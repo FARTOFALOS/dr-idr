@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#10161e"><title>DR Lab — время, цена, вероятность</title><meta name="description" content="Локальный исследовательский интерфейс DR/IDR. Интерактивная демонстрация на синтетических данных."><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2310161e'/%3E%3Cpath d='M7 22V14M16 26V6M25 18V10' stroke='%233edac3' stroke-width='3'/%3E%3C/svg%3E"><link rel="stylesheet" href="/styles.css"><script defer src="/app.js"></script><script defer src="/live.js"></script></head>
+<body class="focus">
+<div class="app-shell">
+<aside class="sidebar">
+  <a class="brand" href="/" aria-label="DR Lab, главная"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 23V13M16 27V5M25 19V9"/></svg><span>DR <b>LAB</b><small>TIME & PRICE RESEARCH</small></span></a>
+  <nav class="main-nav" aria-label="Разделы"><button class="active" data-view="dashboard"><span>▦</span> Обзор распределений</button><button data-view="scenes"><span>▤</span> Исторические сцены</button><button data-view="model"><span>◇</span> Модель системы</button></nav>
+  <div class="filter-title"><span>КОНТЕКСТ ВЫБОРКИ</span><button id="mobile-filters" aria-expanded="false" aria-controls="filters">Настроить выборку ⌄</button><button id="reset" title="Сбросить все фильтры" aria-label="Сбросить все фильтры">↺</button></div>
+  <form id="filters">
+    <label for="instrument">Инструмент</label><div class="segmented" id="instrument"><button type="button" data-instrument="NQ" class="active">NQ</button><button type="button" data-instrument="ES">ES</button><button type="button" data-instrument="YM">YM</button></div>
+    <label for="session">Сессия</label><div class="segmented" id="session"><button type="button" data-session="ADR">ADR</button><button type="button" data-session="ODR">ODR</button><button type="button" data-session="RDR" class="active">RDR</button></div>
+    <label for="direction">Подтверждение</label><select id="direction"><option value="long">↑ Вверх · Long</option><option value="short">↓ Вниз · Short</option><option value="all">Оба направления</option></select>
+    <label for="weekday">День недели</label><select id="weekday"><option value="all">Все дни</option><option value="0">Понедельник</option><option value="1">Вторник</option><option value="2">Среда</option><option value="3">Четверг</option><option value="4">Пятница</option></select>
+    <label>Время подтверждения <span class="muted">ET</span></label><div class="time-inputs"><input id="from" aria-label="Подтверждение, начало окна" type="time" value="10:30" step="300"><span>—</span><input id="to" aria-label="Подтверждение, конец окна" type="time" value="11:00" step="300"></div><small class="hint">Время закрытия M5 · конец окна не включён</small>
+    <label for="status">Итог сессии <span class="xray-label">X-RAY</span></label><select id="status"><option value="all">Все исходы</option><option value="true">Только DR true</option><option value="false">Только DR false</option></select>
+    <div class="scale-key"><span>Ценовая шкала</span><strong>1 IDR <i>=</i> 100%</strong><small>Шаг распределений — 0,1 IDR</small></div>
+  </form>
+  <div class="sidebar-bottom"><span class="local-icon">◉</span><div>Локальное рабочее место<small>Данные остаются на компьютере</small></div></div>
+</aside>
+<div class="workspace">
+<header class="topbar"><div class="breadcrumb">Исследование <span>/</span> <b id="crumb-instrument">NQ</b></div><div class="top-actions"><span class="demo-badge">ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ</span><button class="quiet-button" id="export">↓ Сохранить выборку</button></div></header>
+<main>
+<div class="page-heading"><div><div class="eyebrow">DR / IDR · ЛАБОРАТОРИЯ ТРАЕКТОРИЙ</div><h1 id="page-title">Время. Цена. Вероятность.</h1><p id="context-line">NQ · Regular session · подтверждение вверх</p></div><div class="heading-actions"><label class="target-pick" for="target">Цель <select id="target"><option value="0.5">+0,5 IDR</option><option value="0.8" selected>+0,8 IDR</option><option value="1">+1,0 IDR</option><option value="1.5">+1,5 IDR</option><option value="2">+2,0 IDR</option></select></label><div class="mode-switch" aria-label="Режим наблюдения"><button class="active" data-mode="history">Полная история</button><button data-mode="prefix">На момент</button></div></div></div>
+<div class="demo-note">Макет на <b>2 160 искусственных сессиях</b>. Числа показывают работу интерфейса и расчётов, а не свойства рынка NQ.</div>
+<div id="prefix-panel" class="prefix-panel hidden"><label for="observed">Наблюдаем до <b id="observed-label">11:30 ET</b></label><input type="range" min="635" max="955" step="5" value="690" id="observed"><span>Подтверждение уже есть · DR ещё не опровергнут · цель ещё впереди</span></div>
+<div class="selection-row"><div id="selection-chips"><span class="muted">Вся выбранная группа · нажмите на столбец или ячейку, чтобы уточнить</span></div><button id="clear-charts" class="text-button hidden">Снять выделение</button></div>
+<div id="error" class="error hidden" role="alert"></div>
+<section id="dashboard-view">
+  <div class="kpi-grid" id="kpis"></div>
+  <section class="panel live-panel" id="live-panel"><div class="panel-heading"><div class="live-head-left"><button type="button" class="icon-button" id="focus-toggle" title="Показать или скрыть меню" aria-label="Показать или скрыть меню">☰</button><h2><span id="live-title">—</span></h2></div><div class="live-actions"><div class="live-layers" role="group" aria-label="Слои"><button type="button" class="layer active" data-layer="rclust">Кластеры отката</button><button type="button" class="layer" data-layer="eclust">Кластеры экстремума</button><button type="button" class="layer active" data-layer="fan">Веер</button><button type="button" class="layer active" data-layer="ladder">Лесенка</button></div><label class="live-auto"><input type="checkbox" id="live-auto" checked> Авто <span id="live-countdown" class="muted"></span></label><span id="live-status" class="muted"></span><button class="quiet-button" id="live-refresh" type="button">⟳ Обновить</button><button class="text-button" id="live-toggle" type="button">Свернуть</button></div></div><div class="live-body"><div id="live-chart" class="live-chart"></div><div id="live-side" class="live-side"></div></div></section>
+  <div class="mini-row">
+  <div class="top-charts">
+    <section class="panel path-panel"><div class="panel-heading"><div><h2>Траектория выбранных сессий</h2><p>Закрытия свечей · медиана и 20–80% диапазон</p></div><span class="legend"><i></i> IDR</span></div><div id="path-chart" class="path-chart"></div><div class="panel-foot"><span>0 — граница IDR по направлению подтверждения</span><button class="text-button" data-help="path">Как читать ↗</button></div></section>
+    <section class="panel heat-panel"><div class="panel-heading"><div><h2>Глубина × время отката</h2><p>Окончательный минимум в направленной шкале</p></div><button class="info-button" data-help="heat" aria-label="Как рассчитана тепловая карта">i</button></div><div id="heatmap" class="heatmap"></div><div class="panel-foot"><span id="heat-count">Один случай — одна сессия</span><span class="heat-legend">Меньше <i></i> Больше</span></div></section>
+  </div>
+  <div class="distribution-grid">
+    <section class="panel"><div class="panel-heading"><div><h2>Максимальный откат</h2><p>Где закончился возврат после подтверждения</p></div><button class="info-button" data-help="retr" aria-label="Определение максимального отката">i</button></div><div id="retr-chart" class="hist-chart"></div><div class="panel-foot" id="retr-foot"></div></section>
+    <section class="panel"><div class="panel-heading"><div><h2>Максимальное расширение</h2><p>Как далеко цена ушла по подтверждению</p></div><button class="info-button" data-help="ext" aria-label="Определение расширения">i</button></div><div id="ext-chart" class="hist-chart"></div><div class="panel-foot" id="ext-foot"></div></section>
+    <section class="panel"><div class="panel-heading"><div><h2>Время максимального отката</h2><p>Когда сформировался экстремум · интервалы 15 минут</p></div><button class="info-button" data-help="rtime" aria-label="Определение времени отката">i</button></div><div id="rtime-chart" class="hist-chart"></div><div class="panel-foot" id="rtime-foot"></div></section>
+    <section class="panel"><div class="panel-heading"><div><h2>Время максимального расширения</h2><p>Когда достигнут дальний экстремум</p></div><button class="info-button" data-help="etime" aria-label="Определение времени расширения">i</button></div><div id="etime-chart" class="hist-chart"></div><div class="panel-foot" id="etime-foot"></div></section>
+  </div>
+  </div>
+  <div id="target-result" class="hidden"></div>
+</section>
+<section id="scenes-view" class="hidden panel scenes-panel"><div class="panel-heading"><div><h2>Сессии, из которых получены числа</h2><p>Каждое наблюдение можно открыть и проверить по свечам</p></div></div><div id="scenes-table"></div><div id="scene-detail"></div></section>
+<section id="model-view" class="hidden"><div class="architecture-flow"><span>Минутные OHLC</span><b>→</b><span>DR / IDR / подтверждение</span><b>→</b><span>Сессии и траектории</span><b>→</b><span>Выборка и распределения</span></div><article class="panel model-article" id="model-content"></article></section>
+<footer><span>DR LAB <b>/</b> Версия интерфейса 0.1</span><span id="provenance">SYNTHETIC · seed 91724 · без Volume</span><button class="text-button" data-view="model">Смысл и границы расчёта ↗</button></footer>
+</main></div></div>
+<div id="tooltip" role="tooltip" class="tooltip hidden"></div>
+<dialog id="help-dialog"><button class="dialog-close" aria-label="Закрыть">×</button><div id="help-content"></div></dialog>
+</body></html>

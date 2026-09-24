@@ -1,0 +1,6 @@
+# built history, live candles, logs: rebuildable, and market data must never be published
+lab/.runtime/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

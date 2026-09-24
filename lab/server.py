@@ -1,0 +1,87 @@
+"""Local-only, read-only prototype API and static site. Python standard library."""
+import argparse
+import functools
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+import json
+from pathlib import Path
+from urllib.parse import parse_qs, urlparse
+import importlib
+engine = None
+
+ROOT = Path(__file__).resolve().parent
+DATA_KIND = 'SYNTHETIC'
+
+
+class Handler(SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=str(ROOT/'dist'), **kwargs)
+
+    def end_headers(self):
+        # the page must never run a stale copy after an update (the operator only reloads or reopens)
+        if not self.path.startswith('/api/'):
+            self.send_header('Cache-Control', 'no-cache')
+        super().end_headers()
+
+    def log_message(self, fmt, *args):
+        if len(args)>1 and str(args[1]) not in ('200','304'):
+            super().log_message(fmt, *args)
+
+    def json(self, value, status=200):
+        data = json.dumps(value, ensure_ascii=False, allow_nan=False).encode('utf-8')
+        self.send_response(status)
+        self.send_header('Content-Type', 'application/json; charset=utf-8')
+        self.send_header('Content-Length', str(len(data)))
+        self.send_header('Cache-Control', 'no-store')
+        self.end_headers()
+        self.wfile.write(data)
+
+    def do_GET(self):
+        url = urlparse(self.path)
+        params = {k:v[-1] for k,v in parse_qs(url.query).items()}
+        try:
+            if url.path == '/api/health':
+                return self.json({'status':'ok','data_kind':DATA_KIND,'version':engine.VERSION})
+            if url.path == '/api/query':
+                return self.json(engine.query(params))
+            if url.path == '/api/scene':
+                value = engine.scene(params.get('id',''))
+                return self.json(value or {'error':'Сцена не найдена'}, 200 if value else 404)
+            if url.path in ('/api/live', '/api/live/refresh'):
+                import live
+                inst = params.get('instrument', 'NQ'); session = params.get('session', 'RDR')
+                if url.path.endswith('/refresh'):
+                    try:
+                        live.fetch(inst)
+                    except Exception as exc:
+                        return self.json({'status': 'error', 'message': str(exc)}, 200)
+                at = params.get('at')
+                return self.json(live.state(inst, session, int(float(at)) if at not in (None, '') else None))
+            if url.path == '/api/spec':
+                path = ROOT.parent/'docs'/'SEMANTICS.md'
+                return self.json({'text':path.read_text(encoding='utf-8') if path.exists() else 'Смысловая спецификация готовится вместе с интерфейсом.'})
+            if url.path.startswith('/api/'):
+                return self.json({'error':'Неизвестный запрос'},404)
+            return super().do_GET()
+        except (ValueError, TypeError) as exc:
+            self.json({'error': str(exc)},400)
+        except Exception:
+            self.json({'error':'Не удалось выполнить локальный расчёт.'},500)
+            raise
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--port', type=int, default=8767)
+    parser.add_argument('--data', choices=['market', 'demo'], default='market')
+    args = parser.parse_args()
+    engine = importlib.import_module('engine' if args.data == 'demo' else 'engine_market')
+    DATA_KIND = 'SYNTHETIC' if args.data == 'demo' else 'MARKET'
+    engine.initialize()
+    server = ThreadingHTTPServer(('127.0.0.1',args.port),Handler)
+    print(f'DR Lab ready: http://127.0.0.1:{args.port} · {DATA_KIND}',flush=True)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.server_close()
