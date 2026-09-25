@@ -32,6 +32,10 @@ against what happened next.
 4. `docs/UI_RULES.md` — the operator's interface requirements and the design tokens.
 5. `docs/DECISIONS.md` — dated decisions and where they came from.
 6. `docs/RESEARCH.md` — what has been measured, what is not established, and the open questions.
+7. `docs/STRATEGY.md` — the DR/IDR method itself, formalized from the author's 156 videos and streams (Russian):
+   definitions, session models, setups, stops, targets, risk, an algorithm for an autonomous agent, what our tape
+   confirms (`studies/m7_claims.py`) and the decisions still open for the operator. `docs/DR_RULES_WEB.md` is an
+   independent cross-check of the rules against public sources only.
 
 ## Map
 
@@ -47,7 +51,8 @@ lab/
   engine.py               synthetic demo engine (python lab/server.py --data demo); never mixed with market data
   dist/                   front end: index.html, app.js (history dashboard), live.js (live panel), styles.css
   .runtime/               git-ignored: built history, live candles, server logs
-studies/                  research scripts with their results (e.g. intermarket.py: NQ/ES/YM relations)
+studies/                  research scripts with their results (intermarket.py: NQ/ES/YM relations; m7_claims.py: the
+                          author's claims and his time-and-price procedure on our tape)
 tests/smoke.py            offline checks; run after every change
 tests/ui_check.js         in-page check for text overlaps and layout; evaluate it in the browser
 docs/                     everything an agent needs to understand and extend the tool

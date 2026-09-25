@@ -1,0 +1,168 @@
+============================== NQ
+C0 {'share_sessions_differ_pct': 62.1, 'median_edge_shift_when_differs_idr': 0.053, 'median_width_ratio_close_over_body': 0.981}
+C1 ADR DR true all: 71.9% [70.5-73.3] n=3930 | epochs: {'2006-12': 65.4, '2013-19': 73.4, '2020-25': 74.0}
+C1 ODR DR true all: 77.2% [76.0-78.4] n=4712 | epochs: {'2006-12': 75.4, '2013-19': 78.1, '2020-25': 78.3}
+C1 RDR DR true all: 83.0% [81.9-84.0] n=4724 | epochs: {'2006-12': 81.0, '2013-19': 84.3, '2020-25': 83.8}
+C2 ADR same dir all-sessions 63.9% [62.4-65.3] n=4152 | confirmed 66.1% [64.6-67.5] n=4013 | green->long 65.6 red->short 62.1 | ep {'2006-12': 64.7, '2013-19': 64.2, '2020-25': 63.0}
+C2 ODR same dir all-sessions 63.6% [62.2-64.9] n=4848 | confirmed 66.6% [65.2-67.9] n=4630 | green->long 65.7 red->short 61.4 | ep {'2006-12': 66.1, '2013-19': 63.9, '2020-25': 60.7}
+C2 RDR same dir all-sessions 66.2% [64.9-67.5] n=5071 | confirmed 71.4% [70.1-72.7] n=4706 | green->long 70.2 red->short 62.0 | ep {'2006-12': 65.5, '2013-19': 64.3, '2020-25': 69.3}
+C3-5 ADR: intoDR all 90.0 true 86.3 | intoIDR all 83.3 true 77.1 | ext>=.5 all 86.8 true 90.2 | ext>=1 62.8 | ext med 1.29 mean 1.79 | retr med all -0.6 true -0.32 | lastclose out 54.8 last3 59.1
+C3-5 ODR: intoDR all 89.3 true 86.2 | intoIDR all 81.7 true 76.4 | ext>=.5 all 83.7 true 87.3 | ext>=1 55.8 | ext med 1.12 mean 1.54 | retr med all -0.52 true -0.32 | lastclose out 53.5 last3 59.2
+C3-5 RDR: intoDR all 88.2 true 85.8 | intoIDR all 77.6 true 73.0 | ext>=.5 all 77.8 true 80.2 | ext>=1 46.4 | ext med 0.92 mean 1.22 | retr med all -0.37 true -0.23 | lastclose out 56.4 last3 61.6
+C10 ADR weekday: {'0': 79.1, '1': 70.4, '2': 70.5, '3': 68.2, '4': 71.6}
+C11 ADR buckets: {'+0..30m': (65.8, 1814), '+30..60m': (69.9, 984), '+60..90m': (77.7, 476), '+90..120m': (83.3, 258), '+120..150m': (84.7, 131), '+150..180m': (88.1, 67), '+180..210m': (86.8, 53), '+210..240m': (94.7, 38), '+240m..': (98.2, 109)}
+C10 ODR weekday: {'0': 79.7, '1': 76.9, '2': 74.7, '3': 77.3, '4': 77.7}
+C11 ODR buckets: {'+0..30m': (70.9, 2223), '+30..60m': (76.4, 940), '+60..90m': (78.3, 511), '+90..120m': (83.2, 322), '+120..150m': (91.0, 210), '+150..180m': (90.6, 160), '+180..210m': (98.6, 140), '+210..240m': (98.0, 102), '+240m..': (99.0, 104)}
+C10 RDR weekday: {'0': 85.6, '1': 82.2, '2': 76.7, '3': 82.8, '4': 88.1}
+C11 RDR buckets: {'+0..30m': (78.3, 2062), '+30..60m': (81.2, 994), '+60..90m': (82.9, 510), '+90..120m': (90.0, 319), '+120..150m': (90.5, 179), '+150..180m': (90.1, 161), '+180..210m': (93.2, 132), '+210..240m': (96.5, 114), '+240m..': (98.4, 253)}
+C12 {'until_0200': '71.5% [70.1-72.9] n=3874', 'until_0100': '77.6% [76.2-78.8] n=4046'}
+C9 {"look_ahead_split": {"max_retr_before_12": 98.3, "max_retr_after_12": 66.0, "share_max_retr_before_12": 38.6}, "honest_at_12": {"all_confirmed": 78.4, "dr_intact_at_12": 81.0}, "friday_long": {"n": 206, "before_12": 98.8, "after_12": 68.3, "all": 80.6, "intact_at_12": 83.4}}
+C8 window {'observed_pct': 8.67, 'baseline_pct': 8.21, 'z': 1.65} {'2006-12': 9.1, '2013-19': 8.93, '2020-25': 7.87}
+C8 bins {'09:30': (19.47, 15.79), '09:40': (6.48, 6.03), '09:50': (4.07, 3.95), '10:00': (4.6, 4.27), '10:10': (3.11, 2.94), '10:20': (2.56, 2.41), '10:30': (2.53, 2.18), '10:40': (2.21, 1.94), '10:50': (1.89, 1.65), '11:00': (1.74, 1.68), '11:10': (1.61, 1.48), '11:20': (1.36, 1.33), '11:30': (1.67, 1.34)}
+C7a shares {'share_only_up': 20.2, 'share_only_dn': 13.8, 'share_both': 0.0, 'share_neither': 66.0} | long|up-only vs long|dn-only 64.0 vs 45.5 (d=18.5, z=6.72; na=805 nb=543) {'2006-12': 18.9, '2013-19': 19.0, '2020-25': 17.3}
+C7b DRtrue with vs against 84.0 vs 81.6 (d=2.4, z=1.15; na=811 nb=537) {'2006-12': 2.9, '2013-19': 1.4, '2020-25': 3.2}
+C7c rexp share 69.7 ext1 rexp vs not 42.9 vs 50.6 (d=-7.7, z=-4.45; na=2712 nb=1185) {'2006-12': -5.5, '2013-19': -10.3, '2020-25': -6.3}
+C7d contraction share 26.9 events 3502 contr share of events 21.5
+   opposite conf contr vs not 46.5 vs 45.3 (d=1.2, z=0.58; na=753 nb=2749) {'2006-12': -3.0, '2013-19': -2.2, '2020-25': 9.6}
+   reach other extreme contr vs not 34.5 vs 20.7 (d=13.8, z=7.89; na=753 nb=2749) {'2006-12': 9.8, '2013-19': 16.1, '2020-25': 13.8}
+C7e ODR ext1 aligned vs counter 53.2 vs 61.0 (d=-7.8, z=-4.63; na=1857 nb=1635) | DRtrue 78.7 vs 76.1 (d=2.6, z=1.87; na=1856 nb=1634) | median ext {'aligned': 1.06, 'counter': 1.26}
+C7f RDR DRtrue not-both vs odr-both 83.9 vs 82.8 (d=1.1, z=0.94; na=2053 nb=1844)
+C6 ADR: entered 1542 DRtrue|entered 31.9
+   dr_edge: n=1542 win=31.1 stop=62.9 gross=-0.077 net2=-0.3 [-0.366, -0.235] net4=-0.524 risk=11.0 | ep net2 {'2006-12': -0.467, '2013-19': -0.354, '2020-25': -0.125}
+   new_extreme: n=1542 win=16.1 stop=70.2 gross=-0.125 net2=-0.348 [-0.426, -0.27] net4=-0.571 risk=11.0 | ep net2 {'2006-12': -0.502, '2013-19': -0.408, '2020-25': -0.174}
+   plus05: n=1542 win=21.3 stop=68.0 gross=-0.09 net2=-0.314 [-0.388, -0.239] net4=-0.537 risk=11.0 | ep net2 {'2006-12': -0.474, '2013-19': -0.387, '2020-25': -0.12}
+C6 ODR: entered 1476 DRtrue|entered 36.3
+   dr_edge: n=1476 win=30.0 stop=62.9 gross=-0.07 net2=-0.239 [-0.306, -0.173] net4=-0.409 risk=14.0 | ep net2 {'2006-12': -0.341, '2013-19': -0.224, '2020-25': -0.138}
+   new_extreme: n=1476 win=17.8 stop=68.2 gross=-0.062 net2=-0.232 [-0.312, -0.151] net4=-0.401 risk=14.0 | ep net2 {'2006-12': -0.343, '2013-19': -0.207, '2020-25': -0.131}
+   plus05: n=1476 win=21.6 stop=66.9 gross=-0.063 net2=-0.232 [-0.308, -0.156] net4=-0.402 risk=14.0 | ep net2 {'2006-12': -0.365, '2013-19': -0.201, '2020-25': -0.115}
+C6 RDR: entered 1212 DRtrue|entered 40.0
+   dr_edge: n=1212 win=26.0 stop=60.2 gross=-0.028 net2=-0.099 [-0.174, -0.023] net4=-0.169 risk=33.0 | ep net2 {'2006-12': -0.166, '2013-19': -0.095, '2020-25': -0.022}
+   new_extreme: n=1212 win=12.1 stop=64.0 gross=-0.071 net2=-0.142 [-0.225, -0.058] net4=-0.212 risk=33.0 | ep net2 {'2006-12': -0.23, '2013-19': -0.099, '2020-25': -0.087}
+   plus05: n=1212 win=14.9 stop=63.9 gross=-0.079 net2=-0.149 [-0.231, -0.068] net4=-0.22 risk=33.0 | ep net2 {'2006-12': -0.204, '2013-19': -0.105, '2020-25': -0.136}
+C13 ADR author_rr3: used {'key': 1860, 'fallback': 742, 'skipped': 28} | n=719 win=14.2 stop=77.9 gross=-0.097 net2=-0.25 [-0.395, -0.106] net4=-0.404 risk=19.0 | b1 -0.249 n511 b2 -0.255 n208 | per [-0.254, -0.289, -0.218]
+C13 ADR author: used {'key': 1860, 'fallback': 742, 'skipped': 28} | n=2224 win=17.7 stop=75.6 gross=-0.151 net2=-0.365 [-0.436, -0.293] net4=-0.578 risk=13.0 | b1 -0.276 n1556 b2 -0.572 n668 | per [-0.57, -0.35, -0.197]
+C13 ADR honest_rr3: used {'key': 2210, 'fallback': 425, 'skipped': 0} | n=15 win=20.0 stop=60.0 gross=0.103 net2=0.021 [-0.818, 0.86] net4=-0.061 risk=30.0 | b1 0.096 n12 b2 -0.28 n3 | per [0.868, 0.041, -0.35]
+C13 ADR honest: used {'key': 2210, 'fallback': 425, 'skipped': 0} | n=1898 win=35.3 stop=48.7 gross=-0.021 net2=-0.127 [-0.177, -0.076] net4=-0.232 risk=27.0 | b1 -0.115 n1468 b2 -0.166 n430 | per [-0.225, -0.149, -0.009]
+C13 ODR author_rr3: used {'key': 2292, 'fallback': 220, 'skipped': 0} | n=316 win=11.4 stop=81.0 gross=-0.166 net2=-0.28 [-0.497, -0.063] net4=-0.394 risk=25.0 | b1 -0.233 n218 b2 -0.384 n98 | per [-0.256, -0.277, -0.29]
+C13 ODR author: used {'key': 2292, 'fallback': 220, 'skipped': 0} | n=2150 win=21.9 stop=71.0 gross=-0.103 net2=-0.246 [-0.315, -0.176] net4=-0.388 risk=20.0 | b1 -0.151 n1522 b2 -0.474 n628 | per [-0.36, -0.286, -0.087]
+C13 ODR honest_rr3: used {'key': 2386, 'fallback': 126, 'skipped': 0} | n=0 win=None stop=None gross=None net2=None None net4=None risk=None | b1 None n0 b2 None n0 | per [None, None, None]
+C13 ODR honest: used {'key': 2386, 'fallback': 126, 'skipped': 0} | n=1837 win=34.9 stop=50.8 gross=-0.013 net2=-0.091 [-0.145, -0.037] net4=-0.169 risk=37.0 | b1 -0.092 n1389 b2 -0.088 n448 | per [-0.162, -0.107, -0.007]
+C13 RDR author_rr3: used {'key': 2255, 'fallback': 177, 'skipped': 0} | n=882 win=17.0 stop=77.8 gross=-0.024 net2=-0.108 [-0.24, 0.024] net4=-0.193 risk=33.0 | b1 -0.021 n605 b2 -0.299 n277 | per [-0.272, -0.109, 0.046]
+C13 RDR author: used {'key': 2255, 'fallback': 177, 'skipped': 0} | n=2028 win=21.9 stop=71.5 gross=0.05 net2=-0.025 [-0.106, 0.056] net4=-0.1 risk=42.0 | b1 0.051 n1410 b2 -0.198 n618 | per [-0.164, -0.06, 0.118]
+C13 RDR honest_rr3: used {'key': 2331, 'fallback': 101, 'skipped': 0} | n=21 win=4.8 stop=81.0 gross=-0.533 net2=-0.698 [-1.258, -0.138] net4=-0.864 risk=13.0 | b1 -0.978 n13 b2 -0.244 n8 | per [-0.698, None, None]
+C13 RDR honest: used {'key': 2331, 'fallback': 101, 'skipped': 0} | n=1839 win=32.8 stop=54.0 gross=0.025 net2=-0.016 [-0.073, 0.042] net4=-0.056 risk=80.0 | b1 0.022 n1371 b2 -0.126 n468 | per [-0.175, -0.0, 0.099]
+============================== ES
+C0 {'share_sessions_differ_pct': 50.2, 'median_edge_shift_when_differs_idr': 0.1, 'median_width_ratio_close_over_body': 0.995}
+C1 ADR DR true all: 75.5% [74.2-76.7] n=4621 | epochs: {'2006-12': 73.2, '2013-19': 77.1, '2020-25': 75.9}
+C1 ODR DR true all: 79.6% [78.4-80.7] n=4825 | epochs: {'2006-12': 78.6, '2013-19': 80.5, '2020-25': 79.6}
+C1 RDR DR true all: 79.6% [78.4-80.7] n=4862 | epochs: {'2006-12': 79.9, '2013-19': 80.6, '2020-25': 78.1}
+C2 ADR same dir all-sessions 63.8% [62.4-65.2] n=4568 | confirmed 66.7% [65.3-68.1] n=4367 | green->long 66.1 red->short 61.4 | ep {'2006-12': 66.6, '2013-19': 61.6, '2020-25': 63.6}
+C2 ODR same dir all-sessions 63.2% [61.8-64.5] n=4887 | confirmed 66.8% [65.4-68.1] n=4627 | green->long 66.3 red->short 60.0 | ep {'2006-12': 63.2, '2013-19': 63.6, '2020-25': 62.9}
+C2 RDR same dir all-sessions 67.5% [66.2-68.8] n=5043 | confirmed 71.0% [69.7-72.2] n=4795 | green->long 70.9 red->short 63.8 | ep {'2006-12': 67.9, '2013-19': 65.6, '2020-25': 69.2}
+C3-5 ADR: intoDR all 91.4 true 88.7 | intoIDR all 83.9 true 78.8 | ext>=.5 all 87.6 true 89.9 | ext>=1 64.8 | ext med 1.29 mean 1.78 | retr med all -0.57 true -0.33 | lastclose out 54.2 last3 58.9
+C3-5 ODR: intoDR all 91.1 true 88.9 | intoIDR all 82.5 true 78.0 | ext>=.5 all 85.0 true 87.9 | ext>=1 57.6 | ext med 1.13 mean 1.53 | retr med all -0.5 true -0.33 | lastclose out 53.4 last3 59.2
+C3-5 RDR: intoDR all 90.6 true 88.2 | intoIDR all 80.9 true 76.0 | ext>=.5 all 81.4 true 85.1 | ext>=1 52.2 | ext med 1.03 mean 1.38 | retr med all -0.46 true -0.27 | lastclose out 54.8 last3 60.6
+C10 ADR weekday: {'0': 83.8, '1': 72.7, '2': 73.9, '3': 73.9, '4': 74.1}
+C11 ADR buckets: {'+0..30m': (68.8, 1904), '+30..60m': (72.3, 1155), '+60..90m': (79.5, 615), '+90..120m': (85.4, 343), '+120..150m': (88.6, 166), '+150..180m': (93.8, 130), '+180..210m': (89.5, 95), '+210..240m': (96.2, 52), '+240m..': (98.1, 161)}
+C10 ODR weekday: {'0': 83.3, '1': 78.7, '2': 77.5, '3': 79.0, '4': 79.7}
+C11 ODR buckets: {'+0..30m': (73.6, 2060), '+30..60m': (77.8, 1018), '+60..90m': (80.0, 621), '+90..120m': (86.7, 345), '+120..150m': (91.9, 246), '+150..180m': (91.2, 170), '+180..210m': (95.1, 144), '+210..240m': (99.2, 123), '+240m..': (99.0, 98)}
+C10 RDR weekday: {'0': 82.6, '1': 78.8, '2': 73.2, '3': 80.4, '4': 83.2}
+C11 RDR buckets: {'+0..30m': (73.9, 2154), '+30..60m': (77.4, 1023), '+60..90m': (83.5, 540), '+90..120m': (88.3, 308), '+120..150m': (88.3, 196), '+150..180m': (85.0, 153), '+180..210m': (86.6, 119), '+210..240m': (91.9, 135), '+240m..': (99.6, 234)}
+C12 {'until_0200': '75.0% [73.7-76.2] n=4524', 'until_0100': '79.7% [78.5-80.9] n=4569'}
+C9 {"look_ahead_split": {"max_retr_before_12": 97.4, "max_retr_after_12": 60.2, "share_max_retr_before_12": 37.0}, "honest_at_12": {"all_confirmed": 73.9, "dr_intact_at_12": 77.1}, "friday_long": {"n": 222, "before_12": 98.9, "after_12": 59.4, "all": 76.1, "intact_at_12": 78.6}}
+C8 window {'observed_pct': 8.55, 'baseline_pct': 8.02, 'z': 1.93} {'2006-12': 9.28, '2013-19': 8.2, '2020-25': 8.12}
+C8 bins {'09:30': (16.97, 13.58), '09:40': (5.93, 5.43), '09:50': (3.62, 3.71), '10:00': (4.93, 4.32), '10:10': (3.01, 2.8), '10:20': (2.33, 2.29), '10:30': (2.76, 2.13), '10:40': (2.2, 1.9), '10:50': (1.78, 1.62), '11:00': (2.0, 1.68), '11:10': (1.73, 1.46), '11:20': (1.35, 1.34), '11:30': (1.63, 1.36)}
+C7a shares {'share_only_up': 21.9, 'share_only_dn': 15.4, 'share_both': 0.0, 'share_neither': 62.7} | long|up-only vs long|dn-only 61.6 vs 47.1 (d=14.5, z=5.98; na=1010 nb=720) {'2006-12': 15.5, '2013-19': 17.7, '2020-25': 9.3}
+C7b DRtrue with vs against 80.5 vs 77.3 (d=3.2, z=1.64; na=1002 nb=727) {'2006-12': -1.4, '2013-19': 4.0, '2020-25': 6.2}
+C7c rexp share 66.3 ext1 rexp vs not 49.6 vs 56.7 (d=-7.1, z=-4.55; na=3048 nb=1556) {'2006-12': -7.5, '2013-19': -11.1, '2020-25': -3.0}
+C7d contraction share 25.1 events 3904 contr share of events 20.3
+   opposite conf contr vs not 49.3 vs 45.6 (d=3.7, z=1.86; na=791 nb=3113) {'2006-12': 2.0, '2013-19': 4.2, '2020-25': 5.3}
+   reach other extreme contr vs not 33.4 vs 20.1 (d=13.2, z=7.92; na=791 nb=3113) {'2006-12': 14.7, '2013-19': 14.4, '2020-25': 10.4}
+C7e ODR ext1 aligned vs counter 53.7 vs 62.6 (d=-8.9, z=-5.71; na=2147 nb=1863) | DRtrue 80.1 vs 78.6 (d=1.5, z=1.19; na=2146 nb=1862) | median ext {'aligned': 1.0, 'counter': 1.24}
+C7f RDR DRtrue not-both vs odr-both 80.5 vs 78.8 (d=1.8, z=1.51; na=2410 nb=2193)
+C6 ADR: entered 1618 DRtrue|entered 35.0
+   dr_edge: n=1618 win=37.0 stop=55.3 gross=-0.066 net2=-0.449 [-0.505, -0.393] net4=-0.831 risk=5.0 | ep net2 {'2006-12': -0.523, '2013-19': -0.555, '2020-25': -0.264}
+   new_extreme: n=1618 win=16.4 stop=63.3 gross=-0.099 net2=-0.481 [-0.549, -0.413] net4=-0.864 risk=5.0 | ep net2 {'2006-12': -0.582, '2013-19': -0.599, '2020-25': -0.257}
+   plus05: n=1618 win=25.6 stop=60.9 gross=-0.098 net2=-0.48 [-0.543, -0.418] net4=-0.863 risk=5.0 | ep net2 {'2006-12': -0.562, '2013-19': -0.626, '2020-25': -0.246}
+C6 ODR: entered 1386 DRtrue|entered 38.8
+   dr_edge: n=1386 win=33.3 stop=59.7 gross=-0.075 net2=-0.353 [-0.417, -0.289] net4=-0.631 risk=7.0 | ep net2 {'2006-12': -0.353, '2013-19': -0.461, '2020-25': -0.233}
+   new_extreme: n=1386 win=17.5 stop=65.5 gross=-0.085 net2=-0.362 [-0.439, -0.285] net4=-0.64 risk=7.0 | ep net2 {'2006-12': -0.373, '2013-19': -0.498, '2020-25': -0.199}
+   plus05: n=1386 win=24.3 stop=63.1 gross=-0.06 net2=-0.337 [-0.41, -0.264] net4=-0.615 risk=7.0 | ep net2 {'2006-12': -0.342, '2013-19': -0.454, '2020-25': -0.202}
+C6 RDR: entered 1411 DRtrue|entered 36.5
+   dr_edge: n=1411 win=24.3 stop=64.5 gross=-0.175 net2=-0.327 [-0.391, -0.263] net4=-0.479 risk=14.0 | ep net2 {'2006-12': -0.379, '2013-19': -0.422, '2020-25': -0.167}
+   new_extreme: n=1411 win=13.0 stop=68.3 gross=-0.184 net2=-0.337 [-0.41, -0.263] net4=-0.489 risk=14.0 | ep net2 {'2006-12': -0.393, '2013-19': -0.44, '2020-25': -0.163}
+   plus05: n=1411 win=15.9 stop=66.9 gross=-0.176 net2=-0.328 [-0.398, -0.258] net4=-0.481 risk=14.0 | ep net2 {'2006-12': -0.356, '2013-19': -0.426, '2020-25': -0.19}
+C13 ADR author_rr3: used {'key': 2220, 'fallback': 296, 'skipped': 0} | n=289 win=18.7 stop=65.4 gross=0.18 net2=-0.029 [-0.243, 0.184] net4=-0.239 risk=10.0 | b1 -0.011 n216 b2 -0.084 n73 | per [-0.182, -0.186, 0.132]
+C13 ADR author: used {'key': 2220, 'fallback': 296, 'skipped': 0} | n=2064 win=20.3 stop=69.9 gross=-0.152 net2=-0.504 [-0.568, -0.439] net4=-0.855 risk=6.0 | b1 -0.415 n1448 b2 -0.712 n616 | per [-0.638, -0.542, -0.346]
+C13 ADR honest_rr3: used {'key': 2393, 'fallback': 123, 'skipped': 0} | n=1 win=0.0 stop=100.0 gross=-1.0 net2=-1.2 [nan, nan] net4=-1.4 risk=10.0 | b1 -1.2 n1 b2 None n0 | per [-1.2, None, None]
+C13 ADR honest: used {'key': 2393, 'fallback': 123, 'skipped': 0} | n=1822 win=32.0 stop=48.6 gross=-0.066 net2=-0.279 [-0.328, -0.229] net4=-0.491 risk=11.0 | b1 -0.228 n1408 b2 -0.449 n414 | per [-0.413, -0.259, -0.182]
+C13 ODR author_rr3: used {'key': 2277, 'fallback': 161, 'skipped': 0} | n=147 win=15.6 stop=72.8 gross=-0.144 net2=-0.354 [-0.611, -0.096] net4=-0.564 risk=10.0 | b1 -0.17 n105 b2 -0.814 n42 | per [-0.282, -0.477, -0.283]
+C13 ODR author: used {'key': 2277, 'fallback': 161, 'skipped': 0} | n=1922 win=23.1 stop=67.4 gross=-0.119 net2=-0.372 [-0.436, -0.307] net4=-0.624 risk=9.0 | b1 -0.26 n1374 b2 -0.651 n548 | per [-0.475, -0.484, -0.184]
+C13 ODR honest_rr3: used {'key': 2373, 'fallback': 65, 'skipped': 0} | n=0 win=None stop=None gross=None net2=None None net4=None risk=None | b1 None n0 b2 None n0 | per [None, None, None]
+C13 ODR honest: used {'key': 2373, 'fallback': 65, 'skipped': 0} | n=1678 win=33.0 stop=49.8 gross=-0.041 net2=-0.202 [-0.256, -0.148] net4=-0.363 risk=15.0 | b1 -0.189 n1290 b2 -0.247 n388 | per [-0.346, -0.228, -0.07]
+C13 RDR author_rr3: used {'key': 2347, 'fallback': 155, 'skipped': 0} | n=600 win=14.2 stop=79.2 gross=-0.135 net2=-0.305 [-0.453, -0.156] net4=-0.474 risk=15.0 | b1 -0.25 n411 b2 -0.422 n189 | per [-0.255, -0.437, -0.198]
+C13 RDR author: used {'key': 2347, 'fallback': 155, 'skipped': 0} | n=2161 win=19.4 stop=73.9 gross=-0.111 net2=-0.293 [-0.365, -0.221] net4=-0.476 risk=14.0 | b1 -0.227 n1493 b2 -0.442 n668 | per [-0.386, -0.404, -0.123]
+C13 RDR honest_rr3: used {'key': 2410, 'fallback': 92, 'skipped': 0} | n=17 win=5.9 stop=76.5 gross=-0.213 net2=-0.389 [-1.108, 0.33] net4=-0.564 risk=13.0 | b1 -0.33 n16 b2 -1.333 n1 | per [-0.204, -0.433, -1.051]
+C13 RDR honest: used {'key': 2410, 'fallback': 92, 'skipped': 0} | n=1887 win=32.6 stop=54.5 gross=-0.054 net2=-0.158 [-0.211, -0.104] net4=-0.261 risk=24.0 | b1 -0.11 n1409 b2 -0.299 n478 | per [-0.237, -0.227, -0.033]
+============================== YM
+C0 {'share_sessions_differ_pct': 61.5, 'median_edge_shift_when_differs_idr': 0.062, 'median_width_ratio_close_over_body': 0.974}
+C1 ADR DR true all: 71.5% [70.1-72.9] n=4132 | epochs: {'2006-12': 65.7, '2013-19': 73.0, '2020-25': 74.1}
+C1 ODR DR true all: 77.2% [75.9-78.3] n=4717 | epochs: {'2006-12': 75.8, '2013-19': 78.5, '2020-25': 77.2}
+C1 RDR DR true all: 81.0% [79.9-82.1] n=4762 | epochs: {'2006-12': 79.5, '2013-19': 81.2, '2020-25': 82.5}
+C2 ADR same dir all-sessions 64.4% [63.0-65.9] n=4305 | confirmed 66.9% [65.4-68.3] n=4147 | green->long 65.9 red->short 63.0 | ep {'2006-12': 67.3, '2013-19': 63.4, '2020-25': 63.4}
+C2 ODR same dir all-sessions 64.5% [63.1-65.8] n=4876 | confirmed 67.8% [66.4-69.1] n=4639 | green->long 65.4 red->short 63.5 | ep {'2006-12': 66.6, '2013-19': 63.4, '2020-25': 63.5}
+C2 RDR same dir all-sessions 65.8% [64.5-67.1] n=5046 | confirmed 70.4% [69.0-71.6] n=4719 | green->long 68.5 red->short 62.9 | ep {'2006-12': 67.7, '2013-19': 63.4, '2020-25': 66.4}
+C3-5 ADR: intoDR all 90.2 true 86.6 | intoIDR all 84.6 true 78.9 | ext>=.5 all 84.3 true 88.6 | ext>=1 60.1 | ext med 1.22 mean 1.71 | retr med all -0.62 true -0.34 | lastclose out 53.1 last3 57.4
+C3-5 ODR: intoDR all 90.2 true 87.3 | intoIDR all 83.0 true 78.0 | ext>=.5 all 82.1 true 86.4 | ext>=1 55.0 | ext med 1.09 mean 1.52 | retr med all -0.55 true -0.33 | lastclose out 52.9 last3 58.4
+C3-5 RDR: intoDR all 90.1 true 87.7 | intoIDR all 79.6 true 74.8 | ext>=.5 all 79.1 true 82.6 | ext>=1 49.0 | ext med 0.97 mean 1.31 | retr med all -0.43 true -0.27 | lastclose out 54.6 last3 61.5
+C10 ADR weekday: {'0': 80.6, '1': 68.4, '2': 70.9, '3': 68.4, '4': 69.8}
+C11 ADR buckets: {'+0..30m': (65.3, 1921), '+30..60m': (67.9, 1009), '+60..90m': (77.9, 503), '+90..120m': (84.0, 262), '+120..150m': (88.1, 135), '+150..180m': (91.9, 99), '+180..210m': (95.1, 61), '+210..240m': (93.9, 33), '+240m..': (97.2, 109)}
+C10 ODR weekday: {'0': 80.0, '1': 76.8, '2': 76.0, '3': 76.3, '4': 76.8}
+C11 ODR buckets: {'+0..30m': (71.6, 2164), '+30..60m': (74.8, 946), '+60..90m': (77.3, 541), '+90..120m': (83.4, 332), '+120..150m': (92.6, 242), '+150..180m': (93.9, 164), '+180..210m': (93.4, 136), '+210..240m': (91.5, 106), '+240m..': (98.8, 86)}
+C10 RDR weekday: {'0': 83.9, '1': 83.6, '2': 74.5, '3': 80.9, '4': 82.3}
+C11 RDR buckets: {'+0..30m': (75.7, 2039), '+30..60m': (78.7, 998), '+60..90m': (82.6, 530), '+90..120m': (84.1, 315), '+120..150m': (88.6, 193), '+150..180m': (89.3, 177), '+180..210m': (93.4, 121), '+210..240m': (97.7, 129), '+240m..': (99.2, 260)}
+C12 {'until_0200': '71.1% [69.7-72.5] n=4071', 'until_0100': '76.9% [75.6-78.2] n=4202'}
+C9 {"look_ahead_split": {"max_retr_before_12": 97.7, "max_retr_after_12": 62.2, "share_max_retr_before_12": 36.7}, "honest_at_12": {"all_confirmed": 75.2, "dr_intact_at_12": 78.7}, "friday_long": {"n": 202, "before_12": 98.8, "after_12": 63.6, "all": 77.7, "intact_at_12": 82.2}}
+C8 window {'observed_pct': 8.56, 'baseline_pct': 7.82, 'z': 2.71} {'2006-12': 8.99, '2013-19': 8.71, '2020-25': 7.88}
+C8 bins {'09:30': (19.29, 14.94), '09:40': (5.84, 5.29), '09:50': (3.67, 3.63), '10:00': (4.88, 4.19), '10:10': (2.76, 2.71), '10:20': (2.38, 2.19), '10:30': (2.72, 2.08), '10:40': (2.27, 1.83), '10:50': (1.8, 1.55), '11:00': (1.92, 1.64), '11:10': (1.54, 1.42), '11:20': (1.58, 1.3), '11:30': (1.58, 1.33)}
+C7a shares {'share_only_up': 20.9, 'share_only_dn': 15.6, 'share_both': 0.0, 'share_neither': 63.6} | long|up-only vs long|dn-only 59.4 vs 46.1 (d=13.4, z=5.15; na=858 nb=649) {'2006-12': 12.3, '2013-19': 13.8, '2020-25': 13.1}
+C7b DRtrue with vs against 81.3 vs 80.4 (d=0.9, z=0.43; na=859 nb=647) {'2006-12': 4.3, '2013-19': 0.8, '2020-25': -1.2}
+C7c rexp share 68.1 ext1 rexp vs not 46.3 vs 52.5 (d=-6.2, z=-3.73; na=2781 nb=1316) {'2006-12': -6.4, '2013-19': -10.1, '2020-25': -2.1}
+C7d contraction share 27.3 events 3566 contr share of events 22.2
+   opposite conf contr vs not 45.0 vs 46.1 (d=-1.1, z=-0.55; na=793 nb=2773) {'2006-12': -4.8, '2013-19': -0.7, '2020-25': 1.5}
+   reach other extreme contr vs not 33.2 vs 21.0 (d=12.1, z=7.08; na=793 nb=2771) {'2006-12': 6.5, '2013-19': 13.7, '2020-25': 14.2}
+C7e ODR ext1 aligned vs counter 52.2 vs 58.9 (d=-6.7, z=-4.05; na=1886 nb=1717) | DRtrue 79.1 vs 76.2 (d=2.9, z=2.12; na=1884 nb=1714) | median ext {'aligned': 1.04, 'counter': 1.18}
+C7f RDR DRtrue not-both vs odr-both 81.6 vs 80.5 (d=1.1, z=0.89; na=2073 nb=2024)
+C6 ADR: entered 1613 DRtrue|entered 30.6
+   dr_edge: n=1613 win=29.6 stop=64.1 gross=-0.121 net2=-0.376 [-0.438, -0.315] net4=-0.632 risk=9.0 | ep net2 {'2006-12': -0.461, '2013-19': -0.397, '2020-25': -0.279}
+   new_extreme: n=1613 win=16.2 stop=70.5 gross=-0.122 net2=-0.377 [-0.453, -0.301] net4=-0.633 risk=9.0 | ep net2 {'2006-12': -0.422, '2013-19': -0.436, '2020-25': -0.274}
+   plus05: n=1613 win=21.5 stop=68.3 gross=-0.102 net2=-0.357 [-0.428, -0.286] net4=-0.613 risk=9.0 | ep net2 {'2006-12': -0.428, '2013-19': -0.385, '2020-25': -0.265}
+C6 ODR: entered 1447 DRtrue|entered 36.0
+   dr_edge: n=1447 win=30.2 stop=63.3 gross=-0.059 net2=-0.235 [-0.303, -0.167] net4=-0.411 risk=13.0 | ep net2 {'2006-12': -0.297, '2013-19': -0.298, '2020-25': -0.094}
+   new_extreme: n=1447 win=17.8 stop=68.0 gross=-0.034 net2=-0.21 [-0.293, -0.127] net4=-0.385 risk=13.0 | ep net2 {'2006-12': -0.313, '2013-19': -0.209, '2020-25': -0.095}
+   plus05: n=1447 win=21.6 stop=66.8 gross=-0.036 net2=-0.212 [-0.29, -0.133] net4=-0.387 risk=13.0 | ep net2 {'2006-12': -0.27, '2013-19': -0.239, '2020-25': -0.116}
+C6 RDR: entered 1333 DRtrue|entered 39.0
+   dr_edge: n=1333 win=25.6 stop=61.9 gross=-0.066 net2=-0.148 [-0.219, -0.077] net4=-0.23 risk=28.0 | ep net2 {'2006-12': -0.193, '2013-19': -0.147, '2020-25': -0.096}
+   new_extreme: n=1333 win=13.7 stop=65.6 gross=-0.066 net2=-0.147 [-0.231, -0.064] net4=-0.229 risk=28.0 | ep net2 {'2006-12': -0.212, '2013-19': -0.158, '2020-25': -0.058}
+   plus05: n=1333 win=17.6 stop=64.4 gross=-0.047 net2=-0.129 [-0.208, -0.049] net4=-0.211 risk=28.0 | ep net2 {'2006-12': -0.188, '2013-19': -0.149, '2020-25': -0.034}
+C13 ADR author_rr3: used {'key': 2044, 'fallback': 519, 'skipped': 0} | n=532 win=16.4 stop=73.3 gross=0.003 net2=-0.175 [-0.334, -0.016] net4=-0.353 risk=12.0 | b1 -0.046 n378 b2 -0.492 n154 | per [-0.013, -0.182, -0.238]
+C13 ADR author: used {'key': 2044, 'fallback': 519, 'skipped': 0} | n=2400 win=20.0 stop=73.0 gross=-0.095 net2=-0.347 [-0.416, -0.279] net4=-0.6 risk=9.0 | b1 -0.279 n1663 b2 -0.501 n737 | per [-0.44, -0.33, -0.28]
+C13 ADR honest_rr3: used {'key': 2327, 'fallback': 236, 'skipped': 0} | n=0 win=None stop=None gross=None net2=None None net4=None risk=None | b1 None n0 b2 None n0 | per [None, None, None]
+C13 ADR honest: used {'key': 2327, 'fallback': 236, 'skipped': 0} | n=1997 win=33.7 stop=49.4 gross=-0.071 net2=-0.195 [-0.242, -0.148] net4=-0.32 risk=20.0 | b1 -0.153 n1536 b2 -0.336 n461 | per [-0.287, -0.113, -0.192]
+C13 ODR author_rr3: used {'key': 2241, 'fallback': 213, 'skipped': 0} | n=198 win=13.1 stop=80.3 gross=-0.251 net2=-0.422 [-0.654, -0.189] net4=-0.593 risk=12.0 | b1 -0.37 n133 b2 -0.527 n65 | per [-0.384, -0.442, -0.433]
+C13 ODR author: used {'key': 2241, 'fallback': 213, 'skipped': 0} | n=2095 win=22.0 stop=69.6 gross=-0.104 net2=-0.274 [-0.344, -0.204] net4=-0.443 risk=15.0 | b1 -0.213 n1494 b2 -0.424 n601 | per [-0.353, -0.318, -0.161]
+C13 ODR honest_rr3: used {'key': 2350, 'fallback': 104, 'skipped': 0} | n=0 win=None stop=None gross=None net2=None None net4=None risk=None | b1 None n0 b2 None n0 | per [None, None, None]
+C13 ODR honest: used {'key': 2350, 'fallback': 104, 'skipped': 0} | n=1810 win=35.5 stop=49.9 gross=-0.018 net2=-0.113 [-0.167, -0.059] net4=-0.209 risk=26.0 | b1 -0.117 n1377 b2 -0.101 n433 | per [-0.145, -0.092, -0.103]
+C13 RDR author_rr3: used {'key': 2200, 'fallback': 181, 'skipped': 0} | n=527 win=15.6 stop=79.1 gross=-0.03 net2=-0.153 [-0.328, 0.023] net4=-0.275 risk=20.0 | b1 -0.142 n357 b2 -0.175 n170 | per [-0.19, -0.029, -0.332]
+C13 RDR author: used {'key': 2200, 'fallback': 181, 'skipped': 0} | n=2094 win=20.4 stop=71.7 gross=-0.037 net2=-0.136 [-0.213, -0.059] net4=-0.236 risk=27.0 | b1 -0.068 n1466 b2 -0.295 n628 | per [-0.199, -0.118, -0.102]
+C13 RDR honest_rr3: used {'key': 2275, 'fallback': 106, 'skipped': 0} | n=55 win=23.6 stop=63.6 gross=0.489 net2=0.361 [-0.263, 0.986] net4=0.234 risk=18.0 | b1 0.35 n37 b2 0.384 n18 | per [0.628, 0.459, -0.124]
+C13 RDR honest: used {'key': 2275, 'fallback': 106, 'skipped': 0} | n=1905 win=30.6 stop=54.7 gross=-0.026 net2=-0.083 [-0.14, -0.026] net4=-0.14 risk=48.0 | b1 -0.055 n1403 b2 -0.16 n502 | per [-0.057, -0.088, -0.1]
+VERDICTS {
+ "C7a_model_direction": "SUPPORTED",
+ "C7b_with_model_dr_true": "PARTIAL",
+ "C7c_range_expansion_ext1": "NOT SUPPORTED",
+ "C7d_contraction_opposite_conf": "NOT SUPPORTED",
+ "C7d_contraction_reach_other": "SUPPORTED",
+ "C7e_counter_model_ext1": "NOT SUPPORTED",
+ "C7f_odr_both_sides": "PARTIAL"
+}
