@@ -1,0 +1,48 @@
+<div style="position: relative; width: 1920px; height: 1000px; overflow: hidden; background: #0B0D10; color: #D1D4DC; font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif; font-size: 13px; user-select: none">
+__TOOLBAR__
+<div ref="{{chartRef}}" onMouseDown="{{m.down}}" onMouseMove="{{m.move}}" onMouseUp="{{m.up}}" onMouseLeave="{{m.leave}}" onWheel="{{m.wheel}}" style="position: absolute; left: 0px; top: 44px; width: 1548px; height: 742px; overflow: hidden; background: #0B0D10; cursor: {{cursor}}">
+__CHART__
+<div onMouseMove="{{sb.move}}" onMouseLeave="{{sb.leave}}" onClick="{{sb.click}}" style="position: absolute; left: 0px; top: 684px; width: 1416px; height: 30px; box-sizing: border-box; background: #0D0F13; border-top: 1px solid #1B1F26; cursor: col-resize">
+<div style="position: absolute; left: 0px; top: 15px; width: 1416px; height: 1px; background: #20252E; pointer-events: none"></div>
+<sc-for list="{{band}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; border-radius: 1px; background: {{e.bg}}; pointer-events: none"></div></sc-for>
+<div style="position: absolute; left: {{bandMark.x}}px; top: 0px; width: 2px; height: 30px; background: {{bandMark.bg}}; pointer-events: none"></div>
+</div>
+__SCALE__
+__AXIS__
+__LEGEND__
+</div>
+<div onClick="{{nav.click}}" style="position: absolute; left: 0px; top: 786px; width: 1548px; height: 46px; background: #0D0F13; border-top: 1px solid #1E232B; cursor: pointer; overflow: hidden">
+<sc-for list="{{nav.segs}}" as="e" hint-placeholder-count="3"><div style="position: absolute; left: 0px; top: 0px"><div onClick="{{e.click}}" onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" style="position: absolute; left: {{e.x}}px; top: 4px; width: {{e.w}}px; height: 38px; box-sizing: border-box; border-radius: 5px; background: {{e.bg}}; border: {{e.bd}}; cursor: pointer"></div><div style="position: absolute; left: {{e.wx}}px; top: 4px; width: {{e.ww}}px; height: 38px; border-radius: 5px 0px 0px 5px; background: rgba(255,255,255,0.05); pointer-events: none"></div><div style="position: absolute; left: {{e.x}}px; top: 6px; padding-left: 8px; display: flex; gap: 6px; font-size: 11.5px; line-height: 14px; white-space: nowrap; pointer-events: none"><span style="font-weight: 700; color: {{e.c}}">{{e.t}}</span><span style="color: #8F939E">{{e.sub}}</span></div></div></sc-for>
+<svg width="1548" height="46" viewBox="0 0 1548 46" style="position: absolute; left: 0px; top: 0px; pointer-events: none"><path d="{{nav.spark}}" fill="none" stroke="rgba(178,181,190,0.6)" stroke-width="1"></path></svg>
+<div style="position: absolute; left: {{nav.fx}}px; top: 2px; width: {{nav.fw}}px; height: 42px; box-sizing: border-box; border: 1px solid rgba(209,212,220,0.6); border-radius: 4px; background: rgba(209,212,220,0.06); pointer-events: none"></div>
+<div style="position: absolute; left: {{nav.nowx}}px; top: 4px; width: 2px; height: 38px; background: #089981; pointer-events: none"></div>
+<div style="position: absolute; left: {{nav.mx}}px; top: 4px; width: 2px; height: 38px; background: #F7C948; pointer-events: none"></div>
+</div>
+<div style="position: absolute; left: 1548px; top: 44px; width: 372px; height: 788px; box-sizing: border-box; padding: 14px 18px 14px 18px; background: #0F1216; border-left: 1px solid #1E232B; display: flex; flex-direction: column; gap: 16px; overflow: hidden">
+<div style="height: 62px; flex-shrink: 0; box-sizing: border-box; padding: 9px 12px 10px 12px; border-radius: 8px; background: #13171E; border: 1px solid #1E232B; display: flex; flex-direction: column; gap: 3px">
+<div style="display: flex; align-items: center; gap: 8px; white-space: nowrap"><span style="display: {{P.ins.rd}}; width: 16px; height: 16px; border-radius: 8px; background: {{P.ins.hue}}; color: #0B0D10; font-size: 10px; font-weight: 700; align-items: center; justify-content: center">{{P.ins.rank}}</span><span style="font-size: 13px; font-weight: 600; color: {{P.ins.hue}}">{{P.ins.title}}</span><span style="display: {{P.ins.bigShow}}; margin-left: auto; font-size: 14px; font-weight: 600; color: #E6E8EE">{{P.ins.big}}</span></div>
+<div style="font-size: 12.5px; line-height: 17px; color: #9598A1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{P.ins.line}}</div>
+</div>
+<sc-if value="{{P.conf}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-direction: column; gap: 5px">
+<div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #9598A1">РИСК</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between"><span style="font-size: 13.5px; color: #B2B5BE">{{P.risk.label}}</span><span title="{{P.risk.ntip}}" style="font-size: 22px; line-height: 28px; font-weight: 600; color: {{P.risk.col}}; cursor: help">{{P.risk.pct}}</span></div>
+<div style="height: 4px; border-radius: 2px; background: #1E232B"><div style="width: {{P.risk.w}}px; height: 4px; border-radius: 2px; background: #D1D4DC"></div></div>
+<div onMouseEnter="{{P.risk.enter}}" onMouseLeave="{{P.risk.leave}}" onClick="{{P.risk.click}}" style="display: flex; justify-content: space-between; align-items: center; height: 28px; padding: 0px 8px; margin: 2px -8px 0px -8px; border-radius: 6px; background: {{P.risk.bg}}; cursor: pointer; font-size: 13.5px; white-space: nowrap"><span style="color: #B2B5BE">{{P.risk.stopLabel}}</span><span style="color: #E6E8EE">{{P.risk.stop}}</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 3px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #9598A1; margin-bottom: 3px"><span style="width: 11px; height: 9px; background: #FF5A5F; clip-path: {{P.triShape}}"></span>ВХОД · ОТКАТ ЗАКОНЧИТСЯ</div>
+<sc-for list="{{P.zmin}}" as="z" hint-placeholder-count="3"><div onMouseEnter="{{z.enter}}" onMouseLeave="{{z.leave}}" onClick="{{z.click}}" style="position: relative; display: flex; align-items: center; gap: 9px; height: 32px; box-sizing: border-box; padding: 0px 8px; margin: 0px -8px; border-radius: 6px; background: {{z.bg}}; cursor: pointer; font-size: 13px; white-space: nowrap"><span style="width: 11px; height: 10px; background: {{z.hue}}; clip-path: {{z.shape}}; flex-shrink: 0"></span><span style="width: 10px; color: #8F939E; font-size: 12px; flex-shrink: 0">{{z.rank}}</span><span style="color: #B2B5BE; width: 84px; flex-shrink: 0">{{z.time}}</span><span style="color: #E6E8EE; flex-grow: 1">{{z.price}}</span><span style="color: #D1D4DC">{{z.pct}}</span></div></sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #9598A1; margin-bottom: 4px"><span style="width: 10px; height: 10px; border-radius: 2px; background: linear-gradient(180deg,#34D399 0px 5px,#FF5A5F 5px 10px)"></span>ЦЕЛЬ · КАСАНИЕ ДО КОНЦА СЕССИИ</div>
+<sc-for list="{{P.touch}}" as="t" hint-placeholder-count="6"><div style="display: flex; flex-direction: column"><div onMouseEnter="{{t.enter}}" onMouseLeave="{{t.leave}}" onClick="{{t.click}}" style="display: {{t.row}}; align-items: center; gap: 10px; height: 26px; padding: 0px 8px; margin: 0px -8px; border-radius: 6px; background: {{t.bg}}; cursor: pointer; font-size: 13px; white-space: nowrap"><span style="width: 34px; color: #E6E8EE; font-weight: 600">{{t.label}}</span><span style="width: 76px; color: #B2B5BE">{{t.price}}</span><span style="flex-grow: 1; height: 6px; border-radius: 3px; background: #1A1E26; position: relative"><span style="position: absolute; left: 0px; top: 0px; width: {{t.w}}px; height: 6px; border-radius: 3px; background: {{t.hue}}"></span></span><span style="width: 36px; text-align: right; color: #D1D4DC">{{t.pct}}</span></div><div style="display: {{t.div}}; align-items: center; gap: 8px; height: 22px; font-size: 11.5px; color: #089981; white-space: nowrap"><span style="flex-grow: 1; height: 1px; background: rgba(8,153,129,0.5)"></span><span>{{t.now}}</span><span style="flex-grow: 1; height: 1px; background: rgba(8,153,129,0.5)"></span></div></div></sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 3px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #9598A1; margin-bottom: 3px"><span style="width: 10px; height: 10px; border-radius: 5px; background: #34D399"></span>ЭКСТРЕМУМ · ПРОДОЛЖЕНИЕ</div>
+<sc-for list="{{P.zmax}}" as="z" hint-placeholder-count="3"><div onMouseEnter="{{z.enter}}" onMouseLeave="{{z.leave}}" onClick="{{z.click}}" style="position: relative; display: flex; align-items: center; gap: 9px; height: 30px; box-sizing: border-box; padding: 0px 8px; margin: 0px -8px; border-radius: 6px; background: {{z.bg}}; cursor: pointer; font-size: 13px; white-space: nowrap"><span style="width: 11px; height: 10px; background: {{z.hue}}; clip-path: {{z.shape}}; flex-shrink: 0"></span><span style="width: 10px; color: #8F939E; font-size: 12px; flex-shrink: 0">{{z.rank}}</span><span style="color: #B2B5BE; width: 84px; flex-shrink: 0">{{z.time}}</span><span style="color: #E6E8EE; flex-grow: 1">{{z.price}}</span><span style="color: #D1D4DC">{{z.pct}}</span></div></sc-for>
+</div>
+</sc-if>
+</div>
+__BOTTOM__
+</div>

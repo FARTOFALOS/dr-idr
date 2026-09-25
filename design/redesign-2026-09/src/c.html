@@ -1,0 +1,16 @@
+<div style="position: relative; width: 1920px; height: 1000px; overflow: hidden; background: #0B0D10; color: #D1D4DC; font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif; font-size: 13px; user-select: none">
+__TOOLBAR__
+<div ref="{{chartRef}}" onMouseDown="{{m.down}}" onMouseMove="{{m.move}}" onMouseUp="{{m.up}}" onMouseLeave="{{m.leave}}" onWheel="{{m.wheel}}" style="position: absolute; left: 0px; top: 48px; width: 1920px; height: 952px; overflow: hidden; background: #0B0D10; cursor: {{cursor}}">
+__CHART__
+<div style="position: absolute; left: 1650px; top: 0px; width: 124px; height: 924px; background: #0D0F13; border-left: 1px solid #191D24"></div>
+<div style="position: absolute; left: 0px; top: 880px; width: 1650px; height: 44px; background: #0D0F13; border-top: 1px solid #191D24"></div>
+<div style="position: absolute; left: 0px; top: 902px; width: 1650px; height: 1px; background: #232831"></div>
+<sc-if value="{{pr.show}}" hint-placeholder-val="{{true}}">
+<sc-for list="{{pr.pbars}}" as="e" hint-placeholder-count="0"><div onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" onClick="{{e.click}}" style="position: absolute; left: {{e.hx}}px; top: {{e.y}}px; width: {{e.hw}}px; height: {{e.h}}px; cursor: pointer"><div style="position: absolute; left: {{e.lx}}px; top: 0px; width: {{e.w}}px; height: {{e.h}}px; border-radius: 1px; background: {{e.bg}}"></div></div></sc-for>
+<sc-for list="{{pr.tbars}}" as="e" hint-placeholder-count="0"><div onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" onClick="{{e.click}}" style="position: absolute; left: {{e.x}}px; top: {{e.hy}}px; width: {{e.w}}px; height: 22px; cursor: pointer"><div style="position: absolute; left: 0px; top: {{e.ry}}px; width: {{e.w}}px; height: {{e.h}}px; border-radius: 1px; background: {{e.bg}}"></div></div></sc-for>
+</sc-if>
+__SCALE__
+__AXIS__
+__LEGEND__
+</div>
+</div>

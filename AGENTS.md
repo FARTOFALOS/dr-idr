@@ -22,7 +22,9 @@ against what happened next.
 - **He only double-clicks the desktop shortcut "DR Lab".** Never ask him to run commands, edit files or open
   terminals. Any change you make must keep that shortcut working from a cold start (PC reboot). Verify it yourself.
 - He judges the product by the screen. His interface requirements are binding: `docs/UI_RULES.md`. They came from
-  many iterations; re-read them before any visual change.
+  many iterations; re-read them before any visual change. On 2026-09-25 he chose a redesign (`docs/DESIGN.md`,
+  mockups in `design/`): it is the target of the next UI work and records which rules it changes; it is not
+  implemented yet.
 
 ## Read in this order
 
@@ -36,6 +38,20 @@ against what happened next.
    definitions, session models, setups, stops, targets, risk, an algorithm for an autonomous agent, what our tape
    confirms (`studies/m7_claims.py`) and the decisions still open for the operator. `docs/DR_RULES_WEB.md` is an
    independent cross-check of the rules against public sources only.
+8. `docs/DESIGN.md` — the redesign of the screen the operator chose (variant B′): target layout, visual language,
+   interactions, which UI rules it replaces, what the implementation needs; mockups in `design/redesign-2026-09/`.
+
+## Where the work stands (2026-09-25)
+
+Two threads are open; nothing in the running tool has changed since the first commit.
+
+- **Redesign B′ — chosen, not implemented.** Read `docs/DESIGN.md` first; look at
+  `design/redesign-2026-09/snapshots/B2_*.png` and the interactive canvas linked there. The next step is the
+  implementation (whole-day API, the scrub band, porting the mockup geometry into `lab/dist/`), after the operator's
+  go-ahead and outside his trading hours. Open: what "0,5 / 1 / 1,5 … слитыми" meant; rules 12 and 14 are proposals.
+- **Strategy formalized, decisions pending.** `docs/STRATEGY.md`: the 12 choices of §15.1 are defaults until the
+  operator decides; the screen ideas of §16.2 (session-model strip, past levels, imbalances, entry window, signal card,
+  checklist) should be folded into B′ only when he approves them.
 
 ## Map
 
@@ -56,6 +72,7 @@ studies/                  research scripts with their results (intermarket.py: N
 tests/smoke.py            offline checks; run after every change
 tests/ui_check.js         in-page check for text overlaps and layout; evaluate it in the browser
 docs/                     everything an agent needs to understand and extend the tool
+design/                   interactive mockups of the chosen redesign (synthetic data), see docs/DESIGN.md
 ```
 
 ## Hard rules (do not break; if a task seems to need it, ask the operator first)

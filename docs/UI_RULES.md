@@ -4,6 +4,10 @@ These rules came from the operator over many iterations on 2026-09-24. They are 
 rule and a new idea conflict, keep the rule and ask the operator. Each rule says why, so you can apply it to cases it
 does not name.
 
+On 2026-09-25 the operator chose a redesign, `docs/DESIGN.md`. These rules still describe the running screen; the
+table "Rules that change" in that file says which of them the redesign replaces (13 and 21 by his decision) once it is
+implemented.
+
 ## Layout
 
 1. **The current session is the product.** The live session chart takes most of the screen. Focus mode (`body.focus`)

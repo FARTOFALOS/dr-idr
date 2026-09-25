@@ -1,0 +1,1103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>DR Lab · B′ · Сценарий (выбран)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:#0B0D10;font-family:-apple-system,BlinkMacSystemFont,'Trebuchet MS',Roboto,Ubuntu,sans-serif}
+</style>
+</helmet>
+<div style="position: relative; width: 1920px; height: 1000px; overflow: hidden; background: #0B0D10; color: #D1D4DC; font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif; font-size: 13px; user-select: none">
+<div style="position: absolute; left: 0px; top: 0px; width: 1920px; height: 44px; box-sizing: border-box; display: flex; align-items: center; gap: 12px; padding: 0px 12px; background: #0F1216; border-bottom: 1px solid #1E232B">
+<button type="button" aria-label="Меню исследования" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0px; background: transparent; border: 0px; border-radius: 6px; color: #B2B5BE; cursor: pointer"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 5h12M3 9h12M3 13h12"></path></svg></button>
+<div style="display: flex; gap: 2px; padding: 3px; background: #161A21; border-radius: 7px"><sc-for list="{{tb.inst}}" as="b" hint-placeholder-count="3"><button type="button" style="height: 26px; padding: 0px 10px; border: 0px; border-radius: 5px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; background: {{b.bg}}; color: {{b.c}}">{{b.t}}</button></sc-for></div>
+<div style="display: flex; gap: 2px; padding: 3px; background: #161A21; border-radius: 7px"><sc-for list="{{tb.sess}}" as="b" hint-placeholder-count="3"><button type="button" title="{{b.tip}}" onClick="{{b.click}}" onMouseEnter="{{b.enter}}" onMouseLeave="{{b.leave}}" style="height: 26px; padding: 0px 10px; border: 0px; border-radius: 5px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; background: {{b.bg}}; color: {{b.c}}; display: flex; align-items: center; gap: 6px"><span style="width: 6px; height: 6px; border-radius: 3px; background: {{b.dot}}"></span><span>{{b.t}}</span></button></sc-for></div>
+<span style="font-size: 13px; color: #9598A1; white-space: nowrap">чт, 24 сен</span>
+<div style="flex-grow: 1"></div>
+
+<div style="display: flex; gap: 6px"><sc-for list="{{tb.layers}}" as="l" hint-placeholder-count="4"><button type="button" onClick="{{l.click}}" style="height: 28px; padding: 0px 10px; border: {{l.bd}}; border-radius: 6px; background: {{l.bg}}; color: {{l.c}}; font-family: inherit; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 7px; white-space: nowrap"><span style="width: 10px; height: 10px; border-radius: 2px; background: {{l.sw}}; opacity: {{l.swop}}"></span><span>{{l.t}}</span></button></sc-for></div>
+<div style="width: 1px; height: 22px; background: #252A33"></div>
+<sc-if value="{{tb.live}}" hint-placeholder-val="{{true}}"><div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #D1D4DC; white-space: nowrap"><span style="width: 8px; height: 8px; border-radius: 4px; background: #089981; box-shadow: 0 0 0 3px rgba(8,153,129,0.22)"></span><span style="font-weight: 600">LIVE</span><span style="color: #9598A1">{{tb.clock}}</span></div></sc-if>
+<sc-if value="{{tb.replay}}" hint-placeholder-val="{{false}}"><div style="display: flex; align-items: center; gap: 8px; height: 28px; box-sizing: border-box; padding: 0px 3px 0px 10px; border: 1px solid #F7C948; border-radius: 6px; font-size: 13px; color: #F7C948; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 3.2v7.6L2 7zM12.5 3.2v7.6L7.5 7z"></path></svg><span>Повтор</span><span style="font-weight: 600">{{tb.rpText}}</span><button type="button" onClick="{{tb.toLive}}" style="height: 22px; padding: 0px 9px; border: 0px; border-radius: 4px; background: #F7C948; color: #0B0D10; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer">В live</button></div></sc-if>
+<button type="button" aria-label="Обновить из TradingView" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0px; background: transparent; border: 0px; border-radius: 6px; color: #B2B5BE; cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9"></path><path d="M13.5 2.5v3h-3"></path></svg></button>
+</div>
+<div ref="{{chartRef}}" onMouseDown="{{m.down}}" onMouseMove="{{m.move}}" onMouseUp="{{m.up}}" onMouseLeave="{{m.leave}}" onWheel="{{m.wheel}}" style="position: absolute; left: 0px; top: 44px; width: 1548px; height: 742px; overflow: hidden; background: #0B0D10; cursor: {{cursor}}">
+<div onClick="{{m.bg}}" style="position: absolute; left: 0px; top: 0px; width: 1416px; height: 684px"></div>
+<sc-for list="{{boxes}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; background: {{e.bg}}; opacity: {{e.op}}; pointer-events: none"></div></sc-for>
+<sc-for list="{{grid}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: 1px; background: {{e.bg}}; pointer-events: none"></div></sc-for>
+<sc-for list="{{gridT}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; transform: translateX(-100%); padding: 0px 3px; border-radius: 2px; background: rgba(11,13,16,0.86); font-size: 11px; line-height: 14px; color: #A3A8B3; pointer-events: none">{{e.t}}</div></sc-for>
+<sc-for list="{{lines}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; background: {{e.bg}}; opacity: {{e.op}}; box-shadow: {{e.sh}}; pointer-events: none"></div></sc-for>
+<sc-for list="{{lhits}}" as="e" hint-placeholder-count="0"><div onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" onClick="{{e.click}}" style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px"></div></sc-for>
+<sc-if value="{{hasFan}}" hint-placeholder-val="{{false}}"><svg width="1416" height="684" viewBox="0 0 1416 684" style="position: absolute; left: 0px; top: 0px; pointer-events: none"><path d="{{fanArea}}" fill="rgba(209,212,220,0.045)"></path><path d="{{fanMid}}" fill="none" stroke="rgba(209,212,220,0.7)" stroke-width="1.5" stroke-dasharray="6 4"></path></svg></sc-if>
+<div style="position: absolute; left: {{xNow}}px; top: 0px; width: {{cloudW}}px; height: 684px; overflow: hidden; pointer-events: none"><div style="position: absolute; left: 0px; top: 0px; width: {{cloudW}}px; height: 684px; filter: blur(9px)"><sc-for list="{{cloud}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; background: {{e.bg}}"></div></sc-for></div></div>
+<svg width="1416" height="684" viewBox="0 0 1416 684" style="position: absolute; left: 0px; top: 0px; pointer-events: none"><path d="{{cr0}}" fill="none" stroke="rgba(255,90,95,0.32)" stroke-width="1" stroke-dasharray="4 3"></path><path d="{{ce0}}" fill="none" stroke="rgba(52,211,153,0.3)" stroke-width="1"></path><path d="{{ce1}}" fill="none" stroke="rgba(52,211,153,0.6)" stroke-width="1.1"></path><path d="{{ce2}}" fill="none" stroke="rgba(150,240,200,0.95)" stroke-width="1.4"></path></svg>
+<sc-for list="{{pickBox}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; box-sizing: border-box; border-radius: 3px; background: {{e.bg}}; border: 1px solid rgba(255,255,255,0.8); pointer-events: none"></div></sc-for>
+<sc-for list="{{tris}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; filter: {{e.glow}}; pointer-events: none"><div style="width: {{e.w}}px; height: {{e.h}}px; background: #FF5A5F; opacity: {{e.op}}; clip-path: {{e.clip}}"></div></div></sc-for>
+<sc-for list="{{pickTri}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; filter: {{e.glow}}; pointer-events: none"><div style="width: {{e.w}}px; height: {{e.h}}px; background: #FF7A7E; clip-path: {{e.clip}}"></div></div></sc-for>
+<sc-for list="{{hits}}" as="e" hint-placeholder-count="0"><div onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" onClick="{{e.click}}" style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; box-sizing: border-box; border: {{e.bd}}; border-radius: 2px; cursor: pointer"></div></sc-for>
+<sc-for list="{{zlab}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: 0px; top: 0px"><div style="position: absolute; left: {{e.bx}}px; top: {{e.by}}px; width: {{e.bw}}px; height: {{e.bh}}px; box-sizing: border-box; border: {{e.bb}}; border-radius: 4px; display: {{e.box}}; pointer-events: none"></div><div onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" onClick="{{e.click}}" style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; height: 16px; display: flex; align-items: center; gap: 4px; white-space: nowrap; cursor: pointer; font-size: 11px; text-shadow: 0 0 3px #0B0D10, 0 0 3px #0B0D10"><span style="width: 13px; height: 13px; border-radius: 7px; background: {{e.bg}}; color: #0B0D10; font-size: 9.5px; font-weight: 700; line-height: 13px; text-align: center; text-shadow: none">{{e.t}}</span><span style="color: {{e.pc}}">{{e.pct}}</span><span style="display: {{e.wd}}; color: #D1D4DC">{{e.when}}</span></div></div></sc-for>
+
+<sc-for list="{{picks}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; box-sizing: border-box; background: {{e.bg}}; border: {{e.bd}}; border-radius: 2px; pointer-events: none"></div></sc-for>
+<div style="position: absolute; left: {{priceLine.x}}px; top: {{priceLine.y}}px; width: {{priceLine.w}}px; height: 1px; background: {{priceLine.bg}}; opacity: {{priceLine.op}}; pointer-events: none"></div>
+<div style="position: absolute; left: {{touchLine.x}}px; top: {{touchLine.y}}px; width: {{touchLine.w}}px; height: 2px; background: {{touchLine.bg}}; pointer-events: none"></div>
+<sc-for list="{{wicks}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: 1px; height: {{e.h}}px; background: {{e.bg}}; opacity: {{e.op}}; pointer-events: none"></div></sc-for>
+<sc-for list="{{bodies}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; background: {{e.bg}}; opacity: {{e.op}}; outline: {{e.bd}}; pointer-events: none"></div></sc-for>
+<sc-for list="{{chits}}" as="e" hint-placeholder-count="0"><div onClick="{{e.click}}" style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; cursor: pointer"></div></sc-for>
+<sc-for list="{{pills}}" as="e" hint-placeholder-count="0"><div onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" onClick="{{e.click}}" style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: 42px; height: 18px; box-sizing: border-box; border-radius: 9px; background: {{e.bg}}; border: {{e.bd}}; opacity: {{e.op}}; color: #FFFFFF; font-size: 11px; font-weight: 700; line-height: 16px; text-align: center; cursor: default">{{e.t}}</div></sc-for>
+
+<sc-for list="{{vlines}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: 1px; height: {{e.h}}px; background: {{e.bg}}; opacity: {{e.op}}; pointer-events: none"></div></sc-for>
+<sc-for list="{{glines}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; background: {{e.bg}}; pointer-events: none"></div></sc-for>
+<sc-for list="{{xh}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; background: {{e.bg}}; pointer-events: none"></div></sc-for>
+<sc-for list="{{slabels}}" as="e" hint-placeholder-count="0"><div onClick="{{e.click}}" onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" style="position: absolute; left: {{e.x}}px; top: 654px; height: 22px; box-sizing: border-box; padding: 0px 8px; border-radius: 5px; background: {{e.bg}}; display: flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap"><span style="width: 6px; height: 6px; border-radius: 3px; background: #089981; display: {{e.dot}}"></span><span style="font-size: 12px; font-weight: {{e.fw}}; color: {{e.c}}">{{e.t}}</span><span style="font-size: 11.5px; color: #8F939E">{{e.sub}}</span></div></sc-for>
+<div style="position: absolute; left: 1308px; top: 646px; display: flex; gap: 4px">
+<button type="button" aria-label="Отдалить" onClick="{{zoomOut}}" style="width: 30px; height: 28px; display: flex; align-items: center; justify-content: center; padding: 0px; border: 1px solid #2B313C; border-radius: 6px; background: rgba(22,26,33,0.92); color: #B2B5BE; cursor: pointer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 6h8"></path></svg></button>
+<button type="button" aria-label="Приблизить" onClick="{{zoomIn}}" style="width: 30px; height: 28px; display: flex; align-items: center; justify-content: center; padding: 0px; border: 1px solid #2B313C; border-radius: 6px; background: rgba(22,26,33,0.92); color: #B2B5BE; cursor: pointer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 6h8M6 2v8"></path></svg></button>
+<button type="button" aria-label="Вся сессия" onClick="{{reset}}" style="width: 30px; height: 28px; display: flex; align-items: center; justify-content: center; padding: 0px; border: 1px solid #2B313C; border-radius: 6px; background: rgba(22,26,33,0.92); color: #B2B5BE; cursor: pointer"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7a4.5 4.5 0 1 0 1.3-3.2"></path><path d="M2.5 2v2.5H5"></path></svg></button>
+</div>
+<div onMouseMove="{{sb.move}}" onMouseLeave="{{sb.leave}}" onClick="{{sb.click}}" style="position: absolute; left: 0px; top: 684px; width: 1416px; height: 30px; box-sizing: border-box; background: #0D0F13; border-top: 1px solid #1B1F26; cursor: col-resize">
+<div style="position: absolute; left: 0px; top: 15px; width: 1416px; height: 1px; background: #20252E; pointer-events: none"></div>
+<sc-for list="{{band}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; border-radius: 1px; background: {{e.bg}}; pointer-events: none"></div></sc-for>
+<div style="position: absolute; left: {{bandMark.x}}px; top: 0px; width: 2px; height: 30px; background: {{bandMark.bg}}; pointer-events: none"></div>
+</div>
+<div style="position: absolute; left: 1416px; top: 0px; width: 132px; height: 714px; background: #0B0D10; border-left: 1px solid #262B34"></div>
+<sc-for list="{{ticks}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: 1426px; top: {{e.y}}px; font-size: 12px; line-height: 16px; color: #B2B5BE; pointer-events: none">{{e.t}}</div></sc-for>
+<sc-for list="{{anchors}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: 1410px; top: {{e.y}}px; width: 6px; height: 1px; background: {{e.bg}}; pointer-events: none"></div></sc-for>
+<sc-for list="{{tags}}" as="e" hint-placeholder-count="0"><div onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" onClick="{{e.click}}" style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; height: {{e.h}}px; box-sizing: border-box; padding: 0px 6px; display: flex; flex-direction: column; justify-content: center; background: {{e.bg}}; color: {{e.fg}}; border: {{e.bd}}; border-radius: 3px; font-size: 12.5px; font-weight: {{e.fw}}; line-height: 15px; white-space: nowrap; cursor: default"><div style="display: flex; gap: 6px; align-items: baseline"><span style="display: {{e.nd}}; font-size: 11px; font-weight: 700; opacity: 0.8">{{e.name}}</span><span>{{e.price}}</span><span style="display: {{e.pdisp}}; color: {{e.pcol}}; font-weight: 500; font-size: 11.5px">{{e.pct}}</span></div><div style="display: {{e.sd}}; font-size: 11px; opacity: 0.85">{{e.sub}}</div></div></sc-for>
+<div style="position: absolute; left: 0px; top: 714px; width: 1548px; height: 28px; background: #0B0D10; border-top: 1px solid #262B34"></div>
+<sc-for list="{{tlabels}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: 720px; transform: translateX(-50%); font-size: 14px; line-height: 16px; color: #D1D4DC; white-space: nowrap; pointer-events: none">{{e.t}}</div></sc-for>
+<sc-for list="{{ttags}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: 718px; transform: translateX(-50%); height: 20px; padding: 0px 7px; border-radius: 3px; background: {{e.col}}; color: {{e.fg}}; font-size: 12.5px; font-weight: 600; line-height: 20px; white-space: nowrap; pointer-events: none">{{e.t}}</div></sc-for>
+<div style="position: absolute; left: 6px; top: 6px; display: flex; flex-direction: column; gap: 3px; padding: 4px 8px 5px 8px; border-radius: 6px; background: rgba(11,13,16,0.78); pointer-events: none; font-size: 13px; line-height: 17px; white-space: nowrap">
+<div style="display: flex; align-items: center; gap: 8px"><span style="color: #D1D4DC; font-weight: 600">NQ1! · 5 · <span>{{act}}</span></span><span style="display: {{confShow}}; height: 18px; padding: 0px 7px; border-radius: 9px; background: {{confBg}}; color: #FFFFFF; font-size: 11.5px; font-weight: 700; align-items: center">{{conf}}</span></div>
+<div style="display: flex; gap: 10px; color: #9598A1"><span>O <span style="color: {{lg.col}}">{{lg.o}}</span></span><span>H <span style="color: {{lg.col}}">{{lg.h}}</span></span><span>L <span style="color: {{lg.col}}">{{lg.l}}</span></span><span>C <span style="color: {{lg.col}}">{{lg.c}}</span></span><span style="color: {{lg.col}}">{{lg.ch}}</span><span>{{lg.when}}</span></div>
+</div>
+</div>
+<div onClick="{{nav.click}}" style="position: absolute; left: 0px; top: 786px; width: 1548px; height: 46px; background: #0D0F13; border-top: 1px solid #1E232B; cursor: pointer; overflow: hidden">
+<sc-for list="{{nav.segs}}" as="e" hint-placeholder-count="3"><div style="position: absolute; left: 0px; top: 0px"><div onClick="{{e.click}}" onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" style="position: absolute; left: {{e.x}}px; top: 4px; width: {{e.w}}px; height: 38px; box-sizing: border-box; border-radius: 5px; background: {{e.bg}}; border: {{e.bd}}; cursor: pointer"></div><div style="position: absolute; left: {{e.wx}}px; top: 4px; width: {{e.ww}}px; height: 38px; border-radius: 5px 0px 0px 5px; background: rgba(255,255,255,0.05); pointer-events: none"></div><div style="position: absolute; left: {{e.x}}px; top: 6px; padding-left: 8px; display: flex; gap: 6px; font-size: 11.5px; line-height: 14px; white-space: nowrap; pointer-events: none"><span style="font-weight: 700; color: {{e.c}}">{{e.t}}</span><span style="color: #8F939E">{{e.sub}}</span></div></div></sc-for>
+<svg width="1548" height="46" viewBox="0 0 1548 46" style="position: absolute; left: 0px; top: 0px; pointer-events: none"><path d="{{nav.spark}}" fill="none" stroke="rgba(178,181,190,0.6)" stroke-width="1"></path></svg>
+<div style="position: absolute; left: {{nav.fx}}px; top: 2px; width: {{nav.fw}}px; height: 42px; box-sizing: border-box; border: 1px solid rgba(209,212,220,0.6); border-radius: 4px; background: rgba(209,212,220,0.06); pointer-events: none"></div>
+<div style="position: absolute; left: {{nav.nowx}}px; top: 4px; width: 2px; height: 38px; background: #089981; pointer-events: none"></div>
+<div style="position: absolute; left: {{nav.mx}}px; top: 4px; width: 2px; height: 38px; background: #F7C948; pointer-events: none"></div>
+</div>
+<div style="position: absolute; left: 1548px; top: 44px; width: 372px; height: 788px; box-sizing: border-box; padding: 14px 18px 14px 18px; background: #0F1216; border-left: 1px solid #1E232B; display: flex; flex-direction: column; gap: 16px; overflow: hidden">
+<div style="height: 62px; flex-shrink: 0; box-sizing: border-box; padding: 9px 12px 10px 12px; border-radius: 8px; background: #13171E; border: 1px solid #1E232B; display: flex; flex-direction: column; gap: 3px">
+<div style="display: flex; align-items: center; gap: 8px; white-space: nowrap"><span style="display: {{P.ins.rd}}; width: 16px; height: 16px; border-radius: 8px; background: {{P.ins.hue}}; color: #0B0D10; font-size: 10px; font-weight: 700; align-items: center; justify-content: center">{{P.ins.rank}}</span><span style="font-size: 13px; font-weight: 600; color: {{P.ins.hue}}">{{P.ins.title}}</span><span style="display: {{P.ins.bigShow}}; margin-left: auto; font-size: 14px; font-weight: 600; color: #E6E8EE">{{P.ins.big}}</span></div>
+<div style="font-size: 12.5px; line-height: 17px; color: #9598A1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{P.ins.line}}</div>
+</div>
+<sc-if value="{{P.conf}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-direction: column; gap: 5px">
+<div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #9598A1">РИСК</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between"><span style="font-size: 13.5px; color: #B2B5BE">{{P.risk.label}}</span><span title="{{P.risk.ntip}}" style="font-size: 22px; line-height: 28px; font-weight: 600; color: {{P.risk.col}}; cursor: help">{{P.risk.pct}}</span></div>
+<div style="height: 4px; border-radius: 2px; background: #1E232B"><div style="width: {{P.risk.w}}px; height: 4px; border-radius: 2px; background: #D1D4DC"></div></div>
+<div onMouseEnter="{{P.risk.enter}}" onMouseLeave="{{P.risk.leave}}" onClick="{{P.risk.click}}" style="display: flex; justify-content: space-between; align-items: center; height: 28px; padding: 0px 8px; margin: 2px -8px 0px -8px; border-radius: 6px; background: {{P.risk.bg}}; cursor: pointer; font-size: 13.5px; white-space: nowrap"><span style="color: #B2B5BE">{{P.risk.stopLabel}}</span><span style="color: #E6E8EE">{{P.risk.stop}}</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 3px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #9598A1; margin-bottom: 3px"><span style="width: 11px; height: 9px; background: #FF5A5F; clip-path: {{P.triShape}}"></span>ВХОД · ОТКАТ ЗАКОНЧИТСЯ</div>
+<sc-for list="{{P.zmin}}" as="z" hint-placeholder-count="3"><div onMouseEnter="{{z.enter}}" onMouseLeave="{{z.leave}}" onClick="{{z.click}}" style="position: relative; display: flex; align-items: center; gap: 9px; height: 32px; box-sizing: border-box; padding: 0px 8px; margin: 0px -8px; border-radius: 6px; background: {{z.bg}}; cursor: pointer; font-size: 13px; white-space: nowrap"><span style="width: 11px; height: 10px; background: {{z.hue}}; clip-path: {{z.shape}}; flex-shrink: 0"></span><span style="width: 10px; color: #8F939E; font-size: 12px; flex-shrink: 0">{{z.rank}}</span><span style="color: #B2B5BE; width: 84px; flex-shrink: 0">{{z.time}}</span><span style="color: #E6E8EE; flex-grow: 1">{{z.price}}</span><span style="color: #D1D4DC">{{z.pct}}</span></div></sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #9598A1; margin-bottom: 4px"><span style="width: 10px; height: 10px; border-radius: 2px; background: linear-gradient(180deg,#34D399 0px 5px,#FF5A5F 5px 10px)"></span>ЦЕЛЬ · КАСАНИЕ ДО КОНЦА СЕССИИ</div>
+<sc-for list="{{P.touch}}" as="t" hint-placeholder-count="6"><div style="display: flex; flex-direction: column"><div onMouseEnter="{{t.enter}}" onMouseLeave="{{t.leave}}" onClick="{{t.click}}" style="display: {{t.row}}; align-items: center; gap: 10px; height: 26px; padding: 0px 8px; margin: 0px -8px; border-radius: 6px; background: {{t.bg}}; cursor: pointer; font-size: 13px; white-space: nowrap"><span style="width: 34px; color: #E6E8EE; font-weight: 600">{{t.label}}</span><span style="width: 76px; color: #B2B5BE">{{t.price}}</span><span style="flex-grow: 1; height: 6px; border-radius: 3px; background: #1A1E26; position: relative"><span style="position: absolute; left: 0px; top: 0px; width: {{t.w}}px; height: 6px; border-radius: 3px; background: {{t.hue}}"></span></span><span style="width: 36px; text-align: right; color: #D1D4DC">{{t.pct}}</span></div><div style="display: {{t.div}}; align-items: center; gap: 8px; height: 22px; font-size: 11.5px; color: #089981; white-space: nowrap"><span style="flex-grow: 1; height: 1px; background: rgba(8,153,129,0.5)"></span><span>{{t.now}}</span><span style="flex-grow: 1; height: 1px; background: rgba(8,153,129,0.5)"></span></div></div></sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 3px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #9598A1; margin-bottom: 3px"><span style="width: 10px; height: 10px; border-radius: 5px; background: #34D399"></span>ЭКСТРЕМУМ · ПРОДОЛЖЕНИЕ</div>
+<sc-for list="{{P.zmax}}" as="z" hint-placeholder-count="3"><div onMouseEnter="{{z.enter}}" onMouseLeave="{{z.leave}}" onClick="{{z.click}}" style="position: relative; display: flex; align-items: center; gap: 9px; height: 30px; box-sizing: border-box; padding: 0px 8px; margin: 0px -8px; border-radius: 6px; background: {{z.bg}}; cursor: pointer; font-size: 13px; white-space: nowrap"><span style="width: 11px; height: 10px; background: {{z.hue}}; clip-path: {{z.shape}}; flex-shrink: 0"></span><span style="width: 10px; color: #8F939E; font-size: 12px; flex-shrink: 0">{{z.rank}}</span><span style="color: #B2B5BE; width: 84px; flex-shrink: 0">{{z.time}}</span><span style="color: #E6E8EE; flex-grow: 1">{{z.price}}</span><span style="color: #D1D4DC">{{z.pct}}</span></div></sc-for>
+</div>
+</sc-if>
+</div>
+<div style="position: absolute; left: 0px; top: 832px; width: 1920px; height: 168px; background: #0B0D10; border-top: 1px solid #1E232B">
+<sc-for list="{{bot.frames}}" as="e" hint-placeholder-count="6"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; box-sizing: border-box; background: #0F1216; border: 1px solid #1B1F26; border-radius: 6px"></div></sc-for>
+<sc-for list="{{bot.titles}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; font-size: 12.5px; color: #B2B5BE; pointer-events: none; white-space: nowrap">{{e.t}}</div></sc-for>
+<sc-if value="{{bot.show}}" hint-placeholder-val="{{true}}"><svg width="{{bot.fw}}" height="{{bot.fh}}" style="position: absolute; left: {{bot.fx}}px; top: {{bot.fy}}px; overflow: visible; pointer-events: none"><path d="{{bot.fanZero}}" fill="none" stroke="rgba(209,212,220,0.35)" stroke-width="1" stroke-dasharray="3 3"></path><path d="{{bot.fanArea}}" fill="rgba(209,212,220,0.10)"></path><path d="{{bot.fanMid}}" fill="none" stroke="#D1D4DC" stroke-width="1.6"></path></svg></sc-if>
+<sc-for list="{{bot.cells}}" as="e" hint-placeholder-count="0"><div onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" onClick="{{e.click}}" style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; background: {{e.bg}}; outline: {{e.bd}}; cursor: pointer"></div></sc-for>
+<sc-for list="{{bot.bars}}" as="e" hint-placeholder-count="0"><div onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" onClick="{{e.click}}" style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; width: {{e.w}}px; height: {{e.h}}px; background: {{e.bg}}; outline: {{e.bd}}; border-radius: 1px"></div></sc-for>
+<sc-for list="{{bot.texts}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; transform: {{e.al}}; font-size: 11px; line-height: 14px; color: #9598A1; white-space: nowrap; pointer-events: none">{{e.t}}</div></sc-for>
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview": {"width": 1920, "height": 1000}}'>
+class Component extends DCLogic {
+  // ================= shared engine (identical in the three variants) =================
+  // Synthetic day for the mockup only: M5 bars [open minute, o, h, l, c] of 2026-09-24, minutes of the trading day (ET),
+  // the evening of 09-23 negative. Not market data.
+  _D() {
+    if (this.__D) return this.__D;
+    const raw = [[-360,24468.0,24474.25,24465.75,24471.5],[-355,24471.5,24474.25,24466.25,24467.5],[-350,24467.5,24471.0,24464.75,24467.0],[-345,24467.0,24468.75,24464.0,24464.75],[-340,24464.75,24475.0,24464.5,24473.5],[-335,24473.5,24474.75,24469.0,24474.0],[-330,24474.0,24479.75,24471.25,24473.75],[-325,24473.75,24475.75,24468.75,24474.75],[-320,24474.75,24480.5,24473.0,24475.0],[-315,24475.0,24477.75,24472.75,24475.0],[-310,24475.0,24475.75,24468.25,24468.5],[-305,24468.5,24468.75,24462.0,24466.0],[-300,24466.0,24471.75,24465.75,24470.0],[-295,24470.0,24477.5,24470.0,24471.0],[-290,24471.0,24471.5,24464.75,24466.75],[-285,24466.75,24469.0,24462.5,24464.0],[-280,24464.0,24467.75,24463.25,24465.75],[-275,24465.75,24471.0,24463.0,24470.0],[-270,24470.0,24473.25,24459.25,24461.0],[-265,24461.0,24463.5,24449.5,24460.0],[-260,24460.0,24478.25,24459.5,24476.75],[-255,24476.75,24486.5,24474.75,24478.0],[-250,24478.0,24486.5,24474.75,24478.0],[-245,24478.0,24478.25,24469.5,24470.25],[-240,24470.25,24476.5,24465.25,24473.75],[-235,24473.75,24477.5,24470.5,24476.0],[-230,24476.0,24489.25,24475.25,24487.5],[-225,24487.5,24490.5,24481.5,24485.5],[-220,24485.5,24492.75,24484.0,24490.0],[-215,24490.0,24496.0,24483.5,24484.0],[-210,24484.0,24490.5,24479.25,24485.5],[-205,24485.5,24491.0,24482.5,24489.0],[-200,24489.0,24504.5,24487.75,24502.25],[-195,24502.25,24507.5,24498.0,24506.0],[-190,24506.0,24515.0,24504.5,24511.5],[-185,24511.5,24518.25,24509.5,24515.25],[-180,24515.25,24524.75,24510.0,24518.0],[-175,24518.0,24521.75,24509.5,24514.5],[-170,24514.5,24530.75,24510.5,24527.75],[-165,24527.75,24532.25,24523.25,24526.0],[-160,24526.0,24530.75,24521.0,24527.25],[-155,24527.25,24534.25,24524.75,24529.0],[-150,24529.0,24536.25,24526.25,24534.5],[-145,24534.5,24539.75,24527.75,24536.25],[-140,24536.25,24542.5,24532.25,24540.0],[-135,24540.0,24543.0,24529.75,24533.25],[-130,24533.25,24537.25,24528.0,24535.75],[-125,24535.75,24539.5,24530.5,24533.0],[-120,24533.0,24533.5,24525.5,24530.25],[-115,24530.25,24535.25,24521.5,24526.0],[-110,24526.0,24527.75,24516.5,24520.75],[-105,24520.75,24527.5,24514.75,24517.25],[-100,24517.25,24522.0,24513.5,24517.0],[-95,24517.0,24528.5,24514.5,24525.25],[-90,24525.25,24527.5,24506.75,24510.25],[-85,24510.25,24515.75,24506.25,24508.0],[-80,24508.0,24513.0,24500.75,24512.75],[-75,24512.75,24514.75,24503.5,24508.25],[-70,24508.25,24518.5,24507.5,24514.0],[-65,24514.0,24516.5,24507.25,24510.5],[-60,24510.5,24517.5,24505.25,24509.0],[-55,24509.0,24516.0,24503.75,24514.0],[-50,24514.0,24521.0,24510.75,24515.75],[-45,24515.75,24521.0,24511.75,24516.25],[-40,24516.25,24522.25,24512.0,24517.75],[-35,24517.75,24525.5,24515.5,24519.25],[-30,24519.25,24519.5,24508.0,24517.75],[-25,24517.75,24528.0,24515.75,24527.0],[-20,24527.0,24536.25,24526.0,24532.0],[-15,24532.0,24536.5,24528.25,24531.0],[-10,24531.0,24537.75,24523.5,24533.0],[-5,24533.0,24538.5,24528.5,24538.0],[0,24538.0,24544.75,24534.25,24537.5],[5,24537.5,24547.0,24536.75,24546.5],[10,24546.5,24554.25,24541.5,24541.75],[15,24541.75,24542.75,24538.0,24541.0],[20,24541.0,24546.75,24537.75,24544.25],[25,24544.25,24549.0,24539.75,24546.75],[30,24546.75,24551.25,24539.75,24548.75],[35,24548.75,24551.25,24541.5,24546.0],[40,24546.0,24554.75,24543.5,24551.25],[45,24551.25,24555.5,24545.5,24550.5],[50,24550.5,24552.5,24544.0,24547.5],[55,24547.5,24552.0,24537.75,24541.25],[60,24541.25,24545.25,24534.25,24541.0],[65,24541.0,24545.0,24535.25,24537.25],[70,24537.25,24542.25,24533.0,24535.0],[75,24535.0,24543.0,24530.0,24541.0],[80,24541.0,24543.25,24534.25,24541.5],[85,24541.5,24544.5,24533.5,24541.25],[90,24541.25,24551.0,24534.0,24548.75],[95,24548.75,24553.5,24544.75,24552.0],[100,24552.0,24561.0,24548.0,24556.0],[105,24556.0,24559.75,24547.0,24552.0],[110,24552.0,24558.75,24551.25,24556.25],[115,24556.25,24557.5,24546.75,24550.0],[120,24550.0,24554.25,24547.0,24549.5],[125,24549.5,24553.0,24549.0,24551.5],[130,24551.5,24558.25,24550.75,24553.5],[135,24553.5,24554.0,24546.0,24547.5],[140,24547.5,24548.25,24543.5,24546.0],[145,24546.0,24546.5,24542.75,24546.0],[150,24546.0,24550.0,24544.5,24545.75],[155,24545.75,24553.75,24545.75,24548.0],[160,24548.0,24554.5,24546.75,24548.0],[165,24548.0,24553.75,24547.5,24550.75],[170,24550.75,24555.25,24546.75,24550.0],[175,24550.0,24556.0,24549.25,24554.25],[180,24554.25,24572.25,24552.0,24572.25],[185,24572.25,24591.0,24570.75,24586.0],[190,24586.0,24589.25,24572.75,24578.75],[195,24578.75,24590.5,24557.0,24565.0],[200,24565.0,24567.0,24541.75,24543.75],[205,24543.75,24553.25,24528.0,24534.0],[210,24534.0,24537.25,24518.25,24526.25],[215,24526.25,24546.5,24511.0,24539.25],[220,24539.25,24551.5,24535.5,24548.0],[225,24548.0,24561.0,24539.0,24556.0],[230,24556.0,24560.75,24540.0,24549.5],[235,24549.5,24553.75,24534.0,24537.0],[240,24537.0,24545.75,24532.0,24538.75],[245,24538.75,24547.25,24523.5,24527.0],[250,24527.0,24531.5,24514.5,24521.25],[255,24521.25,24526.75,24504.5,24522.0],[260,24522.0,24524.0,24499.75,24502.75],[265,24502.75,24510.25,24497.25,24502.75],[270,24502.75,24504.0,24493.5,24502.5],[275,24502.5,24505.5,24487.75,24492.0],[280,24492.0,24492.25,24468.75,24475.0],[285,24475.0,24482.5,24471.5,24480.75],[290,24480.75,24485.5,24474.0,24479.75],[295,24479.75,24484.0,24469.0,24480.0],[300,24480.0,24492.75,24469.0,24473.5],[305,24473.5,24479.25,24458.0,24460.75],[310,24460.75,24464.25,24449.75,24458.75],[315,24458.75,24469.5,24454.5,24465.0],[320,24465.0,24472.75,24460.5,24465.5],[325,24465.5,24474.0,24456.75,24469.0],[330,24469.0,24484.0,24466.0,24477.0],[335,24477.0,24483.75,24464.0,24473.75],[340,24473.75,24485.5,24468.5,24478.5],[345,24478.5,24494.5,24476.0,24486.0],[350,24486.0,24505.5,24483.0,24498.25],[355,24498.25,24507.25,24487.0,24496.5],[360,24496.5,24520.75,24489.25,24506.25],[365,24506.25,24516.25,24503.5,24512.0],[370,24512.0,24515.5,24494.0,24499.0],[375,24499.0,24501.75,24482.5,24487.0],[380,24487.0,24503.0,24480.5,24491.25],[385,24491.25,24506.25,24481.5,24498.25],[390,24498.25,24502.5,24479.5,24490.0],[395,24490.0,24500.5,24487.75,24494.75],[400,24494.75,24498.0,24480.75,24484.25],[405,24484.25,24495.5,24480.5,24491.0],[410,24491.0,24493.0,24477.0,24478.75],[415,24478.75,24487.75,24462.5,24478.0],[420,24478.0,24494.5,24474.5,24486.0],[425,24486.0,24498.5,24482.5,24495.0],[430,24495.0,24495.5,24477.0,24477.75],[435,24477.75,24480.5,24465.0,24470.75],[440,24470.75,24484.25,24462.0,24470.75],[445,24470.75,24482.25,24463.5,24464.0],[450,24464.0,24469.25,24451.75,24454.0],[455,24454.0,24468.0,24450.25,24456.0],[460,24456.0,24474.5,24451.75,24463.5],[465,24463.5,24473.75,24458.5,24468.0],[470,24468.0,24475.0,24459.5,24471.25],[475,24471.25,24480.25,24461.25,24466.0],[480,24466.0,24481.75,24456.5,24472.5],[485,24472.5,24489.25,24466.0,24484.0],[490,24484.0,24504.0,24483.25,24496.75],[495,24496.75,24506.0,24492.5,24497.75],[500,24497.75,24501.75,24484.5,24490.0],[505,24490.0,24492.0,24480.75,24488.0],[510,24488.0,24502.0,24487.25,24495.5],[515,24495.5,24498.25,24482.0,24485.5],[520,24485.5,24502.25,24482.25,24500.5],[525,24500.5,24516.0,24496.75,24504.25],[530,24504.25,24507.5,24496.5,24503.75],[535,24503.75,24513.0,24495.75,24506.0],[540,24506.0,24521.75,24501.25,24518.75],[545,24518.75,24519.75,24510.5,24510.5],[550,24510.5,24517.75,24502.25,24516.75],[555,24516.75,24521.75,24507.75,24520.75],[560,24520.75,24528.25,24508.75,24509.75],[565,24509.75,24525.25,24509.0,24523.0],[570,24523.0,24542.75,24502.0,24518.25],[575,24518.25,24534.75,24479.0,24498.75],[580,24498.75,24516.25,24489.0,24497.0],[585,24497.0,24534.0,24490.0,24530.75],[590,24530.75,24538.25,24514.0,24532.5],[595,24532.5,24558.0,24515.5,24556.0],[600,24556.0,24564.0,24533.25,24546.75],[605,24546.75,24591.5,24544.5,24579.25],[610,24579.25,24609.25,24568.25,24593.0],[615,24593.0,24618.5,24591.25,24612.0],[620,24612.0,24634.75,24599.75,24615.25],[625,24615.25,24634.75,24609.0,24613.25],[630,24613.25,24633.5,24606.0,24613.0],[635,24613.0,24626.25,24578.0,24588.0],[640,24588.0,24614.5,24587.5,24611.75],[645,24611.75,24648.75,24607.75,24626.75],[650,24626.75,24659.25,24614.25,24645.75],[655,24645.75,24679.25,24634.0,24668.75],[660,24668.75,24685.75,24652.75,24677.75],[665,24677.75,24688.75,24666.0,24686.5],[670,24686.5,24705.5,24675.5,24679.75],[675,24679.75,24701.5,24672.0,24680.5],[680,24680.5,24713.25,24668.75,24701.75],[685,24701.75,24721.75,24698.5,24719.5],[690,24719.5,24728.25,24676.75,24682.0],[695,24682.0,24713.5,24681.0,24696.75],[700,24696.75,24697.25,24659.5,24679.25],[705,24679.25,24689.0,24660.25,24680.5],[710,24680.5,24687.5,24628.75,24653.25],[715,24653.25,24658.75,24631.0,24641.0],[720,24641.0,24662.25,24633.25,24642.5],[725,24642.5,24670.5,24631.75,24654.0],[730,24654.0,24687.0,24645.25,24667.75],[735,24667.75,24700.25,24658.25,24694.25],[740,24694.25,24706.75,24668.25,24674.75],[745,24674.75,24726.75,24667.25,24707.0],[750,24707.0,24714.5,24679.25,24694.5],[755,24694.5,24735.0,24689.25,24731.0],[760,24731.0,24752.75,24714.75,24742.25],[765,24742.25,24761.75,24724.0,24742.0],[770,24742.0,24753.5,24717.0,24725.25],[775,24725.25,24742.0,24712.25,24727.0],[780,24727.0,24735.25,24704.5,24722.25],[785,24722.25,24734.25,24703.75,24723.0]];
+    const bars = raw.map(b => ({ t: b[0], o: b[1], h: b[2], l: b[3], c: b[4] }));
+    const SESS = {
+      ADR: { k: 'ADR', start: -270, formed: -210, end: 120 },
+      ODR: { k: 'ODR', start: 180, formed: 240, end: 510 },
+      RDR: { k: 'RDR', start: 570, formed: 630, end: 960 }
+    };
+    this.__D = { bars, SESS, ORDER: ['ADR', 'ODR', 'RDR'], NOW: 788, DAY0: -360, DAY1: 1020 };
+    return this.__D;
+  }
+  _C() {
+    return Object.assign({
+      bg: '#0B0D10', panel: '#0F1216', raised: '#161A21', hover: '#1B2029', line: '#1E232B', line2: '#2B313C',
+      text: '#D1D4DC', text2: '#B2B5BE', text3: '#8F939E', up: '#089981', dn: '#F23645',
+      retr: '#3D9BFF', ext: '#B07CFF', replay: '#F7C948', white: '#F8FAFC', brk: '#8B1E1E'
+    }, this._palX ? this._palX() : {});
+  }
+  _st() {
+    const s = this.state || {};
+    return {
+      session: s.session || 'RDR', rp: s.rp || null, scrub: s.scrub || null,
+      v0: s.v0 != null ? s.v0 : 545, v1: s.v1 != null ? s.v1 : 970, yz: s.yz || 1,
+      hover: s.hover || null, pick: s.pick || null,
+      layers: s.layers || { rclust: true, eclust: false, fan: true, ladder: true },
+      mx: s.mx != null ? s.mx : null, my: s.my != null ? s.my : null, drag: !!s.drag
+    };
+  }
+  // ---------- small helpers ----------
+  _hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  _rng(seed) {
+    let a = seed >>> 0;
+    return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  }
+  _gauss(r) { let u = 0; while (u === 0) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); }
+  _q(sorted, p) { if (!sorted.length) return 0; const i = (sorted.length - 1) * p, a = Math.floor(i), b = Math.ceil(i); return sorted[a] + (sorted[b] - sorted[a]) * (i - a); }
+  _clk(m) { const x = ((Math.round(m) % 1440) + 1440) % 1440; return String(Math.floor(x / 60)).padStart(2, '0') + ':' + String(x % 60).padStart(2, '0'); }
+  _num(v, d) { return Number(v).toLocaleString('ru-RU', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+  _px(v) { return this._num(Math.round(v / 0.25) * 0.25, 2); }
+  _sg(v, d) { const dd = d == null ? 1 : d, r = Math.round(v * Math.pow(10, dd)) / Math.pow(10, dd); return r > 0 ? '+' + this._num(r, dd) : r < 0 ? '−' + this._num(-r, dd) : this._num(0, dd); }
+  _pct(v) { return this._num(v, v >= 10 || v === 0 ? 0 : 1) + '%'; }
+  _a(hex, a) { const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
+  _dashH(col, a, b) { return 'repeating-linear-gradient(90deg,' + col + ' 0px ' + a + 'px,transparent ' + a + 'px ' + (a + b) + 'px)'; }
+  _dashDotH(col) { return 'repeating-linear-gradient(90deg,' + col + ' 0px 10px,transparent 10px 14px,' + col + ' 14px 16px,transparent 16px 20px)'; }
+  _dashV(col, a, b) { return 'repeating-linear-gradient(180deg,' + col + ' 0px ' + a + 'px,transparent ' + a + 'px ' + (a + b) + 'px)'; }
+  // TradingView's candle body width for a bar spacing (lightweight-charts optimalCandlestickWidth, 1 px wick parity)
+  _bodyW(S) {
+    if (S >= 2.5 && S <= 4) return 3;
+    const coeff = 1 - 0.2 * Math.atan(Math.max(4, S) - 4) / (Math.PI * 0.5);
+    let w = Math.max(1, Math.min(Math.floor(S * coeff), Math.floor(S)));
+    if (w >= 2 && w % 2 === 0) w -= 1;
+    return w;
+  }
+  // ---------- one session at an observed minute (the same rules as lab/live.py) ----------
+  _sess(k, obs, live) {
+    const D = this._D(), S = D.SESS[k], key = k + '|' + obs + '|' + (live ? 1 : 0);
+    this.__S = this.__S || {};
+    if (this.__S[key]) return this.__S[key];
+    const closedBy = live ? D.NOW : obs;
+    const closed = D.bars.filter(b => b.t + 5 <= closedBy), known = live ? D.bars : closed;
+    const res = { k, start: S.start, formed: S.formed, end: S.end, obs, live };
+    const winAll = known.filter(b => b.t >= S.start && b.t < S.formed);
+    if (!winAll.length || obs < S.start) { res.status = 'before'; return (this.__S[key] = res); }
+    res.open = winAll[0].o;
+    res.drH = Math.max(...winAll.map(b => b.h)); res.drL = Math.min(...winAll.map(b => b.l));
+    res.idrH = Math.max(...winAll.map(b => Math.max(b.o, b.c))); res.idrL = Math.min(...winAll.map(b => Math.min(b.o, b.c)));
+    res.winEnd = Math.min(S.formed, winAll[winAll.length - 1].t + 5);
+    res.complete = closed.filter(b => b.t >= S.start && b.t < S.formed).length === (S.formed - S.start) / 5;
+    if (!res.complete) { res.status = 'forming'; return (this.__S[key] = res); }
+    const lim = Math.min(obs, S.end);
+    let conf = null;
+    for (const b of closed) {
+      if (b.t < S.formed || b.t + 5 > lim) continue;
+      if (b.c > res.drH) { conf = { t: b.t + 5, side: 1 }; break; }
+      if (b.c < res.drL) { conf = { t: b.t + 5, side: -1 }; break; }
+    }
+    if (!conf) { res.status = obs >= S.end ? 'noconf' : 'waiting'; return (this.__S[key] = res); }
+    const side = conf.side, w = res.idrH - res.idrL;
+    Object.assign(res, { conf: conf.t, side, dir: side === 1 ? 'long' : 'short', edge: side === 1 ? res.idrH : res.idrL, width: w, opp: side === 1 ? res.drL : res.drH });
+    res.coord = v => side * (v - res.edge) / w;
+    res.price = c => res.edge + side * c * w;
+    for (const b of closed) if (b.t + 5 > conf.t && b.t + 5 <= lim && side * (b.c - res.opp) < 0) { res.failed = b.t + 5; break; }
+    const inSess = known.filter(b => b.t >= S.formed && b.t < lim);
+    const last = inSess[inSess.length - 1];
+    res.priceNow = last.c; res.nowCoord = res.coord(last.c); res.lastT = last.t;
+    let rs = Infinity, rst = null, es = -Infinity, est = null;
+    for (const b of inSess) {
+      if (b.t + 5 <= conf.t) continue;
+      const lo = res.coord(side === 1 ? b.l : b.h), hi = res.coord(side === 1 ? b.h : b.l);
+      if (lo < rs) { rs = lo; rst = b.t + 5; }
+      if (hi > es) { es = hi; est = b.t + 5; }
+    }
+    if (rst != null) Object.assign(res, { retrSoFar: rs, retrT: rst, extSoFar: es, extT: est });
+    res.status = obs >= S.end ? 'done' : 'confirmed';
+    if (res.status === 'confirmed') res.ov = this._ov(k, obs, res);
+    return (this.__S[key] = res);
+  }
+  // ---------- similar sessions (synthetic stand-in for the history cohort, deterministic per session and minute) ----------
+  _ov(k, obs, s) {
+    const key = k + '|' + obs;
+    this.__O = this.__O || {};
+    if (this.__O[key]) return this.__O[key];
+    const r = this._rng(this._hash('ov|' + key)), g = () => this._gauss(r);
+    const end = s.end, x0 = s.nowCoord, oppC = s.coord(s.opp);
+    const n = 70 + Math.floor(r() * 50), extra = 30 + Math.floor(r() * 40);
+    const grid = []; for (let t = obs + 5; t <= end; t += 5) grid.push(t);
+    const P = [];
+    for (let i = 0; i < n + extra; i++) {
+      const co = i < n, xs = x0 + (co ? 0.1 : 0.5) * g();
+      const rev = r() < 0.1, mu = rev ? -(0.010 + 0.008 * r()) : 0.0017 + 0.0022 * g(), pull = 0.004 + 0.006 * Math.abs(g()), tau = 16 + 30 * r(), sig = 0.044 * (0.7 + 0.6 * r());
+      let x = xs, mn = Infinity, tmn = obs + 1, mx = -Infinity, tmx = obs + 1, broken = false, gi = 0;
+      const fan = new Array(grid.length);
+      for (let m = obs + 1; m <= end; m++) {
+        x += mu - pull * Math.exp(-(m - obs) / tau) + sig * g();
+        const lo = x - Math.abs(g()) * sig * 0.9, hi = x + Math.abs(g()) * sig * 0.9;
+        if (lo < mn) { mn = lo; tmn = m; }
+        if (hi > mx) { mx = hi; tmx = m; }
+        if (m % 5 === 0 && x < oppC) broken = true;
+        if (gi < grid.length && m === grid[gi]) { fan[gi] = x - xs; gi++; }
+      }
+      P.push({ co, mn, tmn, mx, tmx, broken, fan });
+    }
+    const C = P.filter(p => p.co), N = C.length;
+    const binLo = (v, st) => Math.round(Math.floor(v / st + 1e-9) * st * 10) / 10, binT = (t, st) => Math.floor((t - 1) / st) * st;
+    const cellsOf = (vk, tk) => {
+      const m = new Map();
+      for (const p of C) { const lo = binLo(p[vk], 0.1), t = binT(p[tk], 15), kk = lo.toFixed(1) + '|' + t, e = m.get(kk); if (e) e.n++; else m.set(kk, { lo, t, n: 1 }); }
+      return [...m.values()];
+    };
+    const zonesOf = (vk, tk) => {
+      const m = new Map();
+      for (const p of C) { const lo = binLo(p[vk], 0.2), t = binT(p[tk], 30), kk = lo.toFixed(1) + '|' + t, e = m.get(kk); if (e) e.n++; else m.set(kk, { lo, t, n: 1 }); }
+      return [...m.values()].sort((a, b) => b.n - a.n || a.t - b.t).slice(0, 3)
+        .map((z, i) => ({ rank: i + 1, lo: z.lo, hi: Math.round((z.lo + 0.2) * 10) / 10, t: z.t, t_hi: z.t + 30, n: z.n, pct: Math.round(1000 * z.n / N) / 10 }));
+    };
+    const disp = cells => {
+      const srt = cells.filter(c => c.n >= 2 && c.t + 15 > obs).sort((a, b) => b.n - a.n || a.t - b.t), out = [];
+      let acc = 0; for (const c of srt) { if (acc >= 0.4 * N) break; out.push(c); acc += c.n; }
+      return out;
+    };
+    const LV = []; for (let v = -1.5; v <= 3.0001; v += 0.25) LV.push(Math.round(v * 100) / 100);
+    const touch = LV.map(L => ({ L, pct: 100 * C.filter(p => (L >= x0 ? p.mx >= L : p.mn <= L)).length / N }));
+    const fan = [];
+    grid.forEach((t, j) => {
+      const v = C.map(p => p.fan[j]).filter(Number.isFinite).sort((a, b) => a - b);
+      if (v.length >= 10) fan.push({ t, lo: x0 + this._q(v, 0.2), mid: x0 + this._q(v, 0.5), hi: x0 + this._q(v, 0.8) });
+    });
+    const rHi = Math.max(0.5, Math.ceil((x0 + 0.15) * 10) / 10), eLo = Math.min(-1, Math.floor((x0 - 0.15) * 10) / 10), t0 = Math.floor(obs / 15) * 15;
+    const hist = (arr, vk, lo, nb, st, isT) => {
+      const b = new Array(nb).fill(0);
+      for (const p of arr) { const i = Math.floor(((isT ? p[vk] - 1 : p[vk]) - lo) / st + 1e-9); if (i >= 0 && i < nb) b[i]++; }
+      return b;
+    };
+    const nt = Math.max(1, Math.ceil((end - t0) / 15));
+    const H = {
+      retr: { lo: Math.round((rHi - 3.1) * 10) / 10, st: 0.1, nb: 31, co: hist(C, 'mn', rHi - 3.1, 31, 0.1), ref: hist(P, 'mn', rHi - 3.1, 31, 0.1) },
+      ext: { lo: eLo, st: 0.1, nb: 46, co: hist(C, 'mx', eLo, 46, 0.1), ref: hist(P, 'mx', eLo, 46, 0.1) },
+      rtime: { lo: t0, st: 15, nb: nt, co: hist(C, 'tmn', t0, nt, 15, true), ref: hist(P, 'tmn', t0, nt, 15, true), time: true },
+      etime: { lo: t0, st: 15, nb: nt, co: hist(C, 'tmx', t0, nt, 15, true), ref: hist(P, 'tmx', t0, nt, 15, true), time: true }
+    };
+    const srtMn = C.map(p => p.mn).sort((a, b) => a - b), srtMx = C.map(p => p.mx).sort((a, b) => a - b);
+    const cellsMin = cellsOf('mn', 'tmn'), cellsMax = cellsOf('mx', 'tmx');
+    const res = {
+      n: N, pool: P.length, band: 0.25, t0, end, x0,
+      drTrue: Math.round(1000 * C.filter(p => !p.broken).length / N) / 10,
+      touch, fan, cellsMin, cellsMax, dispMin: disp(cellsMin), dispMax: disp(cellsMax),
+      zonesMin: zonesOf('mn', 'tmn'), zonesMax: zonesOf('mx', 'tmx'), H,
+      medRetr: this._q(srtMn, 0.5), medExt: this._q(srtMx, 0.5),
+      ptsMin: C.map(p => [p.tmn, p.mn]), ptsMax: C.map(p => [p.tmx, p.mx])
+    };
+    return (this.__O[key] = res);
+  }
+  // ---------- interaction ----------
+  _suppressed() { return Date.now() - (this.__sup || 0) < 250; }
+  _hv(key) {
+    this.__hv = this.__hv || {};
+    if (this.__hv[key]) return this.__hv[key];
+    return (this.__hv[key] = {
+      enter: () => this.setState({ hover: key }),
+      leave: () => { if ((this.state || {}).hover === key) this.setState({ hover: null }); },
+      click: e => { if (e && e.stopPropagation) e.stopPropagation(); if (this._suppressed()) return; const p = (this.state || {}).pick; this.setState({ pick: p === key ? null : key }); }
+    });
+  }
+  _fit(k) { const S = this._D().SESS[k]; return { v0: S.start - 25, v1: S.end + 10 }; }
+  _selSession(k) { this.setState(Object.assign({ session: k, rp: null, pick: null, hover: null, yz: 1 }, this._fit(k))); }
+  _sessIn(t) { const D = this._D(); return D.ORDER.find(k => t > D.SESS[k].start && t <= D.SESS[k].end) || null; }
+  _barClick(t) {
+    if (this._suppressed()) return;
+    const at = t + 5, k = this._sessIn(at);
+    if (!k) return;
+    const st = this._st();
+    if (st.rp && st.rp.at === at) { this.setState({ rp: null, pick: null }); return; }
+    const up = { rp: { sess: k, at }, session: k, pick: null, hover: null };
+    if (k !== st.session) Object.assign(up, this._fit(k));
+    this.setState(up);
+  }
+  _live() { this.setState({ rp: null, pick: null }); }
+  _toggleLayer(k) { const L = Object.assign({}, this._st().layers); L[k] = !L[k]; this.setState({ layers: L }); }
+  _zoomAt(delta, px) {
+    const st = this._st(), D = this._D(), PW = this._cfg().PW, span = st.v1 - st.v0;
+    const f = Math.min(Math.max(px / PW, 0), 1), ta = st.v0 + f * span;
+    const ns = Math.min(Math.max(span * Math.exp(delta * 0.0016), 40), D.DAY1 - D.DAY0 + 60);
+    let v0 = ta - f * ns; v0 = Math.min(Math.max(v0, D.DAY0 - 30), D.DAY1 + 30 - ns);
+    this.setState({ v0, v1: v0 + ns });
+  }
+  _panBy(dxPx) {
+    const st = this._st(), D = this._D(), PW = this._cfg().PW, span = st.v1 - st.v0;
+    let v0 = st.v0 - dxPx / PW * span; v0 = Math.min(Math.max(v0, D.DAY0 - 30), D.DAY1 + 30 - span);
+    this.setState({ v0, v1: v0 + span });
+  }
+  _zoomBtn(dir) { this._zoomAt(dir * 260, this._cfg().PW * 0.62); }
+  _reset() { this.setState(Object.assign({ yz: 1 }, this._fit(this._st().session))); }
+  _local(e) {
+    const el = this.__el || e.currentTarget, rc = el.getBoundingClientRect(), sc = rc.width / this._cfg().W || 1;
+    return { x: (e.clientX - rc.left) / sc, y: (e.clientY - rc.top) / sc, sc };
+  }
+  _wheel(e) {
+    const p = this._local(e), cfg = this._cfg();
+    const dx = e.deltaX || 0, dy = e.deltaY || 0;
+    this.__acc = this.__acc || { z: 0, p: 0, y: 0 };
+    if (p.x > cfg.PW && p.y < cfg.PH) this.__acc.y += dy;
+    else if (Math.abs(dx) > Math.abs(dy) || e.shiftKey) this.__acc.p += (Math.abs(dx) > Math.abs(dy) ? dx : dy);
+    else this.__acc.z += dy;
+    this.__acc.x = p.x;
+    if (this.__wraf) return;
+    this.__wraf = requestAnimationFrame(() => {
+      this.__wraf = null;
+      const a = this.__acc; this.__acc = { z: 0, p: 0, y: 0 };
+      if (a.y) { const yz = Math.min(Math.max(this._st().yz * Math.exp(-a.y * 0.0015), 0.35), 6); this.setState({ yz }); }
+      if (a.p) this._panBy(-a.p);
+      if (a.z) this._zoomAt(a.z, a.x);
+    });
+  }
+  _refCb() {
+    if (this.__cref) return this.__cref;
+    return (this.__cref = el => {
+      if (this.__el === el) return;
+      if (this.__el && this.__wh) this.__el.removeEventListener('wheel', this.__wh);
+      this.__el = el;
+      if (el) { this.__wh = e => { e.preventDefault(); e.stopPropagation(); this._wheel(e); }; el.addEventListener('wheel', this.__wh, { passive: false }); this.__native = true; }
+    });
+  }
+  _mouse() {
+    if (this.__mh) return this.__mh;
+    const move = e => {
+      const p = this._local(e);
+      if (this.__drag && (e.buttons & 1)) {
+        const dx = p.x - this.__drag.x;
+        if (!this.__drag.moved && Math.abs(dx) > 3) { this.__drag.moved = true; this.setState({ drag: true }); }
+        if (this.__drag.moved) { this.__drag.x = p.x; this._panBy(dx); return; }
+      }
+      this.__mm = p;
+      if (this.__mraf) return;
+      this.__mraf = requestAnimationFrame(() => { this.__mraf = null; const q = this.__mm; if (q) this.setState({ mx: q.x, my: q.y }); });
+    };
+    return (this.__mh = {
+      down: e => { if (e.button !== 0) return; const p = this._local(e); this.__drag = { x: p.x, moved: false }; },
+      move,
+      up: () => { if (this.__drag && this.__drag.moved) { this.__sup = Date.now(); this.setState({ drag: false }); } this.__drag = null; },
+      leave: () => { if (this.__drag && this.__drag.moved) this.__sup = Date.now(); this.__drag = null; this.__mm = null; this.setState({ mx: null, my: null, drag: false }); },
+      wheel: e => { if (!this.__native) this._wheel(e); },
+      bg: () => { if (this._suppressed()) return; if ((this.state || {}).pick) this.setState({ pick: null }); }
+    });
+  }
+  // ---------- the session chart: everything in chart pixels ----------
+  _scene(cfg, st) {
+    const D = this._D(), K = this._C();
+    const rpx = st.scrub || st.rp, live = !rpx, act = rpx ? rpx.sess : st.session, obs = rpx ? rpx.at : D.NOW;
+    const S = {}; for (const k of D.ORDER) S[k] = k === act ? this._sess(k, obs, live) : this._sess(k, D.NOW, true);
+    const A = S[act], ov = A.ov || null;
+    const PW = cfg.PW, PH = cfg.PH, v0 = st.v0, v1 = st.v1, span = v1 - v0;
+    const X = t => (t - v0) / span * PW;
+    const sp = 5 * PW / span, bw = this._bodyW(sp);
+    const vis = D.bars.filter(b => b.t + 5 > v0 && b.t < v1);
+    const hk = st.hover || st.pick || null, hp = hk ? hk.split('|') : [];
+    const L = st.layers;
+    // --- price range: visible bars, the active DR, what the overlay draws in view
+    let lo = Infinity, hi = -Infinity, olo = Infinity, ohi = -Infinity;
+    for (const b of vis) { if (b.l < lo) lo = b.l; if (b.h > hi) hi = b.h; }
+    if (A.drH != null && A.end > v0 && A.start < v1) { lo = Math.min(lo, A.drL); hi = Math.max(hi, A.drH); }
+    const addP = p => { if (p < olo) olo = p; if (p > ohi) ohi = p; };
+    if (ov) {
+      const inT = (t, d) => t + d > v0 && t < v1;
+      if (L.rclust) for (const z of ov.zonesMin) if (inT(z.t, 30)) { addP(A.price(z.lo)); addP(A.price(z.hi)); }
+      if (L.eclust) for (const z of ov.zonesMax) if (inT(z.t, 30)) { addP(A.price(z.lo)); addP(A.price(z.hi)); }
+      if (L.fan) for (const f of ov.fan) if (f.t > v0 && f.t < v1) { addP(A.price(f.lo)); addP(A.price(f.hi)); }
+      if (!isFinite(lo) && isFinite(olo)) { lo = A.price(ov.x0) - 1; hi = lo + 2; }
+    }
+    if (isFinite(lo) && isFinite(olo)) {           // the forecast may widen the scale by a third at most: candles stay large
+      const bs = Math.max(hi - lo, 20);
+      lo = Math.min(lo, Math.max(olo, lo - 0.33 * bs)); hi = Math.max(hi, Math.min(ohi, hi + 0.33 * bs));
+    }
+    if (!isFinite(lo)) { lo = 24400; hi = 24800; }
+    if (hi - lo < 20) { const m = (hi + lo) / 2; lo = m - 10; hi = m + 10; }
+    const pad = (hi - lo) * 0.07; lo -= pad; hi += pad;
+    if (st.yz !== 1) { const m = (lo + hi) / 2, half = (hi - lo) / 2 / st.yz; lo = m - half; hi = m + half; }
+    const Y = p => (hi - p) / (hi - lo) * PH;
+    const inY = yy => yy > -1 && yy < PH + 1;
+    const out = { S, A, ov, act, obs, live, X, Y, lo, hi, sp, bw, hk, hp, K, PW, PH };
+    const after = t => !live && t > obs;             // replay: drawn later than the moment
+    // --- session boxes (DR window), the 0.1..0.9 IDR grid of the active one, session labels
+    out.boxes = []; out.grid = []; out.gridT = []; out.slabels = [];
+    for (const k of D.ORDER) {
+      const s = S[k]; if (s.drH == null) continue;
+      const xa = X(s.start), xb = X(s.status === 'forming' ? s.winEnd : s.formed);
+      const active = k === act, sessHl = hk === 'sess|' + k;
+      if (xb > 0 && xa < PW) {
+        const ya = Y(s.drH), yb = Y(s.drL);
+        out.boxes.push({ x: Math.round(xa), y: Math.round(ya), w: Math.max(1, Math.round(xb - xa)), h: Math.max(1, Math.round(yb - ya)), bg: active ? 'rgba(255,255,255,0.055)' : sessHl ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.03)', op: after(s.start) ? 0.4 : 1 });
+        if (active && s.complete) {
+          const wI = s.idrH - s.idrL, fromLow = s.dir === 'short';
+          for (let j = 1; j <= 9; j++) {
+            const v = fromLow ? s.idrL + j * wI / 10 : s.idrH - j * wI / 10, yy = Math.round(Y(v));
+            out.grid.push({ x: Math.round(xa), y: yy, w: Math.max(1, Math.round(xb - xa)), h: 1, bg: 'rgba(203,213,225,0.34)' });
+            if (j !== 5 && xa > 22 && xb - xa >= 90) out.gridT.push({ x: Math.round(xa) - 5, y: yy - 7, t: this._num(j / 10, 1) });
+          }
+        }
+      }
+      const lx = Math.max(X(s.start), 0);
+      if (X(s.end) > 8 && lx < PW - 40) {
+        const hv = this._hv('sess|' + k);
+        out.slabels.push({
+          x: Math.round(lx) + 6, t: k, active, c: active ? K.text : K.text3, fw: active ? 700 : 600,
+          sub: s.status === 'confirmed' ? (live ? 'идёт' : '') : s.status === 'done' ? (s.failed ? 'DR сломан' : 'DR удержался') : s.status === 'waiting' ? 'ждёт подтверждения' : s.status === 'forming' ? 'формируется' : '',
+          dot: k === 'RDR' && live && s.status === 'confirmed' ? 'inline-block' : 'none',
+          click: () => { if (this._suppressed()) return; if (k !== this._st().session || this._st().rp) this._selSession(k); },
+          enter: hv.enter, leave: hv.leave, bg: sessHl ? K.hover : 'transparent'
+        });
+      }
+    }
+    // --- levels (Pine DR/IDR V1.5 lines) with their tags on the price scale
+    out.lines = []; out.lhits = []; out.tags = [];
+    const hlLevel = hp[0] === 'lvl' ? hp[1] + '|' + hp[2] : null;
+    const lvlMatch = (k, id) => hlLevel && (hlLevel === k + '|' + id || hlLevel === k + '|' + id.replace(/[HL]$/, ''));
+    const touchP = hp[0] === 'touch' && ov ? A.price(+hp[1]) : null;
+    for (const k of D.ORDER) {
+      const s = S[k]; if (s.drH == null) continue;
+      const active = k === act, sessHl = hk === 'sess|' + k;
+      const xa = Math.max(0, X(s.start)), xb = Math.min(PW, X(s.status === 'forming' ? s.winEnd : s.end));
+      if (xb - xa < 2) continue;
+      const Ls = [{ id: 'drH', p: s.drH, kind: 'dr', name: 'DR' }, { id: 'drL', p: s.drL, kind: 'dr', name: 'DR' },
+        { id: 'idrH', p: s.idrH, kind: 'idr', name: 'IDR' }, { id: 'idrL', p: s.idrL, kind: 'idr', name: 'IDR' }];
+      if (s.complete) {
+        Ls.push({ id: 'mid', p: (s.idrH + s.idrL) / 2, kind: 'mid', name: 'mid' }, { id: 'open', p: s.open, kind: 'open', name: 'open' });
+        const step = (s.idrH - s.idrL) / 2;
+        for (let j = 1; j <= 10; j++) {
+          Ls.push({ id: 'u' + j, p: s.idrH + j * step, kind: 'std', name: this._num(j * 0.5, 1), c: s.side === 1 ? j * 0.5 : -1 - j * 0.5 });
+          Ls.push({ id: 'd' + j, p: s.idrL - j * step, kind: 'std', name: '−' + this._num(j * 0.5, 1), c: s.side === 1 ? -1 - j * 0.5 : j * 0.5 });
+        }
+      }
+      const anyLvl = !!hlLevel && hlLevel.startsWith(k + '|');
+      for (const l of Ls) {
+        if (!active && !sessHl && !(l.kind === 'dr' || l.kind === 'idr')) continue;
+        const yy = Y(l.p); if (!inY(yy)) continue;
+        const on = lvlMatch(k, l.id) || (touchP != null && active && Math.abs(l.p - touchP) < 0.2);
+        let th = 1, bg, op = 1;
+        if (l.kind === 'dr') { th = 2; bg = K.white; op = 0.92; }
+        else if (l.kind === 'idr') { th = 2; bg = this._dashH('#F1F5F9', 9, 4); op = 0.86; }
+        else if (l.kind === 'open') { bg = K.up; op = 0.85; }
+        else { bg = this._dashDotH('#E2E8F0'); op = l.kind === 'mid' ? 0.8 : 0.62; }
+        if (!active) op *= sessHl ? 0.85 : 0.36;
+        if (anyLvl && active && !on) op *= 0.45;
+        if (on) { th += 1; op = 1; }
+        if (active && after(s.start)) op *= 0.4;
+        const y0 = Math.round(yy) - Math.floor(th / 2);
+        out.lines.push({ x: Math.round(xa), y: y0, w: Math.round(xb - xa), h: th, bg, op: Math.round(op * 100) / 100, sh: on ? '0 0 8px ' + this._a('#FFFFFF', 0.55) : 'none' });
+        if (active || sessHl) {
+          const lk = 'lvl|' + k + '|' + l.id, hv = this._hv(lk);
+          if (active) out.lhits.push({ x: Math.round(xa), y: Math.round(yy) - 4, w: Math.round(xb - xa), h: 9, enter: hv.enter, leave: hv.leave, click: hv.click });
+          out.tags.push({ y: yy, h: 20, kind: l.kind, name: l.name, price: this._px(l.p), on, key: lk, c: l.c, pri: l.kind === 'dr' || l.kind === 'idr' ? 1 : 0, sess: k });
+        }
+      }
+    }
+    // --- current / replay price
+    const lastBar = D.bars[D.bars.length - 1];
+    if (live) {
+      const upb = lastBar.c >= lastBar.o, yy = Y(lastBar.c);
+      if (inY(yy)) out.tags.push({ y: yy, h: 34, kind: 'price', name: '', price: this._px(lastBar.c), sub: '01:52', col: upb ? K.up : K.dn, on: hk === 'price', key: 'price', pri: 2 });
+      const xl = X(lastBar.t + 2.5) + bw / 2 + 3;
+      if (inY(yy) && xl < PW) out.priceLine = { x: Math.round(Math.max(0, xl)), y: Math.round(yy), w: Math.max(0, Math.round(PW - Math.max(0, xl))), h: 1, bg: this._dashH(upb ? K.up : K.dn, 3, 3), op: hk === 'price' ? 1 : 0.55 };
+    } else if (A.priceNow != null) {
+      const yy = Y(A.priceNow);
+      if (inY(yy)) out.tags.push({ y: yy, h: 20, kind: 'rprice', name: '', price: this._px(A.priceNow), col: K.replay, on: hk === 'price', key: 'price', pri: 2 });
+    }
+    // --- overlay of the active session: clusters, zones, fan, ladder
+    out.cells = []; out.zones = []; out.badges = []; out.picks = []; out.ladder = []; out.ladderT = []; out.fan = null; out.guide = null;
+    const cellRect = (lo_, lo2, t, t2) => {
+      const a = Y(A.price(lo_)), b = Y(A.price(lo2)), xa = X(Math.max(t, obs)), xb = X(t2);
+      return { x0: xa, x1: xb, y0: Math.min(a, b), y1: Math.max(a, b) };
+    };
+    if (ov) {
+      const zoneOf = (kind, c) => (kind === 'min' ? ov.zonesMin : ov.zonesMax).find(z => c.lo >= z.lo - 1e-9 && c.lo < z.hi - 1e-9 && c.t >= z.t && c.t < z.t_hi);
+      for (const kind of ['min', 'max']) {
+        const layerOn = kind === 'min' ? L.rclust : L.eclust;
+        if (!layerOn && !(hp[0] === 'zone' && hp[1] === kind)) continue;
+        const hue = kind === 'min' ? K.retr : K.ext, list = kind === 'min' ? ov.dispMin : ov.dispMax, mxn = Math.max(1, ...list.map(c => c.n));
+        const kindHl = (hp[0] === 'cell' || hp[0] === 'zone') && hp[1] === kind;
+        for (const c of layerOn ? list : []) {
+          const R = cellRect(c.lo, c.lo + 0.1, c.t, c.t + 15);
+          if (R.x1 <= 0 || R.x0 >= PW || R.x1 - R.x0 < 1 || R.y1 < 0 || R.y0 > PH) continue;
+          const key = 'cell|' + kind + '|' + c.lo.toFixed(1) + '|' + c.t, on = hk === key, z = zoneOf(kind, c);
+          const inZ = hp[0] === 'zone' && hp[1] === kind && z && z.rank === +hp[2];
+          const f = c.n / mxn, hv = this._hv(key);
+          let a = 0.16 + 0.52 * f;
+          if (kindHl && !on && !inZ) a *= 0.45;
+          if (on || inZ) a = Math.min(0.9, a + 0.25);
+          out.cells.push({ x: Math.round(R.x0) + 1, y: Math.round(R.y0) + 1, w: Math.max(1, Math.round(R.x1 - R.x0) - 1), h: Math.max(1, Math.round(R.y1 - R.y0) - 1), bg: this._a(hue, Math.round(a * 100) / 100), bd: on ? '1.5px solid #FFFFFF' : 'none', key, kind, c, z, f, enter: hv.enter, leave: hv.leave, click: hv.click, R });
+          if (on) out.guide = { R, hue, kind, what: kind === 'min' ? 'Откат закончится' : 'Экстремум', t0: Math.max(c.t, obs), t1: c.t + 15, lo: c.lo, hi: c.lo + 0.1, n: c.n, pct: 100 * c.n / ov.n, key, zone: z };
+        }
+        const zs = kind === 'min' ? ov.zonesMin : ov.zonesMax;
+        for (const zz of zs) {
+          if (!layerOn && hk !== 'zone|' + kind + '|' + zz.rank) continue;
+          const R = cellRect(zz.lo, zz.hi, zz.t, zz.t_hi);
+          if (R.x1 <= 0 || R.x0 >= PW || R.x1 - R.x0 < 2) continue;
+          const key = 'zone|' + kind + '|' + zz.rank, on = hk === key, hv = this._hv(key);
+          out.zones.push({ x: Math.round(R.x0), y: Math.round(R.y0), w: Math.max(2, Math.round(R.x1 - R.x0)), h: Math.max(2, Math.round(R.y1 - R.y0)), bd: (on ? 2 : zz.rank === 1 ? 1.5 : 1) + 'px ' + (zz.rank === 1 || on ? 'solid ' : 'dashed ') + this._a(hue, on ? 1 : zz.rank === 1 ? 0.95 : 0.7), bg: on ? this._a(hue, 0.18) : 'transparent', key, kind, z: zz, hue, R, enter: hv.enter, leave: hv.leave, click: hv.click });
+          out.badges.push({ x: Math.round(R.x0) - 9, y: Math.round(R.y0) - 9, t: String(zz.rank), bg: hue, bd: on ? '1px solid #FFFFFF' : '1px solid ' + hue, on, key, kind, enter: hv.enter, leave: hv.leave, click: hv.click });
+          if (on) out.guide = { R, hue, kind, what: kind === 'min' ? 'Откат закончится' : 'Экстремум', t0: Math.max(zz.t, obs), t1: zz.t_hi, lo: zz.lo, hi: zz.hi, n: zz.n, pct: zz.pct, key, zone: zz, rank: zz.rank };
+        }
+      }
+      // badges must not overlap each other
+      out.badges.sort((a, b) => a.y - b.y || a.x - b.x);
+      for (let i = 1; i < out.badges.length; i++) for (let j = 0; j < i; j++) {
+        const a = out.badges[j], b = out.badges[i];
+        if (Math.abs(a.x - b.x) < 20 && Math.abs(a.y - b.y) < 20) b.x = a.x + 20;
+      }
+      // picks from the history charts: time x price cells (rule 16)
+      if (hp[0] === 'bin' || hp[0] === 'hcell') {
+        const kind = hp[0] === 'hcell' || hp[1] === 'retr' || hp[1] === 'rtime' ? 'min' : 'max', hue = kind === 'min' ? K.retr : K.ext;
+        const src = kind === 'min' ? ov.cellsMin : ov.cellsMax, mxn = Math.max(1, ...src.map(c => c.n));
+        for (const c of src) {
+          const hit = hp[0] === 'hcell' ? Math.abs(c.lo - +hp[1]) < 1e-6 && c.t === +hp[2]
+            : (hp[1] === 'retr' || hp[1] === 'ext') ? Math.abs(c.lo - +hp[2]) < 1e-6 : c.t === +hp[2];
+          if (!hit || c.t + 15 <= obs) continue;
+          const R = cellRect(c.lo, c.lo + 0.1, c.t, c.t + 15);
+          if (R.x1 <= 0 || R.x0 >= PW) continue;
+          out.picks.push({ x: Math.round(R.x0), y: Math.round(R.y0), w: Math.max(2, Math.round(R.x1 - R.x0)), h: Math.max(2, Math.round(R.y1 - R.y0)), bg: this._a(hue, 0.3 + 0.55 * c.n / mxn), bd: '1px solid ' + this._a('#FFFFFF', 0.85), kind, f: c.n / mxn });
+        }
+        if (out.picks.length) {
+          const x0 = Math.min(...out.picks.map(p => p.x)), x1 = Math.max(...out.picks.map(p => p.x + p.w)), y0 = Math.min(...out.picks.map(p => p.y)), y1 = Math.max(...out.picks.map(p => p.y + p.h));
+          const lo2 = A.coord(hi - y1 / PH * (hi - lo)), hi2 = A.coord(hi - y0 / PH * (hi - lo));
+          out.guide = { R: { x0, x1, y0, y1 }, hue, kind, pick: true, t0: v0 + x0 / PW * span, t1: v0 + x1 / PW * span, lo: Math.min(lo2, hi2), hi: Math.max(lo2, hi2) };
+        }
+      }
+      if (hp[0] === 'col') {
+        const tc = +hp[1];
+        for (const kind of ['min', 'max']) {
+          if (kind === 'min' ? !L.rclust : !L.eclust) continue;
+          const hue = kind === 'min' ? K.retr : K.ext, src = kind === 'min' ? ov.cellsMin : ov.cellsMax, mxn = Math.max(1, ...src.map(c => c.n));
+          for (const c of src) {
+            if (c.t !== tc || c.t + 15 <= obs) continue;
+            const R = cellRect(c.lo, c.lo + 0.1, c.t, c.t + 15);
+            if (R.x1 <= 0 || R.x0 >= PW) continue;
+            out.picks.push({ x: Math.round(R.x0), y: Math.round(R.y0), w: Math.max(2, Math.round(R.x1 - R.x0)), h: Math.max(2, Math.round(R.y1 - R.y0)), bg: this._a(hue, 0.3 + 0.55 * c.n / mxn), bd: '1px solid ' + this._a('#FFFFFF', 0.85), kind, f: c.n / mxn });
+          }
+        }
+        const x0 = X(Math.max(tc, obs)), x1 = X(tc + 15);
+        if (x1 > 0 && x0 < PW) {
+          const ys = out.picks.map(p => p.y), ye = out.picks.map(p => p.y + p.h);
+          const y0 = ys.length ? Math.min(...ys) : PH, y1 = ye.length ? Math.max(...ye) : PH;
+          const cr = ov.H.rtime, ce = ov.H.etime, ir = Math.floor((tc - cr.lo) / 15), ie = Math.floor((tc - ce.lo) / 15);
+          out.guide = { R: { x0, x1, y0, y1 }, hue: '#D1D4DC', kind: 'col', col: true, pick: false, t0: Math.max(tc, obs), t1: tc + 15,
+            lo: ys.length ? A.coord(hi - y1 / PH * (hi - lo)) : 0, hi: ys.length ? A.coord(hi - y0 / PH * (hi - lo)) : 0, noPrice: !ys.length,
+            nr: ir >= 0 && ir < cr.nb ? cr.co[ir] : 0, ne: ie >= 0 && ie < ce.nb ? ce.co[ie] : 0 };
+          if (A.side === -1 && out.guide.lo > out.guide.hi) { const q = out.guide.lo; out.guide.lo = out.guide.hi; out.guide.hi = q; }
+        }
+      }
+      if (L.fan && ov.fan.length) {
+        const pts = ov.fan.filter(f => f.t > v0 - 10 && f.t < v1 + 10);
+        if (pts.length) {
+          const sx = X(obs), sy = Y(A.price(ov.x0)), P2 = (t, c) => X(t).toFixed(1) + ',' + Y(A.price(c)).toFixed(1);
+          out.fan = {
+            area: 'M' + sx.toFixed(1) + ',' + sy.toFixed(1) + ' ' + pts.map(f => 'L' + P2(f.t, f.hi)).join(' ') + ' ' + pts.slice().reverse().map(f => 'L' + P2(f.t, f.lo)).join(' ') + ' Z',
+            mid: 'M' + sx.toFixed(1) + ',' + sy.toFixed(1) + ' ' + pts.map(f => 'L' + P2(f.t, f.mid)).join(' ')
+          };
+        }
+      }
+      if (L.ladder && cfg.ladderW && !cfg.noLadder) {
+        const x0 = PW + 6, bwMax = cfg.ladderW - 44;
+        let lastT = -99;
+        const rows = ov.touch.map(tc => ({ tc, yy: Y(A.price(tc.L)) })).filter(q => q.yy > 4 && q.yy < PH - 4).sort((a, b) => a.yy - b.yy);
+        for (const { tc, yy } of rows) {
+          if (tc.pct < 1) continue;
+          const key = 'touch|' + tc.L, on = hk === key, hv = this._hv(key), hue = tc.L >= ov.x0 ? K.ext : K.retr;
+          const barW = Math.max(2, Math.round(bwMax * tc.pct / 100));
+          out.ladder.push({ lx: 42 + bwMax - barW, w: barW, bg: this._a(hue, on ? 1 : 0.78), hit: { x: PW, y: Math.round(yy) - 6, w: cfg.ladderW, h: 12 }, enter: hv.enter, leave: hv.leave, click: hv.click, on });
+          const half = Math.abs(tc.L * 2 - Math.round(tc.L * 2)) < 1e-6;
+          if ((half || on) && yy - lastT >= 15) { out.ladderT.push({ x: x0, y: Math.round(yy) - 8, t: Math.round(tc.pct) + '%', c: on ? '#FFFFFF' : hue, fw: on ? 700 : 500 }); lastT = yy; }
+        }
+      }
+      if (touchP != null) {
+        const yy = Y(touchP), tc = ov.touch.find(q => Math.abs(q.L - +hp[1]) < 1e-6), hue = +hp[1] >= ov.x0 ? K.ext : K.retr;
+        if (inY(yy)) {
+          out.touchLine = { x: Math.round(X(obs)), y: Math.round(yy) - 1, w: Math.max(0, Math.round(PW - X(obs))), h: 2, bg: this._dashH(hue, 6, 4) };
+          out.tags.push({ y: yy, h: 20, kind: 'guide', name: this._sg(+hp[1], 2), price: this._px(touchP) + ' · ' + Math.round(tc.pct) + '%', col: hue, on: true, key: 'touch', pri: 3, guide: true });
+        }
+      }
+    }
+    // guides from the highlighted cluster to the axes (rule 18)
+    out.glines = []; out.ttags = [];
+    if (out.guide) {
+      const G = out.guide, R = G.R, col = this._a(G.hue, 0.75), gx = cfg.PW + (cfg.ladderW || 0);
+      const xa = Math.max(0, R.x0), xb = Math.min(PW, R.x1);
+      out.glines.push({ x: Math.round(xa), y: Math.round(R.y1), w: 1, h: Math.max(0, PH - Math.round(R.y1)), bg: this._dashV(col, 3, 3) });
+      out.glines.push({ x: Math.round(xb), y: Math.round(R.y1), w: 1, h: Math.max(0, PH - Math.round(R.y1)), bg: this._dashV(col, 3, 3) });
+      if (!G.noPrice) {
+        out.glines.push({ x: Math.round(xb), y: Math.round(R.y0), w: Math.max(0, gx - Math.round(xb)), h: 1, bg: this._dashH(col, 3, 3) });
+        out.glines.push({ x: Math.round(xb), y: Math.round(R.y1), w: Math.max(0, gx - Math.round(xb)), h: 1, bg: this._dashH(col, 3, 3) });
+        const pTop = Math.max(A.price(G.lo), A.price(G.hi)), pBot = Math.min(A.price(G.lo), A.price(G.hi));
+        out.tags.push({ y: R.y0, h: 20, kind: 'guide', name: '', price: this._px(pTop), col: G.hue, on: true, pri: 3, guide: true });
+        out.tags.push({ y: R.y1, h: 20, kind: 'guide', name: '', price: this._px(pBot), col: G.hue, on: true, pri: 3, guide: true });
+      }
+      out.ttags.push({ x: xa, t: this._clk(G.t0), col: G.hue, fg: '#0B0D10', pri: 3 }, { x: xb, t: this._clk(G.t1), col: G.hue, fg: '#0B0D10', pri: 3 });
+    }
+    // --- candles in TradingView geometry
+    out.wicks = []; out.bodies = []; out.chits = [];
+    const replayT = rpx ? rpx.at - 5 : null;
+    for (const b of vis) {
+      const xc = Math.round(X(b.t + 2.5)), upb = b.c >= b.o, col = upb ? K.up : K.dn;
+      const yH = Math.round(Y(b.h)), yL = Math.round(Y(b.l)), top = Math.round(Y(Math.max(b.o, b.c))), bot = Math.round(Y(Math.min(b.o, b.c)));
+      const op = after(b.t + 5) ? 0.3 : 1, sel = replayT === b.t;
+      out.wicks.push({ x: xc, y: yH, w: 1, h: Math.max(1, yL - yH), bg: sel ? K.replay : col, op });
+      out.bodies.push({ x: xc - (bw - 1) / 2, y: top, w: bw, h: Math.max(1, bot - top), bg: col, op, bd: sel ? '1px solid ' + K.replay : 'none' });
+      const t = b.t;
+      out.chits.push({ x: Math.round(xc - sp / 2), y: yH - 6, w: Math.max(3, Math.round(sp)), h: Math.max(8, yL - yH + 12), click: () => this._barClick(t) });
+    }
+    // confirmation and DR-break pills of every session (rule 12)
+    out.pills = [];
+    for (const k of D.ORDER) {
+      const s = S[k]; if (!s.conf) continue;
+      const mk = (minute, bg, below, key) => {
+        const b = D.bars.find(q => q.t + 5 === minute); if (!b || b.t + 5 <= v0 || b.t >= v1) return;
+        const xc = X(b.t + 2.5), yy = below ? Y(b.l) + 6 : Y(b.h) - 24, hv = this._hv(key), on = hk === key;
+        out.pills.push({ x: Math.round(xc - 21), y: Math.round(yy), t: this._clk(minute), bg, op: (k === act ? 1 : 0.62) * (after(minute) ? 0.45 : 1), bd: on ? '1px solid #FFFFFF' : '1px solid ' + this._a('#FFFFFF', 0.18), enter: hv.enter, leave: hv.leave, click: hv.click });
+      };
+      mk(s.conf, s.side === 1 ? K.up : K.dn, s.side === -1, 'conf|' + k);
+      if (s.failed) mk(s.failed, K.brk, s.side === 1, 'fail|' + k);
+    }
+    // current minute (rule 11) and the replay moment
+    out.vlines = [];
+    const xn = X(D.NOW);
+    if (xn > 0 && xn < PW) { out.vlines.push({ x: Math.round(xn), y: 0, w: 1, h: PH, bg: this._dashV(this._a('#D1D4DC', 0.34), 6, 4), op: 1 }); out.ttags.push({ x: xn, t: this._clk(D.NOW), col: '#2A2E39', fg: '#FFFFFF', pri: 1 }); }
+    if (!live) { const xm = X(obs); if (xm > 0 && xm < PW) { out.vlines.push({ x: Math.round(xm), y: 0, w: 1, h: PH, bg: K.replay, op: 0.9 }); out.ttags.push({ x: xm, t: 'момент ' + this._clk(obs), col: K.replay, fg: '#0B0D10', pri: 2 }); } }
+    // crosshair
+    out.xh = []; out.hoverBar = null;
+    if (st.mx != null && !st.drag && st.mx >= 0 && st.mx < PW && st.my >= 0 && st.my < PH) {
+      const tm = v0 + st.mx / PW * span, tb = Math.floor(tm / 5) * 5, xc = Math.round(X(tb + 2.5));
+      out.xh.push({ x: xc, y: 0, w: 1, h: PH, bg: this._dashV(this._a('#9598A1', 0.6), 5, 4) }, { x: 0, y: Math.round(st.my), w: PW + (cfg.ladderW || 0), h: 1, bg: this._dashH(this._a('#9598A1', 0.6), 5, 4) });
+      out.tags.push({ y: st.my, h: 20, kind: 'cross', name: '', price: this._px(hi - st.my / PH * (hi - lo)), col: '#363A45', on: true, pri: 4, guide: true });
+      out.ttags.push({ x: xc, t: this._clk(tb), col: '#363A45', fg: '#FFFFFF', pri: 4 });
+      out.hoverBar = D.bars.find(b => b.t === tb) || null;
+    }
+    // --- price scale: tag layout (no tag overlaps another; guides push the others aside) and round-number ticks
+    const guides = out.tags.filter(t => t.guide);
+    let rest = out.tags.filter(t => !t.guide && !guides.some(gt => Math.abs(gt.y - t.y) < (gt.h + t.h) / 2 + 1));
+    rest.sort((a, b) => a.y - b.y);
+    for (let i = 0; i < rest.length; i++) rest[i].ty = i ? Math.max(rest[i].y, rest[i - 1].ty + (rest[i - 1].h + rest[i].h) / 2 + 2) : Math.max(rest[i].y, rest[i].h / 2);
+    for (let i = rest.length - 1; i >= 0; i--) { const lim = i === rest.length - 1 ? PH - rest[i].h / 2 : rest[i + 1].ty - (rest[i + 1].h + rest[i].h) / 2 - 2; if (rest[i].ty > lim) rest[i].ty = lim; }
+    for (const g of guides) g.ty = Math.min(Math.max(g.y, g.h / 2), PH - g.h / 2);
+    out.tags = rest.concat(guides);
+    const steps = [0.25, 0.5, 1, 2.5, 5, 10, 25, 50, 100, 250, 500, 1000];
+    const pstep = steps.find(s2 => s2 / (hi - lo) * PH >= 44) || 1000;
+    out.ticks = [];
+    for (let p = Math.ceil(lo / pstep) * pstep; p <= hi; p += pstep) {
+      const yy = Y(p); if (yy < 8 || yy > PH - 8) continue;
+      if (out.tags.some(t => Math.abs(t.ty - yy) < t.h / 2 + 8)) continue;
+      out.ticks.push({ y: Math.round(yy) - 8, t: this._num(p, pstep < 1 ? 2 : 0) });
+    }
+    // --- time axis
+    const tsteps = [5, 10, 15, 30, 60, 120, 180, 240, 360];
+    const tstep = tsteps.find(s2 => s2 / span * PW >= 76) || 360;
+    out.tlabels = [];
+    const tt = out.ttags;
+    for (let t = Math.ceil(v0 / tstep) * tstep; t <= v1; t += tstep) {
+      const xx = X(t); if (xx < 18 || xx > PW - 18) continue;
+      if (tt.some(q => Math.abs(q.x - xx) < 52)) continue;
+      out.tlabels.push({ x: Math.round(xx), t: ((t % 1440) + 1440) % 1440 === 0 ? (t < 720 ? '24 сен' : '25 сен') : this._clk(t) });
+    }
+    tt.sort((a, b) => b.pri - a.pri);
+    const keep = [];
+    for (const q of tt) if (!keep.some(k2 => Math.abs(k2.x - q.x) < 26 + (q.t.length + k2.t.length) * 3.4)) keep.push(q);
+    out.ttags = keep.map(q => ({ x: Math.round(q.x), t: q.t, col: q.col, fg: q.fg }));
+    // --- legend: OHLC of the bar under the crosshair, else the last one (TradingView style)
+    const lb = out.hoverBar || (!live && D.bars.find(b => b.t + 5 === obs)) || lastBar, ch = lb.c - lb.o;
+    out.legend = { o: this._px(lb.o), h: this._px(lb.h), l: this._px(lb.l), c: this._px(lb.c), ch: (ch >= 0 ? '+' : '−') + this._px(Math.abs(ch)), col: ch >= 0 ? K.up : K.dn, when: this._clk(lb.t) };
+    return out;
+  }
+  // tags -> styled boxes for the price scale (x = scale left)
+  _tagBoxes(sc, xs, withPct) {
+    const K = this._C(), A = sc.A, ov = sc.ov;
+    return sc.tags.map(t => {
+      let bg = '#1B1F27', fg = K.text, bd = '1px solid #3A404C', fw = 500;
+      if (t.kind === 'dr') { bg = K.white; fg = '#0B0D10'; bd = '1px solid ' + K.white; fw = 600; }
+      else if (t.kind === 'idr') { bg = '#0B0D10'; fg = '#F1F5F9'; bd = '1px solid #F1F5F9'; }
+      else if (t.kind === 'open') { bg = '#0B0D10'; fg = K.up; bd = '1px solid ' + K.up; }
+      else if (t.kind === 'price') { bg = t.col; fg = '#FFFFFF'; bd = '1px solid ' + t.col; fw = 600; }
+      else if (t.kind === 'rprice') { bg = '#0B0D10'; fg = K.replay; bd = '1px solid ' + K.replay; fw = 600; }
+      else if (t.kind === 'guide' || t.kind === 'cross') { bg = t.col; fg = t.kind === 'cross' ? '#FFFFFF' : '#0B0D10'; bd = '1px solid ' + t.col; fw = 600; }
+      if (t.on && (t.kind === 'std' || t.kind === 'mid')) { bg = '#E2E8F0'; fg = '#0B0D10'; bd = '1px solid #E2E8F0'; }
+      if (t.on && t.kind === 'idr') { bg = '#F1F5F9'; fg = '#0B0D10'; }
+      if (t.on && t.kind === 'open') { bg = K.up; fg = '#FFFFFF'; }
+      let pct = '', pcol = 'transparent', pdisp = 'none';
+      if (withPct && ov && t.kind === 'std' && t.sess === sc.act && t.c != null) {
+        const tc = ov.touch.find(q => Math.abs(q.L - t.c) < 1e-6);
+        if (tc) { pct = Math.round(tc.pct) + '%'; pcol = withPct === 'muted' ? '#8F939E' : t.c >= ov.x0 ? K.ext : K.retr; pdisp = 'inline'; }
+      }
+      const hv = t.key ? this._hv(t.key) : {};
+      return {
+        x: xs + 1, y: Math.round(t.ty - t.h / 2), h: t.h, bg, fg, bd, fw, name: t.name, nd: t.name ? 'inline' : 'none', price: t.price,
+        sub: t.sub || '', sd: t.sub ? 'block' : 'none', pct, pcol, pdisp,
+        anc: Math.abs(t.ty - t.y) > 1.5 ? 'block' : 'none', ay: Math.round(t.y - t.ty + t.h / 2) - 1, acol: t.kind === 'dr' ? K.white : t.kind === 'price' ? t.col : '#9BA1AC',
+        enter: hv.enter, leave: hv.leave, click: hv.click
+      };
+    });
+  }
+  // ---------- the six history charts of the same cohort (rule 3), flattened for the markup ----------
+  _bottom(sc, W, H) {
+    const K = this._C(), ov = sc.ov, A = sc.A, hk = sc.hk, hp = sc.hp;
+    const res = { frames: [], titles: [], bars: [], cells: [], texts: [], fanArea: 'M0,0', fanMid: 'M0,0', fanZero: 'M0,0', show: !!ov, fx: 0, fy: 0, fw: 0, fh: 0, empty: ov ? 'none' : 'flex' };
+    const gap = 8, cw = (W - gap * 7) / 6, ch = H - gap * 2;
+    const names = ['Путь', 'Глубина × время', 'Откат', 'Расширение', 'Время отката', 'Время экстремума'];
+    if (!ov) {
+      for (let i = 0; i < 6; i++) { const x = gap + i * (cw + gap); res.frames.push({ x: Math.round(x), y: gap, w: Math.round(cw), h: ch }); res.titles.push({ x: Math.round(x) + 10, y: gap + 6, t: names[i] }); }
+      return res;
+    }
+    const G = sc.guide;
+    const hlBin = (chart, lo, st) => {
+      if (hp[0] === 'bin' && hp[1] === chart) return Math.abs(+hp[2] - lo) < 1e-6 ? 2 : 0;
+      if (!G) return 0;
+      if (G.col) return (chart === 'rtime' || chart === 'etime') && lo + st > G.t0 && lo < G.t1 ? 1 : 0;
+      const kindOk = (chart === 'retr' || chart === 'rtime') ? G.kind === 'min' : G.kind === 'max';
+      if (!kindOk) return 0;
+      if (chart === 'retr' || chart === 'ext') return lo + st > G.lo + 1e-6 && lo < G.hi - 1e-6 ? 1 : 0;
+      return lo + st > G.t0 && lo < G.t1 ? 1 : 0;
+    };
+    for (let i = 0; i < 6; i++) {
+      const x = gap + i * (cw + gap), y = gap;
+      res.frames.push({ x: Math.round(x), y, w: Math.round(cw), h: ch });
+      res.titles.push({ x: Math.round(x) + 10, y: y + 6, t: names[i] });
+      const px0 = x + 30, py0 = y + 26, pw = cw - 40, ph = ch - 26 - 20;
+      if (i === 0) {                                   // path: median and 20-80 % of closes, IDR scale
+        const f = ov.fan; if (!f.length) continue;
+        const vmin = Math.min(...f.map(q => q.lo), ov.x0) - 0.1, vmax = Math.max(...f.map(q => q.hi), ov.x0) + 0.1;
+        const fx = t => (t - sc.obs) / (ov.end - sc.obs) * pw, fy = v => (vmax - v) / (vmax - vmin) * ph;
+        res.fx = Math.round(px0); res.fy = Math.round(py0); res.fw = Math.round(pw); res.fh = Math.round(ph);
+        res.fanArea = 'M0,' + fy(ov.x0).toFixed(1) + ' ' + f.map(q => 'L' + fx(q.t).toFixed(1) + ',' + fy(q.hi).toFixed(1)).join(' ') + ' ' + f.slice().reverse().map(q => 'L' + fx(q.t).toFixed(1) + ',' + fy(q.lo).toFixed(1)).join(' ') + ' Z';
+        res.fanMid = 'M0,' + fy(ov.x0).toFixed(1) + ' ' + f.map(q => 'L' + fx(q.t).toFixed(1) + ',' + fy(q.mid).toFixed(1)).join(' ');
+        if (0 > vmin && 0 < vmax) res.fanZero = 'M0,' + fy(0).toFixed(1) + ' L' + pw.toFixed(1) + ',' + fy(0).toFixed(1);
+        for (const v of [Math.ceil(vmin * 2) / 2, Math.floor(vmax * 2) / 2]) res.texts.push({ x: Math.round(px0) - 6, y: Math.round(py0 + fy(v)) - 7, t: this._sg(v, 1), al: 'translateX(-100%)' });
+        res.texts.push({ x: Math.round(px0), y: Math.round(py0 + ph) + 3, t: this._clk(sc.obs), al: 'none' }, { x: Math.round(px0 + pw), y: Math.round(py0 + ph) + 3, t: this._clk(ov.end), al: 'translateX(-100%)' });
+        continue;
+      }
+      if (i === 1) {                                   // depth x time of the final retracement
+        const rows = [], los = ov.cellsMin.map(c => c.lo), top = Math.min(3, Math.max(...los) + 0.1), bottomR = Math.max(-2.5, Math.min(...los) - 0.1);
+        for (let rr = Math.round(top * 10); rr >= Math.round(bottomR * 10); rr--) rows.push(rr / 10);
+        const cols = []; for (let t = ov.t0; t < ov.end; t += 15) cols.push(t);
+        const cwid = pw / cols.length, rh = ph / rows.length, mxn = Math.max(1, ...ov.cellsMin.map(c => c.n));
+        const map = new Map(ov.cellsMin.map(c => [c.lo.toFixed(1) + '|' + c.t, c.n]));
+        rows.forEach((rv, ri) => cols.forEach((t, ci) => {
+          const n = map.get(rv.toFixed(1) + '|' + t) || 0; if (!n) return;
+          const key = 'hcell|' + rv.toFixed(1) + '|' + t, hv = this._hv(key);
+          const on = hk === key || (G && G.kind === 'min' && rv >= G.lo - 1e-6 && rv < G.hi - 1e-6 && t >= Math.floor(G.t0 / 15) * 15 && t < G.t1);
+          res.cells.push({ x: Math.round(px0 + ci * cwid), y: Math.round(py0 + ri * rh), w: Math.max(1, Math.round(cwid) - 1), h: Math.max(1, Math.round(rh) - 1), bg: this._a(K.retr, Math.round((0.22 + 0.73 * n / mxn) * 100) / 100), bd: on ? '1px solid #FFFFFF' : 'none', enter: hv.enter, leave: hv.leave, click: hv.click });
+        }));
+        for (const rv of rows) if (Math.round(rv * 10) % 5 === 0) res.texts.push({ x: Math.round(px0) - 6, y: Math.round(py0 + rows.indexOf(rv) * rh + rh / 2) - 7, t: this._sg(rv, 1), al: 'translateX(-100%)' });
+        res.texts.push({ x: Math.round(px0), y: Math.round(py0 + ph) + 3, t: this._clk(ov.t0), al: 'none' }, { x: Math.round(px0 + pw), y: Math.round(py0 + ph) + 3, t: this._clk(ov.end), al: 'translateX(-100%)' });
+        continue;
+      }
+      const chartKey = ['retr', 'ext', 'rtime', 'etime'][i - 2], Hh = ov.H[chartKey], hue = chartKey === 'retr' || chartKey === 'rtime' ? K.retr : K.ext;
+      const mx = Math.max(1, ...Hh.co, ...Hh.ref), bwid = pw / Hh.nb;
+      const anyHl = Hh.co.some((_, j) => hlBin(chartKey, Math.round((Hh.lo + j * Hh.st) * 10) / 10, Hh.st));
+      for (let j = 0; j < Hh.nb; j++) {
+        const lo2 = Hh.time ? Hh.lo + j * Hh.st : Math.round((Hh.lo + j * Hh.st) * 10) / 10;
+        const xx = px0 + j * bwid, hr = Hh.ref[j] / mx * ph, hc = Hh.co[j] / mx * ph;
+        if (hr > 0) res.bars.push({ x: Math.round(xx) + 1, y: Math.round(py0 + ph - hr), w: Math.max(1, Math.round(bwid) - 2), h: Math.max(1, Math.round(hr)), bg: '#262B35', bd: 'none' });
+        const lvl = hlBin(chartKey, lo2, Hh.st), key = 'bin|' + chartKey + '|' + (Hh.time ? lo2 : lo2.toFixed(1)), hv = this._hv(key);
+        if (hc > 0) res.bars.push({ x: Math.round(xx) + 1, y: Math.round(py0 + ph - hc), w: Math.max(1, Math.round(bwid) - 2), h: Math.max(2, Math.round(hc)), bg: lvl ? this._a(hue, 1) : this._a(hue, anyHl ? 0.35 : 0.8), bd: lvl === 2 || hk === key ? '1px solid #FFFFFF' : 'none', enter: hv.enter, leave: hv.leave, click: hv.click });
+        else res.bars.push({ x: Math.round(xx), y: Math.round(py0), w: Math.max(1, Math.round(bwid)), h: Math.round(ph), bg: 'transparent', bd: 'none', enter: hv.enter, leave: hv.leave, click: hv.click });
+      }
+      const every = Math.max(1, Math.ceil(Hh.nb / (Hh.time ? 4 : 5)));
+      for (let j = 0; j < Hh.nb; j += every) {
+        const lo2 = Hh.lo + j * Hh.st;
+        res.texts.push({ x: Math.round(px0 + j * bwid + bwid / 2), y: Math.round(py0 + ph) + 3, t: Hh.time ? this._clk(lo2) : this._sg(lo2, 1), al: 'translateX(-50%)' });
+      }
+      res.texts.push({ x: Math.round(px0) - 6, y: Math.round(py0) - 6, t: String(mx), al: 'translateX(-100%)' });
+    }
+    return res;
+  }
+
+  // ================= shared view pieces (toolbar, side facts) =================
+  _toolbar(sc, st) {
+    const K = this._C(), D = this._D();
+    const inst = ['NQ', 'ES', 'YM'].map(t => ({ t, bg: t === 'NQ' ? '#2A2E39' : 'transparent', c: t === 'NQ' ? '#FFFFFF' : K.text2 }));
+    const sess = D.ORDER.map(k => {
+      const s = sc.S[k], on = k === sc.act, hv = this._hv('sess|' + k);
+      const running = k === 'RDR' && s.status === 'confirmed' && sc.live;
+      return {
+        t: k, bg: on ? '#2A2E39' : 'transparent', c: on ? '#FFFFFF' : K.text2,
+        dot: running ? K.up : s.status === 'done' ? (s.failed ? K.dn : '#6B7280') : 'transparent',
+        tip: k === 'ADR' ? 'ADR · окно 19:30–20:30 · до 02:00' : k === 'ODR' ? 'ODR · окно 03:00–04:00 · до 08:30' : 'RDR · окно 09:30–10:30 · до 16:00',
+        click: () => this._selSession(k), enter: hv.enter, leave: hv.leave
+      };
+    });
+    const L = st.layers;
+    const layers = [
+      { k: 'rclust', t: 'Откат', sw: K.retr }, { k: 'eclust', t: 'Экстремум', sw: K.ext },
+      { k: 'fan', t: 'Веер', sw: '#C9CED6' }, { k: 'ladder', t: 'Лесенка', sw: 'linear-gradient(180deg,' + K.ext + ' 0px 5px,' + K.retr + ' 5px 10px)' }
+    ].map(l => ({ t: l.t, sw: l.sw, bg: L[l.k] ? '#1F242D' : 'transparent', c: L[l.k] ? K.text : '#8F939E', bd: L[l.k] ? '1px solid #3A404C' : '1px solid #252A33', swop: L[l.k] ? 1 : 0.35, click: () => this._toggleLayer(l.k) }));
+    return {
+      inst, sess, layers, live: sc.live, replay: !sc.live,
+      clock: this._clk(D.NOW) + ' ET', rpText: sc.act + ' · ' + this._clk(sc.obs),
+      toLive: () => this._live(), refresh: () => {}
+    };
+  }
+  // the facts of the active session in words and numbers (shared by the side views)
+  _facts(sc) {
+    const A = sc.A, ov = sc.ov, K = this._C();
+    const f = { status: A.status, sess: sc.act, live: sc.live, obs: sc.obs, n: '', ntip: '', bigLabel: '', big: '', bigCol: '#D1D4DC' };
+    f.arrow = A.side === 1 ? '↑' : A.side === -1 ? '↓' : '';
+    if (A.drH != null) { f.dr = this._px(A.drL) + ' – ' + this._px(A.drH); f.idr = this._px(A.idrL) + ' – ' + this._px(A.idrH); }
+    if (A.status === 'confirmed' && ov) {
+      f.bigLabel = 'DR удержится до ' + this._clk(A.end); f.big = this._num(ov.drTrue, 1) + '%';
+      f.bigCol = ov.drTrue >= 80 ? '#FFFFFF' : ov.drTrue >= 60 ? K.retr : K.dn;
+      f.conf = f.arrow + ' ' + this._clk(A.conf);
+      f.price = this._sg(A.nowCoord, 2) + ' IDR · ' + this._px(A.priceNow);
+      f.priceLabel = sc.live ? 'Цена сейчас' : 'Цена на ' + this._clk(sc.obs);
+      f.n = ov.n + ' похожих сессий';
+      f.ntip = ov.n + ' из ' + ov.pool + ' сессий 2006–2025: подтверждение ' + f.arrow + ' ±15 мин от ' + this._clk(A.conf) + ', DR цел на ' + this._clk(sc.obs) + ', цена ±' + this._num(ov.band, 2) + ' IDR от сегодняшней. В макете числа синтетические.';
+    } else if (A.status === 'done') {
+      f.bigLabel = 'Сессия завершена'; f.big = A.failed ? 'DR сломан ' + this._clk(A.failed) : 'DR удержался'; f.bigCol = A.failed ? K.dn : '#FFFFFF';
+      f.conf = f.arrow + ' ' + this._clk(A.conf);
+      f.retr = this._sg(A.retrSoFar, 2) + ' IDR · ' + this._clk(A.retrT); f.ext = this._sg(A.extSoFar, 2) + ' IDR · ' + this._clk(A.extT);
+    } else if (A.status === 'waiting') {
+      f.bigLabel = 'DR сформирован'; f.big = 'Подтверждения нет'; f.bigCol = '#E6E8EE';
+      f.pending = [['Позже вверх', '46% · 10:55'], ['Позже вниз', '38% · 11:05'], ['Без подтверждения', '16%']];
+    } else if (A.status === 'forming') {
+      f.bigLabel = 'Окно ' + this._clk(A.start) + '–' + this._clk(A.formed); f.big = 'DR формируется'; f.bigCol = '#E6E8EE';
+    } else { f.bigLabel = ''; f.big = 'Сессия не началась'; f.bigCol = K.text2; }
+    return f;
+  }
+  // the day's three sessions as clickable rows (select a session; hover lights its window on the chart)
+  _days(sc) {
+    const K = this._C(), D = this._D();
+    return D.ORDER.map(k => {
+      const s = sc.S[k], hv = this._hv('sess|' + k), on = k === sc.act, running = s.status === 'confirmed' && (k !== sc.act || sc.live);
+      const conf = s.conf ? (s.side === 1 ? '↑ ' : '↓ ') + this._clk(s.conf) : '—';
+      const stt = s.status === 'done' ? (s.failed ? 'DR сломан ' + this._clk(s.failed) : 'DR удержался') : running ? 'идёт' : s.status === 'waiting' ? 'ждёт подтверждения' : s.status === 'forming' ? 'DR формируется' : s.status === 'confirmed' ? 'повтор' : '';
+      return {
+        k, conf, st: stt, bg: on ? '#1B2029' : sc.hk === 'sess|' + k ? '#161A21' : 'transparent', c: on ? '#FFFFFF' : K.text2,
+        ac: s.side === 1 ? K.up : s.side === -1 ? K.dn : K.text3, dot: running && sc.live ? K.up : 'transparent',
+        click: () => { if (k !== this._st().session || this._st().rp) this._selSession(k); }, enter: hv.enter, leave: hv.leave
+      };
+    });
+  }
+
+  // ================= variant B′ · Сценарий, chosen by the operator on 2026-09-25 =================
+  // Continuation (extension, the far extreme) is green and drawn as a soft cloud with iso-lines;
+  // the pullback (retracement) is red and drawn as triangles pointing the way of the pullback, so the two never blend.
+  // The band above the time axis scrubs time: over the past it shows the forecast as of that minute (hover replay),
+  // over the future it lights the clusters of that 15-minute column.
+  _cfg() { return { W: 1548, H: 742, PW: 1416, PH: 684, ladderW: 0, scaleW: 132, axisH: 28, bandH: 30 }; }
+  _palX() { return { retr: '#FF5A5F', ext: '#34D399' }; }
+  // both kinds are visible from the start: green continuation and red pullback are read together (operator, 2026-09-25)
+  _st() {
+    const s = this.state || {};
+    return {
+      session: s.session || 'RDR', rp: s.rp || null, scrub: s.scrub || null,
+      v0: s.v0 != null ? s.v0 : 545, v1: s.v1 != null ? s.v1 : 970, yz: s.yz || 1,
+      hover: s.hover || null, pick: s.pick || null,
+      layers: s.layers || { rclust: true, eclust: true, fan: true, ladder: true },
+      mx: s.mx != null ? s.mx : null, my: s.my != null ? s.my : null, drag: !!s.drag
+    };
+  }
+  // smoothed density of where/when the extreme landed, and its iso-lines (marching squares), in (minute, IDR) units
+  _kde(ov, kind) {
+    const key = '__kde_' + kind;
+    if (ov[key]) return ov[key];
+    const pts = kind === 'min' ? ov.ptsMin : ov.ptsMax, t0 = pts.reduce((m, p) => Math.min(m, p[0]), Infinity);
+    const cs = pts.map(p => p[1]).sort((a, b) => a - b), cLo = this._q(cs, 0.04) - 0.3, cHi = this._q(cs, 0.96) + 0.3;
+    const ts = [], cc = [];
+    for (let t = Math.min(ov.t0, t0); t <= ov.end + 0.001; t += 5) ts.push(t);
+    for (let c = cLo; c <= cHi + 1e-9; c += 0.05) cc.push(c);
+    const sT = 12, sC = 0.085, G = ts.map(() => new Array(cc.length).fill(0));
+    let mx = 0;
+    for (let i = 0; i < ts.length; i++) for (let j = 0; j < cc.length; j++) {
+      let v = 0;
+      for (const p of pts) { const dt = (ts[i] - p[0]) / sT, dc = (cc[j] - p[1]) / sC; if (dt * dt + dc * dc < 16) v += Math.exp(-0.5 * (dt * dt + dc * dc)); }
+      G[i][j] = v; if (v > mx) mx = v;
+    }
+    const segs = [0.3, 0.55, 0.8].map(lv => {
+      const L = lv * mx, out = [];
+      for (let i = 0; i < ts.length - 1; i++) for (let j = 0; j < cc.length - 1; j++) {
+        const a = G[i][j], b = G[i + 1][j], c = G[i + 1][j + 1], d = G[i][j + 1];
+        const idx = (a > L ? 8 : 0) | (b > L ? 4 : 0) | (c > L ? 2 : 0) | (d > L ? 1 : 0);
+        if (idx === 0 || idx === 15) continue;
+        const lerp = (v1, v2) => (L - v1) / (v2 - v1), T = [ts[i], ts[i + 1]], C = [cc[j], cc[j + 1]];
+        const e = { b: [T[0] + (T[1] - T[0]) * lerp(a, b), C[0]], r: [T[1], C[0] + (C[1] - C[0]) * lerp(b, c)], t: [T[0] + (T[1] - T[0]) * lerp(d, c), C[1]], l: [T[0], C[0] + (C[1] - C[0]) * lerp(a, d)] };
+        const map = { 1: ['l', 't'], 2: ['t', 'r'], 3: ['l', 'r'], 4: ['b', 'r'], 5: ['l', 'b', 't', 'r'], 6: ['b', 't'], 7: ['l', 'b'], 8: ['l', 'b'], 9: ['b', 't'], 10: ['l', 't', 'b', 'r'], 11: ['b', 'r'], 12: ['l', 'r'], 13: ['t', 'r'], 14: ['l', 't'] }[idx];
+        for (let k = 0; k < map.length; k += 2) out.push([e[map[k]], e[map[k + 1]]]);
+      }
+      return out;
+    });
+    return (ov[key] = { segs });
+  }
+  _contours(sc, kind) {
+    const ov = sc.ov, A = sc.A; if (!ov) return ['', '', ''];
+    const K = this._kde(ov, kind), X = sc.X, Y = sc.Y;
+    return K.segs.map(list => list.map(s => 'M' + X(s[0][0]).toFixed(1) + ',' + Y(A.price(s[0][1])).toFixed(1) + 'L' + X(s[1][0]).toFixed(1) + ',' + Y(A.price(s[1][1])).toFixed(1)).join(''));
+  }
+  // triangle glyph inside a cell, pointing the way the pullback goes (down for a long, up for a short)
+  _tri(R, f, side, on) {
+    const w = R.x1 - R.x0, h = R.y1 - R.y0;
+    const base = Math.min(w, h * 2.2), tw = Math.max(8, base * (0.3 + 0.36 * f)), th = Math.max(7, tw * 0.8);
+    return { x: Math.round(R.x0 + (w - tw) / 2), y: Math.round(R.y0 + (h - th) / 2), w: Math.round(tw), h: Math.round(th),
+      clip: side === 1 ? 'polygon(0% 0%, 100% 0%, 50% 100%)' : 'polygon(50% 0%, 100% 100%, 0% 100%)',
+      op: on ? 1 : Math.round((0.42 + 0.5 * f) * 100) / 100, glow: on ? 'drop-shadow(0 0 5px rgba(255,90,95,0.9))' : 'none' };
+  }
+  _scrub() {
+    if (this.__sh) return this.__sh;
+    const move = e => {
+      const p = this._local(e), cfg = this._cfg(), st = this._st();
+      this.__sm = st.v0 + p.x / cfg.PW * (st.v1 - st.v0);
+      if (this.__sraf) return;
+      this.__sraf = requestAnimationFrame(() => {
+        this.__sraf = null;
+        const t = this.__sm, D = this._D(), s = this.state || {};
+        if (t == null) return;
+        const at = Math.floor(t / 5) * 5;
+        if (at <= D.NOW) {                      // the past: the screen as it was at that candle close
+          const k = this._sessIn(at);
+          if (k) { if (!s.scrub || s.scrub.at !== at || s.scrub.sess !== k || s.hover) this.setState({ scrub: { sess: k, at }, hover: null }); }
+          else if (s.scrub || s.hover) this.setState({ scrub: null, hover: null });
+        } else {                                // the future: the clusters of that 15-minute column
+          const key = 'col|' + Math.floor(t / 15) * 15;
+          if (s.scrub || s.hover !== key) this.setState({ scrub: null, hover: key });
+        }
+      });
+    };
+    return (this.__sh = {
+      move,
+      leave: () => { this.__sm = null; const s = this.state || {}; if (s.scrub || (s.hover && s.hover.startsWith('col|'))) this.setState({ scrub: null, hover: null }); },
+      click: e => { if (e && e.stopPropagation) e.stopPropagation(); if (this._suppressed()) return; const s = this.state || {}; if (s.scrub) this.setState({ rp: s.scrub, session: s.scrub.sess, scrub: null }); }
+    });
+  }
+  _band(sc, st) {
+    const K = this._C(), ov = sc.ov, cfg = this._cfg(), hk = sc.hk, G = sc.guide, bars = [];
+    const mark = { x: -10, bg: 'transparent' };
+    if (st.scrub) { mark.x = Math.round(sc.X(st.scrub.at)); mark.bg = K.replay; }
+    else if (hk && hk.startsWith('col|')) { mark.x = Math.round(sc.X(+hk.split('|')[1] + 7.5)); mark.bg = '#D1D4DC'; }
+    if (!ov) return { bars, mark };
+    const L = st.layers;
+    for (const chart of ['rtime', 'etime']) {
+      if (chart === 'rtime' ? !L.rclust : !L.eclust) continue;
+      const H = ov.H[chart], hue = chart === 'rtime' ? K.retr : K.ext, mx = Math.max(1, ...H.co);
+      for (let j = 0; j < H.nb; j++) {
+        if (!H.co[j]) continue;
+        const t = H.lo + j * H.st, xa = sc.X(Math.max(t, sc.obs)), xb = sc.X(t + H.st);
+        if (xb <= 0 || xa >= cfg.PW || xb - xa < 1) continue;
+        const h = Math.max(2, Math.round(13 * Math.sqrt(H.co[j] / mx))), lit = G && (G.col || G.kind === (chart === 'rtime' ? 'min' : 'max')) && t + H.st > G.t0 && t < G.t1;
+        bars.push({ x: Math.round(xa) + 1, w: Math.max(1, Math.round(xb - xa) - 2), y: chart === 'rtime' ? 15 : 15 - h, h, bg: this._a(hue, lit ? 1 : 0.55) });
+      }
+    }
+    return { bars, mark };
+  }
+  _panelB(sc) {
+    const K = this._C(), A = sc.A, ov = sc.ov, hk = sc.hk, hp = sc.hp, f = this._facts(sc), G = sc.guide;
+    const P = { f, conf: f.status === 'confirmed', zmin: [], zmax: [], touch: [], ins: null, risk: { pct: '', col: '#FFFFFF', w: 0, label: '', stop: '', stopLabel: '', bg: 'transparent', n: '', ntip: '' } };
+    const ins = { title: sc.act + (sc.live ? ' · сейчас' : ' · на ' + this._clk(sc.obs)), hue: '#D1D4DC', rank: '', rd: 'none', big: '', line: '' };
+    if (G && G.col) {
+      Object.assign(ins, { title: this._clk(G.t0) + '–' + this._clk(G.t1), line: 'откат закончится здесь: ' + this._pct(100 * G.nr / ov.n) + ' · экстремум: ' + this._pct(100 * G.ne / ov.n) });
+    } else if (G && G.kind && !G.pick) {
+      const a = A.price(G.lo), b = A.price(G.hi);
+      Object.assign(ins, { title: G.kind === 'min' ? 'Откат закончится' : 'Экстремум', hue: G.kind === 'min' ? K.retr : K.ext, rank: G.rank ? String(G.rank) : '', rd: G.rank ? 'flex' : 'none', big: this._pct(G.pct),
+        line: this._clk(G.t0) + '–' + this._clk(G.t1) + ' · ' + this._px(Math.min(a, b)) + '–' + this._px(Math.max(a, b)) + ' · ' + G.n + ' из ' + ov.n });
+    } else if (G && G.pick) {
+      const a = A.price(G.lo), b = A.price(G.hi);
+      Object.assign(ins, { title: G.kind === 'min' ? 'Откат · выбор' : 'Экстремум · выбор', hue: G.kind === 'min' ? K.retr : K.ext, line: this._clk(G.t0) + '–' + this._clk(G.t1) + ' · ' + this._px(Math.min(a, b)) + '–' + this._px(Math.max(a, b)) });
+    } else if (hp[0] === 'lvl' || hp[0] === 'touch') {
+      const lvlTag = hp[0] === 'lvl' ? sc.tags.find(t => t.key && (t.key === hk || t.key.startsWith(hk)) && t.on) : null;
+      const L2 = hp[0] === 'touch' ? +hp[1] : lvlTag && lvlTag.c != null ? lvlTag.c : null;
+      const tc = ov && L2 != null ? ov.touch.find(q => Math.abs(q.L - L2) < 1e-6) : null;
+      Object.assign(ins, { title: hp[0] === 'touch' ? 'Уровень ' + this._sg(L2, 1) : 'Уровень ' + (lvlTag ? lvlTag.name : ''), big: tc ? this._pct(tc.pct) : '',
+        line: (hp[0] === 'touch' ? this._px(A.price(L2)) : lvlTag ? lvlTag.price : '') + (tc ? ' · касание до ' + this._clk(A.end) : '') });
+    } else if (f.status === 'confirmed') {
+      ins.line = f.conf + ' · ' + this._sg(A.nowCoord, 2) + ' IDR · ' + this._px(A.priceNow) + ' · ' + ov.n + ' похожих';
+    } else if (f.status === 'done') {
+      ins.big = f.big; ins.line = 'Подтверждение ' + f.conf + ' · откат ' + f.retr + ' · расширение ' + f.ext;
+    } else if (f.pending) { ins.big = f.big; ins.line = f.pending.map(r => r[0] + ' ' + r[1]).join(' · '); }
+    else { ins.big = f.big; ins.line = f.dr ? 'DR ' + f.dr + ' · IDR ' + f.idr : ''; }
+    ins.bigShow = ins.big ? 'inline' : 'none';
+    P.ins = ins;
+    P.triShape = A.side === -1 ? 'polygon(50% 0%, 100% 100%, 0% 100%)' : 'polygon(0% 0%, 100% 0%, 50% 100%)';
+    if (P.conf) {
+      const drl = 'lvl|' + sc.act + '|' + (A.side === 1 ? 'drL' : 'drH'), hv = this._hv(drl);
+      P.risk = { pct: f.big, col: f.bigCol, w: Math.round(ov.drTrue * 3.36), label: f.bigLabel, stop: this._px(A.opp), stopLabel: A.side === 1 ? 'Слом DR: закрытие M5 ниже' : 'Слом DR: закрытие M5 выше', bg: hk === drl ? K.hover : 'transparent', enter: hv.enter, leave: hv.leave, click: hv.click, n: f.n, ntip: f.ntip };
+      const zr = (kind, z) => {
+        const key = 'zone|' + kind + '|' + z.rank, hv = this._hv(key), hue = kind === 'min' ? K.retr : K.ext;
+        const soft = G && G.kind === kind && G.zone && G.zone.rank === z.rank && hk !== key, a = A.price(z.lo), b = A.price(z.hi);
+        return { rank: String(z.rank), hue, shape: kind === 'min' ? (A.side === 1 ? 'polygon(0% 0%, 100% 0%, 50% 100%)' : 'polygon(50% 0%, 100% 100%, 0% 100%)') : 'circle(50% at 50% 50%)',
+          time: this._clk(Math.max(z.t, sc.obs)) + '–' + this._clk(z.t_hi), price: this._px(Math.min(a, b)) + '–' + this._px(Math.max(a, b)), pct: this._pct(z.pct),
+          bg: hk === key ? this._a(hue, 0.14) : soft ? this._a(hue, 0.07) : 'transparent', enter: hv.enter, leave: hv.leave, click: hv.click };
+      };
+      P.zmin = ov.zonesMin.map(z => zr('min', z)); P.zmax = ov.zonesMax.map(z => zr('max', z));
+      let divDone = false;
+      for (const L of [2, 1.5, 1, 0.5, 0, -0.5, -1]) {
+        const tc = ov.touch.find(q => Math.abs(q.L - L) < 1e-6); if (!tc) continue;
+        if (!divDone && L < ov.x0) { P.touch.push({ div: 'flex', row: 'none', label: '', price: '', pct: '', w: 0, hue: 'transparent', now: 'цена ' + this._px(A.priceNow) + ' · ' + this._sg(ov.x0, 2), bg: 'transparent' }); divDone = true; }
+        const key = 'touch|' + L, hv = this._hv(key), hue = L >= ov.x0 ? K.ext : K.retr;
+        P.touch.push({ div: 'none', row: 'flex', label: this._sg(L, 1), price: this._px(A.price(L)), pct: this._pct(tc.pct), w: Math.max(2, Math.round(tc.pct * 1.1)), hue, now: '', bg: hk === key ? K.hover : 'transparent', enter: hv.enter, leave: hv.leave, click: hv.click });
+      }
+    }
+    return P;
+  }
+  _nav(sc, st) {
+    const K = this._C(), D = this._D(), W = 1548, x0 = 12, x1 = W - 12;
+    const nx = t => x0 + (t - D.DAY0) / (D.DAY1 - D.DAY0) * (x1 - x0);
+    const closes = D.bars.map(b => b.c), lo = Math.min(...closes), hi = Math.max(...closes);
+    const ny = v => 19 + (hi - v) / (hi - lo) * 22;
+    const spark = D.bars.map((b, i) => (i ? 'L' : 'M') + nx(b.t + 2.5).toFixed(1) + ',' + ny(b.c).toFixed(1)).join('');
+    const segs = D.ORDER.map(k => {
+      const s = sc.S[k], on = k === sc.act, hv = this._hv('sess|' + k), hl = sc.hk === 'sess|' + k;
+      return { x: Math.round(nx(s.start)), w: Math.round(nx(s.end) - nx(s.start)), wx: Math.round(nx(s.start)), ww: Math.max(2, Math.round(nx(s.formed) - nx(s.start))),
+        bg: on ? 'rgba(209,212,220,0.09)' : hl ? 'rgba(209,212,220,0.07)' : 'rgba(209,212,220,0.035)', bd: on ? '1px solid rgba(209,212,220,0.35)' : '1px solid transparent',
+        t: k, sub: (s.conf ? (s.side === 1 ? '↑ ' : '↓ ') + this._clk(s.conf) : '') + (s.status === 'done' ? ' · ' + (s.failed ? 'DR сломан' : 'DR удержался') : s.status === 'confirmed' && sc.live ? ' · идёт' : ''), c: on ? '#FFFFFF' : K.text2,
+        click: e => { if (e && e.stopPropagation) e.stopPropagation(); if (k !== this._st().session || this._st().rp) this._selSession(k); }, enter: hv.enter, leave: hv.leave };
+    });
+    const center = e => {
+      const rc = e.currentTarget.getBoundingClientRect(), sc2 = rc.width / W, px = (e.clientX - rc.left) / sc2;
+      const t = D.DAY0 + (px - x0) / (x1 - x0) * (D.DAY1 - D.DAY0), s2 = this._st(), span = s2.v1 - s2.v0;
+      let v0 = t - span / 2; v0 = Math.min(Math.max(v0, D.DAY0 - 30), D.DAY1 + 30 - span);
+      this.setState({ v0, v1: v0 + span });
+    };
+    return { spark, segs, fx: Math.round(nx(Math.max(st.v0, D.DAY0 - 30))), fw: Math.max(6, Math.round(nx(Math.min(st.v1, D.DAY1 + 30)) - nx(Math.max(st.v0, D.DAY0 - 30)))), nowx: Math.round(nx(D.NOW)), mx: sc.live ? -10 : Math.round(nx(sc.obs)), click: center };
+  }
+  renderVals() {
+    const st = this._st(), cfg = this._cfg(), K = this._C();
+    const sc = this._scene(cfg, st), m = this._mouse(), xs = cfg.PW;
+    const tb = this._toolbar(sc, st), P = this._panelB(sc), bot = this._bottom(sc, 1920, 168), nav = this._nav(sc, st), band = this._band(sc, st);
+    const anchors = sc.tags.filter(t => Math.abs(t.ty - t.y) > 1.5).map(t => ({ x: xs, y: Math.round(t.y), bg: t.kind === 'dr' ? K.white : '#9BA1AC' }));
+    const conf = sc.A.conf ? (sc.A.side === 1 ? '↑ ' : '↓ ') + this._clk(sc.A.conf) : '';
+    const side = sc.A.side || 1, xNow = Math.max(0, Math.round(sc.X(sc.obs)));
+    // continuation: soft green cloud (blurred cells) under crisp iso-lines
+    const cloud = sc.cells.filter(c => c.kind === 'max').map(c => ({ x: c.x - xNow - 1, y: c.y - 1, w: c.w + 2, h: c.h + 2, bg: this._a(K.ext, Math.round((0.16 + 0.62 * c.f) * 100) / 100) }));
+    // pullback: red triangles, one per dense cell
+    const tris = sc.cells.filter(c => c.kind === 'min').map(c => this._tri(c.R, c.f, side, c.bd !== 'none'));
+    const hits = sc.cells.map(c => ({ x: c.x, y: c.y, w: c.w, h: c.h, bd: c.bd === 'none' || c.kind === 'min' ? '1px solid transparent' : '1.5px solid #FFFFFF', enter: c.enter, leave: c.leave, click: c.click }));
+    const pickTri = sc.picks.filter(q => q.kind === 'min').map(q => this._tri({ x0: q.x, x1: q.x + q.w, y0: q.y, y1: q.y + q.h }, q.f, side, true));
+    const pickBox = sc.picks.filter(q => q.kind === 'max').map(q => ({ x: q.x, y: q.y, w: q.w, h: q.h, bg: q.bg }));
+    const cr = st.layers.rclust && sc.ov ? this._contours(sc, 'min') : ['', '', ''], ce = st.layers.eclust && sc.ov ? this._contours(sc, 'max') : ['', '', ''];
+    // zone marks: a small rank and a quiet share; the details only under the pointer
+    const zl = sc.zones.map(z => {
+      const on = sc.hk === z.key;
+      const lx = z.R.x1 + 58 > cfg.PW ? Math.round(z.R.x0) - (on ? 150 : 58) : Math.round(z.R.x1) + 4;
+      return { x: lx, y: Math.round(z.R.y0 + (z.R.y1 - z.R.y0) / 2) - 8, t: String(z.z.rank), pct: this._pct(z.z.pct), when: on ? this._clk(Math.max(z.z.t, sc.obs)) + '–' + this._clk(z.z.t_hi) : '', wd: on ? 'inline' : 'none',
+        bg: z.hue, pc: on ? '#FFFFFF' : '#8F939E', box: on ? 'block' : 'none', bx: z.x, by: z.y, bw: z.w, bh: z.h, bb: '1.5px solid ' + z.hue, enter: z.enter, leave: z.leave, click: z.click };
+    });
+    zl.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < zl.length; i++) for (let j = 0; j < i; j++) if (Math.abs(zl[i].x - zl[j].x) < 56 && Math.abs(zl[i].y - zl[j].y) < 17) zl[i].y = zl[j].y + 17;
+    return {
+      tb, P, bot, nav, m, sb: this._scrub(), band: band.bars, bandMark: band.mark, chartRef: this._refCb(), cursor: st.drag ? 'grabbing' : 'crosshair',
+      boxes: sc.boxes, grid: sc.grid, gridT: sc.gridT, lines: sc.lines, lhits: sc.lhits, zlab: zl, xNow, cloudW: Math.max(0, cfg.PW - xNow), cloud, tris, hits, pickTri, pickBox,
+      cr0: cr[0], ce0: ce[0], ce1: ce[1], ce2: ce[2],
+      picks: [], wicks: sc.wicks, bodies: sc.bodies, chits: sc.chits, pills: sc.pills, vlines: sc.vlines, glines: sc.glines, xh: sc.xh,
+      ticks: sc.ticks, tags: this._tagBoxes(sc, xs, st.layers.ladder ? 'muted' : false), anchors,
+      tlabels: sc.tlabels, ttags: sc.ttags, slabels: sc.slabels, lg: sc.legend, act: sc.act, conf, confBg: sc.A.side === 1 ? K.up : K.dn, confShow: conf ? 'inline-flex' : 'none',
+      hasFan: !!sc.fan, fanArea: sc.fan ? sc.fan.area : 'M0,0', fanMid: sc.fan ? sc.fan.mid : 'M0,0',
+      priceLine: sc.priceLine || { x: 0, y: 0, w: 0, h: 0, bg: 'transparent', op: 0 }, touchLine: sc.touchLine || { x: 0, y: 0, w: 0, h: 0, bg: 'transparent' },
+      zoomIn: () => this._zoomBtn(-1), zoomOut: () => this._zoomBtn(1), reset: () => this._reset(), replay: !sc.live, live: sc.live
+    };
+  }
+
+}
+</script>
+</body>
+</html>
