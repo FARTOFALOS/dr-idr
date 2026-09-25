@@ -1,0 +1,44 @@
+<div style="position: relative; width: 1920px; height: 1000px; overflow: hidden; background: #0B0D10; color: #D1D4DC; font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif; font-size: 13px; user-select: none">
+__TOOLBAR__
+<div ref="{{chartRef}}" onMouseDown="{{m.down}}" onMouseMove="{{m.move}}" onMouseUp="{{m.up}}" onMouseLeave="{{m.leave}}" onWheel="{{m.wheel}}" style="position: absolute; left: 0px; top: 44px; width: 1568px; height: 788px; overflow: hidden; background: #0B0D10; cursor: {{cursor}}">
+__CHART__
+<div style="position: absolute; left: 1372px; top: 0px; width: 88px; height: 760px; background: #0D0F13; border-left: 1px solid #191D24"></div>
+<sc-if value="{{ladderOn}}" hint-placeholder-val="{{true}}">
+<sc-for list="{{ladder}}" as="e" hint-placeholder-count="0"><div onMouseEnter="{{e.enter}}" onMouseLeave="{{e.leave}}" onClick="{{e.click}}" style="position: absolute; left: {{e.hit.x}}px; top: {{e.hit.y}}px; width: {{e.hit.w}}px; height: {{e.hit.h}}px; cursor: pointer"><div style="position: absolute; left: {{e.lx}}px; top: 4px; width: {{e.w}}px; height: 4px; border-radius: 2px; background: {{e.bg}}"></div></div></sc-for>
+<sc-for list="{{ladderT}}" as="e" hint-placeholder-count="0"><div style="position: absolute; left: {{e.x}}px; top: {{e.y}}px; font-size: 12.5px; line-height: 16px; color: {{e.c}}; font-weight: {{e.fw}}; pointer-events: none">{{e.t}}</div></sc-for>
+</sc-if>
+__SCALE__
+__AXIS__
+__LEGEND__
+__CARD__
+</div>
+<div style="position: absolute; left: 1568px; top: 44px; width: 352px; height: 788px; box-sizing: border-box; padding: 18px 18px 16px 18px; background: #0F1216; border-left: 1px solid #1E232B; display: flex; flex-direction: column; gap: 16px; overflow: hidden">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 12.5px; color: #9598A1">{{P.f.bigLabel}}</div>
+<div style="font-size: 30px; line-height: 36px; font-weight: 600; color: {{P.f.bigCol}}">{{P.f.big}}</div>
+<div title="{{P.f.ntip}}" style="display: {{P.showN}}; align-items: center; gap: 6px; font-size: 12.5px; color: #9598A1; cursor: help"><span>{{P.f.n}}</span><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"></circle><path d="M8 7.2v4M8 4.8v.2"></path></svg></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{P.rows}}" as="r" hint-placeholder-count="2"><div onMouseEnter="{{r.enter}}" onMouseLeave="{{r.leave}}" onClick="{{r.click}}" style="display: flex; justify-content: space-between; align-items: center; height: 30px; padding: 0px 8px; margin: 0px -8px; border-radius: 6px; background: {{r.bg}}; cursor: {{r.cur}}; font-size: 14px"><span style="color: #B2B5BE">{{r.label}}</span><span style="color: #E6E8EE">{{r.value}}</span></div></sc-for>
+</div>
+<sc-if value="{{P.showZ}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-direction: column; gap: 3px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #9598A1; margin-bottom: 3px"><span style="width: 10px; height: 10px; border-radius: 2px; background: #3D9BFF"></span>ОТКАТ ЗАКОНЧИТСЯ</div>
+<sc-for list="{{P.zmin}}" as="z" hint-placeholder-count="3"><div onMouseEnter="{{z.enter}}" onMouseLeave="{{z.leave}}" onClick="{{z.click}}" style="display: flex; align-items: center; gap: 10px; height: 32px; box-sizing: border-box; padding: 0px 8px; margin: 0px -8px; border-radius: 6px; background: {{z.bg}}; border: {{z.bd}}; cursor: pointer; font-size: 13.5px; white-space: nowrap"><span style="width: 18px; height: 18px; border-radius: 9px; background: {{z.hue}}; color: #0B0D10; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">{{z.rank}}</span><span style="color: #B2B5BE; width: 88px; flex-shrink: 0">{{z.time}}</span><span style="color: #E6E8EE; flex-grow: 1">{{z.price}}</span><span style="color: #FFFFFF; font-weight: 600">{{z.pct}}</span></div></sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 3px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #9598A1; margin-bottom: 3px"><span style="width: 10px; height: 10px; border-radius: 2px; background: #B07CFF"></span>ЭКСТРЕМУМ</div>
+<sc-for list="{{P.zmax}}" as="z" hint-placeholder-count="3"><div onMouseEnter="{{z.enter}}" onMouseLeave="{{z.leave}}" onClick="{{z.click}}" style="display: flex; align-items: center; gap: 10px; height: 32px; box-sizing: border-box; padding: 0px 8px; margin: 0px -8px; border-radius: 6px; background: {{z.bg}}; border: {{z.bd}}; cursor: pointer; font-size: 13.5px; white-space: nowrap"><span style="width: 18px; height: 18px; border-radius: 9px; background: {{z.hue}}; color: #0B0D10; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">{{z.rank}}</span><span style="color: #B2B5BE; width: 88px; flex-shrink: 0">{{z.time}}</span><span style="color: #E6E8EE; flex-grow: 1">{{z.price}}</span><span style="color: #FFFFFF; font-weight: 600">{{z.pct}}</span></div></sc-for>
+</div>
+</sc-if>
+<div style="flex-grow: 1"></div>
+<div style="display: flex; flex-direction: column; gap: 2px; border-top: 1px solid #1E232B; padding-top: 12px">
+<div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #9598A1; margin-bottom: 3px">СЕССИИ ДНЯ</div>
+<sc-for list="{{P.days}}" as="d" hint-placeholder-count="3"><div onClick="{{d.click}}" onMouseEnter="{{d.enter}}" onMouseLeave="{{d.leave}}" style="display: flex; align-items: center; gap: 10px; height: 30px; padding: 0px 8px; margin: 0px -8px; border-radius: 6px; background: {{d.bg}}; cursor: pointer; font-size: 13.5px; white-space: nowrap"><span style="width: 38px; font-weight: 700; color: {{d.c}}">{{d.k}}</span><span style="width: 62px; color: {{d.ac}}">{{d.conf}}</span><span style="flex-grow: 1; color: #B2B5BE">{{d.st}}</span><span style="width: 7px; height: 7px; border-radius: 4px; background: {{d.dot}}"></span></div></sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; border-top: 1px solid #1E232B; padding-top: 12px">
+<sc-for list="{{P.lv}}" as="r" hint-placeholder-count="2"><div onMouseEnter="{{r.enter}}" onMouseLeave="{{r.leave}}" onClick="{{r.click}}" style="display: flex; justify-content: space-between; align-items: center; height: 30px; padding: 0px 8px; margin: 0px -8px; border-radius: 6px; background: {{r.bg}}; cursor: pointer; font-size: 14px"><span style="color: #B2B5BE">{{r.label}}</span><span style="color: #E6E8EE">{{r.value}}</span></div></sc-for>
+</div>
+</div>
+__BOTTOM__
+</div>

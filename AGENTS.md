@@ -22,7 +22,9 @@ against what happened next.
 - **He only double-clicks the desktop shortcut "DR Lab".** Never ask him to run commands, edit files or open
   terminals. Any change you make must keep that shortcut working from a cold start (PC reboot). Verify it yourself.
 - He judges the product by the screen. His interface requirements are binding: `docs/UI_RULES.md`. They came from
-  many iterations; re-read them before any visual change.
+  many iterations; re-read them before any visual change. On 2026-09-25 he chose a redesign (`docs/DESIGN.md`,
+  mockups in `design/`): it is the target of the next UI work and records which rules it changes; it is not
+  implemented yet.
 
 ## Read in this order
 
@@ -51,6 +53,7 @@ studies/                  research scripts with their results (e.g. intermarket.
 tests/smoke.py            offline checks; run after every change
 tests/ui_check.js         in-page check for text overlaps and layout; evaluate it in the browser
 docs/                     everything an agent needs to understand and extend the tool
+design/                   interactive mockups of the chosen redesign (synthetic data), see docs/DESIGN.md
 ```
 
 ## Hard rules (do not break; if a task seems to need it, ask the operator first)
