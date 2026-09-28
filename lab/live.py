@@ -36,7 +36,7 @@ def fetch(inst):
     chart is switched to 5 minutes for 2-4 s and restored."""
     if inst not in SYMBOLS: raise ValueError("Unknown instrument")
     with _lock:
-        r = subprocess.run(["node", str(ROOT / "tv_fetch.mjs"), SYMBOLS[inst], "500"], capture_output=True, text=True,
+        r = subprocess.run(["node", str(ROOT / "tv_fetch.mjs"), SYMBOLS[inst], "1000"], capture_output=True, text=True,
                            timeout=90, encoding="utf-8")
     try:
         d = json.loads(r.stdout.strip().splitlines()[-1])

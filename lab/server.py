@@ -56,6 +56,18 @@ class Handler(SimpleHTTPRequestHandler):
                         return self.json({'status': 'error', 'message': str(exc)}, 200)
                 at = params.get('at')
                 return self.json(live.state(inst, session, int(float(at)) if at not in (None, '') else None))
+            if url.path in ('/api/day', '/api/day/refresh', '/api/cohort'):
+                import live, scene21
+                inst = params.get('instrument', 'NQ')
+                if url.path == '/api/day/refresh':
+                    try:
+                        live.fetch(inst)
+                    except Exception as exc:
+                        return self.json({'status': 'error', 'message': str(exc)}, 200)
+                if url.path == '/api/cohort':
+                    at = params.get('at')
+                    return self.json(scene21.cohort(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None))
+                return self.json(scene21.day_view(inst))
             if url.path == '/api/spec':
                 path = ROOT.parent/'docs'/'SEMANTICS.md'
                 return self.json({'text':path.read_text(encoding='utf-8') if path.exists() else 'Смысловая спецификация готовится вместе с интерфейсом.'})

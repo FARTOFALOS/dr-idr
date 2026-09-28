@@ -1,0 +1,1879 @@
+// Built from design/sozvezdiya-21/src (app.js + panel21.js) by its build.py: edit there.
+// ================= DR Lab · «Созвездия» (design 21): the working screen and its mockup =================
+// With window.__DAYS__ (design/sozvezdiya-21/built) it runs on two synthetic days; without it (lab/dist) it is the
+// working screen: day bars and similar sessions come from the local server (lab/scene21.py, docs/SEMANTICS.md).
+// Synthetic days only (design/clusters-2026-09-28/gen_days.py + a few VIBs from build.py): M5 bars [open minute, o, h, l,
+// c], minutes of the trading day in ET, the evening before negative. The similar sessions are SIMULATED (a stand-in for
+// the history cohort): not market data, not the lab's numbers. Replay obeys prefix honesty: only bars closed by the
+// chosen minute are used; later bars are shown, never used.
+(function () {
+  'use strict';
+  const DAYS = window.__DAYS__;
+  const API = !DAYS;               // the working screen (data from the local server) or the synthetic mockup
+  let NOW = 788;                   // the live minute (day minutes, ET); in the mockup 13:08, the 13:05 bar is forming
+  const NEAR = 15;                 // the first minutes after the moment: shown as one number, not as a cloud
+  const SESS = {
+    ADR: { k: 'ADR', start: -270, formed: -210, end: 120 },
+    ODR: { k: 'ODR', start: 180, formed: 240, end: 510 },
+    RDR: { k: 'RDR', start: 570, formed: 630, end: 960 }
+  };
+  const ORDER = ['ADR', 'ODR', 'RDR'];
+  // yesterday's RDR box (synthetic): its levels run through the whole day as structure
+  let PREV = API ? null : { k: 'PREV', name: 'RDR 23.09', start: -360, drH: 24518.5, drL: 24402.25, idrH: 24506, idrL: 24411.5 };
+  const A = { inst: 'NQ', day: null, D: null, cohorts: new Map(), pending: new Set(), auto: true, timer: 0, busy: false, error: null };
+  const C = {
+    bg: '#08090C', grid: '#1C2027', text: '#D1D4DC', text2: '#A3A8B3', text3: '#6F7582', axis: '#0B0C10',
+    up: '#089981', dn: '#F23645', cont: '#5DB8FF', pull: '#FFB347', upS: '#A9B9E6', dnS: '#D7A3C9',
+    dr: '#EEF1F5', idr: '#AEBACB', mid: '#8B95A5', open: '#6B7380', std: '#5F6877', stdOn: '#A7B2C3',
+    ADR: '#8E7CF0', ODR: '#E27AB8', PREV: '#8FA0B8', vib: '#D6DCE6', replay: '#F7C948', fan: '#A9B8CE', brk: '#F23645'
+  };
+  const PAL = {
+    mint: { name: 'Мята / коралл', cont: '#63C3A5', pull: '#DE8580' },
+    lav: { name: 'Лаванда / персик', cont: '#9C8DF5', pull: '#E9A27A' },
+    cyan: { name: 'Голубой / янтарь', cont: '#5DB8FF', pull: '#F2AE4E' }
+  };
+  // everything a viewer can tune in «Настройки»; kept in this browser (localStorage), «Сбросить» restores these
+  const DEF = {
+    cont: '#63C3A5', pull: '#DE8580', up: '#A9B9E6', dn: '#D7A3C9',
+    starA: 50, glowA: 17, contourA: 30, markA: 42, markSize: 100,
+    stripA: 80, projA: 90, fanA: 50, typ: '#D1D4DC', typA: 70,
+    dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
+    mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
+    prevA: 46, vib: '#D6DCE6', vibA: 20, vibNQ: 2, vibES: 0.5, vibYM: 5, upC: '#089981', dnC: '#F23645', bg: '#08090C'
+  };
+  const DASH = { solid: [], dash: [7, 4], dots: [1.5, 3.5], dashdot: [9, 3, 2, 3] };
+  const CFG_KEY = 'drlab.sozvezdiya21.cfg';
+  const cfg = Object.assign({}, DEF);
+  try { Object.assign(cfg, JSON.parse(localStorage.getItem(CFG_KEY) || '{}')); } catch (e) { /* no storage: defaults */ }
+  const saveCfg = () => { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* not kept */ } };
+  const SCHEMA = [
+    ['Созвездия и звёзды', [['cont', 'Продолжение', 'color'], ['pull', 'Откат', 'color'], ['up', 'Верх (до подтверждения)', 'color'], ['dn', 'Низ (до подтверждения)', 'color'],
+      ['starA', 'Звёзды · яркость', 'range', 0, 100], ['glowA', 'Свечение созвездий', 'range', 0, 60], ['contourA', 'Контур созвездий', 'range', 0, 100],
+      ['markA', 'Проценты в созвездиях · яркость', 'range', 10, 100], ['markSize', 'Проценты · размер', 'range', 50, 150]]],
+    ['Полоса, плотность, веер', [['stripA', 'Полоса времени снизу', 'range', 10, 100], ['projA', 'Плотность по цене справа', 'range', 10, 100],
+      ['fanA', 'Веер 20–80 %', 'range', 0, 100], ['typ', 'Медиана веера · цвет', 'color'], ['typA', 'Медиана веера · яркость', 'range', 10, 100]]],
+    ['Линии сессии', [['dr', 'DR · цвет', 'color'], ['drA', 'DR · яркость', 'range', 10, 100], ['drW', 'DR · толщина', 'range', 0.5, 3, 0.1],
+      ['idr', 'IDR · цвет', 'color'], ['idrA', 'IDR · яркость', 'range', 10, 100], ['idrW', 'IDR · толщина', 'range', 0.5, 3, 0.1], ['idrDash', 'IDR · вид', 'dash'],
+      ['mid', 'mid · цвет', 'color'], ['midA', 'mid · яркость', 'range', 10, 100], ['midDash', 'mid · вид', 'dash'],
+      ['std', 'STD · цвет', 'color'], ['stdA', 'STD стороны в игре · яркость', 'range', 5, 100], ['stdOffA', 'STD другой стороны · яркость', 'range', 0, 100]]],
+    ['Прошлые сессии и VIB', [['prevA', 'DR / IDR прошлых сессий · яркость', 'range', 5, 100], ['vib', 'VIB · цвет', 'color'], ['vibA', 'VIB · яркость', 'range', 5, 60], ['vibNQ', 'VIB NQ · разрыв от, пунктов', 'range', 0, 6, 0.25], ['vibES', 'VIB ES · разрыв от, пунктов', 'range', 0, 3, 0.25], ['vibYM', 'VIB YM · разрыв от, пунктов', 'range', 0, 20, 1]]],
+    ['График', [['upC', 'Свеча вверх', 'color'], ['dnC', 'Свеча вниз', 'color'], ['bg', 'Фон', 'color']]]
+  ];
+  const DASH_NAMES = { solid: 'сплошная', dash: 'штрих', dots: 'точки', dashdot: 'штрихпунктир' };
+  const roleCol = id => id === 'cont' ? cfg.cont : id === 'pull' ? cfg.pull : id === 'up' ? cfg.up : cfg.dn;
+  const FONT = '-apple-system,BlinkMacSystemFont,"Trebuchet MS",Roboto,Ubuntu,sans-serif';
+  const SCENES = [['conf', 'Подтверждено'], ['wait', 'До подтверждения'], ['brk', 'Слом DR']];
+  const LAYERS = [
+    ['stars', 'Звёзды: похожие сессии', C.fan], ['cons', 'Созвездия и проценты', '#63C3A5'], ['fan', 'Веер и его медиана', C.fan],
+    ['proj', 'Плотность по цене справа', '#DE8580'], ['strip', 'Полоса времени снизу', '#63C3A5'], ['std', 'STD', C.stdOn],
+    ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VIB (объёмные имбалансы)', C.vib], ['hist', 'Шесть графиков истории (снизу)', C.text2], ['snap21', 'Контуры на момент подтверждения', '#AAB5C4']
+  ];
+
+  // ---------- small helpers ----------
+  const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+  const mkRng = seed => { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
+  const gauss = r => { let u = 0; while (u === 0) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); };
+  const clk = m => { const x = ((Math.round(m) % 1440) + 1440) % 1440; return String(Math.floor(x / 60)).padStart(2, '0') + ':' + String(x % 60).padStart(2, '0'); };
+  const num = (v, d) => Number(v).toLocaleString('ru-RU', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const px = v => { const r = Math.round(v / 0.25) * 0.25; return num(r, r % 1 === 0 ? 0 : 2); };
+  const pct = v => num(v, v >= 10 || v === 0 ? 0 : 1) + '%';
+  const sgn = v => (v >= 0 ? '+' : '−') + num(Math.abs(v), 2);
+  const rgb = hex => { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+  const mixW = (hex, f) => { const c = rgb(hex).map(v => Math.round(v + (255 - v) * f)); return '#' + c.map(v => v.toString(16).padStart(2, '0')).join(''); };
+  const rgba = (hex, a) => { const c = rgb(hex); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const stepName = (j, above) => (above ? '+' : '−') + num(j * 0.5, 1);
+
+  // ---------- the day: bars and volume imbalances ----------
+  const DD = {};
+  function vibsOf(bars) {
+    const vibs = [];
+    for (let i = 1; i < bars.length; i++) {
+      const a = bars[i - 1], b = bars[i];
+      if (Math.abs(b.o - a.c) < 1e-9 || b.t - a.t !== 5) continue;
+      const lo = Math.min(a.c, b.o), hi = Math.max(a.c, b.o);
+      let fill = null;   // rebalanced: a later bar enters the gap, even with a wick
+      for (let j = i + 1; j < bars.length; j++) { const q = bars[j]; if (q.l < hi && q.h > lo) { fill = q.t; break; } }
+      vibs.push({ t: b.t, lo, hi, dir: b.o > a.c ? 1 : -1, fill });
+    }
+    return vibs;
+  }
+  const MON = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'], WD = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
+  function day(d) {
+    if (API) {
+      const x = A.day;
+      if (!x || x.status !== 'ok') return A.D = { d: 'none', bars: [], vibs: [], date: '', dm: '', S: {}, O: {} };
+      const key = A.inst + '|' + x.fetched_at;
+      if (A.D && A.D.d === key) return A.D;
+      const [yy, mm, dd] = x.date.split('-').map(Number);
+      const bars = x.bars.map(b => ({ t: b[0], o: b[1], h: b[2], l: b[3], c: b[4] }));
+      return (A.D = { d: key, bars, vibs: vibsOf(bars), date: WD[x.weekday] + ', ' + dd + ' ' + MON[mm - 1], dm: dd + ' ' + MON[mm - 1], S: {}, O: {} });
+    }
+    if (DD[d]) return DD[d];
+    const bars = DAYS[d].map(b => ({ t: b[0], o: b[1], h: b[2], l: b[3], c: b[4] }));
+    return (DD[d] = { d, bars, vibs: vibsOf(bars), date: d === 'B' ? 'пт, 25 сен' : 'чт, 24 сен', dm: d === 'B' ? '25 сен' : '24 сен', S: {}, O: {} });
+  }
+  // ---------- one session at an observed minute (the rules of lab/live.py; DR, confirmation, break from closed M5) ----------
+  function sess(D, k, obs, live) {
+    const S = SESS[k], key = k + '|' + obs + '|' + (live ? 1 : 0);
+    if (D.S[key]) return D.S[key];
+    const closedBy = live ? NOW : obs;
+    const closed = D.bars.filter(b => b.t + 5 <= closedBy), known = live ? D.bars : closed;
+    const res = { k, start: S.start, formed: S.formed, end: S.end, obs, live };
+    const win = known.filter(b => b.t >= S.start && b.t < S.formed);
+    if (!win.length || obs < S.start) { res.status = 'before'; return (D.S[key] = res); }
+    res.open = win[0].o;
+    res.drH = Math.max(...win.map(b => b.h)); res.drL = Math.min(...win.map(b => b.l));
+    res.idrH = Math.max(...win.map(b => Math.max(b.o, b.c))); res.idrL = Math.min(...win.map(b => Math.min(b.o, b.c)));
+    res.mid = (res.idrH + res.idrL) / 2;
+    res.complete = closed.filter(b => b.t >= S.start && b.t < S.formed).length === (S.formed - S.start) / 5;
+    if (!res.complete) { res.status = 'forming'; return (D.S[key] = res); }
+    res.close = win[win.length - 1].c; res.boxUp = res.close >= res.open; res.width = res.idrH - res.idrL;
+    const lim = Math.min(obs, S.end), w = res.width;
+    const inSess = known.filter(b => b.t >= S.formed && b.t < lim), last = inSess[inSess.length - 1] || win[win.length - 1];
+    res.priceNow = last.c; res.lastT = last.t;
+    let conf = null;
+    for (const b of closed) {
+      if (b.t < S.formed || b.t + 5 > lim) continue;
+      if (b.c > res.drH) { conf = { t: b.t + 5, side: 1 }; break; }
+      if (b.c < res.drL) { conf = { t: b.t + 5, side: -1 }; break; }
+    }
+    if (!conf) { res.status = obs >= S.end ? 'noconf' : 'waiting'; return (D.S[key] = res); }
+    const side = conf.side;
+    Object.assign(res, { conf: conf.t, side, edge: side === 1 ? res.idrH : res.idrL, opp: side === 1 ? res.drL : res.drH });
+    res.coord = v => side * (v - res.edge) / w;
+    res.price = c => res.edge + side * c * w;
+    for (const b of closed) if (b.t + 5 > conf.t && b.t + 5 <= lim && side * (b.c - res.opp) < 0) { res.failed = b.t + 5; break; }
+    res.nowCoord = res.coord(res.priceNow);
+    let rs = Infinity, rst = null;
+    for (const b of inSess) {
+      if (b.t + 5 <= conf.t || (res.failed && b.t + 5 > res.failed)) continue;
+      const lo = res.coord(side === 1 ? b.l : b.h);
+      if (lo < rs) { rs = lo; rst = b.t + 5; }
+    }
+    if (rst != null) Object.assign(res, { retrSoFar: rs, retrT: rst, retrP: res.price(rs) });
+    let far = -Infinity, fart = null;
+    for (const b of inSess) {
+      if (b.t + 5 <= conf.t || (res.failed && b.t + 5 > res.failed)) continue;
+      const hi = res.coord(side === 1 ? b.h : b.l);
+      if (hi > far) { far = hi; fart = b.t + 5; }
+    }
+    if (fart != null) Object.assign(res, { farSoFar: far, farT: fart, farP: res.price(far) });
+    const taken = (sd, edge, from, to) => {
+      const out = [];
+      for (let j = 1; j <= 6; j++) {
+        const L = edge + sd * j * w / 2, b = inSess.find(q => q.t + 5 > from && q.t + 5 <= to && (sd === 1 ? q.h >= L : q.l <= L));
+        if (!b) { out.push({ j, t: null, name: stepName(j, sd === 1) }); break; }
+        out.push({ j, t: b.t + 5, name: stepName(j, sd === 1) });
+      }
+      return out;
+    };
+    res.taken = taken(side, res.edge, conf.t, res.failed || lim);
+    if (res.failed) {
+      res.nside = -side; res.nedge = side === 1 ? res.idrL : res.idrH;
+      res.ncoord = v => res.nside * (v - res.nedge) / w;
+      res.nprice = c => res.nedge + res.nside * c * w;
+      res.nowN = res.ncoord(res.priceNow);
+      res.takenN = taken(res.nside, res.nedge, res.failed - 5, lim);
+    }
+    res.status = obs >= S.end ? 'done' : res.failed ? 'broken' : 'confirmed';
+    return (D.S[key] = res);
+  }
+  // the named lines of a session, as Pine DR/IDR V1.5 draws them (STD = steps of 0.5 IDR from the IDR edges)
+  function levels(s) {
+    if (s.drH == null) return [];
+    const w = s.idrH - s.idrL, L = [
+      { id: 'drH', name: 'DR', full: 'DR high', p: s.drH, type: 'dr' }, { id: 'drL', name: 'DR', full: 'DR low', p: s.drL, type: 'dr' },
+      { id: 'idrH', name: 'IDR', full: 'IDR high', p: s.idrH, type: 'idr' }, { id: 'idrL', name: 'IDR', full: 'IDR low', p: s.idrL, type: 'idr' },
+      { id: 'mid', name: 'mid', full: 'середина IDR', p: s.mid, type: 'mid' }, { id: 'open', name: 'open', full: 'открытие сессии', p: s.open, type: 'open' }
+    ];
+    for (let j = 1; j <= 6; j++) {
+      L.push({ id: 'u' + j, name: stepName(j, true), full: 'STD ' + stepName(j, true), p: s.idrH + j * w / 2, type: 'std', dir: 1, j });
+      L.push({ id: 'd' + j, name: stepName(j, false), full: 'STD ' + stepName(j, false), p: s.idrL - j * w / 2, type: 'std', dir: -1, j });
+    }
+    return L;
+  }
+  function where(s, p) {
+    const L = levels(s).filter(l => l.type !== 'open').sort((a, b) => a.p - b.p), w = s.idrH - s.idrL;
+    let best = null;
+    for (const l of L) if (!best || Math.abs(l.p - p) < Math.abs(best.p - p)) best = l;
+    if (best && Math.abs(best.p - p) < 0.12 * w) return 'у ' + (best.type === 'std' ? best.name : best.full);
+    let a = null, b = null;
+    for (const l of L) { if (l.p <= p) a = l; if (l.p > p && !b) b = l; }
+    const nm = l => (l.type === 'std' ? l.name : l.full);
+    if (a && b) return 'между ' + nm(a) + ' и ' + nm(b);
+    return a ? 'выше ' + nm(a) : b ? 'ниже ' + nm(b) : '';
+  }
+
+  // ---------- similar sessions: a simulated stand-in for the history cohort, deterministic per day, session and minute ----------
+  function walk(r, g, x0, obs, end, o, grid) {
+    let x = x0, mn = Infinity, tmn = obs + 1, mx = -Infinity, tmx = obs + 1, cross = 0, gi = 0, bh = -Infinity, bl = Infinity;
+    const xs = x0;
+    const G = grid.length, cl = new Float32Array(G), hi = new Float32Array(G), lo = new Float32Array(G);
+    for (let m = Math.floor(obs) + 1; m <= end; m++) {
+      const mu = o.mu + (cross ? cross * (o.trend || 0) : 0);
+      x += mu - o.pull * Math.exp(-(m - obs) / o.tau) + o.sig * g();
+      const l = x - Math.abs(g()) * o.sig * 0.9, h = x + Math.abs(g()) * o.sig * 0.9;
+      if (l < mn) { mn = l; tmn = m; }
+      if (h > mx) { mx = h; tmx = m; }
+      if (h > bh) bh = h;
+      if (l < bl) bl = l;
+      if (o.hiC != null && !cross && m % 5 === 0) { if (x > o.hiC) cross = 1; else if (x < o.loC) cross = -1; }
+      while (gi < G && grid[gi] === m) { cl[gi] = x; hi[gi] = bh; lo[gi] = bl; gi++; bh = -Infinity; bl = Infinity; }
+    }
+    return { mn, tmn, mx, tmx, cross, cl, hi, lo, xs };
+  }
+  function simulate(key, n, x0, obs, end, o, grid) {
+    const r = mkRng(hash(key)), g = () => gauss(r), out = [];
+    for (let i = 0; i < n; i++) {
+      const oo = Object.assign({}, o, { mu: o.mu + (o.muJ || 0) * g(), pull: o.pull * (0.5 + r()), tau: o.tau * (0.6 + 0.8 * r()), sig: o.sig * (0.75 + 0.5 * r()) });
+      if (o.rev && r() < o.rev) oo.mu = -Math.abs(oo.mu) * 3;
+      const w = walk(r, g, x0 + 0.1 * g(), obs, end, oo, grid);
+      const y = 2006 + Math.floor(r() * 20), dd = 1 + Math.floor(r() * 28), mm = 1 + Math.floor(r() * 12);
+      w.date = String(dd).padStart(2, '0') + '.' + String(mm).padStart(2, '0') + '.' + y;
+      out.push(w);
+    }
+    return out;
+  }
+  function overlay(D, s) {
+    if (!['confirmed', 'broken', 'waiting'].includes(s.status)) return null;
+    if (API) return apiOverlay(D, s);
+    const key = s.k + '|' + s.obs + '|' + s.status + '|' + (s.live ? 1 : 0);
+    if (D.O[key]) return D.O[key];
+    const obs = s.obs, end = s.end, r = mkRng(hash(D.d + 'n' + key)), grid = [];
+    for (let T = Math.floor(obs / 5) * 5 + 5; T <= end; T += 5) grid.push(T);
+    const ov = { s, obs, end, grid, key };
+    let pts;
+    if (s.status === 'confirmed') {
+      ov.mode = 'conf'; ov.N = 380 + Math.floor(r() * 140);
+      ov.sims = simulate(D.d + key, ov.N, s.nowCoord, obs, end, { mu: 0.0017, muJ: 0.0022, pull: 0.007, tau: 30, sig: 0.044, rev: 0.1 }, grid);
+      ov.u2p = s.price; ov.p2u = s.coord; ov.u0 = s.nowCoord;
+      ov.cond = (s.side === 1 ? 'лонг' : 'шорт') + ', подтверждение ' + clk(s.conf - 15) + '–' + clk(s.conf + 15) + ', DR цел, цена ±0,25 IDR';
+      pts = PTS.conf;
+    } else if (s.status === 'broken') {
+      ov.mode = 'brk'; ov.N = 160 + Math.floor(r() * 80);
+      ov.sims = simulate(D.d + key, ov.N, s.nowN, obs, end, { mu: 0.0016, muJ: 0.0022, pull: 0.012, tau: 18, sig: 0.042, rev: 0.1 }, grid);
+      ov.u2p = s.nprice; ov.p2u = s.ncoord; ov.u0 = s.nowN;
+      ov.cond = 'слом DR ' + (s.nside === 1 ? '↑' : '↓') + ' ' + clk(s.failed - 15) + '–' + clk(s.failed + 15) + ', цена ±0,25 IDR';
+      pts = PTS.conf;
+    } else {
+      ov.mode = 'wait'; ov.N = 480 + Math.floor(r() * 160);
+      const w = s.width, u = p => (p - s.idrL) / w;
+      ov.u2p = v => s.idrL + v * w; ov.p2u = u; ov.u0 = u(s.priceNow);
+      ov.sims = simulate(D.d + key, ov.N, ov.u0, obs, end, { mu: s.boxUp ? 0.0004 : -0.0004, muJ: 0.0006, pull: 0, tau: 1, sig: 0.04, hiC: u(s.drH), loC: u(s.drL), trend: 0.0022 }, grid);
+      const up = ov.sims.filter(p => p.cross === 1).length, dn = ov.sims.filter(p => p.cross === -1).length;
+      ov.dir = { up: 100 * up / ov.N, dn: 100 * dn / ov.N, none: 100 * (ov.N - up - dn) / ov.N };
+      ov.cond = 'подтверждения нет к ' + clk(obs) + ', цена ±0,25 IDR';
+      pts = PTS.wait;
+    }
+    // DR holds (SEMANTICS «DR удержится»): no 5-minute close beyond the opposite DR edge until the end of the session
+    if (ov.mode === 'conf') { const oppU = s.coord(s.opp); for (const p of ov.sims) p.held = !p.cl.some(v => v < oppU); }
+    return (D.O[key] = finishOverlay(ov, pts));
+  }
+  const PTS = { conf: [['cont', 'Продолжение', 'mx', 'tmx'], ['pull', 'Откат', 'mn', 'tmn']], wait: [['up', 'Верх', 'mx', 'tmx'], ['dn', 'Низ', 'mn', 'tmn']] };
+  function finishOverlay(ov, pts) {
+    ov.near = ov.end - ov.obs < 45 ? 5 : NEAR;
+    ov.roles = pts.map(q => role(ov, q[0], q[1], null, ov.sims.map((z, i) => ({ u: z[q[q.length - 2]], t: z[q[q.length - 1]], i }))));
+    ov.fan = fanOf(ov);
+    if (ov.mode === 'conf') ov.holds = 100 * ov.sims.filter(p => p.held).length / ov.N;
+    const mxs = Float64Array.from(ov.sims.map(q => q.mx)).sort(), mns = Float64Array.from(ov.sims.map(q => q.mn)).sort();
+    const cntGE = (a, v) => { let lo = 0, hi = a.length; while (lo < hi) { const m = (lo + hi) >> 1; if (a[m] < v) lo = m + 1; else hi = m; } return a.length - lo; };
+    ov.touch = p => { const u = ov.p2u(p); return 100 * (u >= ov.u0 ? cntGE(mxs, u) : ov.N - cntGE(mns, u + 1e-12)) / ov.N; };
+    return ov;
+  }
+  // the working screen: the similar sessions of 2006-2025 at this minute, measured by the server (lab/scene21.py)
+  function apiOverlay(D, s) {
+    const key = s.k + '|' + s.obs + '|' + (s.live ? 1 : 0), ck = D.d + '|' + key;
+    if (D.O[key]) return D.O[key];
+    const r = A.cohorts.get(ck);
+    if (!r) { requestCohort(ck, s); return null; }
+    const mode = { confirmed: 'conf', broken: 'brk', waiting: 'wait' }[s.status];
+    if (r.status !== 'ok' || r.mode !== mode || !r.n) return null;
+    const S = r.sims, ov = { s, obs: s.obs, end: s.end, grid: r.grid, key, mode, N: r.n, cond: r.cond, models: r.models };
+    ov.sims = S.mx.map((_, i) => ({ mx: S.mx[i], tmx: S.tmx[i], mn: S.mn[i], tmn: S.tmn[i], cl: S.cl[i], hi: S.hi[i], lo: S.lo[i], xs: S.pos[i],
+      date: S.date[i].split('-').reverse().join('.'), held: S.held ? S.held[i] : null, cross: S.cross ? S.cross[i] : 0 }));
+    if (mode === 'conf') { ov.u2p = s.price; ov.p2u = s.coord; ov.u0 = s.nowCoord; }
+    else if (mode === 'brk') { ov.u2p = s.nprice; ov.p2u = s.ncoord; ov.u0 = s.nowN; }
+    else { const w = s.width; ov.u2p = v => s.idrL + v * w; ov.p2u = p => (p - s.idrL) / w; ov.u0 = ov.p2u(s.priceNow); }
+    if (mode === 'wait') {
+      const up = ov.sims.filter(p => p.cross === 1).length, dn = ov.sims.filter(p => p.cross === -1).length;
+      ov.dir = { up: 100 * up / ov.N, dn: 100 * dn / ov.N, none: 100 * (ov.N - up - dn) / ov.N };
+    }
+    return (D.O[key] = finishOverlay(ov, mode === 'wait' ? PTS.wait : PTS.conf));
+  }
+  function requestCohort(ck, s) {
+    if (A.pending.has(ck)) return;
+    A.pending.add(ck);
+    fetch('/api/cohort?instrument=' + A.inst + '&session=' + s.k + (s.live ? '' : '&at=' + s.obs))
+      .then(r => r.json()).then(r => { A.cohorts.set(ck, r); if (A.cohorts.size > 60) A.cohorts.delete(A.cohorts.keys().next().value); })
+      .catch(() => A.cohorts.set(ck, { status: 'error' }))
+      .finally(() => { A.pending.delete(ck); redraw(true); });
+  }
+  function role(ov, id, name, col, pts) {
+    const nearT = ov.obs + ov.near, N = ov.N;
+    const stars = pts.map(q => ({ u: q.u, t: q.t, p: ov.u2p(q.u), i: q.i, near: q.t <= nearT, role: id }));
+    const far = stars.filter(q => !q.near);
+    const R = { id, name, stars, nNear: stars.length - far.length };
+    Object.defineProperty(R, 'col', { get: () => roleCol(id) });
+    R.nearPct = 100 * R.nNear / N;
+    R.nearP = R.nNear ? stars.filter(q => q.near).map(q => q.p).sort((a, b) => a - b)[R.nNear >> 1] : null;
+    R.cons = zoneDefs(ov, id).map((z, i) => zoneOf(ov, R, z, i, far));
+    R.peak = Math.max(1e-9, ...R.cons.map(k => k.g ? k.g.peak : 0));
+    const pm = new Map(), tm = new Map(), hm = new Map(), heat = new Map();
+    for (const q of far) { const b = Math.floor(q.u / 0.1 + 1e-9); pm.set(b, (pm.get(b) || 0) + 1); }
+    for (const q of stars) {
+      const tb = Math.floor((q.t - 1) / 15) * 15, ub = Math.floor(q.u / 0.1 + 1e-9);
+      tm.set(tb, (tm.get(tb) || 0) + 1); hm.set(ub, (hm.get(ub) || 0) + 1);
+      const hk = ub + '|' + tb; heat.set(hk, (heat.get(hk) || 0) + 1);
+    }
+    const P = b => { const a = ov.u2p(b * 0.1), c = ov.u2p(b * 0.1 + 0.1); return [Math.min(a, c), Math.max(a, c)]; };
+    R.pb = [...pm].map(([b, n]) => { const [pLo, pHi] = P(b); return { b, pLo, pHi, n, pct: 100 * n / N }; });
+    R.tb = [...tm].sort((a, b) => a[0] - b[0]).map(([t, n]) => ({ t, t1: t + 15, n, pct: 100 * n / N, near: t < nearT }));
+    R.hu = [...hm].sort((a, b) => a[0] - b[0]).map(([b, n]) => { const [pLo, pHi] = P(b); return { b, u: b * 0.1, pLo, pHi, n, pct: 100 * n / N }; });
+    R.heat = [...heat].map(([k, n]) => { const [b, t] = k.split('|').map(Number), [pLo, pHi] = P(b); return { b, u: b * 0.1, t, t1: t + 15, pLo, pHi, n, pct: 100 * n / N }; });
+    return R;
+  }
+  // density of the extremes on a grid of 2.5 min x 0.025 IDR, smoothed (6 min x 0.06 IDR), without the first minutes
+  function kde(stars, ov) {
+    if (stars.length < 3) return null;
+    const dt = 2.5, du = 0.025;
+    let uA = Infinity, uB = -Infinity;
+    for (const q of stars) { if (q.u < uA) uA = q.u; if (q.u > uB) uB = q.u; }
+    const u0 = uA - 0.3, t0 = ov.obs + ov.near - 10, nU = Math.ceil((uB + 0.3 - u0) / du) + 1, nT = Math.ceil((ov.end + 10 - t0) / dt) + 1;
+    const H = new Float32Array(nU * nT);
+    const add = (y, x, w) => { if (y >= 0 && y < nU && x >= 0 && x < nT) H[y * nT + x] += w; };
+    for (const q of stars) {
+      const fx = (q.t - t0) / dt, fy = (q.u - u0) / du, ix = Math.floor(fx), iy = Math.floor(fy), ax = fx - ix, ay = fy - iy;
+      add(iy, ix, (1 - ax) * (1 - ay)); add(iy, ix + 1, ax * (1 - ay)); add(iy + 1, ix, (1 - ax) * ay); add(iy + 1, ix + 1, ax * ay);
+    }
+    blur(H, nU, nT, 6 / dt, 0.06 / du);
+    let peak = 0;
+    for (let i = 0; i < H.length; i++) if (H[i] > peak) peak = H[i];
+    return { t0, dt, nT, u0, du, nU, v: H, peak };
+  }
+  function blur(H, nU, nT, sx, sy) {
+    const kern = s => { const r = Math.ceil(s * 3), a = new Float32Array(2 * r + 1); let sum = 0; for (let i = -r; i <= r; i++) { a[i + r] = Math.exp(-i * i / (2 * s * s)); sum += a[i + r]; } for (let i = 0; i < a.length; i++) a[i] /= sum; return a; };
+    const kx = kern(sx), ky = kern(sy), rx = (kx.length - 1) / 2, ry = (ky.length - 1) / 2, T = new Float32Array(H.length);
+    for (let y = 0; y < nU; y++) {
+      const o = y * nT;
+      for (let x = 0; x < nT; x++) { let s = 0; for (let i = -rx; i <= rx; i++) { const xx = x + i; if (xx >= 0 && xx < nT) s += H[o + xx] * kx[i + rx]; } T[o + x] = s; }
+    }
+    for (let x = 0; x < nT; x++) for (let y = 0; y < nU; y++) {
+      let s = 0;
+      for (let i = -ry; i <= ry; i++) { const yy = y + i; if (yy >= 0 && yy < nU) s += T[yy * nT + x] * ky[i + ry]; }
+      H[y * nT + x] = s;
+    }
+  }
+  const cellOf = (g, t, u) => { const x = Math.round((t - g.t0) / g.dt), y = Math.round((u - g.u0) / g.du); return x < 0 || y < 0 || x >= g.nT || y >= g.nU ? -1 : y * g.nT + x; };
+  // a constellation = a connected region where the density is at least 38 % of the role's peak; its share = the
+  // similar sessions whose extreme (after the first minutes) fell inside it, of all similar sessions
+  // three places per side, by price (the operator, 28.09: «от верхней границы, от центра, либо retirement setup от низа»,
+  // and three the same way for the continuation). A place = a price band in IDR units of the side being played;
+  // its share = the similar sessions whose extreme (after the first 15 minutes) fell in the band, of all similar ones.
+  function zoneDefs(ov, id) {
+    const s = ov.s, nm = u => { const p = ov.u2p(u), l = levels(s).find(q => Math.abs(q.p - p) < 1e-6); return l ? (l.type === 'std' ? l.name : l.full) : px(p); };
+    if (ov.mode === 'wait') {
+      const w = s.width, uH = (s.drH - s.idrL) / w, uL = (s.drL - s.idrL) / w;
+      return id === 'up' ? [{ name: 'выше +1,0', short: 'за +1,0', lo: 2, hi: Infinity }, { name: 'от DR high до +1,0', short: 'DR…+1,0', lo: uH, hi: 2 }, { name: 'не выше DR', short: 'в DR', lo: -Infinity, hi: uH }]
+        : [{ name: 'не ниже DR', short: 'в DR', lo: uL, hi: Infinity }, { name: 'от DR low до −1,0', short: 'DR…−1,0', lo: -1, hi: uL }, { name: 'ниже −1,0', short: 'за −1,0', lo: -Infinity, hi: -1 }];
+    }
+    if (id === 'cont') {
+      const s1 = Math.ceil((ov.u0 + 0.25) / 0.5) * 0.5, s2 = s1 + 0.5;
+      return [{ name: 'дальше ' + nm(s2), short: 'за ' + nm(s2), lo: s2, hi: Infinity }, { name: 'от ' + nm(s1) + ' до ' + nm(s2), short: nm(s1) + '…' + nm(s2), lo: s1, hi: s2 }, { name: 'не дальше ' + nm(s1), short: 'до ' + nm(s1), lo: -Infinity, hi: s1 }];
+    }
+    const side = ov.mode === 'brk' ? s.nside : s.side;
+    return [{ name: 'от ' + (side === 1 ? 'верхней' : 'нижней') + ' границы', short: 'граница', lo: -0.25, hi: Infinity }, { name: 'от центра', short: 'центр', lo: -0.75, hi: -0.25 }, { name: 'retirement setup', short: 'retirement', lo: -Infinity, hi: -0.75 }];
+  }
+  // the constellation of a place: where inside the band the extremes lie densest (the connected region of at least 38 %
+  // of the place's own peak that holds most of its sessions), with its time window
+  function zoneOf(ov, R, z, i, far) {
+    const all = far.filter(q => q.u >= z.lo && q.u < z.hi), N = ov.N;
+    const k = { id: i, rank: i + 1, role: R.id, name: z.name, short: z.short, lo: z.lo, hi: z.hi, n: all.length, pct: 100 * all.length / N, all, mem: [] };
+    const ps = all.map(q => q.p).sort((a, b) => a - b);
+    k.sortP = ps.length ? ps[ps.length >> 1] : ov.u2p(isFinite(z.lo) ? z.lo : z.hi);
+    k.zA = ps.length ? ps[0] : null; k.zB = ps.length ? ps[ps.length - 1] : null;
+    for (const q of all) q.zone = k;
+    const g = k.g = kde(all, ov);
+    if (!g) return k;
+    const thr = g.peak * 0.38, n = g.nU * g.nT, lab = new Int16Array(n).fill(-1), comps = [];
+    for (let c0 = 0; c0 < n; c0++) {
+      if (g.v[c0] < thr || lab[c0] >= 0) continue;
+      const cid = comps.length, stack = [c0];
+      let best = c0;
+      lab[c0] = cid;
+      while (stack.length) {
+        const c = stack.pop(), y = (c / g.nT) | 0, x = c - y * g.nT;
+        if (g.v[c] > g.v[best]) best = c;
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+          const yy = y + dy, xx = x + dx;
+          if (yy < 0 || xx < 0 || yy >= g.nU || xx >= g.nT) continue;
+          const kk = yy * g.nT + xx;
+          if (lab[kk] < 0 && g.v[kk] >= thr) { lab[kk] = cid; stack.push(kk); }
+        }
+      }
+      comps.push({ best, mem: [] });
+    }
+    for (const q of all) { const c = cellOf(g, q.t, q.u); if (c >= 0 && lab[c] >= 0) comps[lab[c]].mem.push(q); }
+    let core = 0;
+    comps.forEach((cc, j) => { if (cc.mem.length > comps[core].mem.length) core = j; });
+    g.lab = lab; g.thr = thr; g.coreId = core;
+    g.segs = contour(g, thr);
+    const cc = comps[core];
+    if (!cc || !cc.mem.length) return k;
+    const y = (cc.best / g.nT) | 0, x = cc.best - y * g.nT;
+    k.mem = cc.mem; k.corePct = 100 * cc.mem.length / N;
+    k.tp = g.t0 + x * g.dt; k.up = g.u0 + y * g.du; k.pp = ov.u2p(k.up);
+    k.tA = Math.min(...cc.mem.map(q => q.t)); k.tB = Math.max(...cc.mem.map(q => q.t));
+    k.pA = Math.min(...cc.mem.map(q => q.p)); k.pB = Math.max(...cc.mem.map(q => q.p));
+    k.t0 = Math.floor(k.tA / 5) * 5; k.t1 = Math.ceil(k.tB / 5) * 5;
+    for (const q of cc.mem) q.con = k;
+    return k;
+  }
+  // a 15-minute slice of a constellation (the column under the cursor): its sessions and prices
+  function sliceOf(k, t0, N) {
+    let m = k.mem.filter(q => q.t > t0 && q.t <= t0 + 15);
+    if (!m.length) m = k.all.filter(q => q.t > t0 && q.t <= t0 + 15);
+    if (!m.length) return null;
+    return { t0, t1: t0 + 15, n: m.length, pct: 100 * m.length / N, pA: Math.min(...m.map(q => q.p)), pB: Math.max(...m.map(q => q.p)) };
+  }
+  // marching squares: segments of the iso-line in grid coordinates, each tagged with its region
+  function contour(g, thr) {
+    const { nT, nU, v } = g, out = [];
+    for (let y = 0; y < nU - 1; y++) for (let x = 0; x < nT - 1; x++) {
+      const a = v[y * nT + x], b = v[y * nT + x + 1], c = v[(y + 1) * nT + x + 1], d = v[(y + 1) * nT + x];
+      const idx = (a >= thr ? 8 : 0) | (b >= thr ? 4 : 0) | (c >= thr ? 2 : 0) | (d >= thr ? 1 : 0);
+      if (idx === 0 || idx === 15) continue;
+      const T = [x + (thr - a) / (b - a), y], Rr = [x + 1, y + (thr - b) / (c - b)], B = [x + (thr - d) / (c - d), y + 1], L = [x, y + (thr - a) / (d - a)];
+      const E = { 1: [[L, B]], 2: [[B, Rr]], 3: [[L, Rr]], 4: [[T, Rr]], 5: [[L, T], [B, Rr]], 6: [[T, B]], 7: [[L, T]], 8: [[L, T]], 9: [[T, B]], 10: [[T, Rr], [L, B]], 11: [[T, Rr]], 12: [[L, Rr]], 13: [[B, Rr]], 14: [[L, B]] }[idx];
+      let comp = -1;
+      if (g.lab) for (const k of [y * nT + x, y * nT + x + 1, (y + 1) * nT + x + 1, (y + 1) * nT + x]) if (g.lab[k] >= 0) { comp = g.lab[k]; break; }
+      for (const [p, q] of E) out.push(p[0], p[1], q[0], q[1], comp);
+    }
+    return out;
+  }
+  // the fan (SEMANTICS: median and 20-80 % of the closes of similar sessions) and the median path as ghost candles
+  // the fan (SEMANTICS: median and 20-80 % of the closes of similar sessions, from the current position) and the
+  // typical path: the one similar session whose closes stay nearest to that median (sum of squared gaps)
+  // the fan (SEMANTICS «веер»: median and 20-80 % of the similar sessions' closes, from the current position)
+  function fanOf(ov) {
+    const N = ov.sims.length, a = new Float64Array(N), out = [];
+    for (let j = 0; j < ov.grid.length; j++) {
+      let m = 0;
+      for (let i = 0; i < N; i++) { const p = ov.sims[i], v = p.cl[j]; if (v != null && isFinite(v)) a[m++] = v - p.xs + ov.u0; }
+      if (m < 10) continue;
+      const v = a.subarray(0, m).sort(), q = f => v[Math.min(m - 1, Math.max(0, Math.round(f * (m - 1))))];
+      out.push({ T: ov.grid[j], q20: q(0.2), q50: q(0.5), q80: q(0.8) });
+    }
+    return out;
+  }
+  // ---------- view state ----------
+  const st = {
+    scene: 'conf', dayK: 'A', session: 'RDR', rp: null, v0: 545, v1: 975, p0: null, p1: null, auto: true,
+    L: { stars: true, cons: true, fan: true, proj: true, strip: true, std: true, prev: true, vib: true, hist: true },
+    hover: null, pin: null, mx: -1, my: -1, drag: null, stripH: 46, stripPin: false, menu: false,
+    pal: 'mint', histH: 22, histPin: false, histOver: false, navHover: false
+  };
+  const root = document.getElementById('dr21-root');
+  const dom = id => id === 'dr21-root' ? root : root.querySelector('#' + id);
+  const cv = dom('cv'), g2 = cv.getContext('2d'), tip = dom('tip'), panel = dom('panel'), nav = dom('nav');
+  let V = null;   // this frame's geometry and context
+
+  function cur() {
+    const D = day(st.dayK), obs = st.rp != null ? st.rp : NOW, live = st.rp == null;
+    const s = sess(D, st.session, obs, live), ov = overlay(D, s);
+    return { D, obs, live, s, ov };
+  }
+  function fitSession(k) { const S = SESS[k]; st.v0 = S.start - 25; st.v1 = S.end + 15; st.auto = true; }
+  function setScene(sc) {
+    st.scene = sc; st.dayK = sc === 'brk' ? 'B' : 'A'; st.session = 'RDR'; st.rp = sc === 'wait' ? 640 : null;
+    st.pin = null; st.hover = null; fitSession('RDR'); if (sc !== 'wait') { st.v0 = 545; st.v1 = 975; }
+    render(true);
+  }
+  function selSession(k) {
+    const D = day(st.dayK);
+    st.session = k; st.pin = null; st.hover = null;
+    if (API && NOW >= SESS[k].start && NOW < SESS[k].end) st.rp = null;
+    else if (API && NOW < SESS[k].start) st.rp = null;
+    else if (!API && k === 'RDR') st.rp = st.scene === 'wait' ? 640 : null;
+    else { const s = sess(D, k, SESS[k].end, false); st.rp = s.conf ? Math.min(SESS[k].end - 5, s.conf + 30) : SESS[k].formed + 45; }
+    fitSession(k);
+    render(true);
+  }
+  function sessOf(t) { return ORDER.find(k => t >= SESS[k].start && t < SESS[k].end) || null; }
+  function replayAt(t) {
+    const k = sessOf(t);
+    if (!k) return;
+    if (st.rp === t) { st.rp = null; st.session = 'RDR'; st.pin = null; render(true); return; }
+    if ((API || st.scene !== 'wait') && t >= NOW) { st.rp = null; } else st.rp = t;
+    st.session = k; st.pin = null;
+    render(true);
+  }
+  function backLive() { st.rp = null; st.session = API ? sessionNow() : 'RDR'; st.pin = null; if (st.scene === 'wait') st.scene = 'conf'; render(true); }
+  // the session the screen opens on: the one whose hours contain the minute, else the latest one that has started
+  function sessionNow() {
+    for (const k of ORDER) if (NOW >= SESS[k].start && NOW < SESS[k].end) return k;
+    let best = 'RDR';
+    for (const k of ORDER) if (NOW >= SESS[k].start) best = k;
+    return best;
+  }
+
+  // ---------- geometry ----------
+  function geom(ctx) {
+    const W = cv.clientWidth, H = cv.clientHeight, handleH = st.L.hist ? 22 : 0, axisW = 88, timeH = 28;
+    const projW = st.L.proj && ctx.ov ? 92 : 0;
+    const plot = { x: 0, y: 0, w: W - axisW - projW, h: H - handleH - timeH };
+    const G = { W, H, handleH, axisW, timeH, plot, projW, ctx };
+    G.proj = { x: plot.w + axisW, y: 0, w: projW, h: plot.h };
+    G.X = t => plot.x + (t - st.v0) / (st.v1 - st.v0) * plot.w;
+    G.T = x => st.v0 + (x - plot.x) / plot.w * (st.v1 - st.v0);
+    let p0 = st.p0, p1 = st.p1;
+    if (st.auto || p0 == null) { const r = autoRange(ctx); p0 = r[0]; p1 = r[1]; }
+    G.p0 = p0; G.p1 = p1;
+    G.Y = p => plot.y + (p1 - p) / (p1 - p0) * plot.h;
+    G.P = y => p1 - (y - plot.y) / plot.h * (p1 - p0);
+    G.bs = plot.w * 5 / (st.v1 - st.v0);
+    G.stripOn = st.L.strip && ctx.ov && ctx.ov.grid.length > 0;
+    const sx0 = Math.max(plot.x, G.X(ctx.obs));
+    G.strip = { x: sx0, y: plot.h - st.stripH, w: Math.max(0, Math.min(plot.w, G.X(ctx.ov ? ctx.ov.end : 0)) - sx0), h: st.stripH };
+    return G;
+  }
+  function autoRange(ctx) {
+    let lo = Infinity, hi = -Infinity;
+    const inV = t => t + 5 >= st.v0 && t <= st.v1;
+    for (const b of ctx.D.bars) if (inV(b.t)) { lo = Math.min(lo, b.l); hi = Math.max(hi, b.h); }
+    const s = ctx.s;
+    if (s.drH != null) { lo = Math.min(lo, s.drL); hi = Math.max(hi, s.drH); }
+    if (P21.compare) { const snap = p21Snapshot(ctx); if (snap) for (const R of snap.ov.roles) for (const k of R.cons) if (k.tp != null) { lo = Math.min(lo,k.pA); hi = Math.max(hi,k.pB); } }
+    if (ctx.ov) {
+      for (const R of ctx.ov.roles) for (const k of R.cons) if (inV(k.t0) || inV(k.t1)) { lo = Math.min(lo, k.pA); hi = Math.max(hi, k.pB); }
+      for (const f of ctx.ov.fan) if (inV(f.T)) { const a = ctx.ov.u2p(f.q20), b = ctx.ov.u2p(f.q80); lo = Math.min(lo, a, b); hi = Math.max(hi, a, b); }
+    }
+    if (!isFinite(lo)) { lo = 24400; hi = 24800; }
+    const pad = (hi - lo) * 0.07;
+    return [lo - pad, hi + pad + (hi - lo) * 0.03];
+  }
+  const bodyW = S => { if (S >= 2.5 && S <= 4) return 3; const c = 1 - 0.2 * Math.atan(Math.max(4, S) - 4) / (Math.PI * 0.5); let w = Math.max(1, Math.min(Math.floor(S * c), Math.floor(S))); if (w >= 2 && w % 2 === 0) w -= 1; return w; };
+
+  // ---------- drawing ----------
+  function render(full) {
+    const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+    const ctx = cur();
+    V = geom(ctx);
+    V.win = null; V.pbWin = null;
+    prep21(ctx);
+    const c = g2;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    Object.assign(C, { dr: cfg.dr, idr: cfg.idr, mid: cfg.mid, std: cfg.std, stdOn: cfg.std, vib: cfg.vib, up: cfg.upC, dn: cfg.dnC, bg: cfg.bg, upS: cfg.up, dnS: cfg.dn });
+    c.fillStyle = C.bg; c.fillRect(0, 0, W, H);
+    c.save(); c.beginPath(); c.rect(V.plot.x, V.plot.y, V.plot.w, V.plot.h); c.clip();
+    drawBoxes(c, ctx);
+    if (st.L.prev) drawPrev(c, ctx);
+    if (st.L.vib) drawVib(c, ctx);
+    if (ctx.ov) {
+      if (st.L.fan) drawFanBand(c, ctx.ov);
+      if (st.L.cons) drawGlow(c, ctx.ov);
+      drawHighlightBands(c, ctx);
+      if (st.L.stars) drawStars(c, ctx.ov);
+      if (st.L.cons) drawContours(c, ctx.ov);
+    }
+    drawLevels(c, ctx);
+    drawSnapshot21(c, ctx);
+    drawReference21(c, ctx);
+    drawCandles(c, ctx);
+    if (ctx.ov && st.L.fan) drawTyp(c, ctx.ov);
+    drawPills(c, ctx);
+    drawNow(c, ctx);
+    if (ctx.ov) {
+      drawWindow(c, ctx);
+      if (st.L.cons) drawMarks(c, ctx.ov);
+      if (V.stripOn) drawStrip(c, ctx.ov);
+    }
+    drawTags(c, ctx);
+    drawCross(c);
+    c.restore();
+    drawPriceAxis(c, ctx);
+    if (ctx.ov && st.L.proj) drawProj(c, ctx.ov);
+    drawTimeAxis(c, ctx);
+    drawLegend(c, ctx);
+    drawHist(c, ctx);
+    if (full) { toolbar(ctx); panelHtml(ctx); }
+    else panelMarks();
+    placeNav();
+  }
+  const hv = () => st.hover || st.pin;
+  const isCon = (h, R, k) => h && (h.k === 'con' || h.k === 'place') && h.role === R.id && h.id === k.id;
+  const isConH = h => h && (h.k === 'con' || h.k === 'place');
+
+  function drawBoxes(c, ctx) {
+    for (const k of ORDER) {
+      const s = sess(ctx.D, k, ctx.obs, ctx.live);
+      if (s.drH == null || s.status === 'forming' && k !== ctx.s.k) continue;
+      const x0 = V.X(s.start), x1 = V.X(s.formed), y0 = V.Y(s.drH), y1 = V.Y(s.drL);
+      c.fillStyle = k === ctx.s.k ? 'rgba(255,255,255,0.045)' : 'rgba(255,255,255,0.025)';
+      c.fillRect(x0, y0, x1 - x0, y1 - y0);
+      c.fillStyle = k === ctx.s.k ? C.text2 : C.text3; c.font = '600 11px ' + FONT; c.textBaseline = 'bottom';
+      c.fillText(k, x0 + 2, y0 - 3);
+    }
+  }
+  function prevList(ctx) {
+    const i = ORDER.indexOf(ctx.s.k), out = PREV ? [{ k: 'PREV', name: PREV.name, col: C.PREV, s: PREV }] : [];
+    for (let j = 0; j < i; j++) { const s = sess(ctx.D, ORDER[j], ctx.obs, ctx.live); if (s.drH != null && s.complete) out.push({ k: ORDER[j], name: ORDER[j], col: C[ORDER[j]], s }); }
+    return out;
+  }
+  // DR of past sessions: two solid bands (DR to IDR on each side) in the session's colour, drawn to the right edge
+  // DR and IDR of past sessions: the same white lines as today's (DR solid, IDR dashed), a little dimmer, named at the right
+  function drawPrev(c, ctx) {
+    const h = hv();
+    for (const P of prevList(ctx)) {
+      const s = P.s, x0 = Math.max(V.plot.x, V.X(P.k === 'PREV' ? st.v0 : SESS[P.k].start)), x1 = V.plot.w;
+      if (x1 <= x0) continue;
+      for (const [p, type] of [[s.drH, 'dr'], [s.drL, 'dr'], [s.idrH, 'idr'], [s.idrL, 'idr']]) {
+        const on = h && h.k === 'prev' && h.id === P.k && Math.abs(h.p - p) < 1e-6, y = Math.round(V.Y(p)) + 0.5;
+        c.strokeStyle = type === 'dr' ? rgba(C.dr, on ? 1 : cfg.prevA / 100) : rgba(C.idr, on ? 1 : cfg.prevA / 100 * 0.87);
+        c.lineWidth = type === 'dr' ? Math.max(0.6, cfg.drW * 0.75) : Math.max(0.6, cfg.idrW * 0.85); c.setLineDash(type === 'dr' ? [] : DASH[cfg.idrDash] || []);
+        c.beginPath(); c.moveTo(x0, y); c.lineTo(x1, y); c.stroke(); c.setLineDash([]);
+      }
+    }
+  }
+  function vibsKnown(ctx) {
+    const by = ctx.live ? NOW : ctx.obs;
+    const min = API ? cfg['vib' + A.inst] || 0 : 0;
+    return ctx.D.vibs.filter(v => v.t + 5 <= by && v.hi - v.lo >= min - 1e-9).map(v => Object.assign({}, v, { fill: v.fill != null && v.fill + 5 <= by ? v.fill : null }));
+  }
+  function drawVib(c, ctx) {
+    const h = hv();
+    for (const v of vibsKnown(ctx)) {
+      const x0 = V.X(v.t), x1 = v.fill != null ? V.X(v.fill + 5) : V.plot.w, y0 = V.Y(v.hi), y1 = V.Y(v.lo);
+      if (x1 < 0 || x0 > V.plot.w) continue;
+      const on = h && h.k === 'vib' && h.t === v.t;
+      const vf = cfg.vibA / 20;
+      c.fillStyle = rgba(C.vib, Math.min(1, on ? 0.34 * vf : v.fill != null ? 0.09 * vf : 0.2 * vf));
+      c.fillRect(x0, y0 - 1, x1 - x0, Math.max(2, y1 - y0 + 2));
+      c.fillStyle = rgba(C.vib, Math.min(1, on ? 0.9 : (v.fill != null ? 0.25 : 0.5) * vf));
+      c.fillRect(x0, y0 - 1, 1.5, Math.max(2, y1 - y0 + 2));
+    }
+  }
+  function drawFanBand(c, ov) {
+    const F = ov.fan;
+    if (!F.length) return;
+    const x0 = V.X(ov.obs), y0 = V.Y(ov.s.priceNow);
+    c.beginPath(); c.moveTo(x0, y0);
+    for (const f of F) c.lineTo(V.X(f.T), V.Y(ov.u2p(f.q80)));
+    for (let i = F.length - 1; i >= 0; i--) c.lineTo(V.X(F[i].T), V.Y(ov.u2p(F[i].q20)));
+    c.closePath();
+    c.fillStyle = 'rgba(209,212,220,' + (0.045 * cfg.fanA / 50).toFixed(4) + ')'; c.fill();
+  }
+  // the median path of the similar sessions as hollow ghost candles (body: median close to median close; wick: median high / low)
+  // the typical path: dash-dot, like the fan's middle line in design 1, but one real similar session, so it moves like price
+  // the median of the similar sessions' closes (SEMANTICS «веер»): how price went on the whole, as in design 1
+  function drawTyp(c, ov) {
+    const F = ov.fan;
+    if (!F.length) return;
+    const h = hv(), on = h && h.k === 'typ';
+    c.strokeStyle = rgba(cfg.typ, on ? 1 : cfg.typA / 100); c.lineWidth = on ? 2 : 1.5; c.setLineDash([6, 4]); c.lineJoin = 'round';
+    c.beginPath(); c.moveTo(V.X(ov.obs), V.Y(ov.s.priceNow));
+    for (const f of F) c.lineTo(V.X(f.T), V.Y(ov.u2p(f.q50)));
+    c.stroke(); c.setLineDash([]);
+  }
+  function glowImg(g, col, ov, peak, only) {
+    const cvs = document.createElement('canvas');
+    cvs.width = g.nT; cvs.height = g.nU;
+    const x = cvs.getContext('2d'), im = x.createImageData(g.nT, g.nU), [r, gg, b] = rgb(col);
+    const inc = ov.u2p(g.u0 + g.du) > ov.u2p(g.u0);
+    for (let y = 0; y < g.nU; y++) {
+      const row = inc ? g.nU - 1 - y : y;
+      for (let i = 0; i < g.nT; i++) {
+        const k = y * g.nT + i;
+        if (only != null && g.lab[k] !== only) continue;
+        const f = g.v[k] / peak;
+        if (f < 0.03) continue;
+        const o = (row * g.nT + i) * 4;
+        im.data[o] = r; im.data[o + 1] = gg; im.data[o + 2] = b; im.data[o + 3] = Math.round(Math.min(1, Math.pow(f, 0.85)) * 255);
+      }
+    }
+    x.putImageData(im, 0, 0);
+    return cvs;
+  }
+  function glowRect(g, ov) {
+    const pa = ov.u2p(g.u0 - g.du / 2), pb = ov.u2p(g.u0 + (g.nU - 0.5) * g.du);
+    const x0 = V.X(g.t0 - g.dt / 2), x1 = V.X(g.t0 + (g.nT - 0.5) * g.dt), y0 = V.Y(Math.max(pa, pb)), y1 = V.Y(Math.min(pa, pb));
+    return [x0, y0, x1 - x0, y1 - y0];
+  }
+  function drawGlow(c, ov) {
+    const h = hv(), focus = h && (h.k === 'con' || h.k === 'place' || h.k === 'col' || h.k === 'pband' || h.k === 'rect');
+    c.save(); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
+    for (const R of ov.roles) for (const k of R.cons) {
+      const g = k.g;
+      if (!g) continue;
+      if (g.pal !== R.col) { g.img = glowImg(g, R.col, ov, R.peak); g.coreImg = null; g.pal = R.col; }
+      c.globalAlpha = cfg.glowA / 100 * (focus ? 0.6 : 1);
+      c.drawImage(g.img, ...glowRect(g, ov));
+      if (isCon(h, R, k) && g.coreId != null) {
+        g.coreImg = g.coreImg || glowImg(g, R.col, ov, R.peak, g.coreId);
+        c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(1, cfg.glowA / 100 * 1.7); c.drawImage(g.coreImg, ...glowRect(g, ov)); c.globalCompositeOperation = 'source-over';
+      }
+    }
+    c.restore();
+  }
+  function drawContours(c, ov) {
+    const h = hv(), cf = cfg.contourA / 30;
+    for (const R of ov.roles) for (const k of R.cons) {
+      const g = k.g;
+      if (!g || !g.segs) continue;
+      const pt = (gx, gy) => [V.X(g.t0 + gx * g.dt), V.Y(ov.u2p(g.u0 + gy * g.du))];
+      const on = isCon(h, R, k);
+      for (const core of [false, true]) {
+        c.strokeStyle = rgba(R.col, core ? (on ? 0.9 : Math.min(1, (isConH(h) ? 0.16 : 0.3) * cf)) : Math.min(1, 0.08 * cf));
+        c.lineWidth = core && on ? 1.6 : 1;
+        c.beginPath();
+        for (let i = 0; i < g.segs.length; i += 5) {
+          if ((g.segs[i + 4] === g.coreId) !== core) continue;
+          const a = pt(g.segs[i], g.segs[i + 1]), b = pt(g.segs[i + 2], g.segs[i + 3]);
+          c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]);
+        }
+        c.stroke();
+      }
+    }
+  }
+  function starStyle(q, R, ov, h) {
+    let a, r;
+    if (q.near) { a = 0.1; r = 0.9; }
+    else {
+      const g = q.zone && q.zone.g, cidx = g ? cellOf(g, q.t, q.u) : -1, f = cidx >= 0 ? g.v[cidx] / R.peak : 0;
+      a = 0.13 + 0.37 * Math.sqrt(f); r = 0.8 + 0.7 * Math.sqrt(f);
+    }
+    r *= 0.8 + 0.4 * ((q.i * 2654435761 >>> 0) % 100) / 100;
+    if (h) {
+      let inF = null;
+      if (h.k === 'con') { inF = !!(q.con && q.con.id === h.id && q.role === h.role); if (inF && h.slice != null) inF = q.t > h.slice && q.t <= h.slice + 15 ? true : 'core'; }
+      else if (h.k === 'col') inF = q.t > h.t0 && q.t <= h.t1;
+      else if (h.k === 'pband') {
+        const w = V.pbWin;
+        inF = q.p >= h.pLo && q.p < h.pHi && (w ? q.role === w.role : !h.role || h.role === q.role);
+        if (inF && w) inF = q.t > w.t0 && q.t <= w.t1 ? true : 'core';
+      }
+      else if (h.k === 'rect') inF = q.role === h.role && q.t > h.t0 && q.t <= h.t1 && q.p >= h.pLo && q.p <= h.pHi;
+      else if (h.k === 'star') inF = q.i === h.i;
+      else if (h.k === 'place') {
+        const H = V.h21, hot = H && H.hot;
+        inF = q.role !== h.role ? false : hot && q.p >= hot.pLo && q.p < hot.pHi && q.t > hot.tc.t0 && q.t <= hot.tc.t1 ? true : q.zone && q.zone.id === h.id ? 'core' : false;
+      }
+      if (inF === true) { a = Math.min(0.8, a + 0.3); r += 0.35; } else if (inF === 'core') { a = Math.min(0.6, a + 0.1); } else if (inF === false) a *= 0.45;
+    }
+    return [Math.min(1, a * cfg.starA / 50), r];
+  }
+  function drawStars(c, ov) {
+    const h = hv();
+    for (const R of ov.roles) {
+      const [cr, cg, cb] = rgb(R.col);
+      for (const q of R.stars) {
+        const x = V.X(q.t), y = V.Y(q.p);
+        if (x < -3 || x > V.plot.w || y < -3 || y > V.plot.h + 3) continue;
+        const [a, r] = starStyle(q, R, ov, h);
+        c.fillStyle = 'rgba(' + cr + ',' + cg + ',' + cb + ',' + a.toFixed(3) + ')';
+        c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill();
+      }
+    }
+    if (h && h.k === 'star') {
+      for (const R of ov.roles) { const q = R.stars.find(z => z.i === h.i); if (!q) continue; c.strokeStyle = R.col; c.lineWidth = 1.2; c.beginPath(); c.arc(V.X(q.t), V.Y(q.p), 5, 0, 6.2832); c.stroke(); }
+    }
+  }
+  function drawLevels(c, ctx) {
+    const s = ctx.s;
+    if (s.drH == null) return;
+    const x0 = V.X(s.start), x1 = V.plot.w, h = hv();
+    if (x1 <= x0) return;
+    const play = s.status === 'broken' ? s.nside : s.side || 0;
+    const line = (p, col, a, w, dash) => { const y = Math.round(V.Y(p)) + 0.5; c.strokeStyle = rgba(col, a); c.lineWidth = w; c.setLineDash(dash); c.beginPath(); c.moveTo(Math.max(x0, 0), y); c.lineTo(x1, y); c.stroke(); c.setLineDash([]); };
+    for (const l of levels(s)) {
+      const on = h && h.k === 'lvl' && h.id === l.id;
+      if (l.type === 'std') {
+        if (!st.L.std) continue;
+        const inPlay = play === l.dir;
+        line(l.p, C.std, on ? 1 : (inPlay ? cfg.stdA : cfg.stdOffA) / 100, 1, []);
+      } else if (l.type === 'dr') line(l.p, C.dr, on ? 1 : cfg.drA / 100, +cfg.drW, []);
+      else if (l.type === 'idr') line(l.p, C.idr, on ? 1 : cfg.idrA / 100, +cfg.idrW, DASH[cfg.idrDash] || []);
+      else if (l.type === 'mid') line(l.p, C.mid, on ? 1 : cfg.midA / 100, 1.2, DASH[cfg.midDash] || []);
+      else if (l.type === 'open') line(l.p, C.open, on ? 0.9 : 0.5, 1, [1, 6]);
+    }
+    // the IDR fractions inside the box (0,1 ... 0,9 of the IDR), as in the Pine indicator
+    c.fillStyle = C.text3; c.font = '10px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right';
+    const w = s.idrH - s.idrL, xb = V.X(s.start) - 4;
+    if (w * V.plot.h / (V.p1 - V.p0) > 90) for (let j = 1; j <= 9; j++) if (j !== 5) c.fillText(num(j / 10, 1), xb, V.Y(s.idrL + j * w / 10));
+    c.textAlign = 'left';
+  }
+  function drawCandles(c, ctx) {
+    const bw = bodyW(V.bs), used = ctx.live ? NOW : ctx.obs;
+    for (const b of ctx.D.bars) {
+      const cx = Math.round(V.X(b.t + 2.5));
+      if (cx < -bw || cx > V.plot.w + bw) continue;
+      const future = !ctx.live && b.t + 5 > used;
+      const col = b.c >= b.o ? C.up : C.dn, a = future ? 0.22 : 1;
+      c.fillStyle = rgba(col, a);
+      const yh = V.Y(b.h), yl = V.Y(b.l), yo = V.Y(b.o), yc = V.Y(b.c);
+      c.fillRect(cx, yh, 1, Math.max(1, yl - yh));
+      c.fillRect(cx - (bw - 1) / 2, Math.min(yo, yc), bw, Math.max(1, Math.abs(yo - yc)));
+    }
+  }
+  function pill(c, x, y, text, bg, fg, up) {
+    c.font = '600 11px ' + FONT;
+    const w = c.measureText(text).width + 12, h = 18, yy = up ? y - h - 6 : y + 6;
+    c.fillStyle = bg; roundRect(c, x - w / 2, yy, w, h, 4); c.fill();
+    c.fillStyle = fg; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, x, yy + h / 2 + 0.5); c.textAlign = 'left';
+  }
+  function roundRect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+  function drawPills(c, ctx) {
+    for (const k of ORDER) {
+      const s = sess(ctx.D, k, ctx.obs, ctx.live);
+      if (!s.conf) continue;
+      const b = ctx.D.bars.find(q => q.t === s.conf - 5);
+      if (b) pill(c, V.X(b.t + 2.5), s.side === 1 ? V.Y(b.h) : V.Y(b.l), (s.side === 1 ? '↑ ' : '↓ ') + clk(s.conf), k === ctx.s.k ? 'rgba(8,153,129,.9)' : 'rgba(80,88,100,.8)', '#fff', s.side === 1);
+      if (s.failed) { const q = ctx.D.bars.find(z => z.t === s.failed - 5); if (q) pill(c, V.X(q.t + 2.5), s.side === 1 ? V.Y(q.l) : V.Y(q.h), 'Слом DR ' + (s.side === 1 ? '↓ ' : '↑ ') + clk(s.failed), 'rgba(159,29,36,.95)', '#fff', s.side !== 1); }
+    }
+  }
+  function drawNow(c, ctx) {
+    if (ctx.ov) {
+      const xe = Math.round(V.X(ctx.ov.end)) + 0.5;
+      c.strokeStyle = 'rgba(255,255,255,.12)'; c.setLineDash([2, 5]); c.lineWidth = 1;
+      c.beginPath(); c.moveTo(xe, 0); c.lineTo(xe, V.plot.h); c.stroke(); c.setLineDash([]);
+      c.fillStyle = C.text3; c.font = '11px ' + FONT; c.textBaseline = 'top'; c.textAlign = 'right'; c.fillText('конец ' + ctx.s.k + ' ' + clk(ctx.ov.end), xe - 5, 64); c.textAlign = 'left';
+    }
+    const x = Math.round(V.X(ctx.obs)) + 0.5;
+    c.strokeStyle = ctx.live ? 'rgba(255,255,255,.14)' : rgba(C.replay, 0.55); c.setLineDash([3, 4]); c.lineWidth = 1;
+    c.beginPath(); c.moveTo(x, 0); c.lineTo(x, V.plot.h); c.stroke(); c.setLineDash([]);
+  }
+  // the hovered or pinned constellation: its time and price window; the time window runs down to the time axis
+  function drawHighlightBands(c, ctx) {
+    const h = hv();
+    if (!h) return;
+    if (h.k === 'col') { const x0 = V.X(h.t0), x1 = V.X(h.t1); c.fillStyle = 'rgba(255,255,255,.045)'; c.fillRect(x0, 0, x1 - x0, V.plot.h); }
+    if (h.k === 'pband') {
+      const y0 = V.Y(h.pHi), y1 = V.Y(h.pLo);
+      c.fillStyle = rgba(h.col || '#ffffff', 0.08); c.fillRect(0, y0, V.plot.w, Math.max(1, y1 - y0));
+      const R = ctx.ov && bandRole(ctx.ov, h), tc = R && timeCluster(ctx.ov, R, h.pLo, h.pHi);
+      if (tc) {
+        const mid = (y0 + y1) / 2, hh = Math.max(16, y1 - y0), top = mid - hh / 2;
+        for (const [b, n] of tc.bins) {
+          const x0 = V.X(b) + 0.5, x1 = V.X(b + 5) - 0.5, bh = Math.max(1.5, hh * n / tc.peak), inW = b >= tc.t0 && b < tc.t1;
+          c.fillStyle = rgba(R.col, inW ? 0.9 : 0.35); c.fillRect(x0, top + hh - bh, Math.max(1, x1 - x0), bh);
+        }
+        const xa = Math.round(V.X(tc.t0)) + 0.5, xb = Math.round(V.X(tc.t1)) + 0.5;
+        c.strokeStyle = rgba(R.col, 0.95); c.lineWidth = 1; c.strokeRect(xa, Math.round(top) + 0.5, xb - xa, Math.round(hh));
+        c.fillStyle = rgba(R.col, 0.08); c.fillRect(xa, top + hh, xb - xa, V.plot.h - top - hh);
+        c.strokeStyle = rgba(R.col, 0.5); c.setLineDash([3, 3]);
+        c.beginPath(); c.moveTo(xa, top + hh); c.lineTo(xa, V.plot.h); c.moveTo(xb, top + hh); c.lineTo(xb, V.plot.h); c.stroke(); c.setLineDash([]);
+        V.win = { t0: tc.t0, t1: tc.t1, pA: h.pLo, pB: h.pHi, col: R.col };
+        V.pbWin = { role: R.id, t0: tc.t0, t1: tc.t1 };
+      }
+    }
+    if (h.k === 'rect') { const x0 = V.X(h.t0), x1 = V.X(h.t1), y0 = V.Y(h.pHi), y1 = V.Y(h.pLo); c.fillStyle = rgba(h.col, 0.12); c.fillRect(x0, y0, x1 - x0, y1 - y0); c.strokeStyle = rgba(h.col, 0.8); c.strokeRect(x0 + 0.5, y0 + 0.5, x1 - x0, y1 - y0); }
+  }
+  function timeCluster(ov, R, pLo, pHi) {
+    const m = R.stars.filter(q => !q.near && q.p >= pLo && q.p < pHi);
+    if (!m.length) return null;
+    const bins = new Map();
+    for (const q of m) { const b = Math.floor((q.t - 1) / 5) * 5; bins.set(b, (bins.get(b) || 0) + 1); }
+    let pk = null;
+    for (const [b, n] of bins) if (!pk || n > pk[1]) pk = [b, n];
+    let t0 = pk[0], t1 = pk[0] + 5;
+    while ((bins.get(t0 - 5) || 0) >= 0.6 * pk[1]) t0 -= 5;
+    while ((bins.get(t1) || 0) >= 0.6 * pk[1]) t1 += 5;
+    const n = m.filter(q => q.t > t0 && q.t <= t1).length;
+    return { R, pLo, pHi, bins: [...bins].sort((a, b) => a[0] - b[0]), peak: pk[1], t0, t1, n, pct: 100 * n / ov.N, bandPct: 100 * m.length / ov.N };
+  }
+  function bandRole(ov, h) {
+    if (!h || h.k !== 'pband') return null;
+    if (h.role) return ov.roles.find(r => r.id === h.role) || null;
+    return h.list && h.list.length ? h.list[0].R : null;
+  }
+  function conOf(ov, h) { if (!h || h.k !== 'con') return null; const R = ov.roles.find(r => r.id === h.role); return R && { R, k: R.cons.find(q => q.id === h.id) }; }
+  // the hovered or pinned place: its band (faint), its constellation's window, and the 15-minute slice under the cursor,
+  // which runs down to the time axis with its own times
+  function drawWindow(c, ctx) {
+    const h = hv(), o = conOf(ctx.ov, h), ov = ctx.ov;
+    if (!o || !o.k || o.k.tp == null) return;
+    const { R, k } = o, sl = h.slice != null ? sliceOf(k, h.slice, ov.N) : null;
+    if (k.zA != null) {
+      const xa = V.X(ov.obs + ov.near), xb = V.X(ov.end), ya = V.Y(k.zB), yb = V.Y(k.zA);
+      c.fillStyle = rgba(R.col, 0.035); c.fillRect(xa, ya, xb - xa, yb - ya);
+      c.strokeStyle = rgba(R.col, 0.25); c.setLineDash([2, 4]); c.lineWidth = 1;
+      c.beginPath(); c.moveTo(xa, Math.round(ya) + 0.5); c.lineTo(xb, Math.round(ya) + 0.5); c.moveTo(xa, Math.round(yb) + 0.5); c.lineTo(xb, Math.round(yb) + 0.5); c.stroke(); c.setLineDash([]);
+    }
+    const box = (t0, t1, pA, pB, strong) => {
+      const x0 = Math.round(V.X(t0)) + 0.5, x1 = Math.round(V.X(t1)) + 0.5, y0 = Math.round(V.Y(pB)) + 0.5, y1 = Math.round(V.Y(pA)) + 0.5;
+      c.fillStyle = rgba(R.col, strong ? 0.13 : 0.04); c.fillRect(x0, y0, x1 - x0, y1 - y0);
+      c.strokeStyle = rgba(R.col, strong ? 0.95 : 0.45); c.lineWidth = 1; c.strokeRect(x0, y0, x1 - x0, y1 - y0);
+      if (strong) {
+        c.fillStyle = rgba(R.col, 0.08); c.fillRect(x0, y1, x1 - x0, V.plot.h - y1);
+        c.strokeStyle = rgba(R.col, 0.5); c.setLineDash([3, 3]);
+        c.beginPath(); c.moveTo(x0, y1); c.lineTo(x0, V.plot.h); c.moveTo(x1, y1); c.lineTo(x1, V.plot.h); c.stroke(); c.setLineDash([]);
+      }
+    };
+    box(k.t0, k.t1, k.pA, k.pB, !sl);
+    if (sl) box(sl.t0, sl.t1, sl.pA, sl.pB, true);
+    V.win = sl ? { t0: sl.t0, t1: sl.t1, pA: sl.pA, pB: sl.pB, col: R.col } : { t0: k.t0, t1: k.t1, pA: k.pA, pB: k.pB, col: R.col };
+  }
+  // the share of each constellation, written large inside it like a watermark; it lights up on hover
+  function drawMarks(c, ov) {
+    const h = hv(), boxes = [];
+    V.marks = [];
+    const all = [];
+    for (const R of ov.roles) for (const k of R.cons) if (k.tp != null) all.push({ R, k });
+    all.sort((a, b) => b.k.pct - a.k.pct);
+    for (const { R, k } of all) {
+      const fs = Math.round(clamp(11 + 7 * Math.sqrt(k.pct / 40), 11, 19) * cfg.markSize / 100), text = pct(k.pct);
+      c.font = '700 ' + fs + 'px ' + FONT;
+      const tw = c.measureText(text).width;
+      const cands = [[V.X(k.tp), V.Y(k.pp)], [V.X((k.t0 + k.t1) / 2), V.Y((k.pA + k.pB) / 2)], [V.X(k.tp), V.Y(k.pp) - fs * 0.9], [V.X(k.tp), V.Y(k.pp) + fs * 0.9]];
+      let pos = null;
+      const xA = V.X(ov.obs + ov.near) + tw / 2 + 4, xB = V.plot.w - tw / 2 - 84, yA = fs, yB = V.plot.h - (V.stripOn ? V.strip.h : 0) - fs;
+      for (const c0 of cands) { c0[0] = clamp(c0[0], Math.min(xA, xB), xB); c0[1] = clamp(c0[1], yA, yB); }
+      for (const [x, y] of cands) {
+        const b = [x - tw / 2 - 3, y - fs / 2 - 2, tw + 6, fs + 4];
+        if (!boxes.some(q => b[0] < q[0] + q[2] && q[0] < b[0] + b[2] && b[1] < q[1] + q[3] && q[1] < b[1] + b[3])) { pos = [x, y, b]; break; }
+      }
+      if (!pos) continue;
+      boxes.push(pos[2]);
+      const on = isCon(h, R, k), dim = isConH(h) && !on;
+      c.textAlign = 'center'; c.textBaseline = 'middle';
+      if (on) { c.shadowColor = R.col; c.shadowBlur = 10; }
+      c.fillStyle = on ? '#FFFFFF' : 'rgba(236,240,246,' + (cfg.markA / 100 * (dim ? 0.4 : 1)).toFixed(3) + ')';
+      c.fillText(text, pos[0], pos[1] + 1);
+      c.shadowBlur = 0;
+      if (on) { c.font = '600 11px ' + FONT; c.fillStyle = rgba(R.col, 0.95); c.fillText(k.name, pos[0], pos[1] + fs / 2 + 9); }
+      c.textAlign = 'left';
+      V.marks.push({ R, k, box: pos[2] });
+    }
+  }
+  // the first minutes after the moment: one quiet number per side instead of a bright blot over the last candle
+  // the density by price, to the right of the price scale: longer and brighter where more extremes ended
+  function drawProj(c, ov) {
+    const A = V.proj, W = A.w - 34, h = hv();
+    c.fillStyle = C.axis; c.fillRect(A.x, 0, A.w, A.h);
+    c.fillStyle = C.grid; c.fillRect(A.x, 0, 1, A.h);
+    let mx = 0;
+    for (const R of ov.roles) for (const b of R.pb) mx = Math.max(mx, b.pct);
+    if (!mx) return;
+    c.save(); c.beginPath(); c.rect(A.x, 0, A.w, A.h); c.clip();
+    const labels = [];
+    for (const R of ov.roles) {
+      const top = R.pb.slice().sort((a, b) => b.pct - a.pct).slice(0, 2);
+      for (const b of R.pb) {
+        const y0 = V.Y(b.pHi), y1 = V.Y(b.pLo), f = b.pct / mx, len = Math.max(1, W * f);
+        const k = h && h.k === 'con' && h.role === R.id ? R.cons.find(q => q.id === h.id) : null;
+        const on = h && ((h.k === 'pband' && b.pHi > h.pLo && b.pLo < h.pHi && (!h.role || h.role === R.id)) || (k && b.pHi > k.pA && b.pLo < k.pB));
+        const topB = top.indexOf(b);
+        c.fillStyle = rgba(topB === 0 ? mixW(R.col, 0.35) : R.col, on ? 1 : Math.min(1, (0.05 + 0.95 * Math.pow(f, 2.4)) * cfg.projA / 90));
+        c.fillRect(A.x + 3, y0 + 0.5, len, Math.max(1, y1 - y0 - 1));
+        if (topB === 0) { c.strokeStyle = 'rgba(255,255,255,.75)'; c.lineWidth = 1; c.strokeRect(A.x + 3.5, y0 + 1, len - 1, Math.max(1, y1 - y0 - 2)); }
+        if (top.includes(b)) labels.push({ y: (y0 + y1) / 2, x: A.x + 5 + len, text: pct(b.pct), col: R.col });
+      }
+    }
+    c.font = '600 10.5px ' + FONT; c.textBaseline = 'middle';
+    const used = [];
+    for (const L of labels.sort((a, b) => a.y - b.y)) { if (used.some(u => Math.abs(u - L.y) < 11)) continue; used.push(L.y); c.fillStyle = L.col; c.fillText(L.text, Math.min(L.x, A.x + A.w - 30), L.y + 0.5); }
+    c.restore();
+  }
+  function stripData(ov) {
+    const cols = [], t0 = Math.floor(ov.obs / 15) * 15;
+    for (let t = t0; t < ov.end; t += 15) cols.push({ t, t1: t + 15, near: t < ov.obs + ov.near, v: ov.roles.map(R => { const b = R.tb.find(q => q.t === t); return b ? b.pct : 0; }) });
+    let mx = 0;
+    for (const q of cols) if (!q.near) mx = Math.max(mx, ...q.v);
+    return { cols, mx: mx || 1 };
+  }
+  // the time strip: 15-minute columns of the extremes (continuation up, pullback down); it grows on hover, a click pins it
+  function drawStrip(c, ov) {
+    const S = V.strip;
+    if (S.w < 20) return;
+    const open = S.h > 60, h = hv(), { cols, mx } = stripData(ov), mid = S.y + S.h / 2, half = S.h / 2 - (open ? 18 : 4);
+    c.fillStyle = open ? 'rgba(10,11,15,.94)' : 'rgba(8,9,12,.72)'; c.fillRect(S.x, S.y, S.w, S.h);
+    c.fillStyle = C.grid; c.fillRect(S.x, S.y, S.w, 1);
+    c.fillStyle = 'rgba(255,255,255,.07)'; c.fillRect(S.x, Math.round(mid), S.w, 1);
+    V.stripCols = [];
+    for (const q of cols) {
+      const x0 = Math.max(S.x, V.X(q.t)) + 1, x1 = Math.min(S.x + S.w, V.X(q.t1)) - 1;
+      if (x1 - x0 < 1) continue;
+      V.stripCols.push({ q, x0, x1 });
+      const onCol = h && h.k === 'col' && h.t0 === q.t;
+      const onCon = (() => { const w = V.win; if (!w) return null; const R = ov.roles.find(r => r.col === w.col); return R && q.t1 > w.t0 && q.t < w.t1 ? R.id : null; })();
+      if (onCol) { c.fillStyle = 'rgba(255,255,255,.06)'; c.fillRect(x0 - 1, S.y + 1, x1 - x0 + 2, S.h - 1); }
+      ov.roles.forEach((R, i) => {
+        const v = q.v[i], len = Math.min(half, half * v / mx), up = i === 0;
+        c.fillStyle = rgba(R.col, Math.min(1, (q.near ? 0.22 : onCol || onCon === R.id ? 0.9 : 0.14 + 0.66 * Math.pow(Math.min(1, v / mx), 1.3)) * cfg.stripA / 80));
+        if (up) c.fillRect(x0, mid - len, x1 - x0, len); else c.fillRect(x0, mid + 1, x1 - x0, len);
+        if (q.near && v / mx > 1) { c.fillStyle = C.bg; c.fillRect(x0, up ? mid - half + 3 : mid + half - 4, x1 - x0, 2); }
+        if (open && v >= 1 && x1 - x0 >= 20) {
+          c.font = '600 10.5px ' + FONT; c.textAlign = 'center'; c.textBaseline = up ? 'bottom' : 'top';
+          c.fillStyle = rgba(R.col, q.near ? 0.55 : 0.95);
+          c.fillText(num(v, v >= 10 ? 0 : 1), (x0 + x1) / 2, up ? mid - len - 2 : mid + len + 3);
+          c.textAlign = 'left';
+        }
+      });
+    }
+    if (open) {
+      const text = 'когда: доля экстремумов по 15 минутам · ' + ov.roles[0].name.toLowerCase() + ' вверх, ' + ov.roles[1].name.toLowerCase() + ' вниз · ' + (st.stripPin ? 'клик — открепить' : 'клик — закрепить');
+      c.font = '11px ' + FONT; c.textBaseline = 'middle';
+      const w = c.measureText(text).width + 12;
+      c.fillStyle = 'rgba(10,11,15,.94)'; c.fillRect(S.x, S.y - 20, w, 20);
+      c.fillStyle = C.text3; c.fillText(text, S.x + 6, S.y - 10);
+    }
+  }
+  // names of the lines at their right end, just before the price scale, so nothing has to be scrolled to be read
+  function drawTags(c, ctx) {
+    const items = [], s = ctx.s, xr = V.plot.w - 6;
+    if (s.drH != null) {
+      const play = s.status === 'broken' ? s.nside : s.side || 0;
+      for (const l of levels(s)) {
+        if (l.type === 'std' && (!st.L.std || l.j > 4)) continue;
+        const col = l.type === 'dr' ? C.dr : l.type === 'idr' ? C.idr : l.type === 'mid' ? C.mid : l.type === 'open' ? C.open : play === l.dir ? C.stdOn : C.std;
+        items.push({ y: V.Y(l.p), text: (l.type === 'std' ? '' : s.k + ' ') + l.name, col, pr: l.type === 'dr' || l.type === 'idr' ? 3 : l.type === 'std' ? 1 : 2 });
+      }
+    }
+    if (st.L.prev) for (const P of prevList(ctx)) {
+      items.push({ y: V.Y(P.s.drH), text: P.name + ' DR', col: '#BFC6D2', pr: 2 }, { y: V.Y(P.s.drL), text: P.name + ' DR', col: '#BFC6D2', pr: 2 });
+      items.push({ y: V.Y(P.s.idrH), text: P.name + ' IDR', col: '#8C95A3', pr: 1 }, { y: V.Y(P.s.idrL), text: P.name + ' IDR', col: '#8C95A3', pr: 1 });
+    }
+    if (st.L.vib) {
+      const open = vibsKnown(ctx).filter(v => v.fill == null), pNow = s.priceNow != null ? s.priceNow : 0;
+      const near = side => open.filter(v => side * ((v.lo + v.hi) / 2 - pNow) > 0).sort((a, b) => Math.abs((a.lo + a.hi) / 2 - pNow) - Math.abs((b.lo + b.hi) / 2 - pNow)).slice(0, 2);
+      for (const v of near(1).concat(near(-1))) items.push({ y: V.Y((v.lo + v.hi) / 2), text: 'VIB', col: C.vib, pr: 0 });
+    }
+    const vis = items.filter(q => q.y > 8 && q.y < V.plot.h - (V.stripOn ? V.strip.h : 0) - 6).sort((a, b) => a.y - b.y);
+    const placed = [];
+    for (const q of vis.slice().sort((a, b) => b.pr - a.pr)) {
+      let y = q.y;
+      for (let tries = 0; tries < 6 && placed.some(p => Math.abs(p.y - y) < 13); tries++) {
+        const hit = placed.find(p => Math.abs(p.y - y) < 13);
+        y = q.y >= hit.y ? hit.y + 13 : hit.y - 13;
+      }
+      if (placed.some(p => Math.abs(p.y - y) < 12)) continue;
+      placed.push({ y, q });
+    }
+    c.font = '600 10.5px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right';
+    for (const { y, q } of placed) {
+      const w = c.measureText(q.text).width + 8;
+      c.fillStyle = 'rgba(8,9,12,.85)'; c.fillRect(xr - w, y - 7, w + 2, 14);
+      c.fillStyle = q.col; c.fillText(q.text, xr - 2, y + 0.5);
+    }
+    c.textAlign = 'left';
+  }
+  function drawCross(c) {
+    if (st.mx < 0 || st.drag || st.mx > V.plot.w || st.my > V.plot.h) return;
+    c.strokeStyle = 'rgba(150,160,175,.55)'; c.lineWidth = 1; c.setLineDash([4, 4]);
+    const x = Math.round(V.X(snapT(V.T(st.mx)))) + 0.5, y = Math.round(st.my) + 0.5;
+    c.beginPath(); c.moveTo(x, 0); c.lineTo(x, V.plot.h); c.moveTo(0, y); c.lineTo(V.plot.w, y); c.stroke(); c.setLineDash([]);
+  }
+  const snapT = t => Math.floor(t / 5) * 5 + 2.5;
+  function niceStep(span, pxs, minPx, list) { for (const s of list) if (s * pxs / span >= minPx) return s; return list[list.length - 1]; }
+  function axisTag(c, y, text, bg, fg) {
+    const x = V.plot.w + 1, w = V.axisW - 2;
+    c.fillStyle = bg; roundRect(c, x, y - 9, w, 18, 3); c.fill();
+    c.fillStyle = fg; c.font = '600 11px ' + FONT; c.textBaseline = 'middle'; c.fillText(text, x + 6, y + 0.5);
+  }
+  function drawPriceAxis(c, ctx) {
+    const x = V.plot.w, H = V.plot.h;
+    c.fillStyle = C.axis; c.fillRect(x, 0, V.axisW, H);
+    c.fillStyle = C.grid; c.fillRect(x, 0, 1, H);
+    const span = V.p1 - V.p0, step = niceStep(span, H, 46, [0.25, 0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100, 250, 500]);
+    c.font = '11px ' + FONT; c.fillStyle = C.text2; c.textBaseline = 'middle';
+    for (let p = Math.ceil(V.p0 / step) * step; p <= V.p1; p += step) { const y = V.Y(p); if (y > 8 && y < H - 8) c.fillText(px(p), x + 8, y); }
+    const s = ctx.s, tags = [];
+    if (s.drH != null) {
+      tags.push([V.Y(s.drH), 'DR ' + px(s.drH), '#E9ECF1', '#0B0C10'], [V.Y(s.drL), 'DR ' + px(s.drL), '#E9ECF1', '#0B0C10']);
+      tags.push([V.Y(s.idrH), 'IDR ' + px(s.idrH), '#39414E', '#E6EAF0'], [V.Y(s.idrL), 'IDR ' + px(s.idrL), '#39414E', '#E6EAF0']);
+    }
+    const hh = hv(), wn = V.win;
+    if (wn) { tags.push([V.Y(wn.pB), px(wn.pB), wn.col, '#0B0C10'], [V.Y(wn.pA), px(wn.pA), wn.col, '#0B0C10']); }
+    if (hh && hh.k === 'lvl' && hh.l) tags.push([V.Y(hh.l.p), (hh.l.type === 'std' ? hh.l.name : hh.l.name) + ' ' + px(hh.l.p), '#C9D1DD', '#0B0C10']);
+    if (hh && hh.k === 'prev') tags.push([V.Y(hh.p), px(hh.p), '#8C95A3', '#0B0C10']);
+    const lastP = s.priceNow != null ? s.priceNow : null;
+    if (lastP != null) { const b = ctx.D.bars.filter(q => q.t + 5 <= (ctx.live ? NOW + 5 : ctx.obs)).pop(); tags.push([V.Y(lastP), px(lastP), b && b.c >= b.o ? C.up : C.dn, '#fff']); }
+    for (const [y, t, bg, fg] of tags) if (y > 0 && y < H) axisTag(c, y, t, bg, fg);
+    if (st.mx >= 0 && st.my >= 0 && st.my < H && st.mx < V.plot.w) axisTag(c, st.my, px(V.P(st.my)), '#363A45', '#fff');
+    if (!st.auto) { c.fillStyle = '#262B35'; roundRect(c, x + V.axisW - 24, H - 22, 18, 16, 3); c.fill(); c.fillStyle = C.text2; c.font = '600 10px ' + FONT; c.fillText('A', x + V.axisW - 19, H - 13.5); }
+  }
+  function drawTimeAxis(c, ctx) {
+    const y = V.plot.h, W = V.plot.w;
+    c.fillStyle = C.axis; c.fillRect(0, y, V.W, V.timeH);
+    c.fillStyle = C.grid; c.fillRect(0, y, V.W, 1);
+    const step = niceStep(st.v1 - st.v0, W, 72, [5, 10, 15, 30, 60, 120, 180, 240, 360, 720]);
+    const h = hv(), busy = [ctx.obs], wn = V.win;
+    if (wn) busy.push(wn.t0, wn.t1);
+    if (h && h.k === 'col') busy.push(h.t0, h.t1);
+    if (st.mx >= 0 && st.mx < W && st.my < V.plot.h) busy.push(snapT(V.T(st.mx)) - 2.5);
+    c.font = '11.5px ' + FONT; c.fillStyle = C.text2; c.textBaseline = 'middle'; c.textAlign = 'center';
+    for (let t = Math.ceil(st.v0 / step) * step; t <= st.v1; t += step) { const x = V.X(t); if (x > 20 && x < W - 20 && !busy.some(b => Math.abs(V.X(b) - x) < 42)) c.fillText(t % 1440 === 0 ? ctx.D.dm : clk(t), x, y + V.timeH / 2); }
+    const tag = (t, bg, fg, txt) => { const x = V.X(t), text = txt || clk(t); c.font = '600 11px ' + FONT; const w = c.measureText(text).width + 12; c.fillStyle = bg; roundRect(c, x - w / 2, y + 4, w, 20, 3); c.fill(); c.fillStyle = fg; c.fillText(text, x, y + 14.5); };
+    if (wn) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
+    if (h && h.k === 'col') { tag(h.t0, '#39414E', '#fff'); tag(h.t1, '#39414E', '#fff'); }
+    tag(ctx.obs, ctx.live ? '#2A2F38' : C.replay, ctx.live ? '#fff' : '#0B0C10');
+    if (st.mx >= 0 && st.mx < W && st.my < V.plot.h) tag(snapT(V.T(st.mx)) - 2.5, '#363A45', '#fff');
+    c.textAlign = 'left';
+  }
+  function barAt(ctx, t) { const tt = Math.floor(t / 5) * 5; return ctx.D.bars.find(b => b.t === tt) || null; }
+  function drawLegend(c, ctx) {
+    const s = ctx.s, used = ctx.live ? NOW + 5 : ctx.obs;
+    let b = st.mx >= 0 && st.mx < V.plot.w && st.my < V.plot.h ? barAt(ctx, V.T(st.mx)) : null;
+    if (!b) b = ctx.D.bars.filter(q => q.t + 5 <= used).pop();
+    c.textBaseline = 'top';
+    let x = 10;
+    const put = (t, col, bold) => { c.font = (bold ? '600 ' : '') + '12.5px ' + FONT; c.fillStyle = col; c.fillText(t, x, 8); x += c.measureText(t).width + 6; };
+    put((API ? A.inst : 'NQ') + '1! · 5 · ' + s.k, C.text, true);
+    if (b) { const col = b.c >= b.o ? C.up : C.dn; put('O', C.text3); put(px(b.o), col); put('H', C.text3); put(px(b.h), col); put('L', C.text3); put(px(b.l), col); put('C', C.text3); put(px(b.c), col); put(sgn(b.c - b.o), col); put(clk(b.t), C.text3); }
+    c.font = '12px ' + FONT; c.fillStyle = C.text2;
+    let line = '';
+    if (s.status === 'confirmed' || s.status === 'broken' || s.status === 'done') {
+      line = (s.side === 1 ? '↑ ' : '↓ ') + clk(s.conf) + ' · взято ' + (s.taken.filter(q => q.t).map(q => q.name + ' в ' + clk(q.t)).join(' · ') || 'ничего');
+      if (s.failed) line = 'Слом DR ' + (s.side === 1 ? '↓ ' : '↑ ') + clk(s.failed) + ' · сторона анализа ' + (s.nside === 1 ? 'вверх' : 'вниз') + (s.takenN && s.takenN.some(q => q.t) ? ' · взято ' + s.takenN.filter(q => q.t).map(q => q.name + ' в ' + clk(q.t)).join(' · ') : '');
+    } else if (s.status === 'waiting') line = 'подтверждения нет · ' + (ctx.obs - s.formed) + ' мин после коробки';
+    else if (s.status === 'forming') line = 'коробка формируется';
+    if (line) c.fillText(line, 10, 28);
+    if (!ctx.live) { c.fillStyle = C.replay; c.fillText('Повтор ' + clk(ctx.obs) + ' — экран как в момент закрытия этой свечи; свечи правее показаны, но не использованы', 10, 46); }
+  }
+
+  // ---------- the six charts of the history of similar sessions (as in design 1), linked to the chart ----------
+  function histSpec(ov) {
+    const [A, B] = ov.roles, pullR = ov.mode === 'wait' ? B : B, contR = A;
+    return [
+      { id: 'path', title: 'Путь · медиана и 20–80 %', kind: 'path' },
+      ov.mode === 'wait' ? { id: 'dir', title: 'Первое подтверждение позже', kind: 'dir' } : { id: 'heat', title: 'Глубина отката + время', kind: 'heat', R: pullR },
+      { id: 'hp', title: ov.mode === 'wait' ? 'Низ · цена' : 'Откат · цена', kind: 'hu', R: pullR },
+      { id: 'hc', title: ov.mode === 'wait' ? 'Верх · цена' : 'Расширение · цена', kind: 'hu', R: contR },
+      { id: 'tp', title: ov.mode === 'wait' ? 'Время низа' : 'Время отката', kind: 'tb', R: pullR },
+      { id: 'tc', title: ov.mode === 'wait' ? 'Время верха' : 'Время экстремума', kind: 'tb', R: contR }
+    ];
+  }
+  function drawHist(c, ctx) {
+    V.histCells = [];
+    if (!st.L.hist) return;
+    const y0 = V.H - st.histH, W = V.W, open = st.histH >= 150, ov = ctx.ov;
+    c.fillStyle = open || st.histH > 30 ? 'rgba(11,12,16,.97)' : '#0B0C10'; c.fillRect(0, y0, W, st.histH);
+    c.fillStyle = st.histOver || st.histPin ? '#2A2F38' : C.grid; c.fillRect(0, y0, W, 1);
+    c.font = '600 11.5px ' + FONT; c.textBaseline = 'middle'; c.fillStyle = st.histOver || st.histPin ? C.text : C.text3;
+    c.fillText((open ? '▾ ' : '▴ ') + 'История похожих · шесть графиков' + (ov ? ' · как было на ' + clk(ctx.obs) : '') + (open ? (st.histPin ? ' · клик — открепить' : ' · клик — закрепить') : ' · наведите, чтобы раскрыть'), 10, y0 + 11);
+    if (!open || !ov) return;
+    const spec = histSpec(ov), n = spec.length, gap = 10, cw = (W - gap * (n + 1)) / n, top = y0 + 26, ch = st.histH - 32;
+    const h = hv();
+    spec.forEach((sp, i) => {
+      const x = gap + i * (cw + gap), r = { x, y: top + 16, w: cw, h: ch - 30 };
+      c.fillStyle = C.text3; c.font = '11px ' + FONT; c.textBaseline = 'top'; c.fillText(sp.title, x, top);
+      c.fillStyle = '#101218'; c.fillRect(r.x, r.y, r.w, r.h);
+      const items = [];
+      if (sp.kind === 'path') {
+        const F = ov.fan, us = F.flatMap(f => [f.q20, f.q80]).concat([ov.u0]), lo = Math.min(...us), hi = Math.max(...us);
+        const X = t => r.x + (t - ov.obs) / (ov.end - ov.obs) * r.w, Y = u => r.y + r.h - 4 - (u - lo) / (hi - lo || 1) * (r.h - 8);
+        c.beginPath(); c.moveTo(X(ov.obs), Y(ov.u0)); for (const f of F) c.lineTo(X(f.T), Y(f.q80)); for (let j = F.length - 1; j >= 0; j--) c.lineTo(X(F[j].T), Y(F[j].q20)); c.closePath();
+        c.fillStyle = rgba(C.fan, 0.16); c.fill();
+        c.strokeStyle = rgba(C.fan, 0.85); c.beginPath(); c.moveTo(X(ov.obs), Y(ov.u0)); for (const f of F) c.lineTo(X(f.T), Y(f.q50)); c.stroke();
+        c.strokeStyle = 'rgba(255,255,255,.2)'; c.setLineDash([2, 3]); c.beginPath(); c.moveTo(r.x, Y(ov.u0)); c.lineTo(r.x + r.w, Y(ov.u0)); c.stroke(); c.setLineDash([]);
+        for (let t = Math.ceil(ov.obs / 15) * 15; t < ov.end; t += 15) items.push({ x0: X(t), x1: X(t + 15), y0: r.y, y1: r.y + r.h, hl: { k: 'col', t0: t, t1: t + 15 }, tip: 'Медиана к ' + clk(t + 15) + ': ' + px(ov.u2p((F.find(f => f.T >= t + 15) || F[F.length - 1]).q50)) });
+        axisLbl(c, r, clk(ov.obs), clk(ov.end));
+      } else if (sp.kind === 'dir') {
+        const d = ov.dir, vals = [['↑ вверх', d.up, C.upS], ['↓ вниз', d.dn, C.dnS], ['не будет', d.none, C.text3]], bw = r.w / 3;
+        vals.forEach(([nm, v, col], j) => {
+          const hh = (r.h - 20) * v / 100, xx = r.x + j * bw + 8;
+          c.fillStyle = rgba(col, 0.7); c.fillRect(xx, r.y + r.h - 14 - hh, bw - 16, hh);
+          c.fillStyle = col; c.font = '600 12px ' + FONT; c.textBaseline = 'bottom'; c.fillText(pct(v), xx, r.y + r.h - 16 - hh);
+          c.fillStyle = C.text3; c.font = '11px ' + FONT; c.textBaseline = 'bottom'; c.fillText(nm, xx, r.y + r.h - 1);
+        });
+      } else if (sp.kind === 'heat') {
+        const R = sp.R, keepB = new Set(body(R.hu).map(q => q.b)), cells = R.heat.filter(q => keepB.has(q.b)), us = cells.map(q => q.u), uLo = Math.min(...us), uHi = Math.max(...us) + 0.1, mx = Math.max(...cells.map(q => q.n));
+        const X = t => r.x + (t - Math.floor(ov.obs / 15) * 15) / (ov.end - Math.floor(ov.obs / 15) * 15) * r.w, Y = u => r.y + r.h - (u - uLo) / (uHi - uLo) * r.h;
+        for (const q of cells) {
+          const x0 = X(q.t), x1 = X(q.t1), yA = Y(q.u + 0.1), yB = Y(q.u), on = h && h.k === 'rect' && h.t0 === q.t && Math.abs(h.pLo - q.pLo) < 1e-6;
+          c.fillStyle = rgba(R.col, on ? 1 : 0.12 + 0.85 * Math.sqrt(q.n / mx)); c.fillRect(x0 + 0.5, yA + 0.5, Math.max(1, x1 - x0 - 1), Math.max(1, yB - yA - 1));
+          items.push({ x0, x1, y0: yA, y1: yB, hl: { k: 'rect', role: R.id, t0: q.t, t1: q.t1, pLo: q.pLo, pHi: q.pHi, col: R.col }, tip: R.name + ' · ' + clk(q.t) + '–' + clk(q.t1) + ' · ' + px(q.pLo) + '–' + px(q.pHi) + ' · <b>' + pct(q.pct) + '</b>' });
+        }
+        axisLbl(c, r, clk(ov.obs), clk(ov.end));
+      } else if (sp.kind === 'hu') {
+        const R = sp.R, bins = body(R.hu), lo = Math.min(...bins.map(q => q.b)), hi = Math.max(...bins.map(q => q.b)), mx = Math.max(...bins.map(q => q.pct)), bw = r.w / (hi - lo + 1);
+        for (const q of bins) {
+          const x0 = r.x + (q.b - lo) * bw, hh = (r.h - 16) * q.pct / mx, on = h && h.k === 'pband' && Math.abs(h.pLo - q.pLo) < 1e-6 && h.role === R.id;
+          c.fillStyle = rgba(R.col, on ? 1 : 0.62); c.fillRect(x0 + 0.5, r.y + r.h - hh, Math.max(1, bw - 1), hh);
+          items.push({ x0, x1: x0 + bw, y0: r.y, y1: r.y + r.h, hl: { k: 'pband', role: R.id, pLo: q.pLo, pHi: q.pHi, col: R.col }, tip: R.name + ' · ' + px(q.pLo) + '–' + px(q.pHi) + ' (' + where(ctx.s, (q.pLo + q.pHi) / 2) + ') · <b>' + pct(q.pct) + '</b>' });
+        }
+        axisLbl(c, r, px(ov.u2p(lo * 0.1)), px(ov.u2p(hi * 0.1 + 0.1)));
+      } else if (sp.kind === 'tb') {
+        const R = sp.R, t0 = Math.floor(ov.obs / 15) * 15, bins = R.tb, mx = Math.max(...bins.map(q => q.pct)), bw = r.w / Math.ceil((ov.end - t0) / 15);
+        for (const q of bins) {
+          const x0 = r.x + (q.t - t0) / 15 * bw, hh = (r.h - 16) * q.pct / mx, on = h && h.k === 'col' && h.t0 === q.t;
+          c.fillStyle = rgba(R.col, on ? 1 : q.near ? 0.3 : 0.62); c.fillRect(x0 + 0.5, r.y + r.h - hh, Math.max(1, bw - 1), hh);
+          items.push({ x0, x1: x0 + bw, y0: r.y, y1: r.y + r.h, hl: { k: 'col', t0: q.t, t1: q.t1 }, tip: R.name + ' · ' + clk(q.t) + '–' + clk(q.t1) + ' · <b>' + pct(q.pct) + '</b>' + (q.near ? ' <span class="k">(первые 15 минут)</span>' : '') });
+        }
+        axisLbl(c, r, clk(t0), clk(ov.end));
+      }
+      V.histCells.push({ r, items });
+    });
+  }
+  function body(bins) { const tot = bins.reduce((a, q) => a + q.n, 0); let cum = 0; return bins.filter(q => { const a = cum; cum += q.n; return cum >= tot * 0.01 && a <= tot * 0.99; }); }
+  function axisLbl(c, r, a, b) { c.fillStyle = C.text3; c.font = '10.5px ' + FONT; c.textBaseline = 'top'; c.fillText(a, r.x, r.y + r.h + 3); c.textAlign = 'right'; c.fillText(b, r.x + r.w, r.y + r.h + 3); c.textAlign = 'left'; }
+
+  // ---------- hit test ----------
+  function hit(x, y) {
+    const ctx = V.ctx, ov = ctx.ov;
+    if (st.L.hist && y >= V.H - st.histH) {
+      if (y < V.H - st.histH + 22) return { k: 'histHead', src: 'hist' };
+      for (const cell of V.histCells || []) for (const it of cell.items) if (x >= it.x0 && x < it.x1 && y >= it.y0 && y < it.y1) return Object.assign({ tip: it.tip }, it.hl, { src: 'hist' });
+      return { k: 'histBg', src: 'hist' };
+    }
+    if (ov && V.projW && x >= V.proj.x && y < V.plot.h) {
+      const p = V.P(y), out = [];
+      for (const R of ov.roles) { const b = R.pb.find(q => p >= q.pLo && p < q.pHi); if (b) out.push({ R, b }); }
+      if (out.length) { const b = out.sort((a, z) => z.b.pct - a.b.pct)[0].b; return { k: 'pband', pLo: b.pLo, pHi: b.pHi, src: 'proj', list: out }; }
+      return { k: 'paxis' };
+    }
+    if (x > V.plot.w) return y < V.plot.h ? { k: 'paxis' } : null;
+    if (y > V.plot.h) return { k: 'taxis' };
+    if (!ov) return lvlHit(ctx, y) || vibHit(ctx, x, y);
+    if (V.stripOn && x >= V.strip.x && x <= V.strip.x + V.strip.w && y >= V.strip.y) {
+      const c = (V.stripCols || []).find(q => x >= q.x0 - 1 && x <= q.x1 + 1);
+      return c ? { k: 'col', t0: c.q.t, t1: c.q.t1, src: 'strip', q: c.q } : { k: 'stripBg' };
+    }
+    if (st.L.cons) for (const m of V.marks || []) { const b = m.box; if (x >= b[0] && x <= b[0] + b[2] && y >= b[1] && y <= b[1] + b[3]) return { k: 'con', role: m.R.id, id: m.k.id, slice: Math.floor(V.T(x) / 15) * 15 }; }
+    if (st.L.stars) {
+      let best = null, bd = 5;
+      for (const R of ov.roles) for (const q of R.stars) { const d = Math.hypot(V.X(q.t) - x, V.Y(q.p) - y); if (d < bd) { bd = d; best = q; } }
+      if (best && bd < 3.5) return { k: 'star', i: best.i, q: best };
+    }
+    if (st.L.fan && ov.fan.length) {
+      let px0 = V.X(ov.obs), py0 = V.Y(ov.s.priceNow);
+      for (const p of ov.fan) {
+        const px1 = V.X(p.T), py1 = V.Y(ov.u2p(p.q50)), dx = px1 - px0, dy = py1 - py0, L2 = dx * dx + dy * dy || 1;
+        const f = clamp(((x - px0) * dx + (y - py0) * dy) / L2, 0, 1);
+        if (Math.hypot(px0 + f * dx - x, py0 + f * dy - y) < 3.5) return { k: 'typ', T: p.T, p: ov.u2p(p.q50) };
+        px0 = px1; py0 = py1;
+      }
+    }
+    if (st.L.cons && x > V.X(ov.obs)) {
+      const t = V.T(x), p = V.P(y);
+      let bestC = null, bv = 0;
+      for (const R of ov.roles) for (const k of R.cons) {
+        const g = k.g, u = ov.p2u(p);
+        if (!g || g.coreId == null || u < k.lo || u >= k.hi) continue;
+        const cidx = cellOf(g, t, u);
+        if (cidx < 0 || g.lab[cidx] !== g.coreId) continue;
+        const v = g.v[cidx] / R.peak;
+        if (v > bv) { bv = v; bestC = { k: 'con', role: R.id, id: k.id, slice: Math.floor(t / 15) * 15 }; }
+      }
+      if (bestC) return bestC;
+    }
+    return lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y);
+  }
+  function lvlHit(ctx, y) {
+    for (const l of levels(ctx.s)) { if (l.type === 'std' && !st.L.std) continue; if (Math.abs(V.Y(l.p) - y) <= 3.5) return { k: 'lvl', id: l.id, l }; }
+    return null;
+  }
+  function vibHit(ctx, x, y) {
+    if (!st.L.vib) return null;
+    for (const v of vibsKnown(ctx)) { const x0 = V.X(v.t), x1 = v.fill != null ? V.X(v.fill + 5) : V.plot.w; if (x >= x0 && x <= x1 && y >= V.Y(v.hi) - 3 && y <= V.Y(v.lo) + 3) return { k: 'vib', t: v.t, v }; }
+    return null;
+  }
+  function prevHit(ctx, y) {
+    if (!st.L.prev) return null;
+    for (const P of prevList(ctx)) for (const [p, nm] of [[P.s.drH, 'DR high'], [P.s.drL, 'DR low'], [P.s.idrH, 'IDR high'], [P.s.idrL, 'IDR low']]) if (Math.abs(V.Y(p) - y) <= 3.5) return { k: 'prev', id: P.k, P, p, nm };
+    return null;
+  }
+  function tipHtml(h, ctx) {
+    const ov = ctx.ov, s = ctx.s;
+    if (!h) return '';
+    if (h.tip) {
+      const R = h.k === 'pband' ? bandRole(ov, h) : null, tc = R && timeCluster(ov, R, h.pLo, h.pHi);
+      return h.tip + (tc ? '<br><span class="k">когда чаще всего:</span> <b>' + clk(tc.t0) + '–' + clk(tc.t1) + '</b> — <b>' + pct(tc.pct) + '</b>' : '');
+    }
+    if (h.k === 'con') {
+      const o = conOf(ov, h);
+      if (!o || !o.k) return '';
+      const { R, k } = o, sl = h.slice != null ? sliceOf(k, h.slice, ov.N) : null, hot = hotOf(ov, R, k);
+      return '<b style="color:' + R.col + '">' + R.name + ' ' + pct(k.pct) + '</b> · ' + k.name +
+        (sl ? '<br>здесь ' + clk(sl.t0) + '–' + clk(sl.t1) + ': <b>' + pct(sl.pct) + '</b>' : '') +
+        (hot ? '<br><span class="k">плотнее всего</span> ' + px(hot.p) + ' · ' + clk(hot.tc.t0) + '–' + clk(hot.tc.t1) : '');
+    }
+    if (h.k === 'typ') return '<b>Медиана похожих</b> · к ' + clk(h.T) + ': ' + px(h.p) + '<br><span class="k">как в среднем шла цена у похожих сессий после ' + clk(ctx.obs) + '; бледный веер вокруг — 20–80 % их закрытий</span>';
+    if (h.k === 'star') {
+      const q = h.q, pair = ov.roles.map(R => ({ R, z: R.stars.find(w => w.i === q.i) }));
+      return '<b>Похожая сессия · ' + ov.sims[q.i].date + '</b> <span class="k">(синт.)</span><br>' + pair.map(({ R, z }) => '<span style="color:' + R.col + '">' + R.name + '</span> ' + clk(z.t) + ' · ' + px(z.p) + ' <span class="k">' + where(s, z.p) + '</span>').join('<br>');
+    }
+    if (h.k === 'col' && h.src === 'strip') {
+      const q = h.q;
+      return '<b>' + clk(h.t0) + '–' + clk(h.t1) + '</b>' + (q.near ? ' <span class="k">первые 15 минут</span>' : '') + '<br>' + ov.roles.map((R, i) => '<span style="color:' + R.col + '">' + R.name + '</span> ' + pct(q.v[i])).join(' · ');
+    }
+    if (h.k === 'pband' && h.src === 'proj') {
+      const R = bandRole(ov, h), tc = R && timeCluster(ov, R, h.pLo, h.pHi);
+      return '<b>' + px(h.pLo) + '–' + px(h.pHi) + '</b> <span class="k">' + where(s, (h.pLo + h.pHi) / 2) + '</span><br>' + h.list.map(({ R: r, b }) => '<span style="color:' + r.col + '">' + r.name + '</span> ' + pct(b.pct)).join(' · ') +
+        (tc ? '<br><span class="k">когда чаще всего:</span> <b>' + clk(tc.t0) + '–' + clk(tc.t1) + '</b> — <b>' + pct(tc.pct) + '</b> <span class="k">из ' + pct(tc.bandPct) + ' этой цены</span>' : '') + '<br><span class="k">без первых 15 минут</span>';
+    }
+    if (h.k === 'lvl') {
+      const l = h.l, t = ov ? ov.touch(l.p) : null;
+      let taken = '';
+      const tk = (s.taken || []).concat(s.takenN || []).find(q => q.t && l.type === 'std' && q.name === l.name);
+      if (tk) taken = ' · взят в ' + clk(tk.t);
+      return '<b>' + s.k + ' · ' + l.full + '</b> · ' + px(l.p) + taken + (t != null ? '<br><span class="k">дошли после ' + clk(ctx.obs) + ' до конца сессии:</span> ' + pct(t) : '');
+    }
+    if (h.k === 'vib') { const v = h.v; return '<b>VIB ' + (v.dir === 1 ? '↑' : '↓') + '</b> · ' + px(v.lo) + '–' + px(v.hi) + ' · ' + clk(v.t) + '<br><span class="k">' + (v.fill != null ? 'ребалансирован в ' + clk(v.fill) : 'открыт: цена ещё не заходила') + '</span>'; }
+    if (h.k === 'prev') {
+      const P = h.P, q = P.s;
+      const how = q.conf ? (q.side === 1 ? '↑ ' : '↓ ') + clk(q.conf) + (q.failed ? ' · слом DR ' + clk(q.failed) : ' · DR удержался') : P.k === 'PREV' ? 'вчерашняя RDR' : 'подтверждения не было';
+      return '<b>' + P.name + ' · ' + h.nm + '</b> · ' + px(h.p) + '<br><span class="k">' + how + ' · цена сейчас ' + (ctx.s.priceNow > h.p ? 'выше' : 'ниже') + '</span>';
+    }
+    return '';
+  }
+
+  // ---------- toolbar, panel, menu ----------
+  function toolbar(ctx) {
+    dom('sess').innerHTML = ORDER.map(k => '<button data-s="' + k + '" class="' + (k === st.session ? 'on' : '') + '">' + k + '</button>').join('');
+    dom('inst').innerHTML = ['NQ', 'ES', 'YM'].map(k => '<button data-i="' + k + '" class="' + (k === A.inst ? 'on' : '') + (API ? '' : ' off') + '">' + k + '</button>').join('');
+    if (API) {
+      const x = A.day, et = x && x.fetched_at ? new Date(x.fetched_at).toLocaleTimeString('ru-RU', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '';
+      dom('apibar').innerHTML = '<span class="feed">' + (A.error ? '<b class="err">' + esc(A.error) + '</b>' : x && x.status === 'ok' ? esc((x.feed || A.inst) + ' · ' + et + ' ET') : x ? esc(x.message || '') : 'загружаю…') + '</span>' +
+        '<label class="auto"><input type="checkbox" id="auto21"' + (A.auto ? ' checked' : '') + '> Авто</label><button id="refresh21"' + (A.busy ? ' disabled' : '') + '>⟳ Обновить</button>';
+    }
+    dom('scene').innerHTML = API ? '' : SCENES.map(([k, n]) => '<button data-sc="' + k + '" class="' + (k === st.scene ? 'on' : '') + '">' + n + '</button>').join('');
+    dom('date').textContent = ctx.D.date;
+    dom('clock').innerHTML = ctx.live ? '<div class="pill"><span class="dot"></span><span id="live">LIVE ' + clk(NOW) + ' ET</span></div>' :
+      '<div style="display:flex;gap:6px"><div class="pill rp"><span class="dot"></span>Повтор ' + ctx.s.k + ' · ' + clk(ctx.obs) + '</div><button id="back">К текущему</button></div>';
+    dom('menu').innerHTML = LAYERS.map(([k, n, col]) => '<label><input type="checkbox" data-l="' + k + '"' + (st.L[k] ? ' checked' : '') + '><span class="sw" style="background:' + col + '"></span>' + n + '</label>').join('') +
+      '';
+  }
+    // Variant 21: the right panel carries only what the chart cannot say at a glance, and every line is a link:
+  // hovering it lights on the chart the level, the place, its densest spot and its time (the operator, 28.09).
+  // Percentages only (no session counts). Same synthetic, prefix-limited data as design 20.
+  const P21 = { get compare() { return !!st.L.snap21; }, snapshots: new Map(), links: [] };
+
+  function p21Key(h) {
+    if (!h) return '';
+    return [h.k, h.role, h.id, h.slice, h.pLo, h.pHi, h.t0, h.t1, h.T, h.i, h.t, h.p, h.hot].join('|');
+  }
+  function p21Pin(h) {
+    if (!h) return;
+    st.pin = p21Key(st.pin) === p21Key(h) ? null : h;
+    st.hover = null;
+    render(true);
+  }
+  // the screen at the confirmation (grey contours on the chart; «Слои» → «Контуры на момент подтверждения»)
+  function p21Snapshot(ctx) {
+    if (ctx.s.conf == null || ctx.s.conf > ctx.obs) return null;
+    const key = ctx.D.d + '|' + ctx.s.k + '|' + ctx.s.conf;
+    if (!P21.snapshots.has(key)) {
+      const s = sess(ctx.D, ctx.s.k, ctx.s.conf, false), ov = overlay(ctx.D, s);
+      if (!ov) return null;
+      P21.snapshots.set(key, { D: ctx.D, s, ov, obs: s.conf, live: false });
+    }
+    return P21.snapshots.get(key);
+  }
+
+  // ---------- what a link shows ----------
+  // the densest spot of a place: its densest price step (0.1 IDR, the bars right of the price scale) and, in it,
+  // the densest time window (5 minutes, widened to neighbours holding at least 60 % of it)
+  function hotOf(ov, R, k) {
+    if (!k.all || !k.all.length) return null;
+    const cnt = new Map();
+    for (const q of k.all) { const b = Math.floor(q.u / 0.1 + 1e-9); cnt.set(b, (cnt.get(b) || 0) + 1); }
+    let best = null;
+    for (const [b, n] of cnt) if (!best || n > best[1]) best = [b, n];
+    const pb = R.pb.find(q => q.b === best[0]);
+    if (!pb) return null;
+    const tc = timeCluster(ov, R, pb.pLo, pb.pHi);
+    return tc && { pLo: pb.pLo, pHi: pb.pHi, p: (pb.pLo + pb.pHi) / 2, binPct: pb.pct, tc };
+  }
+  // when similar sessions first reached a price after the moment (5-minute bars), and the densest window of it
+  function firstTouch(ov, p) {
+    const u = ov.p2u(p), up = u >= ov.u0, bins = new Map();
+    let n = 0;
+    for (const q of ov.sims) {
+      for (let j = 0; j < ov.grid.length; j++) {
+        const v = up ? q.hi[j] : q.lo[j];
+        if (v != null && (up ? v >= u : v <= u)) { const T = ov.grid[j] - 5; bins.set(T, (bins.get(T) || 0) + 1); n++; break; }
+      }
+    }
+    if (!n) return null;
+    let pk = null;
+    for (const [b, c] of bins) if (!pk || c > pk[1]) pk = [b, c];
+    let t0 = pk[0], t1 = pk[0] + 5, m = pk[1];
+    while ((bins.get(t0 - 5) || 0) >= 0.6 * pk[1]) { t0 -= 5; m += bins.get(t0); }
+    while ((bins.get(t1) || 0) >= 0.6 * pk[1]) { m += bins.get(t1); t1 += 5; }
+    return { bins: [...bins].sort((a, b) => a[0] - b[0]), peak: pk[1], t0, t1, pct: 100 * m / ov.N, all: 100 * n / ov.N };
+  }
+  // before the stars are drawn: resolve the link under the mouse into a window for the axes, the strip and the stars
+  function prep21(ctx) {
+    V.h21 = null;
+    const h = hv(), ov = ctx.ov;
+    if (!h || !ov) return;
+    if (h.k === 'place') {
+      const R = ov.roles.find(r => r.id === h.role), k = R && R.cons.find(q => q.id === h.id);
+      if (!k) return;
+      const hot = hotOf(ov, R, k);
+      V.h21 = { k: 'place', R, zone: k, hot };
+      if (hot) { V.win = { t0: hot.tc.t0, t1: hot.tc.t1, pA: hot.pLo, pB: hot.pHi, col: R.col }; V.pbWin = { role: R.id, t0: hot.tc.t0, t1: hot.tc.t1 }; }
+    } else if (h.k === 'times' || h.k === 'zone') {
+      V.h21 = h;
+    } else if (h.k === 'step') {
+      const ft = firstTouch(ov, h.p);
+      V.h21 = { k: 'step', p: h.p, name: h.name, ft };
+      if (ft) V.win = { t0: ft.t0, t1: ft.t1, pA: h.p, pB: h.p, col: '#E9EEF5' };
+    }
+  }
+  function drawTC21(c, col, tc, pLo, pHi, xFrom, xTo) {
+    const y0 = V.Y(pHi), y1 = V.Y(pLo), mid = (y0 + y1) / 2, hh = Math.max(16, y1 - y0), top = mid - hh / 2;
+    c.fillStyle = rgba(col, 0.09); c.fillRect(xFrom, top, xTo - xFrom, hh);
+    for (const [b, n] of tc.bins) {
+      const x0 = V.X(b) + 0.5, x1 = V.X(b + 5) - 0.5, bh = Math.max(1.5, hh * n / tc.peak), inW = b >= tc.t0 && b < tc.t1;
+      c.fillStyle = rgba(col, inW ? 0.95 : 0.35); c.fillRect(x0, top + hh - bh, Math.max(1, x1 - x0), bh);
+    }
+    const xa = Math.round(V.X(tc.t0)) + 0.5, xb = Math.round(V.X(tc.t1)) + 0.5;
+    c.strokeStyle = rgba(col, 1); c.lineWidth = 1.5; c.strokeRect(xa, Math.round(top) + 0.5, xb - xa, Math.round(hh));
+    c.fillStyle = rgba(col, 0.1); c.fillRect(xa, top + hh, xb - xa, V.plot.h - top - hh);
+    c.strokeStyle = rgba(col, 0.6); c.lineWidth = 1; c.setLineDash([3, 3]);
+    c.beginPath(); c.moveTo(xa, top + hh); c.lineTo(xa, V.plot.h); c.moveTo(xb, top + hh); c.lineTo(xb, V.plot.h); c.stroke(); c.setLineDash([]);
+  }
+  function brightLine(c, p, text, xl) {
+    const y = Math.round(V.Y(p)) + 0.5;
+    c.strokeStyle = 'rgba(246,248,252,.95)'; c.lineWidth = 2; c.setLineDash([]);
+    c.beginPath(); c.moveTo(0, y); c.lineTo(V.plot.w, y); c.stroke();
+    if (text) {
+      c.font = '700 12px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right';
+      const w = c.measureText(text).width + 10;
+      const xr = xl != null ? xl + w : V.plot.w - 8;
+      c.fillStyle = '#F4F6FA'; roundRect(c, xr - w, y - 9, w, 18, 3); c.fill();
+      c.fillStyle = '#0B0C10'; c.fillText(text, xr - 5, y + 0.5); c.textAlign = 'left';
+    }
+  }
+  // after the levels: the lit link (a place: its borders, its densest spot and its time; a step: the line and when it
+  // was usually reached; a level: the line)
+  function drawReference21(c, ctx) {
+    const h = hv(), ov = ctx.ov;
+    if (!h) return;
+    if (h.k === 'lvl' || h.k === 'prev') {
+      const p = h.k === 'lvl' ? h.l && h.l.p : h.p;
+      if (Number.isFinite(p)) brightLine(c, p, h.k === 'lvl' && h.l ? (h.l.type === 'std' ? h.l.name : h.l.full) : null);
+      return;
+    }
+    const H = V.h21;
+    if (!H || !ov) return;
+    if (H.k === 'place') {
+      const k = H.zone, s = ctx.s;
+      for (const u of [k.lo, k.hi]) {
+        if (!isFinite(u)) continue;
+        const p = ov.u2p(u), l = levels(s).find(q => Math.abs(q.p - p) < 1e-6);
+        brightLine(c, p, (l ? (l.type === 'std' ? l.name : l.full) + ' · ' : 'граница места · ') + px(p), V.X(ov.obs) + 10);
+      }
+      if (H.hot) drawTC21(c, H.R.col, H.hot.tc, H.hot.pLo, H.hot.pHi, V.X(ov.obs + ov.near), V.X(ov.end));
+    } else if (H.k === 'times') {
+      if (H.from != null) { const xa = V.X(H.from), xb = V.X(H.ts[0].t); c.fillStyle = 'rgba(246,248,252,.05)'; c.fillRect(Math.min(xa, xb), 0, Math.abs(xb - xa), V.plot.h); }
+      for (const q of H.ts) {
+        const x = Math.round(V.X(q.t)) + 0.5;
+        c.strokeStyle = 'rgba(246,248,252,.9)'; c.lineWidth = 1.5; c.setLineDash([5, 4]);
+        c.beginPath(); c.moveTo(x, 0); c.lineTo(x, V.plot.h); c.stroke(); c.setLineDash([]);
+        c.font = '700 11.5px ' + FONT; c.textBaseline = 'top';
+        const w = c.measureText(q.label).width + 10;
+        c.fillStyle = '#F4F6FA'; roundRect(c, x - w / 2, 96, w, 18, 3); c.fill();
+        c.fillStyle = '#0B0C10'; c.textAlign = 'center'; c.fillText(q.label, x, 99); c.textAlign = 'left';
+      }
+    } else if (H.k === 'zone') {
+      const ya = V.Y(Math.max(H.pA, H.pB)), yb = V.Y(Math.min(H.pA, H.pB));
+      c.fillStyle = rgba(H.col || '#F4F6FA', 0.13); c.fillRect(0, ya, V.plot.w, Math.max(2, yb - ya));
+      brightLine(c, H.pA, H.name + ' · ' + px(H.pA), V.X(ov.obs) + 10);
+      if (Math.abs(H.pB - H.pA) > 1e-9) brightLine(c, H.pB, px(H.pB), V.X(ov.obs) + 10);
+    } else if (H.k === 'step') {
+      brightLine(c, H.p, H.name);
+      if (H.ft) drawTC21(c, '#E9EEF5', H.ft, H.p - (V.p1 - V.p0) * 0.004, H.p + (V.p1 - V.p0) * 0.004, V.X(ov.obs), V.X(ov.end));
+    }
+  }
+  function drawSnapshot21(c, ctx) {
+    const snap = P21.compare && p21Snapshot(ctx);
+    if (!snap) return;
+    c.save(); c.setLineDash([4, 5]);
+    for (const R of snap.ov.roles) for (const k of R.cons) {
+      const g = k.g;
+      if (!g || !g.segs) continue;
+      c.strokeStyle = 'rgba(171,180,194,.35)'; c.lineWidth = 1;
+      c.beginPath();
+      for (let i = 0; i < g.segs.length; i += 5) {
+        if (g.segs[i + 4] !== g.coreId) continue;
+        c.moveTo(V.X(g.t0 + g.segs[i] * g.dt), V.Y(snap.ov.u2p(g.u0 + g.segs[i + 1] * g.du)));
+        c.lineTo(V.X(g.t0 + g.segs[i + 2] * g.dt), V.Y(snap.ov.u2p(g.u0 + g.segs[i + 3] * g.du)));
+      }
+      c.stroke();
+    }
+    c.setLineDash([]); c.font = '12px ' + FONT; c.fillStyle = '#AAB5C4'; c.fillText('Серые контуры · как было на подтверждении ' + clk(snap.obs), 10, 76); c.restore();
+  }
+
+  // ---------- the panel ----------
+  function link(h, html, cls) { const i = P21.links.push(h) - 1; return '<div class="p21-link' + (cls ? ' ' + cls : '') + '" data-l21="' + i + '">' + html + '</div>'; }
+  function lvlObj(s, id) { return levels(s).find(l => l.id === id); }
+  // what the three new blocks list: targets ahead in the direction of the side in play, by when pullbacks and extremes
+  // usually ended, and where the scenario breaks (docs/SEMANTICS.md, «Экран Созвездия»)
+  function targets21(ctx) {
+    const s = ctx.s, ov = ctx.ov, side = ov.mode === 'brk' ? s.nside : s.side, w = s.idrH - s.idrL, out = [];
+    const ahead = p => side === 1 ? p > s.priceNow + 1e-9 : p < s.priceNow - 1e-9;
+    const edge = ov.mode === 'brk' ? s.nedge : s.edge, done = (ov.mode === 'brk' ? s.takenN : s.taken) || [];
+    for (let j = 1; j <= 6; j++) { const p = edge + side * j * w / 2; if (ahead(p) && !done.some(q => q.j === j && q.t)) out.push({ p, name: stepName(j, side === 1) }); }
+    const bars = ctx.D.bars.filter(b => b.t >= s.start && b.t < Math.min(ctx.obs, s.end) && (ctx.live || b.t + 5 <= ctx.obs));
+    if (bars.length) { const e = side === 1 ? Math.max(...bars.map(b => b.h)) : Math.min(...bars.map(b => b.l)); if (ahead(e)) out.push({ p: e, name: side === 1 ? 'максимум сессии' : 'минимум сессии' }); }
+    for (const P of prevList(ctx)) { const p = side === 1 ? P.s.drH : P.s.drL; if (ahead(p)) out.push({ p, name: P.name + (side === 1 ? ' DR high' : ' DR low') }); }
+    for (const v of vibsKnown(ctx)) if (v.fill == null) { const p = side === 1 ? v.lo : v.hi; if (ahead(p)) out.push({ p, name: 'VIB' }); }
+    out.sort((a, b) => Math.abs(a.p - s.priceNow) - Math.abs(b.p - s.priceNow));
+    const res = [], kind = q => q.name === 'VIB' ? 'vib' : /^[+−]\d/.test(q.name) ? 'std' : 'lvl', cap = { vib: 1, std: 2, lvl: 3 }, used = { vib: 0, std: 0, lvl: 0 };
+    for (const q of out) {
+      if (res.some(r => Math.abs(r.p - q.p) < 0.06 * w) || used[kind(q)] >= cap[kind(q)]) continue;
+      used[kind(q)]++; res.push(q);
+      if (res.length === 4) break;
+    }
+    return res.sort((a, b) => Math.abs(a.p - s.priceNow) - Math.abs(b.p - s.priceNow));
+  }
+  function quant(a, f) { const v = a.slice().sort((x, y) => x - y); return v.length ? v[Math.min(v.length - 1, Math.round(f * (v.length - 1)))] : null; }
+  // the widest price interval (steps of 0.05 IDR, between the price and the deepest 97 %) where no pullback of a similar
+  // session ended (the author's place for a stop); otherwise the price beyond which only 3 % ended
+  function gapOf(ctx, R) {
+    const ov = ctx.ov, s = ctx.s, us = R.stars.map(q => q.u).sort((a, b) => a - b), stp = 0.05, hi = ov.u0;
+    const wall = ov.p2u(ov.mode === 'brk' ? (s.side === 1 ? s.drH : s.drL) : s.opp), lo = Math.max(quant(us, 0.03), wall);
+    if (lo == null || lo >= hi) return null;
+    const n = Math.ceil((hi - lo) / stp), cnt = new Array(n).fill(0);
+    for (const u of us) { const k = Math.floor((u - lo) / stp); if (k >= 0 && k < n) cnt[k]++; }
+    let best = null;
+    for (let a = 0; a < n;) {
+      if (cnt[a]) { a++; continue; }
+      let b = a;
+      while (b < n && !cnt[b]) b++;
+      if (a > 0 && b < n && b - a >= 2 && (!best || b - a > best[1] - best[0])) best = [a, b];
+      a = b;
+    }
+    if (best) return { gap: true, pA: ov.u2p(lo + best[0] * stp), pB: ov.u2p(lo + best[1] * stp) };
+    return lo > wall + 1e-9 ? { gap: false, pA: ov.u2p(lo) } : null;
+  }
+  function panelHtml(ctx) {
+    const s = ctx.s, ov = ctx.ov;
+    P21.links = [];
+    if (!ov) {
+      const msg = API && (!A.day || A.day.status !== 'ok') ? (A.day && A.day.message) || 'Загружаю свечи…' :
+        s.status === 'forming' ? 'Коробка ещё формируется' : s.status === 'before' ? 'Сессия ещё не началась' :
+        ['confirmed', 'broken', 'waiting'].includes(s.status) ? 'Ищу похожие сессии…' : s.status === 'noconf' ? 'Сессия закончилась без подтверждения' : 'Сессия закончилась';
+      panel.innerHTML = '<div class="p21-empty">' + esc(msg) + '</div>';
+      return;
+    }
+    const side = ov.mode === 'brk' ? s.nside : s.side, out = [];
+    const row = (text, val) => '<span class="t">' + text + '</span><b>' + val + '</b>';
+    out.push('<div class="p21-h"><span title="' + esc(ov.cond || '') + '">Дальше по похожим</span><span>после ' + clk(ctx.obs) + '</span></div>');
+    if (ov.mode === 'wait') {
+      out.push('<div class="p21-dir"><span class="lb">Подтверждение</span>' +
+        link({ k: 'lvl', id: 'drH', l: lvlObj(s, 'drH') }, '↑ <b>' + pct(ov.dir.up) + '</b>', 'in') +
+        link({ k: 'lvl', id: 'drL', l: lvlObj(s, 'drL') }, '↓ <b>' + pct(ov.dir.dn) + '</b>', 'in') +
+        '<span class="p21-no">нет <b>' + pct(ov.dir.none) + '</b></span></div>');
+      out.push(link({ k: 'step', p: s.drH, name: 'DR high' }, row('до DR high ' + px(s.drH), pct(ov.touch(s.drH)))));
+      out.push(link({ k: 'step', p: s.drL, name: 'DR low' }, row('до DR low ' + px(s.drL), pct(ov.touch(s.drL)))));
+    }
+    for (const R of ov.roles) {
+      const k = R.cons.slice().sort((a, b) => b.pct - a.pct)[0];
+      if (k && k.n) out.push(link({ k: 'place', role: R.id, id: k.id }, row('<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i> чаще всего ' + k.name, pct(k.pct))));
+    }
+    out.push(link({ k: 'col', t0: ctx.obs, t1: ctx.obs + ov.near }, row('в первые ' + ov.near + ' минут', ov.roles.map(R => '<i style="color:' + R.col + '">' + pct(R.nearPct) + '</i>').join(' · ')), 'dim'));
+    // the three places per side: share, the densest price in it and when
+    out.push('<div class="p21-h second">Места <span>цена · когда плотнее всего</span></div>');
+    const mx = Math.max(1, ...ov.roles.flatMap(r => r.cons.map(k => k.pct)));
+    for (const R of ov.roles) {
+      const arrow = ov.mode === 'wait' ? '' : ((R.id === 'cont' ? side : -side) === 1 ? ' ↑' : ' ↓');
+      out.push('<div class="p21-g"><i style="background:' + R.col + '"></i>' + R.name + arrow + '</div>');
+      for (const k of R.cons.slice().sort((a, b) => b.sortP - a.sortP)) {
+        const hot = k.n ? hotOf(ov, R, k) : null;
+        out.push(link({ k: 'place', role: R.id, id: k.id },
+          '<span class="bar" style="width:' + (100 * k.pct / mx).toFixed(1) + '%;background:' + R.col + '"></span><b style="color:' + R.col + '">' + pct(k.pct) + '</b><span class="z">' + k.short + '</span><span class="pr">' + (hot ? px(hot.p) : '—') + '</span><span class="tm">' + (hot ? clk(hot.tc.t0) + '–' + clk(hot.tc.t1) : '') + '</span>', 'place'));
+      }
+    }
+    if (ov.mode !== 'wait') {
+      // targets ahead: the share of similar sessions that got there, and when they usually first did
+      const T = targets21(ctx);
+      if (T.length) {
+        out.push('<div class="p21-h second">Цели <span>обычно к · дошли</span></div>');
+        for (const q of T) {
+          const ft = firstTouch(ov, q.p);
+          out.push(link({ k: 'step', p: q.p, name: q.name }, '<span class="t">' + esc(q.name) + ' · ' + px(q.p) + '</span><span class="tm2">' + (ft ? clk(ft.t0) : '') + '</span><b>' + pct(ov.touch(q.p)) + '</b>', 'tgt'));
+        }
+      }
+    }
+    // time: by when half (and 70 %) of the pullbacks and the extremes had ended
+    out.push('<div class="p21-h second">Время <span>к какому времени закончились</span></div>');
+    for (const R of ov.roles) {
+      const ts = R.stars.map(q => q.t), t50 = quant(ts, 0.5), t70 = quant(ts, 0.7);
+      if (t50 == null) continue;
+      const deep = R.id === 'pull' || R.id === 'dn';
+      const text = '<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i>: половина к ' + clk(t50) + (deep ? ' · 70% к ' + clk(t70) : '');
+      const ts2 = [{ t: t50, label: '50% · ' + clk(t50) }].concat(deep ? [{ t: t70, label: '70% · ' + clk(t70) }] : []);
+      out.push(link({ k: 'times', from: ctx.obs, ts: ts2 }, '<span class="t">' + text + '</span>' + (t50 <= ctx.obs ? '<span class="p21-past">прошло</span>' : ''), 'time'));
+    }
+    if (ov.mode !== 'wait') {
+      // where the scenario breaks: the DR rule, the retirement zone, the empty interval (a place for a stop)
+      out.push('<div class="p21-h second">Где сценарий сломан</div>');
+      const pull = ov.roles.find(r => r.id === 'pull');
+      if (ov.mode === 'conf') {
+        out.push(link({ k: 'lvl', id: side === 1 ? 'drL' : 'drH', l: lvlObj(s, side === 1 ? 'drL' : 'drH') }, row('DR удержится до ' + clk(s.end), pct(ov.holds))));
+        const pR = ov.u2p(-0.75), deep = ov.sims.filter(q => q.mn <= -0.75), heldAfter = deep.length >= 10 ? 100 * deep.filter(q => q.held).length / deep.length : null;
+        if (ov.u0 > -0.75) out.push(link({ k: 'zone', pA: pR, pB: s.opp, name: 'retirement −0,75', col: pull.col }, row('retirement −0,75 · ' + px(pR) + (heldAfter != null ? '<br><span class="p21-sub">после касания DR держался ' + pct(heldAfter) + '</span>' : ''), pct(ov.touch(pR)))));
+        else out.push('<div class="p21-note">цена уже в зоне retirement: после касания DR держится реже</div>');
+      }
+      const gp = pull && gapOf(ctx, pull);
+      if (gp && gp.gap) out.push(link({ k: 'zone', pA: gp.pA, pB: gp.pB, name: 'пусто', col: pull.col }, row('пусто ' + px(Math.min(gp.pA, gp.pB)) + '–' + px(Math.max(gp.pA, gp.pB)) + ': здесь откаты не заканчивались', '')));
+      else if (gp) out.push(link({ k: 'zone', pA: gp.pA, pB: gp.pA, name: 'глубже — 3%', col: pull.col }, row('глубже ' + px(gp.pA) + ' — только 3% откатов', '')));
+    }
+    panel.innerHTML = out.join('');
+    panelMarks();
+  }
+  function panelMarks() {
+    const h = hv();
+    for (const el of panel.querySelectorAll('[data-l21]')) {
+      const L = P21.links[+el.dataset.l21];
+      let on = p21Key(L) === p21Key(h);
+      if (!on && h && L && L.k === 'place' && h.k === 'con') on = h.role === L.role && h.id === L.id;
+      el.classList.toggle('on', !!on);
+      el.classList.toggle('pinned', !!(st.pin && p21Key(L) === p21Key(st.pin)));
+    }
+  }
+  function initPanel21() {
+    panel.addEventListener('mouseover', e => { const el = e.target.closest('[data-l21]'); if (!el) return; st.hover = P21.links[+el.dataset.l21]; animStrip(); redraw(); });
+    panel.addEventListener('mouseout', e => { const el = e.target.closest('[data-l21]'); if (!el || el.contains(e.relatedTarget)) return; st.hover = null; animStrip(); redraw(); });
+    panel.addEventListener('click', e => { const el = e.target.closest('[data-l21]'); if (el) p21Pin(P21.links[+el.dataset.l21]); });
+    dom('step21').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const t = (st.rp ?? Math.floor(NOW / 5) * 5) + Number(b.dataset.step); if (t >= NOW) backLive(); else replayAt(t); });
+    dom('panel21toggle').addEventListener('click', () => { const closed = dom('dr21-root').classList.toggle('panel21closed'); dom('panel21toggle').setAttribute('aria-pressed', String(!closed)); render(true); });
+    new ResizeObserver(() => redraw(true)).observe(cv);
+  }
+
+  function placeNav() {
+    if (!V) return;
+    nav.style.left = (V.plot.w / 2 - 50) + 'px';
+    nav.style.top = (V.plot.h - (V.stripOn ? V.strip.h : 0) - 44) + 'px';
+    nav.classList.toggle('show', st.navHover || (st.mx >= 0 && st.mx < V.plot.w && st.my < V.plot.h && st.my > V.plot.h * 0.5));
+  }
+  function showTip(h, x, y) {
+    const html = tipHtml(h, V.ctx);
+    if (!html) { tip.hidden = true; return; }
+    tip.innerHTML = html; tip.hidden = false;
+    const r = cv.getBoundingClientRect(), w = tip.offsetWidth, hh = tip.offsetHeight;
+    let tx = x + 16, ty = y + 16;
+    if (tx + w > r.width - 4) tx = x - w - 14;
+    if (ty + hh > r.height - 4) ty = y - hh - 12;
+    tip.style.left = Math.max(4, tx) + 'px'; tip.style.top = Math.max(4, ty) + 'px';
+  }
+
+  // ---------- interaction (TradingView-like) ----------
+  let raf = 0, fullNext = false;
+  const redraw = full => { fullNext = fullNext || !!full; if (!raf) raf = requestAnimationFrame(() => { raf = 0; const f = fullNext; fullNext = false; render(f); }); };
+  function stripTarget() { return V && V.stripOn && (st.stripPin || (st.hover && (st.hover.src === 'strip' || st.hover.k === 'stripBg'))) ? 200 : 46; }
+  function animStrip() {
+    const ts = stripTarget(), th = st.L.hist ? (st.histPin || st.histOver ? 176 : 22) : 0;
+    const done = Math.abs(st.stripH - ts) < 1 && Math.abs(st.histH - th) < 1;
+    if (done) { st.stripH = ts; st.histH = th; redraw(); return; }
+    st.stripH += (ts - st.stripH) * 0.35; st.histH += (th - st.histH) * 0.35;
+    redraw();
+    requestAnimationFrame(animStrip);
+  }
+  const local = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  cv.addEventListener('mousemove', e => {
+    const [x, y] = local(e);
+    st.mx = x; st.my = y;
+    const d = st.drag;
+    if (d) {
+      const dx = x - d.x, dy = y - d.y;
+      if (Math.abs(dx) + Math.abs(dy) > 3) d.moved = true;
+      if (d.zone === 'plot') {
+        const span = d.v1 - d.v0; st.v0 = d.v0 - dx * span / V.plot.w; st.v1 = d.v1 - dx * span / V.plot.w;
+        if (Math.abs(y - d.y) > 2 || !st.auto) { const ps = d.p1 - d.p0; st.auto = false; st.p0 = d.p0 + dy * ps / V.plot.h; st.p1 = d.p1 + dy * ps / V.plot.h; }
+      } else if (d.zone === 'paxis') {
+        const f = Math.exp(dy * 0.006), m = (d.p0 + d.p1) / 2, half = (d.p1 - d.p0) / 2 * f;
+        st.auto = false; st.p0 = m - half; st.p1 = m + half;
+      } else if (d.zone === 'taxis') {
+        const f = Math.exp(-dx * 0.005), span = clamp((d.v1 - d.v0) * f, 30, 1500);
+        st.v0 = d.v1 - span; st.v1 = d.v1;
+      }
+      cv.style.cursor = d.zone === 'plot' ? 'grabbing' : d.zone === 'paxis' ? 'ns-resize' : 'ew-resize';
+      tip.hidden = true;
+      redraw();
+      return;
+    }
+    const h = hit(x, y), was = JSON.stringify(st.hover && Object.assign({}, st.hover, { q: undefined, l: undefined, v: undefined, P: undefined, list: undefined }));
+    st.hover = h && !['paxis', 'taxis', 'histHead', 'histBg'].includes(h.k) ? h : null;
+    st.histOver = !!(h && h.src === 'hist');
+    cv.style.cursor = !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : h.k === 'histHead' || h.k === 'con' || h.src === 'strip' ? 'pointer' : h.src === 'hist' ? 'default' : 'crosshair';
+    showTip(st.hover, x, y);
+    const now = JSON.stringify(st.hover && Object.assign({}, st.hover, { q: undefined, l: undefined, v: undefined, P: undefined, list: undefined }));
+    if (now !== was || st.histOver !== (st.histH > 30)) animStrip();
+    redraw();
+  });
+  cv.addEventListener('mouseleave', () => { st.mx = -1; st.my = -1; st.histOver = false; if (!st.drag) { st.hover = null; tip.hidden = true; animStrip(); } redraw(); });
+  cv.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    const [x, y] = local(e), zone = st.L.hist && y >= V.H - st.histH ? 'hist' : x > V.plot.w && y < V.plot.h ? 'paxis' : y > V.plot.h ? 'taxis' : 'plot';
+    st.drag = { x, y, zone, v0: st.v0, v1: st.v1, p0: V.p0, p1: V.p1, moved: false, h: st.hover };
+    e.preventDefault();
+  });
+  window.addEventListener('mouseup', e => {
+    const d = st.drag;
+    if (!d) return;
+    st.drag = null; cv.style.cursor = 'crosshair';
+    if (d.moved) { redraw(); return; }
+    const [x, y] = local(e);
+    click(x, y, d);
+  });
+  function click(x, y, d) {
+    const h = hit(x, y);
+    if (d.zone === 'hist') { if (h && h.k === 'histHead') { st.histPin = !st.histPin; animStrip(); } else if (h && ['pband','col','heat','typ'].includes(h.k)) p21Pin(h); return; }
+    if (h && h.k === 'pband' && d.zone === 'paxis') { p21Pin(h); return; }
+    if (d.zone !== 'plot') return;
+    if (h && (h.src === 'strip' || h.k === 'stripBg')) { st.stripPin = !st.stripPin; animStrip(); redraw(); return; }
+    if (h && h.k === 'con') { st.pin = st.pin && st.pin.k === 'con' && st.pin.role === h.role && st.pin.id === h.id ? null : { k: 'con', role: h.role, id: h.id }; redraw(true); return; }
+    const b = barAt(V.ctx, V.T(x));
+    const lastUsed = V.ctx.live ? NOW : V.ctx.obs;
+    if (b && y >= V.Y(b.h) - 6 && y <= V.Y(b.l) + 6 && (b.t + 5 <= NOW || st.scene === 'wait')) { replayAt(Math.min(b.t + 5, b.t + 5 <= lastUsed || !V.ctx.live ? b.t + 5 : b.t + 5)); return; }
+    if (h && ['lvl','prev','typ','star','vib'].includes(h.k)) { p21Pin(h); return; }
+    if (st.pin) { st.pin = null; st.hover = null; redraw(true); }
+  }
+  cv.addEventListener('dblclick', e => {
+    const [x, y] = local(e);
+    if (x > V.plot.w && y < V.plot.h) { st.auto = true; redraw(); }
+    else if (y > V.plot.h && y < V.plot.h + V.timeH) { fitSession(st.session); redraw(); }
+  });
+  cv.addEventListener('wheel', e => {
+    const [x, y] = local(e);
+    if (st.L.hist && y >= V.H - st.histH) return;
+    e.preventDefault();
+    if (x > V.plot.w) {
+      const f = Math.exp(e.deltaY * 0.0015), m = (V.p0 + V.p1) / 2, half = (V.p1 - V.p0) / 2 * f;
+      st.auto = false; st.p0 = m - half; st.p1 = m + half;
+    } else if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+      const dt = (e.deltaX || e.deltaY) * (st.v1 - st.v0) / V.plot.w * 0.6; st.v0 += dt; st.v1 += dt;
+    } else {
+      const f = Math.exp(e.deltaY * 0.0012), t = V.T(Math.min(x, V.plot.w)), span = clamp((st.v1 - st.v0) * f, 30, 1500), k = span / (st.v1 - st.v0);
+      st.v0 = t - (t - st.v0) * k; st.v1 = st.v0 + span;
+    }
+    redraw();
+  }, { passive: false });
+  nav.addEventListener('mouseenter', () => { st.navHover = true; placeNav(); });
+  nav.addEventListener('mouseleave', () => { st.navHover = false; placeNav(); });
+  nav.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    const z = +b.dataset.z;
+    if (z === 0) { fitSession(st.session); st.auto = true; st.p0 = st.p1 = null; if (st.session === 'RDR' && st.scene !== 'wait') { st.v0 = 545; st.v1 = 975; } }
+    else { const f = z > 0 ? 1.35 : 1 / 1.35, span = clamp((st.v1 - st.v0) * f, 30, 1500); st.v0 = st.v1 - span; }
+    redraw();
+  });
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { if (st.pin) st.pin = null; else if (st.stripPin) st.stripPin = false; else if (st.rp != null) backLive(); animStrip(); redraw(true); }
+    else if (e.altKey && (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К')) { e.preventDefault(); fitSession(st.session); if (st.session === 'RDR' && st.scene !== 'wait') { st.v0 = 545; st.v1 = 975; } redraw(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      const t0 = st.rp != null ? st.rp : Math.floor(NOW / 5) * 5, t = t0 + (e.key === 'ArrowLeft' ? -5 : 5);
+      if (t >= NOW && (API || st.scene !== 'wait')) backLive(); else if (sessOf(t - 5)) { st.rp = t; st.session = sessOf(t - 5); st.pin = null; render(true); }
+    }
+  });
+  root.addEventListener('click', e => {
+    const t = e.target;
+    if (t.closest('#sess button')) { st.userSession = true; selSession(t.closest('button').dataset.s); }
+    else if (API && t.closest('#inst button')) { A.inst = t.closest('button').dataset.i; A.day = null; A.D = null; loadDay(false); }
+    else if (API && t.id === 'refresh21') loadDay(true);
+    else if (t.closest('#scene button')) setScene(t.closest('button').dataset.sc);
+    else if (t.id === 'back') backLive();
+    else if (t.id === 'lay') { st.menu = !st.menu; dom('menu').hidden = !st.menu; t.classList.toggle('on', st.menu); dom('cfgp').hidden = true; dom('cfgb').classList.remove('on'); }
+    else if (t.id === 'cfgb') { const o = dom('cfgp').hidden; dom('cfgp').hidden = !o; t.classList.toggle('on', o); st.menu = false; dom('menu').hidden = true; dom('lay').classList.remove('on'); }
+    else {
+      if (!t.closest('#menu') && st.menu) { st.menu = false; dom('menu').hidden = true; dom('lay').classList.remove('on'); }
+      if (!t.closest('#cfgp') && !dom('cfgp').hidden) { dom('cfgp').hidden = true; dom('cfgb').classList.remove('on'); }
+    }
+  });
+  dom('apibar').addEventListener('change', e => { if (e.target.id === 'auto21') { A.auto = e.target.checked; try { localStorage.setItem('drlab.auto', A.auto ? '1' : '0'); } catch (x) { /* optional */ } schedule(); } });
+  dom('menu').addEventListener('change', e => {
+    const k = e.target.dataset.l, p = e.target.dataset.p;
+    if (k) { st.L[k] = e.target.checked; if (k === 'hist') { st.histH = st.L.hist ? 22 : 0; st.histPin = false; } redraw(true); }
+  });
+  // the settings panel: built from SCHEMA; every change redraws at once and is kept in this browser
+  function cfgPanel() {
+    const row = ([k, n, type, a, b, step]) => {
+      const v = cfg[k];
+      if (type === 'color') return '<label class="cr"><span>' + n + '</span><input type="color" data-c="' + k + '" value="' + v + '"></label>';
+      if (type === 'dash') return '<label class="cr"><span>' + n + '</span><select data-c="' + k + '">' + Object.keys(DASH).map(d => '<option value="' + d + '"' + (d === v ? ' selected' : '') + '>' + DASH_NAMES[d] + '</option>').join('') + '</select></label>';
+      return '<label class="cr"><span>' + n + '</span><input type="range" data-c="' + k + '" min="' + a + '" max="' + b + '" step="' + (step || 1) + '" value="' + v + '"><em>' + v + '</em></label>';
+    };
+    dom('cfgp').innerHTML = '<div class="ch"><b>Настройки</b><button id="cfgReset">Сбросить</button></div>' +
+      '<div class="cs">Готовые пары: ' + Object.keys(PAL).map(k => '<button data-pal="' + k + '"><i style="background:linear-gradient(90deg,' + PAL[k].cont + ' 50%,' + PAL[k].pull + ' 50%)"></i>' + PAL[k].name + '</button>').join('') + '</div>' +
+      SCHEMA.map(([t, rows]) => '<div class="cg">' + t + '</div>' + rows.map(row).join('')).join('');
+  }
+  dom('cfgp').addEventListener('input', e => {
+    const k = e.target.dataset.c;
+    if (!k) return;
+    const d = DEF[k];
+    cfg[k] = typeof d === 'number' ? +e.target.value : e.target.value;
+    const em = e.target.parentNode.querySelector('em'); if (em) em.textContent = e.target.value;
+    saveCfg(); redraw(true);
+  });
+  dom('cfgp').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    if (b.id === 'cfgReset') { Object.assign(cfg, DEF); saveCfg(); cfgPanel(); redraw(true); }
+    else if (b.dataset.pal) { cfg.cont = PAL[b.dataset.pal].cont; cfg.pull = PAL[b.dataset.pal].pull; saveCfg(); cfgPanel(); redraw(true); }
+  });
+  window.addEventListener('resize', () => redraw(true));
+
+  // start: the scene from the address (#conf, #wait, #brk), otherwise the live confirmed day
+  // ---------- the working screen: the day from the server, refreshed after every M5 close while a session runs ----------
+  function etMinute() {
+    const p = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(new Date());
+    const g = t => +p.find(x => x.type === t).value;
+    return (g('hour') % 24) * 60 + g('minute') + g('second') / 60;
+  }
+  function running() { const k = sessionNow(); return A.day && A.day.status === 'ok' && NOW >= SESS[k].start && NOW < SESS[k].end; }
+  function schedule() {
+    clearTimeout(A.timer);
+    if (!API || !A.auto || !running()) return;
+    const step = A.day.switched ? 5 : 1, m = etMinute(), wait = ((Math.floor(m / step) + 1) * step + (step === 1 ? 3 : 20) / 60 - m) * 60000;
+    A.timer = setTimeout(() => loadDay(true), Math.max(5000, wait));
+  }
+  async function loadDay(refresh) {
+    A.busy = true; A.error = null; toolbar(cur());
+    try {
+      let x = await (await fetch('/api/day?instrument=' + A.inst)).json();
+      const stale = x.status !== 'ok' || Date.now() - Date.parse(x.fetched_at) > 180000;
+      if (refresh || stale) {
+        const y = await (await fetch('/api/day/refresh?instrument=' + A.inst)).json();
+        if (y.status === 'error') A.error = y.message; else x = y;
+      }
+      const first = !A.day;
+      A.day = x;
+      if (x.status === 'ok') {
+        NOW = Math.floor(x.now);
+        PREV = x.prev ? { k: 'PREV', name: x.prev.name, start: -360, drH: x.prev.drH, drL: x.prev.drL, idrH: x.prev.idrH, idrL: x.prev.idrL } : null;
+        if (!st.userSession && (first || st.rp == null)) st.session = sessionNow();
+        if (first) { fitSession(st.session); if (st.session === 'RDR' && st.rp == null) { st.v0 = 545; st.v1 = 975; } }
+      }
+    } catch (e) { A.error = 'Локальный сервер не ответил'; }
+    A.busy = false;
+    render(true);
+    schedule();
+  }
+  // #conf | #wait | #brk, and optionally &pin=pull:1 (a place by side and its number 1-3), &slice=14:00 (its 15-minute
+  // slice), &band=pull:24666 (a price in the density column), &strip=1, &at=11:35 (replay)
+  const hp = new URLSearchParams(API ? '' : location.hash.slice(1).replace(/^(conf|wait|brk)/, 'scene=$1'));
+  window.__dr = { st, render, cur, hit: (x, y) => hit(x, y), get V() { return V; } };
+  initPanel21();
+  if (API) {
+    root.classList.add('api');
+    try { A.auto = localStorage.getItem('drlab.auto') !== '0'; } catch (x) { /* optional */ }
+    const q = new URLSearchParams(location.hash.slice(1));
+    if (['NQ', 'ES', 'YM'].includes(q.get('inst'))) A.inst = q.get('inst');
+    if (SESS[q.get('session')]) { st.session = q.get('session'); st.userSession = true; }
+    if (q.get('at')) { const [hh, mm] = q.get('at').split(':').map(Number); const t = hh * 60 + mm - (hh >= 18 ? 1440 : 0); st.rp = t; st.session = sessOf(t - 5) || st.session; st.userSession = true; fitSession(st.session); }
+    cfgPanel(); render(true); loadDay(false); return;
+  }
+  setScene(['conf', 'wait', 'brk'].includes(hp.get('scene')) ? hp.get('scene') : 'conf');
+  cfgPanel();
+  if (hp.get('hl')) setTimeout(() => { st.hover = P21.links[+hp.get('hl')] || null; render(false); }, 0);   // &hl=N: as if the N-th panel link were hovered
+  if (hp.get('at')) { const [hh, mm] = hp.get('at').split(':').map(Number); replayAt(hh * 60 + mm); }
+  if (hp.get('strip')) { st.stripPin = true; st.stripH = 200; }
+  if (hp.get('band')) {   // &band=pull:24666 — as if the cursor were on that price in the density column
+    const [role, p] = hp.get('band').split(':'), c = cur(), R = c.ov && c.ov.roles.find(r => r.id === role), b = R && (p === 'max' ? R.pb.slice().sort((x, y) => y.pct - x.pct)[0] : R.pb.find(q => +p >= q.pLo && +p < q.pHi));
+    if (b) st.hover = { k: 'pband', pLo: b.pLo, pHi: b.pHi, src: 'proj', list: [{ R, b }] };
+  }
+  if (hp.get('pin')) {
+    const [role, rank] = hp.get('pin').split(':'), c = cur(), R = c.ov && c.ov.roles.find(r => r.id === role), k = R && R.cons.find(q => q.rank === +rank);
+    if (k) st.pin = { k: 'con', role, id: k.id };
+    if (k && hp.get('slice')) { const [a1, b1] = hp.get('slice').split(':').map(Number); st.pin.slice = a1 * 60 + b1; }
+  }
+  render(true);
+})();

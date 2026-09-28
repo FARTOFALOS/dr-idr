@@ -41,14 +41,16 @@ against what happened next.
 8. `docs/DESIGN.md` — the redesign of the screen the operator chose (variant B′): target layout, visual language,
    interactions, which UI rules it replaces, what the implementation needs; mockups in `design/redesign-2026-09/`.
 
-## Where the work stands (2026-09-25)
+## Where the work stands (2026-09-28)
 
-Two threads are open; nothing in the running tool has changed since the first commit.
-
-- **Redesign B′ — chosen, not implemented.** Read `docs/DESIGN.md` first; look at
-  `design/redesign-2026-09/snapshots/B2_*.png` and the interactive canvas linked there. The next step is the
-  implementation (whole-day API, the scrub band, porting the mockup geometry into `lab/dist/`), after the operator's
-  go-ahead and outside his trading hours. Open: what "0,5 / 1 / 1,5 … слитыми" meant; rules 12 and 14 are proposals.
+- **The working screen is «Созвездия» (design 21), on market data.** On 2026-09-28 the operator told us to make
+  design 21 the main screen: `http://127.0.0.1:8767` now opens it (`lab/dist/index.html` + `sozvezdiya.js`, built from
+  `design/sozvezdiya-21/src` with its `build.py` — edit there, never the built file); the previous screen is
+  `/classic.html`. Its data: `lab/scene21.py` (`/api/day`, `/api/cohort`) over a new base of every session
+  (`lab/build_boxes.py`, `lab/.runtime/boxes_*`). Every number on it is defined in `docs/SEMANTICS.md` («Экран
+  «Созвездия»»); which UI rules it replaces is in `docs/UI_RULES.md`. Start at `design/README.md` for the design story,
+  his remarks round by round and what is open.
+- **Redesign B′** (`docs/DESIGN.md`) was chosen on 2026-09-25 and then superseded by the rounds above.
 - **Strategy formalized, decisions pending.** `docs/STRATEGY.md`: the 12 choices of §15.1 are defaults until the
   operator decides; the screen ideas of §16.2 (session-model strip, past levels, imbalances, entry window, signal card,
   checklist) should be folded into B′ only when he approves them.
@@ -60,19 +62,23 @@ start-dr-lab.cmd / .ps1   the operator's shortcut target: TradingView (port 9222
 stop-dr-lab.cmd / .ps1    stop the local server
 lab/
   server.py               local HTTP server 127.0.0.1:8767 (stdlib): static page + JSON API
+  scene21.py              the working screen's data: the trading day from TradingView, similar sessions at a minute
+  build_boxes.py          builds every session box (confirmed or not) with its M5 bars (once; ~20 s per instrument)
   build_market.py         builds the history base from the G3 market tape (once; ~30 s per instrument)
   engine_market.py        history queries over the built base (the research dashboard, API /api/query, /api/scene)
   live.py                 the live session: fetch from TradingView, DR state, overlay from similar sessions, replay
   tv_fetch.mjs            reads M5/M1 bars from TradingView Desktop via Chrome DevTools (tradingview-mcp internals)
   engine.py               synthetic demo engine (python lab/server.py --data demo); never mixed with market data
-  dist/                   front end: index.html, app.js (history dashboard), live.js (live panel), styles.css
+  dist/                   front end: index.html + sozvezdiya.js (the working screen «Созвездия», built from
+                          design/sozvezdiya-21), classic.html + app.js + live.js + styles.css (the previous screen)
   .runtime/               git-ignored: built history, live candles, server logs
 studies/                  research scripts with their results (intermarket.py: NQ/ES/YM relations; m7_claims.py: the
                           author's claims and his time-and-price procedure on our tape)
 tests/smoke.py            offline checks; run after every change
-tests/ui_check.js         in-page check for text overlaps and layout; evaluate it in the browser
+tests/ui_check21.js       in-page check of the working screen; evaluate it in the browser (ui_check.js: classic.html)
 docs/                     everything an agent needs to understand and extend the tool
-design/                   interactive mockups of the chosen redesign (synthetic data), see docs/DESIGN.md
+design/                   mockups on synthetic data: the chosen redesign B′ (docs/DESIGN.md) and the later rounds,
+                          start at design/README.md
 ```
 
 ## Hard rules (do not break; if a task seems to need it, ask the operator first)
@@ -107,9 +113,11 @@ stop-dr-lab.cmd                          # or kill the process listening on 8767
 start-dr-lab.cmd -NoBrowser              # the same path the operator's shortcut takes
 ```
 
-If you touched the page: open http://127.0.0.1:8767 in a browser tool, wait ~6 s for the live panel, evaluate
-`tests/ui_check.js` and expect `problems: []`. Check at 1600×900 and 1920×1000 at least. Hover and click a cluster,
-click a candle (replay) and click it again (back to live), click a bottom-chart bar twice.
+If you touched the page: edit `design/sozvezdiya-21/src` and run its `build.py` (it writes `lab/dist/index.html` and
+`sozvezdiya.js`), open http://127.0.0.1:8767 in a browser tool, wait ~6 s, evaluate `tests/ui_check21.js` and expect
+`problems: []`. Check at 1600×900 and 1920×1000 at least. Hover a constellation and every panel line, click a candle
+(replay) and «К текущему». The mockup (`design/sozvezdiya-21/built/index.html`) must keep working too. For
+`/classic.html` the old check is `tests/ui_check.js`.
 
 ## Gotchas already paid for
 

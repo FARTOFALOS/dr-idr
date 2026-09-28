@@ -4,9 +4,24 @@ These rules came from the operator over many iterations on 2026-09-24. They are 
 rule and a new idea conflict, keep the rule and ask the operator. Each rule says why, so you can apply it to cases it
 does not name.
 
-On 2026-09-25 the operator chose a redesign, `docs/DESIGN.md`. These rules still describe the running screen; the
-table "Rules that change" in that file says which of them the redesign replaces (13 and 21 by his decision) once it is
-implemented.
+On 2026-09-28 the working screen became «Созвездия» (design 21, `design/README.md` has his remarks round by round);
+the previous screen stays at `/classic.html` and these rules still describe it. For the new screen the operator's
+later decisions replace some of them (live chat, 2026-09-28):
+
+- **Replaced:** 3 (the six history charts sit in a handle at the bottom and open over the chart on hover, a click pins
+  them); 8 (DR solid, IDR dashed, mid dotted, STD thin solid lines, the side in play brighter; past sessions' DR / IDR
+  the same, dimmer, named at the right end — he wanted the kinds of lines told apart, not all dash-dot); 13 and 14
+  (colours by role, not by rank: continuation and pullback, before a confirmation «Верх» / «Низ»; every colour,
+  brightness and line style is in «⚙ Настройки»); 16 and 17 (a price band or a time window may run across the chart,
+  the hovered window runs down to the time axis; details go to the tooltip and the panel instead of a card); 21
+  (layers in «Слои», all on).
+- **New, for the right panel:** percentages only, never session counts; no line that repeats what the chart shows at a
+  glance; every line is a link — hovering it lights on the chart the level, the place, its densest spot and its time,
+  a click pins it.
+- **Kept:** 1, 2, 4–7, 9–12 (the confirmation and the DR-break pills), 15, 18–20 in spirit, 22, 23 (refresh after every
+  M5 close while a session runs; every 5 minutes when the TradingView chart has to be switched).
+
+Check the new screen with `tests/ui_check21.js`; `tests/ui_check.js` is for `/classic.html`.
 
 ## Layout
 

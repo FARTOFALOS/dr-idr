@@ -57,6 +57,16 @@ if ($missing) {
     if ($code -ne 0) { Fail 'История не собралась: нет ленты G3 (см. AGENTS.md, переменная DR_IDR_MARKET).' }
     Write-Host '  [ok] История собрана'
 }
+$missingBoxes = @('nq', 'es', 'ym') | Where-Object { -not (Test-Path (Join-Path $runtime "boxes_$($_).npz")) }
+if ($missingBoxes) {
+    Write-Host "  [..] Собираю базу сессий для экрана ($($missingBoxes -join ', ')): около 20 секунд на инструмент"
+    Push-Location $root
+    & $python -B lab/build_boxes.py @($missingBoxes | ForEach-Object { $_.ToUpper() }) | Out-Null
+    $code = $LASTEXITCODE
+    Pop-Location
+    if ($code -ne 0) { Fail 'База сессий не собралась: нет ленты G3 (см. AGENTS.md, переменная DR_IDR_MARKET).' }
+    Write-Host '  [ok] База сессий собрана'
+}
 
 # 3. The local server
 if (Test-Url 'http://127.0.0.1:8767/api/health') {

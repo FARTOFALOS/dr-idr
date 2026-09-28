@@ -66,9 +66,27 @@ if raw.exists():
 else:
     print("  --  no live candles saved yet (lab/.runtime/live/nq.json): live checks skipped")
 
+import scene21  # noqa: E402
+B = scene21._boxes("NQ")
+if B is None:
+    check(False, "session base built (python -B lab/build_boxes.py)")
+else:
+    check(max(b["date"] for b in B["boxes"]) <= "2025-12-31", "2026 stays hidden in the session base (latest " + max(b["date"] for b in B["boxes"]) + ")")
+    confirmed = {(e["date"], e["session"]): (e["confirmation"], 1 if e["direction"] == "long" else -1) for e in by_inst["NQ"]}
+    bad = sum(1 for b in B["boxes"] if b["conf"] and (b["date"], b["session"]) in confirmed and confirmed[(b["date"], b["session"])] != (b["conf"], b["side"]))
+    check(bad == 0, f"session base agrees with the episodes on every confirmation (mismatches {bad})")
+    if raw.exists():
+        v = scene21.day_view("NQ")
+        check(v.get("status") == "ok" and len(v["bars"]) > 0 and finite_json(v, "day view"), f"day view NQ {v.get('date')}: {len(v.get('bars', []))} bars")
+        for session, at in (("RDR", 700), ("RDR", 635), ("ODR", 300)):
+            c = scene21.cohort("NQ", session, at)
+            ok = c.get("status") in ("ok", "before", "forming", "done", "noconf") and finite_json(c, f"cohort {session} {at}")
+            if c.get("status") == "ok": ok = ok and c["n"] > 0 and len(c["sims"]["mx"]) == c["n"] and all(len(x) == len(c["grid"]) for x in c["sims"]["cl"])
+            check(ok, f"cohort NQ {session} at {H.clock(at)}: {c.get('status')} {c.get('mode', '')} n={c.get('n')}")
+
 node = shutil.which("node")
 if node:
-    for js in ("dist/app.js", "dist/live.js", "tv_fetch.mjs"):
+    for js in ("dist/app.js", "dist/live.js", "dist/sozvezdiya.js", "tv_fetch.mjs"):
         r = subprocess.run([node, "--check", str(LAB / js)], capture_output=True, text=True)
         check(r.returncode == 0, f"syntax {js}")
 else:
