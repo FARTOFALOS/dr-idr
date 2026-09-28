@@ -1,0 +1,1909 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920, initial-scale=1">
+<title>DR Lab — три варианта</title>
+<style>
+:root{
+  --bg:#0e1117; --panel:#141821; --chart:#131722; --line:#252b37; --line2:#303746; --hover:#1d2330;
+  --tx:#e8eaf0; --tx2:#c9cdd6; --tx3:#a9afbb;
+  --up:#26a69a; --dn:#ef5350;
+  --c:#c8962c; --c-hi:#f0b547; --p:#2c8fd0; --p-hi:#4db0f5;
+  --hi:#8f7bf0; --hi-hi:#ab9bff; --lo:#d4668f; --lo-hi:#f08ab0;
+  --sc:#5b6376; --brk:#ef5350;
+  --font:-apple-system, BlinkMacSystemFont, "Trebuchet MS", Roboto, Ubuntu, sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font:13px/1.35 var(--font)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+#app{position:relative;width:100vw;height:100vh;display:flex;flex-direction:column}
+
+/* header */
+#hdr{height:52px;flex:0 0 52px;display:flex;align-items:center;gap:14px;padding:0 14px;border-bottom:1px solid var(--line);background:var(--panel);white-space:nowrap}
+.brand{font-weight:700;font-size:14px;color:var(--tx);letter-spacing:.02em}
+.inst{display:flex;align-items:baseline;gap:8px;font-size:14px}
+.inst b{font-weight:700}
+.inst .sub{color:var(--tx2);font-size:13px}
+.sep{width:1px;height:24px;background:var(--line2)}
+.clock{display:flex;align-items:center;gap:8px;font-size:14px}
+.clock .live{width:8px;height:8px;border-radius:50%;background:var(--up)}
+.replay{display:flex;align-items:center;gap:6px;background:#2a2412;border:1px solid #6b5520;border-radius:4px;padding:3px 4px 3px 8px;font-size:13px;color:#ffe2a8}
+.replay button{padding:2px 8px;border-radius:3px;color:var(--tx);font-size:12px;background:#3a3218}
+.replay button:hover{background:#4a4020}
+.replay button.on{background:#6b5520}
+.chips{display:flex;gap:8px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 9px;border-radius:4px;border:1px solid var(--line2);background:#181d27;font-size:13px;color:var(--tx);cursor:default}
+.chip .dot{width:9px;height:9px;border-radius:2px}
+.chip.brk{border-color:#8a2f33;background:#2a1417;color:#ffd6d3}
+.chip.ok{border-color:#2e5a55;background:#12211f}
+.chip.n{cursor:help}
+.chip.n:hover,.chip.n.hl{border-color:#6d7686;background:var(--hover)}
+.grow{flex:1}
+.seg{display:flex;border:1px solid var(--line2);border-radius:5px;overflow:hidden}
+.seg button{padding:5px 11px;font-size:13px;color:var(--tx2);border-right:1px solid var(--line2)}
+.seg button:last-child{border-right:0}
+.seg button:hover{background:var(--hover);color:var(--tx)}
+.seg button.on{background:#2a3242;color:#fff;font-weight:700}
+.seg .k{color:var(--tx3);font-weight:400;margin-right:5px}
+.seglab{font-size:12px;color:var(--tx3);margin-right:-6px}
+
+/* main */
+#main{flex:1;display:flex;min-height:0}
+#chartWrap{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;background:var(--chart)}
+#cv{display:block;cursor:crosshair}
+#cv.drag{cursor:grabbing}
+#panel{width:392px;flex:0 0 392px;border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;overflow:hidden}
+
+/* panel */
+.psec{padding:12px 14px 12px;border-bottom:1px solid var(--line)}
+.psec:last-child{border-bottom:0}
+.ptitle{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--tx);margin-bottom:8px}
+.ptitle .r{margin-left:auto;font-weight:400;color:var(--tx2)}
+.kv{display:grid;grid-template-columns:104px 1fr;row-gap:4px;column-gap:8px;font-size:13px}
+.kv .k{color:var(--tx2)}
+.kv .v{color:var(--tx);font-variant-numeric:tabular-nums}
+.kv .v .m{color:var(--tx2)}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.step{display:inline-flex;gap:5px;align-items:center;padding:1px 6px;border-radius:3px;background:#1c222d;border:1px solid var(--line2);font-size:12px}
+.step.no{color:var(--tx3);border-style:dashed}
+.step b{font-weight:700}
+.hlrow{border-radius:3px}
+.hov{cursor:default}
+.hov:hover,.hov.hl{background:var(--hover)}
+
+/* composition + list */
+.comp{display:flex;height:12px;gap:2px;margin:2px 0 8px}
+.comp i{display:block;height:100%;border-radius:2px;min-width:2px}
+.comp i.hl{outline:2px solid #fff;outline-offset:0}
+.plist{display:flex;flex-direction:column;gap:1px;margin-bottom:10px}
+.prow{display:grid;grid-template-columns:16px 21px 48px 68px 1fr 78px;align-items:center;height:25px;padding:0 4px;border-radius:3px;font-size:13px;font-variant-numeric:tabular-nums;cursor:pointer}
+.prow:hover,.prow.hl{background:var(--hover)}
+.prow.pin{background:#262e3d;box-shadow:inset 2px 0 0 #fff}
+.prow .rk{font-size:12px;color:var(--tx2);text-align:center}
+.prow .sh{font-weight:700;color:#fff}
+.prow .kn{color:var(--tx2);font-size:12px}
+.prow .pr{color:var(--tx);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow .tw{color:var(--tx2);font-size:12px;text-align:right}
+.prow.weak .sh{font-weight:400;color:var(--tx2)}
+.prow.weak .pr,.prow.weak .tw{color:var(--tx3)}
+.prow.rest{cursor:default;color:var(--tx3);font-size:12px}
+.prow.rest:hover{background:none}
+.rolehead{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;margin:2px 0 4px}
+.rolehead .n{margin-left:auto;font-weight:400;font-size:12px;color:var(--tx2)}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;flex:0 0 auto}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--tx2);margin-top:2px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.outc{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.outc .o{border:1px solid var(--line2);border-radius:4px;padding:4px 7px;cursor:default}
+.outc .o:hover,.outc .o.hl{background:var(--hover)}
+.outc .o b{font-size:14px;color:#fff}
+.outc .o .l{font-size:12px;color:var(--tx2)}
+.outc .o .kn{font-size:12px;color:var(--tx2)}
+
+/* day structure */
+.mdl{display:grid;grid-template-columns:52px 1fr 1fr;gap:3px 8px;font-size:13px;margin-top:8px}
+.mdl .h{font-size:12px;color:var(--tx2)}
+.mdl .c{padding:1px 4px;border-radius:3px}
+.mdl .ok{color:#9fe0d8}
+.mdl .br{color:#ffb4ae}
+.struct svg{display:block}
+
+/* board */
+#board{position:relative;flex:0 0 auto;border-top:1px solid var(--line);background:#12161f;overflow:hidden}
+.bgrid{position:absolute;inset:0;pointer-events:none}
+.bgrid i{position:absolute;top:0;bottom:0;width:1px;background:#1c212c}
+.bgrid i.now{background:#6f7788}
+.bgrid i.end{background:#3b4252}
+.bsec{position:relative}
+.bhead{position:relative;height:26px;display:flex;align-items:center;gap:10px;padding:0 12px;font-size:13px;font-weight:700;background:#161b25;border-bottom:1px solid var(--line)}
+.bhead .n{font-weight:400;color:var(--tx2);font-size:12px}
+.bhead .comp{width:260px;margin:0}
+.brow{position:relative;display:flex;align-items:center;border-bottom:1px solid #1a1f29;cursor:pointer}
+.brow:hover,.brow.hl{background:rgba(255,255,255,.04)}
+.brow.pin{background:rgba(255,255,255,.07);box-shadow:inset 3px 0 0 #fff}
+.btext{position:relative;z-index:2;display:grid;align-items:center;height:100%;padding:0 12px;background:#12161f;font-variant-numeric:tabular-nums;white-space:nowrap}
+.brow:hover .btext,.brow.hl .btext{background:#181d27}
+.brow.pin .btext{background:#1d2330}
+.btext .rk{font-size:13px;color:var(--tx2);text-align:center}
+.btext .sh{font-weight:700;font-size:14px;color:#fff}
+.btext .kn{font-size:12px;color:var(--tx2)}
+.btext .pr{font-size:13px;color:var(--tx)}
+.btext .wh{font-size:12px;color:var(--tx2)}
+.btext .tw{font-size:13px;color:var(--tx)}
+.brow.weak .sh{font-weight:400;font-size:13px;color:var(--tx2)}
+.brow.weak .pr,.brow.weak .tw{color:var(--tx2)}
+.bbar{position:absolute;z-index:1;border-radius:3px}
+.sbar{display:block;height:10px;margin-right:14px;background:#1f2530;border-radius:2px;position:relative}
+.sbar i{position:absolute;left:0;top:0;bottom:0;border-radius:2px}
+.mdl .h{padding:0 4px}
+.brest{display:flex;align-items:center;gap:8px;height:26px;padding:0 12px;font-size:12px;color:var(--tx2);border-bottom:1px solid #1a1f29;position:relative;z-index:2;background:#12161f;width:max-content;min-width:100%}
+.brest .wchip{padding:1px 7px;border-radius:3px;border:1px dashed #4a5263;color:var(--tx2);cursor:pointer}
+.brest .wchip:hover,.brest .wchip.hl{background:var(--hover);color:var(--tx)}
+.bempty{padding:14px 16px;color:var(--tx2);font-size:13px}
+
+/* cards */
+.card{position:absolute;z-index:50;min-width:260px;max-width:340px;background:#1b2130;border:1px solid #3a4356;border-radius:6px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,.45);font-size:13px;color:var(--tx);pointer-events:none;display:none}
+.card.pinned{pointer-events:auto;border-color:#8d97ab}
+.card .ch{display:flex;align-items:center;gap:7px;font-weight:700;margin-bottom:6px}
+.card .ch .x{margin-left:auto;font-weight:400;color:var(--tx2);cursor:pointer;padding:0 4px}
+.card .cbig{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.card .cbig b{font-size:14px}
+.card .cbig span{color:var(--tx2);font-size:13px}
+.card table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+.card td{padding:2px 0;vertical-align:top;font-size:13px}
+.card td:first-child{color:var(--tx2);width:62px;padding-right:8px}
+.card .cdef{margin-top:7px;padding-top:7px;border-top:1px solid #333b4c;color:var(--tx2);font-size:12px;line-height:1.4}
+.card .tier{font-weight:400;font-size:12px;padding:0 6px;border-radius:3px;border:1px solid #4a5366;color:var(--tx2)}
+.card .tier.t-strong{color:#fff;border-color:#9aa3b5}
+.card .ep{display:grid;grid-template-columns:62px 40px 1fr;gap:1px 8px;font-size:12px}
+.card .ep .l{color:var(--tx2)}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="hdr"></header>
+  <div id="main">
+    <section id="chartWrap"><canvas id="cv"></canvas><div id="board"></div></section>
+    <aside id="panel"></aside>
+  </div>
+  <div id="card" class="card"></div>
+  <div id="pcard" class="card pinned"></div>
+</div>
+<script>
+/* synthetic M5 bars [open-minute from trading-day midnight ET, o, h, l, c] */
+window.BARS_A = [[-360,24468.0,24474.25,24465.75,24471.5],[-355,24471.5,24474.25,24466.25,24467.5],[-350,24467.5,24471.0,24464.75,24467.0],[-345,24467.0,24468.75,24464.0,24464.75],[-340,24464.75,24475.0,24464.5,24473.5],[-335,24473.5,24474.75,24469.0,24474.0],[-330,24474.0,24479.75,24471.25,24473.75],[-325,24473.75,24475.75,24468.75,24474.75],[-320,24474.75,24480.5,24473.0,24475.0],[-315,24475.0,24477.75,24472.75,24475.0],[-310,24475.0,24475.75,24468.25,24468.5],[-305,24468.5,24468.75,24462.0,24466.0],[-300,24466.0,24471.75,24465.75,24470.0],[-295,24470.0,24477.5,24470.0,24471.0],[-290,24471.0,24471.5,24464.75,24466.75],[-285,24466.75,24469.0,24462.5,24464.0],[-280,24464.0,24467.75,24463.25,24465.75],[-275,24465.75,24471.0,24463.0,24470.0],[-270,24470.0,24473.25,24459.25,24461.0],[-265,24461.0,24463.5,24449.5,24460.0],[-260,24460.0,24478.25,24459.5,24476.75],[-255,24476.75,24486.5,24474.75,24478.0],[-250,24478.0,24486.5,24474.75,24478.0],[-245,24478.0,24478.25,24469.5,24470.25],[-240,24470.25,24476.5,24465.25,24473.75],[-235,24473.75,24477.5,24470.5,24476.0],[-230,24476.0,24489.25,24475.25,24487.5],[-225,24487.5,24490.5,24481.5,24485.5],[-220,24485.5,24492.75,24484.0,24490.0],[-215,24490.0,24496.0,24483.5,24484.0],[-210,24484.0,24490.5,24479.25,24485.5],[-205,24485.5,24491.0,24482.5,24489.0],[-200,24489.0,24504.5,24487.75,24502.25],[-195,24502.25,24507.5,24498.0,24506.0],[-190,24506.0,24515.0,24504.5,24511.5],[-185,24511.5,24518.25,24509.5,24515.25],[-180,24515.25,24524.75,24510.0,24518.0],[-175,24518.0,24521.75,24509.5,24514.5],[-170,24514.5,24530.75,24510.5,24527.75],[-165,24527.75,24532.25,24523.25,24526.0],[-160,24526.0,24530.75,24521.0,24527.25],[-155,24527.25,24534.25,24524.75,24529.0],[-150,24529.0,24536.25,24526.25,24534.5],[-145,24534.5,24539.75,24527.75,24536.25],[-140,24536.25,24542.5,24532.25,24540.0],[-135,24540.0,24543.0,24529.75,24533.25],[-130,24533.25,24537.25,24528.0,24535.75],[-125,24535.75,24539.5,24530.5,24533.0],[-120,24533.0,24533.5,24525.5,24530.25],[-115,24530.25,24535.25,24521.5,24526.0],[-110,24526.0,24527.75,24516.5,24520.75],[-105,24520.75,24527.5,24514.75,24517.25],[-100,24517.25,24522.0,24513.5,24517.0],[-95,24517.0,24528.5,24514.5,24525.25],[-90,24525.25,24527.5,24506.75,24510.25],[-85,24510.25,24515.75,24506.25,24508.0],[-80,24508.0,24513.0,24500.75,24512.75],[-75,24512.75,24514.75,24503.5,24508.25],[-70,24508.25,24518.5,24507.5,24514.0],[-65,24514.0,24516.5,24507.25,24510.5],[-60,24510.5,24517.5,24505.25,24509.0],[-55,24509.0,24516.0,24503.75,24514.0],[-50,24514.0,24521.0,24510.75,24515.75],[-45,24515.75,24521.0,24511.75,24516.25],[-40,24516.25,24522.25,24512.0,24517.75],[-35,24517.75,24525.5,24515.5,24519.25],[-30,24519.25,24519.5,24508.0,24517.75],[-25,24517.75,24528.0,24515.75,24527.0],[-20,24527.0,24536.25,24526.0,24532.0],[-15,24532.0,24536.5,24528.25,24531.0],[-10,24531.0,24537.75,24523.5,24533.0],[-5,24533.0,24538.5,24528.5,24538.0],[0,24538.0,24544.75,24534.25,24537.5],[5,24537.5,24547.0,24536.75,24546.5],[10,24546.5,24554.25,24541.5,24541.75],[15,24541.75,24542.75,24538.0,24541.0],[20,24541.0,24546.75,24537.75,24544.25],[25,24544.25,24549.0,24539.75,24546.75],[30,24546.75,24551.25,24539.75,24548.75],[35,24548.75,24551.25,24541.5,24546.0],[40,24546.0,24554.75,24543.5,24551.25],[45,24551.25,24555.5,24545.5,24550.5],[50,24550.5,24552.5,24544.0,24547.5],[55,24547.5,24552.0,24537.75,24541.25],[60,24541.25,24545.25,24534.25,24541.0],[65,24541.0,24545.0,24535.25,24537.25],[70,24537.25,24542.25,24533.0,24535.0],[75,24535.0,24543.0,24530.0,24541.0],[80,24541.0,24543.25,24534.25,24541.5],[85,24541.5,24544.5,24533.5,24541.25],[90,24541.25,24551.0,24534.0,24548.75],[95,24548.75,24553.5,24544.75,24552.0],[100,24552.0,24561.0,24548.0,24556.0],[105,24556.0,24559.75,24547.0,24552.0],[110,24552.0,24558.75,24551.25,24556.25],[115,24556.25,24557.5,24546.75,24550.0],[120,24550.0,24554.25,24547.0,24549.5],[125,24549.5,24553.0,24549.0,24551.5],[130,24551.5,24558.25,24550.75,24553.5],[135,24553.5,24554.0,24546.0,24547.5],[140,24547.5,24548.25,24543.5,24546.0],[145,24546.0,24546.5,24542.75,24546.0],[150,24546.0,24550.0,24544.5,24545.75],[155,24545.75,24553.75,24545.75,24548.0],[160,24548.0,24554.5,24546.75,24548.0],[165,24548.0,24553.75,24547.5,24550.75],[170,24550.75,24555.25,24546.75,24550.0],[175,24550.0,24556.0,24549.25,24554.25],[180,24554.25,24572.25,24552.0,24572.25],[185,24572.25,24591.0,24570.75,24586.0],[190,24586.0,24589.25,24572.75,24578.75],[195,24578.75,24590.5,24557.0,24565.0],[200,24565.0,24567.0,24541.75,24543.75],[205,24543.75,24553.25,24528.0,24534.0],[210,24534.0,24537.25,24518.25,24526.25],[215,24526.25,24546.5,24511.0,24539.25],[220,24539.25,24551.5,24535.5,24548.0],[225,24548.0,24561.0,24539.0,24556.0],[230,24556.0,24560.75,24540.0,24549.5],[235,24549.5,24553.75,24534.0,24537.0],[240,24537.0,24545.75,24532.0,24538.75],[245,24538.75,24547.25,24523.5,24527.0],[250,24527.0,24531.5,24514.5,24521.25],[255,24521.25,24526.75,24504.5,24522.0],[260,24522.0,24524.0,24499.75,24502.75],[265,24502.75,24510.25,24497.25,24502.75],[270,24502.75,24504.0,24493.5,24502.5],[275,24502.5,24505.5,24487.75,24492.0],[280,24492.0,24492.25,24468.75,24475.0],[285,24475.0,24482.5,24471.5,24480.75],[290,24480.75,24485.5,24474.0,24479.75],[295,24479.75,24484.0,24469.0,24480.0],[300,24480.0,24492.75,24469.0,24473.5],[305,24473.5,24479.25,24458.0,24460.75],[310,24460.75,24464.25,24449.75,24458.75],[315,24458.75,24469.5,24454.5,24465.0],[320,24465.0,24472.75,24460.5,24465.5],[325,24465.5,24474.0,24456.75,24469.0],[330,24469.0,24484.0,24466.0,24477.0],[335,24477.0,24483.75,24464.0,24473.75],[340,24473.75,24485.5,24468.5,24478.5],[345,24478.5,24494.5,24476.0,24486.0],[350,24486.0,24505.5,24483.0,24498.25],[355,24498.25,24507.25,24487.0,24496.5],[360,24496.5,24520.75,24489.25,24506.25],[365,24506.25,24516.25,24503.5,24512.0],[370,24512.0,24515.5,24494.0,24499.0],[375,24499.0,24501.75,24482.5,24487.0],[380,24487.0,24503.0,24480.5,24491.25],[385,24491.25,24506.25,24481.5,24498.25],[390,24498.25,24502.5,24479.5,24490.0],[395,24490.0,24500.5,24487.75,24494.75],[400,24494.75,24498.0,24480.75,24484.25],[405,24484.25,24495.5,24480.5,24491.0],[410,24491.0,24493.0,24477.0,24478.75],[415,24478.75,24487.75,24462.5,24478.0],[420,24478.0,24494.5,24474.5,24486.0],[425,24486.0,24498.5,24482.5,24495.0],[430,24495.0,24495.5,24477.0,24477.75],[435,24477.75,24480.5,24465.0,24470.75],[440,24470.75,24484.25,24462.0,24470.75],[445,24470.75,24482.25,24463.5,24464.0],[450,24464.0,24469.25,24451.75,24454.0],[455,24454.0,24468.0,24450.25,24456.0],[460,24456.0,24474.5,24451.75,24463.5],[465,24463.5,24473.75,24458.5,24468.0],[470,24468.0,24475.0,24459.5,24471.25],[475,24471.25,24480.25,24461.25,24466.0],[480,24466.0,24481.75,24456.5,24472.5],[485,24472.5,24489.25,24466.0,24484.0],[490,24484.0,24504.0,24483.25,24496.75],[495,24496.75,24506.0,24492.5,24497.75],[500,24497.75,24501.75,24484.5,24490.0],[505,24490.0,24492.0,24480.75,24488.0],[510,24488.0,24502.0,24487.25,24495.5],[515,24495.5,24498.25,24482.0,24485.5],[520,24485.5,24502.25,24482.25,24500.5],[525,24500.5,24516.0,24496.75,24504.25],[530,24504.25,24507.5,24496.5,24503.75],[535,24503.75,24513.0,24495.75,24506.0],[540,24506.0,24521.75,24501.25,24518.75],[545,24518.75,24519.75,24510.5,24510.5],[550,24510.5,24517.75,24502.25,24516.75],[555,24516.75,24521.75,24507.75,24520.75],[560,24520.75,24528.25,24508.75,24509.75],[565,24509.75,24525.25,24509.0,24523.0],[570,24523.0,24542.75,24502.0,24518.25],[575,24518.25,24534.75,24479.0,24498.75],[580,24498.75,24516.25,24489.0,24497.0],[585,24497.0,24534.0,24490.0,24530.75],[590,24530.75,24538.25,24514.0,24532.5],[595,24532.5,24558.0,24515.5,24556.0],[600,24556.0,24564.0,24533.25,24546.75],[605,24546.75,24591.5,24544.5,24579.25],[610,24579.25,24609.25,24568.25,24593.0],[615,24593.0,24618.5,24591.25,24612.0],[620,24612.0,24634.75,24599.75,24615.25],[625,24615.25,24634.75,24609.0,24613.25],[630,24613.25,24633.5,24606.0,24613.0],[635,24613.0,24626.25,24578.0,24588.0],[640,24588.0,24614.5,24587.5,24611.75],[645,24611.75,24648.75,24607.75,24626.75],[650,24626.75,24659.25,24614.25,24645.75],[655,24645.75,24679.25,24634.0,24668.75],[660,24668.75,24685.75,24652.75,24677.75],[665,24677.75,24688.75,24666.0,24686.5],[670,24686.5,24705.5,24675.5,24679.75],[675,24679.75,24701.5,24672.0,24680.5],[680,24680.5,24713.25,24668.75,24701.75],[685,24701.75,24721.75,24698.5,24719.5],[690,24719.5,24728.25,24676.75,24682.0],[695,24682.0,24713.5,24681.0,24696.75],[700,24696.75,24697.25,24659.5,24679.25],[705,24679.25,24689.0,24660.25,24680.5],[710,24680.5,24687.5,24628.75,24653.25],[715,24653.25,24658.75,24631.0,24641.0],[720,24641.0,24662.25,24633.25,24642.5],[725,24642.5,24670.5,24631.75,24654.0],[730,24654.0,24687.0,24645.25,24667.75],[735,24667.75,24700.25,24658.25,24694.25],[740,24694.25,24706.75,24668.25,24674.75],[745,24674.75,24726.75,24667.25,24707.0],[750,24707.0,24714.5,24679.25,24694.5],[755,24694.5,24735.0,24689.25,24731.0],[760,24731.0,24752.75,24714.75,24742.25],[765,24742.25,24761.75,24724.0,24742.0],[770,24742.0,24753.5,24717.0,24725.25],[775,24725.25,24742.0,24712.25,24727.0],[780,24727.0,24735.25,24704.5,24722.25],[785,24722.25,24734.25,24703.75,24723.0]];
+window.BARS_B = [[-360,24468.0,24474.25,24465.75,24471.5],[-355,24471.5,24474.25,24466.25,24467.5],[-350,24467.5,24471.0,24464.75,24467.0],[-345,24467.0,24468.75,24464.0,24464.75],[-340,24464.75,24475.0,24464.5,24473.5],[-335,24473.5,24474.75,24469.0,24474.0],[-330,24474.0,24479.75,24471.25,24473.75],[-325,24473.75,24475.75,24468.75,24474.75],[-320,24474.75,24480.5,24473.0,24475.0],[-315,24475.0,24477.75,24472.75,24475.0],[-310,24475.0,24475.75,24468.25,24468.5],[-305,24468.5,24468.75,24462.0,24466.0],[-300,24466.0,24471.75,24465.75,24470.0],[-295,24470.0,24477.5,24470.0,24471.0],[-290,24471.0,24471.5,24464.75,24466.75],[-285,24466.75,24469.0,24462.5,24464.0],[-280,24464.0,24467.75,24463.25,24465.75],[-275,24465.75,24471.0,24463.0,24470.0],[-270,24470.0,24473.25,24459.25,24461.0],[-265,24461.0,24463.5,24449.5,24460.0],[-260,24460.0,24478.25,24459.5,24476.75],[-255,24476.75,24486.5,24474.75,24478.0],[-250,24478.0,24486.5,24474.75,24478.0],[-245,24478.0,24478.25,24469.5,24470.25],[-240,24470.25,24476.5,24465.25,24473.75],[-235,24473.75,24477.5,24470.5,24476.0],[-230,24476.0,24489.25,24475.25,24487.5],[-225,24487.5,24490.5,24481.5,24485.5],[-220,24485.5,24492.75,24484.0,24490.0],[-215,24490.0,24496.0,24483.5,24484.0],[-210,24484.0,24490.5,24479.25,24485.5],[-205,24485.5,24491.0,24482.5,24489.0],[-200,24489.0,24504.5,24487.75,24502.25],[-195,24502.25,24507.5,24498.0,24506.0],[-190,24506.0,24515.0,24504.5,24511.5],[-185,24511.5,24518.25,24509.5,24515.25],[-180,24515.25,24524.75,24510.0,24518.0],[-175,24518.0,24521.75,24509.5,24514.5],[-170,24514.5,24530.75,24510.5,24527.75],[-165,24527.75,24532.25,24523.25,24526.0],[-160,24526.0,24530.75,24521.0,24527.25],[-155,24527.25,24534.25,24524.75,24529.0],[-150,24529.0,24536.25,24526.25,24534.5],[-145,24534.5,24539.75,24527.75,24536.25],[-140,24536.25,24542.5,24532.25,24540.0],[-135,24540.0,24543.0,24529.75,24533.25],[-130,24533.25,24537.25,24528.0,24535.75],[-125,24535.75,24539.5,24530.5,24533.0],[-120,24533.0,24533.5,24525.5,24530.25],[-115,24530.25,24535.25,24521.5,24526.0],[-110,24526.0,24527.75,24516.5,24520.75],[-105,24520.75,24527.5,24514.75,24517.25],[-100,24517.25,24522.0,24513.5,24517.0],[-95,24517.0,24528.5,24514.5,24525.25],[-90,24525.25,24527.5,24506.75,24510.25],[-85,24510.25,24515.75,24506.25,24508.0],[-80,24508.0,24513.0,24500.75,24512.75],[-75,24512.75,24514.75,24503.5,24508.25],[-70,24508.25,24518.5,24507.5,24514.0],[-65,24514.0,24516.5,24507.25,24510.5],[-60,24510.5,24517.5,24505.25,24509.0],[-55,24509.0,24516.0,24503.75,24514.0],[-50,24514.0,24521.0,24510.75,24515.75],[-45,24515.75,24521.0,24511.75,24516.25],[-40,24516.25,24522.25,24512.0,24517.75],[-35,24517.75,24525.5,24515.5,24519.25],[-30,24519.25,24519.5,24508.0,24517.75],[-25,24517.75,24528.0,24515.75,24527.0],[-20,24527.0,24536.25,24526.0,24532.0],[-15,24532.0,24536.5,24528.25,24531.0],[-10,24531.0,24537.75,24523.5,24533.0],[-5,24533.0,24538.5,24528.5,24538.0],[0,24538.0,24544.75,24534.25,24537.5],[5,24537.5,24547.0,24536.75,24546.5],[10,24546.5,24554.25,24541.5,24541.75],[15,24541.75,24542.75,24538.0,24541.0],[20,24541.0,24546.75,24537.75,24544.25],[25,24544.25,24549.0,24539.75,24546.75],[30,24546.75,24551.25,24539.75,24548.75],[35,24548.75,24551.25,24541.5,24546.0],[40,24546.0,24554.75,24543.5,24551.25],[45,24551.25,24555.5,24545.5,24550.5],[50,24550.5,24552.5,24544.0,24547.5],[55,24547.5,24552.0,24537.75,24541.25],[60,24541.25,24545.25,24534.25,24541.0],[65,24541.0,24545.0,24535.25,24537.25],[70,24537.25,24542.25,24533.0,24535.0],[75,24535.0,24543.0,24530.0,24541.0],[80,24541.0,24543.25,24534.25,24541.5],[85,24541.5,24544.5,24533.5,24541.25],[90,24541.25,24551.0,24534.0,24548.75],[95,24548.75,24553.5,24544.75,24552.0],[100,24552.0,24561.0,24548.0,24556.0],[105,24556.0,24559.75,24547.0,24552.0],[110,24552.0,24558.75,24551.25,24556.25],[115,24556.25,24557.5,24546.75,24550.0],[120,24550.0,24554.25,24547.0,24549.5],[125,24549.5,24553.0,24549.0,24551.5],[130,24551.5,24558.25,24550.75,24553.5],[135,24553.5,24554.0,24546.0,24547.5],[140,24547.5,24548.25,24543.5,24546.0],[145,24546.0,24546.5,24542.75,24546.0],[150,24546.0,24550.0,24544.5,24545.75],[155,24545.75,24553.75,24545.75,24548.0],[160,24548.0,24554.5,24546.75,24548.0],[165,24548.0,24553.75,24547.5,24550.75],[170,24550.75,24555.25,24546.75,24550.0],[175,24550.0,24556.0,24549.25,24554.25],[180,24554.25,24572.25,24552.0,24572.25],[185,24572.25,24591.0,24570.75,24586.0],[190,24586.0,24589.25,24572.75,24578.75],[195,24578.75,24590.5,24557.0,24565.0],[200,24565.0,24567.0,24541.75,24543.75],[205,24543.75,24553.25,24528.0,24534.0],[210,24534.0,24537.25,24518.25,24526.25],[215,24526.25,24546.5,24511.0,24539.25],[220,24539.25,24551.5,24535.5,24548.0],[225,24548.0,24561.0,24539.0,24556.0],[230,24556.0,24560.75,24540.0,24549.5],[235,24549.5,24553.75,24534.0,24537.0],[240,24537.0,24545.75,24532.0,24538.75],[245,24538.75,24547.25,24523.5,24527.0],[250,24527.0,24531.5,24514.5,24521.25],[255,24521.25,24526.75,24504.5,24522.0],[260,24522.0,24524.0,24499.75,24502.75],[265,24502.75,24510.25,24497.25,24502.75],[270,24502.75,24504.0,24493.5,24502.5],[275,24502.5,24505.5,24487.75,24492.0],[280,24492.0,24492.25,24468.75,24475.0],[285,24475.0,24482.5,24471.5,24480.75],[290,24480.75,24485.5,24474.0,24479.75],[295,24479.75,24484.0,24469.0,24480.0],[300,24480.0,24492.75,24469.0,24473.5],[305,24473.5,24479.25,24458.0,24460.75],[310,24460.75,24464.25,24449.75,24458.75],[315,24458.75,24469.5,24454.5,24465.0],[320,24465.0,24472.75,24460.5,24465.5],[325,24465.5,24474.0,24456.75,24469.0],[330,24469.0,24484.0,24466.0,24477.0],[335,24477.0,24483.75,24464.0,24473.75],[340,24473.75,24485.5,24468.5,24478.5],[345,24478.5,24494.5,24476.0,24486.0],[350,24486.0,24505.5,24483.0,24498.25],[355,24498.25,24507.25,24487.0,24496.5],[360,24496.5,24520.75,24489.25,24506.25],[365,24506.25,24516.25,24503.5,24512.0],[370,24512.0,24515.5,24494.0,24499.0],[375,24499.0,24501.75,24482.5,24487.0],[380,24487.0,24503.0,24480.5,24491.25],[385,24491.25,24506.25,24481.5,24498.25],[390,24498.25,24502.5,24479.5,24490.0],[395,24490.0,24500.5,24487.75,24494.75],[400,24494.75,24498.0,24480.75,24484.25],[405,24484.25,24495.5,24480.5,24491.0],[410,24491.0,24493.0,24477.0,24478.75],[415,24478.75,24487.75,24462.5,24478.0],[420,24478.0,24494.5,24474.5,24486.0],[425,24486.0,24498.5,24482.5,24495.0],[430,24495.0,24495.5,24477.0,24477.75],[435,24477.75,24480.5,24465.0,24470.75],[440,24470.75,24484.25,24462.0,24470.75],[445,24470.75,24482.25,24463.5,24464.0],[450,24464.0,24469.25,24451.75,24454.0],[455,24454.0,24468.0,24450.25,24456.0],[460,24456.0,24474.5,24451.75,24463.5],[465,24463.5,24473.75,24458.5,24468.0],[470,24468.0,24475.0,24459.5,24471.25],[475,24471.25,24480.25,24461.25,24466.0],[480,24466.0,24481.75,24456.5,24472.5],[485,24472.5,24489.25,24466.0,24484.0],[490,24484.0,24504.0,24483.25,24496.75],[495,24496.75,24506.0,24492.5,24497.75],[500,24497.75,24501.75,24484.5,24490.0],[505,24490.0,24492.0,24480.75,24488.0],[510,24488.0,24502.0,24487.25,24495.5],[515,24495.5,24498.25,24482.0,24485.5],[520,24485.5,24502.25,24482.25,24500.5],[525,24500.5,24516.0,24496.75,24504.25],[530,24504.25,24507.5,24496.5,24503.75],[535,24503.75,24513.0,24495.75,24506.0],[540,24506.0,24521.75,24501.25,24518.75],[545,24518.75,24519.75,24510.5,24510.5],[550,24510.5,24517.75,24502.25,24516.75],[555,24516.75,24521.75,24507.75,24520.75],[560,24520.75,24528.25,24508.75,24509.75],[565,24509.75,24525.25,24509.0,24523.0],[570,24523.0,24542.75,24502.25,24519.25],[575,24519.25,24536.0,24482.75,24504.25],[580,24504.25,24525.25,24494.75,24506.5],[585,24506.5,24535.0,24499.5,24531.75],[590,24531.75,24551.75,24518.75,24547.0],[595,24547.0,24577.25,24531.0,24575.25],[600,24575.25,24581.75,24551.25,24558.0],[605,24558.0,24568.25,24545.25,24552.0],[610,24552.0,24572.25,24532.25,24558.0],[615,24558.0,24587.0,24556.25,24578.0],[620,24578.0,24602.25,24565.75,24587.25],[625,24587.25,24607.25,24581.0,24588.0],[630,24588.0,24613.75,24582.0,24601.5],[635,24601.5,24617.75,24585.5,24595.75],[640,24595.75,24627.25,24595.25,24618.0],[645,24618.0,24646.5,24606.5,24626.0],[650,24626.0,24656.0,24613.5,24639.75],[655,24639.75,24666.0,24627.25,24650.5],[660,24650.5,24655.5,24623.25,24630.5],[665,24630.5,24639.5,24586.75,24601.5],[670,24601.5,24613.0,24574.75,24575.0],[675,24575.0,24591.0,24553.5,24562.0],[680,24562.0,24567.5,24533.0,24541.75],[685,24541.75,24550.25,24526.25,24543.5],[690,24543.5,24552.25,24493.5,24498.75],[695,24498.75,24520.25,24485.75,24488.0],[700,24488.0,24488.5,24448.75,24472.75],[705,24472.75,24493.5,24458.25,24487.25],[710,24487.25,24494.25,24435.75,24464.25],[715,24464.25,24477.0,24450.25,24473.75],[720,24473.75,24489.75,24441.25,24448.0],[725,24448.0,24464.25,24416.5,24435.75],[730,24435.75,24459.5,24427.0,24435.0],[735,24435.0,24454.25,24420.25,24448.25],[740,24448.25,24460.75,24412.0,24413.25],[745,24413.25,24467.75,24405.5,24448.0],[750,24448.0,24448.5,24412.25,24426.5],[755,24426.5,24462.0,24420.0,24458.0],[760,24458.0,24480.0,24441.75,24469.75],[765,24469.75,24489.5,24451.5,24470.0],[770,24470.0,24481.75,24446.25,24454.5],[775,24454.5,24471.75,24441.5,24458.25],[780,24458.25,24468.5,24438.5,24455.0],[785,24455.0,24465.75,24434.0,24452.0]];
+</script>
+<script>
+/* DR Lab mockup engine: session facts, synthetic similar sessions, clusters.
+   Everything numeric about "similar sessions" here is SYNTHETIC (seeded simulation). */
+(function (G) {
+'use strict';
+
+const SESS = {
+  ADR: { key: 'ADR', s: -270, e: -210, end: 120, traded: false },
+  ODR: { key: 'ODR', s: 180, e: 240, end: 510, traded: true },
+  RDR: { key: 'RDR', s: 570, e: 630, end: 960, traded: true },
+};
+// invented previous-day RDR box (synthetic)
+const PREV_RDR = { key: 'pRDR', drh: 24519.75, idrh: 24508.0, idrl: 24414.5, drl: 24402.25, open: 24431.0, close: 24497.5 };
+PREV_RDR.mid = (PREV_RDR.idrh + PREV_RDR.idrl) / 2;
+PREV_RDR.w = PREV_RDR.idrh - PREV_RDR.idrl;
+const EPOCHS = [
+  { key: 'e1', label: '2006–12', from: 2006, to: 2012 },
+  { key: 'e2', label: '2013–19', from: 2013, to: 2019 },
+  { key: 'e3', label: '2020–25', from: 2020, to: 2025 },
+];
+
+// ---------- time helpers ----------
+function hhmm(m) { let t = ((Math.round(m) % 1440) + 1440) % 1440; return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
+function dur(min) { min = Math.max(0, Math.round(min)); const h = Math.floor(min / 60), mm = min % 60; return h ? (h + ' ч ' + String(mm).padStart(2, '0') + ' мин') : (mm + ' мин'); }
+
+// ---------- seeded rng ----------
+function hashStr(s) { let h = 2166136261 >>> 0; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rng(seed) { let a = seed >>> 0; return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function normal(r) { let u = 0, v = 0; while (u === 0) u = r(); v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+function pick(r, ws) { const s = ws.reduce((a, b) => a + b, 0); let x = r() * s; for (let i = 0; i < ws.length; i++) { x -= ws[i]; if (x <= 0) return i; } return ws.length - 1; }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+// ---------- boxes and facts ----------
+function closedBars(bars, m) { return bars.filter(b => b[0] + 5 <= m); }
+
+function box(bars, S, m) {
+  const bx = bars.filter(b => b[0] >= S.s && b[0] < S.e && b[0] + 5 <= m);
+  if (!bx.length) return null;
+  const drh = Math.max(...bx.map(b => b[2])), drl = Math.min(...bx.map(b => b[3]));
+  const idrh = Math.max(...bx.map(b => Math.max(b[1], b[4]))), idrl = Math.min(...bx.map(b => Math.min(b[1], b[4])));
+  const open = bx[0][1], close = bx[bx.length - 1][4];
+  const w = idrh - idrl;
+  return { key: S.key, s: S.s, e: S.e, end: S.end, drh, drl, idrh, idrl, mid: (idrh + idrl) / 2, w, open, close,
+    color: close > open ? 'green' : close < open ? 'red' : 'gray', formed: m >= S.e, nBars: bx.length };
+}
+
+// confirmation, break, steps, pullback; all strictly from bars closed by m
+function sessionFacts(bars, S, m) {
+  const B = box(bars, S, m);
+  if (!B) return { S, box: null, phase: 'before' };
+  if (!B.formed) return { S, box: B, phase: 'box' };
+  let conf = null, brk = null;
+  const after = bars.filter(b => b[0] >= S.e && b[0] < S.end && b[0] + 5 <= m);
+  for (const b of after) {
+    if (!conf) {
+      if (b[4] > B.drh) conf = { dir: 'up', t: b[0] + 5, bar: b[0], price: b[4] };
+      else if (b[4] < B.drl) conf = { dir: 'down', t: b[0] + 5, bar: b[0], price: b[4] };
+    } else if (!brk) {
+      if (conf.dir === 'up' && b[4] < B.drl) brk = { dir: 'down', t: b[0] + 5, bar: b[0], price: b[4] };
+      if (conf.dir === 'down' && b[4] > B.drh) brk = { dir: 'up', t: b[0] + 5, bar: b[0], price: b[4] };
+    }
+  }
+  const ended = m >= S.end;
+  const phase = ended ? 'ended' : !conf ? 'pre' : brk ? 'broken' : 'conf';
+  const F = { S, box: B, phase, conf, brk, m };
+  // analysis direction and frame
+  const dir = brk ? brk.dir : conf ? conf.dir : null;
+  F.dir = dir;
+  F.toX = (p) => dir === 'down' ? (B.idrl - p) / B.w : (p - B.idrh) / B.w;
+  F.toP = (x) => dir === 'down' ? B.idrl - x * B.w : B.idrh + x * B.w;
+  const last = closedBars(bars, m).slice(-1)[0];
+  F.last = last; F.price = last ? last[4] : null; F.u = last ? F.toX(last[4]) : null;
+  // STD levels (Pine): +k*0.5W above IDR high, -k*0.5W below IDR low
+  F.std = [];
+  for (let k = 1; k <= 8; k++) { F.std.push({ lab: '+' + fmtStd(k * 0.5), p: B.idrh + k * 0.5 * B.w, side: 'up', k }); F.std.push({ lab: '−' + fmtStd(k * 0.5), p: B.idrl - k * 0.5 * B.w, side: 'down', k }); }
+  // steps taken since confirmation (in confirmation direction) and since break (in break direction)
+  function steps(from, d) {
+    const out = [];
+    const bs = bars.filter(b => b[0] + 5 > from && b[0] < S.end && b[0] + 5 <= m);
+    for (let k = 1; k <= 6; k++) {
+      const lvl = d === 'up' ? B.idrh + k * 0.5 * B.w : B.idrl - k * 0.5 * B.w;
+      const hit = bs.find(b => d === 'up' ? b[2] >= lvl : b[3] <= lvl);
+      out.push({ k, lab: (d === 'up' ? '+' : '−') + fmtStd(k * 0.5), p: lvl, t: hit ? hit[0] + 5 : null });
+      if (!hit) break;
+    }
+    return out;
+  }
+  if (conf) F.stepsConf = steps(conf.t - 5, conf.dir);
+  if (brk) F.stepsBrk = steps(brk.t - 5, brk.dir);
+  // pullback so far (against current analysis direction) since conf (or since break)
+  if (dir) {
+    const from = brk ? brk.t : conf.t;
+    const bs = bars.filter(b => b[0] >= from && b[0] + 5 <= m);
+    let pb = null, ext = null;
+    for (const b of bs) {
+      const against = dir === 'up' ? b[3] : b[2];
+      const along = dir === 'up' ? b[2] : b[3];
+      if (!pb || F.toX(against) < pb.x) pb = { x: F.toX(against), p: against, t: b[0] + 5 };
+      if (!ext || F.toX(along) > ext.x) ext = { x: F.toX(along), p: along, t: b[0] + 5 };
+    }
+    F.pbSoFar = pb; F.extSoFar = ext;
+  }
+  return F;
+}
+function fmtStd(v) { return (Math.round(v * 10) / 10).toFixed(1).replace('.', ','); }
+
+function activeSession(m) {
+  for (const S of Object.values(SESS)) if (m > S.s && m <= S.end) return S;
+  return null;
+}
+
+// day models for the session relative to previous box (M5 closes beyond prev DR low/high)
+function models(bars, S, prevBox, m) {
+  if (!prevBox) return null;
+  let upBr = null, dnBr = null;
+  for (const b of bars) {
+    if (b[0] < S.s || b[0] >= S.end || b[0] + 5 > m) continue;
+    if (!upBr && b[4] < prevBox.drl) upBr = b[0] + 5;
+    if (!dnBr && b[4] > prevBox.drh) dnBr = b[0] + 5;
+  }
+  return { up: upBr, down: dnBr, vs: prevBox.key };
+}
+
+// ---------- synthetic similar sessions ----------
+// frame x: 0 = IDR edge on analysis side, +1 = one W further, -1 = opposite IDR edge.
+function simulate(ctx) {
+  const r = rng(hashStr(ctx.seedKey));
+  const { m, E, u } = ctx;
+  const R = E - m, nb = Math.max(1, Math.round(R / 5));
+  const tAt = (frac) => m + 5 * clamp(Math.floor(clamp(frac, 0, 0.9999) * nb), 0, nb - 1);
+  const tNear = () => { let k = 0; while (r() > 0.42 && k < 5) k++; return m + 5 * Math.min(k, nb - 1); };
+  const tLate = () => tAt(1 - Math.abs(normal(r)) * 0.08);
+  const tUni = () => tAt(r());
+  const tN = (mu, sd) => tAt(mu + normal(r) * sd);
+  const year = (bias) => { if (bias && r() < bias) return 2020 + Math.floor(r() * 6); return 2006 + Math.floor(r() * 20); };
+  const sessions = [];
+  const N = ctx.N;
+  const magnetsUp = (from, extra) => { const c = []; for (let k = -2; k <= 8; k++) c.push(k * 0.5); (extra || []).forEach(v => c.push(v)); return c.filter(v => v > from).sort((a, b) => a - b); };
+  const magnetsDn = (from, extra) => { const c = []; for (let k = -3; k <= 8; k++) c.push(k * 0.5); (extra || []).forEach(v => c.push(v)); return c.filter(v => v < from).sort((a, b) => b - a); };
+
+  if (ctx.state === 'conf' || ctx.state === 'broken') {
+    const extraUp = [ctx.drExt]; if (ctx.extSoFar != null) extraUp.push(ctx.extSoFar);
+    const L = magnetsUp(u + 0.13, extraUp);
+    const L1 = L[0], L2 = L.find(v => v > L1 + 0.2) ?? L1 + 0.5;
+    const M = magnetsDn(u - 0.13, [ctx.drExt]);
+    const M1 = M[0], M2 = M.find(v => v < M1 - 0.3) ?? M1 - 0.5;
+    const brkX = -1 - ctx.drOpp;
+    const pDeep = 0.06 * clamp(R / 300, 0.2, 1.2);
+    for (let i = 0; i < N; i++) {
+      let c, p, yb = 0;
+      const ci = pick(r, [0.28, 0.19, 0.09, 0.09, 0.07, 0.03, 0.25]);
+      if (ci === 0) c = { t: tNear(), x: u + Math.abs(0.02 + normal(r) * 0.03) };
+      else if (ci === 1) c = { t: tN(0.22, 0.09), x: L1 + 0.005 + normal(r) * 0.05 };
+      else if (ci === 2) c = { t: tN(0.56, 0.14), x: L2 + normal(r) * 0.075 };
+      else if (ci === 3) c = { t: tLate(), x: u + Math.abs(0.28 + normal(r) * 0.22) };
+      else if (ci === 4) { yb = 0.55; c = { t: tUni(), x: u + 0.45 + -Math.log(1 - r()) * 0.55 }; }
+      else if (ci === 5) { yb = 1; c = { t: tN(0.45, 0.1), x: L2 + 0.5 + normal(r) * 0.06 }; }
+      else c = { t: tUni(), x: u + r() * 1.25 };
+      if (c.x < u) c.x = u + 0.01;
+      const pi = pick(r, [0.25, 0.2, 0.1, 0.08, pDeep, 0.27]);
+      if (pi === 0) p = { t: tNear(), x: u - Math.abs(0.025 + normal(r) * 0.03) };
+      else if (pi === 1) p = { t: tN(0.3, 0.11), x: M1 - 0.01 + normal(r) * 0.055 };
+      else if (pi === 2) p = { t: tN(0.5, 0.16), x: M2 + normal(r) * 0.08 };
+      else if (pi === 3) p = { t: tLate(), x: u - Math.abs(0.3 + normal(r) * 0.25) };
+      else if (pi === 4) p = { t: tN(0.6, 0.2), x: brkX - Math.abs(normal(r) * 0.3) };
+      else p = { t: tUni(), x: u - r() * 1.3 };
+      if (p.x > u) p.x = u - 0.01;
+      sessions.push({ id: i, year: year(yb), c, p });
+    }
+  } else if (ctx.state === 'pre') {
+    // up-frame: x=(p-IDRh)/W. DR high at +dh, DR low at -1-dl.
+    const dh = ctx.dh, dl = ctx.dl;
+    const pUp = ctx.color === 'green' ? 0.52 : ctx.color === 'red' ? 0.31 : 0.42;
+    const pDn = ctx.color === 'green' ? 0.30 : ctx.color === 'red' ? 0.51 : 0.40;
+    for (let i = 0; i < N; i++) {
+      const o = pick(r, [pUp, pDn, 1 - pUp - pDn]);
+      let hi, lo, out, ot = null;
+      const near = (s) => ({ t: tNear(), x: u + s * Math.abs(0.03 + normal(r) * 0.035) });
+      if (o === 0) {
+        out = 'up'; ot = tN(0.07, 0.05) + 5;
+        const k = pick(r, [0.36, 0.24, 0.14, 0.26]);
+        hi = k === 0 ? { t: tN(0.22, 0.09), x: dh + 0.32 + normal(r) * 0.1 } : k === 1 ? { t: tN(0.45, 0.14), x: 1.0 + normal(r) * 0.09 }
+          : k === 2 ? { t: tLate(), x: 1.35 + normal(r) * 0.22 } : { t: tUni(), x: dh + 0.1 + r() * 1.6 };
+        const j = pick(r, [0.5, 0.3, 0.2]);
+        lo = j === 0 ? near(-1) : j === 1 ? { t: tN(0.05, 0.03), x: -0.5 + normal(r) * 0.08 } : { t: tUni(), x: u - r() * 0.9 };
+      } else if (o === 1) {
+        out = 'down'; ot = tN(0.1, 0.06) + 5;
+        const k = pick(r, [0.36, 0.24, 0.14, 0.26]);
+        lo = k === 0 ? { t: tN(0.24, 0.09), x: -1 - dl - 0.3 + normal(r) * 0.1 } : k === 1 ? { t: tN(0.48, 0.14), x: -2.0 + normal(r) * 0.09 }
+          : k === 2 ? { t: tLate(), x: -2.35 + normal(r) * 0.22 } : { t: tUni(), x: -1 - dl - 0.1 - r() * 1.6 };
+        const j = pick(r, [0.55, 0.25, 0.2]);
+        hi = j === 0 ? near(1) : j === 1 ? { t: tN(0.05, 0.03), x: Math.min(dh - 0.03, 0.0 + normal(r) * 0.06) } : { t: tUni(), x: u + r() * 0.5 };
+      } else {
+        out = 'none';
+        const k = pick(r, [0.45, 0.35, 0.2]);
+        hi = k === 0 ? near(1) : k === 1 ? { t: tN(0.4, 0.2), x: Math.min(dh - 0.01, dh - Math.abs(normal(r) * 0.06)) } : { t: tUni(), x: u + r() * (dh - u) };
+        const j = pick(r, [0.4, 0.35, 0.25]);
+        lo = j === 0 ? near(-1) : j === 1 ? { t: tN(0.45, 0.2), x: -0.95 + normal(r) * 0.1 } : { t: tUni(), x: u - r() * (u + 1 + dl) };
+      }
+      if (hi.x < u) hi.x = u + 0.01; if (lo.x > u) lo.x = u - 0.01;
+      sessions.push({ id: i, year: year(0), hi, lo, out, ot });
+    }
+  }
+  // synthetic calendar dates (for per-session hover only)
+  for (const s of sessions) {
+    const doy = 2 + Math.floor(r() * 360); const d = new Date(Date.UTC(s.year, 0, doy));
+    let wd = d.getUTCDay(); if (wd === 0) d.setUTCDate(d.getUTCDate() + 1); if (wd === 6) d.setUTCDate(d.getUTCDate() + 2);
+    s.date = d.toISOString().slice(0, 10); s.dow = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'][d.getUTCDay()];
+    s.jit = r();
+  }
+  return sessions;
+}
+
+// ---------- clusters on the time x price grid ----------
+// points: [{t, x, sid}], t = bar-open minute, x = frame coord. Region = rectangle of cells (15 min x 0.1 W).
+function findClusters(points, opt) {
+  const { m, E, N } = opt;
+  const TB = opt.tb || 15, PB = 0.1;
+  const t0 = Math.floor(m / TB) * TB, nT = Math.ceil((E - t0) / TB);
+  let pmin = Infinity, pmax = -Infinity;
+  for (const q of points) { const pi = Math.floor(q.x / PB + 1e-9); q._ti = Math.floor((q.t - t0) / TB); q._pi = pi; pmin = Math.min(pmin, pi); pmax = Math.max(pmax, pi); }
+  const nP = pmax - pmin + 1;
+  const Gd = Array.from({ length: nT }, () => new Float64Array(nP));
+  for (const q of points) Gd[q._ti][q._pi - pmin]++;
+  const K = [[0.5, 1, 0.5]];
+  const S = Array.from({ length: nT }, () => new Float64Array(nP));
+  for (let i = 0; i < nT; i++) for (let j = 0; j < nP; j++) {
+    let s = 0;
+    for (let di = -1; di <= 1; di++) for (let dj = -1; dj <= 1; dj++) {
+      const a = i + di, b = j + dj; if (a < 0 || b < 0 || a >= nT || b >= nP) continue;
+      s += Gd[a][b] * [0.5, 1, 0.5][di + 1] * [0.55, 1, 0.55][dj + 1];
+    }
+    S[i][j] = s;
+  }
+  // watershed: every occupied cell climbs to its local maximum of the smoothed density
+  const lab = Array.from({ length: nT }, () => new Int32Array(nP).fill(-1));
+  const peakOf = (i, j) => {
+    let ci = i, cj = j;
+    for (let g = 0; g < 200; g++) {
+      let bi = ci, bj = cj, bv = S[ci][cj];
+      for (let di = -1; di <= 1; di++) for (let dj = -1; dj <= 1; dj++) {
+        const a = ci + di, b = cj + dj; if (a < 0 || b < 0 || a >= nT || b >= nP) continue;
+        if (S[a][b] > bv + 1e-12) { bv = S[a][b]; bi = a; bj = b; }
+      }
+      if (bi === ci && bj === cj) return ci * nP + cj;
+      ci = bi; cj = bj;
+    }
+    return ci * nP + cj;
+  };
+  const peaks = new Map();
+  for (let i = 0; i < nT; i++) for (let j = 0; j < nP; j++) {
+    if (S[i][j] <= 0) continue;
+    const pk = peakOf(i, j); lab[i][j] = pk;
+    if (!peaks.has(pk)) peaks.set(pk, { pk, i: Math.floor(pk / nP), j: pk % nP, s: S[Math.floor(pk / nP)][pk % nP], cells: [] });
+    peaks.get(pk).cells.push([i, j]);
+  }
+  const minPeak = Math.max(2.5, N * 0.009);
+  const cand = [...peaks.values()].filter(p => p.s >= minPeak).sort((a, b) => b.s - a.s);
+  const clusters = [];
+  const taken = Array.from({ length: nT }, () => new Uint8Array(nP));
+  const cntRect = (r0, r1, c0, c1) => { let s = 0; for (let i = r0; i <= r1; i++) for (let j = c0; j <= c1; j++) s += Gd[i][j]; return s; };
+  const freeRect = (r0, r1, c0, c1) => { for (let i = r0; i <= r1; i++) for (let j = c0; j <= c1; j++) if (taken[i][j]) return false; return true; };
+  for (const p of cand) {
+    const core = p.cells.filter(([i, j]) => S[i][j] >= 0.42 * p.s && Gd[i][j] > 0);
+    if (!core.length) continue;
+    let r0 = Math.min(...core.map(c => c[0])), r1 = Math.max(...core.map(c => c[0]));
+    let c0 = Math.min(...core.map(c => c[1])), c1 = Math.max(...core.map(c => c[1]));
+    // cap the size (6 time bins = 90 min, 5 price bins = 0.5 W): drop the side that loses fewest points
+    while (r1 - r0 + 1 > 6) { if (cntRect(r0, r0, c0, c1) <= cntRect(r1, r1, c0, c1)) r0++; else r1--; }
+    while (c1 - c0 + 1 > 5) { if (cntRect(r0, r1, c0, c0) <= cntRect(r0, r1, c1, c1)) c0++; else c1--; }
+    // trim until the rectangle does not overlap earlier clusters (drop the side that loses the fewest points)
+    let guard = 0;
+    while (!freeRect(r0, r1, c0, c1) && guard++ < 60) {
+      const opts = [];
+      if (r1 > r0) { opts.push([r0 + 1, r1, c0, c1]); opts.push([r0, r1 - 1, c0, c1]); }
+      if (c1 > c0) { opts.push([r0, r1, c0 + 1, c1]); opts.push([r0, r1, c0, c1 - 1]); }
+      if (!opts.length) { r0 = -1; break; }
+      opts.sort((a, b) => (freeRect(...b) - freeRect(...a)) || (cntRect(...b) - cntRect(...a)));
+      [r0, r1, c0, c1] = opts[0];
+    }
+    if (r0 < 0 || !freeRect(r0, r1, c0, c1)) continue;
+    const k = cntRect(r0, r1, c0, c1);
+    if (k < Math.max(5, N * 0.015)) continue;
+    for (let i = r0; i <= r1; i++) for (let j = c0; j <= c1; j++) taken[i][j] = 1;
+    const ta = Math.max(m, t0 + r0 * TB), tb = Math.min(E, t0 + (r1 + 1) * TB);
+    clusters.push({ ta, tb, xa: (c0 + pmin) * PB, xb: (c1 + pmin + 1) * PB, k, ti: [r0, r1], pi: [c0 + pmin, c1 + pmin] });
+    if (clusters.length >= 7) break;
+  }
+  // members & epochs
+  for (const c of clusters) {
+    c.members = points.filter(q => q._ti >= c.ti[0] && q._ti <= c.ti[1] && q._pi >= c.pi[0] && q._pi <= c.pi[1]);
+    c.k = c.members.length;
+  }
+  clusters.sort((a, b) => b.k - a.k);
+  return { clusters, grid: { t0, TB, PB, nT, nP, pmin, G: Gd } };
+}
+
+function epochStats(sessions, members) {
+  return EPOCHS.map(e => {
+    const n = sessions.filter(s => s.year >= e.from && s.year <= e.to).length;
+    const k = members.filter(q => q.year >= e.from && q.year <= e.to).length;
+    return { key: e.key, label: e.label, n, k, s: n ? k / n : 0 };
+  });
+}
+
+// display tiers (a design rule, not a probability). Thresholds are for the operator to decide.
+const TIER_RULE = { strongShare: 0.15, strongK: 25, notableShare: 0.06, notableK: 12, epochFrac: 0.5 };
+function tierOf(c, N) {
+  const s = c.k / N;
+  const stable = c.epochs.every(e => e.s >= TIER_RULE.epochFrac * s);
+  c.stable = stable;
+  if (s >= TIER_RULE.strongShare && c.k >= TIER_RULE.strongK && stable) return 'strong';
+  if (s >= TIER_RULE.notableShare && c.k >= TIER_RULE.notableK) return 'notable';
+  return 'weak';
+}
+
+// full analysis at moment m for a day
+function analyze(day, m) {
+  const bars = day.bars;
+  const S = activeSession(m);
+  const out = { m, day: day.key, S, bars };
+  // all boxes known at m
+  out.boxes = {};
+  for (const k of ['ADR', 'ODR', 'RDR']) { const b = box(bars, SESS[k], m); if (b) out.boxes[k] = b; }
+  out.prevRDR = PREV_RDR;
+  const prevOf = { ADR: PREV_RDR, ODR: out.boxes.ADR, RDR: out.boxes.ODR };
+  out.models = {};
+  for (const k of ['ADR', 'ODR', 'RDR']) if (out.boxes[k]) out.models[k] = models(bars, SESS[k], prevOf[k], m);
+  if (!S) { out.phase = 'transition'; return out; }
+  const F = sessionFacts(bars, S, m);
+  out.F = F; out.phase = F.phase;
+  if (!S.traded && (F.phase === 'pre' || F.phase === 'conf' || F.phase === 'broken')) { out.phase = 'untraded'; return out; }
+  if (!['pre', 'conf', 'broken'].includes(F.phase)) return out;
+  const B = F.box;
+  const r = rng(hashStr('N|' + day.key + '|' + S.key + '|' + m));
+  const E = S.end;
+  const frac = (E - m) / (E - S.e);
+  let N, tol = 0.25;
+  if (F.phase === 'pre') N = Math.round(570 + 60 * r() + 20 * frac);
+  else if (F.phase === 'conf') N = Math.round(400 + 120 * r() + 40 * frac);
+  else N = Math.round(165 + 55 * r());
+  out.N = N; out.tol = tol;
+  const seedKey = [day.key, S.key, m, F.phase].join('|');
+  if (F.phase === 'pre') {
+    const u = (F.price - B.idrh) / B.w;
+    const sessions = simulate({ state: 'pre', m, E, u, N, seedKey, dh: (B.drh - B.idrh) / B.w, dl: (B.idrl - B.drl) / B.w, color: B.color });
+    out.sessions = sessions; out.u = u;
+    out.frame = { toX: p => (p - B.idrh) / B.w, toP: x => B.idrh + x * B.w, dir: 'up' };
+    const nUp = sessions.filter(s => s.out === 'up').length, nDn = sessions.filter(s => s.out === 'down').length;
+    out.outcomes = [{ key: 'up', k: nUp }, { key: 'down', k: nDn }, { key: 'none', k: N - nUp - nDn }];
+    out.roles = [roleBlock('hi', 'Верх', sessions, s => s.hi, m, E, N), roleBlock('lo', 'Низ', sessions, s => s.lo, m, E, N)];
+  } else {
+    const dir = F.dir;
+    const u = F.u;
+    const drExt = dir === 'down' ? (B.idrl - B.drl) / B.w : (B.drh - B.idrh) / B.w;
+    const drOpp = dir === 'down' ? (B.drh - B.idrh) / B.w : (B.idrl - B.drl) / B.w;
+    const sessions = simulate({ state: F.phase, m, E, u, N, seedKey, drExt, drOpp, extSoFar: F.extSoFar ? F.extSoFar.x : null });
+    out.sessions = sessions; out.u = u;
+    out.frame = { toX: F.toX, toP: F.toP, dir };
+    out.roles = [roleBlock('c', 'Продолжение', sessions, s => s.c, m, E, N), roleBlock('p', 'Откат', sessions, s => s.p, m, E, N)];
+  }
+  // absolute prices for clusters
+  for (const R of out.roles) for (const c of R.clusters) {
+    const pa = out.frame.toP(c.xa), pb = out.frame.toP(c.xb);
+    c.pLo = Math.min(pa, pb); c.pHi = Math.max(pa, pb);
+  }
+  return out;
+}
+
+function roleBlock(key, name, sessions, get, m, E, N) {
+  const pts = sessions.map(s => { const e = get(s); return { t: e.t, x: e.x, sid: s.id, year: s.year }; });
+  const { clusters, grid } = findClusters(pts, { m, E, N });
+  let idx = 0;
+  const kept = [];
+  for (const c of clusters) {
+    c.epochs = epochStats(sessions, c.members);
+    c.tier = tierOf(c, N);
+    c.share = c.k / N;
+    kept.push(c);
+  }
+  kept.sort((a, b) => b.k - a.k);
+  kept.forEach(c => { c.id = key + (++idx); c.rank = idx; c.role = key; });
+  const inCl = new Set(); kept.forEach(c => c.members.forEach(q => inCl.add(q.sid)));
+  return { key, name, pts, clusters: kept, grid, scatter: N - inCl.size };
+}
+
+const API = { SESS, PREV_RDR, EPOCHS, TIER_RULE, hhmm, dur, fmtStd, box, sessionFacts, activeSession, analyze, rng, hashStr };
+if (typeof module !== 'undefined' && module.exports) module.exports = API; else G.DRE = API;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function () {
+'use strict';
+const E = window.DRE;
+const hhmm = E.hhmm;
+const FONT = '-apple-system, BlinkMacSystemFont, "Trebuchet MS", Roboto, Ubuntu, sans-serif';
+const C = {
+  bg: '#131722', grid: '#1a1f2a', tx: '#e8eaf0', tx2: '#c9cdd6', tx3: '#a9afbb',
+  up: '#26a69a', dn: '#ef5350', sc: '#5b6376', lvl: '#cdd2dc', idr: '#949cab', std: '#384051', ctx: '#737b8d',
+};
+const ROLE = {
+  c: { name: 'Продолжение', short: 'продолжение', base: '#c8962c', hi: '#f0b547', rgb: [240, 181, 71], brgb: [200, 150, 44] },
+  p: { name: 'Откат', short: 'откат', base: '#2c8fd0', hi: '#4db0f5', rgb: [77, 176, 245], brgb: [44, 143, 208] },
+  hi: { name: 'Верх', short: 'верхний экстремум', base: '#8f7bf0', hi: '#ab9bff', rgb: [171, 155, 255], brgb: [143, 123, 240] },
+  lo: { name: 'Низ', short: 'нижний экстремум', base: '#d4668f', hi: '#f08ab0', rgb: [240, 138, 176], brgb: [212, 102, 143] },
+};
+const TIER_NAME = { strong: 'сильное', notable: 'заметное', weak: 'слабое' };
+const rgba = (rgb, a) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
+const NB = ' ';
+function fmtP(p) { const s = (Math.round(p * 100) / 100).toFixed(2); const [i, d] = s.split('.'); return i.replace(/\B(?=(\d{3})+(?!\d))/g, NB) + ',' + d; }
+function tick(p) { return Math.round(p * 4) / 4; }
+function fmtP0(p) { return String(Math.round(p)).replace(/\B(?=(\d{3})+(?!\d))/g, NB); }
+function pct(s) { const v = s * 100; return (v > 0 && v < 1 ? '<1' : v < 10 ? (Math.round(v * 10) / 10).toFixed(1).replace('.', ',') : String(Math.round(v))) + NB + '%'; }
+function f2(v) { return (Math.round(v * 100) / 100).toFixed(2).replace('.', ','); }
+function f1(v) { return (Math.round(v * 10) / 10).toFixed(1).replace('.', ','); }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+const $ = (s) => document.querySelector(s);
+
+// ---------------- data ----------------
+const DAYS = {
+  A: { key: 'A', bars: window.BARS_A, now: 788, label: 'день A' },
+  B: { key: 'B', bars: window.BARS_B, now: 788, label: 'день B' },
+};
+const PRESETS = {
+  conf: { day: 'A', m: null, name: 'Подтверждено', t: '13:08' },
+  pre: { day: 'A', m: 640, name: 'До подтверждения', t: '10:40' },
+  broken: { day: 'B', m: null, name: 'Слом DR', t: '13:08' },
+};
+const VARIANTS = { profile: 'Профиль', swarm: 'Рой', board: 'Табло' };
+
+const st = { v: 'profile', s: 'conf', day: 'A', m: 788, replay: false, ghost: false, view: null, py: null, yShift: 0,
+  hover: null, pin: null, expand: {}, drag: null, mouse: null };
+let AN = null;
+
+function load(day, m, replay) {
+  st.day = day; st.m = m; st.replay = replay;
+  AN = E.analyze(DAYS[day], Math.floor(m / 5) * 5);
+  derive();
+}
+function derive() {
+  const a = AN;
+  a.cl = {}; a.clList = []; a.member = {};
+  a.box = a.F && a.F.box ? a.F.box : null;
+  if (a.roles) for (const R of a.roles) {
+    const mp = new Map(); a.member[R.key] = mp;
+    for (const c of R.clusters) { a.cl[c.id] = c; a.clList.push(c); for (const q of c.members) mp.set(q.sid, c); c.where = rangeLabel(c.pLo, c.pHi); }
+    for (const q of R.pts) q.p = a.frame.toP(q.x);
+  }
+  // context boxes
+  a.ctx = [];
+  a.ctx.push({ key: 'pRDR', name: 'RDR−1', full: 'RDR прошлого дня', b: E.PREV_RDR, from: -360 });
+  const act = a.S ? a.S.key : null;
+  for (const k of ['ADR', 'ODR', 'RDR']) {
+    const b = a.boxes[k]; if (!b) continue;
+    if (k === act) continue;
+    if (!b.formed) continue;
+    a.ctx.push({ key: k, name: k, full: k, b, from: b.e });
+  }
+}
+function curBox() { return AN.box; }
+
+// ---------------- level descriptions ----------------
+function anchors() {
+  const B = curBox(); if (!B) return [];
+  const L = [];
+  for (let k = 1; k <= 8; k++) { L.push({ p: B.idrh + k * 0.5 * B.w, n: '+' + E.fmtStd(k * 0.5) }); L.push({ p: B.idrl - k * 0.5 * B.w, n: '−' + E.fmtStd(k * 0.5) }); }
+  L.push({ p: B.drh, n: 'DR high' }, { p: B.idrh, n: 'IDR high' }, { p: B.mid, n: 'mid' }, { p: B.idrl, n: 'IDR low' }, { p: B.drl, n: 'DR low' });
+  return L.sort((a, b) => a.p - b.p);
+}
+function rangeLabel(lo, hi) {
+  const B = curBox(); if (!B) return '';
+  const tol = 0.03 * B.w, A = anchors();
+  const inside = A.filter(a => a.p >= lo - tol && a.p <= hi + tol);
+  if (inside.length === 1) return 'у ' + inside[0].n;
+  if (inside.length >= 2) return inside[0].n + ' … ' + inside[inside.length - 1].n;
+  const below = A.filter(a => a.p < lo).pop(), above = A.find(a => a.p > hi);
+  if (below && above) return 'между ' + below.n + ' и ' + above.n;
+  return below ? 'выше ' + below.n : above ? 'ниже ' + above.n : '';
+}
+function stdCoord(p) {
+  const B = curBox(); if (!B) return '';
+  if (p >= B.idrh) return '+' + f2((p - B.idrh) / B.w);
+  if (p <= B.idrl) return '−' + f2((B.idrl - p) / B.w);
+  return 'внутри IDR';
+}
+// share of similar sessions whose extreme of this role lies beyond a price (a region share, from definitions)
+function beyond(roleKey, price) {
+  const R = AN.roles.find(r => r.key === roleKey); if (!R) return null;
+  let k = 0;
+  if (roleKey === 'hi') k = R.pts.filter(q => q.p >= price).length;
+  else if (roleKey === 'lo') k = R.pts.filter(q => q.p <= price).length;
+  else { const x = AN.frame.toX(price); k = roleKey === 'c' ? R.pts.filter(q => q.x >= x).length : R.pts.filter(q => q.x <= x).length; }
+  return k;
+}
+
+// ---------------- layout ----------------
+const cv = $('#cv'), ctx = cv.getContext('2d');
+const CH = {};
+function layout() {
+  const wrap = $('#chartWrap');
+  const W = wrap.clientWidth, Htot = wrap.clientHeight;
+  let boardH = 0;
+  const board = $('#board');
+  if (st.v === 'board') { board.style.display = 'block'; boardH = boardHeight(); board.style.height = boardH + 'px'; }
+  else { board.style.display = 'none'; }
+  const H = Htot - boardH;
+  const dpr = window.devicePixelRatio || 1;
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  Object.assign(CH, { W, H, axisW: 76, timeH: 30, topH: 28, stripW: st.v === 'profile' ? 440 : 0 });
+  CH.plotX = 0; CH.plotY = CH.topH;
+  CH.plotW = W - CH.axisW - CH.stripW;
+  CH.plotH = H - CH.topH - CH.timeH;
+  CH.stripX = CH.plotW;
+  CH.axisX = W - CH.axisW;
+}
+function sessEnd() { return AN.S ? AN.S.end : st.m + 60; }
+function dataEnd() { return st.replay ? st.m : DAYS[st.day].now; }
+function defaultView() {
+  const m = st.m;
+  if (st.v === 'profile') return { t0: -365, t1: Math.ceil(m / 5) * 5 + 15 };
+  if (AN.S && AN.S.traded && st.v === 'board') {
+    // keep "now" to the right of the board's text column so every time bar stays visible
+    const t1 = AN.S.end + 10, r = (BT + 24) / CH.plotW, mm = AN.m;
+    return { t0: Math.min(AN.S.s - 30, (mm - r * t1) / (1 - r)), t1 };
+  }
+  if (AN.S && AN.S.traded) return { t0: AN.S.s - 150, t1: AN.S.end + 10 };
+  return { t0: m - 330, t1: m + 90 };
+}
+function ppm() { return CH.plotW / (st.view.t1 - st.view.t0); }
+function X(t) { return CH.plotX + (t - st.view.t0) * ppm(); }
+function Tm(x) { return st.view.t0 + (x - CH.plotX) / ppm(); }
+function Y(p) { return CH.plotY + (st.py.max - p) / (st.py.max - st.py.min) * CH.plotH; }
+function Pr(y) { return st.py.max - (y - CH.plotY) / CH.plotH * (st.py.max - st.py.min); }
+
+function visibleBars(ghost) {
+  const bars = DAYS[st.day].bars, t0 = st.view.t0 - 5, t1 = st.view.t1;
+  const end = dataEnd();
+  if (ghost) return bars.filter(b => b[0] >= t0 && b[0] <= t1 && b[0] + 5 > end && st.replay);
+  return bars.filter(b => b[0] >= t0 && b[0] <= t1 && (st.replay ? b[0] + 5 <= end : b[0] < end));
+}
+function autoscale() {
+  let lo = Infinity, hi = -Infinity;
+  const inc = (p) => { if (!isFinite(p)) return; if (p < lo) lo = p; if (p > hi) hi = p; };
+  for (const b of visibleBars(false)) { inc(b[2]); inc(b[3]); }
+  if (st.ghost) for (const b of visibleBars(true)) { inc(b[2]); inc(b[3]); }
+  const B = curBox(); if (B) { inc(B.drh); inc(B.drl); }
+  if (AN.roles) {
+    const futureVisible = st.v === 'profile' || X(AN.m) < CH.plotX + CH.plotW - 20;
+    if (futureVisible) {
+      for (const c of AN.clList) if (c.tier !== 'weak' || st.v !== 'board') { inc(c.pLo); inc(c.pHi); }
+      if (st.v !== 'board') for (const R of AN.roles) { const ps = R.pts.map(q => q.p).sort((a, b) => a - b); inc(ps[Math.floor(ps.length * 0.02)]); inc(ps[Math.floor(ps.length * 0.98)]); }
+    }
+  }
+  if (!isFinite(lo)) { lo = 24400; hi = 24800; }
+  const pad = (hi - lo) * 0.05;
+  st.py = { min: lo - pad + st.yShift, max: hi + pad + st.yShift };
+}
+
+// ---------------- drawing primitives ----------------
+function font(size, weight) { return `${weight || 400} ${size}px ${FONT}`; }
+function textW(s, size, weight) { ctx.font = font(size, weight); return ctx.measureText(s).width; }
+function hline(y, x0, x1, color, width, dash) { ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = width || 1; ctx.setLineDash(dash || []); ctx.beginPath(); const yy = Math.round(y) + 0.5; ctx.moveTo(x0, yy); ctx.lineTo(x1, yy); ctx.stroke(); ctx.restore(); }
+function vline(x, y0, y1, color, width, dash) { ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = width || 1; ctx.setLineDash(dash || []); ctx.beginPath(); const xx = Math.round(x) + 0.5; ctx.moveTo(xx, y0); ctx.lineTo(xx, y1); ctx.stroke(); ctx.restore(); }
+function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath(); }
+class Occ {
+  constructor() { this.r = []; }
+  hit(b) { return this.r.some(a => !(b.x + b.w <= a.x || a.x + a.w <= b.x || b.y + b.h <= a.y || a.y + a.h <= b.y)); }
+  add(b) { this.r.push(b); }
+}
+function overlapArea(a, b) { const w = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), h = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y); return w > 0 && h > 0 ? w * h : 0; }
+
+// ---------------- hover helpers ----------------
+function isHot(id) { return (st.hover && st.hover.id === id) || (st.pin && st.pin.id === id); }
+function anyClusterHot() { const h = st.hover && st.hover.type === 'cluster' ? st.hover.id : null; const p = st.pin && st.pin.type === 'cluster' ? st.pin.id : null; return h || p; }
+function hotSession() { return st.hover && st.hover.type === 'session' ? st.hover.id : null; }
+
+// ---------------- main chart ----------------
+let HIT = [];
+function drawChart() {
+  const W = CH.W, H = CH.H;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+  HIT = [];
+  const occ = new Occ();
+  const pl = CH.plotX, pr = CH.plotX + CH.plotW, pt = CH.plotY, pb = CH.plotY + CH.plotH;
+  // price ticks
+  const ticks = priceTicks();
+  ctx.save(); ctx.beginPath(); ctx.rect(pl, pt, CH.plotW, CH.plotH); ctx.clip();
+  for (const p of ticks) hline(Y(p), pl, pr, C.grid, 1);
+  const tt = timeTicks();
+  for (const t of tt) vline(X(t), pt, pb, C.grid, 1);
+  // session box windows
+  for (const k of ['ADR', 'ODR', 'RDR']) {
+    const S = E.SESS[k]; const x0 = X(S.s), x1 = X(S.e);
+    if (x1 < pl || x0 > pr) continue;
+    ctx.fillStyle = 'rgba(255,255,255,0.028)'; ctx.fillRect(x0, pt, x1 - x0, CH.plotH);
+  }
+  // remaining-session field
+  if (AN.S && AN.S.traded && ['pre', 'conf', 'broken'].includes(AN.phase)) {
+    const x0 = X(AN.m), x1 = X(AN.S.end);
+    ctx.fillStyle = 'rgba(255,255,255,0.022)'; ctx.fillRect(x0, pt, x1 - x0, CH.plotH);
+    vline(x1, pt, pb, '#3b4252', 1);
+  }
+  drawContextLevels();
+  drawBoxes();
+  if (st.v === 'swarm') drawSwarm(occ, 'under');
+  if (st.v === 'board') drawBoardMarks(occ, 'under');
+  if (st.v === 'profile') drawProfileBand();
+  drawCandles(occ);
+  drawMarkers(occ);
+  if (st.v === 'swarm') drawSwarm(occ, 'over');
+  if (st.v === 'board') drawBoardMarks(occ, 'over');
+  // now / replay line
+  const xm = X(st.replay ? st.m : DAYS[st.day].now);
+  vline(xm, pt, pb, st.replay ? '#d8b25a' : '#8b93a3', 1, [4, 4]);
+  // crosshair
+  if (st.mouse && st.mouse.inPlot && !st.drag) {
+    vline(st.mouse.x, pt, pb, 'rgba(200,205,215,0.35)', 1, [3, 4]);
+    hline(st.mouse.y, pl, pr, 'rgba(200,205,215,0.35)', 1, [3, 4]);
+  }
+  ctx.restore();
+  if (st.v === 'profile') drawProfile();
+  drawTopLegend();
+  drawPriceAxis(ticks);
+  drawTimeAxis(tt, xm);
+}
+
+function priceTicks() {
+  const span = st.py.max - st.py.min, target = CH.plotH / 56;
+  const steps = [1, 2, 2.5, 5, 10, 20, 25, 50, 100, 200, 250, 500];
+  let step = steps.find(s => span / s <= target) || 1000;
+  const out = []; for (let p = Math.ceil(st.py.min / step) * step; p <= st.py.max; p += step) out.push(p);
+  return out;
+}
+function timeTicks() {
+  const steps = [15, 30, 60, 120, 180, 360];
+  const step = steps.find(s => s * ppm() >= 64) || 720;
+  const out = []; for (let t = Math.ceil(st.view.t0 / step) * step; t <= st.view.t1; t += step) out.push(t);
+  return out;
+}
+
+function drawContextLevels() {
+  const pl = CH.plotX, pr = CH.plotX + CH.plotW;
+  const hs = hotSession();
+  for (const c of AN.ctx) {
+    const b = c.b, x0 = Math.max(pl, X(c.from));
+    if (x0 > pr) continue;
+    const hot = hs === c.key;
+    const col = hot ? '#dfe3ea' : C.ctx, a = hot ? 1 : 0.8;
+    ctx.globalAlpha = a;
+    hline(Y(b.drh), x0, pr, col, 1, [5, 4]);
+    hline(Y(b.drl), x0, pr, col, 1, [5, 4]);
+    hline(Y(b.idrh), x0, pr, col, 1, [2, 4]);
+    hline(Y(b.idrl), x0, pr, col, 1, [2, 4]);
+    hline(Y(b.mid), x0, pr, col, 1, [1, 3]);
+    ctx.globalAlpha = 1;
+    HIT.push({ type: 'ctxlevel', key: c.key, lines: [b.drh, b.drl, b.idrh, b.idrl, b.mid], x0 });
+  }
+}
+function boxTint(b, a) { return b.color === 'green' ? `rgba(38,166,154,${a})` : b.color === 'red' ? `rgba(239,83,80,${a})` : `rgba(160,160,160,${a})`; }
+function drawBoxes() {
+  const pl = CH.plotX, pr = CH.plotX + CH.plotW;
+  const hs = hotSession();
+  for (const k of ['ADR', 'ODR', 'RDR']) {
+    const b = AN.boxes[k]; if (!b) continue;
+    const x0 = X(b.s), x1 = X(Math.min(b.e, b.s + b.nBars * 5));
+    if (x1 < pl || x0 > pr) continue;
+    const hot = hs === k;
+    ctx.fillStyle = boxTint(b, hot ? 0.16 : 0.07); ctx.fillRect(x0, Y(b.drh), x1 - x0, Y(b.drl) - Y(b.drh));
+    ctx.fillStyle = boxTint(b, hot ? 0.2 : 0.1); ctx.fillRect(x0, Y(b.idrh), x1 - x0, Y(b.idrl) - Y(b.idrh));
+    ctx.save(); ctx.strokeStyle = boxTint(b, 0.75); ctx.lineWidth = 1; if (!b.formed) ctx.setLineDash([4, 3]);
+    ctx.strokeRect(Math.round(x0) + 0.5, Math.round(Y(b.drh)) + 0.5, Math.round(x1 - x0), Math.round(Y(b.drl) - Y(b.drh))); ctx.restore();
+    ctx.font = font(12, 700); ctx.fillStyle = C.tx2; ctx.textBaseline = 'bottom';
+    const lab = k + (b.formed ? '' : ' · формируется');
+    if (x1 - x0 > textW(lab, 12, 700) + 4) ctx.fillText(lab, x0 + 3, Y(b.drh) - 3);
+    else if (x1 - x0 > textW(k, 12, 700) - 8) ctx.fillText(k, x0 + 1, Y(b.drh) - 3);
+    ctx.textBaseline = 'alphabetic';
+  }
+  // current session levels + STD
+  const B = curBox(); if (!B || !B.formed) return;
+  const S = AN.S; const x0 = Math.max(pl, X(B.e)), x1 = Math.min(pr, X(S.end));
+  if (x1 <= x0) return;
+  for (const s of AN.F.std) { const y = Y(s.p); if (y < CH.plotY - 2 || y > CH.plotY + CH.plotH + 2) continue; hline(y, x0, x1, isHot('std' + s.lab) ? '#8d96a8' : C.std, 1); }
+  hline(Y(B.drh), x0, x1, C.lvl, 1); hline(Y(B.drl), x0, x1, C.lvl, 1);
+  hline(Y(B.idrh), x0, x1, C.idr, 1); hline(Y(B.idrl), x0, x1, C.idr, 1);
+  hline(Y(B.mid), x0, x1, C.idr, 1, [1, 3]);
+}
+
+function drawCandles(occ) {
+  const w = Math.max(1, Math.floor(5 * ppm() * 0.72));
+  const drawSet = (bars, alpha) => {
+    ctx.globalAlpha = alpha;
+    for (const b of bars) {
+      const cx = Math.round(X(b[0] + 2.5)); const up = b[4] >= b[1];
+      ctx.fillStyle = up ? C.up : C.dn;
+      const yh = Y(b[2]), yl = Y(b[3]), yo = Y(b[1]), yc = Y(b[4]);
+      ctx.fillRect(cx, Math.round(yh), 1, Math.max(1, Math.round(yl - yh)));
+      const top = Math.round(Math.min(yo, yc)), hgt = Math.max(1, Math.round(Math.abs(yc - yo)));
+      ctx.fillRect(cx - Math.floor(w / 2), top, w, hgt);
+      if (alpha === 1) occ.add({ x: cx - w / 2 - 1, y: yh - 1, w: w + 2, h: yl - yh + 2 });
+    }
+    ctx.globalAlpha = 1;
+  };
+  if (st.replay && st.ghost) drawSet(visibleBars(true), 0.22);
+  drawSet(visibleBars(false), 1);
+}
+
+function chip(x, y, text, opt) {
+  const size = opt.size || 12, wt = opt.weight || 400;
+  const w = textW(text, size, wt) + 12, h = size + 9;
+  ctx.fillStyle = opt.bg; rrect(x, y, w, h, 3); ctx.fill();
+  if (opt.border) { ctx.strokeStyle = opt.border; ctx.lineWidth = 1; rrect(x + 0.5, y + 0.5, w - 1, h - 1, 3); ctx.stroke(); }
+  ctx.fillStyle = opt.color; ctx.font = font(size, wt); ctx.textBaseline = 'middle'; ctx.fillText(text, x + 6, y + h / 2 + 0.5); ctx.textBaseline = 'alphabetic';
+  return { x, y, w, h };
+}
+function placeChip(occ, cands, text, opt) {
+  const size = opt.size || 12, wt = opt.weight || 400;
+  const w = textW(text, size, wt) + 12, h = size + 9;
+  for (const [cx, cy] of cands) {
+    const b = { x: cx, y: cy, w, h };
+    if (b.x < CH.plotX + 2 || b.x + w > CH.plotX + CH.plotW - 2 || b.y < CH.plotY + 2 || b.y + h > CH.plotY + CH.plotH - 2) continue;
+    if (occ.hit(b)) continue;
+    occ.add(b); return chip(b.x, b.y, text, opt);
+  }
+  return null;
+}
+function drawMarkers(occ) {
+  const F = AN.F; if (!F || !F.box || !F.box.formed) return;
+  const bars = DAYS[st.day].bars;
+  const mk = (ev, text, opt, below) => {
+    const b = bars.find(x => x[0] === ev.bar); if (!b) return;
+    const cx = X(b[0] + 2.5); if (cx < CH.plotX || cx > CH.plotX + CH.plotW) return;
+    const size = opt.size || 12, w = textW(text, size, opt.weight) + 12, h = size + 9;
+    const yb = Y(b[3]), ya = Y(b[2]);
+    const cands = [];
+    for (const d of [8, 26, 48, 72, 100, 130, 165, 200]) {
+      const pri = below ? [[cx - w / 2, yb + d], [cx - w / 2, ya - d - h]] : [[cx - w / 2, ya - d - h], [cx - w / 2, yb + d]];
+      for (const [x, y] of pri) { cands.push([x, y]); cands.push([x - w / 2 - 6, y]); cands.push([x + w / 2 + 6, y]); }
+    }
+    let spot = null;
+    const inb = (x, y) => x >= CH.plotX + 2 && x + w <= CH.plotX + CH.plotW - 2 && y >= CH.plotY + 2 && y + h <= CH.plotY + CH.plotH - 2;
+    for (const [x, y] of cands) { if (!inb(x, y)) continue; if (!occ.hit({ x, y, w, h })) { spot = [x, y]; break; } }
+    if (!spot) for (const [x, y] of cands) if (inb(x, y)) { spot = [x, y]; break; }
+    if (!spot) return;
+    const [x, y] = spot; occ.add({ x, y, w, h });
+    const anchorY = y > yb ? yb + 2 : ya - 2, chipY = y > yb ? y : y + h;
+    if (Math.abs(chipY - anchorY) > 10) { ctx.strokeStyle = opt.border; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(cx + 0.5, anchorY); ctx.lineTo(Math.max(x + 6, Math.min(x + w - 6, cx)) + 0.5, chipY); ctx.stroke(); }
+    const r = chip(x, y, text, opt);
+    HIT.push({ type: 'marker', kind: opt.kind, box: r });
+  };
+  if (F.conf) mk(F.conf, (F.conf.dir === 'up' ? '↑ ' : '↓ ') + hhmm(F.conf.t), { bg: '#222a38', color: C.tx, border: '#6b7488', kind: 'conf' }, F.conf.dir === 'up');
+  if (F.brk) mk(F.brk, 'Слом DR ' + (F.brk.dir === 'down' ? '↓ ' : '↑ ') + hhmm(F.brk.t), { bg: '#3a1719', color: '#ffe1de', border: '#ef5350', size: 13, weight: 700, kind: 'brk' }, false);
+}
+
+function drawTopLegend() {
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, CH.plotW, CH.topH);
+  let b = null;
+  if (st.mouse && st.mouse.inPlot) { const t = Math.floor(Tm(st.mouse.x) / 5) * 5; b = DAYS[st.day].bars.find(x => x[0] === t); if (b && (st.replay ? b[0] + 5 > st.m : b[0] >= DAYS[st.day].now)) b = null; }
+  if (!b) { const vb = DAYS[st.day].bars.filter(x => st.replay ? x[0] + 5 <= st.m : x[0] < DAYS[st.day].now); b = vb[vb.length - 1]; }
+  if (!b) return;
+  ctx.textBaseline = 'middle';
+  let x = 10; const y = CH.topH / 2 + 1;
+  const put = (s, col, wt) => { ctx.font = font(13, wt || 400); ctx.fillStyle = col; ctx.fillText(s, x, y); x += ctx.measureText(s).width + 10; };
+  put('NQ · M5', C.tx, 700); put(hhmm(b[0]) + '–' + hhmm(b[0] + 5), C.tx2);
+  const col = b[4] >= b[1] ? C.up : C.dn;
+  put('откр ' + fmtP(b[1]), C.tx2); put('макс ' + fmtP(b[2]), C.tx2); put('мин ' + fmtP(b[3]), C.tx2); put('закр ' + fmtP(b[4]), col, 700);
+  ctx.textBaseline = 'alphabetic';
+}
+
+function drawPriceAxis(ticks) {
+  const x0 = CH.axisX, W = CH.axisW;
+  ctx.fillStyle = C.bg; ctx.fillRect(x0, 0, W, CH.H);
+  vline(x0, 0, CH.H - CH.timeH, '#2a303c', 1);
+  // tags
+  const tags = [];
+  const B = curBox();
+  const lastBar = DAYS[st.day].bars.filter(x => st.replay ? x[0] + 5 <= st.m : x[0] < DAYS[st.day].now).slice(-1)[0];
+  if (lastBar) tags.push({ p: lastBar[4], text: fmtP(lastBar[4]), bg: lastBar[4] >= lastBar[1] ? '#1f7d74' : '#b23b39', color: '#fff', prio: 100, bold: true });
+  if (st.mouse && st.mouse.inPlot && !st.drag) tags.push({ p: Pr(st.mouse.y), text: fmtP(Pr(st.mouse.y)), bg: '#3a4254', color: '#fff', prio: 120 });
+  if (B && B.formed) {
+    tags.push({ p: B.drh, text: 'DR', bg: '#2a303c', color: C.tx, prio: 90, id: 'lvl-drh' }, { p: B.drl, text: 'DR', bg: '#2a303c', color: C.tx, prio: 90, id: 'lvl-drl' });
+    tags.push({ p: B.idrh, text: 'IDR', bg: '#232833', color: C.tx2, prio: 85, id: 'lvl-idrh' }, { p: B.idrl, text: 'IDR', bg: '#232833', color: C.tx2, prio: 85, id: 'lvl-idrl' });
+    tags.push({ p: B.mid, text: 'mid', bg: '#232833', color: C.tx2, prio: 80, id: 'lvl-mid' });
+    for (const s of AN.F.std) tags.push({ p: s.p, text: s.lab, bg: '#1b2029', color: C.tx2, prio: 70 - s.k, id: 'std' + s.lab, std: s });
+  }
+  for (const c of AN.ctx) {
+    tags.push({ p: c.b.drh, text: c.name, bg: '#181c24', color: C.tx3, prio: 40 - AN.ctx.indexOf(c), id: 'ctx-' + c.key, ses: c.key });
+    tags.push({ p: c.b.drl, text: c.name, bg: '#181c24', color: C.tx3, prio: 40 - AN.ctx.indexOf(c), id: 'ctx-' + c.key, ses: c.key });
+    tags.push({ p: c.b.mid, text: c.name + ' mid', bg: '#181c24', color: C.tx3, prio: 30 - AN.ctx.indexOf(c), id: 'ctx-' + c.key, ses: c.key });
+  }
+  const placed = [];
+  const th = 18;
+  tags.sort((a, b) => b.prio - a.prio);
+  for (const t of tags) {
+    const y = Y(t.p); if (y < CH.plotY - 4 || y > CH.plotY + CH.plotH + 4) continue;
+    let yy = y - th / 2, ok = false;
+    for (const d of [0, -4, 4, -8, 8]) { const b = { y: yy + d, h: th }; if (!placed.some(q => !(b.y + b.h <= q.y || q.y + q.h <= b.y))) { yy += d; ok = true; break; } }
+    if (!ok) continue;
+    placed.push({ y: yy, h: th, t });
+  }
+  // ticks where free
+  ctx.font = font(12); ctx.textBaseline = 'middle';
+  for (const p of ticks) {
+    const y = Y(p); if (y < CH.plotY + 6 || y > CH.plotY + CH.plotH - 6) continue;
+    if (placed.some(q => y > q.y - 7 && y < q.y + q.h + 7)) continue;
+    ctx.fillStyle = C.tx3; ctx.fillText(fmtP0(p), x0 + 8, y);
+  }
+  for (const q of placed.slice().reverse()) {
+    const t = q.t; const hot = t.id && (isHot(t.id) || (t.ses && hotSession() === t.ses));
+    ctx.fillStyle = hot ? '#46506a' : t.bg; ctx.fillRect(x0 + 1, q.y, W - 1, q.h);
+    ctx.font = font(12, t.bold ? 700 : 400); ctx.fillStyle = t.color; ctx.fillText(t.text, x0 + 6, q.y + q.h / 2 + 0.5);
+    if (t.id) HIT.push({ type: 'tag', t, box: { x: x0, y: q.y, w: W, h: q.h } });
+  }
+  ctx.textBaseline = 'alphabetic';
+}
+
+function drawTimeAxis(tt, xm) {
+  const y0 = CH.H - CH.timeH;
+  ctx.fillStyle = C.bg; ctx.fillRect(0, y0, CH.plotW + (st.v === 'profile' ? 0 : 0), CH.timeH);
+  hline(y0, 0, CH.plotW, '#2a303c', 1);
+  ctx.font = font(14); ctx.textBaseline = 'middle'; ctx.fillStyle = C.tx2; ctx.textAlign = 'center';
+  const nowLab = st.replay ? hhmm(st.m) : hhmm(DAYS[st.day].now);
+  const nowW = textW(nowLab, 14, 700) + 14;
+  const hx = st.mouse && st.mouse.inPlot && !st.drag ? st.mouse.x : null;
+  for (const t of tt) {
+    const x = X(t); if (x < 20 || x > CH.plotW - 20) continue;
+    if (Math.abs(x - xm) < nowW / 2 + 22) continue;
+    if (hx != null && Math.abs(x - hx) < 58) continue;
+    ctx.font = font(14); ctx.fillStyle = C.tx2; ctx.fillText(hhmm(t), x, y0 + CH.timeH / 2 + 1);
+  }
+  // now tag
+  if (xm >= 0 && xm <= CH.plotW) {
+    const x = Math.max(nowW / 2 + 2, Math.min(CH.plotW - nowW / 2 - 2, xm));
+    ctx.fillStyle = st.replay ? '#6b5520' : '#3a4254'; rrect(x - nowW / 2, y0 + 5, nowW, CH.timeH - 10, 3); ctx.fill();
+    ctx.font = font(14, 700); ctx.fillStyle = '#fff'; ctx.fillText(nowLab, x, y0 + CH.timeH / 2 + 1);
+  }
+  if (st.mouse && st.mouse.inPlot && !st.drag) {
+    const t = Tm(st.mouse.x); const lab = hhmm(Math.floor(t / 5) * 5);
+    const w = textW(lab, 14) + 14; const x = Math.max(w / 2, Math.min(CH.plotW - w / 2, st.mouse.x));
+    ctx.fillStyle = '#3a4254'; rrect(x - w / 2, y0 + 5, w, CH.timeH - 10, 3); ctx.fill();
+    ctx.font = font(14); ctx.fillStyle = '#fff'; ctx.fillText(lab, x, y0 + CH.timeH / 2 + 1);
+  }
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+// ---------------- style per tier ----------------
+function tierStyle(c, hot, dim) {
+  const R = ROLE[c.role];
+  if (c.tier === 'strong') return { fill: rgba(R.rgb, hot ? 0.3 : dim ? 0.07 : 0.15), stroke: rgba(R.rgb, dim ? 0.45 : 1), lw: 2, dash: [] };
+  if (c.tier === 'notable') return { fill: rgba(R.rgb, hot ? 0.24 : dim ? 0.02 : 0.04), stroke: rgba(R.rgb, dim ? 0.25 : 0.5), lw: 1, dash: [] };
+  return { fill: hot ? rgba(R.rgb, 0.16) : 'rgba(0,0,0,0)', stroke: rgba(R.rgb, hot ? 0.9 : dim ? 0.25 : 0.55), lw: 1, dash: [4, 3] };
+}
+function clusterRect(c) { const x0 = X(c.ta), x1 = X(c.tb), y0 = Y(c.pHi), y1 = Y(c.pLo); return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }; }
+
+// ---------------- V2 swarm ----------------
+function drawSwarm(occ, pass) {
+  if (!AN.roles) return;
+  const hot = anyClusterHot();
+  const hotC = hot ? AN.cl[hot] : null;
+  if (pass === 'under') {
+    // dots
+    const order = ['scatter', 'weak', 'notable', 'strong'];
+    const pp = ppm();
+    for (const tier of order) for (const R of AN.roles) {
+      const role = ROLE[R.key]; const mp = AN.member[R.key];
+      for (const q of R.pts) {
+        const c = mp.get(q.sid); const t = c ? c.tier : 'scatter'; if (t !== tier) continue;
+        const x = X(q.t + 2.5 + (AN.sessions[q.sid].jit - 0.5) * 3.8), y = Y(q.p);
+        let col, a;
+        if (!c) { col = [128, 136, 152]; a = 0.55; } else { col = role.rgb; a = tier === 'strong' ? 0.95 : tier === 'notable' ? 0.8 : 0.6; }
+        if (hotC) a = c === hotC ? 1 : a * 0.3;
+        ctx.fillStyle = rgba(col, a);
+        ctx.beginPath(); ctx.arc(x, y, pp > 3 ? 2.6 : 2.2, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    // rects
+    for (const c of AN.clList.slice().reverse()) {
+      const r = clusterRect(c); const h = isHot(c.id);
+      const s = tierStyle(c, h, hotC && !h);
+      ctx.fillStyle = s.fill; ctx.fillRect(r.x, r.y, r.w, r.h);
+      ctx.save(); ctx.strokeStyle = h ? '#ffffff' : s.stroke; ctx.lineWidth = h ? 2 : s.lw; ctx.setLineDash(s.dash);
+      ctx.strokeRect(Math.round(r.x) + 0.5, Math.round(r.y) + 0.5, Math.round(r.w) - 1, Math.round(r.h) - 1); ctx.restore();
+      HIT.push({ type: 'cluster', id: c.id, box: r, prio: c.tier === 'strong' ? 3 : c.tier === 'notable' ? 2 : 1 });
+    }
+    // hovered cell
+    if (st.hover && st.hover.type === 'cell') {
+      const h = st.hover; ctx.save(); ctx.strokeStyle = '#e8eaf0'; ctx.lineWidth = 1; ctx.setLineDash([2, 2]);
+      const x0 = X(h.ta), x1 = X(h.tb), y0 = Y(Math.max(h.pa, h.pb)), y1 = Y(Math.min(h.pa, h.pb));
+      ctx.strokeRect(x0 + 0.5, y0 + 0.5, x1 - x0 - 1, y1 - y0 - 1); ctx.restore();
+    }
+    return;
+  }
+  // labels (over)
+  const rects = AN.clList.map(c => ({ c, r: clusterRect(c) }));
+  const list = AN.clList.slice().sort((a, b) => b.k - a.k);
+  for (const c of list) {
+    const hotNow = isHot(c.id);
+    if (c.tier === 'weak' && !hotNow) {
+      // tiny share only
+      const r = clusterRect(c); const s = pct(c.share); const w = textW(s, 12) + 8, h = 16;
+      const cands = [[r.x + 3, r.y + 3], [r.x + r.w + 4, r.y], [r.x + r.w + 4, r.y + r.h - h], [r.x, r.y - h - 2], [r.x, r.y + r.h + 2]];
+      for (const [x, y] of cands) {
+        const b = { x, y, w, h }; if (b.w > r.w - 6 && x === r.x + 3) continue;
+        if (b.x < CH.plotX || b.x + w > CH.plotX + CH.plotW || b.y < CH.plotY || b.y + h > CH.plotY + CH.plotH || occ.hit(b)) continue;
+        occ.add(b); ctx.font = font(12); ctx.fillStyle = C.tx3; ctx.textBaseline = 'middle'; ctx.fillText(s, x + 4, y + h / 2); ctx.textBaseline = 'alphabetic';
+        break;
+      }
+      continue;
+    }
+    const r = clusterRect(c);
+    const big = pct(c.share), small = c.k + ' из ' + AN.N;
+    const w1 = textW(big, 14, 700), w2 = textW(small, 12);
+    const w = Math.max(w1, w2) + 34, h = 38;
+    const cands = [
+      [r.x + r.w + 6, r.y + r.h / 2 - h / 2], [r.x + r.w + 6, r.y], [r.x + r.w + 6, r.y + r.h - h],
+      [r.x, r.y - h - 4], [r.x, r.y + r.h + 4], [r.x + r.w - w, r.y - h - 4], [r.x + r.w - w, r.y + r.h + 4],
+      [r.x + 4, r.y + 4], [r.x - w - 6, r.y + r.h / 2 - h / 2],
+    ];
+    let best = null, bestPen = Infinity;
+    for (const [x, y] of cands) {
+      const b = { x, y, w, h };
+      if (b.x < CH.plotX + 2 || b.x + w > CH.plotX + CH.plotW - 2 || b.y < CH.plotY + 2 || b.y + h > CH.plotY + CH.plotH - 2) continue;
+      if (occ.hit(b)) continue;
+      let pen = 0; for (const o of rects) if (o.c !== c) pen += overlapArea(b, o.r) * (o.c.tier === 'weak' ? 0.3 : 1);
+      const self = overlapArea(b, r); if (self > 0 && !(x === r.x + 4)) pen += self * 0.5;
+      if (pen < bestPen - 0.5) { bestPen = pen; best = b; }
+      if (pen === 0) break;
+    }
+    if (!best) continue;
+    occ.add(best);
+    const R = ROLE[c.role];
+    ctx.fillStyle = hotNow ? '#2b3448' : 'rgba(22,27,37,0.92)'; rrect(best.x, best.y, w, h, 4); ctx.fill();
+    ctx.strokeStyle = hotNow ? '#fff' : rgba(R.rgb, c.tier === 'strong' ? 0.9 : 0.5); ctx.lineWidth = 1; rrect(best.x + 0.5, best.y + 0.5, w - 1, h - 1, 4); ctx.stroke();
+    // rank badge
+    ctx.fillStyle = rgba(R.rgb, c.tier === 'strong' ? 1 : 0.7); ctx.beginPath(); ctx.arc(best.x + 13, best.y + h / 2, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#10131a'; ctx.font = font(12, 700); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(c.rank), best.x + 13, best.y + h / 2 + 0.5); ctx.textAlign = 'left';
+    ctx.fillStyle = c.tier === 'strong' ? '#ffffff' : C.tx; ctx.font = font(14, c.tier === 'strong' ? 700 : 400); ctx.fillText(big, best.x + 27, best.y + 12);
+    ctx.fillStyle = C.tx2; ctx.font = font(12); ctx.fillText(small, best.x + 27, best.y + 27);
+    ctx.textBaseline = 'alphabetic';
+    HIT.push({ type: 'cluster', id: c.id, box: best, prio: 5 });
+  }
+}
+
+// ---------------- V3 board marks on chart ----------------
+function drawBoardMarks(occ, pass) {
+  if (!AN.roles) return;
+  const hot = anyClusterHot();
+  if (pass === 'under') {
+    for (const c of AN.clList.slice().reverse()) {
+      const h = isHot(c.id); const show = c.tier !== 'weak' || h || st.expand[c.role];
+      if (!show) continue;
+      const r = clusterRect(c); const s = tierStyle(c, h, hot && !h);
+      ctx.fillStyle = s.fill; ctx.fillRect(r.x, r.y, r.w, r.h);
+      ctx.save(); ctx.strokeStyle = h ? '#fff' : s.stroke; ctx.lineWidth = h ? 2 : s.lw; ctx.setLineDash(s.dash);
+      ctx.strokeRect(Math.round(r.x) + 0.5, Math.round(r.y) + 0.5, Math.round(r.w) - 1, Math.round(r.h) - 1); ctx.restore();
+      HIT.push({ type: 'cluster', id: c.id, box: r, prio: c.tier === 'strong' ? 3 : 2 });
+    }
+    return;
+  }
+  for (const c of AN.clList) {
+    const h = isHot(c.id); const show = c.tier !== 'weak' || h || st.expand[c.role];
+    if (!show) continue;
+    const r = clusterRect(c), R = ROLE[c.role];
+    const cands = [[r.x + 3, r.y + 3], [r.x + r.w + 4, r.y], [r.x - 21, r.y], [r.x + 3, r.y - 21], [r.x + 3, r.y + r.h + 3], [r.x + r.w + 4, r.y + r.h - 18]];
+    for (const [x, y] of cands) {
+      const b = { x, y, w: 18, h: 18 };
+      if ((x === r.x + 3 && y === r.y + 3) && (r.w < 22 || r.h < 22)) continue;
+      if (b.x < CH.plotX || b.x + 18 > CH.plotX + CH.plotW || b.y < CH.plotY || b.y + 18 > CH.plotY + CH.plotH || occ.hit(b)) continue;
+      occ.add(b);
+      ctx.fillStyle = h ? '#fff' : rgba(R.rgb, c.tier === 'strong' ? 1 : c.tier === 'notable' ? 0.75 : 0.5);
+      ctx.beginPath(); ctx.arc(x + 9, y + 9, 9, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#10131a'; ctx.font = font(12, 700); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(c.rank), x + 9, y + 9.5); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+      HIT.push({ type: 'cluster', id: c.id, box: b, prio: 5 });
+      break;
+    }
+  }
+}
+
+// ---------------- V1 profile ----------------
+function profileModel() {
+  const sides = AN.phase === 'pre' ? { L: 'lo', R: 'hi' } : { L: 'p', R: 'c' };
+  const bins = {};
+  let maxN = 1;
+  for (const R of AN.roles) {
+    const mp = AN.member[R.key]; const m = new Map();
+    for (const q of R.pts) {
+      const i = Math.floor(q.x / 0.1 + 1e-9);
+      if (!m.has(i)) m.set(i, { i, n: 0, segs: new Map() });
+      const bin = m.get(i); bin.n++;
+      const c = mp.get(q.sid); const key = c ? c.id : '_';
+      bin.segs.set(key, (bin.segs.get(key) || 0) + 1);
+    }
+    for (const b of m.values()) maxN = Math.max(maxN, b.n);
+    bins[R.key] = m;
+  }
+  return { sides, bins, maxN };
+}
+function drawProfileBand() {
+  // on hover, show the hovered cluster's price range across the candle plot
+  const hot = anyClusterHot(); if (!hot) return;
+  const c = AN.cl[hot]; if (!c) return; const R = ROLE[c.role];
+  ctx.fillStyle = rgba(R.rgb, 0.1); ctx.fillRect(CH.plotX, Y(c.pHi), CH.plotW, Y(c.pLo) - Y(c.pHi));
+  hline(Y(c.pHi), CH.plotX, CH.plotX + CH.plotW, rgba(R.rgb, 0.6), 1, [4, 3]);
+  hline(Y(c.pLo), CH.plotX, CH.plotX + CH.plotW, rgba(R.rgb, 0.6), 1, [4, 3]);
+}
+function drawProfile() {
+  const x0 = CH.stripX, w = CH.stripW, top = CH.plotY, bot = CH.plotY + CH.plotH;
+  ctx.fillStyle = '#11151d'; ctx.fillRect(x0, 0, w, CH.H);
+  vline(x0, 0, CH.H, '#2a303c', 1);
+  if (!AN.roles) {
+    ctx.font = font(13); ctx.fillStyle = C.tx2; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(phaseText(), x0 + w / 2, (top + bot) / 2); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    return;
+  }
+  const LANE = 128, RUG0 = x0 + 3, RUGW = 10, BR0 = x0 + 18, barX0 = x0 + 42;
+  const barW = w - (barX0 - x0) - LANE - 22;
+  const SCALE = 0.4, K = barW / SCALE;
+  const hot = anyClusterHot();
+  // share scale (common baseline) in the header band + hairline grid
+  ctx.font = font(12); ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+  for (let s = 0; s <= SCALE + 1e-9; s += 0.1) {
+    const x = barX0 + s * K;
+    if (s > 0) vline(x, top, bot, '#1b2029', 1);
+    ctx.fillStyle = C.tx3; ctx.fillText(Math.round(s * 100) + (s >= SCALE - 1e-9 ? ' %' : ''), x, CH.topH / 2 + 1);
+  }
+  ctx.textAlign = 'left';
+  ctx.save(); ctx.beginPath(); ctx.rect(x0 + 1, top, w - 1, bot - top); ctx.clip();
+  vline(barX0, top, bot, '#3a4252', 1);
+  // rug: every similar session's extreme, one tick each (raw evidence)
+  for (const R of AN.roles) {
+    const role = ROLE[R.key];
+    for (const q of R.pts) { const y = Math.round(Y(q.p)); ctx.fillStyle = rgba(role.rgb, 0.3); ctx.fillRect(RUG0, y, RUGW, 1); }
+  }
+  // brackets: exact price range of each place, lanes for overlaps
+  const byPrice = AN.clList.slice().sort((a, b) => (b.pHi + b.pLo) - (a.pHi + a.pLo));
+  const lanes = [];
+  for (const c of byPrice) { let l = 0; while (lanes[l] && lanes[l].some(o => !(c.pHi <= o.pLo + 1e-6 || o.pHi <= c.pLo + 1e-6))) l++; (lanes[l] = lanes[l] || []).push(c); c._lane = Math.min(l, 3); }
+  // bars: common baseline, centred on the place's price, nudged apart when needed
+  const thick = { strong: 16, notable: 12, weak: 8 };
+  const items = byPrice.map(c => ({ c, h: thick[c.tier], yc: (Y(c.pHi) + Y(c.pLo)) / 2 }));
+  let prev = null;
+  for (const it of items) { it.y = it.yc - it.h / 2; if (prev && it.y < prev.y + prev.h + 3) it.y = prev.y + prev.h + 3; prev = it; }
+  const over = items.length ? items[items.length - 1].y + items[items.length - 1].h - (bot - 2) : 0;
+  if (over > 0) { let lim = bot - 2; for (let i = items.length - 1; i >= 0; i--) { if (items[i].y + items[i].h > lim) items[i].y = lim - items[i].h; lim = items[i].y - 3; } }
+  for (const it of items) {
+    const c = it.c, R = ROLE[c.role], isH = isHot(c.id), dim = hot && !isH;
+    const bx = Math.round(BR0 + c._lane * 5) + 0.5, y0 = Y(c.pHi) + 1, y1 = Y(c.pLo) - 1, ym = (y0 + y1) / 2;
+    ctx.save(); ctx.strokeStyle = isH ? '#fff' : rgba(R.rgb, dim ? 0.3 : c.tier === 'weak' ? 0.55 : 0.95); ctx.lineWidth = c.tier === 'strong' ? 2 : 1; if (c.tier === 'weak') ctx.setLineDash([2, 2]);
+    ctx.beginPath(); ctx.moveTo(bx + 3, y0); ctx.lineTo(bx, y0); ctx.lineTo(bx, y1); ctx.lineTo(bx + 3, y1); ctx.stroke();
+    ctx.setLineDash([]); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(bx, ym); ctx.lineTo(barX0 - 4, it.y + it.h / 2); ctx.lineTo(barX0, it.y + it.h / 2); ctx.stroke(); ctx.restore();
+    const len = Math.max(3, Math.min(barW + 8, c.share * K));
+    let fill;
+    if (c.tier === 'strong') fill = isH ? R.hi : rgba(R.brgb, dim ? 0.4 : 1);
+    else if (c.tier === 'notable') fill = isH ? R.hi : rgba(R.brgb, dim ? 0.22 : 0.55);
+    else fill = isH ? rgba(R.rgb, 0.35) : 'rgba(0,0,0,0)';
+    ctx.fillStyle = fill; ctx.fillRect(barX0 + 1, it.y, len, it.h);
+    if (c.tier === 'weak') { ctx.save(); ctx.strokeStyle = rgba(R.rgb, isH ? 1 : dim ? 0.3 : 0.75); ctx.setLineDash([3, 2]); ctx.strokeRect(barX0 + 1.5, it.y + 0.5, len - 1, it.h - 1); ctx.restore(); }
+    if (isH) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.strokeRect(barX0 + 1.75, it.y + 0.75, len - 1.5, it.h - 1.5); }
+    c._bar = { x: barX0 + 1, y: it.y, w: len, h: it.h, end: barX0 + 1 + len };
+    HIT.push({ type: 'cluster', id: c.id, box: { x: barX0, y: it.y - 1, w: Math.max(8, len + 2), h: it.h + 2 }, prio: 3 });
+    HIT.push({ type: 'cluster', id: c.id, box: { x: bx - 3, y: y0, w: 8, h: y1 - y0 }, prio: 2 });
+  }
+  // current price across the strip
+  const lastBar = DAYS[st.day].bars.filter(b => st.replay ? b[0] + 5 <= st.m : b[0] < DAYS[st.day].now).slice(-1)[0];
+  if (lastBar) hline(Y(lastBar[4]), x0, x0 + w - LANE - 10, 'rgba(232,234,240,0.5)', 1, [4, 3]);
+  ctx.restore();
+  // labels in the lane, 1D de-overlap, leader from bar end
+  const laneX = x0 + w - LANE - 4;
+  const labs = AN.clList.map(c => ({ c, h: c.tier === 'weak' ? 17 : 35, yc: c._bar.y + c._bar.h / 2 }));
+  labs.forEach(l => { l.y = l.yc - (l.c.tier === 'weak' ? l.h / 2 : 9); });
+  const kept = layout1D(labs, top + 2, bot - 2);
+  for (const l of kept) {
+    const c = l.c, R = ROLE[c.role], isH = isHot(c.id), dim = hot && !isH;
+    if (isH) { ctx.fillStyle = '#232b3b'; rrect(laneX - 5, l.y - 2, LANE + 4, l.h + 4, 3); ctx.fill(); }
+    const ly = l.y + (c.tier === 'weak' ? l.h / 2 : 9);
+    ctx.strokeStyle = rgba(R.rgb, dim ? 0.2 : c.tier === 'weak' ? 0.35 : 0.55); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(c._bar.end + 4, l.yc); ctx.lineTo(laneX - 14, l.yc); ctx.lineTo(laneX - 6, ly); ctx.stroke();
+    ctx.textBaseline = 'middle';
+    if (c.tier === 'weak') {
+      ctx.font = font(12); ctx.fillStyle = isH ? C.tx : C.tx3;
+      ctx.fillText(pct(c.share) + ' · ' + c.k + ' из ' + AN.N, laneX, l.y + l.h / 2 + 0.5);
+    } else {
+      const big = pct(c.share);
+      ctx.font = font(14, c.tier === 'strong' ? 700 : 400); ctx.fillStyle = dim ? C.tx2 : c.tier === 'strong' ? '#fff' : C.tx;
+      ctx.fillText(big, laneX, l.y + 9);
+      const bw = ctx.measureText(big).width;
+      ctx.font = font(12); ctx.fillStyle = C.tx2; ctx.fillText(c.k + ' из ' + AN.N, laneX + bw + 7, l.y + 9.5);
+      const rw = 34, ry = l.y + 26, t0 = AN.m, t1 = AN.S.end;
+      ctx.fillStyle = '#2c3342'; ctx.fillRect(laneX, ry - 3, rw, 6);
+      const a = (c.ta - t0) / (t1 - t0), b = (c.tb - t0) / (t1 - t0);
+      ctx.fillStyle = rgba(R.rgb, 1); ctx.fillRect(laneX + a * rw, ry - 3, Math.max(2, (b - a) * rw), 6);
+      ctx.font = font(12); ctx.fillStyle = C.tx2; ctx.fillText(hhmm(c.ta) + '–' + hhmm(c.tb), laneX + rw + 6, ry + 0.5);
+    }
+    ctx.textBaseline = 'alphabetic';
+    HIT.push({ type: 'cluster', id: c.id, box: { x: laneX - 5, y: l.y - 2, w: LANE + 4, h: l.h + 4 }, prio: 4 });
+  }
+  // legend in the bottom band
+  const lyy = CH.H - CH.timeH / 2;
+  const roles = AN.roles.map(r => r.key);
+  ctx.font = font(12); ctx.textBaseline = 'middle';
+  let lx = x0 + 10;
+  for (const k of roles) { const R = ROLE[k]; ctx.fillStyle = R.base; ctx.fillRect(lx, lyy - 5, 10, 10); ctx.fillStyle = C.tx; ctx.fillText(R.name, lx + 15, lyy + 0.5); lx += 15 + textW(R.name, 12) + 14; }
+  lx += 4; vline(lx - 9, lyy - 8, lyy + 8, '#343b4a', 1);
+  const R0 = ROLE[roles[0]];
+  for (const [t, name] of [['strong', 'сильное'], ['notable', 'заметное'], ['weak', 'слабое']]) {
+    const hh = thick[t] * 0.7;
+    ctx.fillStyle = t === 'strong' ? R0.base : t === 'notable' ? rgba(R0.brgb, 0.55) : 'rgba(0,0,0,0)'; ctx.fillRect(lx, lyy - hh / 2, 14, hh);
+    if (t === 'weak') { ctx.strokeStyle = rgba(R0.rgb, 0.75); ctx.setLineDash([3, 2]); ctx.strokeRect(lx + 0.5, lyy - hh / 2 + 0.5, 13, hh - 1); ctx.setLineDash([]); }
+    ctx.fillStyle = C.tx2; ctx.fillText(name, lx + 19, lyy + 0.5); lx += 19 + textW(name, 12) + 12;
+  }
+  ctx.textBaseline = 'alphabetic';
+}
+function layout1D(items, minY, maxY) {
+  const it = items.slice().sort((a, b) => a.y - b.y);
+  const total = it.reduce((s, a) => s + a.h + 4, 0);
+  let keep = it;
+  if (total > maxY - minY) { keep = it.filter(a => a.c.tier !== 'weak'); }
+  if (keep.reduce((s, a) => s + a.h + 4, 0) > maxY - minY) { keep = keep.filter(a => a.c.tier === 'strong'); }
+  for (let i = 0; i < keep.length; i++) { if (i && keep[i].y < keep[i - 1].y + keep[i - 1].h + 4) keep[i].y = keep[i - 1].y + keep[i - 1].h + 4; if (keep[i].y < minY) keep[i].y = minY; }
+  for (let i = keep.length - 1; i >= 0; i--) { const lim = i === keep.length - 1 ? maxY : keep[i + 1].y - 4; if (keep[i].y + keep[i].h > lim) keep[i].y = lim - keep[i].h; }
+  return keep;
+}
+
+function phaseText() {
+  if (!AN.S) return 'Переходное окно · статистики нет';
+  if (AN.phase === 'box') return 'Коробка ' + AN.S.key + ' ' + hhmm(AN.S.s) + '–' + hhmm(AN.S.e) + ' · статистики нет';
+  if (AN.phase === 'untraded') return 'ADR · не торгуется';
+  if (AN.phase === 'before') return 'До коробки ' + AN.S.key;
+  return '';
+}
+
+// ---------------- board (V3) ----------------
+const BT = 690; // text column width
+function boardRows() {
+  const rows = [];
+  if (!AN.roles) { rows.push({ kind: 'empty', h: 48 }); return rows; }
+  if (AN.phase === 'pre') rows.push({ kind: 'outcome', h: 40 });
+  for (const R of AN.roles) {
+    rows.push({ kind: 'head', R, h: 27 });
+    const strongish = R.clusters.filter(c => c.tier !== 'weak');
+    const weak = R.clusters.filter(c => c.tier === 'weak');
+    for (const c of strongish) rows.push({ kind: 'row', c, h: c.tier === 'strong' ? 36 : 30 });
+    if (st.expand[R.key]) for (const c of weak) rows.push({ kind: 'row', c, h: 28 });
+    rows.push({ kind: 'rest', R, weak, h: 27 });
+  }
+  return rows;
+}
+function boardHeight() { return boardRows().reduce((s, r) => s + r.h, 0) + 2; }
+function sigGlyph(tier, rgb) {
+  const n = tier === 'strong' ? 3 : tier === 'notable' ? 2 : 1;
+  let s = '<svg width="16" height="14" viewBox="0 0 16 14">';
+  for (let i = 0; i < 3; i++) { const h = 5 + i * 4; s += `<rect x="${i * 5 + 1}" y="${14 - h}" width="3.5" height="${h}" rx="1" fill="${i < n ? rgba(rgb, 1) : '#3a4252'}"/>`; }
+  return s + '</svg>';
+}
+function epochSpark(c, rgb) {
+  const mx = Math.max(0.0001, ...c.epochs.map(e => e.s), c.share) * 1.15;
+  let s = '<svg width="44" height="18" viewBox="0 0 44 18">';
+  c.epochs.forEach((e, i) => { const h = Math.max(1, e.s / mx * 16); const ok = e.s >= 0.5 * c.share; s += `<rect x="${i * 14 + 2}" y="${17 - h}" width="10" height="${h}" rx="1" fill="${ok ? rgba(rgb, 0.95) : '#6b7385'}"/>`; });
+  const yr = 17 - c.share / mx * 16; s += `<line x1="0" x2="44" y1="${yr}" y2="${yr}" stroke="#e8eaf0" stroke-width="1" stroke-dasharray="2 2" opacity=".7"/>`;
+  return s + '</svg>';
+}
+function compBar(R, width) {
+  const N = AN.N; let s = `<div class="comp" style="width:${width}px">`;
+  for (const c of R.clusters) {
+    const col = c.tier === 'strong' ? ROLE[c.role].base : c.tier === 'notable' ? rgba(ROLE[c.role].brgb, 0.62) : rgba(ROLE[c.role].brgb, 0.3);
+    s += `<i data-id="${c.id}" class="${isHot(c.id) ? 'hl' : ''}" style="flex:${c.k} 0 0;background:${col}"></i>`;
+  }
+  s += `<i style="flex:${R.scatter} 0 0;background:#3b4252" data-rest="${R.key}"></i>`;
+  return s + '</div>';
+}
+function renderBoard() {
+  const el = $('#board'); if (st.v !== 'board') { el.innerHTML = ''; return; }
+  const rows = boardRows();
+  let html = '<div class="bgrid">';
+  const tt = timeTicks();
+  for (const t of tt) { const x = X(t); if (x > BT && x < CH.plotW) html += `<i style="left:${x}px"></i>`; }
+  const xn = X(st.replay ? st.m : DAYS[st.day].now); if (xn > BT && xn < CH.plotW) html += `<i class="now" style="left:${xn}px"></i>`;
+  if (AN.S) { const xe = X(AN.S.end); if (xe > BT && xe < CH.plotW) html += `<i class="end" style="left:${xe}px"></i>`; }
+  html += '</div>';
+  const N = AN.N;
+  for (const r of rows) {
+    if (r.kind === 'empty') { html += `<div class="bempty">${esc(phaseText())}</div>`; continue; }
+    if (r.kind === 'outcome') {
+      const o = AN.outcomes; const lab = { up: '↑ вверх', down: '↓ вниз', none: 'не будет' };
+      html += `<div class="bhead" style="height:${r.h}px;background:#12161f;font-weight:400">` +
+        `<span style="font-weight:700">Первое подтверждение</span>` +
+        o.map(x => `<span class="hov" data-oid="o-${x.key}" style="display:inline-flex;gap:6px;align-items:baseline;padding:2px 8px;border:1px solid #303746;border-radius:4px"><span style="color:#c9cdd6">${lab[x.key]}</span><b style="font-size:14px">${pct(x.k / N)}</b><span class="n">${x.k} из ${N}</span></span>`).join('') + '</div>';
+      continue;
+    }
+    if (r.kind === 'head') {
+      const R = ROLE[r.R.key];
+      html += `<div class="bhead" style="height:${r.h}px"><span class="sw" style="background:${R.hi}"></span>${R.name}<span class="n">${N} похожих</span></div>`;
+      continue;
+    }
+    if (r.kind === 'row') {
+      const c = r.c, R = ROLE[c.role];
+      const cls = 'brow ' + c.tier + (isHot(c.id) ? ' hl' : '') + (st.pin && st.pin.id === c.id ? ' pin' : '');
+      const x0 = Math.max(BT + 4, X(c.ta)), x1 = Math.min(CH.plotW, X(c.tb));
+      const bh = c.tier === 'strong' ? 16 : c.tier === 'notable' ? 11 : 7;
+      const bst = c.tier === 'strong' ? `background:${R.base}` : c.tier === 'notable' ? `background:${rgba(R.brgb, 0.62)}` : `border:1px dashed ${rgba(R.rgb, 0.8)}`;
+      html += `<div class="${cls}" data-id="${c.id}" style="height:${r.h}px">` +
+        `<div class="btext" style="width:${BT}px;grid-template-columns:24px 24px 50px 84px 150px 118px 158px 52px">` +
+        `<span class="rk">${c.rank}</span><span>${sigGlyph(c.tier, R.rgb)}</span><span class="sh">${pct(c.share)}</span><span class="kn">${c.k} из ${N}</span>` +
+        `<span class="sbar"><i style="width:${Math.min(100, c.share / 0.4 * 100)}%;${bst.replace('border:', 'outline:')}"></i></span>` +
+        `<span class="pr">${fmtP0(c.pLo)}–${fmtP0(c.pHi)}</span><span class="wh">${esc(c.where)}</span><span>${epochSpark(c, R.rgb)}</span></div>` +
+        (x1 > x0 ? `<div class="bbar" style="left:${x0}px;width:${Math.max(3, x1 - x0)}px;top:${(r.h - bh) / 2}px;height:${bh}px;${bst}"></div>` +
+          `<div style="position:absolute;z-index:1;left:${x1 + 6}px;top:0;height:100%;display:flex;align-items:center;font-size:13px;color:${c.tier === 'weak' ? '#a9afbb' : '#e8eaf0'}">${hhmm(c.ta)}–${hhmm(c.tb)}</div>`
+          : `<div style="position:absolute;z-index:1;left:${BT + 8}px;top:0;height:100%;display:flex;align-items:center;font-size:13px;color:#c9cdd6">◂ ${hhmm(c.ta)}–${hhmm(c.tb)}</div>`) +
+        `</div>`;
+      continue;
+    }
+    if (r.kind === 'rest') {
+      const R = r.R; const wk = r.weak;
+      html += `<div class="brest" style="height:${r.h}px">` + compBar(R, 220) +
+        (wk.length ? `<span>слабые:</span>` + wk.map(c => `<span class="wchip${isHot(c.id) ? ' hl' : ''}" data-id="${c.id}">${pct(c.share)} · ${c.k}</span>`).join('') +
+          `<span class="wchip" data-expand="${R.key}" style="border-style:solid">${st.expand[R.key] ? 'свернуть' : 'раскрыть'}</span>` : '') +
+        `<span style="margin-left:6px">вне мест ${pct(R.scatter / N)} · ${R.scatter} из ${N}</span></div>`;
+    }
+  }
+  el.innerHTML = html;
+}
+
+// ---------------- panel ----------------
+function renderPanel() {
+  const el = $('#panel');
+  const a = AN; const F = a.F; const B = curBox();
+  let h = '';
+  // session block
+  const S = a.S;
+  h += '<div class="psec">';
+  if (S && B) {
+    const colName = { green: 'зелёная', red: 'красная', gray: 'серая' }[B.color];
+    h += `<div class="ptitle">Сессия ${S.key}<span class="r">${hhmm(S.s)}–${hhmm(S.e)} · до ${hhmm(S.end)}</span></div><div class="kv">`;
+    h += `<span class="k">Коробка</span><span class="v"><span class="sw" style="background:${B.color === 'green' ? '#26a69a' : '#ef5350'};margin-right:6px"></span>${B.formed ? colName : 'формируется'} · W ${f2(B.w)}</span>`;
+    h += `<span class="k">DR</span><span class="v">${fmtP(B.drl)} – ${fmtP(B.drh)}</span>`;
+    h += `<span class="k">IDR</span><span class="v">${fmtP(B.idrl)} – ${fmtP(B.idrh)} <span class="m">· mid ${fmtP(B.mid)}</span></span>`;
+    if (B.formed && F.phase !== 'box') {
+      h += `<span class="k">Подтверждение</span><span class="v">${F.conf ? (F.conf.dir === 'up' ? '↑ ' : '↓ ') + hhmm(F.conf.t) + ' <span class="m">· ' + fmtP(F.conf.price) + '</span>' : 'нет · ' + dur(st.m - B.e) + ' после коробки'}</span>`;
+      if (F.conf) h += `<span class="k">Статус</span><span class="v">${F.brk ? '<b style="color:#ff9d96">Слом DR ' + (F.brk.dir === 'down' ? '↓ ' : '↑ ') + hhmm(F.brk.t) + '</b>' : 'цел'}</span>`;
+      const stepHtml = (arr) => '<span class="steps">' + arr.map(s => `<span class="step${s.t ? '' : ' no'}"><b>${s.lab}</b>${s.t ? hhmm(s.t) : '—'}</span>`).join('') + '</span>';
+      if (F.stepsConf) h += `<span class="k">Ступени ${F.conf.dir === 'up' ? '↑' : '↓'}</span><span class="v">${stepHtml(F.stepsConf)}</span>`;
+      if (F.stepsBrk) h += `<span class="k">Ступени ${F.brk.dir === 'up' ? '↑' : '↓'}</span><span class="v">${stepHtml(F.stepsBrk)}</span>`;
+      if (F.pbSoFar) h += `<span class="k">Откат пока</span><span class="v">${stdCoord(F.pbSoFar.p)} <span class="m">· ${fmtP(F.pbSoFar.p)} · ${hhmm(F.pbSoFar.t)}</span></span>`;
+      if (F.extSoFar) h += `<span class="k">Дальше всего</span><span class="v">${stdCoord(F.extSoFar.p)} <span class="m">· ${fmtP(F.extSoFar.p)} · ${hhmm(F.extSoFar.t)}</span></span>`;
+    }
+    h += `<span class="k">До конца</span><span class="v">${dur(S.end - st.m)}</span>`;
+    h += '</div>';
+  } else {
+    h += `<div class="ptitle">${esc(phaseText() || 'Нет активной сессии')}</div>`;
+  }
+  h += '</div>';
+  // places list (V1, V2)
+  if (st.v !== 'board') {
+    h += '<div class="psec" style="flex:1;overflow:hidden">';
+    if (a.roles) {
+      h += `<div class="ptitle">Места<span class="r">похожих <b style="color:#fff">${a.N}</b></span></div>`;
+      if (a.phase === 'pre') {
+        const lab = { up: '↑ вверх', down: '↓ вниз', none: 'не будет' };
+        h += '<div class="rolehead" style="font-weight:400;color:#c9cdd6">Первое подтверждение</div><div class="outc">' + a.outcomes.map(o => `<div class="o" data-oid="o-${o.key}"><div class="l">${lab[o.key]}</div><b>${pct(o.k / a.N)}</b> <span class="kn">${o.k} из ${a.N}</span></div>`).join('') + '</div>';
+      }
+      for (const R of a.roles) {
+        const role = ROLE[R.key];
+        h += `<div class="rolehead"><span class="sw" style="background:${role.hi}"></span>${role.name}<span class="n">вне мест ${pct(R.scatter / a.N)} · ${R.scatter}</span></div>`;
+        h += compBar(R, 362);
+        h += '<div class="plist">';
+        const cls = R.clusters;
+        const showN = a.phase === 'pre' ? 4 : 5;
+        cls.slice(0, showN).forEach(c => {
+          h += `<div class="prow ${c.tier}${isHot(c.id) ? ' hl' : ''}${st.pin && st.pin.id === c.id ? ' pin' : ''}" data-id="${c.id}"><span class="rk">${c.rank}</span><span>${sigGlyph(c.tier, role.rgb)}</span><span class="sh">${pct(c.share)}</span><span class="kn">${c.k} из ${a.N}</span><span class="pr">${esc(c.where)}</span><span class="tw">${hhmm(c.ta)}–${hhmm(c.tb)}</span></div>`;
+        });
+        if (cls.length > showN) h += `<div class="prow rest"><span></span><span></span><span colspan="4" style="grid-column:3 / 7">ещё ${cls.length - showN} слабых: ${cls.slice(showN).map(c => `<span class="hov" data-id="${c.id}">${pct(c.share)}</span>`).join(' · ')}</span></div>`;
+        h += '</div>';
+      }
+      h += '<div class="legend">' + [['strong', 'сильное'], ['notable', 'заметное'], ['weak', 'слабое']].map(([t, n]) => `<span>${sigGlyph(t, [201, 205, 214])}${n}</span>`).join('') + '<span><i class="sw" style="background:#3b4252"></i>вне мест</span></div>';
+    } else {
+      h += `<div class="ptitle">Места</div><div style="color:#c9cdd6">${esc(phaseText())}</div>`;
+    }
+    h += '</div>';
+  } else {
+    h += '<div class="psec" style="flex:1">';
+    if (a.roles) {
+      const eps = E.EPOCHS.map(e => ({ e, n: a.sessions.filter(s => s.year >= e.from && s.year <= e.to).length }));
+      h += `<div class="ptitle">Похожие сессии<span class="r"><b style="color:#fff">${a.N}</b></span></div><div class="kv">`;
+      h += `<span class="k">База</span><span class="v">NQ · ${a.S.key} · 2006–2025</span>`;
+      if (a.phase === 'pre') h += `<span class="k">Состояние</span><span class="v">не подтвердились к ${hhmm(a.m)}</span>`;
+      else {
+        h += `<span class="k">Подтверждение</span><span class="v">${F.conf.dir === 'up' ? '↑' : '↓'} ${hhmm(F.conf.t - 15)}–${hhmm(F.conf.t + 15)}</span>`;
+        h += `<span class="k">DR</span><span class="v">${a.phase === 'broken' ? 'слом уже был к ' + hhmm(a.m) : 'цел на ' + hhmm(a.m)}</span>`;
+      }
+      h += `<span class="k">Цена сейчас</span><span class="v">${f2(a.u)} W <span class="m">± ${f2(a.tol)}</span></span>`;
+      h += `<span class="k">Эпохи</span><span class="v">${eps.map(x => `${x.e.label} <span class="m">${x.n}</span>`).join(' · ')}</span>`;
+      h += `<span class="k">Пересчёт</span><span class="v">закрытие M5 ${hhmm(a.m)}</span>`;
+      h += '</div>';
+      h += '<div class="legend" style="margin-top:12px">' + [['strong', 'сильное'], ['notable', 'заметное'], ['weak', 'слабое']].map(([t, n]) => `<span>${sigGlyph(t, [201, 205, 214])}${n}</span>`).join('') + '<span><svg width="44" height="18" viewBox="0 0 44 18"><rect x="2" y="5" width="10" height="12" fill="#c9cdd6"/><rect x="16" y="3" width="10" height="14" fill="#c9cdd6"/><rect x="30" y="11" width="10" height="6" fill="#6b7385"/></svg>доля по эпохам</span></div>';
+    } else h += `<div class="ptitle">${esc(phaseText())}</div>`;
+    h += '</div>';
+  }
+  // day structure
+  h += '<div class="psec struct"><div class="ptitle">День<span class="r">' + DAYS[st.day].label + '</span></div>' + structSvg() + modelsHtml() + '</div>';
+  el.innerHTML = h;
+}
+function dur(min) { return E.dur(min); }
+function structSvg() {
+  const a = AN;
+  const cols = [{ key: 'pRDR', name: 'RDR−1', b: E.PREV_RDR }];
+  for (const k of ['ADR', 'ODR', 'RDR']) if (a.boxes[k]) cols.push({ key: k, name: k, b: a.boxes[k] });
+  const W = 362, H = 132, top = 8, bot = 100;
+  let lo = Infinity, hi = -Infinity; for (const c of cols) { lo = Math.min(lo, c.b.drl); hi = Math.max(hi, c.b.drh); }
+  const last = DAYS[st.day].bars.filter(x => st.replay ? x[0] + 5 <= st.m : x[0] < DAYS[st.day].now).slice(-1)[0];
+  if (last) { lo = Math.min(lo, last[4]); hi = Math.max(hi, last[4]); }
+  const pad = (hi - lo) * 0.04; lo -= pad; hi += pad;
+  const y = (p) => top + (hi - p) / (hi - lo) * (bot - top);
+  const cw = W / 4;
+  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`;
+  cols.forEach((c, i) => {
+    const b = c.b, x = i * cw + 18, w = cw - 36; const hot = hotSession() === c.key;
+    const col = b.close > b.open ? '38,166,154' : '239,83,80';
+    s += `<g data-ses="${c.key}" style="cursor:default">`;
+    s += `<rect x="${i * cw + 2}" y="0" width="${cw - 4}" height="${H}" fill="${hot ? '#1d2330' : 'transparent'}" rx="4"/>`;
+    s += `<rect x="${x}" y="${y(b.drh)}" width="${w}" height="${y(b.drl) - y(b.drh)}" fill="rgba(${col},0.12)" stroke="rgba(${col},0.8)" stroke-width="1"/>`;
+    s += `<rect x="${x}" y="${y(b.idrh)}" width="${w}" height="${y(b.idrl) - y(b.idrh)}" fill="rgba(${col},0.28)"/>`;
+    s += `<line x1="${x}" x2="${x + w}" y1="${y(b.mid)}" y2="${y(b.mid)}" stroke="#c9cdd6" stroke-dasharray="1 2"/>`;
+    s += `<text x="${i * cw + cw / 2}" y="${bot + 14}" fill="#e8eaf0" font-size="12" font-weight="700" text-anchor="middle">${c.name}</text>`;
+    s += `<text x="${i * cw + cw / 2}" y="${bot + 28}" fill="#c9cdd6" font-size="12" text-anchor="middle">W ${f2(b.idrh - b.idrl)}</text>`;
+    s += '</g>';
+  });
+  if (last) { const yy = y(last[4]); s += `<line x1="0" x2="${W}" y1="${yy}" y2="${yy}" stroke="#e8eaf0" stroke-opacity=".6" stroke-dasharray="3 3"/>`; }
+  return s + '</svg>';
+}
+function modelsHtml() {
+  const a = AN; const rows = [];
+  for (const k of ['ODR', 'RDR']) {
+    const m = a.models[k]; if (!m) continue;
+    rows.push({ k, m });
+  }
+  if (!rows.length) return '';
+  let h = '<div class="mdl"><span class="h"></span><span class="h">рост</span><span class="h">снижение</span>';
+  for (const { k, m } of rows) {
+    h += `<span style="font-weight:700">${k}</span>`;
+    h += `<span class="c hov ${m.up ? 'br' : 'ok'}" data-mid="${k}-up">${m.up ? 'сломан ' + hhmm(m.up) : 'цел'}</span>`;
+    h += `<span class="c hov ${m.down ? 'br' : 'ok'}" data-mid="${k}-down">${m.down ? 'сломано ' + hhmm(m.down) : 'цело'}</span>`;
+  }
+  return h + '</div>';
+}
+
+// ---------------- header ----------------
+function renderHeader() {
+  const a = AN, F = a.F, B = curBox();
+  let h = `<span class="brand">DR Lab</span><span class="sep"></span>`;
+  h += `<span class="inst"><b>NQ</b><span class="sub">${a.S ? a.S.key : '—'} · M5 · ${DAYS[st.day].label}</span></span><span class="sep"></span>`;
+  if (st.replay) h += `<span class="replay">Повтор ${hhmm(st.m)}<button data-act="ghost" class="${st.ghost ? 'on' : ''}">что было дальше</button><button data-act="now">← сейчас ${hhmm(DAYS[st.day].now)}</button></span>`;
+  else h += `<span class="clock"><i class="live"></i><b>${hhmm(DAYS[st.day].now)}</b><span class="sub" style="color:#c9cdd6">ET · пересчёт ${hhmm(Math.floor(DAYS[st.day].now / 5) * 5)}</span></span>`;
+  h += '<span class="chips">';
+  if (B && B.formed && F && F.phase !== 'box') {
+    h += `<span class="chip"><i class="dot" style="background:${B.color === 'green' ? '#26a69a' : '#ef5350'}"></i>коробка ${B.color === 'green' ? 'зелёная' : 'красная'}</span>`;
+    if (F.conf) h += `<span class="chip">подтверждение ${F.conf.dir === 'up' ? '↑' : '↓'} ${hhmm(F.conf.t)}</span>`;
+    else h += `<span class="chip">подтверждения нет</span>`;
+    if (F.brk) h += `<span class="chip brk">Слом DR ${F.brk.dir === 'down' ? '↓' : '↑'} ${hhmm(F.brk.t)}</span>`;
+    else if (F.conf) h += `<span class="chip ok">DR цел</span>`;
+  }
+  if (a.N) h += `<span class="chip n${st.hover && st.hover.type === 'ncard' ? ' hl' : ''}" data-ncard="1">похожих <b>${a.N}</b></span>`;
+  h += '</span><span class="grow"></span>';
+  h += '<span class="seglab">вариант</span><span class="seg">' + Object.entries(VARIANTS).map(([k, n], i) => `<button data-v="${k}" class="${st.v === k ? 'on' : ''}"><span class="k">${i + 1}</span>${n}</button>`).join('') + '</span>';
+  h += '<span class="seglab">состояние</span><span class="seg">' + Object.entries(PRESETS).map(([k, p]) => `<button data-s="${k}" class="${st.s === k && isPreset(k) ? 'on' : ''}">${p.name} · ${p.t}</button>`).join('') + '</span>';
+  $('#hdr').innerHTML = h;
+}
+function isPreset(k) { const p = PRESETS[k]; if (p.day !== st.day) return false; if (p.m == null) return !st.replay; return st.replay && st.m === p.m; }
+
+// ---------------- cards ----------------
+function roleDef(role) {
+  return { c: 'самая дальняя точка по направлению', p: 'самая глубокая точка против направления', hi: 'самая высокая точка', lo: 'самая низкая точка' }[role];
+}
+function tierWhy(c) {
+  const T = E.TIER_RULE, s = c.share;
+  const fails = [];
+  if (s < T.strongShare) fails.push(`доля ${pct(s)} < ${Math.round(T.strongShare * 100)}${NB}%`);
+  if (c.k < T.strongK) fails.push(`сессий ${c.k} < ${T.strongK}`);
+  const weakEp = c.epochs.filter(e => e.s < T.epochFrac * s);
+  if (weakEp.length) fails.push(`в ${weakEp.map(e => e.label).join(', ')} доля ${weakEp.map(e => pct(e.s)).join(', ')} < половины общей`);
+  const rule = `Сильное — доля ≥ ${Math.round(T.strongShare * 100)}${NB}%, сессий ≥ ${T.strongK} и в каждой эпохе доля ≥ половины общей. Заметное — ≥ ${Math.round(T.notableShare * 100)}${NB}% и ≥ ${T.notableK} сессий.`;
+  if (c.tier === 'strong') return rule + ' Здесь выполнено всё.';
+  return rule + ' Здесь: ' + fails.join('; ') + '.';
+}
+function clusterCard(c) {
+  const R = ROLE[c.role], N = AN.N;
+  let h = `<div class="ch"><i class="sw" style="background:${R.hi}"></i>${R.name} · место ${c.rank}<span class="tier t-${c.tier}">${TIER_NAME[c.tier]}</span></div>`;
+  h += `<div class="cbig"><b>${pct(c.share)}</b><span>${c.k} из ${N} похожих</span></div>`;
+  h += '<table>';
+  h += `<tr><td>Цена</td><td>${fmtP(tick(c.pLo))} – ${fmtP(tick(c.pHi))}</td></tr>`;
+  h += `<tr><td>Где</td><td>${esc(c.where)}${curBox() && (c.pLo >= curBox().idrh || c.pHi <= curBox().idrl) ? ' · ' + stdCoord(AN.frame.dir === 'down' ? c.pHi : c.pLo) + '…' + stdCoord(AN.frame.dir === 'down' ? c.pLo : c.pHi) : ''}</td></tr>`;
+  h += `<tr><td>Время</td><td>${hhmm(c.ta)} – ${hhmm(c.tb)}</td></tr>`;
+  h += '</table>';
+  h += '<div class="cdef" style="margin-top:6px;padding-top:6px"><div class="ep">' + c.epochs.map(e => `<span class="l">${e.label}</span><b>${pct(e.s)}</b><span class="l">${e.k} из ${e.n}</span>`).join('') + '</div></div>';
+  h += `<div class="cdef">У ${c.k} из ${N} похожих сессий ${roleDef(c.role)} остатка сессии (${hhmm(AN.m)}–${hhmm(AN.S.end)}) оказалась в этой цене и в это время. Не частота посещения и не прогноз; порядок отката и продолжения не задан.</div>`;
+  h += `<div class="cdef">${tierWhy(c)}</div>`;
+  return h;
+}
+function nCard() {
+  const a = AN, F = a.F; const S = a.S;
+  const eps = E.EPOCHS.map(e => ({ e, n: a.sessions.filter(s => s.year >= e.from && s.year <= e.to).length }));
+  let cond = [];
+  cond.push(`NQ · ${S.key} · 2006–2025`);
+  if (a.phase === 'pre') cond.push(`не подтвердились к ${hhmm(a.m)}`);
+  else {
+    cond.push(`подтверждение ${F.conf.dir === 'up' ? '↑' : '↓'} в ${hhmm(F.conf.t - 15)}–${hhmm(F.conf.t + 15)}`);
+    cond.push(a.phase === 'broken' ? `слом DR уже был к ${hhmm(a.m)}` : `DR цел на ${hhmm(a.m)}`);
+  }
+  const u = a.u; const tol = a.tol;
+  cond.push(`цена сейчас ${a.phase === 'broken' ? 'в сторону слома ' : ''}${f2(u)} W от ${a.phase === 'broken' ? 'IDR low' : 'IDR high'} (±${f2(tol)})`);
+  let h = `<div class="ch">Похожие сессии<span class="tier t-strong">${a.N}</span></div><table>`;
+  h += cond.map((c, i) => `<tr><td>${i === 0 ? 'Условия' : ''}</td><td>${esc(c)}</td></tr>`).join('');
+  h += `<tr><td>Эпохи</td><td>${eps.map(x => x.e.label + ': ' + x.n).join(' · ')}</td></tr>`;
+  h += `<tr><td>Пересчёт</td><td>на закрытии M5 ${hhmm(a.m)}</td></tr></table>`;
+  h += `<div class="cdef">Для каждой похожей сессии берутся два экстремума остатка сессии (${hhmm(a.m)}–${hhmm(S.end)}) и их время: ${a.phase === 'pre' ? 'верхний и нижний' : 'откат и продолжение'}. Место — область «15 мин × 0,1 W»; доля места = k из N.</div>`;
+  return h;
+}
+function levelCard(t) {
+  const B = curBox(); const p = t.p; let h = `<div class="ch">${esc(t.text)}<span class="tier">${fmtP(p)}</span></div>`;
+  if (t.std || ['lvl-drh', 'lvl-drl', 'lvl-idrh', 'lvl-idrl', 'lvl-mid'].includes(t.id)) {
+    if (AN.roles) {
+      const N = AN.N; const rows = [];
+      const cur = AN.F.price;
+      if (AN.phase === 'pre') {
+        if (p >= cur) { const kh = beyond('hi', p); rows.push(`верхний экстремум на уровне или выше: <b>${pct(kh / N)}</b> · ${kh} из ${N}`); }
+        else { const kl = beyond('lo', p); rows.push(`нижний экстремум на уровне или ниже: <b>${pct(kl / N)}</b> · ${kl} из ${N}`); }
+      } else {
+        const ahead = AN.frame.toX(p) >= AN.frame.toX(cur);
+        if (ahead) { const kc = beyond('c', p); rows.push(`продолжение дошло до уровня и дальше: <b>${pct(kc / N)}</b> · ${kc} из ${N}`); }
+        else { const kp = beyond('p', p); rows.push(`откат дошёл до уровня и глубже: <b>${pct(kp / N)}</b> · ${kp} из ${N}`); }
+      }
+      h += '<div style="display:flex;flex-direction:column;gap:3px">' + rows.map(r => `<div>${r}</div>`).join('') + '</div>';
+      h += `<div class="cdef">Остаток сессии ${hhmm(AN.m)}–${hhmm(AN.S.end)}, любое время. Уровень — ориентир: цена может его пройти.</div>`;
+    } else h += '<div class="cdef">Уровень текущей коробки.</div>';
+  } else if (t.ses) {
+    const c = AN.ctx.find(x => x.key === t.ses);
+    if (c) h += `<table><tr><td>DR</td><td>${fmtP(c.b.drl)} – ${fmtP(c.b.drh)}</td></tr><tr><td>IDR</td><td>${fmtP(c.b.idrl)} – ${fmtP(c.b.idrh)}</td></tr><tr><td>mid</td><td>${fmtP(c.b.mid)}</td></tr></table><div class="cdef">${esc(c.full)} — структура дня.</div>`;
+  }
+  return h;
+}
+function sessionDotCard(roleKey, sid) {
+  const s = AN.sessions[sid]; const R = ROLE[roleKey]; const e = roleKey === 'c' ? s.c : roleKey === 'p' ? s.p : roleKey === 'hi' ? s.hi : s.lo;
+  const c = AN.member[roleKey].get(sid);
+  let h = `<div class="ch"><i class="sw" style="background:${R.hi}"></i>Похожая сессия · ${s.date} (${s.dow})</div><table>`;
+  h += `<tr><td>${R.name}</td><td>${fmtP(AN.frame.toP(e.x))} · ${hhmm(e.t)}</td></tr>`;
+  h += `<tr><td>Место</td><td>${c ? c.rank + ' (' + TIER_NAME[c.tier] + ')' : 'вне мест'}</td></tr>`;
+  if (s.out) h += `<tr><td>Итог</td><td>${s.out === 'up' ? 'подтверждение ↑' : s.out === 'down' ? 'подтверждение ↓' : 'без подтверждения'}</td></tr>`;
+  return h + '</table>';
+}
+function cellCard(hv) {
+  const N = AN.N; let h = `<div class="ch">Клетка ${hhmm(hv.ta)}–${hhmm(hv.tb)}</div><table><tr><td>Цена</td><td>${fmtP(Math.min(hv.pa, hv.pb))} – ${fmtP(Math.max(hv.pa, hv.pb))}</td></tr>`;
+  for (const R of AN.roles) { const k = R.pts.filter(q => q.t >= hv.ta && q.t < hv.tb && q.x >= hv.xa - 1e-9 && q.x < hv.xb - 1e-9).length; h += `<tr><td>${ROLE[R.key].name}</td><td><b>${pct(k / N)}</b> · ${k} из ${N}</td></tr>`; }
+  return h + '</table>';
+}
+function binCard(role, i) {
+  const R = AN.roles.find(r => r.key === role); const k = R.pts.filter(q => Math.floor(q.x / 0.1 + 1e-9) === i).length;
+  const pa = AN.frame.toP(i * 0.1), pb = AN.frame.toP((i + 1) * 0.1);
+  return `<div class="ch"><i class="sw" style="background:${ROLE[role].hi}"></i>${ROLE[role].name} · ${fmtP(Math.min(pa, pb))} – ${fmtP(Math.max(pa, pb))}</div><div><b>${pct(k / AN.N)}</b> · ${k} из ${AN.N} · в любое время до ${hhmm(AN.S.end)}</div><div class="cdef">Серым — сессии вне мест.</div>`;
+}
+function modelCard(id) {
+  const [k, side] = id.split('-'); const m = AN.models[k]; const prev = k === 'ODR' ? 'ADR' : 'ODR'; const pb = AN.boxes[prev];
+  const name = side === 'up' ? 'Рост' : 'Снижение'; const t = m[side];
+  return `<div class="ch">${k} · ${name}</div><div>${t ? (side === 'up' ? 'сломан' : 'сломано') + ' ' + hhmm(t) : side === 'up' ? 'цел' : 'цело'}</div><div class="cdef">${side === 'up' ? `${name}: ${k} не закрывала M5 ниже DR low ${prev} (${fmtP(pb.drl)}).` : `${name}: ${k} не закрывала M5 выше DR high ${prev} (${fmtP(pb.drh)}).`} Слом — навсегда.</div>`;
+}
+function outcomeCard(id) {
+  const key = id.slice(2); const o = AN.outcomes.find(x => x.key === key); const lab = { up: 'вверх', down: 'вниз', none: 'не будет до конца сессии' }[key];
+  return `<div class="ch">Первое подтверждение · ${lab}</div><div class="cbig"><b>${pct(o.k / AN.N)}</b><span>${o.k} из ${AN.N}</span></div><div class="cdef">Среди похожих сессий, не подтвердившихся к ${hhmm(AN.m)}; сессии без подтверждения остаются в знаменателе.</div>`;
+}
+function markerCard(kind) {
+  const F = AN.F;
+  if (kind === 'brk') return `<div class="ch">Слом DR ${F.brk.dir === 'down' ? '↓' : '↑'} ${hhmm(F.brk.t)}</div><div>закрытие M5 ${fmtP(F.brk.price)} за ${F.brk.dir === 'down' ? 'DR low' : 'DR high'} ${fmtP(F.brk.dir === 'down' ? F.box.drl : F.box.drh)}</div><div class="cdef">После подтверждения ${F.conf.dir === 'up' ? '↑' : '↓'} ${hhmm(F.conf.t)}. Факт остаётся навсегда. Это не обещание разворота. Места считаются по сессиям, где слом уже был, относительно стороны слома.</div>`;
+  return `<div class="ch">Подтверждение ${F.conf.dir === 'up' ? '↑' : '↓'} ${hhmm(F.conf.t)}</div><div>закрытие M5 ${fmtP(F.conf.price)} за ${F.conf.dir === 'up' ? 'DR high ' + fmtP(F.box.drh) : 'DR low ' + fmtP(F.box.drl)}</div><div class="cdef">Первое закрытие M5 за DR после коробки. Фитиль не считается.</div>`;
+}
+function cardHtml(o) {
+  if (!o) return '';
+  if (o.type === 'cluster') return AN.cl[o.id] ? clusterCard(AN.cl[o.id]) : '';
+  if (o.type === 'ncard') return nCard();
+  if (o.type === 'tag') return levelCard(o.t);
+  if (o.type === 'dot') return sessionDotCard(o.role, o.sid);
+  if (o.type === 'cell') return cellCard(o);
+  if (o.type === 'bin') return binCard(o.role, o.bin);
+  if (o.type === 'model') return modelCard(o.id);
+  if (o.type === 'outcome') return outcomeCard(o.id);
+  if (o.type === 'marker') return markerCard(o.kind);
+  if (o.type === 'session') { const c = AN.ctx.find(x => x.key === o.id); const b = c ? c.b : AN.boxes[o.id]; if (!b) return ''; return `<div class="ch">${o.id === 'pRDR' ? 'RDR прошлого дня' : o.id}</div><table><tr><td>DR</td><td>${fmtP(b.drl)} – ${fmtP(b.drh)}</td></tr><tr><td>IDR</td><td>${fmtP(b.idrl)} – ${fmtP(b.idrh)}</td></tr><tr><td>mid</td><td>${fmtP(b.mid)}</td></tr><tr><td>W</td><td>${f2(b.idrh - b.idrl)}</td></tr></table>`; }
+  return '';
+}
+function placeCard(el, x, y, above) {
+  el.style.display = 'block';
+  const w = el.offsetWidth, h = el.offsetHeight, VW = window.innerWidth, VH = window.innerHeight;
+  let cx = above ? x - w - 8 : x + 18, cy = above ? y - h : y + 16;
+  if (above && cx < 8) cx = 8;
+  if (cy < 60) cy = 60;
+  if (cx + w > VW - 8) cx = x - w - 18;
+  if (cy + h > VH - 8) cy = Math.max(8, VH - h - 8);
+  el.style.left = Math.max(8, cx) + 'px'; el.style.top = cy + 'px';
+}
+function showCards() {
+  const card = $('#card'), pc = $('#pcard');
+  if (st.pin) {
+    pc.innerHTML = cardHtml(st.pin).replace('</div>', '<span class="x" data-act="unpin">✕</span></div>');
+    placeCard(pc, st.pin.cx, st.pin.cy, st.pin.above);
+  } else pc.style.display = 'none';
+  const hv = st.hover;
+  if (hv && hv.cx != null && !(st.pin && st.pin.id === hv.id && st.pin.type === hv.type) && hv.type !== 'candle') {
+    const html = cardHtml(hv); if (html) { card.innerHTML = html; placeCard(card, hv.cx, hv.cy, hv.above); } else card.style.display = 'none';
+  } else card.style.display = 'none';
+}
+
+// ---------------- render ----------------
+function render(full) {
+  if (full) { renderHeader(); layout(); }
+  autoscale();
+  drawChart();
+  renderBoard();
+  if (full || st._panelDirty) { renderPanel(); st._panelDirty = false; }
+  syncDom();
+  showCards();
+}
+function syncDom() {
+  document.querySelectorAll('[data-id]').forEach(el => { const id = el.getAttribute('data-id'); el.classList.toggle('hl', isHot(id)); el.classList.toggle('pin', !!(st.pin && st.pin.id === id && el.classList.contains('prow'))); });
+  document.querySelectorAll('[data-oid]').forEach(el => el.classList.toggle('hl', !!(st.hover && st.hover.id === el.getAttribute('data-oid'))));
+  document.querySelectorAll('[data-ses]').forEach(el => { const r = el.querySelector('rect'); if (r) r.setAttribute('fill', hotSession() === el.getAttribute('data-ses') ? '#1d2330' : 'transparent'); });
+}
+function fullReset() { st.view = null; st.yShift = 0; st.pin = null; st.hover = null; layout(); st.view = defaultView(); render(true); }
+
+// ---------------- events ----------------
+function hitTest(mx, my) {
+  // swarm dots
+  if (st.v === 'swarm' && AN.roles && mx > X(AN.m) - 4 && mx < CH.plotX + CH.plotW && my > CH.plotY && my < CH.plotY + CH.plotH) {
+    let best = null, bd = 30;
+    for (const R of AN.roles) for (const q of R.pts) { const x = X(q.t + 2.5 + (AN.sessions[q.sid].jit - 0.5) * 3.8), y = Y(q.p); const d = (x - mx) ** 2 + (y - my) ** 2; if (d < bd) { bd = d; best = { type: 'dot', role: R.key, sid: q.sid, id: 'dot' + R.key + q.sid }; } }
+    const labelHit = HIT.filter(h => h.type === 'cluster' && h.prio === 5 && inBox(h.box, mx, my));
+    if (labelHit.length) return { type: 'cluster', id: labelHit[0].id };
+    if (best && bd < 16) return best;
+  }
+  const hits = HIT.filter(h => h.box && inBox(h.box, mx, my)).sort((a, b) => (b.prio || 0) - (a.prio || 0));
+  if (hits.length) {
+    const h = hits[0];
+    if (h.type === 'cluster') return { type: 'cluster', id: h.id };
+    if (h.type === 'bin') return { type: 'bin', role: h.role, bin: h.bin, id: 'bin' + h.role + h.bin };
+    if (h.type === 'tag') return { type: 'tag', t: h.t, id: h.t.id };
+    if (h.type === 'marker') return { type: 'marker', kind: h.kind, id: 'mk' + h.kind };
+  }
+  // cell in the remaining-session field (swarm)
+  if (st.v === 'swarm' && AN.roles && mx > X(AN.m) && mx < Math.min(CH.plotX + CH.plotW, X(AN.S.end)) && my > CH.plotY && my < CH.plotY + CH.plotH) {
+    const t = Tm(mx); const tb0 = Math.floor(t / 15) * 15; const ta = Math.max(AN.m, tb0), tb = Math.min(AN.S.end, tb0 + 15);
+    const x = AN.frame.toX(Pr(my)); const xa = Math.floor(x / 0.1 + 1e-9) * 0.1, xb = xa + 0.1;
+    return { type: 'cell', ta, tb, xa, xb, pa: AN.frame.toP(xa), pb: AN.frame.toP(xb), id: 'cell' + ta + '_' + xa.toFixed(1) };
+  }
+  // candle
+  if (mx >= CH.plotX && mx < CH.plotX + CH.plotW && my > CH.plotY && my < CH.plotY + CH.plotH) {
+    const t = Math.floor(Tm(mx) / 5) * 5; const b = DAYS[st.day].bars.find(x => x[0] === t);
+    const visible = b && (st.replay ? (b[0] + 5 <= st.m || st.ghost) : true);
+    if (visible) return { type: 'candle', bar: t, id: 'bar' + t };
+  }
+  return null;
+}
+function inBox(b, x, y) { return x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h; }
+
+function onMove(e) {
+  const r = cv.getBoundingClientRect(); const mx = e.clientX - r.left, my = e.clientY - r.top;
+  const inPlot = mx >= CH.plotX && mx < CH.plotX + CH.plotW && my >= CH.plotY && my < CH.plotY + CH.plotH;
+  st.mouse = { x: mx, y: my, inPlot };
+  if (st.drag) {
+    const dx = mx - st.drag.x, dy = my - st.drag.y;
+    if (Math.abs(dx) + Math.abs(dy) > 3) st.drag.moved = true;
+    if (st.drag.moved) {
+      const span = st.drag.t1 - st.drag.t0; const dt = -dx / CH.plotW * span;
+      st.view = clampView(st.drag.t0 + dt, st.drag.t1 + dt);
+      st.yShift = st.drag.ys + dy / CH.plotH * (st.py.max - st.py.min);
+      cv.classList.add('drag');
+      render(false); return;
+    }
+  }
+  const h = hitTest(mx, my);
+  const prev = st.hover;
+  st.hover = h ? Object.assign(h, { cx: e.clientX, cy: e.clientY }) : null;
+  if ((prev && prev.type === 'cluster') !== (h && h.type === 'cluster') || (prev && h && prev.id !== h.id)) st._panelDirty = false;
+  render(false);
+}
+function clampView(t0, t1) {
+  const span = t1 - t0, lo = -420, hi = 1000;
+  if (t0 < lo) { t0 = lo; t1 = lo + span; }
+  if (t1 > hi) { t1 = hi; t0 = hi - span; }
+  return { t0, t1 };
+}
+function onDown(e) { const r = cv.getBoundingClientRect(); st.drag = { x: e.clientX - r.left, y: e.clientY - r.top, t0: st.view.t0, t1: st.view.t1, ys: st.yShift, moved: false }; }
+function onUp(e) {
+  const d = st.drag; st.drag = null; cv.classList.remove('drag');
+  if (!d || d.moved) return;
+  const r = cv.getBoundingClientRect(); const mx = e.clientX - r.left, my = e.clientY - r.top;
+  const h = hitTest(mx, my);
+  if (h && h.type === 'cluster') { togglePin({ type: 'cluster', id: h.id }, e.clientX, e.clientY); return; }
+  if (h && (h.type === 'marker' || h.type === 'tag' || h.type === 'dot' || h.type === 'cell' || h.type === 'bin')) { togglePin(Object.assign({}, h), e.clientX, e.clientY); return; }
+  if (h && h.type === 'candle') { replayAt(h.bar + 5); return; }
+  if (st.pin) { st.pin = null; render(true); }
+}
+function togglePin(o, cx, cy) {
+  if (st.pin && st.pin.id === o.id) st.pin = null; else st.pin = Object.assign(o, { cx, cy });
+  st.hover = null; render(true);
+}
+function replayAt(m) {
+  const now = DAYS[st.day].now;
+  if (st.replay && st.m === m) { goNow(); return; }
+  if (!st.replay && m >= Math.floor(now / 5) * 5 + 5) { return; }
+  const keepView = st.view;
+  load(st.day, m, true); st.pin = null; st.hover = null; st.s = matchPreset();
+  layout(); st.view = st.v === 'swarm' ? keepView : defaultView(); render(true);
+}
+function goNow() { load(st.day, DAYS[st.day].now, false); st.s = matchPreset(); st.pin = null; st.hover = null; layout(); st.view = defaultView(); st.yShift = 0; render(true); }
+function matchPreset() { for (const k of Object.keys(PRESETS)) if (isPreset(k)) return k; return st.s; }
+function onWheel(e) {
+  e.preventDefault();
+  const r = cv.getBoundingClientRect(); const mx = e.clientX - r.left;
+  const t = Tm(Math.max(CH.plotX, Math.min(CH.plotX + CH.plotW, mx)));
+  const f = Math.exp(e.deltaY * 0.0015);
+  let span = (st.view.t1 - st.view.t0) * f; span = Math.max(30, Math.min(1500, span));
+  const a = (t - st.view.t0) / (st.view.t1 - st.view.t0);
+  st.view = clampView(t - a * span, t - a * span + span);
+  render(false);
+}
+
+function bindDom() {
+  cv.addEventListener('mousemove', onMove);
+  cv.addEventListener('mousedown', onDown);
+  window.addEventListener('mouseup', onUp);
+  cv.addEventListener('wheel', onWheel, { passive: false });
+  cv.addEventListener('dblclick', () => { st.view = defaultView(); st.yShift = 0; render(false); });
+  cv.addEventListener('mouseleave', () => { st.mouse = null; if (!st.drag) { st.hover = null; render(false); } });
+  document.addEventListener('mouseover', (e) => {
+    if (e.target === cv) return;
+    const el = e.target.closest('[data-id],[data-oid],[data-ses],[data-mid],[data-ncard]');
+    let h = null;
+    if (el) {
+      if (el.hasAttribute('data-id')) h = { type: 'cluster', id: el.getAttribute('data-id') };
+      else if (el.hasAttribute('data-oid')) h = { type: 'outcome', id: el.getAttribute('data-oid') };
+      else if (el.hasAttribute('data-ses')) h = { type: 'session', id: el.getAttribute('data-ses') };
+      else if (el.hasAttribute('data-mid')) h = { type: 'model', id: el.getAttribute('data-mid') };
+      else if (el.hasAttribute('data-ncard')) h = { type: 'ncard', id: 'ncard' };
+      const r = el.getBoundingClientRect();
+      h.cx = h.type === 'cluster' && el.closest('#panel') ? r.left - 380 : (el.closest('#board') ? e.clientX : r.left); h.cy = el.closest('#board') ? r.top - 10 : r.bottom - 8;
+      if (h.type === 'cluster' && el.closest('#panel')) h.cx = r.left - 372;
+      if (h.type === 'ncard') { h.cx = r.left - 10; h.cy = r.bottom + 2; }
+      if (h.type === 'session' || h.type === 'model') { h.cx = r.left - 372; h.cy = r.top - 20; }
+      if (el.closest('#board')) { h.cx = Math.max(360, X(AN.m) - 12); h.cy = $('#board').getBoundingClientRect().top - 8; h.above = true; }
+    }
+    const same = (st.hover && h && st.hover.id === h.id) || (!st.hover && !h);
+    if (same) return;
+    if (!h && st.hover && st.mouse) return;
+    st.hover = h; render(false);
+  });
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('button,[data-act],[data-expand]');
+    if (b) {
+      if (b.dataset.v) { st.v = b.dataset.v; fullReset(); setHash(); return; }
+      if (b.dataset.s) { applyPreset(b.dataset.s); setHash(); return; }
+      if (b.dataset.act === 'now') { goNow(); return; }
+      if (b.dataset.act === 'ghost') { st.ghost = !st.ghost; render(true); return; }
+      if (b.dataset.act === 'unpin') { st.pin = null; render(true); return; }
+      if (b.dataset.expand) { st.expand[b.dataset.expand] = !st.expand[b.dataset.expand]; layout(); render(true); return; }
+    }
+    if (e.target === cv) return;
+    const el = e.target.closest('[data-id]');
+    if (el) {
+      const r = el.getBoundingClientRect();
+      if (el.closest('#board')) togglePin({ type: 'cluster', id: el.dataset.id, above: true }, Math.max(360, X(AN.m) - 12), $('#board').getBoundingClientRect().top - 8);
+      else togglePin({ type: 'cluster', id: el.dataset.id }, el.closest('#panel') ? r.left - 372 : e.clientX, r.top);
+    }
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { if (st.pin) { st.pin = null; render(true); } else if (st.replay) goNow(); }
+    if (e.key === '1' || e.key === '2' || e.key === '3') { st.v = Object.keys(VARIANTS)[+e.key - 1]; fullReset(); setHash(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      const now = Math.floor(DAYS[st.day].now / 5) * 5; let m = st.replay ? st.m : now;
+      m += e.key === 'ArrowLeft' ? -5 : 5;
+      if (m >= now + 5) { goNow(); return; }
+      if (m < -355) return;
+      load(st.day, m, true); st.s = matchPreset(); st.pin = null; render(true);
+    }
+  });
+  window.addEventListener('resize', () => { layout(); render(true); });
+}
+function applyPreset(k) {
+  const p = PRESETS[k]; st.s = k; st.ghost = false; st.expand = {};
+  load(p.day, p.m == null ? DAYS[p.day].now : p.m, p.m != null);
+  st.pin = null; st.hover = null; st.yShift = 0; layout(); st.view = defaultView(); render(true);
+}
+function setHash() { try { history.replaceState(null, '', '#v=' + st.v + '&s=' + st.s); } catch (e) { } }
+function readHash() {
+  const q = new URLSearchParams(location.hash.slice(1));
+  if (q.get('v') && VARIANTS[q.get('v')]) st.v = q.get('v');
+  if (q.get('s') && PRESETS[q.get('s')]) st.s = q.get('s');
+  return q;
+}
+
+// ---------------- boot ----------------
+bindDom();
+const q = readHash();
+applyPreset(st.s);
+if (q.get('pin')) {
+  const id = q.get('pin');
+  if (AN.cl[id]) { st.pin = { type: 'cluster', id, cx: +(q.get('px') || 700), cy: +(q.get('py') || 300) }; render(true); }
+  if (id === 'n') { st.hover = { type: 'ncard', id: 'ncard', cx: 700, cy: 60 }; render(false); }
+}
+if (q.get('m')) {
+  const [hh, mi] = q.get('m').split(':').map(Number); let mm = hh * 60 + mi; if (hh >= 18) mm -= 1440;
+  load(st.day, mm, true); st.s = matchPreset(); layout(); st.view = defaultView(); render(true);
+}
+if (q.get('ghost')) { st.ghost = true; render(true); }
+if (q.get('expand')) { st.expand[q.get('expand')] = true; layout(); render(true); }
+// test hook: #...&sim=move:x,y;click:x,y;wheel:x,y,dy;drag:x1,y1,x2,y2;over:#selector  (dispatches real events)
+if (q.get('sim')) { $('#app').style.cssText = 'width:1920px;height:1000px'; layout(); render(true); }
+if (q.get('sim')) setTimeout(() => {
+  const ev = (type, x, y, extra) => { const t = document.elementFromPoint(x, y) || cv; t.dispatchEvent(new MouseEvent(type, Object.assign({ bubbles: true, clientX: x, clientY: y }, extra || {}))); };
+  for (const step of q.get('sim').split(';')) {
+    const [k, a] = step.split(':'); const n = (a || '').split(',').map(Number);
+    if (k === 'move') ev('mousemove', n[0], n[1]);
+    if (k === 'click') { ev('mousedown', n[0], n[1]); ev('mouseup', n[0], n[1]); ev('click', n[0], n[1]); }
+    if (k === 'wheel') { const t = document.elementFromPoint(n[0], n[1]); t.dispatchEvent(new WheelEvent('wheel', { bubbles: true, cancelable: true, clientX: n[0], clientY: n[1], deltaY: n[2] })); }
+    if (k === 'drag') { ev('mousedown', n[0], n[1]); for (let i = 1; i <= 5; i++) ev('mousemove', n[0] + (n[2] - n[0]) * i / 5, n[1] + (n[3] - n[1]) * i / 5); ev('mouseup', n[2], n[3]); }
+    if (k === 'over') { const el = document.querySelector(a); if (el) { const r = el.getBoundingClientRect(); el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: r.left + 20, clientY: r.top + 5 })); } }
+  }
+}, 400);
+window.__st = st; window.__AN = () => AN;
+})();
+
+</script>
+</body>
+</html>
