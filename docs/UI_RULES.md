@@ -23,6 +23,11 @@ later decisions replace some of them (live chat, 2026-09-28):
 
 Check the new screen with `tests/ui_check21.js`; `tests/ui_check.js` is for `/classic.html`.
 
+Design 22 (2026-09-29, a proposal, `meaning/04-dizajn-22.md`) keeps all of the above and removes the hint texts that
+had crept into 21 against rule 4 («наведите, чтобы раскрыть», «клик — закрепить», the long replay caption). Its new
+presentation choices (no percentage without a matched price, a place's share on its band, the fan as slices) change
+no binding rule; they become rules only when the operator accepts them.
+
 ## Layout
 
 1. **The current session is the product.** The live session chart takes most of the screen. Focus mode (`body.focus`)

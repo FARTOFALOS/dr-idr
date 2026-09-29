@@ -8,9 +8,11 @@ plain arithmetic over the history base, so the same candles always give the same
 ```
 TradingView Desktop  --(Chrome DevTools, 127.0.0.1:9222)-->  lab/tv_fetch.mjs  (node, one shot per refresh)
                                                                    |
-browser page  <--HTTP 127.0.0.1:8767-->  lab/server.py (python)  --+--> lab/live.py  --> lab/engine_market.py
- (dist/*.js)                                  |                                              (history base in RAM)
-                                              +--> lab/engine_market.py  (history dashboard)
+browser page  <--HTTP 127.0.0.1:8767-->  lab/server.py (python)  --+--> lab/scene21.py --> boxes_* (every session, M5)
+ (dist/*.js)                                  |                    |    (working screen «Созвездия»: /api/day, /api/cohort)
+                                              |                    +--> lab/live.py  --> lab/engine_market.py
+                                              |                         (classic screen: /api/live)   (episodes in RAM)
+                                              +--> lab/engine_market.py  (history dashboard of the classic screen)
 ```
 
 | Process | Started by | Lifetime | Notes |
@@ -28,6 +30,13 @@ browser page  <--HTTP 127.0.0.1:8767-->  lab/server.py (python)  --+--> lab/live
   `lab/dist/`.
 - **Data**: the G3 minute spine `<DR_IDR_MARKET>/<inst>/{close_ts_utc_ns,open,high,low,close}.npy` (UTC close
   timestamps, prices as float64; the tape itself never enters this repository).
+
+## The session base of the working screen (`lab/build_boxes.py` → `lab/.runtime/boxes_*`)
+
+Every session instance whose formation hour is complete (confirmed or not), with its seven box levels, confirmation and
+DR break (if any) and its clock M5 bars from the start of the box to the end of the session (`bars` int32 [N,5] = close
+minute, o, h, l, c in ticks; `offsets`; `boxes_<inst>_meta.json` → `boxes`). Same tape and definitions as below, 2026
+hidden. The launcher builds it when missing. `lab/scene21.py` reads it.
 
 ## The history base (`lab/build_market.py` → `lab/.runtime/`)
 
@@ -52,8 +61,31 @@ Tick sizes: NQ, ES 0.25; YM 1. History bars carry the **close** minute of each M
 | `GET /api/query?...` | history dashboard (see `engine_market.query`): params `instrument, session, direction (long|short|all), weekday, from, to` (confirmation minutes, window `[from,to)`), `status`, `mode (history|prefix)`, `observed`, `target`, X-ray filters `retr[_hi], ext[_hi], rtime[_hi], etime[_hi]` |
 | `GET /api/scene?id=NQ-20240315-RDR` | one session with its post-confirmation M1 bars |
 | `GET /api/spec` | the text of `docs/SEMANTICS.md` (the "Модель системы" view) |
-| `GET /api/live?instrument=NQ&session=RDR[&at=<minute>]` | live state from the last fetched candles; `at` = replay minute |
+| `GET /api/live?instrument=NQ&session=RDR[&at=<minute>]` | classic screen: live state from the last fetched candles; `at` = replay minute |
 | `GET /api/live/refresh?...` | fetch from TradingView first, then the same as `/api/live` |
+| `GET /api/day?instrument=NQ` | working screen: the trading day's M5 bars from the last fetch and the previous trading day's RDR box |
+| `GET /api/day/refresh?instrument=NQ` | fetch from TradingView first, then the same as `/api/day` |
+| `GET /api/cohort?instrument=NQ&session=RDR[&at=<day minute>]` | working screen: the similar sessions of 2006–2025 at the live minute or the replay minute `at` |
+
+### `/api/day` response (`lab/scene21.day_view`)
+
+`status` (`ok` | `no_data`), `instrument, tick, date` (the trading day, which starts at 18:00 ET the evening before),
+`weekday, now` (the fetch moment in day minutes: minutes from the trading day's midnight, the evening before negative,
+18:00 = −360), `fetched_at, feed, switched, source_interval, bars` (`[day-minute of the bar OPEN, o, h, l, c]`), `prev`
+(`{drH, drL, idrH, idrL, open, close, name, date}` of the previous trading day's RDR, or null), `base` (the session base
+exists). The page computes DR, IDR, confirmation and DR break itself with the rules of `lab/live.py`.
+
+### `/api/cohort` response (`lab/scene21.cohort`)
+
+`status`: `ok` | `no_data` | `no_base` | `before` | `forming` | `done` | `noconf`. With `ok`: `mode` (`conf` = confirmed
+and DR intact, `brk` = DR broken, `wait` = before a confirmation), `session, obs, o5` (the last M5 close at or before the
+minute), `n, band` (0.25 | 0.5 | null = the price could not be matched), `cond` (the similarity condition in words),
+`grid` (5-minute close minutes after `o5`), `u0` (today's position on the scale of the mode), `models`
+(`{up, down, used}` before a confirmation, else null) and `sims` — per similar session, in its own IDR units of the
+mode: `date, pos, mx, tmx, mn, tmn` (extremes after the minute and their day minutes), `cl, hi, lo` (per grid point),
+`held` (conf: no later M5 close beyond its own opposite DR), `cross` (wait: side of its first later confirmation, 0 =
+none). Definitions: `docs/SEMANTICS.md` «Экран Созвездия». Design 22 (a proposal, `meaning/04-dizajn-22.md`) would add
+per session `uH, uL` (own DR high / low, wait) and `wick` (conf: a wick beyond its own opposite DR after the minute).
 
 ### `/api/live` response
 
@@ -91,8 +123,12 @@ complete_n, median_retr, median_ext, median_rtime`.
 
 ## Front end (`lab/dist/`)
 
-- `index.html` — one page. `body.focus` (default) hides the research sidebar and headings; ☰ toggles it
-  (`localStorage dr-lab-focus`).
+- `index.html` + `sozvezdiya.js` — **the working screen «Созвездия» (design 21)**, built from `design/sozvezdiya-21/src`
+  by its `build.py` (edit there, never the built files): the whole trading day on a canvas, levels, stars, places and
+  constellations, the fan, the right panel; data from `/api/day` and `/api/cohort`, refreshed after every M5 close while
+  a session runs. Check with `tests/ui_check21.js`.
+- `classic.html` — **the previous screen**, kept at `/classic.html` (it was `index.html` until 2026-09-28): one page.
+  `body.focus` (default) hides the research sidebar and headings; ☰ toggles it (`localStorage dr-lab-focus`).
 - `app.js` — the history dashboard (sidebar filters, KPIs, bottom charts `drawPath/drawHeat/drawHist`, scenes view,
   model view). In focus mode with a confirmed live session it yields the bottom charts to `live.js`
   (`window.liveOwnsCharts()`).
