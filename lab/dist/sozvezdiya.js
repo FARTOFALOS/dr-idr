@@ -1843,11 +1843,11 @@
       const dt = (e.deltaX || e.deltaY) * (st.v1 - st.v0) / V.plot.w * 0.6; st.v0 += dt; st.v1 += dt;
     } else {
       // operator 2026-09-29: no empty future on the right when zooming either way
-      // zoom around the last closed candle; the right edge never goes past the session end + the «↺» margin
-      const f = Math.exp(e.deltaY * 0.0012), span = clamp((st.v1 - st.v0) * f, 30, 1500), k = span / (st.v1 - st.v0);
-      const lim = SESS[st.session].end + 45, now = cur().obs, a = now > st.v0 && now < st.v1 ? now : st.v1;
-      st.v0 = a - (a - st.v0) * k; st.v1 = st.v0 + span;
-      if (st.v1 > lim) { st.v1 = lim; st.v0 = lim - span; }
+      // the right edge is anchored at the session end + the «↺» margin (the clusters up to 16:00 stay in view); the wheel
+      // only adds or removes history on the left, and zooming in stops with the last candle and 30 minutes before it
+      const lim = SESS[st.session].end + 45, now = cur().obs, minSpan = Math.max(30, lim - now + 30);
+      const span = clamp((lim - st.v0) * Math.exp(e.deltaY * 0.0012), Math.min(minSpan, 1500), 1500);
+      st.v1 = lim; st.v0 = lim - span;
     }
     redraw();
   }, { passive: false });
