@@ -170,7 +170,7 @@
   function link(h, html, cls, mean) { const i = P21.links.push(h) - 1; return '<div class="p21-link' + (cls ? ' ' + cls : '') + '" data-l21="' + i + '"' + (mean ? ' title="' + esc(mean) + '"' : '') + '>' + html + '</div>'; }
   function lvlObj(s, id) { return levels(s).find(l => l.id === id); }
   // targets ahead in the direction of the side in play (the next STD steps not yet taken, the session extreme, past
-  // sessions' DR, the nearest open VIB)
+  // sessions' DR, the nearest open VI)
   function targets21(ctx) {
     const s = ctx.s, ov = ctx.ov, side = ov.mode === 'brk' ? s.nside : s.side, w = s.idrH - s.idrL, out = [];
     const ahead = p => side === 1 ? p > s.priceNow + 1e-9 : p < s.priceNow - 1e-9;
@@ -179,9 +179,9 @@
     const bars = ctx.D.bars.filter(b => b.t >= s.start && b.t < Math.min(ctx.obs, s.end) && (ctx.live || b.t + 5 <= ctx.obs));
     if (bars.length) { const e = side === 1 ? Math.max(...bars.map(b => b.h)) : Math.min(...bars.map(b => b.l)); if (ahead(e)) out.push({ p: e, name: side === 1 ? 'максимум сессии' : 'минимум сессии' }); }
     for (const P of prevList(ctx)) { const p = side === 1 ? P.s.drH : P.s.drL; if (ahead(p)) out.push({ p, name: P.name + (side === 1 ? ' DR high' : ' DR low') }); }
-    for (const v of vibsKnown(ctx)) if (v.fill == null) { const p = side === 1 ? v.lo : v.hi; if (ahead(p)) out.push({ p, name: 'VIB' }); }
+    for (const v of vibsKnown(ctx)) if (v.fill == null) { const p = side === 1 ? v.lo : v.hi; if (ahead(p)) out.push({ p, name: 'VI' }); }
     out.sort((a, b) => Math.abs(a.p - s.priceNow) - Math.abs(b.p - s.priceNow));
-    const res = [], kind = q => q.name === 'VIB' ? 'vib' : /^[+−]\d/.test(q.name) ? 'std' : 'lvl', cap = { vib: 1, std: 2, lvl: 3 }, used = { vib: 0, std: 0, lvl: 0 };
+    const res = [], kind = q => q.name === 'VI' ? 'vib' : /^[+−]\d/.test(q.name) ? 'std' : 'lvl', cap = { vib: 1, std: 2, lvl: 3 }, used = { vib: 0, std: 0, lvl: 0 };
     for (const q of out) {
       if (res.some(r => Math.abs(r.p - q.p) < 0.06 * w) || used[kind(q)] >= cap[kind(q)]) continue;
       used[kind(q)]++; res.push(q);

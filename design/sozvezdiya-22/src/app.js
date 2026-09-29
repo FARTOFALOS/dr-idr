@@ -28,7 +28,7 @@
     bg: '#08090C', grid: '#1C2027', text: '#D1D4DC', text2: '#A3A8B3', text3: '#6F7582', axis: '#0B0C10',
     up: '#089981', dn: '#F23645', cont: '#5DB8FF', pull: '#FFB347', upS: '#A9B9E6', dnS: '#D7A3C9',
     dr: '#EEF1F5', idr: '#AEBACB', mid: '#8B95A5', open: '#6B7380', std: '#5F6877', stdOn: '#A7B2C3',
-    ADR: '#8E7CF0', ODR: '#E27AB8', PREV: '#8FA0B8', vib: '#D6DCE6', replay: '#F7C948', fan: '#A9B8CE', brk: '#F23645'
+    ADR: '#8E7CF0', ODR: '#E27AB8', PREV: '#8FA0B8', vib: '#F29A38', replay: '#F7C948', fan: '#A9B8CE', brk: '#F23645'
   };
   const PAL = {
     mint: { name: 'Мята / коралл', cont: '#63C3A5', pull: '#DE8580' },
@@ -42,8 +42,9 @@
     stripA: 80, projA: 90, fanA: 50, typ: '#D1D4DC', typA: 70,
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
-    prevA: 46, vib: '#D6DCE6', vibA: 20, vibNQ: 2, vibES: 0.5, vibYM: 5, upC: '#089981', dnC: '#F23645', bg: '#08090C'
+    boxFill: 'grad', boxA: 45, prevA: 46, viC: '#F29A38', vibA: 20, vibNQ: 2, vibES: 0.5, vibYM: 5, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
+  const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
   const DASH = { solid: [], dash: [7, 4], dots: [1.5, 3.5], dashdot: [9, 3, 2, 3] };
   const CFG_KEY = 'drlab.sozvezdiya21.cfg';
   const cfg = Object.assign({}, DEF);
@@ -59,7 +60,8 @@
       ['idr', 'IDR · цвет', 'color'], ['idrA', 'IDR · яркость', 'range', 10, 100], ['idrW', 'IDR · толщина', 'range', 0.5, 3, 0.1], ['idrDash', 'IDR · вид', 'dash'],
       ['mid', 'mid · цвет', 'color'], ['midA', 'mid · яркость', 'range', 10, 100], ['midDash', 'mid · вид', 'dash'],
       ['std', 'STD · цвет', 'color'], ['stdA', 'STD стороны в игре · яркость', 'range', 5, 100], ['stdOffA', 'STD другой стороны · яркость', 'range', 0, 100]]],
-    ['Прошлые сессии и VIB', [['prevA', 'DR / IDR прошлых сессий · яркость', 'range', 5, 100], ['vib', 'VIB · цвет', 'color'], ['vibA', 'VIB · яркость', 'range', 5, 60], ['vibNQ', 'VIB NQ · разрыв от, пунктов', 'range', 0, 6, 0.25], ['vibES', 'VIB ES · разрыв от, пунктов', 'range', 0, 3, 0.25], ['vibYM', 'VIB YM · разрыв от, пунктов', 'range', 0, 20, 1]]],
+    ['Коробки сессий', [['boxFill', 'Заливка DR / IDR', 'boxfill'], ['boxA', 'Заливка · яркость', 'range', 0, 100]]],
+    ['Прошлые сессии и VI', [['prevA', 'DR / IDR прошлых сессий · яркость', 'range', 5, 100], ['viC', 'VI · цвет', 'color'], ['vibA', 'VI · яркость', 'range', 5, 60], ['vibNQ', 'VI NQ · разрыв тел от, пунктов', 'range', 0, 6, 0.25], ['vibES', 'VI ES · разрыв тел от, пунктов', 'range', 0, 3, 0.25], ['vibYM', 'VI YM · разрыв тел от, пунктов', 'range', 0, 20, 1]]],
     ['График', [['upC', 'Свеча вверх', 'color'], ['dnC', 'Свеча вниз', 'color'], ['bg', 'Фон', 'color']]]
   ];
   const DASH_NAMES = { solid: 'сплошная', dash: 'штрих', dots: 'точки', dashdot: 'штрихпунктир' };
@@ -69,7 +71,7 @@
   const LAYERS = [
     ['stars', 'Звёзды: похожие сессии', C.fan], ['cons', 'Созвездия и проценты', '#63C3A5'], ['fan', 'Веер и его медиана', C.fan],
     ['proj', 'Плотность по цене справа', '#DE8580'], ['strip', 'Полоса времени снизу', '#63C3A5'], ['std', 'STD', C.stdOn],
-    ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VIB (объёмные имбалансы)', C.vib], ['hist', 'Шесть графиков истории (снизу)', C.text2], ['snap21', 'Контуры на момент подтверждения', '#AAB5C4']
+    ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VI (volume imbalance)', C.vib], ['hist', 'Шесть графиков истории (снизу)', C.text2], ['snap21', 'Контуры на момент подтверждения', '#AAB5C4']
   ];
 
   // ---------- small helpers ----------
@@ -93,15 +95,21 @@
 
   // ---------- the day: bars and volume imbalances ----------
   const DD = {};
+  // volume imbalance (VI, ICT; operator 2026-09-29): two neighbouring M5 candles whose BODIES do not overlap while their
+  // WICKS do; the zone is the space between the two bodies. Bodies apart and wicks apart = a gap, not a VI.
   function vibsOf(bars) {
     const vibs = [];
     for (let i = 1; i < bars.length; i++) {
       const a = bars[i - 1], b = bars[i];
-      if (Math.abs(b.o - a.c) < 1e-9 || b.t - a.t !== 5) continue;
-      const lo = Math.min(a.c, b.o), hi = Math.max(a.c, b.o);
-      let fill = null;   // rebalanced: a later bar enters the gap, even with a wick
+      if (b.t - a.t !== 5) continue;
+      const aT = Math.max(a.o, a.c), aB = Math.min(a.o, a.c), bT = Math.max(b.o, b.c), bB = Math.min(b.o, b.c);
+      let lo, hi, dir;
+      if (bB > aT + 1e-9 && b.l <= a.h + 1e-9) { lo = aT; hi = bB; dir = 1; }
+      else if (bT < aB - 1e-9 && b.h >= a.l - 1e-9) { lo = bT; hi = aB; dir = -1; }
+      else continue;
+      let fill = null;   // rebalanced: a later bar enters the zone, even with a wick
       for (let j = i + 1; j < bars.length; j++) { const q = bars[j]; if (q.l < hi && q.h > lo) { fill = q.t; break; } }
-      vibs.push({ t: b.t, lo, hi, dir: b.o > a.c ? 1 : -1, fill });
+      vibs.push({ t: b.t, lo, hi, dir, fill });
     }
     return vibs;
   }
@@ -637,7 +645,7 @@
     prep21(ctx);
     const c = g2;
     c.setTransform(dpr, 0, 0, dpr, 0, 0);
-    Object.assign(C, { dr: cfg.dr, idr: cfg.idr, mid: cfg.mid, std: cfg.std, stdOn: cfg.std, vib: cfg.vib, up: cfg.upC, dn: cfg.dnC, bg: cfg.bg, upS: cfg.up, dnS: cfg.dn });
+    Object.assign(C, { dr: cfg.dr, idr: cfg.idr, mid: cfg.mid, std: cfg.std, stdOn: cfg.std, vib: cfg.viC, up: cfg.upC, dn: cfg.dnC, bg: cfg.bg, upS: cfg.up, dnS: cfg.dn });
     c.fillStyle = C.bg; c.fillRect(0, 0, W, H);
     c.save(); c.beginPath(); c.rect(V.plot.x, V.plot.y, V.plot.w, V.plot.h); c.clip();
     drawBoxes(c, ctx);
@@ -683,7 +691,19 @@
       const s = sess(ctx.D, k, ctx.obs, ctx.live);
       if (s.drH == null || s.status === 'forming' && k !== ctx.s.k) continue;
       const x0 = V.X(s.start), x1 = V.X(s.formed), y0 = V.Y(s.drH), y1 = V.Y(s.drL);
-      c.fillStyle = k === ctx.s.k ? 'rgba(255,255,255,0.045)' : 'rgba(255,255,255,0.025)';
+      // box colour (operator 2026-09-29): green / red by the box's close against its open, grey while it forms or is flat;
+      // gradient = strongest over the IDR body, fading to the DR wick edges
+      const col = s.status === 'forming' || s.close == null || s.close === s.open ? '#8B93A1' : s.close > s.open ? C.up : C.dn;
+      const a = cfg.boxA / 100 * (k === ctx.s.k ? 1 : 0.6);
+      if (cfg.boxFill === 'none') { c.fillStyle = k === ctx.s.k ? 'rgba(255,255,255,0.045)' : 'rgba(255,255,255,0.025)'; }
+      else if (cfg.boxFill === 'solid') { c.fillStyle = rgba(col, 0.3 * a); }
+      else {
+        const g = c.createLinearGradient(0, y0, 0, y1), f = p => Math.min(1, Math.max(0, (V.Y(p) - y0) / Math.max(1, y1 - y0)));
+        const ih = f(s.idrH), il = f(s.idrL);
+        g.addColorStop(0, rgba(col, 0.06 * a)); g.addColorStop(ih, rgba(col, 0.42 * a)); g.addColorStop((ih + il) / 2, rgba(col, 0.5 * a));
+        g.addColorStop(Math.max(ih, il), rgba(col, 0.42 * a)); g.addColorStop(1, rgba(col, 0.06 * a));
+        c.fillStyle = g;
+      }
       c.fillRect(x0, y0, x1 - x0, y1 - y0);
       c.fillStyle = k === ctx.s.k ? C.text2 : C.text3; c.font = '600 11px ' + FONT; c.textBaseline = 'bottom';
       c.fillText(k, x0 + 2, y0 - 3);
@@ -727,19 +747,16 @@
       c.fillRect(x0, y0 - 1, 1.5, Math.max(2, y1 - y0 + 2));
     }
   }
-  // the fan as time slices (design 22): every 15 minutes a thin vertical from the 20th to the 80th percentile of the
-  // similar sessions' closes at that moment (each from its own position), not a filled corridor: a whole path stays
-  // inside such a fan only rarely (ov.fanCover)
+  // the fan 20-80 % as a quiet filled band, as in design 21 (operator 2026-09-29: the 15-minute slices were irritating)
   function drawFanBand(c, ov) {
     const F = ov.fan;
     if (!F.length) return;
-    const h = hv(), a = Math.min(1, 0.3 * cfg.fanA / 50);
-    for (const f of F) {
-      if (f.T % 15) continue;
-      const x = Math.round(V.X(f.T)) + 0.5, ya = V.Y(ov.u2p(f.q20)), yb = V.Y(ov.u2p(f.q80)), on = h && h.k === 'fan' && h.T === f.T;
-      c.strokeStyle = rgba(C.fan, on ? 0.95 : a); c.lineWidth = on ? 2 : 1;
-      c.beginPath(); c.moveTo(x, ya); c.lineTo(x, yb); c.moveTo(x - 2, ya); c.lineTo(x + 2, ya); c.moveTo(x - 2, yb); c.lineTo(x + 2, yb); c.stroke();
-    }
+    const x0 = V.X(ov.obs), y0 = V.Y(ov.s.priceNow);
+    c.beginPath(); c.moveTo(x0, y0);
+    for (const f of F) c.lineTo(V.X(f.T), V.Y(ov.u2p(f.q80)));
+    for (let i = F.length - 1; i >= 0; i--) c.lineTo(V.X(F[i].T), V.Y(ov.u2p(F[i].q20)));
+    c.closePath();
+    c.fillStyle = 'rgba(209,212,220,' + (0.045 * cfg.fanA / 50).toFixed(4) + ')'; c.fill();
   }
   // the median path of the similar sessions as hollow ghost candles (body: median close to median close; wick: median high / low)
   // the typical path: dash-dot, like the fan's middle line in design 1, but one real similar session, so it moves like price
@@ -1108,23 +1125,23 @@
     if (st.L.vib) {
       const open = vibsKnown(ctx).filter(v => v.fill == null), pNow = s.priceNow != null ? s.priceNow : 0;
       const near = side => open.filter(v => side * ((v.lo + v.hi) / 2 - pNow) > 0).sort((a, b) => Math.abs((a.lo + a.hi) / 2 - pNow) - Math.abs((b.lo + b.hi) / 2 - pNow)).slice(0, 2);
-      for (const v of near(1).concat(near(-1))) items.push({ y: V.Y((v.lo + v.hi) / 2), text: 'VIB', col: C.vib, pr: 0 });
+      for (const v of near(1).concat(near(-1))) items.push({ y: V.Y((v.lo + v.hi) / 2), text: 'VI', col: C.vib, pr: 0 });
     }
     const vis = items.filter(q => q.y > 8 && q.y < V.plot.h - (V.stripOn ? V.strip.h : 0) - 6).sort((a, b) => a.y - b.y);
     const placed = [];
     for (const q of vis.slice().sort((a, b) => b.pr - a.pr)) {
       let y = q.y;
-      for (let tries = 0; tries < 6 && placed.some(p => Math.abs(p.y - y) < 13); tries++) {
-        const hit = placed.find(p => Math.abs(p.y - y) < 13);
-        y = q.y >= hit.y ? hit.y + 13 : hit.y - 13;
+      for (let tries = 0; tries < 6 && placed.some(p => Math.abs(p.y - y) < 11); tries++) {
+        const hit = placed.find(p => Math.abs(p.y - y) < 11);
+        y = q.y >= hit.y ? hit.y + 11 : hit.y - 11;
       }
-      if (placed.some(p => Math.abs(p.y - y) < 12)) continue;
+      if (placed.some(p => Math.abs(p.y - y) < 10)) continue;
       placed.push({ y, q });
     }
-    c.font = '600 10.5px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right';
+    c.font = '9px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right';
     for (const { y, q } of placed) {
-      const w = c.measureText(q.text).width + 8;
-      c.fillStyle = 'rgba(8,9,12,.85)'; c.fillRect(xr - w, y - 7, w + 2, 14);
+      const w = c.measureText(q.text).width + 6;
+      c.fillStyle = 'rgba(8,9,12,.8)'; c.fillRect(xr - w, y - 5.5, w + 2, 11);
       c.fillStyle = q.col; c.fillText(q.text, xr - 2, y + 0.5);
     }
     c.textAlign = 'left';
@@ -1398,7 +1415,7 @@
       if (tk) taken = ' · взят в ' + clk(tk.t);
       return '<b>' + s.k + ' · ' + l.full + '</b> · ' + px(l.p) + taken + (t != null ? '<br>дошли хотя бы раз: <b>' + pct(t) + '</b>' + mfoot(ov, 'касание уровня') : ov ? '<br><span class="k">цена не сопоставлена: процентов нет</span>' : '');
     }
-    if (h.k === 'vib') { const v = h.v; return '<b>VIB ' + (v.dir === 1 ? '↑' : '↓') + '</b> · ' + px(v.lo) + '–' + px(v.hi) + ' · ' + clk(v.t) + '<br><span class="k">' + (v.fill != null ? 'ребалансирован в ' + clk(v.fill) : 'открыт: цена ещё не заходила') + '</span>'; }
+    if (h.k === 'vib') { const v = h.v; return '<b>VI ' + (v.dir === 1 ? '↑' : '↓') + '</b> · ' + px(v.lo) + '–' + px(v.hi) + ' · ' + clk(v.t) + '<br><span class="k">' + (v.fill != null ? 'ребалансирован в ' + clk(v.fill) : 'открыт: цена ещё не заходила') + '</span>'; }
     if (h.k === 'prev') {
       const P = h.P, q = P.s;
       const how = q.conf ? (q.side === 1 ? '↑ ' : '↓ ') + clk(q.conf) + (q.failed ? ' · слом DR ' + clk(q.failed) : ' · DR удержался') : P.k === 'PREV' ? 'вчерашняя RDR' : 'подтверждения не было';
@@ -1576,6 +1593,7 @@
     const row = ([k, n, type, a, b, step]) => {
       const v = cfg[k];
       if (type === 'color') return '<label class="cr"><span>' + n + '</span><input type="color" data-c="' + k + '" value="' + v + '"></label>';
+      if (type === 'boxfill') return '<label class="cr"><span>' + n + '</span><select data-c="' + k + '">' + Object.keys(BOXFILL).map(d => '<option value="' + d + '"' + (d === v ? ' selected' : '') + '>' + BOXFILL[d] + '</option>').join('') + '</select></label>';
       if (type === 'dash') return '<label class="cr"><span>' + n + '</span><select data-c="' + k + '">' + Object.keys(DASH).map(d => '<option value="' + d + '"' + (d === v ? ' selected' : '') + '>' + DASH_NAMES[d] + '</option>').join('') + '</select></label>';
       return '<label class="cr"><span>' + n + '</span><input type="range" data-c="' + k + '" min="' + a + '" max="' + b + '" step="' + (step || 1) + '" value="' + v + '"><em>' + v + '</em></label>';
     };
