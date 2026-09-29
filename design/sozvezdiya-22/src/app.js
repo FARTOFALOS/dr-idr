@@ -1547,8 +1547,10 @@
     } else if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
       const dt = (e.deltaX || e.deltaY) * (st.v1 - st.v0) / V.plot.w * 0.6; st.v0 += dt; st.v1 += dt;
     } else {
-      const f = Math.exp(e.deltaY * 0.0012), t = V.T(Math.min(x, V.plot.w)), span = clamp((st.v1 - st.v0) * f, 30, 1500), k = span / (st.v1 - st.v0);
-      st.v0 = t - (t - st.v0) * k; st.v1 = st.v0 + span;
+      // the right edge stays where it is (the session end + a small margin after «↺»): the wheel only shows more or less
+      // history on the left, never an empty future on the right (operator 2026-09-29)
+      const f = Math.exp(e.deltaY * 0.0012), span = clamp((st.v1 - st.v0) * f, 30, 1500);
+      st.v0 = st.v1 - span;
     }
     redraw();
   }, { passive: false });
