@@ -1296,6 +1296,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       const play = s.status === 'broken' ? s.nside : s.side || 0;
       for (const l of levels(s)) {
         if (l.type === 'std' && (!st.L.std || l.j > 4)) continue;
+        if (l.type === 'dr' || l.type === 'idr') continue;   // today's DR / IDR are already named on the price scale (operator 2026-09-29)
         const col = l.type === 'dr' ? C.dr : l.type === 'idr' ? C.idr : l.type === 'mid' ? C.mid : l.type === 'open' ? C.open : play === l.dir ? C.stdOn : C.std;
         items.push({ y: V.Y(l.p), text: (l.type === 'std' ? '' : s.k + ' ') + l.name, col, pr: l.type === 'dr' || l.type === 'idr' ? 3 : l.type === 'std' ? 1 : 2 });
       }
@@ -1313,17 +1314,17 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     const placed = [];
     for (const q of vis.slice().sort((a, b) => b.pr - a.pr)) {
       let y = q.y;
-      for (let tries = 0; tries < 6 && placed.some(p => Math.abs(p.y - y) < 11); tries++) {
-        const hit = placed.find(p => Math.abs(p.y - y) < 11);
-        y = q.y >= hit.y ? hit.y + 11 : hit.y - 11;
+      for (let tries = 0; tries < 6 && placed.some(p => Math.abs(p.y - y) < 7); tries++) {
+        const hit = placed.find(p => Math.abs(p.y - y) < 7);
+        y = q.y >= hit.y ? hit.y + 7 : hit.y - 7;
       }
-      if (placed.some(p => Math.abs(p.y - y) < 10)) continue;
+      if (placed.some(p => Math.abs(p.y - y) < 6)) continue;
       placed.push({ y, q });
     }
-    c.font = '9px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right';
+    c.font = '5px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right';
     for (const { y, q } of placed) {
-      const w = c.measureText(q.text).width + 6;
-      c.fillStyle = 'rgba(8,9,12,.8)'; c.fillRect(xr - w, y - 5.5, w + 2, 11);
+      const w = c.measureText(q.text).width + 4;
+      c.fillStyle = 'rgba(8,9,12,.8)'; c.fillRect(xr - w, y - 3.5, w + 2, 7);
       c.fillStyle = q.col; c.fillText(q.text, xr - 2, y + 0.5);
     }
     c.textAlign = 'left';
