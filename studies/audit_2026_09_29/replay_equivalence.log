@@ -1,0 +1,19 @@
+NQ RDR conf: states 25, same n 25, same band 25, same selected dates 25
+NQ RDR brk: states 15, same n 15, same band 15, same selected dates 15
+NQ RDR wait: states 20, same n 20, same band 20, same selected dates 20
+NQ ODR conf: states 25, same n 25, same band 25, same selected dates 25
+NQ ODR brk: states 15, same n 15, same band 15, same selected dates 15
+NQ ODR wait: states 20, same n 20, same band 20, same selected dates 20
+ES RDR conf: states 25, same n 25, same band 25, same selected dates 25
+ES RDR brk: states 15, same n 15, same band 15, same selected dates 15
+ES RDR wait: states 20, same n 20, same band 20, same selected dates 20
+ES ODR conf: states 25, same n 25, same band 25, same selected dates 25
+ES ODR brk: states 15, same n 15, same band 15, same selected dates 15
+ES ODR wait: states 20, same n 20, same band 20, same selected dates 20
+YM RDR conf: states 25, same n 25, same band 25, same selected dates 25
+YM RDR brk: states 15, same n 15, same band 15, same selected dates 15
+YM RDR wait: states 20, same n 20, same band 20, same selected dates 20
+YM ODR conf: states 25, same n 25, same band 25, same selected dates 25
+YM ODR brk: states 15, same n 15, same band 15, same selected dates 15
+YM ODR wait: states 20, same n 20, same band 20, same selected dates 20
+TOTAL states 360, identical cohorts 360

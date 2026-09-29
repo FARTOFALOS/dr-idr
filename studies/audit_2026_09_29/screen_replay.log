@@ -1,0 +1,64 @@
+============================== RDR (NQ, ES, YM pooled; walk-forward 2016-2025)
+DR удержится: {'states': 113924, 'sessions': 7169, 'bss': np.float64(13.5), 'bss_ci': [np.float64(12.1), np.float64(14.8)], 'citl_pp': np.float64(-1.0), 'citl_ci': [np.float64(-1.7), np.float64(-0.3)]}
+first STD target (panel «Цели») band 0.25: share of states 74.2% {'states': 84496, 'sessions': 6262, 'bss': np.float64(22.2), 'bss_ci': [np.float64(21.0), np.float64(23.4)], 'citl_pp': np.float64(2.0), 'citl_ci': [np.float64(1.2), np.float64(3.0)]}
+      0.0-0.5: pred 25 real 24 [23; 25] (49721 states, 5674 sessions)
+      0.5-0.7: pred 60 real 55 [54; 57] (20747 states, 5320 sessions)
+      0.7-0.8: pred 75 real 72 [70; 73] (8560 states, 3920 sessions)
+      0.8-0.9: pred 84 real 84 [83; 86] (4685 states, 2731 sessions)
+      0.9-1.0: pred 92 real 91 [89; 94] (783 states, 692 sessions)
+first STD target (panel «Цели») band 0.5: share of states 13.7% {'states': 15566, 'sessions': 3931, 'bss': np.float64(24.1), 'bss_ci': [np.float64(22.0), np.float64(26.0)], 'citl_pp': np.float64(1.6), 'citl_ci': [np.float64(0.2), np.float64(3.0)]}
+      0.0-0.5: pred 24 real 21 [20; 23] (10555 states, 3305 sessions)
+      0.5-0.7: pred 59 real 59 [57; 62] (3789 states, 1832 sessions)
+      0.7-0.8: pred 74 real 76 [73; 80] (949 states, 712 sessions)
+      0.8-0.9: pred 83 real 84 [79; 89] (257 states, 234 sessions)
+first STD target (panel «Цели») no band: share of states 12.2% {'states': 13862, 'sessions': 2769, 'bss': np.float64(-48.0), 'bss_ci': [np.float64(-52.0), np.float64(-43.6)], 'citl_pp': np.float64(-12.2), 'citl_ci': [np.float64(-14.5), np.float64(-9.4)]}
+      0.0-0.5: pred 17 real 44 [42; 46] (10708 states, 2134 sessions)
+      0.5-0.7: pred 60 real 22 [19; 26] (2320 states, 780 sessions)
+      0.7-0.8: pred 74 real 33 [28; 39] (723 states, 428 sessions)
+      0.8-0.9: pred 82 real 56 [45; 66] (111 states, 86 sessions)
+pullback places (first minutes + 3 bands): {'states': 113924, 'sessions': 7169, 'bss': np.float64(13.0), 'ci': [np.float64(12.5), np.float64(13.4)], 'pred': [np.float64(22.9), np.float64(31.1), np.float64(18.7), np.float64(27.3)], 'real': [np.float64(22.5), np.float64(34.0), np.float64(18.0), np.float64(25.5)]}
+before confirmation, first later confirmation up: {'states': 34255, 'sessions': 5279, 'bss': np.float64(19.8), 'bss_ci': [np.float64(17.8), np.float64(21.3)], 'citl_pp': np.float64(0.8), 'citl_ci': [np.float64(-0.8), np.float64(2.4)]}
+   «до DR high» mapped: {'states': 34255, 'sessions': 5279, 'bss': np.float64(18.4), 'bss_ci': [np.float64(16.6), np.float64(20.1)], 'citl_pp': np.float64(-0.1), 'citl_ci': [np.float64(-1.5), np.float64(1.4)]} | own-DR frame: {'states': 34255, 'sessions': 5279, 'bss': np.float64(20.0), 'bss_ci': [np.float64(18.5), np.float64(21.5)], 'citl_pp': np.float64(0.8), 'citl_ci': [np.float64(-0.7), np.float64(2.4)]}
+   states where «до DR high» < «↑»: mapped 11.4%, own-DR frame 0.00%
+late 30 min, pull, early states 37804: cohort 28.8% | today 28.6% | arcsine on the tape's variance clock 35.1% | arcsine flat clock 26.6% | uniform 12.7%  || incl. first minutes: cohort 24.1% vs arcsine 30.3%
+late 30 min, cont, early states 37804: cohort 30.9% | today 33.1% | arcsine on the tape's variance clock 35.1% | arcsine flat clock 26.6% | uniform 12.7%  || incl. first minutes: cohort 25.4% vs arcsine 30.3%
+fan 20-80: similar sessions whose whole path stays inside 12.1% (median state 9.9%); today's path stays inside 11.6%
+============================== ODR (NQ, ES, YM pooled; walk-forward 2016-2025)
+DR удержится: {'states': 91231, 'sessions': 7238, 'bss': np.float64(15.0), 'bss_ci': [np.float64(13.7), np.float64(16.1)], 'citl_pp': np.float64(-0.4), 'citl_ci': [np.float64(-1.1), np.float64(0.2)]}
+first STD target (panel «Цели») band 0.25: share of states 72.6% {'states': 66269, 'sessions': 6277, 'bss': np.float64(18.7), 'bss_ci': [np.float64(17.7), np.float64(20.0)], 'citl_pp': np.float64(0.5), 'citl_ci': [np.float64(-0.5), np.float64(1.6)]}
+      0.0-0.5: pred 25 real 27 [26; 28] (40450 states, 5675 sessions)
+      0.5-0.7: pred 60 real 56 [55; 57] (15478 states, 4998 sessions)
+      0.7-0.8: pred 75 real 70 [68; 72] (6231 states, 3482 sessions)
+      0.8-0.9: pred 84 real 82 [80; 83] (3509 states, 2426 sessions)
+      0.9-1.0: pred 92 real 92 [89; 95] (601 states, 548 sessions)
+first STD target (panel «Цели») band 0.5: share of states 14.4% {'states': 13102, 'sessions': 4172, 'bss': np.float64(20.9), 'bss_ci': [np.float64(19.3), np.float64(22.7)], 'citl_pp': np.float64(0.4), 'citl_ci': [np.float64(-0.9), np.float64(1.6)]}
+      0.0-0.5: pred 24 real 24 [22; 25] (9072 states, 3501 sessions)
+      0.5-0.7: pred 59 real 59 [56; 61] (2911 states, 1772 sessions)
+      0.7-0.8: pred 74 real 75 [72; 79] (836 states, 713 sessions)
+      0.8-0.9: pred 84 real 86 [82; 90] (256 states, 235 sessions)
+first STD target (panel «Цели») no band: share of states 13.0% {'states': 11860, 'sessions': 2876, 'bss': np.float64(-50.0), 'bss_ci': [np.float64(-54.5), np.float64(-46.2)], 'citl_pp': np.float64(-18.6), 'citl_ci': [np.float64(-20.9), np.float64(-16.2)]}
+      0.0-0.5: pred 16 real 46 [44; 48] (9823 states, 2302 sessions)
+      0.5-0.7: pred 61 real 20 [17; 24] (1359 states, 662 sessions)
+      0.7-0.8: pred 74 real 35 [29; 39] (566 states, 374 sessions)
+      0.8-0.9: pred 83 real 50 [40; 61] (103 states, 91 sessions)
+pullback places (first minutes + 3 bands): {'states': 91231, 'sessions': 7238, 'bss': np.float64(12.1), 'ci': [np.float64(11.6), np.float64(12.6)], 'pred': [np.float64(24.8), np.float64(26.4), np.float64(18.3), np.float64(30.6)], 'real': [np.float64(25.0), np.float64(30.1), np.float64(16.4), np.float64(28.5)]}
+before confirmation, first later confirmation up: {'states': 29899, 'sessions': 5168, 'bss': np.float64(13.7), 'bss_ci': [np.float64(12.4), np.float64(14.9)], 'citl_pp': np.float64(0.4), 'citl_ci': [np.float64(-1.1), np.float64(1.9)]}
+   «до DR high» mapped: {'states': 29899, 'sessions': 5168, 'bss': np.float64(11.7), 'bss_ci': [np.float64(9.9), np.float64(13.2)], 'citl_pp': np.float64(-0.8), 'citl_ci': [np.float64(-2.5), np.float64(1.0)]} | own-DR frame: {'states': 29899, 'sessions': 5168, 'bss': np.float64(13.9), 'bss_ci': [np.float64(12.6), np.float64(15.2)], 'citl_pp': np.float64(1.3), 'citl_ci': [np.float64(-0.2), np.float64(3.0)]}
+   states where «до DR high» < «↑»: mapped 8.6%, own-DR frame 0.00%
+late 30 min, pull, early states 26225: cohort 31.2% | today 29.8% | arcsine on the tape's variance clock 36.3% | arcsine flat clock 29.9% | uniform 15.5%  || incl. first minutes: cohort 26.0% vs arcsine 30.5%
+late 30 min, cont, early states 26225: cohort 28.1% | today 29.3% | arcsine on the tape's variance clock 36.3% | arcsine flat clock 29.9% | uniform 15.5%  || incl. first minutes: cohort 22.2% vs arcsine 30.5%
+fan 20-80: similar sessions whose whole path stays inside 13.4% (median state 10.7%); today's path stays inside 11.4%
+============================== sample sizes (all instruments, both sessions)
+conf: states 205155, median n 129, n<40 0.3%, n<10 0.0%, no price band 8.3%
+   0-60 min after the confirmation: states 60058, n<40 0.9%, n<10 0.0%
+   60-180: states 94717, n<40 0.0%, n<10 0.0%
+   180+: states 50380, n<40 0.0%, n<10 0.0%
+brk: states 20238, median n 57, n<40 15.2%, n<10 3.5%, no price band 54.2%
+   0-60 min after the confirmation: states 583, n<40 89.9%, n<10 34.6%
+   60-180: states 8502, n<40 25.8%, n<10 5.8%
+   180+: states 11153, n<40 3.1%, n<10 0.1%
+wait: states 64154, median n 113, n<40 0.6%, n<10 0.2%, no price band 4.6%
+RDR price matched · DR удержится: {'states': 100062, 'sessions': 6721, 'bss': np.float64(14.5), 'bss_ci': [np.float64(13.0), np.float64(15.7)], 'citl_pp': np.float64(-1.2), 'citl_ci': [np.float64(-1.8), np.float64(-0.5)]} · pullback places: {'states': 100062, 'sessions': 6721, 'bss': np.float64(14.6), 'ci': [np.float64(14.1), np.float64(15.1)], 'pred': [np.float64(22.3), np.float64(30.6), np.float64(18.9), np.float64(28.3)], 'real': [np.float64(22.1), np.float64(32.4), np.float64(19.0), np.float64(26.6)]}
+RDR price NOT matched · DR удержится: {'states': 13862, 'sessions': 2769, 'bss': np.float64(2.2), 'bss_ci': [np.float64(0.5), np.float64(3.4)], 'citl_pp': np.float64(0.2), 'citl_ci': [np.float64(-0.8), np.float64(1.3)]} · pullback places: {'states': 13862, 'sessions': 2769, 'bss': np.float64(-3.2), 'ci': [np.float64(-4.6), np.float64(-2.2)], 'pred': [np.float64(27.1), np.float64(34.7), np.float64(17.7), np.float64(20.5)], 'real': [np.float64(25.4), np.float64(45.7), np.float64(10.9), np.float64(18.0)]}
+ODR price matched · DR удержится: {'states': 79371, 'sessions': 6799, 'bss': np.float64(15.9), 'bss_ci': [np.float64(14.6), np.float64(17.1)], 'citl_pp': np.float64(-0.1), 'citl_ci': [np.float64(-0.9), np.float64(0.6)]} · pullback places: {'states': 79371, 'sessions': 6799, 'bss': np.float64(13.3), 'ci': [np.float64(12.8), np.float64(13.8)], 'pred': [np.float64(24.0), np.float64(25.6), np.float64(18.6), np.float64(31.8)], 'real': [np.float64(24.1), np.float64(27.4), np.float64(17.9), np.float64(30.7)]}
+ODR price NOT matched · DR удержится: {'states': 11860, 'sessions': 2876, 'bss': np.float64(-1.1), 'bss_ci': [np.float64(-3.8), np.float64(0.8)], 'citl_pp': np.float64(-2.0), 'citl_ci': [np.float64(-3.1), np.float64(-1.0)]} · pullback places: {'states': 11860, 'sessions': 2876, 'bss': np.float64(-8.3), 'ci': [np.float64(-10.3), np.float64(-6.6)], 'pred': [np.float64(29.9), np.float64(31.1), np.float64(16.3), np.float64(22.8)], 'real': [np.float64(31.0), np.float64(48.3), np.float64(6.8), np.float64(13.9)]}

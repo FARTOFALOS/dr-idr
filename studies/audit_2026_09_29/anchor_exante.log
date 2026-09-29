@@ -1,0 +1,12 @@
+NQ across starts: R2 0.991, resid sd 1.37 pp, {'03:00': -0.35, '09:30': -2.86, '19:30': 1.98}
+   03:00: anchored minus neighbours at equal ex-ante ratio +2.22 pp [+1.66; +2.99]
+   09:30: anchored minus neighbours at equal ex-ante ratio +2.46 pp [+2.02; +3.18]
+   19:30: anchored minus neighbours at equal ex-ante ratio +1.19 pp [+0.28; +2.02]
+ES across starts: R2 0.993, resid sd 1.06 pp, {'03:00': -0.29, '09:30': -2.16, '19:30': 1.44}
+   03:00: anchored minus neighbours at equal ex-ante ratio +2.57 pp [+1.92; +3.25]
+   09:30: anchored minus neighbours at equal ex-ante ratio +2.44 pp [+1.72; +3.10]
+   19:30: anchored minus neighbours at equal ex-ante ratio +1.00 pp [+0.24; +1.58]
+YM across starts: R2 0.991, resid sd 1.23 pp, {'03:00': -0.12, '09:30': -2.89, '19:30': 0.99}
+   03:00: anchored minus neighbours at equal ex-ante ratio +2.17 pp [+1.52; +2.82]
+   09:30: anchored minus neighbours at equal ex-ante ratio +2.04 pp [+1.36; +2.85]
+   19:30: anchored minus neighbours at equal ex-ante ratio +0.68 pp [-0.28; +1.50]

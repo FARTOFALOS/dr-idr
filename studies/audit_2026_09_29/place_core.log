@@ -1,0 +1,12 @@
+NQ RDR pull: places 788 | band share median 25.5% | core/band median 0.35 (p25 0.23, p75 0.52) | core < half the band in 71% | for places >= 20%: core/band 0.31, hot spot/band 0.05
+NQ RDR cont: places 868 | band share median 25.0% | core/band median 0.33 (p25 0.24, p75 0.53) | core < half the band in 71% | for places >= 20%: core/band 0.31, hot spot/band 0.06
+NQ ODR pull: places 809 | band share median 24.8% | core/band median 0.38 (p25 0.26, p75 0.57) | core < half the band in 64% | for places >= 20%: core/band 0.33, hot spot/band 0.06
+NQ ODR cont: places 873 | band share median 23.3% | core/band median 0.38 (p25 0.24, p75 0.56) | core < half the band in 67% | for places >= 20%: core/band 0.33, hot spot/band 0.07
+ES RDR pull: places 810 | band share median 24.8% | core/band median 0.34 (p25 0.23, p75 0.52) | core < half the band in 71% | for places >= 20%: core/band 0.30, hot spot/band 0.05
+ES RDR cont: places 861 | band share median 25.0% | core/band median 0.33 (p25 0.22, p75 0.56) | core < half the band in 69% | for places >= 20%: core/band 0.30, hot spot/band 0.06
+ES ODR pull: places 812 | band share median 23.9% | core/band median 0.38 (p25 0.24, p75 0.56) | core < half the band in 66% | for places >= 20%: core/band 0.33, hot spot/band 0.06
+ES ODR cont: places 869 | band share median 22.8% | core/band median 0.38 (p25 0.24, p75 0.57) | core < half the band in 67% | for places >= 20%: core/band 0.31, hot spot/band 0.06
+YM RDR pull: places 836 | band share median 25.0% | core/band median 0.32 (p25 0.21, p75 0.50) | core < half the band in 75% | for places >= 20%: core/band 0.27, hot spot/band 0.06
+YM RDR cont: places 872 | band share median 26.0% | core/band median 0.33 (p25 0.23, p75 0.50) | core < half the band in 73% | for places >= 20%: core/band 0.30, hot spot/band 0.07
+YM ODR pull: places 822 | band share median 25.4% | core/band median 0.36 (p25 0.23, p75 0.57) | core < half the band in 66% | for places >= 20%: core/band 0.30, hot spot/band 0.06
+YM ODR cont: places 877 | band share median 23.5% | core/band median 0.38 (p25 0.25, p75 0.57) | core < half the band in 67% | for places >= 20%: core/band 0.33, hot spot/band 0.06
