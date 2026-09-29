@@ -52,9 +52,9 @@ against what happened next.
 - **Semantic audit and design 22 (2026-09-29).** The operator asked for a deep audit of the whole system and then for
   the next design built on its conclusions, with the repository made readable for a semantic agent without code.
   Results: `meaning/03-dokazatelstva.md` (studies in `studies/audit_2026_09_29/`, all aggregates); design 22 is a
-  mockup (`design/sozvezdiya-22/`, `meaning/04-dizajn-22.md`), **not** the working screen. Moving it onto market data
-  needs his go-ahead, two new per-session fields in `/api/cohort` (own DR, wick beyond DR) and work outside trading
-  hours.
+  the working screen since the same evening (`design/sozvezdiya-22/`, `meaning/04-dizajn-22.md`); `/api/cohort` sends
+  own DR (`uH`, `uL`) and `wick` per similar session. Stars and places were then switched to first arrivals (hard
+  rule 10).
 
 - **The working screen is «Созвездия» design 22 «смысл числа», on market data** (since 2026-09-29; design 21 from
   2026-09-28 before it). `http://127.0.0.1:8767` opens it (`lab/dist/index.html` + `sozvezdiya.js`, built from

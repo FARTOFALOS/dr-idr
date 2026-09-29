@@ -1,9 +1,11 @@
 # DR Lab screen design — start here (state of 2026-09-29)
 
 If you join the design work, read this page, then open the pages below. Everything in `design/` is a **mockup on
-synthetic data**, except that design 21 is also **the working screen of DR Lab on market data** since 2026-09-28
-(`lab/dist/index.html` is built from `design/sozvezdiya-21/src`). **Design 22 «смысл числа»** (2026-09-29) is the current
-proposal: its meaning, pictures and open questions are in `meaning/04-dizajn-22.md` (Russian, no code needed).
+synthetic data**, except that **design 22 «смысл числа» is the working screen of DR Lab on market data since
+2026-09-29** (`lab/dist/index.html` is built from `design/sozvezdiya-22/src`; design 21 was the working screen on
+2026-09-28). Its meaning, pictures and open questions: `meaning/04-dizajn-22.md` (Russian, no code needed). **Stars,
+constellations and place percentages = where and when price of similar sessions CAME after this candle** (operator,
+2026-09-29); never the session's final extreme (AGENTS.md hard rule 10).
 
 ## Where we are, in one paragraph
 
@@ -13,7 +15,7 @@ to show for the current session **where and when price went most often in 20 yea
 structure. Twenty-one screen designs exist, all numbered in one history page. He picked parts from 1–19, we built 20,
 refined it round by round, reworked its right panel as 21 with a second agent, and on 2026-09-28 he made **21
 «Созвездия» the working screen** of DR Lab on market data (http://127.0.0.1:8767; the previous screen is
-`/classic.html`). Further remarks go into design 21 and from there into the working screen.
+`/classic.html`). On 2026-09-29 design 22 replaced it (round 8). Further remarks go into design 22.
 
 ## Open the work
 
@@ -113,8 +115,10 @@ definitions in `docs/SEMANTICS.md`, replaced rules in `docs/UI_RULES.md`, checks
 calculations, studies, designs, external sources), then passed on two texts of a semantic agent («линзы»,
 `meaning/lens/`), then asked for the next design built on all the semantic conclusions and for the repository to be
 readable by a semantic agent without code (GitHub as the intermediary). Done: `meaning/` (the semantic layer),
-`studies/audit_2026_09_29/`, design 22 in `design/sozvezdiya-22/` (a mockup; the working screen stays 21). What changed
-against 21 and why: `meaning/04-dizajn-22.md`; his decisions to take: `meaning/05-otkrytye-voprosy.md` (О1–О10).
+`studies/audit_2026_09_29/`, design 22 in `design/sozvezdiya-22/`. The same evening the operator made 22 the working
+screen and corrected it live: stars and places = first arrivals (the final-extreme meaning was an agents' invention of
+28.09), fan back to the filled band, box fill by colour, smaller line names, VI by the ICT rule, wheel zoom anchored at
+the session end. What changed and why: `meaning/04-dizajn-22.md`; open decisions: `meaning/05-otkrytye-voprosy.md`.
 
 ## Open questions
 

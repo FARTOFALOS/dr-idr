@@ -210,7 +210,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     bg: '#08090C', grid: '#1C2027', text: '#D1D4DC', text2: '#A3A8B3', text3: '#6F7582', axis: '#0B0C10',
     up: '#089981', dn: '#F23645', cont: '#5DB8FF', pull: '#FFB347', upS: '#A9B9E6', dnS: '#D7A3C9',
     dr: '#EEF1F5', idr: '#AEBACB', mid: '#8B95A5', open: '#6B7380', std: '#5F6877', stdOn: '#A7B2C3',
-    ADR: '#8E7CF0', ODR: '#E27AB8', PREV: '#8FA0B8', vib: '#D6DCE6', replay: '#F7C948', fan: '#A9B8CE', brk: '#F23645'
+    ADR: '#8E7CF0', ODR: '#E27AB8', PREV: '#8FA0B8', vib: '#F29A38', replay: '#F7C948', fan: '#A9B8CE', brk: '#F23645'
   };
   const PAL = {
     mint: { name: 'Мята / коралл', cont: '#63C3A5', pull: '#DE8580' },
@@ -220,12 +220,13 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
   // everything a viewer can tune in «Настройки»; kept in this browser (localStorage), «Сбросить» restores these
   const DEF = {
     cont: '#63C3A5', pull: '#DE8580', up: '#A9B9E6', dn: '#D7A3C9',
-    starA: 50, glowA: 17, contourA: 30, markA: 42, markSize: 100,
+    starA: 50, glowA: 17, bestA: 130, bestCoreA: 40, bestLineA: 60, otherA: 70, bracketA: 28, contourA: 30, markA: 42, markSize: 100,
     stripA: 80, projA: 90, fanA: 50, typ: '#D1D4DC', typA: 70,
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
-    prevA: 46, vib: '#D6DCE6', vibA: 20, vibNQ: 2, vibES: 0.5, vibYM: 5, upC: '#089981', dnC: '#F23645', bg: '#08090C'
+    boxFill: 'grad', boxA: 45, prevA: 46, viC: '#F29A38', vibA: 20, vibNQ: 2, vibES: 0.5, vibYM: 5, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
+  const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
   const DASH = { solid: [], dash: [7, 4], dots: [1.5, 3.5], dashdot: [9, 3, 2, 3] };
   const CFG_KEY = 'drlab.sozvezdiya21.cfg';
   const cfg = Object.assign({}, DEF);
@@ -233,7 +234,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
   const saveCfg = () => { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* not kept */ } };
   const SCHEMA = [
     ['Созвездия и звёзды', [['cont', 'Продолжение', 'color'], ['pull', 'Откат', 'color'], ['up', 'Верх (до подтверждения)', 'color'], ['dn', 'Низ (до подтверждения)', 'color'],
-      ['starA', 'Звёзды · яркость', 'range', 0, 100], ['glowA', 'Свечение созвездий', 'range', 0, 60], ['contourA', 'Контур созвездий', 'range', 0, 100],
+      ['starA', 'Звёзды · яркость', 'range', 0, 100], ['glowA', 'Свечение созвездий', 'range', 0, 60], ['bestA', 'Главное созвездие · заливка', 'range', 50, 250], ['bestCoreA', 'Главное созвездие · ядро', 'range', 0, 100], ['bestLineA', 'Главное созвездие · контур', 'range', 0, 100], ['otherA', 'Остальные созвездия · заливка', 'range', 10, 150], ['bracketA', 'Скобки мест · яркость', 'range', 0, 100], ['contourA', 'Контур созвездий', 'range', 0, 100],
       ['markA', 'Проценты в созвездиях · яркость', 'range', 10, 100], ['markSize', 'Проценты · размер', 'range', 50, 150]]],
     ['Полоса, плотность, веер', [['stripA', 'Полоса времени снизу', 'range', 10, 100], ['projA', 'Плотность по цене справа', 'range', 10, 100],
       ['fanA', 'Веер 20–80 %', 'range', 0, 100], ['typ', 'Медиана веера · цвет', 'color'], ['typA', 'Медиана веера · яркость', 'range', 10, 100]]],
@@ -241,7 +242,8 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       ['idr', 'IDR · цвет', 'color'], ['idrA', 'IDR · яркость', 'range', 10, 100], ['idrW', 'IDR · толщина', 'range', 0.5, 3, 0.1], ['idrDash', 'IDR · вид', 'dash'],
       ['mid', 'mid · цвет', 'color'], ['midA', 'mid · яркость', 'range', 10, 100], ['midDash', 'mid · вид', 'dash'],
       ['std', 'STD · цвет', 'color'], ['stdA', 'STD стороны в игре · яркость', 'range', 5, 100], ['stdOffA', 'STD другой стороны · яркость', 'range', 0, 100]]],
-    ['Прошлые сессии и VIB', [['prevA', 'DR / IDR прошлых сессий · яркость', 'range', 5, 100], ['vib', 'VIB · цвет', 'color'], ['vibA', 'VIB · яркость', 'range', 5, 60], ['vibNQ', 'VIB NQ · разрыв от, пунктов', 'range', 0, 6, 0.25], ['vibES', 'VIB ES · разрыв от, пунктов', 'range', 0, 3, 0.25], ['vibYM', 'VIB YM · разрыв от, пунктов', 'range', 0, 20, 1]]],
+    ['Коробки сессий', [['boxFill', 'Заливка DR / IDR', 'boxfill'], ['boxA', 'Заливка · яркость', 'range', 0, 100]]],
+    ['Прошлые сессии и VI', [['prevA', 'DR / IDR прошлых сессий · яркость', 'range', 5, 100], ['viC', 'VI · цвет', 'color'], ['vibA', 'VI · яркость', 'range', 5, 60], ['vibNQ', 'VI NQ · разрыв тел от, пунктов', 'range', 0, 6, 0.25], ['vibES', 'VI ES · разрыв тел от, пунктов', 'range', 0, 3, 0.25], ['vibYM', 'VI YM · разрыв тел от, пунктов', 'range', 0, 20, 1]]],
     ['График', [['upC', 'Свеча вверх', 'color'], ['dnC', 'Свеча вниз', 'color'], ['bg', 'Фон', 'color']]]
   ];
   const DASH_NAMES = { solid: 'сплошная', dash: 'штрих', dots: 'точки', dashdot: 'штрихпунктир' };
@@ -251,7 +253,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
   const LAYERS = [
     ['stars', 'Звёзды: похожие сессии', C.fan], ['cons', 'Созвездия и проценты', '#63C3A5'], ['fan', 'Веер и его медиана', C.fan],
     ['proj', 'Плотность по цене справа', '#DE8580'], ['strip', 'Полоса времени снизу', '#63C3A5'], ['std', 'STD', C.stdOn],
-    ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VIB (объёмные имбалансы)', C.vib], ['hist', 'Шесть графиков истории (снизу)', C.text2], ['snap21', 'Контуры на момент подтверждения', '#AAB5C4']
+    ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VI (volume imbalance)', C.vib], ['hist', 'Шесть графиков истории (снизу)', C.text2], ['snap21', 'Контуры на момент подтверждения', '#AAB5C4']
   ];
 
   // ---------- small helpers ----------
@@ -275,15 +277,21 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
 
   // ---------- the day: bars and volume imbalances ----------
   const DD = {};
+  // volume imbalance (VI, ICT; operator 2026-09-29): two neighbouring M5 candles whose BODIES do not overlap while their
+  // WICKS do; the zone is the space between the two bodies. Bodies apart and wicks apart = a gap, not a VI.
   function vibsOf(bars) {
     const vibs = [];
     for (let i = 1; i < bars.length; i++) {
       const a = bars[i - 1], b = bars[i];
-      if (Math.abs(b.o - a.c) < 1e-9 || b.t - a.t !== 5) continue;
-      const lo = Math.min(a.c, b.o), hi = Math.max(a.c, b.o);
-      let fill = null;   // rebalanced: a later bar enters the gap, even with a wick
+      if (b.t - a.t !== 5) continue;
+      const aT = Math.max(a.o, a.c), aB = Math.min(a.o, a.c), bT = Math.max(b.o, b.c), bB = Math.min(b.o, b.c);
+      let lo, hi, dir;
+      if (bB > aT + 1e-9 && b.l <= a.h + 1e-9) { lo = aT; hi = bB; dir = 1; }
+      else if (bT < aB - 1e-9 && b.h >= a.l - 1e-9) { lo = bT; hi = aB; dir = -1; }
+      else continue;
+      let fill = null;   // rebalanced: a later bar enters the zone, even with a wick
       for (let j = i + 1; j < bars.length; j++) { const q = bars[j]; if (q.l < hi && q.h > lo) { fill = q.t; break; } }
-      vibs.push({ t: b.t, lo, hi, dir: b.o > a.c ? 1 : -1, fill });
+      vibs.push({ t: b.t, lo, hi, dir, fill });
     }
     return vibs;
   }
@@ -477,7 +485,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
   function finishOverlay(ov, pts) {
     ov.near = ov.end - ov.obs < 45 ? 5 : NEAR;
     ov.match = ov.band === 0.25 ? 'p25' : ov.band === 0.5 ? 'p50' : 'none';
-    ov.roles = pts.map(q => role(ov, q[0], q[1], null, ov.sims.map((z, i) => ({ u: z[q[q.length - 2]], t: z[q[q.length - 1]], i }))));
+    ov.roles = pts.map(q => role(ov, q[0], q[1], null, arrivalsOf(ov, q[0])));
     ov.fan = fanOf(ov);
     if (ov.mode === 'conf') ov.holds = 100 * ov.sims.filter(p => p.held).length / ov.N;
     if (ov.mode === 'conf' && ov.sims.every(p => p.wick != null)) ov.wick = 100 * ov.sims.filter(p => p.wick).length / ov.N;
@@ -521,9 +529,29 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       .catch(() => A.cohorts.set(ck, { status: 'error' }))
       .finally(() => { A.pending.delete(ck); redraw(true); });
   }
+  // THE MEANING OF A STAR (operator 2026-09-29, binding): after this moment, WHERE similar sessions' price CAME and
+  // WHEN — one star per session per place ahead of the price, at its first arrival there. NOT the session's final
+  // extreme until the close: that was an agents' invention of 2026-09-28 that the operator never asked for (it piled
+  // every cluster up at 15:50-16:00). A place's share = how often price came into it.
+  function arrivalsOf(ov, id) {
+    const down = id === 'pull' || id === 'dn', u0 = ov.u0, zs = zoneDefs(ov, id), pts = [];
+    ov.sims.forEach((p, i) => {
+      const arr = down ? p.lo : p.hi;
+      if (!arr) return;
+      for (const z of zs) {
+        if (down ? !(z.hi <= u0) : !(z.lo > u0)) continue;           // only places ahead of the price on this side
+        const edge = down ? z.hi : z.lo;
+        for (let j = 0; j < ov.grid.length; j++) {
+          const v = arr[j];
+          if (v != null && (down ? v < edge : v >= edge)) { pts.push({ u: down ? Math.max(v, z.lo + 1e-9) : Math.min(v, z.hi - 1e-9), t: ov.grid[j] - 5, i }); break; }
+        }
+      }
+    });
+    return pts;
+  }
   function role(ov, id, name, col, pts) {
     const nearT = ov.obs + ov.near, N = ov.N;
-    const stars = pts.map(q => ({ u: q.u, t: q.t, p: ov.u2p(q.u), i: q.i, near: q.t <= nearT, role: id }));
+    const stars = pts.map(q => ({ u: q.u, t: q.t, p: ov.u2p(q.u), i: q.i, near: false, role: id }));
     const far = stars.filter(q => !q.near);
     const R = { id, name, stars, nNear: stars.length - far.length };
     Object.defineProperty(R, 'col', { get: () => roleCol(id) });
@@ -612,22 +640,22 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       if (!arr) continue;
       for (let j = 0; j < ov.grid.length; j++) {
         const v = arr[j];
-        if (v != null && (down ? v <= edge : v >= edge)) { const T = ov.grid[j] - 5; bins.set(T, (bins.get(T) || 0) + 1); n++; break; }
+        if (v != null && (down ? v <= edge : v >= edge)) { const T = Math.floor((ov.grid[j] - 5) / 15) * 15; bins.set(T, (bins.get(T) || 0) + 1); n++; break; }
       }
     }
     if (!n) return null;
     let pk = null;
     for (const [b, c] of bins) if (!pk || c > pk[1]) pk = [b, c];
-    let t0 = pk[0], t1 = pk[0] + 5, m = pk[1];
-    while ((bins.get(t0 - 5) || 0) >= 0.6 * pk[1]) { t0 -= 5; m += bins.get(t0); }
-    while ((bins.get(t1) || 0) >= 0.6 * pk[1]) { m += bins.get(t1); t1 += 5; }
+    let t0 = pk[0], t1 = pk[0] + 15, m = pk[1];   // 15-minute windows: 5-minute ones caught noise on ~50 sessions
+    while ((bins.get(t0 - 15) || 0) >= 0.6 * pk[1]) { t0 -= 15; m += bins.get(t0); }
+    while ((bins.get(t1) || 0) >= 0.6 * pk[1]) { m += bins.get(t1); t1 += 15; }
     return { t0, t1, pct: 100 * m / ov.N, bins: [...bins].sort((a, b) => a[0] - b[0]), peak: pk[1], edge };
   }
   // the constellation of a place: where inside the band the extremes lie densest (the connected region of at least 38 %
   // of the place's own peak that holds most of its sessions), with its time window
   function zoneOf(ov, R, z, i, far) {
     const all = far.filter(q => q.u >= z.lo && q.u < z.hi), N = ov.N;
-    const k = { id: i, rank: i + 1, role: R.id, name: z.name, short: z.short, lo: z.lo, hi: z.hi, n: all.length, pct: 100 * all.length / N, all, mem: [] };
+    const k = { id: i, rank: i + 1, role: R.id, name: z.name, short: z.short, lo: z.lo, hi: z.hi, n: all.length, pct: 100 * all.length / N, all, mem: [], now: z.lo <= ov.u0 && ov.u0 < z.hi };
     k.entry = all.length ? entryOf(ov, R, k) : null;
     const ps = all.map(q => q.p).sort((a, b) => a - b);
     k.sortP = ps.length ? ps[ps.length >> 1] : ov.u2p(isFinite(z.lo) ? z.lo : z.hi);
@@ -819,7 +847,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     prep21(ctx);
     const c = g2;
     c.setTransform(dpr, 0, 0, dpr, 0, 0);
-    Object.assign(C, { dr: cfg.dr, idr: cfg.idr, mid: cfg.mid, std: cfg.std, stdOn: cfg.std, vib: cfg.vib, up: cfg.upC, dn: cfg.dnC, bg: cfg.bg, upS: cfg.up, dnS: cfg.dn });
+    Object.assign(C, { dr: cfg.dr, idr: cfg.idr, mid: cfg.mid, std: cfg.std, stdOn: cfg.std, vib: cfg.viC, up: cfg.upC, dn: cfg.dnC, bg: cfg.bg, upS: cfg.up, dnS: cfg.dn });
     c.fillStyle = C.bg; c.fillRect(0, 0, W, H);
     c.save(); c.beginPath(); c.rect(V.plot.x, V.plot.y, V.plot.w, V.plot.h); c.clip();
     drawBoxes(c, ctx);
@@ -865,7 +893,19 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       const s = sess(ctx.D, k, ctx.obs, ctx.live);
       if (s.drH == null || s.status === 'forming' && k !== ctx.s.k) continue;
       const x0 = V.X(s.start), x1 = V.X(s.formed), y0 = V.Y(s.drH), y1 = V.Y(s.drL);
-      c.fillStyle = k === ctx.s.k ? 'rgba(255,255,255,0.045)' : 'rgba(255,255,255,0.025)';
+      // box colour (operator 2026-09-29): green / red by the box's close against its open, grey while it forms or is flat;
+      // gradient = strongest over the IDR body, fading to the DR wick edges
+      const col = s.status === 'forming' || s.close == null || s.close === s.open ? '#8B93A1' : s.close > s.open ? C.up : C.dn;
+      const a = cfg.boxA / 100 * (k === ctx.s.k ? 1 : 0.6);
+      if (cfg.boxFill === 'none') { c.fillStyle = k === ctx.s.k ? 'rgba(255,255,255,0.045)' : 'rgba(255,255,255,0.025)'; }
+      else if (cfg.boxFill === 'solid') { c.fillStyle = rgba(col, 0.3 * a); }
+      else {
+        const g = c.createLinearGradient(0, y0, 0, y1), f = p => Math.min(1, Math.max(0, (V.Y(p) - y0) / Math.max(1, y1 - y0)));
+        const ih = f(s.idrH), il = f(s.idrL);
+        g.addColorStop(0, rgba(col, 0.06 * a)); g.addColorStop(ih, rgba(col, 0.42 * a)); g.addColorStop((ih + il) / 2, rgba(col, 0.5 * a));
+        g.addColorStop(Math.max(ih, il), rgba(col, 0.42 * a)); g.addColorStop(1, rgba(col, 0.06 * a));
+        c.fillStyle = g;
+      }
       c.fillRect(x0, y0, x1 - x0, y1 - y0);
       c.fillStyle = k === ctx.s.k ? C.text2 : C.text3; c.font = '600 11px ' + FONT; c.textBaseline = 'bottom';
       c.fillText(k, x0 + 2, y0 - 3);
@@ -909,19 +949,16 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       c.fillRect(x0, y0 - 1, 1.5, Math.max(2, y1 - y0 + 2));
     }
   }
-  // the fan as time slices (design 22): every 15 minutes a thin vertical from the 20th to the 80th percentile of the
-  // similar sessions' closes at that moment (each from its own position), not a filled corridor: a whole path stays
-  // inside such a fan only rarely (ov.fanCover)
+  // the fan 20-80 % as a quiet filled band, as in design 21 (operator 2026-09-29: the 15-minute slices were irritating)
   function drawFanBand(c, ov) {
     const F = ov.fan;
     if (!F.length) return;
-    const h = hv(), a = Math.min(1, 0.3 * cfg.fanA / 50);
-    for (const f of F) {
-      if (f.T % 15) continue;
-      const x = Math.round(V.X(f.T)) + 0.5, ya = V.Y(ov.u2p(f.q20)), yb = V.Y(ov.u2p(f.q80)), on = h && h.k === 'fan' && h.T === f.T;
-      c.strokeStyle = rgba(C.fan, on ? 0.95 : a); c.lineWidth = on ? 2 : 1;
-      c.beginPath(); c.moveTo(x, ya); c.lineTo(x, yb); c.moveTo(x - 2, ya); c.lineTo(x + 2, ya); c.moveTo(x - 2, yb); c.lineTo(x + 2, yb); c.stroke();
-    }
+    const x0 = V.X(ov.obs), y0 = V.Y(ov.s.priceNow);
+    c.beginPath(); c.moveTo(x0, y0);
+    for (const f of F) c.lineTo(V.X(f.T), V.Y(ov.u2p(f.q80)));
+    for (let i = F.length - 1; i >= 0; i--) c.lineTo(V.X(F[i].T), V.Y(ov.u2p(F[i].q20)));
+    c.closePath();
+    c.fillStyle = 'rgba(209,212,220,' + (0.045 * cfg.fanA / 50).toFixed(4) + ')'; c.fill();
   }
   // the median path of the similar sessions as hollow ghost candles (body: median close to median close; wick: median high / low)
   // the typical path: dash-dot, like the fan's middle line in design 1, but one real similar session, so it moves like price
@@ -959,6 +996,9 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     const x0 = V.X(g.t0 - g.dt / 2), x1 = V.X(g.t0 + (g.nT - 0.5) * g.dt), y0 = V.Y(Math.max(pa, pb)), y1 = V.Y(Math.min(pa, pb));
     return [x0, y0, x1 - x0, y1 - y0];
   }
+  // the most likely place of a side (largest share among its places): its constellation is drawn denser and brighter
+  // (operator 2026-09-29: the emphasis belongs to the constellation, not to the bracket)
+  const bestCon = R => R.cons.reduce((m, k) => k.n && (!m || k.pct > m.pct) ? k : m, null);
   function drawGlow(c, ov) {
     if (ov.match === 'none') return;   // without a matched price the constellations are outlines only (design 22)
     const h = hv(), focus = h && (h.k === 'con' || h.k === 'place' || h.k === 'col' || h.k === 'pband' || h.k === 'rect');
@@ -967,11 +1007,12 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       const g = k.g;
       if (!g) continue;
       if (g.pal !== R.col) { g.img = glowImg(g, R.col, ov, R.peak); g.coreImg = null; g.pal = R.col; }
-      c.globalAlpha = cfg.glowA / 100 * (focus ? 0.6 : 1);
+      const best = k === bestCon(R);
+      c.globalAlpha = Math.min(1, cfg.glowA / 100 * (focus ? 0.6 : best ? cfg.bestA / 100 : cfg.otherA / 100));
       c.drawImage(g.img, ...glowRect(g, ov));
-      if (isCon(h, R, k) && g.coreId != null) {
+      if ((isCon(h, R, k) || best && !focus) && g.coreId != null) {
         g.coreImg = g.coreImg || glowImg(g, R.col, ov, R.peak, g.coreId);
-        c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(1, cfg.glowA / 100 * 1.7); c.drawImage(g.coreImg, ...glowRect(g, ov)); c.globalCompositeOperation = 'source-over';
+        c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(1, cfg.glowA / 100 * (isCon(h, R, k) ? 1.7 : cfg.bestCoreA / 25)); c.drawImage(g.coreImg, ...glowRect(g, ov)); c.globalCompositeOperation = 'source-over';
       }
     }
     c.restore();
@@ -982,10 +1023,10 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       const g = k.g;
       if (!g || !g.segs) continue;
       const pt = (gx, gy) => [V.X(g.t0 + gx * g.dt), V.Y(ov.u2p(g.u0 + gy * g.du))];
-      const on = isCon(h, R, k);
+      const on = isCon(h, R, k), best = k === bestCon(R);
       for (const core of [false, true]) {
-        c.strokeStyle = rgba(R.col, core ? (on ? 0.9 : Math.min(1, (isConH(h) ? 0.16 : 0.3) * cf)) : Math.min(1, 0.08 * cf));
-        c.lineWidth = core && on ? 1.6 : 1;
+        c.strokeStyle = rgba(R.col, core ? (on ? 0.9 : Math.min(1, (isConH(h) ? 0.16 : best ? cfg.bestLineA / 100 : 0.3) * cf)) : Math.min(1, 0.08 * cf));
+        c.lineWidth = core && (on || best) ? 1.8 : 1;
         c.beginPath();
         for (let i = 0; i < g.segs.length; i += 5) {
           if ((g.segs[i + 4] === g.coreId) !== core) continue;
@@ -1180,30 +1221,35 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     V.marks = [];
     if (ov.match === 'none') return;
     const xEnd = Math.min(V.X(ov.end) + 6, V.plot.w - 70), yMax = V.plot.h - (V.stripOn ? V.strip.h : 0);
+    // a bracket per place ahead of the price: how often price came there; the largest share is the bold number
     ov.roles.forEach((R, ri) => {
       const x = Math.round(xEnd + ri * 7) + 0.5;
-      for (const k of R.cons) {
+      const all = R.cons.filter(k => k.n && k.zA != null);
+      const best = all.reduce((m, k) => k.pct > m ? k.pct : m, 0);
+      for (const k of all) {
+        k.best = k.pct === best;
         if (!k.n || k.zA == null) continue;
         const ya = V.Y(k.zA), yb = V.Y(k.zB), top = Math.max(0, Math.min(ya, yb)), bot = Math.min(yMax, Math.max(ya, yb));
         if (bot <= top) continue;
         const on = isCon(h, R, k), dim = isConH(h) && !on;
-        c.strokeStyle = rgba(R.col, on ? 1 : dim ? 0.3 : 0.75); c.lineWidth = on ? 2.4 : 1.4;
-        c.beginPath(); c.moveTo(x, top + 1.5); c.lineTo(x, bot - 1.5); c.moveTo(x - 3, top + 1.5); c.lineTo(x, top + 1.5); c.moveTo(x - 3, bot - 1.5); c.lineTo(x, bot - 1.5); c.stroke();
+        c.strokeStyle = rgba(R.col, on ? 0.8 : cfg.bracketA / 100 * (dim ? 0.45 : 1)); c.lineWidth = on ? 1.4 : 1;
+        if (k.near) c.setLineDash([2, 2]);
+        c.beginPath(); c.moveTo(x, top + 1.5); c.lineTo(x, bot - 1.5); c.moveTo(x - 3, top + 1.5); c.lineTo(x, top + 1.5); c.moveTo(x - 3, bot - 1.5); c.lineTo(x, bot - 1.5); c.stroke(); c.setLineDash([]);
         labels.push({ R, k, x, y: (top + bot) / 2, top, bot, on, dim });
       }
     });
     const xl = Math.round(xEnd + ov.roles.length * 7 + 4), placed = [];
     for (const L of labels.sort((a, b) => b.k.pct - a.k.pct)) {
-      const fs = Math.round(clamp(11 + 4 * Math.sqrt(L.k.pct / 40), 11, 15) * cfg.markSize / 100), text = pct(L.k.pct);
-      c.font = '700 ' + fs + 'px ' + FONT;
+      const fs = Math.round((L.k.best ? 16 : 11) * cfg.markSize / 100), text = (L.k.near ? 'сразу ' : '') + pct(L.k.pct);
+      c.font = (L.k.best ? '700 ' : '400 ') + fs + 'px ' + FONT;
       const tw = c.measureText(text).width;
       let y = clamp(L.y, fs, yMax - fs);
       for (let tries = 0; tries < 8 && placed.some(p => Math.abs(p - y) < fs + 1); tries++) y += (tries % 2 ? -1 : 1) * (fs + 1) * (tries + 1);
       if (placed.some(p => Math.abs(p - y) < fs)) continue;
       placed.push(y);
-      c.fillStyle = L.on ? '#FFFFFF' : 'rgba(236,240,246,' + Math.min(1, cfg.markA / 100 * (L.dim ? 0.8 : 2)).toFixed(3) + ')';
+      c.fillStyle = L.on || L.k.best && !L.dim ? '#FFFFFF' : 'rgba(236,240,246,' + Math.min(1, cfg.markA / 100 * (L.dim ? 0.8 : 1.3)).toFixed(3) + ')';
       c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillText(text, xl, y + 1);
-      V.marks.push({ R: L.R, k: L.k, box: [L.x - 5, L.top, xl + tw + 4 - (L.x - 5), Math.max(10, L.bot - L.top)], lbl: [xl - 2, y - fs / 2 - 2, tw + 6, fs + 4] });
+      if (!L.k.near) V.marks.push({ R: L.R, k: L.k, box: [L.x - 5, L.top, xl + tw + 4 - (L.x - 5), Math.max(10, L.bot - L.top)], lbl: [xl - 2, y - fs / 2 - 2, tw + 6, fs + 4] });
     }
   }
   // the first minutes after the moment: one quiet number per side instead of a bright blot over the last candle
@@ -1279,6 +1325,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       const play = s.status === 'broken' ? s.nside : s.side || 0;
       for (const l of levels(s)) {
         if (l.type === 'std' && (!st.L.std || l.j > 4)) continue;
+        if (l.type === 'dr' || l.type === 'idr') continue;   // today's DR / IDR are already named on the price scale (operator 2026-09-29)
         const col = l.type === 'dr' ? C.dr : l.type === 'idr' ? C.idr : l.type === 'mid' ? C.mid : l.type === 'open' ? C.open : play === l.dir ? C.stdOn : C.std;
         items.push({ y: V.Y(l.p), text: (l.type === 'std' ? '' : s.k + ' ') + l.name, col, pr: l.type === 'dr' || l.type === 'idr' ? 3 : l.type === 'std' ? 1 : 2 });
       }
@@ -1290,23 +1337,23 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     if (st.L.vib) {
       const open = vibsKnown(ctx).filter(v => v.fill == null), pNow = s.priceNow != null ? s.priceNow : 0;
       const near = side => open.filter(v => side * ((v.lo + v.hi) / 2 - pNow) > 0).sort((a, b) => Math.abs((a.lo + a.hi) / 2 - pNow) - Math.abs((b.lo + b.hi) / 2 - pNow)).slice(0, 2);
-      for (const v of near(1).concat(near(-1))) items.push({ y: V.Y((v.lo + v.hi) / 2), text: 'VIB', col: C.vib, pr: 0 });
+      for (const v of near(1).concat(near(-1))) items.push({ y: V.Y((v.lo + v.hi) / 2), text: 'VI', col: C.vib, pr: 0 });
     }
     const vis = items.filter(q => q.y > 8 && q.y < V.plot.h - (V.stripOn ? V.strip.h : 0) - 6).sort((a, b) => a.y - b.y);
     const placed = [];
     for (const q of vis.slice().sort((a, b) => b.pr - a.pr)) {
       let y = q.y;
-      for (let tries = 0; tries < 6 && placed.some(p => Math.abs(p.y - y) < 13); tries++) {
-        const hit = placed.find(p => Math.abs(p.y - y) < 13);
-        y = q.y >= hit.y ? hit.y + 13 : hit.y - 13;
+      for (let tries = 0; tries < 6 && placed.some(p => Math.abs(p.y - y) < 7); tries++) {
+        const hit = placed.find(p => Math.abs(p.y - y) < 7);
+        y = q.y >= hit.y ? hit.y + 7 : hit.y - 7;
       }
-      if (placed.some(p => Math.abs(p.y - y) < 12)) continue;
+      if (placed.some(p => Math.abs(p.y - y) < 6)) continue;
       placed.push({ y, q });
     }
-    c.font = '600 10.5px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right';
+    c.font = '5px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right';
     for (const { y, q } of placed) {
-      const w = c.measureText(q.text).width + 8;
-      c.fillStyle = 'rgba(8,9,12,.85)'; c.fillRect(xr - w, y - 7, w + 2, 14);
+      const w = c.measureText(q.text).width + 4;
+      c.fillStyle = 'rgba(8,9,12,.8)'; c.fillRect(xr - w, y - 3.5, w + 2, 7);
       c.fillStyle = q.col; c.fillText(q.text, xr - 2, y + 0.5);
     }
     c.textAlign = 'left';
@@ -1393,7 +1440,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       { id: 'hp', title: ov.mode === 'wait' ? 'Низ · цена' : 'Откат · цена', kind: 'hu', R: pullR },
       { id: 'hc', title: ov.mode === 'wait' ? 'Верх · цена' : 'Расширение · цена', kind: 'hu', R: contR },
       { id: 'tp', title: ov.mode === 'wait' ? 'Время низа' : 'Время отката', kind: 'tb', R: pullR },
-      { id: 'tc', title: ov.mode === 'wait' ? 'Время верха' : 'Время экстремума', kind: 'tb', R: contR }
+      { id: 'tc', title: ov.mode === 'wait' ? 'Когда приходили вверх' : 'Когда приходили', kind: 'tb', R: contR }
     ];
   }
   function drawHist(c, ctx) {
@@ -1580,7 +1627,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       if (tk) taken = ' · взят в ' + clk(tk.t);
       return '<b>' + s.k + ' · ' + l.full + '</b> · ' + px(l.p) + taken + (t != null ? '<br>дошли хотя бы раз: <b>' + pct(t) + '</b>' + mfoot(ov, 'касание уровня') : ov ? '<br><span class="k">цена не сопоставлена: процентов нет</span>' : '');
     }
-    if (h.k === 'vib') { const v = h.v; return '<b>VIB ' + (v.dir === 1 ? '↑' : '↓') + '</b> · ' + px(v.lo) + '–' + px(v.hi) + ' · ' + clk(v.t) + '<br><span class="k">' + (v.fill != null ? 'ребалансирован в ' + clk(v.fill) : 'открыт: цена ещё не заходила') + '</span>'; }
+    if (h.k === 'vib') { const v = h.v; return '<b>VI ' + (v.dir === 1 ? '↑' : '↓') + '</b> · ' + px(v.lo) + '–' + px(v.hi) + ' · ' + clk(v.t) + '<br><span class="k">' + (v.fill != null ? 'ребалансирован в ' + clk(v.fill) : 'открыт: цена ещё не заходила') + '</span>'; }
     if (h.k === 'prev') {
       const P = h.P, q = P.s;
       const how = q.conf ? (q.side === 1 ? '↑ ' : '↓ ') + clk(q.conf) + (q.failed ? ' · слом DR ' + clk(q.failed) : ' · DR удержался') : P.k === 'PREV' ? 'вчерашняя RDR' : 'подтверждения не было';
@@ -1777,7 +1824,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
   function link(h, html, cls, mean) { const i = P21.links.push(h) - 1; return '<div class="p21-link' + (cls ? ' ' + cls : '') + '" data-l21="' + i + '"' + (mean ? ' title="' + esc(mean) + '"' : '') + '>' + html + '</div>'; }
   function lvlObj(s, id) { return levels(s).find(l => l.id === id); }
   // targets ahead in the direction of the side in play (the next STD steps not yet taken, the session extreme, past
-  // sessions' DR, the nearest open VIB)
+  // sessions' DR, the nearest open VI)
   function targets21(ctx) {
     const s = ctx.s, ov = ctx.ov, side = ov.mode === 'brk' ? s.nside : s.side, w = s.idrH - s.idrL, out = [];
     const ahead = p => side === 1 ? p > s.priceNow + 1e-9 : p < s.priceNow - 1e-9;
@@ -1786,9 +1833,9 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     const bars = ctx.D.bars.filter(b => b.t >= s.start && b.t < Math.min(ctx.obs, s.end) && (ctx.live || b.t + 5 <= ctx.obs));
     if (bars.length) { const e = side === 1 ? Math.max(...bars.map(b => b.h)) : Math.min(...bars.map(b => b.l)); if (ahead(e)) out.push({ p: e, name: side === 1 ? 'максимум сессии' : 'минимум сессии' }); }
     for (const P of prevList(ctx)) { const p = side === 1 ? P.s.drH : P.s.drL; if (ahead(p)) out.push({ p, name: P.name + (side === 1 ? ' DR high' : ' DR low') }); }
-    for (const v of vibsKnown(ctx)) if (v.fill == null) { const p = side === 1 ? v.lo : v.hi; if (ahead(p)) out.push({ p, name: 'VIB' }); }
+    for (const v of vibsKnown(ctx)) if (v.fill == null) { const p = side === 1 ? v.lo : v.hi; if (ahead(p)) out.push({ p, name: 'VI' }); }
     out.sort((a, b) => Math.abs(a.p - s.priceNow) - Math.abs(b.p - s.priceNow));
-    const res = [], kind = q => q.name === 'VIB' ? 'vib' : /^[+−]\d/.test(q.name) ? 'std' : 'lvl', cap = { vib: 1, std: 2, lvl: 3 }, used = { vib: 0, std: 0, lvl: 0 };
+    const res = [], kind = q => q.name === 'VI' ? 'vib' : /^[+−]\d/.test(q.name) ? 'std' : 'lvl', cap = { vib: 1, std: 2, lvl: 3 }, used = { vib: 0, std: 0, lvl: 0 };
     for (const q of out) {
       if (res.some(r => Math.abs(r.p - q.p) < 0.06 * w) || used[kind(q)] >= cap[kind(q)]) continue;
       used[kind(q)]++; res.push(q);
@@ -1827,22 +1874,21 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     }
     for (const R of ov.roles) {
       const k = R.cons.slice().sort((a, b) => b.pct - a.pct)[0];
-      const ev = (R.id === 'pull' || R.id === 'dn' ? 'окончательный минимум' : 'окончательный максимум') + ' попал в полосу места';
-      if (k && k.n) out.push(link({ k: 'place', role: R.id, id: k.id }, row('<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i> чаще всего ' + k.name, P(k.pct)), '', M(ev)));
+      const ev = 'после этого момента цена похожих сессий заходила в эту полосу';
+      if (k && k.n) out.push(link({ k: 'place', role: R.id, id: k.id }, row('<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i> чаще всего заходила ' + k.name, P(k.pct)), '', M(ev)));
     }
-    out.push(link({ k: 'col', t0: ctx.obs, t1: ctx.obs + ov.near }, row('в первые ' + ov.near + ' минут', ov.roles.map(R => '<i style="color:' + R.col + '">' + P(R.nearPct) + '</i>').join(' · ')), 'dim', M('окончательный экстремум случился в первые минуты')));
     // the three places per side: share of the band, the densest price in it, and when its sessions first came there
-    out.push('<div class="p21-h second">Места <span>цена · впервые здесь</span></div>');
+    out.push('<div class="p21-h second">Места <span>как часто заходила · цена · впервые</span></div>');
     const mx = Math.max(1, ...ov.roles.flatMap(r => r.cons.map(k => k.pct)));
     for (const R of ov.roles) {
       const arrow = ov.mode === 'wait' ? '' : ((R.id === 'cont' ? side : -side) === 1 ? ' ↑' : ' ↓');
       out.push('<div class="p21-g"><i style="background:' + R.col + '"></i>' + R.name + arrow + '</div>');
       for (const k of R.cons.slice().sort((a, b) => b.sortP - a.sortP)) {
         const hot = k.n ? hotOf(ov, R, k) : null, en = k.entry;
-        const when = !k.n ? '' : en && en.now ? 'сейчас' : en && !none ? clk(en.t0) + '–' + clk(en.t1) : '';
-        const ev = (R.id === 'pull' || R.id === 'dn' ? 'окончательный минимум' : 'окончательный максимум') + ' попал в полосу «' + k.name + '» (вся полоса, не только ядро); «впервые» — когда эти сессии первый раз дошли до полосы';
+        const when = k.now ? 'сейчас здесь' : !k.n ? '' : en && en.now ? 'сейчас' : en && !none ? clk(en.t0) + '–' + clk(en.t1) : '';
+        const ev = 'цена похожих сессий заходила в полосу «' + k.name + '» после этого момента; «впервые» — когда чаще всего заходила первый раз';
         out.push(link({ k: 'place', role: R.id, id: k.id },
-          '<span class="bar" style="width:' + (none ? 0 : 100 * k.pct / mx).toFixed(1) + '%;background:' + R.col + '"></span><b style="color:' + R.col + '">' + P(k.pct) + '</b><span class="z">' + k.short + '</span><span class="pr">' + (hot && !none ? px(hot.p) : '—') + '</span><span class="tm">' + when + '</span>', 'place', M(ev)));
+          '<span class="bar" style="width:' + (none ? 0 : 100 * k.pct / mx).toFixed(1) + '%;background:' + R.col + '"></span><b style="color:' + R.col + '">' + (k.now ? '' : P(k.pct)) + '</b><span class="z">' + k.short + '</span><span class="pr">' + (hot && !none ? px(hot.p) : '—') + '</span><span class="tm">' + when + '</span>', 'place', M(ev)));
       }
     }
     if (ov.mode !== 'wait') {
@@ -1856,22 +1902,12 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
         }
       }
     }
-    // time: by when half (and 70 %) of the final extremes had been reached
-    out.push('<div class="p21-h second">Время экстремума <span>половина достигнута к</span></div>');
-    for (const R of ov.roles) {
-      const ts = R.stars.map(q => q.t), t50 = quant(ts, 0.5), t70 = quant(ts, 0.7);
-      if (t50 == null) continue;
-      const deep = R.id === 'pull' || R.id === 'dn';
-      const text = '<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i>: ' + (none ? '—' : clk(t50) + (deep ? ' · 70% к ' + clk(t70) : ''));
-      const ts2 = none ? [] : [{ t: t50, label: '50% · ' + clk(t50) }].concat(deep ? [{ t: t70, label: '70% · ' + clk(t70) }] : []);
-      out.push(link({ k: 'times', from: ctx.obs, ts: ts2.length ? ts2 : [{ t: ctx.obs, label: clk(ctx.obs) }] }, '<span class="t">' + text + '</span>' + (!none && t50 <= ctx.obs ? '<span class="p21-past">прошло</span>' : ''), 'time',
-        M('момент, когда был достигнут окончательный экстремум; окончательным он стал только к концу сессии')));
-    }
+
     if (ov.mode === 'conf') {
       // the opposite side: the DR rule by M5 close, the wick beyond the DR, and the deep pullback (retirement −0,75)
       out.push('<div class="p21-h second">Противоположная сторона</div>');
       out.push(link({ k: 'lvl', id: side === 1 ? 'drL' : 'drH', l: lvlObj(s, side === 1 ? 'drL' : 'drH') }, row('DR удержится до ' + clk(s.end), P(ov.holds)), '', M('ни одно закрытие M5 не ушло за противоположный край своего DR')));
-      if (ov.wick != null) out.push(link({ k: 'lvl', id: side === 1 ? 'drL' : 'drH', l: lvlObj(s, side === 1 ? 'drL' : 'drH') }, row('тенью за DR заходили', P(ov.wick)), 'dim', M('цена хотя бы тенью (low / high) зашла за противоположный край своего DR — это не сломало правило DR, но задело бы стоп прямо за DR')));
+      if (ov.wick != null) out.push(link({ k: 'lvl', id: side === 1 ? 'drL' : 'drH', l: lvlObj(s, side === 1 ? 'drL' : 'drH') }, row('тенью за DR заходили', P(ov.wick)), 'dim', M('цена хотя бы тенью (low / high) зашла за противоположный край своего DR — так задевается стоп прямо за DR; сюда входят и сломы DR закрытием')));
       const pR = ov.u2p(-0.75), deep = ov.sims.filter(q => q.mn <= -0.75), heldAfter = deep.length >= 10 ? 100 * deep.filter(q => q.held).length / deep.length : null;
       const pull = ov.roles.find(r => r.id === 'pull');
       if (ov.u0 > -0.75) out.push(link({ k: 'zone', pA: pR, pB: s.opp, name: 'retirement −0,75', col: pull.col }, row('retirement −0,75 · ' + px(pR) + (heldAfter != null && !none ? '<br><span class="p21-sub">после касания DR держался ' + pct(heldAfter) + '</span>' : ''), P(none ? null : ov.touch(pR))), '',
@@ -2005,8 +2041,12 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     } else if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
       const dt = (e.deltaX || e.deltaY) * (st.v1 - st.v0) / V.plot.w * 0.6; st.v0 += dt; st.v1 += dt;
     } else {
-      const f = Math.exp(e.deltaY * 0.0012), t = V.T(Math.min(x, V.plot.w)), span = clamp((st.v1 - st.v0) * f, 30, 1500), k = span / (st.v1 - st.v0);
-      st.v0 = t - (t - st.v0) * k; st.v1 = st.v0 + span;
+      // operator 2026-09-29: no empty future on the right when zooming either way
+      // the right edge is anchored at the session end + the «↺» margin (the clusters up to 16:00 stay in view); the wheel
+      // only adds or removes history on the left; zooming in stops at the «↺» view (box start .. session end)
+      const lim = SESS[st.session].end + 45, minSpan = lim - (SESS[st.session].start - 25);   // the closest view = «↺»
+      const span = clamp((lim - st.v0) * Math.exp(e.deltaY * 0.0012), Math.min(minSpan, 1500), 1500);
+      st.v1 = lim; st.v0 = lim - span;
     }
     redraw();
   }, { passive: false });
@@ -2052,6 +2092,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     const row = ([k, n, type, a, b, step]) => {
       const v = cfg[k];
       if (type === 'color') return '<label class="cr"><span>' + n + '</span><input type="color" data-c="' + k + '" value="' + v + '"></label>';
+      if (type === 'boxfill') return '<label class="cr"><span>' + n + '</span><select data-c="' + k + '">' + Object.keys(BOXFILL).map(d => '<option value="' + d + '"' + (d === v ? ' selected' : '') + '>' + BOXFILL[d] + '</option>').join('') + '</select></label>';
       if (type === 'dash') return '<label class="cr"><span>' + n + '</span><select data-c="' + k + '">' + Object.keys(DASH).map(d => '<option value="' + d + '"' + (d === v ? ' selected' : '') + '>' + DASH_NAMES[d] + '</option>').join('') + '</select></label>';
       return '<label class="cr"><span>' + n + '</span><input type="range" data-c="' + k + '" min="' + a + '" max="' + b + '" step="' + (step || 1) + '" value="' + v + '"><em>' + v + '</em></label>';
     };

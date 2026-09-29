@@ -4,7 +4,7 @@ These rules came from the operator over many iterations on 2026-09-24. They are 
 rule and a new idea conflict, keep the rule and ask the operator. Each rule says why, so you can apply it to cases it
 does not name.
 
-On 2026-09-28 the working screen became «Созвездия» (design 21, `design/README.md` has his remarks round by round);
+On 2026-09-28 the working screen became «Созвездия» (design 21; since 2026-09-29 design 22, `design/README.md` has the remarks round by round);
 the previous screen stays at `/classic.html` and these rules still describe it. For the new screen the operator's
 later decisions replace some of them (live chat, 2026-09-28):
 

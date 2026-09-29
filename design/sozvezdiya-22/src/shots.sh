@@ -5,7 +5,7 @@
 cd "$(dirname "$0")/.." || exit 1
 W="$(pwd -W 2>/dev/null || pwd)"
 mkdir -p snap
-for s in "conf" "wait" "brk" "conf&hl=1" "conf&hl=4" "wait&hl=3" "conf&strip=1"; do
+for s in "conf" "wait" "brk" "conf&hl=1" "conf&hl=3" "wait&hl=3" "conf&strip=1"; do
   n=$(echo "$s" | tr '&=:' '___')
   timeout 90 "/c/Program Files/Google/Chrome/Application/chrome.exe" --headless=new --disable-gpu --hide-scrollbars \
     --force-device-scale-factor=1 --window-size=1920,1000 --user-data-dir="$W/snap/.chrome" \

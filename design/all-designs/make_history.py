@@ -114,7 +114,7 @@ copy(os.path.join(REPO, 'design', 'sozvezdiya-21', 'built', 'index.html'), os.pa
 # ---------- 22: design 21 changed by the semantic audit of 29 September («смысл числа»; meaning/04-dizajn-22.md) ----------
 s22 = os.path.join(REPO, 'design', 'sozvezdiya-22')
 copy(os.path.join(s22, 'built', 'index.html'), os.path.join(INTER, '22-smysl-chisla.html'))
-for a, b in [('conf', 'conf'), ('wait', 'wait'), ('brk', 'brk'), ('conf_hl_4', 'place'), ('wait_hl_3', 'own-dr')]:
+for a, b in [('conf', 'conf'), ('wait', 'wait'), ('brk', 'brk'), ('conf_hl_3', 'place'), ('wait_hl_3', 'own-dr')]:
     copy(os.path.join(s22, 'snap', a + '.png'), os.path.join(IMG, '22-smysl-%s.png' % b))
 
 # ---------- the page ----------
