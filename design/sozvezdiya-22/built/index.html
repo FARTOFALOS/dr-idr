@@ -2025,8 +2025,8 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     } else {
       // operator 2026-09-29: no empty future on the right when zooming either way
       // the right edge is anchored at the session end + the «↺» margin (the clusters up to 16:00 stay in view); the wheel
-      // only adds or removes history on the left, and zooming in stops with the last candle and 30 minutes before it
-      const lim = SESS[st.session].end + 45, now = cur().obs, minSpan = Math.max(30, lim - now + 30);
+      // only adds or removes history on the left; zooming in stops at the «↺» view (box start .. session end)
+      const lim = SESS[st.session].end + 45, minSpan = lim - (SESS[st.session].start - 25);   // the closest view = «↺»
       const span = clamp((lim - st.v0) * Math.exp(e.deltaY * 0.0012), Math.min(minSpan, 1500), 1500);
       st.v1 = lim; st.v0 = lim - span;
     }
