@@ -103,7 +103,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
 #cfgp .cr input[type=range]{width:120px;accent-color:#9AA6B8}
 #cfgp .cr em{font-style:normal;color:var(--text3);font-size:11px;text-align:right}
 .dim{color:var(--text3)}
-/* Same chart as 20; the right panel is short and every line is a link to the chart. */
+/* Design 22: the panel of 21 with a match mark and quiet meanings on hover. */
 #dr21-root{position:relative;width:100%;height:100%;--p21-width:292px}
 #main{right:var(--p21-width)}
 #panel{width:var(--p21-width);padding:12px 12px 12px;font-size:13px;line-height:1.35;color:#D1D4DC}
@@ -153,16 +153,18 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
 @media(max-width:700px){html,body{height:auto;min-height:100%;overflow:auto}#dr21-root{height:1260px!important}#tb{height:90px;flex-wrap:wrap;align-content:center;gap:6px;white-space:normal}#main{top:90px;right:0;height:570px;bottom:auto}#panel{top:660px;left:0;width:100%;bottom:0;border-left:0;border-top:1px solid #252B34;padding:10px 14px}#dr21-root.panel21closed{height:660px!important}#menu,#cfgp{right:5px;top:85px;max-width:calc(100% - 10px)}#clock{margin-left:auto}#step21 button,#panel21toggle{min-height:30px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 .p21-sub{color:#8F98A6;font-size:11.5px}
+.p22-match{font-style:normal;margin-left:6px;font-size:12px;cursor:help}.p22-match.m-p25{color:#8FD3BC}.p22-match.m-p50{color:#D8C17E}.p22-match.m-none{color:#E79A94}
+.p21-link[title],.p21-h span[title],.p21-note[title],.p21-dir .lb[title]{cursor:help}
 
 </style>
 </head>
 <body>
-<div id="dr21-root" aria-label="DR Lab — вариант 21">
+<div id="dr21-root" aria-label="DR Lab — вариант 22">
 <div id="tb">
   <div class="seg" id="inst"><button class="on">NQ</button><button class="off" title="В макете только NQ">ES</button><button class="off" title="В макете только NQ">YM</button></div>
   <div class="seg" id="sess"></div>
   <span class="lbl" id="date"></span>
-  <span class="lbl version21">№ 21 · пример</span>
+  <span class="lbl version21">№ 22 · пример</span>
   <div class="seg" id="scene"></div>
   <div class="sp"></div>
   <div id="apibar"></div>

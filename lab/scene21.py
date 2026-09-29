@@ -271,14 +271,17 @@ def cohort(inst, session, at=None):
         if mode == "conf":
             opp = m["dr_low"] if side == 1 else m["dr_high"]
             rec["held"] = not bool((side * (fut[:, 4] - opp) < 0).any())
-        if mode == "wait": rec["cross"] = m["side"] if m["conf"] is not None else 0
+            rec["wick"] = bool((side * ((fut[:, 3] if side == 1 else fut[:, 2]) - opp) < 0).any())  # design 22: a wick beyond its own DR
+        if mode == "wait":
+            rec["cross"] = m["side"] if m["conf"] is not None else 0
+            rec["uH"] = round(float((m["dr_high"] - rec["e"]) / rec["w"]), 4); rec["uL"] = round(float((m["dr_low"] - rec["e"]) / rec["w"]), 4)  # own DR
     clk = lambda t: f"{(t // 60) % 24:02d}:{t % 60:02d}"
     if mode == "wait":
         cond = "подтверждения нет к " + clk(obs) + ", коробка " + {"up": "зелёная", "down": "красная", "flat": "серая"}[s["box"]] +                (", модели дня те же" if used_models else "")
     else:
         cond = ("лонг" if side == 1 else "шорт") + ", подтверждение " + clk(s["conf"] - 15) + "–" + clk(s["conf"] + 15) +                (", DR сломан" if mode == "brk" else ", DR цел")
     cond += (", цена ±" + str(band).replace(".", ",") + " IDR") if band else ", цена без ограничения"
-    keys = ("date", "pos", "mx", "tmx", "mn", "tmn", "cl", "hi", "lo") + (("held",) if mode == "conf" else ()) + (("cross",) if mode == "wait" else ())
+    keys = ("date", "pos", "mx", "tmx", "mn", "tmn", "cl", "hi", "lo") + (("held", "wick") if mode == "conf" else ()) + (("cross", "uH", "uL") if mode == "wait" else ())
     out = dict(status="ok", mode=mode, session=session, obs=obs, o5=o5, n=len(sel), band=band, cond=cond, grid=grid, u0=u0,
                models=dict(up=models_today[0], down=models_today[1], used=used_models) if models_today else None,
                sims={k: [x[k] for x in sel] for k in keys})

@@ -1,4 +1,4 @@
-# Design 22 «Созвездия · смысл числа» — a mockup (the working screen is still 21)
+# Design 22 «Созвездия · смысл числа» — the working screen since 2026-09-29 (operator's go-ahead)
 
 Design 21 changed by the semantic audit of 2026-09-29. **The meaning of every change, with numbered pictures, is in
 [`meaning/04-dizajn-22.md`](../../meaning/04-dizajn-22.md)**; this file is about the code. Synthetic data only: the two
@@ -35,9 +35,10 @@ most frequent pullback place, 4 = the continuation place «+1,5…+2,0»; in `#w
 | removed | the hint texts «наведите, чтобы раскрыть», «клик — закрепить», the long replay caption (UI rule 4) |
 | view | 45 minutes kept right of the session end for the brackets (`fitSession`, default `v1`) |
 
-## To make it the working screen (only with the operator's go-ahead, outside trading hours)
+## The working screen (2026-09-29)
 
-`lab/scene21.py` must add per similar session `uH`, `uL` (wait: its own DR high / low on the 0 = IDR low, 1 = IDR high
-scale) and `wick` (conf: a low / high beyond its own opposite DR after the minute); `build.py` must then also write
-`lab/dist` like design 21's does; `docs/SEMANTICS.md` «Дизайн 22» becomes the definitions of the working screen;
-`tests/ui_check21.js` must know the dashes and the match mark.
+`build.py` also writes `lab/dist/index.html` + `sozvezdiya.js` (restart not needed for the front end; `lab/scene21.py`
+changes need a server restart). `/api/cohort` sends per similar session `uH`, `uL` (wait: own DR high / low on the
+0 = IDR low, 1 = IDR high scale) and `wick` (conf: a wick beyond its own opposite DR after the minute). Checked live
+on 29.09 with `tests/ui_check21.js` (no problems; ◐ with percentages, ○ with dashes). Still to do: `docs/SEMANTICS.md`
+«Дизайн 22» should become the definitions of the working screen.

@@ -1,7 +1,11 @@
-// Built from design/sozvezdiya-21/src (app.js + panel21.js) by its build.py: edit there.
-// ================= DR Lab · «Созвездия» (design 21): the working screen and its mockup =================
-// With window.__DAYS__ (design/sozvezdiya-21/built) it runs on two synthetic days; without it (lab/dist) it is the
-// working screen: day bars and similar sessions come from the local server (lab/scene21.py, docs/SEMANTICS.md).
+// Built from design/sozvezdiya-22/src (app.js + panel.js) by its build.py: edit there.
+// ================= DR Lab · «Созвездия» · design 22 «смысл числа» (a mockup; the working screen is still 21) =================
+// Design 21 changed by the semantic audit of 2026-09-29 (meaning/04-dizajn-22.md): every number says which event,
+// after which minute, over which area and with which match of the price it counts; numbers without a matched price are
+// not shown; a place's share sits on its price band, not on its densest core; «when» of a place = first arrival there;
+// the fan is drawn as time slices; before a confirmation «до DR high/low» uses each session's own DR; after a DR break
+// the roles are named by the break; «пусто» is gone. With window.__DAYS__ it runs on two synthetic days; without it the
+// code would read the local server (lab/scene21.py) like design 21, with two more fields (own DR, wick) when they exist.
 // Synthetic days only (design/clusters-2026-09-28/gen_days.py + a few VIBs from build.py): M5 bars [open minute, o, h, l,
 // c], minutes of the trading day in ET, the evening before negative. The similar sessions are SIMULATED (a stand-in for
 // the history cohort): not market data, not the lab's numbers. Replay obeys prefix honesty: only bars closed by the
@@ -84,6 +88,9 @@
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const stepName = (j, above) => (above ? '+' : '−') + num(j * 0.5, 1);
+  // the meaning of a number in one quiet line (design 22): which event, after which minute until when, how today's price
+  // was matched in the history
+  const mfoot = (ov, ev) => '<br><span class="k">' + esc(ev) + ' · после ' + clk(ov.obs) + ' до ' + clk(ov.end) + ' · ' + MATCH[ov.match] + '</span>';
 
   // ---------- the day: bars and volume imbalances ----------
   const DD = {};
@@ -229,7 +236,10 @@
     for (let i = 0; i < n; i++) {
       const oo = Object.assign({}, o, { mu: o.mu + (o.muJ || 0) * g(), pull: o.pull * (0.5 + r()), tau: o.tau * (0.6 + 0.8 * r()), sig: o.sig * (0.75 + 0.5 * r()) });
       if (o.rev && r() < o.rev) oo.mu = -Math.abs(oo.mu) * 3;
+      // each similar session has its own DR in its own IDR units (design 22): its confirmation is judged by its own DR
+      if (o.hiC != null && o.ownDR) { oo.hiC = o.hiC + o.ownDR * g(); oo.loC = o.loC + o.ownDR * g(); }
       const w = walk(r, g, x0 + 0.1 * g(), obs, end, oo, grid);
+      if (oo.hiC != null) { w.uH = oo.hiC; w.uL = oo.loC; }
       const y = 2006 + Math.floor(r() * 20), dd = 1 + Math.floor(r() * 28), mm = 1 + Math.floor(r() * 12);
       w.date = String(dd).padStart(2, '0') + '.' + String(mm).padStart(2, '0') + '.' + y;
       out.push(w);
@@ -246,37 +256,55 @@
     const ov = { s, obs, end, grid, key };
     let pts;
     if (s.status === 'confirmed') {
-      ov.mode = 'conf'; ov.N = 380 + Math.floor(r() * 140);
+      ov.mode = 'conf'; ov.N = 380 + Math.floor(r() * 140); ov.band = 0.25;
       ov.sims = simulate(D.d + key, ov.N, s.nowCoord, obs, end, { mu: 0.0017, muJ: 0.0022, pull: 0.007, tau: 30, sig: 0.044, rev: 0.1 }, grid);
       ov.u2p = s.price; ov.p2u = s.coord; ov.u0 = s.nowCoord;
       ov.cond = (s.side === 1 ? 'лонг' : 'шорт') + ', подтверждение ' + clk(s.conf - 15) + '–' + clk(s.conf + 15) + ', DR цел, цена ±0,25 IDR';
       pts = PTS.conf;
     } else if (s.status === 'broken') {
-      ov.mode = 'brk'; ov.N = 160 + Math.floor(r() * 80);
+      // after a DR break the history is thin and usually cannot be matched on price (on the tape: 63-70 % of such moments);
+      // the mockup shows that case on purpose
+      ov.mode = 'brk'; ov.N = 22 + Math.floor(r() * 8); ov.band = null;
       ov.sims = simulate(D.d + key, ov.N, s.nowN, obs, end, { mu: 0.0016, muJ: 0.0022, pull: 0.012, tau: 18, sig: 0.042, rev: 0.1 }, grid);
       ov.u2p = s.nprice; ov.p2u = s.ncoord; ov.u0 = s.nowN;
-      ov.cond = 'слом DR ' + (s.nside === 1 ? '↑' : '↓') + ' ' + clk(s.failed - 15) + '–' + clk(s.failed + 15) + ', цена ±0,25 IDR';
-      pts = PTS.conf;
+      ov.cond = (s.side === 1 ? 'лонг' : 'шорт') + ', подтверждение ' + clk(s.conf - 15) + '–' + clk(s.conf + 15) + ', DR сломан, цена не сопоставлена';
+      pts = PTS.brk;
     } else {
-      ov.mode = 'wait'; ov.N = 480 + Math.floor(r() * 160);
+      ov.mode = 'wait'; ov.N = 480 + Math.floor(r() * 160); ov.band = 0.25;
       const w = s.width, u = p => (p - s.idrL) / w;
       ov.u2p = v => s.idrL + v * w; ov.p2u = u; ov.u0 = u(s.priceNow);
-      ov.sims = simulate(D.d + key, ov.N, ov.u0, obs, end, { mu: s.boxUp ? 0.0004 : -0.0004, muJ: 0.0006, pull: 0, tau: 1, sig: 0.04, hiC: u(s.drH), loC: u(s.drL), trend: 0.0022 }, grid);
+      ov.sims = simulate(D.d + key, ov.N, ov.u0, obs, end, { mu: s.boxUp ? 0.0004 : -0.0004, muJ: 0.0006, pull: 0, tau: 1, sig: 0.04, hiC: u(s.drH), loC: u(s.drL), ownDR: 0.12, trend: 0.0022 }, grid);
       const up = ov.sims.filter(p => p.cross === 1).length, dn = ov.sims.filter(p => p.cross === -1).length;
       ov.dir = { up: 100 * up / ov.N, dn: 100 * dn / ov.N, none: 100 * (ov.N - up - dn) / ov.N };
       ov.cond = 'подтверждения нет к ' + clk(obs) + ', цена ±0,25 IDR';
       pts = PTS.wait;
     }
-    // DR holds (SEMANTICS «DR удержится»): no 5-minute close beyond the opposite DR edge until the end of the session
-    if (ov.mode === 'conf') { const oppU = s.coord(s.opp); for (const p of ov.sims) p.held = !p.cl.some(v => v < oppU); }
+    // DR holds (SEMANTICS «DR удержится»): no 5-minute close beyond the session's OWN opposite DR edge until the end of
+    // the session; «тенью за DR»: its low (high) went beyond that edge at least once (design 22)
+    if (ov.mode === 'conf') {
+      const oppU = s.coord(s.opp), rr = mkRng(hash(D.d + key + 'own'));
+      for (const p of ov.sims) { p.oppU = oppU + 0.12 * gauss(rr); p.held = !p.cl.some(v => v < p.oppU); p.wick = p.lo.some(v => v < p.oppU); }
+    }
     return (D.O[key] = finishOverlay(ov, pts));
   }
-  const PTS = { conf: [['cont', 'Продолжение', 'mx', 'tmx'], ['pull', 'Откат', 'mn', 'tmn']], wait: [['up', 'Верх', 'mx', 'tmx'], ['dn', 'Низ', 'mn', 'tmn']] };
+  // after a DR break the sides are named by the break, not «продолжение / откат» of the broken confirmation (design 22)
+  const PTS = { conf: [['cont', 'Продолжение', 'mx', 'tmx'], ['pull', 'Откат', 'mn', 'tmn']], brk: [['cont', 'По слому', 'mx', 'tmx'], ['pull', 'Против слома', 'mn', 'tmn']],
+    wait: [['up', 'Верх', 'mx', 'tmx'], ['dn', 'Низ', 'mn', 'tmn']] };
+  // the match of today's price in the history: ±0,25 IDR, ±0,5 IDR or none (then no percentage is shown: on new days
+  // such numbers were no better than a constant, the targets worse; meaning/03-dokazatelstva.md)
+  const MATCH = { p25: 'цена сопоставлена ±0,25 IDR', p50: 'цена сопоставлена ±0,5 IDR', none: 'цена не сопоставлена' };
   function finishOverlay(ov, pts) {
     ov.near = ov.end - ov.obs < 45 ? 5 : NEAR;
+    ov.match = ov.band === 0.25 ? 'p25' : ov.band === 0.5 ? 'p50' : 'none';
     ov.roles = pts.map(q => role(ov, q[0], q[1], null, ov.sims.map((z, i) => ({ u: z[q[q.length - 2]], t: z[q[q.length - 1]], i }))));
     ov.fan = fanOf(ov);
     if (ov.mode === 'conf') ov.holds = 100 * ov.sims.filter(p => p.held).length / ov.N;
+    if (ov.mode === 'conf' && ov.sims.every(p => p.wick != null)) ov.wick = 100 * ov.sims.filter(p => p.wick).length / ov.N;
+    // before a confirmation: the share that reached its OWN DR high / low (consistent with ↑ / ↓, which use own DRs)
+    if (ov.mode === 'wait' && ov.sims.every(p => p.uH != null)) {
+      ov.ownH = 100 * ov.sims.filter(p => p.mx >= p.uH).length / ov.N;
+      ov.ownL = 100 * ov.sims.filter(p => p.mn <= p.uL).length / ov.N;
+    }
     const mxs = Float64Array.from(ov.sims.map(q => q.mx)).sort(), mns = Float64Array.from(ov.sims.map(q => q.mn)).sort();
     const cntGE = (a, v) => { let lo = 0, hi = a.length; while (lo < hi) { const m = (lo + hi) >> 1; if (a[m] < v) lo = m + 1; else hi = m; } return a.length - lo; };
     ov.touch = p => { const u = ov.p2u(p); return 100 * (u >= ov.u0 ? cntGE(mxs, u) : ov.N - cntGE(mns, u + 1e-12)) / ov.N; };
@@ -290,9 +318,11 @@
     if (!r) { requestCohort(ck, s); return null; }
     const mode = { confirmed: 'conf', broken: 'brk', waiting: 'wait' }[s.status];
     if (r.status !== 'ok' || r.mode !== mode || !r.n) return null;
-    const S = r.sims, ov = { s, obs: s.obs, end: s.end, grid: r.grid, key, mode, N: r.n, cond: r.cond, models: r.models };
+    const S = r.sims, ov = { s, obs: s.obs, end: s.end, grid: r.grid, key, mode, N: r.n, cond: r.cond, models: r.models, band: r.band };
+    // own DR fields (design 22) exist only if the server sends them: sims.uH / uL (own DR high / low, wait) and sims.wick
     ov.sims = S.mx.map((_, i) => ({ mx: S.mx[i], tmx: S.tmx[i], mn: S.mn[i], tmn: S.tmn[i], cl: S.cl[i], hi: S.hi[i], lo: S.lo[i], xs: S.pos[i],
-      date: S.date[i].split('-').reverse().join('.'), held: S.held ? S.held[i] : null, cross: S.cross ? S.cross[i] : 0 }));
+      date: S.date[i].split('-').reverse().join('.'), held: S.held ? S.held[i] : null, cross: S.cross ? S.cross[i] : 0,
+      uH: S.uH ? S.uH[i] : null, uL: S.uL ? S.uL[i] : null, wick: S.wick ? S.wick[i] : null }));
     if (mode === 'conf') { ov.u2p = s.price; ov.p2u = s.coord; ov.u0 = s.nowCoord; }
     else if (mode === 'brk') { ov.u2p = s.nprice; ov.p2u = s.ncoord; ov.u0 = s.nowN; }
     else { const w = s.width; ov.u2p = v => s.idrL + v * w; ov.p2u = p => (p - s.idrL) / w; ov.u0 = ov.p2u(s.priceNow); }
@@ -300,7 +330,7 @@
       const up = ov.sims.filter(p => p.cross === 1).length, dn = ov.sims.filter(p => p.cross === -1).length;
       ov.dir = { up: 100 * up / ov.N, dn: 100 * dn / ov.N, none: 100 * (ov.N - up - dn) / ov.N };
     }
-    return (D.O[key] = finishOverlay(ov, mode === 'wait' ? PTS.wait : PTS.conf));
+    return (D.O[key] = finishOverlay(ov, PTS[mode]));
   }
   function requestCohort(ck, s) {
     if (A.pending.has(ck)) return;
@@ -383,13 +413,41 @@
       return [{ name: 'дальше ' + nm(s2), short: 'за ' + nm(s2), lo: s2, hi: Infinity }, { name: 'от ' + nm(s1) + ' до ' + nm(s2), short: nm(s1) + '…' + nm(s2), lo: s1, hi: s2 }, { name: 'не дальше ' + nm(s1), short: 'до ' + nm(s1), lo: -Infinity, hi: s1 }];
     }
     const side = ov.mode === 'brk' ? s.nside : s.side;
+    if (ov.mode === 'brk') return [{ name: 'у нового края IDR', short: 'новый край', lo: -0.25, hi: Infinity }, { name: 'середина IDR', short: 'середина', lo: -0.75, hi: -0.25 }, { name: 'к старому краю IDR', short: 'старый край', lo: -Infinity, hi: -0.75 }];
     return [{ name: 'от ' + (side === 1 ? 'верхней' : 'нижней') + ' границы', short: 'граница', lo: -0.25, hi: Infinity }, { name: 'от центра', short: 'центр', lo: -0.75, hi: -0.25 }, { name: 'retirement setup', short: 'retirement', lo: -Infinity, hi: -0.75 }];
+  }
+  // «впервые» of a place (design 22): when its sessions first reached its price band — the band's edge nearest to the
+  // price at the moment — on 5-minute bars; the densest 5-minute window, widened to neighbours holding >= 60 % of it.
+  // A place that already holds the price answers «сейчас здесь». The stars stay where the final extremes were.
+  function entryOf(ov, R, k) {
+    const down = R.id === 'pull' || R.id === 'dn', u0 = ov.u0;
+    if (k.lo <= u0 && u0 < k.hi) return { now: true };
+    const edge = down ? k.hi : k.lo;
+    if (down ? edge > u0 : edge <= u0) return null;
+    const bins = new Map();
+    let n = 0;
+    for (const q of k.all) {
+      const p = ov.sims[q.i], arr = down ? p.lo : p.hi;
+      if (!arr) continue;
+      for (let j = 0; j < ov.grid.length; j++) {
+        const v = arr[j];
+        if (v != null && (down ? v <= edge : v >= edge)) { const T = ov.grid[j] - 5; bins.set(T, (bins.get(T) || 0) + 1); n++; break; }
+      }
+    }
+    if (!n) return null;
+    let pk = null;
+    for (const [b, c] of bins) if (!pk || c > pk[1]) pk = [b, c];
+    let t0 = pk[0], t1 = pk[0] + 5, m = pk[1];
+    while ((bins.get(t0 - 5) || 0) >= 0.6 * pk[1]) { t0 -= 5; m += bins.get(t0); }
+    while ((bins.get(t1) || 0) >= 0.6 * pk[1]) { m += bins.get(t1); t1 += 5; }
+    return { t0, t1, pct: 100 * m / ov.N, bins: [...bins].sort((a, b) => a[0] - b[0]), peak: pk[1], edge };
   }
   // the constellation of a place: where inside the band the extremes lie densest (the connected region of at least 38 %
   // of the place's own peak that holds most of its sessions), with its time window
   function zoneOf(ov, R, z, i, far) {
     const all = far.filter(q => q.u >= z.lo && q.u < z.hi), N = ov.N;
     const k = { id: i, rank: i + 1, role: R.id, name: z.name, short: z.short, lo: z.lo, hi: z.hi, n: all.length, pct: 100 * all.length / N, all, mem: [] };
+    k.entry = all.length ? entryOf(ov, R, k) : null;
     const ps = all.map(q => q.p).sort((a, b) => a - b);
     k.sortP = ps.length ? ps[ps.length >> 1] : ov.u2p(isFinite(z.lo) ? z.lo : z.hi);
     k.zA = ps.length ? ps[0] : null; k.zB = ps.length ? ps[ps.length - 1] : null;
@@ -457,19 +515,34 @@
   // typical path: the one similar session whose closes stay nearest to that median (sum of squared gaps)
   // the fan (SEMANTICS «веер»: median and 20-80 % of the similar sessions' closes, from the current position)
   function fanOf(ov) {
-    const N = ov.sims.length, a = new Float64Array(N), out = [];
+    const N = ov.sims.length, a = new Float64Array(N), out = [], cols = [];
     for (let j = 0; j < ov.grid.length; j++) {
       let m = 0;
       for (let i = 0; i < N; i++) { const p = ov.sims[i], v = p.cl[j]; if (v != null && isFinite(v)) a[m++] = v - p.xs + ov.u0; }
-      if (m < 10) continue;
+      if (m < 10) { cols.push(null); continue; }
       const v = a.subarray(0, m).sort(), q = f => v[Math.min(m - 1, Math.max(0, Math.round(f * (m - 1))))];
-      out.push({ T: ov.grid[j], q20: q(0.2), q50: q(0.5), q80: q(0.8) });
+      const f = { T: ov.grid[j], q20: q(0.2), q50: q(0.5), q80: q(0.8) };
+      out.push(f); cols.push(f);
     }
+    // the fan is a spread per moment, not a corridor (design 22): the share of similar sessions whose WHOLE path stayed
+    // inside it (on the tape 12-13 % on average)
+    let inside = 0;
+    for (const p of ov.sims) {
+      let ok = true;
+      for (let j = 0; j < cols.length && ok; j++) {
+        const f = cols[j], v = p.cl[j];
+        if (!f || v == null || !isFinite(v)) continue;
+        const x = v - p.xs + ov.u0;
+        if (x < f.q20 || x > f.q80) ok = false;
+      }
+      if (ok) inside++;
+    }
+    ov.fanCover = N ? 100 * inside / N : null;
     return out;
   }
   // ---------- view state ----------
   const st = {
-    scene: 'conf', dayK: 'A', session: 'RDR', rp: null, v0: 545, v1: 975, p0: null, p1: null, auto: true,
+    scene: 'conf', dayK: 'A', session: 'RDR', rp: null, v0: 545, v1: 1005, p0: null, p1: null, auto: true,
     L: { stars: true, cons: true, fan: true, proj: true, strip: true, std: true, prev: true, vib: true, hist: true },
     hover: null, pin: null, mx: -1, my: -1, drag: null, stripH: 46, stripPin: false, menu: false,
     pal: 'mint', histH: 22, histPin: false, histOver: false, navHover: false
@@ -484,10 +557,10 @@
     const s = sess(D, st.session, obs, live), ov = overlay(D, s);
     return { D, obs, live, s, ov };
   }
-  function fitSession(k) { const S = SESS[k]; st.v0 = S.start - 25; st.v1 = S.end + 15; st.auto = true; }
+  function fitSession(k) { const S = SESS[k]; st.v0 = S.start - 25; st.v1 = S.end + 45; st.auto = true; }
   function setScene(sc) {
     st.scene = sc; st.dayK = sc === 'brk' ? 'B' : 'A'; st.session = 'RDR'; st.rp = sc === 'wait' ? 640 : null;
-    st.pin = null; st.hover = null; fitSession('RDR'); if (sc !== 'wait') { st.v0 = 545; st.v1 = 975; }
+    st.pin = null; st.hover = null; fitSession('RDR'); if (sc !== 'wait') { st.v0 = 545; st.v1 = 1005; }
     render(true);
   }
   function selSession(k) {
@@ -521,7 +594,7 @@
   // ---------- geometry ----------
   function geom(ctx) {
     const W = cv.clientWidth, H = cv.clientHeight, handleH = st.L.hist ? 22 : 0, axisW = 88, timeH = 28;
-    const projW = st.L.proj && ctx.ov ? 92 : 0;
+    const projW = st.L.proj && ctx.ov && ctx.ov.match !== 'none' ? 92 : 0;
     const plot = { x: 0, y: 0, w: W - axisW - projW, h: H - handleH - timeH };
     const G = { W, H, handleH, axisW, timeH, plot, projW, ctx };
     G.proj = { x: plot.w + axisW, y: 0, w: projW, h: plot.h };
@@ -533,7 +606,7 @@
     G.Y = p => plot.y + (p1 - p) / (p1 - p0) * plot.h;
     G.P = y => p1 - (y - plot.y) / plot.h * (p1 - p0);
     G.bs = plot.w * 5 / (st.v1 - st.v0);
-    G.stripOn = st.L.strip && ctx.ov && ctx.ov.grid.length > 0;
+    G.stripOn = st.L.strip && ctx.ov && ctx.ov.grid.length > 0 && ctx.ov.match !== 'none';
     const sx0 = Math.max(plot.x, G.X(ctx.obs));
     G.strip = { x: sx0, y: plot.h - st.stripH, w: Math.max(0, Math.min(plot.w, G.X(ctx.ov ? ctx.ov.end : 0)) - sx0), h: st.stripH };
     return G;
@@ -594,7 +667,7 @@
     drawCross(c);
     c.restore();
     drawPriceAxis(c, ctx);
-    if (ctx.ov && st.L.proj) drawProj(c, ctx.ov);
+    if (ctx.ov && st.L.proj && V.projW) drawProj(c, ctx.ov);
     drawTimeAxis(c, ctx);
     drawLegend(c, ctx);
     drawHist(c, ctx);
@@ -655,15 +728,19 @@
       c.fillRect(x0, y0 - 1, 1.5, Math.max(2, y1 - y0 + 2));
     }
   }
+  // the fan as time slices (design 22): every 15 minutes a thin vertical from the 20th to the 80th percentile of the
+  // similar sessions' closes at that moment (each from its own position), not a filled corridor: a whole path stays
+  // inside such a fan only rarely (ov.fanCover)
   function drawFanBand(c, ov) {
     const F = ov.fan;
     if (!F.length) return;
-    const x0 = V.X(ov.obs), y0 = V.Y(ov.s.priceNow);
-    c.beginPath(); c.moveTo(x0, y0);
-    for (const f of F) c.lineTo(V.X(f.T), V.Y(ov.u2p(f.q80)));
-    for (let i = F.length - 1; i >= 0; i--) c.lineTo(V.X(F[i].T), V.Y(ov.u2p(F[i].q20)));
-    c.closePath();
-    c.fillStyle = 'rgba(209,212,220,' + (0.045 * cfg.fanA / 50).toFixed(4) + ')'; c.fill();
+    const h = hv(), a = Math.min(1, 0.3 * cfg.fanA / 50);
+    for (const f of F) {
+      if (f.T % 15) continue;
+      const x = Math.round(V.X(f.T)) + 0.5, ya = V.Y(ov.u2p(f.q20)), yb = V.Y(ov.u2p(f.q80)), on = h && h.k === 'fan' && h.T === f.T;
+      c.strokeStyle = rgba(C.fan, on ? 0.95 : a); c.lineWidth = on ? 2 : 1;
+      c.beginPath(); c.moveTo(x, ya); c.lineTo(x, yb); c.moveTo(x - 2, ya); c.lineTo(x + 2, ya); c.moveTo(x - 2, yb); c.lineTo(x + 2, yb); c.stroke();
+    }
   }
   // the median path of the similar sessions as hollow ghost candles (body: median close to median close; wick: median high / low)
   // the typical path: dash-dot, like the fan's middle line in design 1, but one real similar session, so it moves like price
@@ -702,6 +779,7 @@
     return [x0, y0, x1 - x0, y1 - y0];
   }
   function drawGlow(c, ov) {
+    if (ov.match === 'none') return;   // without a matched price the constellations are outlines only (design 22)
     const h = hv(), focus = h && (h.k === 'con' || h.k === 'place' || h.k === 'col' || h.k === 'pband' || h.k === 'rect');
     c.save(); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
     for (const R of ov.roles) for (const k of R.cons) {
@@ -756,10 +834,7 @@
       }
       else if (h.k === 'rect') inF = q.role === h.role && q.t > h.t0 && q.t <= h.t1 && q.p >= h.pLo && q.p <= h.pHi;
       else if (h.k === 'star') inF = q.i === h.i;
-      else if (h.k === 'place') {
-        const H = V.h21, hot = H && H.hot;
-        inF = q.role !== h.role ? false : hot && q.p >= hot.pLo && q.p < hot.pHi && q.t > hot.tc.t0 && q.t <= hot.tc.t1 ? true : q.zone && q.zone.id === h.id ? 'core' : false;
-      }
+      else if (h.k === 'place') inF = q.role === h.role && !!q.zone && q.zone.id === h.id;
       if (inF === true) { a = Math.min(0.8, a + 0.3); r += 0.35; } else if (inF === 'core') { a = Math.min(0.6, a + 0.1); } else if (inF === false) a *= 0.45;
     }
     return [Math.min(1, a * cfg.starA / 50), r];
@@ -915,36 +990,39 @@
     if (sl) box(sl.t0, sl.t1, sl.pA, sl.pB, true);
     V.win = sl ? { t0: sl.t0, t1: sl.t1, pA: sl.pA, pB: sl.pB, col: R.col } : { t0: k.t0, t1: k.t1, pA: k.pA, pB: k.pB, col: R.col };
   }
-  // the share of each constellation, written large inside it like a watermark; it lights up on hover
+  // a place's share sits on its price band, not on its core (design 22): right of the session's end, a thin bracket over
+  // the prices where the place's sessions ended (lowest to highest of their extremes) with the share beside it. The
+  // glowing core carries no number: on the tape it holds about a third of the place's sessions. No bracket and no number
+  // when today's price could not be matched in the history.
   function drawMarks(c, ov) {
-    const h = hv(), boxes = [];
+    const h = hv(), labels = [];
     V.marks = [];
-    const all = [];
-    for (const R of ov.roles) for (const k of R.cons) if (k.tp != null) all.push({ R, k });
-    all.sort((a, b) => b.k.pct - a.k.pct);
-    for (const { R, k } of all) {
-      const fs = Math.round(clamp(11 + 7 * Math.sqrt(k.pct / 40), 11, 19) * cfg.markSize / 100), text = pct(k.pct);
+    if (ov.match === 'none') return;
+    const xEnd = Math.min(V.X(ov.end) + 6, V.plot.w - 70), yMax = V.plot.h - (V.stripOn ? V.strip.h : 0);
+    ov.roles.forEach((R, ri) => {
+      const x = Math.round(xEnd + ri * 7) + 0.5;
+      for (const k of R.cons) {
+        if (!k.n || k.zA == null) continue;
+        const ya = V.Y(k.zA), yb = V.Y(k.zB), top = Math.max(0, Math.min(ya, yb)), bot = Math.min(yMax, Math.max(ya, yb));
+        if (bot <= top) continue;
+        const on = isCon(h, R, k), dim = isConH(h) && !on;
+        c.strokeStyle = rgba(R.col, on ? 1 : dim ? 0.3 : 0.75); c.lineWidth = on ? 2.4 : 1.4;
+        c.beginPath(); c.moveTo(x, top + 1.5); c.lineTo(x, bot - 1.5); c.moveTo(x - 3, top + 1.5); c.lineTo(x, top + 1.5); c.moveTo(x - 3, bot - 1.5); c.lineTo(x, bot - 1.5); c.stroke();
+        labels.push({ R, k, x, y: (top + bot) / 2, top, bot, on, dim });
+      }
+    });
+    const xl = Math.round(xEnd + ov.roles.length * 7 + 4), placed = [];
+    for (const L of labels.sort((a, b) => b.k.pct - a.k.pct)) {
+      const fs = Math.round(clamp(11 + 4 * Math.sqrt(L.k.pct / 40), 11, 15) * cfg.markSize / 100), text = pct(L.k.pct);
       c.font = '700 ' + fs + 'px ' + FONT;
       const tw = c.measureText(text).width;
-      const cands = [[V.X(k.tp), V.Y(k.pp)], [V.X((k.t0 + k.t1) / 2), V.Y((k.pA + k.pB) / 2)], [V.X(k.tp), V.Y(k.pp) - fs * 0.9], [V.X(k.tp), V.Y(k.pp) + fs * 0.9]];
-      let pos = null;
-      const xA = V.X(ov.obs + ov.near) + tw / 2 + 4, xB = V.plot.w - tw / 2 - 84, yA = fs, yB = V.plot.h - (V.stripOn ? V.strip.h : 0) - fs;
-      for (const c0 of cands) { c0[0] = clamp(c0[0], Math.min(xA, xB), xB); c0[1] = clamp(c0[1], yA, yB); }
-      for (const [x, y] of cands) {
-        const b = [x - tw / 2 - 3, y - fs / 2 - 2, tw + 6, fs + 4];
-        if (!boxes.some(q => b[0] < q[0] + q[2] && q[0] < b[0] + b[2] && b[1] < q[1] + q[3] && q[1] < b[1] + b[3])) { pos = [x, y, b]; break; }
-      }
-      if (!pos) continue;
-      boxes.push(pos[2]);
-      const on = isCon(h, R, k), dim = isConH(h) && !on;
-      c.textAlign = 'center'; c.textBaseline = 'middle';
-      if (on) { c.shadowColor = R.col; c.shadowBlur = 10; }
-      c.fillStyle = on ? '#FFFFFF' : 'rgba(236,240,246,' + (cfg.markA / 100 * (dim ? 0.4 : 1)).toFixed(3) + ')';
-      c.fillText(text, pos[0], pos[1] + 1);
-      c.shadowBlur = 0;
-      if (on) { c.font = '600 11px ' + FONT; c.fillStyle = rgba(R.col, 0.95); c.fillText(k.name, pos[0], pos[1] + fs / 2 + 9); }
-      c.textAlign = 'left';
-      V.marks.push({ R, k, box: pos[2] });
+      let y = clamp(L.y, fs, yMax - fs);
+      for (let tries = 0; tries < 8 && placed.some(p => Math.abs(p - y) < fs + 1); tries++) y += (tries % 2 ? -1 : 1) * (fs + 1) * (tries + 1);
+      if (placed.some(p => Math.abs(p - y) < fs)) continue;
+      placed.push(y);
+      c.fillStyle = L.on ? '#FFFFFF' : 'rgba(236,240,246,' + Math.min(1, cfg.markA / 100 * (L.dim ? 0.8 : 2)).toFixed(3) + ')';
+      c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillText(text, xl, y + 1);
+      V.marks.push({ R: L.R, k: L.k, box: [L.x - 5, L.top, xl + tw + 4 - (L.x - 5), Math.max(10, L.bot - L.top)], lbl: [xl - 2, y - fs / 2 - 2, tw + 6, fs + 4] });
     }
   }
   // the first minutes after the moment: one quiet number per side instead of a bright blot over the last candle
@@ -968,7 +1046,7 @@
         c.fillStyle = rgba(topB === 0 ? mixW(R.col, 0.35) : R.col, on ? 1 : Math.min(1, (0.05 + 0.95 * Math.pow(f, 2.4)) * cfg.projA / 90));
         c.fillRect(A.x + 3, y0 + 0.5, len, Math.max(1, y1 - y0 - 1));
         if (topB === 0) { c.strokeStyle = 'rgba(255,255,255,.75)'; c.lineWidth = 1; c.strokeRect(A.x + 3.5, y0 + 1, len - 1, Math.max(1, y1 - y0 - 2)); }
-        if (top.includes(b)) labels.push({ y: (y0 + y1) / 2, x: A.x + 5 + len, text: pct(b.pct), col: R.col });
+        if (top.includes(b) && ov.match !== 'none') labels.push({ y: (y0 + y1) / 2, x: A.x + 5 + len, text: pct(b.pct), col: R.col });
       }
     }
     c.font = '600 10.5px ' + FONT; c.textBaseline = 'middle';
@@ -1004,20 +1082,13 @@
         c.fillStyle = rgba(R.col, Math.min(1, (q.near ? 0.22 : onCol || onCon === R.id ? 0.9 : 0.14 + 0.66 * Math.pow(Math.min(1, v / mx), 1.3)) * cfg.stripA / 80));
         if (up) c.fillRect(x0, mid - len, x1 - x0, len); else c.fillRect(x0, mid + 1, x1 - x0, len);
         if (q.near && v / mx > 1) { c.fillStyle = C.bg; c.fillRect(x0, up ? mid - half + 3 : mid + half - 4, x1 - x0, 2); }
-        if (open && v >= 1 && x1 - x0 >= 20) {
+        if (open && v >= 1 && x1 - x0 >= 20 && ov.match !== 'none') {
           c.font = '600 10.5px ' + FONT; c.textAlign = 'center'; c.textBaseline = up ? 'bottom' : 'top';
           c.fillStyle = rgba(R.col, q.near ? 0.55 : 0.95);
           c.fillText(num(v, v >= 10 ? 0 : 1), (x0 + x1) / 2, up ? mid - len - 2 : mid + len + 3);
           c.textAlign = 'left';
         }
       });
-    }
-    if (open) {
-      const text = 'когда: доля экстремумов по 15 минутам · ' + ov.roles[0].name.toLowerCase() + ' вверх, ' + ov.roles[1].name.toLowerCase() + ' вниз · ' + (st.stripPin ? 'клик — открепить' : 'клик — закрепить');
-      c.font = '11px ' + FONT; c.textBaseline = 'middle';
-      const w = c.measureText(text).width + 12;
-      c.fillStyle = 'rgba(10,11,15,.94)'; c.fillRect(S.x, S.y - 20, w, 20);
-      c.fillStyle = C.text3; c.fillText(text, S.x + 6, S.y - 10);
     }
   }
   // names of the lines at their right end, just before the price scale, so nothing has to be scrolled to be read
@@ -1130,7 +1201,6 @@
     } else if (s.status === 'waiting') line = 'подтверждения нет · ' + (ctx.obs - s.formed) + ' мин после коробки';
     else if (s.status === 'forming') line = 'коробка формируется';
     if (line) c.fillText(line, 10, 28);
-    if (!ctx.live) { c.fillStyle = C.replay; c.fillText('Повтор ' + clk(ctx.obs) + ' — экран как в момент закрытия этой свечи; свечи правее показаны, но не использованы', 10, 46); }
   }
 
   // ---------- the six charts of the history of similar sessions (as in design 1), linked to the chart ----------
@@ -1152,8 +1222,8 @@
     c.fillStyle = open || st.histH > 30 ? 'rgba(11,12,16,.97)' : '#0B0C10'; c.fillRect(0, y0, W, st.histH);
     c.fillStyle = st.histOver || st.histPin ? '#2A2F38' : C.grid; c.fillRect(0, y0, W, 1);
     c.font = '600 11.5px ' + FONT; c.textBaseline = 'middle'; c.fillStyle = st.histOver || st.histPin ? C.text : C.text3;
-    c.fillText((open ? '▾ ' : '▴ ') + 'История похожих · шесть графиков' + (ov ? ' · как было на ' + clk(ctx.obs) : '') + (open ? (st.histPin ? ' · клик — открепить' : ' · клик — закрепить') : ' · наведите, чтобы раскрыть'), 10, y0 + 11);
-    if (!open || !ov) return;
+    c.fillText((open ? '▾ ' : '▴ ') + 'История похожих' + (ov ? ' · ' + clk(ctx.obs) : '') + (ov && ov.match === 'none' ? ' · цена не сопоставлена' : ''), 10, y0 + 11);
+    if (!open || !ov || ov.match === 'none') return;
     const spec = histSpec(ov), n = spec.length, gap = 10, cw = (W - gap * (n + 1)) / n, top = y0 + 26, ch = st.histH - 32;
     const h = hv();
     spec.forEach((sp, i) => {
@@ -1231,13 +1301,18 @@
       const c = (V.stripCols || []).find(q => x >= q.x0 - 1 && x <= q.x1 + 1);
       return c ? { k: 'col', t0: c.q.t, t1: c.q.t1, src: 'strip', q: c.q } : { k: 'stripBg' };
     }
-    if (st.L.cons) for (const m of V.marks || []) { const b = m.box; if (x >= b[0] && x <= b[0] + b[2] && y >= b[1] && y <= b[1] + b[3]) return { k: 'con', role: m.R.id, id: m.k.id, slice: Math.floor(V.T(x) / 15) * 15 }; }
+    if (st.L.cons) for (const m of V.marks || []) for (const b of [m.lbl, m.box]) if (b && x >= b[0] && x <= b[0] + b[2] && y >= b[1] && y <= b[1] + b[3]) return { k: 'place', role: m.R.id, id: m.k.id, src: 'mark' };
     if (st.L.stars) {
       let best = null, bd = 5;
       for (const R of ov.roles) for (const q of R.stars) { const d = Math.hypot(V.X(q.t) - x, V.Y(q.p) - y); if (d < bd) { bd = d; best = q; } }
       if (best && bd < 3.5) return { k: 'star', i: best.i, q: best };
     }
     if (st.L.fan && ov.fan.length) {
+      for (const f of ov.fan) {
+        if (f.T % 15) continue;
+        const fx = V.X(f.T), ya = V.Y(ov.u2p(f.q20)), yb = V.Y(ov.u2p(f.q80));
+        if (Math.abs(x - fx) <= 3.5 && y >= Math.min(ya, yb) - 3 && y <= Math.max(ya, yb) + 3) return { k: 'fan', T: f.T, f };
+      }
       let px0 = V.X(ov.obs), py0 = V.Y(ov.s.priceNow);
       for (const p of ov.fan) {
         const px1 = V.X(p.T), py1 = V.Y(ov.u2p(p.q50)), dx = px1 - px0, dy = py1 - py0, L2 = dx * dx + dy * dy || 1;
@@ -1282,34 +1357,47 @@
       const R = h.k === 'pband' ? bandRole(ov, h) : null, tc = R && timeCluster(ov, R, h.pLo, h.pHi);
       return h.tip + (tc ? '<br><span class="k">когда чаще всего:</span> <b>' + clk(tc.t0) + '–' + clk(tc.t1) + '</b> — <b>' + pct(tc.pct) + '</b>' : '');
     }
-    if (h.k === 'con') {
-      const o = conOf(ov, h);
-      if (!o || !o.k) return '';
-      const { R, k } = o, sl = h.slice != null ? sliceOf(k, h.slice, ov.N) : null, hot = hotOf(ov, R, k);
-      return '<b style="color:' + R.col + '">' + R.name + ' ' + pct(k.pct) + '</b> · ' + k.name +
-        (sl ? '<br>здесь ' + clk(sl.t0) + '–' + clk(sl.t1) + ': <b>' + pct(sl.pct) + '</b>' : '') +
-        (hot ? '<br><span class="k">плотнее всего</span> ' + px(hot.p) + ' · ' + clk(hot.tc.t0) + '–' + clk(hot.tc.t1) : '');
+    if (h.k === 'con' || h.k === 'place') {
+      const R = ov.roles.find(r => r.id === h.role), k = R && R.cons.find(q => q.id === h.id);
+      if (!k) return '';
+      const sl = h.k === 'con' && h.slice != null ? sliceOf(k, h.slice, ov.N) : null, hot = hotOf(ov, R, k), en = k.entry;
+      const ev = R.id === 'pull' || R.id === 'dn' ? 'окончательный минимум' : 'окончательный максимум';
+      if (ov.match === 'none') return '<b style="color:' + R.col + '">' + R.name + ' · ' + k.name + '</b><br>цена не сопоставлена: процентов нет' + mfoot(ov, ev + ' похожих');
+      return '<b style="color:' + R.col + '">' + R.name + ' · ' + k.name + '</b>' +
+        '<br>вся полоса места: <b>' + pct(k.pct) + '</b>' + (k.corePct != null ? ' · яркое ядро: <b>' + pct(k.corePct) + '</b>' : '') +
+        (hot ? ' · плотнее всего у ' + px(hot.p) + ': <b>' + pct(hot.binPct) + '</b>' : '') +
+        (sl ? '<br>в ' + clk(sl.t0) + '–' + clk(sl.t1) + ' здесь: <b>' + pct(sl.pct) + '</b>' : '') +
+        (en ? '<br>' + (en.now ? 'цена сейчас в этом месте' : 'впервые приходили сюда чаще всего <b>' + clk(en.t0) + '–' + clk(en.t1) + '</b>') : '') +
+        mfoot(ov, ev + ' попал в полосу места');
     }
-    if (h.k === 'typ') return '<b>Медиана похожих</b> · к ' + clk(h.T) + ': ' + px(h.p) + '<br><span class="k">как в среднем шла цена у похожих сессий после ' + clk(ctx.obs) + '; бледный веер вокруг — 20–80 % их закрытий</span>';
+    if (h.k === 'typ') return '<b>Медиана закрытий похожих</b> · ' + clk(h.T) + ': ' + px(h.p) + '<br><span class="k">середина закрытий в каждую минуту, каждое от своего положения; это не путь одной сессии</span>';
+    if (h.k === 'fan') {
+      const f = h.f;
+      return '<b>Веер · ' + clk(f.T) + '</b><br>у 60 % похожих закрытие было между ' + px(Math.min(ov.u2p(f.q20), ov.u2p(f.q80))) + ' и ' + px(Math.max(ov.u2p(f.q20), ov.u2p(f.q80))) + ' · середина ' + px(ov.u2p(f.q50)) +
+        '<br><span class="k">срез в эту минуту, не коридор: целиком внутри веера прошли ' + pct(ov.fanCover) + ' похожих</span>' + mfoot(ov, 'закрытие M5 в эту минуту');
+    }
     if (h.k === 'star') {
       const q = h.q, pair = ov.roles.map(R => ({ R, z: R.stars.find(w => w.i === q.i) }));
       return '<b>Похожая сессия · ' + ov.sims[q.i].date + '</b> <span class="k">(синт.)</span><br>' + pair.map(({ R, z }) => '<span style="color:' + R.col + '">' + R.name + '</span> ' + clk(z.t) + ' · ' + px(z.p) + ' <span class="k">' + where(s, z.p) + '</span>').join('<br>');
     }
     if (h.k === 'col' && h.src === 'strip') {
       const q = h.q;
-      return '<b>' + clk(h.t0) + '–' + clk(h.t1) + '</b>' + (q.near ? ' <span class="k">первые 15 минут</span>' : '') + '<br>' + ov.roles.map((R, i) => '<span style="color:' + R.col + '">' + R.name + '</span> ' + pct(q.v[i])).join(' · ');
+      return '<b>' + clk(h.t0) + '–' + clk(h.t1) + '</b>' + (q.near ? ' <span class="k">первые минуты</span>' : '') + '<br>' +
+        (ov.match === 'none' ? 'цена не сопоставлена: процентов нет' : ov.roles.map((R, i) => '<span style="color:' + R.col + '">' + R.name + '</span> ' + pct(q.v[i])).join(' · ')) +
+        mfoot(ov, 'окончательный экстремум был в эти 15 минут (у конца сессии их всегда больше)');
     }
     if (h.k === 'pband' && h.src === 'proj') {
       const R = bandRole(ov, h), tc = R && timeCluster(ov, R, h.pLo, h.pHi);
+      if (ov.match === 'none') return '<b>' + px(h.pLo) + '–' + px(h.pHi) + '</b><br>цена не сопоставлена: процентов нет' + mfoot(ov, 'окончательный экстремум в этой цене');
       return '<b>' + px(h.pLo) + '–' + px(h.pHi) + '</b> <span class="k">' + where(s, (h.pLo + h.pHi) / 2) + '</span><br>' + h.list.map(({ R: r, b }) => '<span style="color:' + r.col + '">' + r.name + '</span> ' + pct(b.pct)).join(' · ') +
-        (tc ? '<br><span class="k">когда чаще всего:</span> <b>' + clk(tc.t0) + '–' + clk(tc.t1) + '</b> — <b>' + pct(tc.pct) + '</b> <span class="k">из ' + pct(tc.bandPct) + ' этой цены</span>' : '') + '<br><span class="k">без первых 15 минут</span>';
+        (tc ? '<br><span class="k">когда здесь был экстремум чаще всего:</span> <b>' + clk(tc.t0) + '–' + clk(tc.t1) + '</b> — <b>' + pct(tc.pct) + '</b>' : '') + mfoot(ov, 'окончательный экстремум в этой цене, без первых минут');
     }
     if (h.k === 'lvl') {
-      const l = h.l, t = ov ? ov.touch(l.p) : null;
+      const l = h.l, t = ov && ov.match !== 'none' ? ov.touch(l.p) : null;
       let taken = '';
       const tk = (s.taken || []).concat(s.takenN || []).find(q => q.t && l.type === 'std' && q.name === l.name);
       if (tk) taken = ' · взят в ' + clk(tk.t);
-      return '<b>' + s.k + ' · ' + l.full + '</b> · ' + px(l.p) + taken + (t != null ? '<br><span class="k">дошли после ' + clk(ctx.obs) + ' до конца сессии:</span> ' + pct(t) : '');
+      return '<b>' + s.k + ' · ' + l.full + '</b> · ' + px(l.p) + taken + (t != null ? '<br>дошли хотя бы раз: <b>' + pct(t) + '</b>' + mfoot(ov, 'касание уровня') : ov ? '<br><span class="k">цена не сопоставлена: процентов нет</span>' : '');
     }
     if (h.k === 'vib') { const v = h.v; return '<b>VIB ' + (v.dir === 1 ? '↑' : '↓') + '</b> · ' + px(v.lo) + '–' + px(v.hi) + ' · ' + clk(v.t) + '<br><span class="k">' + (v.fill != null ? 'ребалансирован в ' + clk(v.fill) : 'открыт: цена ещё не заходила') + '</span>'; }
     if (h.k === 'prev') {
@@ -1336,9 +1424,11 @@
     dom('menu').innerHTML = LAYERS.map(([k, n, col]) => '<label><input type="checkbox" data-l="' + k + '"' + (st.L[k] ? ' checked' : '') + '><span class="sw" style="background:' + col + '"></span>' + n + '</label>').join('') +
       '';
   }
-    // Variant 21: the right panel carries only what the chart cannot say at a glance, and every line is a link:
-  // hovering it lights on the chart the level, the place, its densest spot and its time (the operator, 28.09).
-  // Percentages only (no session counts). Same synthetic, prefix-limited data as design 20.
+    // Design 22: the right panel of design 21 (percentages only, every line a link to the chart), changed by the audit of
+  // 2026-09-29 (meaning/04-dizajn-22.md): a match mark says how today's price was matched in the history and, when it
+  // was not, no percentage is shown (a dash is «no fitting history», not zero); every row names its event, horizon and
+  // match on hover; a place's time is when its sessions first came there; before a confirmation «до DR high / low»
+  // counts each session's own DR; «тенью за DR» beside «DR удержится»; no «пусто». Same synthetic data as design 21.
   const P21 = { get compare() { return !!st.L.snap21; }, snapshots: new Map(), links: [] };
 
   function p21Key(h) {
@@ -1364,8 +1454,7 @@
   }
 
   // ---------- what a link shows ----------
-  // the densest spot of a place: its densest price step (0.1 IDR, the bars right of the price scale) and, in it,
-  // the densest time window (5 minutes, widened to neighbours holding at least 60 % of it)
+  // the densest spot of a place: its densest price step (0.1 IDR) and, in it, the densest time window of the extremes
   function hotOf(ov, R, k) {
     if (!k.all || !k.all.length) return null;
     const cnt = new Map();
@@ -1377,14 +1466,17 @@
     const tc = timeCluster(ov, R, pb.pLo, pb.pHi);
     return tc && { pLo: pb.pLo, pHi: pb.pHi, p: (pb.pLo + pb.pHi) / 2, binPct: pb.pct, tc };
   }
-  // when similar sessions first reached a price after the moment (5-minute bars), and the densest window of it
-  function firstTouch(ov, p) {
-    const u = ov.p2u(p), up = u >= ov.u0, bins = new Map();
+  // when similar sessions first reached a price after the moment (5-minute bars), and the densest window of it;
+  // own = 'H' | 'L': each session's own DR high / low instead of today's price (design 22, before a confirmation)
+  function firstTouch(ov, p, own) {
+    const u = ov.p2u(p), up = own ? own === 'H' : u >= ov.u0, bins = new Map();
     let n = 0;
     for (const q of ov.sims) {
+      const lv = own ? (own === 'H' ? q.uH : q.uL) : u;
+      if (lv == null) continue;
       for (let j = 0; j < ov.grid.length; j++) {
         const v = up ? q.hi[j] : q.lo[j];
-        if (v != null && (up ? v >= u : v <= u)) { const T = ov.grid[j] - 5; bins.set(T, (bins.get(T) || 0) + 1); n++; break; }
+        if (v != null && (up ? v >= lv : v <= lv)) { const T = ov.grid[j] - 5; bins.set(T, (bins.get(T) || 0) + 1); n++; break; }
       }
     }
     if (!n) return null;
@@ -1403,13 +1495,13 @@
     if (h.k === 'place') {
       const R = ov.roles.find(r => r.id === h.role), k = R && R.cons.find(q => q.id === h.id);
       if (!k) return;
-      const hot = hotOf(ov, R, k);
-      V.h21 = { k: 'place', R, zone: k, hot };
-      if (hot) { V.win = { t0: hot.tc.t0, t1: hot.tc.t1, pA: hot.pLo, pB: hot.pHi, col: R.col }; V.pbWin = { role: R.id, t0: hot.tc.t0, t1: hot.tc.t1 }; }
+      const en = k.entry && !k.entry.now ? k.entry : null;
+      V.h21 = { k: 'place', R, zone: k, en };
+      if (en) { const p = ov.u2p(en.edge); V.win = { t0: en.t0, t1: en.t1, pA: p, pB: p, col: R.col }; }
     } else if (h.k === 'times' || h.k === 'zone') {
       V.h21 = h;
     } else if (h.k === 'step') {
-      const ft = firstTouch(ov, h.p);
+      const ft = ov.match === 'none' ? null : firstTouch(ov, h.p, h.own);
       V.h21 = { k: 'step', p: h.p, name: h.name, ft };
       if (ft) V.win = { t0: ft.t0, t1: ft.t1, pA: h.p, pB: h.p, col: '#E9EEF5' };
     }
@@ -1439,8 +1531,8 @@
       c.fillStyle = '#0B0C10'; c.fillText(text, xr - 5, y + 0.5); c.textAlign = 'left';
     }
   }
-  // after the levels: the lit link (a place: its borders, its densest spot and its time; a step: the line and when it
-  // was usually reached; a level: the line)
+  // after the levels: the lit link (a place: its borders and when its sessions first came there; a step: the line and
+  // when it was usually first reached; a level: the line)
   function drawReference21(c, ctx) {
     const h = hv(), ov = ctx.ov;
     if (!h) return;
@@ -1458,7 +1550,7 @@
         const p = ov.u2p(u), l = levels(s).find(q => Math.abs(q.p - p) < 1e-6);
         brightLine(c, p, (l ? (l.type === 'std' ? l.name : l.full) + ' · ' : 'граница места · ') + px(p), V.X(ov.obs) + 10);
       }
-      if (H.hot) drawTC21(c, H.R.col, H.hot.tc, H.hot.pLo, H.hot.pHi, V.X(ov.obs + ov.near), V.X(ov.end));
+      if (H.en) { const p = ov.u2p(H.en.edge), d = (V.p1 - V.p0) * 0.004; drawTC21(c, H.R.col, H.en, p - d, p + d, V.X(ov.obs), V.X(ov.end)); }
     } else if (H.k === 'times') {
       if (H.from != null) { const xa = V.X(H.from), xb = V.X(H.ts[0].t); c.fillStyle = 'rgba(246,248,252,.05)'; c.fillRect(Math.min(xa, xb), 0, Math.abs(xb - xa), V.plot.h); }
       for (const q of H.ts) {
@@ -1500,10 +1592,11 @@
   }
 
   // ---------- the panel ----------
-  function link(h, html, cls) { const i = P21.links.push(h) - 1; return '<div class="p21-link' + (cls ? ' ' + cls : '') + '" data-l21="' + i + '">' + html + '</div>'; }
+  // a link row; `mean` = its meaning on hover (event · horizon · match), plain text
+  function link(h, html, cls, mean) { const i = P21.links.push(h) - 1; return '<div class="p21-link' + (cls ? ' ' + cls : '') + '" data-l21="' + i + '"' + (mean ? ' title="' + esc(mean) + '"' : '') + '>' + html + '</div>'; }
   function lvlObj(s, id) { return levels(s).find(l => l.id === id); }
-  // what the three new blocks list: targets ahead in the direction of the side in play, by when pullbacks and extremes
-  // usually ended, and where the scenario breaks (docs/SEMANTICS.md, «Экран Созвездия»)
+  // targets ahead in the direction of the side in play (the next STD steps not yet taken, the session extreme, past
+  // sessions' DR, the nearest open VIB)
   function targets21(ctx) {
     const s = ctx.s, ov = ctx.ov, side = ov.mode === 'brk' ? s.nside : s.side, w = s.idrH - s.idrL, out = [];
     const ahead = p => side === 1 ? p > s.priceNow + 1e-9 : p < s.priceNow - 1e-9;
@@ -1523,61 +1616,52 @@
     return res.sort((a, b) => Math.abs(a.p - s.priceNow) - Math.abs(b.p - s.priceNow));
   }
   function quant(a, f) { const v = a.slice().sort((x, y) => x - y); return v.length ? v[Math.min(v.length - 1, Math.round(f * (v.length - 1)))] : null; }
-  // the widest price interval (steps of 0.05 IDR, between the price and the deepest 97 %) where no pullback of a similar
-  // session ended (the author's place for a stop); otherwise the price beyond which only 3 % ended
-  function gapOf(ctx, R) {
-    const ov = ctx.ov, s = ctx.s, us = R.stars.map(q => q.u).sort((a, b) => a - b), stp = 0.05, hi = ov.u0;
-    const wall = ov.p2u(ov.mode === 'brk' ? (s.side === 1 ? s.drH : s.drL) : s.opp), lo = Math.max(quant(us, 0.03), wall);
-    if (lo == null || lo >= hi) return null;
-    const n = Math.ceil((hi - lo) / stp), cnt = new Array(n).fill(0);
-    for (const u of us) { const k = Math.floor((u - lo) / stp); if (k >= 0 && k < n) cnt[k]++; }
-    let best = null;
-    for (let a = 0; a < n;) {
-      if (cnt[a]) { a++; continue; }
-      let b = a;
-      while (b < n && !cnt[b]) b++;
-      if (a > 0 && b < n && b - a >= 2 && (!best || b - a > best[1] - best[0])) best = [a, b];
-      a = b;
-    }
-    if (best) return { gap: true, pA: ov.u2p(lo + best[0] * stp), pB: ov.u2p(lo + best[1] * stp) };
-    return lo > wall + 1e-9 ? { gap: false, pA: ov.u2p(lo) } : null;
-  }
   function panelHtml(ctx) {
     const s = ctx.s, ov = ctx.ov;
     P21.links = [];
     if (!ov) {
       const msg = API && (!A.day || A.day.status !== 'ok') ? (A.day && A.day.message) || 'Загружаю свечи…' :
         s.status === 'forming' ? 'Коробка ещё формируется' : s.status === 'before' ? 'Сессия ещё не началась' :
-        ['confirmed', 'broken', 'waiting'].includes(s.status) ? 'Ищу похожие сессии…' : s.status === 'noconf' ? 'Сессия закончилась без подтверждения' : 'Сессия закончилась';
+        ['confirmed', 'broken', 'waiting'].includes(s.status) ? (API && A.cohorts.size ? 'Похожих сессий нет' : 'Ищу похожие сессии…') : s.status === 'noconf' ? 'Сессия закончилась без подтверждения' : 'Сессия закончилась';
       panel.innerHTML = '<div class="p21-empty">' + esc(msg) + '</div>';
       return;
     }
-    const side = ov.mode === 'brk' ? s.nside : s.side, out = [];
+    const side = ov.mode === 'brk' ? s.nside : s.side, out = [], none = ov.match === 'none';
+    const P = v => none || v == null ? '—' : pct(v);                     // a dash = no fitting history, not zero
+    const hor = 'после ' + clk(ctx.obs) + ' до ' + clk(ov.end), m = MATCH[ov.match];
+    const M = ev => ev + ' · ' + hor + ' · ' + m;                          // the meaning of a row, on hover
     const row = (text, val) => '<span class="t">' + text + '</span><b>' + val + '</b>';
-    out.push('<div class="p21-h"><span title="' + esc(ov.cond || '') + '">Дальше по похожим</span><span>после ' + clk(ctx.obs) + '</span></div>');
+    const mark = { p25: '●', p50: '◐', none: '○' }[ov.match];
+    out.push('<div class="p21-h"><span title="' + esc(m + ' · ' + (ov.cond || '')) + '">Дальше по похожим <i class="p22-match m-' + ov.match + '">' + mark + '</i></span><span>после ' + clk(ctx.obs) + '</span></div>');
+    if (none) out.push('<div class="p21-note" title="' + esc('Похожих, у которых цена была там же, где сегодня, в истории не набралось. Такие проценты на новых днях были не лучше постоянной оценки (цели — хуже), поэтому их нет. Прочерк — это отсутствие подходящей истории, а не ноль.') + '">цена не сопоставлена · процентов нет</div>');
     if (ov.mode === 'wait') {
-      out.push('<div class="p21-dir"><span class="lb">Подтверждение</span>' +
-        link({ k: 'lvl', id: 'drH', l: lvlObj(s, 'drH') }, '↑ <b>' + pct(ov.dir.up) + '</b>', 'in') +
-        link({ k: 'lvl', id: 'drL', l: lvlObj(s, 'drL') }, '↓ <b>' + pct(ov.dir.dn) + '</b>', 'in') +
-        '<span class="p21-no">нет <b>' + pct(ov.dir.none) + '</b></span></div>');
-      out.push(link({ k: 'step', p: s.drH, name: 'DR high' }, row('до DR high ' + px(s.drH), pct(ov.touch(s.drH)))));
-      out.push(link({ k: 'step', p: s.drL, name: 'DR low' }, row('до DR low ' + px(s.drL), pct(ov.touch(s.drL)))));
+      out.push('<div class="p21-dir"><span class="lb" title="' + esc(M('первое подтверждение позже (закрытие M5 за своим DR); «нет» — не было до конца сессии')) + '">Подтверждение</span>' +
+        link({ k: 'lvl', id: 'drH', l: lvlObj(s, 'drH') }, '↑ <b>' + P(ov.dir.up) + '</b>', 'in') +
+        link({ k: 'lvl', id: 'drL', l: lvlObj(s, 'drL') }, '↓ <b>' + P(ov.dir.dn) + '</b>', 'in') +
+        '<span class="p21-no">нет <b>' + P(ov.dir.none) + '</b></span></div>');
+      if (ov.ownH != null) {
+        out.push(link({ k: 'step', p: s.drH, name: 'DR high', own: 'H' }, row('до своего DR high', P(ov.ownH)), '', M('цена похожей сессии хотя бы раз дошла до собственного DR high (как и ↑)')));
+        out.push(link({ k: 'step', p: s.drL, name: 'DR low', own: 'L' }, row('до своего DR low', P(ov.ownL)), '', M('цена похожей сессии хотя бы раз дошла до собственного DR low (как и ↓)')));
+      }
     }
     for (const R of ov.roles) {
       const k = R.cons.slice().sort((a, b) => b.pct - a.pct)[0];
-      if (k && k.n) out.push(link({ k: 'place', role: R.id, id: k.id }, row('<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i> чаще всего ' + k.name, pct(k.pct))));
+      const ev = (R.id === 'pull' || R.id === 'dn' ? 'окончательный минимум' : 'окончательный максимум') + ' попал в полосу места';
+      if (k && k.n) out.push(link({ k: 'place', role: R.id, id: k.id }, row('<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i> чаще всего ' + k.name, P(k.pct)), '', M(ev)));
     }
-    out.push(link({ k: 'col', t0: ctx.obs, t1: ctx.obs + ov.near }, row('в первые ' + ov.near + ' минут', ov.roles.map(R => '<i style="color:' + R.col + '">' + pct(R.nearPct) + '</i>').join(' · ')), 'dim'));
-    // the three places per side: share, the densest price in it and when
-    out.push('<div class="p21-h second">Места <span>цена · когда плотнее всего</span></div>');
+    out.push(link({ k: 'col', t0: ctx.obs, t1: ctx.obs + ov.near }, row('в первые ' + ov.near + ' минут', ov.roles.map(R => '<i style="color:' + R.col + '">' + P(R.nearPct) + '</i>').join(' · ')), 'dim', M('окончательный экстремум случился в первые минуты')));
+    // the three places per side: share of the band, the densest price in it, and when its sessions first came there
+    out.push('<div class="p21-h second">Места <span>цена · впервые здесь</span></div>');
     const mx = Math.max(1, ...ov.roles.flatMap(r => r.cons.map(k => k.pct)));
     for (const R of ov.roles) {
       const arrow = ov.mode === 'wait' ? '' : ((R.id === 'cont' ? side : -side) === 1 ? ' ↑' : ' ↓');
       out.push('<div class="p21-g"><i style="background:' + R.col + '"></i>' + R.name + arrow + '</div>');
       for (const k of R.cons.slice().sort((a, b) => b.sortP - a.sortP)) {
-        const hot = k.n ? hotOf(ov, R, k) : null;
+        const hot = k.n ? hotOf(ov, R, k) : null, en = k.entry;
+        const when = !k.n ? '' : en && en.now ? 'сейчас' : en && !none ? clk(en.t0) + '–' + clk(en.t1) : '';
+        const ev = (R.id === 'pull' || R.id === 'dn' ? 'окончательный минимум' : 'окончательный максимум') + ' попал в полосу «' + k.name + '» (вся полоса, не только ядро); «впервые» — когда эти сессии первый раз дошли до полосы';
         out.push(link({ k: 'place', role: R.id, id: k.id },
-          '<span class="bar" style="width:' + (100 * k.pct / mx).toFixed(1) + '%;background:' + R.col + '"></span><b style="color:' + R.col + '">' + pct(k.pct) + '</b><span class="z">' + k.short + '</span><span class="pr">' + (hot ? px(hot.p) : '—') + '</span><span class="tm">' + (hot ? clk(hot.tc.t0) + '–' + clk(hot.tc.t1) : '') + '</span>', 'place'));
+          '<span class="bar" style="width:' + (none ? 0 : 100 * k.pct / mx).toFixed(1) + '%;background:' + R.col + '"></span><b style="color:' + R.col + '">' + P(k.pct) + '</b><span class="z">' + k.short + '</span><span class="pr">' + (hot && !none ? px(hot.p) : '—') + '</span><span class="tm">' + when + '</span>', 'place', M(ev)));
       }
     }
     if (ov.mode !== 'wait') {
@@ -1586,34 +1670,32 @@
       if (T.length) {
         out.push('<div class="p21-h second">Цели <span>обычно к · дошли</span></div>');
         for (const q of T) {
-          const ft = firstTouch(ov, q.p);
-          out.push(link({ k: 'step', p: q.p, name: q.name }, '<span class="t">' + esc(q.name) + ' · ' + px(q.p) + '</span><span class="tm2">' + (ft ? clk(ft.t0) : '') + '</span><b>' + pct(ov.touch(q.p)) + '</b>', 'tgt'));
+          const ft = none ? null : firstTouch(ov, q.p);
+          out.push(link({ k: 'step', p: q.p, name: q.name }, '<span class="t">' + esc(q.name) + ' · ' + px(q.p) + '</span><span class="tm2">' + (ft ? clk(ft.t0) : '') + '</span><b>' + P(none ? null : ov.touch(q.p)) + '</b>', 'tgt', M('цена хотя бы раз дошла до уровня; «обычно к» — самое частое окно первого касания')));
         }
       }
     }
-    // time: by when half (and 70 %) of the pullbacks and the extremes had ended
-    out.push('<div class="p21-h second">Время <span>к какому времени закончились</span></div>');
+    // time: by when half (and 70 %) of the final extremes had been reached
+    out.push('<div class="p21-h second">Время экстремума <span>половина достигнута к</span></div>');
     for (const R of ov.roles) {
       const ts = R.stars.map(q => q.t), t50 = quant(ts, 0.5), t70 = quant(ts, 0.7);
       if (t50 == null) continue;
       const deep = R.id === 'pull' || R.id === 'dn';
-      const text = '<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i>: половина к ' + clk(t50) + (deep ? ' · 70% к ' + clk(t70) : '');
-      const ts2 = [{ t: t50, label: '50% · ' + clk(t50) }].concat(deep ? [{ t: t70, label: '70% · ' + clk(t70) }] : []);
-      out.push(link({ k: 'times', from: ctx.obs, ts: ts2 }, '<span class="t">' + text + '</span>' + (t50 <= ctx.obs ? '<span class="p21-past">прошло</span>' : ''), 'time'));
+      const text = '<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i>: ' + (none ? '—' : clk(t50) + (deep ? ' · 70% к ' + clk(t70) : ''));
+      const ts2 = none ? [] : [{ t: t50, label: '50% · ' + clk(t50) }].concat(deep ? [{ t: t70, label: '70% · ' + clk(t70) }] : []);
+      out.push(link({ k: 'times', from: ctx.obs, ts: ts2.length ? ts2 : [{ t: ctx.obs, label: clk(ctx.obs) }] }, '<span class="t">' + text + '</span>' + (!none && t50 <= ctx.obs ? '<span class="p21-past">прошло</span>' : ''), 'time',
+        M('момент, когда был достигнут окончательный экстремум; окончательным он стал только к концу сессии')));
     }
-    if (ov.mode !== 'wait') {
-      // where the scenario breaks: the DR rule, the retirement zone, the empty interval (a place for a stop)
-      out.push('<div class="p21-h second">Где сценарий сломан</div>');
+    if (ov.mode === 'conf') {
+      // the opposite side: the DR rule by M5 close, the wick beyond the DR, and the deep pullback (retirement −0,75)
+      out.push('<div class="p21-h second">Противоположная сторона</div>');
+      out.push(link({ k: 'lvl', id: side === 1 ? 'drL' : 'drH', l: lvlObj(s, side === 1 ? 'drL' : 'drH') }, row('DR удержится до ' + clk(s.end), P(ov.holds)), '', M('ни одно закрытие M5 не ушло за противоположный край своего DR')));
+      if (ov.wick != null) out.push(link({ k: 'lvl', id: side === 1 ? 'drL' : 'drH', l: lvlObj(s, side === 1 ? 'drL' : 'drH') }, row('тенью за DR заходили', P(ov.wick)), 'dim', M('цена хотя бы тенью (low / high) зашла за противоположный край своего DR — так задевается стоп прямо за DR; сюда входят и сломы DR закрытием')));
+      const pR = ov.u2p(-0.75), deep = ov.sims.filter(q => q.mn <= -0.75), heldAfter = deep.length >= 10 ? 100 * deep.filter(q => q.held).length / deep.length : null;
       const pull = ov.roles.find(r => r.id === 'pull');
-      if (ov.mode === 'conf') {
-        out.push(link({ k: 'lvl', id: side === 1 ? 'drL' : 'drH', l: lvlObj(s, side === 1 ? 'drL' : 'drH') }, row('DR удержится до ' + clk(s.end), pct(ov.holds))));
-        const pR = ov.u2p(-0.75), deep = ov.sims.filter(q => q.mn <= -0.75), heldAfter = deep.length >= 10 ? 100 * deep.filter(q => q.held).length / deep.length : null;
-        if (ov.u0 > -0.75) out.push(link({ k: 'zone', pA: pR, pB: s.opp, name: 'retirement −0,75', col: pull.col }, row('retirement −0,75 · ' + px(pR) + (heldAfter != null ? '<br><span class="p21-sub">после касания DR держался ' + pct(heldAfter) + '</span>' : ''), pct(ov.touch(pR)))));
-        else out.push('<div class="p21-note">цена уже в зоне retirement: после касания DR держится реже</div>');
-      }
-      const gp = pull && gapOf(ctx, pull);
-      if (gp && gp.gap) out.push(link({ k: 'zone', pA: gp.pA, pB: gp.pB, name: 'пусто', col: pull.col }, row('пусто ' + px(Math.min(gp.pA, gp.pB)) + '–' + px(Math.max(gp.pA, gp.pB)) + ': здесь откаты не заканчивались', '')));
-      else if (gp) out.push(link({ k: 'zone', pA: gp.pA, pB: gp.pA, name: 'глубже — 3%', col: pull.col }, row('глубже ' + px(gp.pA) + ' — только 3% откатов', '')));
+      if (ov.u0 > -0.75) out.push(link({ k: 'zone', pA: pR, pB: s.opp, name: 'retirement −0,75', col: pull.col }, row('retirement −0,75 · ' + px(pR) + (heldAfter != null && !none ? '<br><span class="p21-sub">после касания DR держался ' + pct(heldAfter) + '</span>' : ''), P(none ? null : ov.touch(pR))), '',
+        M('цена хотя бы раз дошла до −0,75 IDR; «после касания» — доля удержавших DR среди дошедших')));
+      else out.push('<div class="p21-note">цена уже в зоне retirement</div>');
     }
     panel.innerHTML = out.join('');
     panelMarks();
@@ -1720,6 +1802,7 @@
     if (d.zone !== 'plot') return;
     if (h && (h.src === 'strip' || h.k === 'stripBg')) { st.stripPin = !st.stripPin; animStrip(); redraw(); return; }
     if (h && h.k === 'con') { st.pin = st.pin && st.pin.k === 'con' && st.pin.role === h.role && st.pin.id === h.id ? null : { k: 'con', role: h.role, id: h.id }; redraw(true); return; }
+    if (h && h.k === 'place') { p21Pin({ k: 'place', role: h.role, id: h.id }); return; }
     const b = barAt(V.ctx, V.T(x));
     const lastUsed = V.ctx.live ? NOW : V.ctx.obs;
     if (b && y >= V.Y(b.h) - 6 && y <= V.Y(b.l) + 6 && (b.t + 5 <= NOW || st.scene === 'wait')) { replayAt(Math.min(b.t + 5, b.t + 5 <= lastUsed || !V.ctx.live ? b.t + 5 : b.t + 5)); return; }
@@ -1752,13 +1835,13 @@
     const b = e.target.closest('button');
     if (!b) return;
     const z = +b.dataset.z;
-    if (z === 0) { fitSession(st.session); st.auto = true; st.p0 = st.p1 = null; if (st.session === 'RDR' && st.scene !== 'wait') { st.v0 = 545; st.v1 = 975; } }
+    if (z === 0) { fitSession(st.session); st.auto = true; st.p0 = st.p1 = null; if (st.session === 'RDR' && st.scene !== 'wait') { st.v0 = 545; st.v1 = 1005; } }
     else { const f = z > 0 ? 1.35 : 1 / 1.35, span = clamp((st.v1 - st.v0) * f, 30, 1500); st.v0 = st.v1 - span; }
     redraw();
   });
   window.addEventListener('keydown', e => {
     if (e.key === 'Escape') { if (st.pin) st.pin = null; else if (st.stripPin) st.stripPin = false; else if (st.rp != null) backLive(); animStrip(); redraw(true); }
-    else if (e.altKey && (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К')) { e.preventDefault(); fitSession(st.session); if (st.session === 'RDR' && st.scene !== 'wait') { st.v0 = 545; st.v1 = 975; } redraw(); }
+    else if (e.altKey && (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К')) { e.preventDefault(); fitSession(st.session); if (st.session === 'RDR' && st.scene !== 'wait') { st.v0 = 545; st.v1 = 1005; } redraw(); }
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       const t0 = st.rp != null ? st.rp : Math.floor(NOW / 5) * 5, t = t0 + (e.key === 'ArrowLeft' ? -5 : 5);
       if (t >= NOW && (API || st.scene !== 'wait')) backLive(); else if (sessOf(t - 5)) { st.rp = t; st.session = sessOf(t - 5); st.pin = null; render(true); }
@@ -1840,7 +1923,7 @@
         NOW = Math.floor(x.now);
         PREV = x.prev ? { k: 'PREV', name: x.prev.name, start: -360, drH: x.prev.drH, drL: x.prev.drL, idrH: x.prev.idrH, idrL: x.prev.idrL } : null;
         if (!st.userSession && (first || st.rp == null)) st.session = sessionNow();
-        if (first) { fitSession(st.session); if (st.session === 'RDR' && st.rp == null) { st.v0 = 545; st.v1 = 975; } }
+        if (first) { fitSession(st.session); if (st.session === 'RDR' && st.rp == null) { st.v0 = 545; st.v1 = 1005; } }
       }
     } catch (e) { A.error = 'Локальный сервер не ответил'; }
     A.busy = false;
