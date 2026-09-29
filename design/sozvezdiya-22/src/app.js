@@ -303,7 +303,7 @@
   function finishOverlay(ov, pts) {
     ov.near = ov.end - ov.obs < 45 ? 5 : NEAR;
     ov.match = ov.band === 0.25 ? 'p25' : ov.band === 0.5 ? 'p50' : 'none';
-    ov.roles = pts.map(q => role(ov, q[0], q[1], null, ov.sims.map((z, i) => ({ u: z[q[q.length - 2]], t: z[q[q.length - 1]], i }))));
+    ov.roles = pts.map(q => role(ov, q[0], q[1], null, arrivalsOf(ov, q[0])));
     ov.fan = fanOf(ov);
     if (ov.mode === 'conf') ov.holds = 100 * ov.sims.filter(p => p.held).length / ov.N;
     if (ov.mode === 'conf' && ov.sims.every(p => p.wick != null)) ov.wick = 100 * ov.sims.filter(p => p.wick).length / ov.N;
@@ -347,9 +347,29 @@
       .catch(() => A.cohorts.set(ck, { status: 'error' }))
       .finally(() => { A.pending.delete(ck); redraw(true); });
   }
+  // THE MEANING OF A STAR (operator 2026-09-29, binding): after this moment, WHERE similar sessions' price CAME and
+  // WHEN — one star per session per place ahead of the price, at its first arrival there. NOT the session's final
+  // extreme until the close: that was an agents' invention of 2026-09-28 that the operator never asked for (it piled
+  // every cluster up at 15:50-16:00). A place's share = how often price came into it.
+  function arrivalsOf(ov, id) {
+    const down = id === 'pull' || id === 'dn', u0 = ov.u0, zs = zoneDefs(ov, id), pts = [];
+    ov.sims.forEach((p, i) => {
+      const arr = down ? p.lo : p.hi;
+      if (!arr) return;
+      for (const z of zs) {
+        if (down ? !(z.hi <= u0) : !(z.lo > u0)) continue;           // only places ahead of the price on this side
+        const edge = down ? z.hi : z.lo;
+        for (let j = 0; j < ov.grid.length; j++) {
+          const v = arr[j];
+          if (v != null && (down ? v < edge : v >= edge)) { pts.push({ u: down ? Math.max(v, z.lo + 1e-9) : Math.min(v, z.hi - 1e-9), t: ov.grid[j] - 5, i }); break; }
+        }
+      }
+    });
+    return pts;
+  }
   function role(ov, id, name, col, pts) {
     const nearT = ov.obs + ov.near, N = ov.N;
-    const stars = pts.map(q => ({ u: q.u, t: q.t, p: ov.u2p(q.u), i: q.i, near: q.t <= nearT, role: id }));
+    const stars = pts.map(q => ({ u: q.u, t: q.t, p: ov.u2p(q.u), i: q.i, near: false, role: id }));
     const far = stars.filter(q => !q.near);
     const R = { id, name, stars, nNear: stars.length - far.length };
     Object.defineProperty(R, 'col', { get: () => roleCol(id) });
@@ -438,22 +458,22 @@
       if (!arr) continue;
       for (let j = 0; j < ov.grid.length; j++) {
         const v = arr[j];
-        if (v != null && (down ? v <= edge : v >= edge)) { const T = ov.grid[j] - 5; bins.set(T, (bins.get(T) || 0) + 1); n++; break; }
+        if (v != null && (down ? v <= edge : v >= edge)) { const T = Math.floor((ov.grid[j] - 5) / 15) * 15; bins.set(T, (bins.get(T) || 0) + 1); n++; break; }
       }
     }
     if (!n) return null;
     let pk = null;
     for (const [b, c] of bins) if (!pk || c > pk[1]) pk = [b, c];
-    let t0 = pk[0], t1 = pk[0] + 5, m = pk[1];
-    while ((bins.get(t0 - 5) || 0) >= 0.6 * pk[1]) { t0 -= 5; m += bins.get(t0); }
-    while ((bins.get(t1) || 0) >= 0.6 * pk[1]) { m += bins.get(t1); t1 += 5; }
+    let t0 = pk[0], t1 = pk[0] + 15, m = pk[1];   // 15-minute windows: 5-minute ones caught noise on ~50 sessions
+    while ((bins.get(t0 - 15) || 0) >= 0.6 * pk[1]) { t0 -= 15; m += bins.get(t0); }
+    while ((bins.get(t1) || 0) >= 0.6 * pk[1]) { m += bins.get(t1); t1 += 15; }
     return { t0, t1, pct: 100 * m / ov.N, bins: [...bins].sort((a, b) => a[0] - b[0]), peak: pk[1], edge };
   }
   // the constellation of a place: where inside the band the extremes lie densest (the connected region of at least 38 %
   // of the place's own peak that holds most of its sessions), with its time window
   function zoneOf(ov, R, z, i, far) {
     const all = far.filter(q => q.u >= z.lo && q.u < z.hi), N = ov.N;
-    const k = { id: i, rank: i + 1, role: R.id, name: z.name, short: z.short, lo: z.lo, hi: z.hi, n: all.length, pct: 100 * all.length / N, all, mem: [] };
+    const k = { id: i, rank: i + 1, role: R.id, name: z.name, short: z.short, lo: z.lo, hi: z.hi, n: all.length, pct: 100 * all.length / N, all, mem: [], now: z.lo <= ov.u0 && ov.u0 < z.hi };
     k.entry = all.length ? entryOf(ov, R, k) : null;
     const ps = all.map(q => q.p).sort((a, b) => a - b);
     k.sortP = ps.length ? ps[ps.length >> 1] : ov.u2p(isFinite(z.lo) ? z.lo : z.hi);
@@ -1019,13 +1039,10 @@
     V.marks = [];
     if (ov.match === 'none') return;
     const xEnd = Math.min(V.X(ov.end) + 6, V.plot.w - 70), yMax = V.plot.h - (V.stripOn ? V.strip.h : 0);
-    // operator 2026-09-29: every side shows 4 brackets that add up to 100 % (the 3 places + «сразу»: the extreme came in
-    // the first minutes, next to the price), and the largest bracket of a side is the bright, bold one
+    // a bracket per place ahead of the price: how often price came there; the largest share is the bold number
     ov.roles.forEach((R, ri) => {
       const x = Math.round(xEnd + ri * 7) + 0.5;
-      const nearPs = R.stars.filter(q => q.near).map(q => q.p);
-      const nearK = R.nNear ? { near: true, n: R.nNear, pct: R.nearPct, zA: Math.min(ov.s.priceNow, ...nearPs), zB: Math.max(ov.s.priceNow, ...nearPs) } : null;
-      const all = R.cons.filter(k => k.n && k.zA != null).concat(nearK ? [nearK] : []);
+      const all = R.cons.filter(k => k.n && k.zA != null);
       const best = all.reduce((m, k) => k.pct > m ? k.pct : m, 0);
       for (const k of all) {
         k.best = k.pct === best;
@@ -1241,7 +1258,7 @@
       { id: 'hp', title: ov.mode === 'wait' ? 'Низ · цена' : 'Откат · цена', kind: 'hu', R: pullR },
       { id: 'hc', title: ov.mode === 'wait' ? 'Верх · цена' : 'Расширение · цена', kind: 'hu', R: contR },
       { id: 'tp', title: ov.mode === 'wait' ? 'Время низа' : 'Время отката', kind: 'tb', R: pullR },
-      { id: 'tc', title: ov.mode === 'wait' ? 'Время верха' : 'Время экстремума', kind: 'tb', R: contR }
+      { id: 'tc', title: ov.mode === 'wait' ? 'Когда приходили вверх' : 'Когда приходили', kind: 'tb', R: contR }
     ];
   }
   function drawHist(c, ctx) {

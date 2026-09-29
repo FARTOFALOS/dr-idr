@@ -220,22 +220,21 @@
     }
     for (const R of ov.roles) {
       const k = R.cons.slice().sort((a, b) => b.pct - a.pct)[0];
-      const ev = (R.id === 'pull' || R.id === 'dn' ? 'окончательный минимум' : 'окончательный максимум') + ' попал в полосу места';
-      if (k && k.n) out.push(link({ k: 'place', role: R.id, id: k.id }, row('<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i> чаще всего ' + k.name, P(k.pct)), '', M(ev)));
+      const ev = 'после этого момента цена похожих сессий заходила в эту полосу';
+      if (k && k.n) out.push(link({ k: 'place', role: R.id, id: k.id }, row('<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i> чаще всего заходила ' + k.name, P(k.pct)), '', M(ev)));
     }
-    out.push(link({ k: 'col', t0: ctx.obs, t1: ctx.obs + ov.near }, row('в первые ' + ov.near + ' минут', ov.roles.map(R => '<i style="color:' + R.col + '">' + P(R.nearPct) + '</i>').join(' · ')), 'dim', M('окончательный экстремум случился в первые минуты')));
     // the three places per side: share of the band, the densest price in it, and when its sessions first came there
-    out.push('<div class="p21-h second">Места <span>цена · впервые здесь</span></div>');
+    out.push('<div class="p21-h second">Места <span>как часто заходила · цена · впервые</span></div>');
     const mx = Math.max(1, ...ov.roles.flatMap(r => r.cons.map(k => k.pct)));
     for (const R of ov.roles) {
       const arrow = ov.mode === 'wait' ? '' : ((R.id === 'cont' ? side : -side) === 1 ? ' ↑' : ' ↓');
       out.push('<div class="p21-g"><i style="background:' + R.col + '"></i>' + R.name + arrow + '</div>');
       for (const k of R.cons.slice().sort((a, b) => b.sortP - a.sortP)) {
         const hot = k.n ? hotOf(ov, R, k) : null, en = k.entry;
-        const when = !k.n ? '' : en && en.now ? 'сейчас' : en && !none ? clk(en.t0) + '–' + clk(en.t1) : '';
-        const ev = (R.id === 'pull' || R.id === 'dn' ? 'окончательный минимум' : 'окончательный максимум') + ' попал в полосу «' + k.name + '» (вся полоса, не только ядро); «впервые» — когда эти сессии первый раз дошли до полосы';
+        const when = k.now ? 'сейчас здесь' : !k.n ? '' : en && en.now ? 'сейчас' : en && !none ? clk(en.t0) + '–' + clk(en.t1) : '';
+        const ev = 'цена похожих сессий заходила в полосу «' + k.name + '» после этого момента; «впервые» — когда чаще всего заходила первый раз';
         out.push(link({ k: 'place', role: R.id, id: k.id },
-          '<span class="bar" style="width:' + (none ? 0 : 100 * k.pct / mx).toFixed(1) + '%;background:' + R.col + '"></span><b style="color:' + R.col + '">' + P(k.pct) + '</b><span class="z">' + k.short + '</span><span class="pr">' + (hot && !none ? px(hot.p) : '—') + '</span><span class="tm">' + when + '</span>', 'place', M(ev)));
+          '<span class="bar" style="width:' + (none ? 0 : 100 * k.pct / mx).toFixed(1) + '%;background:' + R.col + '"></span><b style="color:' + R.col + '">' + (k.now ? '' : P(k.pct)) + '</b><span class="z">' + k.short + '</span><span class="pr">' + (hot && !none ? px(hot.p) : '—') + '</span><span class="tm">' + when + '</span>', 'place', M(ev)));
       }
     }
     if (ov.mode !== 'wait') {
@@ -249,17 +248,7 @@
         }
       }
     }
-    // time: by when half (and 70 %) of the final extremes had been reached
-    out.push('<div class="p21-h second">Время экстремума <span>половина достигнута к</span></div>');
-    for (const R of ov.roles) {
-      const ts = R.stars.map(q => q.t), t50 = quant(ts, 0.5), t70 = quant(ts, 0.7);
-      if (t50 == null) continue;
-      const deep = R.id === 'pull' || R.id === 'dn';
-      const text = '<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i>: ' + (none ? '—' : clk(t50) + (deep ? ' · 70% к ' + clk(t70) : ''));
-      const ts2 = none ? [] : [{ t: t50, label: '50% · ' + clk(t50) }].concat(deep ? [{ t: t70, label: '70% · ' + clk(t70) }] : []);
-      out.push(link({ k: 'times', from: ctx.obs, ts: ts2.length ? ts2 : [{ t: ctx.obs, label: clk(ctx.obs) }] }, '<span class="t">' + text + '</span>' + (!none && t50 <= ctx.obs ? '<span class="p21-past">прошло</span>' : ''), 'time',
-        M('момент, когда был достигнут окончательный экстремум; окончательным он стал только к концу сессии')));
-    }
+
     if (ov.mode === 'conf') {
       // the opposite side: the DR rule by M5 close, the wick beyond the DR, and the deep pullback (retirement −0,75)
       out.push('<div class="p21-h second">Противоположная сторона</div>');

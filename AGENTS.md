@@ -115,6 +115,13 @@ design/                   mockups on synthetic data, designs 1-22, start at desi
    add a number to the screen whose meaning is not defined in `docs/SEMANTICS.md`.
 8. **The demo engine stays separate** (`--data demo`) and never mixes with market data.
 9. **API contract changes update both sides** (server and `dist/`), and `docs/ARCHITECTURE.md`.
+10. **Clusters answer the operator's question, not an agent's.** The operator trades DR/IDR: after the box / the
+    confirmation, at this candle, he asks WHERE price of similar sessions CAME and WHEN. A star = a similar session's
+    first arrival in a place ahead of the price; a place's percentage = how often price came there. **Never** build
+    clusters, percentages or times from a session's final extreme until the close («окончательный экстремум», «самое
+    дно/верх дня»): agents invented that on 2026-09-28 without being asked, it piled every cluster up at 15:50–16:00 and
+    cost the operator a day of confusion (2026-09-29). Any new number must answer a question the operator asked, in his
+    words; if unsure, ask him in one plain sentence before building.
 
 ## How to verify your change (always, before saying "done")
 

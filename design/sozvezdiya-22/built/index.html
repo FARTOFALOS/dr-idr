@@ -485,7 +485,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
   function finishOverlay(ov, pts) {
     ov.near = ov.end - ov.obs < 45 ? 5 : NEAR;
     ov.match = ov.band === 0.25 ? 'p25' : ov.band === 0.5 ? 'p50' : 'none';
-    ov.roles = pts.map(q => role(ov, q[0], q[1], null, ov.sims.map((z, i) => ({ u: z[q[q.length - 2]], t: z[q[q.length - 1]], i }))));
+    ov.roles = pts.map(q => role(ov, q[0], q[1], null, arrivalsOf(ov, q[0])));
     ov.fan = fanOf(ov);
     if (ov.mode === 'conf') ov.holds = 100 * ov.sims.filter(p => p.held).length / ov.N;
     if (ov.mode === 'conf' && ov.sims.every(p => p.wick != null)) ov.wick = 100 * ov.sims.filter(p => p.wick).length / ov.N;
@@ -529,9 +529,29 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       .catch(() => A.cohorts.set(ck, { status: 'error' }))
       .finally(() => { A.pending.delete(ck); redraw(true); });
   }
+  // THE MEANING OF A STAR (operator 2026-09-29, binding): after this moment, WHERE similar sessions' price CAME and
+  // WHEN — one star per session per place ahead of the price, at its first arrival there. NOT the session's final
+  // extreme until the close: that was an agents' invention of 2026-09-28 that the operator never asked for (it piled
+  // every cluster up at 15:50-16:00). A place's share = how often price came into it.
+  function arrivalsOf(ov, id) {
+    const down = id === 'pull' || id === 'dn', u0 = ov.u0, zs = zoneDefs(ov, id), pts = [];
+    ov.sims.forEach((p, i) => {
+      const arr = down ? p.lo : p.hi;
+      if (!arr) return;
+      for (const z of zs) {
+        if (down ? !(z.hi <= u0) : !(z.lo > u0)) continue;           // only places ahead of the price on this side
+        const edge = down ? z.hi : z.lo;
+        for (let j = 0; j < ov.grid.length; j++) {
+          const v = arr[j];
+          if (v != null && (down ? v < edge : v >= edge)) { pts.push({ u: down ? Math.max(v, z.lo + 1e-9) : Math.min(v, z.hi - 1e-9), t: ov.grid[j] - 5, i }); break; }
+        }
+      }
+    });
+    return pts;
+  }
   function role(ov, id, name, col, pts) {
     const nearT = ov.obs + ov.near, N = ov.N;
-    const stars = pts.map(q => ({ u: q.u, t: q.t, p: ov.u2p(q.u), i: q.i, near: q.t <= nearT, role: id }));
+    const stars = pts.map(q => ({ u: q.u, t: q.t, p: ov.u2p(q.u), i: q.i, near: false, role: id }));
     const far = stars.filter(q => !q.near);
     const R = { id, name, stars, nNear: stars.length - far.length };
     Object.defineProperty(R, 'col', { get: () => roleCol(id) });
@@ -620,22 +640,22 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       if (!arr) continue;
       for (let j = 0; j < ov.grid.length; j++) {
         const v = arr[j];
-        if (v != null && (down ? v <= edge : v >= edge)) { const T = ov.grid[j] - 5; bins.set(T, (bins.get(T) || 0) + 1); n++; break; }
+        if (v != null && (down ? v <= edge : v >= edge)) { const T = Math.floor((ov.grid[j] - 5) / 15) * 15; bins.set(T, (bins.get(T) || 0) + 1); n++; break; }
       }
     }
     if (!n) return null;
     let pk = null;
     for (const [b, c] of bins) if (!pk || c > pk[1]) pk = [b, c];
-    let t0 = pk[0], t1 = pk[0] + 5, m = pk[1];
-    while ((bins.get(t0 - 5) || 0) >= 0.6 * pk[1]) { t0 -= 5; m += bins.get(t0); }
-    while ((bins.get(t1) || 0) >= 0.6 * pk[1]) { m += bins.get(t1); t1 += 5; }
+    let t0 = pk[0], t1 = pk[0] + 15, m = pk[1];   // 15-minute windows: 5-minute ones caught noise on ~50 sessions
+    while ((bins.get(t0 - 15) || 0) >= 0.6 * pk[1]) { t0 -= 15; m += bins.get(t0); }
+    while ((bins.get(t1) || 0) >= 0.6 * pk[1]) { m += bins.get(t1); t1 += 15; }
     return { t0, t1, pct: 100 * m / ov.N, bins: [...bins].sort((a, b) => a[0] - b[0]), peak: pk[1], edge };
   }
   // the constellation of a place: where inside the band the extremes lie densest (the connected region of at least 38 %
   // of the place's own peak that holds most of its sessions), with its time window
   function zoneOf(ov, R, z, i, far) {
     const all = far.filter(q => q.u >= z.lo && q.u < z.hi), N = ov.N;
-    const k = { id: i, rank: i + 1, role: R.id, name: z.name, short: z.short, lo: z.lo, hi: z.hi, n: all.length, pct: 100 * all.length / N, all, mem: [] };
+    const k = { id: i, rank: i + 1, role: R.id, name: z.name, short: z.short, lo: z.lo, hi: z.hi, n: all.length, pct: 100 * all.length / N, all, mem: [], now: z.lo <= ov.u0 && ov.u0 < z.hi };
     k.entry = all.length ? entryOf(ov, R, k) : null;
     const ps = all.map(q => q.p).sort((a, b) => a - b);
     k.sortP = ps.length ? ps[ps.length >> 1] : ov.u2p(isFinite(z.lo) ? z.lo : z.hi);
@@ -1201,13 +1221,10 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     V.marks = [];
     if (ov.match === 'none') return;
     const xEnd = Math.min(V.X(ov.end) + 6, V.plot.w - 70), yMax = V.plot.h - (V.stripOn ? V.strip.h : 0);
-    // operator 2026-09-29: every side shows 4 brackets that add up to 100 % (the 3 places + «сразу»: the extreme came in
-    // the first minutes, next to the price), and the largest bracket of a side is the bright, bold one
+    // a bracket per place ahead of the price: how often price came there; the largest share is the bold number
     ov.roles.forEach((R, ri) => {
       const x = Math.round(xEnd + ri * 7) + 0.5;
-      const nearPs = R.stars.filter(q => q.near).map(q => q.p);
-      const nearK = R.nNear ? { near: true, n: R.nNear, pct: R.nearPct, zA: Math.min(ov.s.priceNow, ...nearPs), zB: Math.max(ov.s.priceNow, ...nearPs) } : null;
-      const all = R.cons.filter(k => k.n && k.zA != null).concat(nearK ? [nearK] : []);
+      const all = R.cons.filter(k => k.n && k.zA != null);
       const best = all.reduce((m, k) => k.pct > m ? k.pct : m, 0);
       for (const k of all) {
         k.best = k.pct === best;
@@ -1423,7 +1440,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
       { id: 'hp', title: ov.mode === 'wait' ? 'Низ · цена' : 'Откат · цена', kind: 'hu', R: pullR },
       { id: 'hc', title: ov.mode === 'wait' ? 'Верх · цена' : 'Расширение · цена', kind: 'hu', R: contR },
       { id: 'tp', title: ov.mode === 'wait' ? 'Время низа' : 'Время отката', kind: 'tb', R: pullR },
-      { id: 'tc', title: ov.mode === 'wait' ? 'Время верха' : 'Время экстремума', kind: 'tb', R: contR }
+      { id: 'tc', title: ov.mode === 'wait' ? 'Когда приходили вверх' : 'Когда приходили', kind: 'tb', R: contR }
     ];
   }
   function drawHist(c, ctx) {
@@ -1857,22 +1874,21 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
     }
     for (const R of ov.roles) {
       const k = R.cons.slice().sort((a, b) => b.pct - a.pct)[0];
-      const ev = (R.id === 'pull' || R.id === 'dn' ? 'окончательный минимум' : 'окончательный максимум') + ' попал в полосу места';
-      if (k && k.n) out.push(link({ k: 'place', role: R.id, id: k.id }, row('<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i> чаще всего ' + k.name, P(k.pct)), '', M(ev)));
+      const ev = 'после этого момента цена похожих сессий заходила в эту полосу';
+      if (k && k.n) out.push(link({ k: 'place', role: R.id, id: k.id }, row('<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i> чаще всего заходила ' + k.name, P(k.pct)), '', M(ev)));
     }
-    out.push(link({ k: 'col', t0: ctx.obs, t1: ctx.obs + ov.near }, row('в первые ' + ov.near + ' минут', ov.roles.map(R => '<i style="color:' + R.col + '">' + P(R.nearPct) + '</i>').join(' · ')), 'dim', M('окончательный экстремум случился в первые минуты')));
     // the three places per side: share of the band, the densest price in it, and when its sessions first came there
-    out.push('<div class="p21-h second">Места <span>цена · впервые здесь</span></div>');
+    out.push('<div class="p21-h second">Места <span>как часто заходила · цена · впервые</span></div>');
     const mx = Math.max(1, ...ov.roles.flatMap(r => r.cons.map(k => k.pct)));
     for (const R of ov.roles) {
       const arrow = ov.mode === 'wait' ? '' : ((R.id === 'cont' ? side : -side) === 1 ? ' ↑' : ' ↓');
       out.push('<div class="p21-g"><i style="background:' + R.col + '"></i>' + R.name + arrow + '</div>');
       for (const k of R.cons.slice().sort((a, b) => b.sortP - a.sortP)) {
         const hot = k.n ? hotOf(ov, R, k) : null, en = k.entry;
-        const when = !k.n ? '' : en && en.now ? 'сейчас' : en && !none ? clk(en.t0) + '–' + clk(en.t1) : '';
-        const ev = (R.id === 'pull' || R.id === 'dn' ? 'окончательный минимум' : 'окончательный максимум') + ' попал в полосу «' + k.name + '» (вся полоса, не только ядро); «впервые» — когда эти сессии первый раз дошли до полосы';
+        const when = k.now ? 'сейчас здесь' : !k.n ? '' : en && en.now ? 'сейчас' : en && !none ? clk(en.t0) + '–' + clk(en.t1) : '';
+        const ev = 'цена похожих сессий заходила в полосу «' + k.name + '» после этого момента; «впервые» — когда чаще всего заходила первый раз';
         out.push(link({ k: 'place', role: R.id, id: k.id },
-          '<span class="bar" style="width:' + (none ? 0 : 100 * k.pct / mx).toFixed(1) + '%;background:' + R.col + '"></span><b style="color:' + R.col + '">' + P(k.pct) + '</b><span class="z">' + k.short + '</span><span class="pr">' + (hot && !none ? px(hot.p) : '—') + '</span><span class="tm">' + when + '</span>', 'place', M(ev)));
+          '<span class="bar" style="width:' + (none ? 0 : 100 * k.pct / mx).toFixed(1) + '%;background:' + R.col + '"></span><b style="color:' + R.col + '">' + (k.now ? '' : P(k.pct)) + '</b><span class="z">' + k.short + '</span><span class="pr">' + (hot && !none ? px(hot.p) : '—') + '</span><span class="tm">' + when + '</span>', 'place', M(ev)));
       }
     }
     if (ov.mode !== 'wait') {
@@ -1886,17 +1902,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
         }
       }
     }
-    // time: by when half (and 70 %) of the final extremes had been reached
-    out.push('<div class="p21-h second">Время экстремума <span>половина достигнута к</span></div>');
-    for (const R of ov.roles) {
-      const ts = R.stars.map(q => q.t), t50 = quant(ts, 0.5), t70 = quant(ts, 0.7);
-      if (t50 == null) continue;
-      const deep = R.id === 'pull' || R.id === 'dn';
-      const text = '<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i>: ' + (none ? '—' : clk(t50) + (deep ? ' · 70% к ' + clk(t70) : ''));
-      const ts2 = none ? [] : [{ t: t50, label: '50% · ' + clk(t50) }].concat(deep ? [{ t: t70, label: '70% · ' + clk(t70) }] : []);
-      out.push(link({ k: 'times', from: ctx.obs, ts: ts2.length ? ts2 : [{ t: ctx.obs, label: clk(ctx.obs) }] }, '<span class="t">' + text + '</span>' + (!none && t50 <= ctx.obs ? '<span class="p21-past">прошло</span>' : ''), 'time',
-        M('момент, когда был достигнут окончательный экстремум; окончательным он стал только к концу сессии')));
-    }
+
     if (ov.mode === 'conf') {
       // the opposite side: the DR rule by M5 close, the wick beyond the DR, and the deep pullback (retirement −0,75)
       out.push('<div class="p21-h second">Противоположная сторона</div>');
