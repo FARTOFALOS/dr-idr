@@ -38,7 +38,7 @@
   // everything a viewer can tune in «Настройки»; kept in this browser (localStorage), «Сбросить» restores these
   const DEF = {
     cont: '#63C3A5', pull: '#DE8580', up: '#A9B9E6', dn: '#D7A3C9',
-    starA: 50, glowA: 17, contourA: 30, markA: 42, markSize: 100,
+    starA: 50, glowA: 17, bestA: 130, bestCoreA: 40, bestLineA: 60, otherA: 70, bracketA: 28, contourA: 30, markA: 42, markSize: 100,
     stripA: 80, projA: 90, fanA: 50, typ: '#D1D4DC', typA: 70,
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
@@ -52,7 +52,7 @@
   const saveCfg = () => { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* not kept */ } };
   const SCHEMA = [
     ['Созвездия и звёзды', [['cont', 'Продолжение', 'color'], ['pull', 'Откат', 'color'], ['up', 'Верх (до подтверждения)', 'color'], ['dn', 'Низ (до подтверждения)', 'color'],
-      ['starA', 'Звёзды · яркость', 'range', 0, 100], ['glowA', 'Свечение созвездий', 'range', 0, 60], ['contourA', 'Контур созвездий', 'range', 0, 100],
+      ['starA', 'Звёзды · яркость', 'range', 0, 100], ['glowA', 'Свечение созвездий', 'range', 0, 60], ['bestA', 'Главное созвездие · заливка', 'range', 50, 250], ['bestCoreA', 'Главное созвездие · ядро', 'range', 0, 100], ['bestLineA', 'Главное созвездие · контур', 'range', 0, 100], ['otherA', 'Остальные созвездия · заливка', 'range', 10, 150], ['bracketA', 'Скобки мест · яркость', 'range', 0, 100], ['contourA', 'Контур созвездий', 'range', 0, 100],
       ['markA', 'Проценты в созвездиях · яркость', 'range', 10, 100], ['markSize', 'Проценты · размер', 'range', 50, 150]]],
     ['Полоса, плотность, веер', [['stripA', 'Полоса времени снизу', 'range', 10, 100], ['projA', 'Плотность по цене справа', 'range', 10, 100],
       ['fanA', 'Веер 20–80 %', 'range', 0, 100], ['typ', 'Медиана веера · цвет', 'color'], ['typA', 'Медиана веера · яркость', 'range', 10, 100]]],
@@ -806,11 +806,11 @@
       if (!g) continue;
       if (g.pal !== R.col) { g.img = glowImg(g, R.col, ov, R.peak); g.coreImg = null; g.pal = R.col; }
       const best = k === bestCon(R);
-      c.globalAlpha = Math.min(1, cfg.glowA / 100 * (focus ? 0.6 : best ? 1.8 : 0.7));
+      c.globalAlpha = Math.min(1, cfg.glowA / 100 * (focus ? 0.6 : best ? cfg.bestA / 100 : cfg.otherA / 100));
       c.drawImage(g.img, ...glowRect(g, ov));
       if ((isCon(h, R, k) || best && !focus) && g.coreId != null) {
         g.coreImg = g.coreImg || glowImg(g, R.col, ov, R.peak, g.coreId);
-        c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(1, cfg.glowA / 100 * 1.7); c.drawImage(g.coreImg, ...glowRect(g, ov)); c.globalCompositeOperation = 'source-over';
+        c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(1, cfg.glowA / 100 * (isCon(h, R, k) ? 1.7 : cfg.bestCoreA / 25)); c.drawImage(g.coreImg, ...glowRect(g, ov)); c.globalCompositeOperation = 'source-over';
       }
     }
     c.restore();
@@ -823,7 +823,7 @@
       const pt = (gx, gy) => [V.X(g.t0 + gx * g.dt), V.Y(ov.u2p(g.u0 + gy * g.du))];
       const on = isCon(h, R, k), best = k === bestCon(R);
       for (const core of [false, true]) {
-        c.strokeStyle = rgba(R.col, core ? (on ? 0.9 : Math.min(1, (isConH(h) ? 0.16 : best ? 0.8 : 0.3) * cf)) : Math.min(1, 0.08 * cf));
+        c.strokeStyle = rgba(R.col, core ? (on ? 0.9 : Math.min(1, (isConH(h) ? 0.16 : best ? cfg.bestLineA / 100 : 0.3) * cf)) : Math.min(1, 0.08 * cf));
         c.lineWidth = core && (on || best) ? 1.8 : 1;
         c.beginPath();
         for (let i = 0; i < g.segs.length; i += 5) {
@@ -1033,7 +1033,7 @@
         const ya = V.Y(k.zA), yb = V.Y(k.zB), top = Math.max(0, Math.min(ya, yb)), bot = Math.min(yMax, Math.max(ya, yb));
         if (bot <= top) continue;
         const on = isCon(h, R, k), dim = isConH(h) && !on;
-        c.strokeStyle = rgba(R.col, on ? 0.8 : dim ? 0.12 : 0.28); c.lineWidth = on ? 1.4 : 1;
+        c.strokeStyle = rgba(R.col, on ? 0.8 : cfg.bracketA / 100 * (dim ? 0.45 : 1)); c.lineWidth = on ? 1.4 : 1;
         if (k.near) c.setLineDash([2, 2]);
         c.beginPath(); c.moveTo(x, top + 1.5); c.lineTo(x, bot - 1.5); c.moveTo(x - 3, top + 1.5); c.lineTo(x, top + 1.5); c.moveTo(x - 3, bot - 1.5); c.lineTo(x, bot - 1.5); c.stroke(); c.setLineDash([]);
         labels.push({ R, k, x, y: (top + bot) / 2, top, bot, on, dim });
