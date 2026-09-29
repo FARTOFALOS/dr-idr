@@ -1,0 +1,44 @@
+NQ RDR 142736 21s
+NQ ODR 113128 38s
+ES RDR 144162 61s
+ES ODR 114356 79s
+YM RDR 138809 100s
+YM ODR 111828 123s
+NQ-RDR  states  127194 | BSS dyn  21.9% [21.1; 22.9]  frozen-films  -1.9% [-3.5; -0.3]  frozen-map -20.2% [-22.6; -17.8]
+            0- 30 min after the confirmation: states  16644  BSS dyn  12.0%  frozen-films   4.5%  frozen-map   3.8%  | Brier frozen-films minus dyn +18.5e-3 [+15.1; +21.6]
+           30- 90 min after the confirmation: states  30365  BSS dyn  16.2%  frozen-films  -0.8%  frozen-map  -5.2%  | Brier frozen-films minus dyn +40.8e-3 [+35.6; +45.6]
+           90-180 min after the confirmation: states  39318  BSS dyn  18.9%  frozen-films  -5.6%  frozen-map -19.7%  | Brier frozen-films minus dyn +54.3e-3 [+48.9; +59.1]
+          180-999 min after the confirmation: states  40867  BSS dyn  24.0%  frozen-films -22.6%  frozen-map -78.1%  | Brier frozen-films minus dyn +71.3e-3 [+67.1; +75.4]
+NQ-ODR  states   97766 | BSS dyn  20.8% [20.1; 21.6]  frozen-films  -2.0% [-3.5; -0.4]  frozen-map -18.7% [-20.6; -16.8]
+            0- 30 min after the confirmation: states  16483  BSS dyn  12.1%  frozen-films   4.2%  frozen-map   3.3%  | Brier frozen-films minus dyn +19.7e-3 [+16.1; +22.9]
+           30- 90 min after the confirmation: states  28667  BSS dyn  15.6%  frozen-films  -2.3%  frozen-map  -7.5%  | Brier frozen-films minus dyn +44.7e-3 [+40.1; +49.7]
+           90-180 min after the confirmation: states  35189  BSS dyn  19.4%  frozen-films  -8.9%  frozen-map -28.0%  | Brier frozen-films minus dyn +67.1e-3 [+60.7; +72.5]
+          180-999 min after the confirmation: states  17427  BSS dyn  22.1%  frozen-films -24.8%  frozen-map -88.2%  | Brier frozen-films minus dyn +82.8e-3 [+77.3; +87.6]
+ES-RDR  states  126826 | BSS dyn  21.5% [20.6; 22.3]  frozen-films  -1.3% [-2.8; 0.2]  frozen-map -17.2% [-19.4; -15.1]
+            0- 30 min after the confirmation: states  17314  BSS dyn  11.7%  frozen-films   3.9%  frozen-map   3.1%  | Brier frozen-films minus dyn +19.5e-3 [+16.5; +22.4]
+           30- 90 min after the confirmation: states  30759  BSS dyn  15.9%  frozen-films  -2.0%  frozen-map  -6.7%  | Brier frozen-films minus dyn +44.6e-3 [+39.6; +49.3]
+           90-180 min after the confirmation: states  38825  BSS dyn  18.8%  frozen-films  -5.3%  frozen-map -17.9%  | Brier frozen-films minus dyn +56.9e-3 [+51.1; +62.2]
+          180-999 min after the confirmation: states  39928  BSS dyn  23.4%  frozen-films -15.6%  frozen-map -58.8%  | Brier frozen-films minus dyn +71.6e-3 [+67.1; +76.3]
+ES-ODR  states  100904 | BSS dyn  20.4% [19.5; 21.2]  frozen-films  -1.7% [-3.1; -0.2]  frozen-map -17.9% [-19.8; -16.2]
+            0- 30 min after the confirmation: states  17059  BSS dyn  11.3%  frozen-films   3.1%  frozen-map   2.2%  | Brier frozen-films minus dyn +20.2e-3 [+17.1; +23.4]
+           30- 90 min after the confirmation: states  29862  BSS dyn  15.8%  frozen-films  -1.7%  frozen-map  -6.6%  | Brier frozen-films minus dyn +43.7e-3 [+39.3; +48.0]
+           90-180 min after the confirmation: states  36638  BSS dyn  19.4%  frozen-films  -7.6%  frozen-map -26.6%  | Brier frozen-films minus dyn +63.3e-3 [+58.0; +68.6]
+          180-999 min after the confirmation: states  17345  BSS dyn  22.1%  frozen-films -23.5%  frozen-map -85.5%  | Brier frozen-films minus dyn +81.4e-3 [+76.7; +86.8]
+YM-RDR  states  121227 | BSS dyn  20.1% [19.2; 21.0]  frozen-films  -2.6% [-4.4; -1.2]  frozen-map -19.7% [-22.2; -17.5]
+            0- 30 min after the confirmation: states  16722  BSS dyn  11.2%  frozen-films   3.6%  frozen-map   2.8%  | Brier frozen-films minus dyn +18.9e-3 [+16.2; +22.0]
+           30- 90 min after the confirmation: states  29275  BSS dyn  14.5%  frozen-films  -1.9%  frozen-map  -6.5%  | Brier frozen-films minus dyn +40.4e-3 [+35.6; +45.0]
+           90-180 min after the confirmation: states  37089  BSS dyn  17.5%  frozen-films  -6.5%  frozen-map -19.8%  | Brier frozen-films minus dyn +55.6e-3 [+50.8; +61.3]
+          180-999 min after the confirmation: states  38141  BSS dyn  22.2%  frozen-films -18.8%  frozen-map -66.7%  | Brier frozen-films minus dyn +72.7e-3 [+67.8; +77.2]
+YM-ODR  states   97159 | BSS dyn  20.3% [19.5; 21.1]  frozen-films  -1.6% [-3.0; -0.0]  frozen-map -18.1% [-20.1; -16.0]
+            0- 30 min after the confirmation: states  16548  BSS dyn  11.6%  frozen-films   4.3%  frozen-map   3.4%  | Brier frozen-films minus dyn +18.3e-3 [+14.5; +22.0]
+           30- 90 min after the confirmation: states  28842  BSS dyn  14.6%  frozen-films  -2.8%  frozen-map  -8.3%  | Brier frozen-films minus dyn +43.4e-3 [+38.3; +48.4]
+           90-180 min after the confirmation: states  34921  BSS dyn  19.3%  frozen-films  -7.5%  frozen-map -26.2%  | Brier frozen-films minus dyn +62.9e-3 [+57.7; +68.3]
+          180-999 min after the confirmation: states  16848  BSS dyn  21.5%  frozen-films -25.7%  frozen-map -91.5%  | Brier frozen-films minus dyn +80.9e-3 [+75.7; +85.5]
+ALL     states  671076 | BSS dyn  21.3% [20.9; 21.6]  frozen-films  -1.4% [-2.0; -0.7]  frozen-map -18.1% [-19.0; -17.2]
+            0- 30 min after the confirmation: states 100770  BSS dyn  11.9%  frozen-films   4.2%  frozen-map   3.4%  | Brier frozen-films minus dyn +19.2e-3 [+17.9; +20.6]
+           30- 90 min after the confirmation: states 177770  BSS dyn  15.7%  frozen-films  -1.6%  frozen-map  -6.4%  | Brier frozen-films minus dyn +42.9e-3 [+41.0; +44.7]
+           90-180 min after the confirmation: states 221980  BSS dyn  19.0%  frozen-films  -6.7%  frozen-map -22.7%  | Brier frozen-films minus dyn +59.8e-3 [+57.9; +62.2]
+          180-999 min after the confirmation: states 170556  BSS dyn  23.0%  frozen-films -20.3%  frozen-map -73.4%  | Brier frozen-films minus dyn +74.8e-3 [+72.8; +76.9]
+          reliability dyn: 0-20%:10->9 20-40%:30->27 40-60%:49->47 60-80%:69->67 80-100%:86->84
+          reliability frozen-films: 0-20%:14->27 20-40%:32->29 40-60%:49->38 60-80%:68->52 80-100%:88->63
+          weather (same level, 15 min apart): dyn moves 9.0 pp on average, > 10 pp in 33% of steps; frozen films 1.1 pp, > 10 pp in 0%

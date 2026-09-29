@@ -116,8 +116,7 @@ calculations, studies, designs, external sources), then passed on two texts of a
 `meaning/lens/`), then asked for the next design built on all the semantic conclusions and for the repository to be
 readable by a semantic agent without code (GitHub as the intermediary). Done: `meaning/` (the semantic layer),
 `studies/audit_2026_09_29/`, design 22 in `design/sozvezdiya-22/`. The same evening the operator made 22 the working
-screen and corrected it live: stars and places = first arrivals (the final-extreme meaning was an agents' invention of
-28.09), fan back to the filled band, box fill by colour, smaller line names, VI by the ICT rule, wheel zoom anchored at
+screen and corrected it live: stars and places = first arrivals (on 28.09 agents had put the author's final-extreme object, STRATEGY §6.3, in place of the operator's question), fan back to the filled band, box fill by colour, smaller line names, VI by the ICT rule, wheel zoom anchored at
 the session end. What changed and why: `meaning/04-dizajn-22.md`; open decisions: `meaning/05-otkrytye-voprosy.md`.
 
 ## Open questions

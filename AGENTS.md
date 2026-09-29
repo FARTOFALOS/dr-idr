@@ -47,14 +47,19 @@ against what happened next.
 8. `docs/DESIGN.md` — the redesign of the screen the operator chose (variant B′): target layout, visual language,
    interactions, which UI rules it replaces, what the implementation needs; mockups in `design/redesign-2026-09/`.
 
-## Where the work stands (2026-09-29)
+## Where the work stands (2026-09-30)
 
 - **Semantic audit and design 22 (2026-09-29).** The operator asked for a deep audit of the whole system and then for
   the next design built on its conclusions, with the repository made readable for a semantic agent without code.
-  Results: `meaning/03-dokazatelstva.md` (studies in `studies/audit_2026_09_29/`, all aggregates); design 22 is a
+  Results: `meaning/03-dokazatelstva.md` (studies in `studies/audit_2026_09_29/`, all aggregates); design 22 is
   the working screen since the same evening (`design/sozvezdiya-22/`, `meaning/04-dizajn-22.md`); `/api/cohort` sends
   own DR (`uH`, `uL`) and `wick` per similar session. Stars and places were then switched to first arrivals (hard
   rule 10).
+- **Lens 4 checks (2026-09-30, `studies/lens4_2026_09_30/`, `meaning/lens/2026-09-30-otvet-4.md`).** Keep rebuilding the
+  similar sessions at every M5 (a map frozen at the confirmation has no skill), keep the state matcher (a level-activation
+  matcher is not better) and the live minute price (not worse than full M1 alignment, better than closed M5 only). A
+  place's cloud height is the first entering bar's depth, not where price came, and the data form no price clusters of
+  their own: what to draw instead is the operator's question О11 — do not restyle the clouds before it is answered.
 
 - **The working screen is «Созвездия» design 22 «смысл числа», on market data** (since 2026-09-29; design 21 from
   2026-09-28 before it). `http://127.0.0.1:8767` opens it (`lab/dist/index.html` + `sozvezdiya.js`, built from
@@ -119,8 +124,10 @@ design/                   mockups on synthetic data, designs 1-22, start at desi
     confirmation, at this candle, the question is WHERE price of similar sessions CAME and WHEN. A star = a similar session's
     first arrival in a place ahead of the price; a place's percentage = how often price came there. **Never** build
     clusters, percentages or times from a session's final extreme until the close («окончательный экстремум», «самое
-    дно/верх дня»): agents invented that on 2026-09-28 without being asked, it piled every cluster up at 15:50–16:00 and
-    cost the operator a day of confusion (2026-09-29). Any new number must answer a question the operator asked, in the
+    дно/верх дня»): on 2026-09-28 agents put that object in place of the operator's question without being asked. The object
+    itself is real in the author's method (the Time & Price of the maximum retracement, `docs/STRATEGY.md` §6.3), but it
+    answers a different question; on the screen it piled every cluster up at 15:50–16:00 and cost the operator a day of
+    confusion (2026-09-29). Any new number must answer a question the operator asked, in the
     operator's words; if unsure, ask in one plain sentence before building.
 
 ## How to verify your change (always, before saying "done")

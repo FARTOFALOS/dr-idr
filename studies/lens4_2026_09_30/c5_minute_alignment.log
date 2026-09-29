@@ -1,0 +1,33 @@
+C:\Users\Admin\Claude\dr-idr\studies\lens4_2026_09_30\c5_minute_alignment.py:69: RuntimeWarning: All-NaN slice encountered
+  H5 = np.nanmax(Hm.reshape(len(Hm), -1, 5), axis=2)
+NQ RDR 290072 M1 rebuilds M5 highs in 100.00% of bars 66s
+NQ ODR 230520 M1 rebuilds M5 highs in 100.00% of bars 101s
+C:\Users\Admin\Claude\dr-idr\studies\lens4_2026_09_30\c5_minute_alignment.py:69: RuntimeWarning: All-NaN slice encountered
+  H5 = np.nanmax(Hm.reshape(len(Hm), -1, 5), axis=2)
+ES RDR 293251 M1 rebuilds M5 highs in 100.00% of bars 169s
+ES ODR 233312 M1 rebuilds M5 highs in 100.00% of bars 211s
+C:\Users\Admin\Claude\dr-idr\studies\lens4_2026_09_30\c5_minute_alignment.py:69: RuntimeWarning: All-NaN slice encountered
+  H5 = np.nanmax(Hm.reshape(len(Hm), -1, 5), axis=2)
+YM RDR 281997 M1 rebuilds M5 highs in 100.00% of bars 271s
+YM ODR 227351 M1 rebuilds M5 highs in 100.00% of bars 305s
+NQ-RDR  states  257054 | BSS A (live now)  21.9% [21.1; 22.7]  B (minutes)  21.9% [21.1; 22.7]  C (closed M5)  19.9% [19.1; 20.7]
+          Brier A minus B +0.01e-3 [-0.16; +0.21]  A minus C -4.30e-3 [-4.76; -3.85] | mean forecast A 34.9% B 34.4% C 35.1% real 31.6%
+          places within 0.25 IDR of the price: mean forecast A 75.6% B 75.3% C 73.5% real 80.5%
+NQ-ODR  states  197868 | BSS A (live now)  21.1% [20.2; 21.9]  B (minutes)  20.8% [19.9; 21.6]  C (closed M5)  17.9% [17.0; 18.8]
+          Brier A minus B -0.74e-3 [-1.05; -0.40]  A minus C -7.75e-3 [-8.51; -7.09] | mean forecast A 42.7% B 41.8% C 43.1% real 40.9%
+          places within 0.25 IDR of the price: mean forecast A 79.7% B 79.2% C 77.2% real 84.7%
+ES-RDR  states  256308 | BSS A (live now)  21.6% [20.8; 22.4]  B (minutes)  21.6% [20.9; 22.4]  C (closed M5)  19.1% [18.3; 20.0]
+          Brier A minus B +0.04e-3 [-0.17; +0.23]  A minus C -5.75e-3 [-6.29; -5.20] | mean forecast A 39.9% B 39.4% C 40.1% real 37.1%
+          places within 0.25 IDR of the price: mean forecast A 78.7% B 78.4% C 76.4% real 83.7%
+ES-ODR  states  204409 | BSS A (live now)  20.5% [19.7; 21.3]  B (minutes)  20.5% [19.7; 21.3]  C (closed M5)  17.2% [16.5; 18.1]
+          Brier A minus B +0.00e-3 [-0.26; +0.27]  A minus C -7.89e-3 [-8.61; -7.23] | mean forecast A 43.6% B 42.8% C 43.9% real 40.3%
+          places within 0.25 IDR of the price: mean forecast A 79.7% B 79.3% C 77.4% real 83.3%
+YM-RDR  states  244551 | BSS A (live now)  20.2% [19.4; 21.0]  B (minutes)  20.2% [19.4; 21.0]  C (closed M5)  18.0% [17.1; 18.8]
+          Brier A minus B +0.05e-3 [-0.13; +0.23]  A minus C -5.13e-3 [-5.60; -4.58] | mean forecast A 38.9% B 38.5% C 39.2% real 35.4%
+          places within 0.25 IDR of the price: mean forecast A 77.3% B 77.0% C 75.1% real 82.4%
+YM-ODR  states  195939 | BSS A (live now)  20.6% [19.8; 21.4]  B (minutes)  20.5% [19.7; 21.3]  C (closed M5)  17.4% [16.6; 18.2]
+          Brier A minus B -0.34e-3 [-0.67; -0.04]  A minus C -7.72e-3 [-8.36; -7.10] | mean forecast A 41.9% B 41.0% C 42.3% real 40.0%
+          places within 0.25 IDR of the price: mean forecast A 78.7% B 78.1% C 76.4% real 82.7%
+ALL     states 1356129 | BSS A (live now)  21.4% [21.0; 21.7]  B (minutes)  21.3% [20.9; 21.7]  C (closed M5)  18.7% [18.3; 19.0]
+          Brier A minus B -0.14e-3 [-0.24; -0.04]  A minus C -6.26e-3 [-6.49; -6.01] | mean forecast A 40.0% B 39.4% C 40.3% real 37.2%
+          places within 0.25 IDR of the price: mean forecast A 78.2% B 77.8% C 75.9% real 82.8%

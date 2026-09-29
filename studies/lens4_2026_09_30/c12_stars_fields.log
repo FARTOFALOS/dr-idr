@@ -1,0 +1,66 @@
+NQ-RDR 139s
+NQ-ODR 228s
+ES-RDR 430s
+ES-ODR 504s
+YM-RDR 653s
+YM-ODR 716s
+NQ-RDR cont bounded places  28672 stars  2117951 | star height above the near edge (IDR): median 0.06, 75% 0.13, 90% 0.25; < 0.1: 66% | densest 0.1-row is the edge row in 99% of places | whole place crossed by the first bar: 2%
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 35/15/7/3%, by the session end 82/69/58/49%
+NQ-RDR cont open    places  28091 stars   989517 | star height above the near edge (IDR): median 0.08, 75% 0.16, 90% 0.30; < 0.1: 59% | densest 0.1-row is the edge row in 93% of places
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 44/21/11/6%, by the session end 82/69/58/50%
+NQ-RDR pull bounded places  24281 stars  1818837 | star height above the near edge (IDR): median 0.07, 75% 0.15, 90% 0.25; < 0.1: 63% | densest 0.1-row is the edge row in 96% of places | whole place crossed by the first bar: 2%
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 40/20/9/5%, by the session end 85/73/63/55%
+NQ-RDR pull open    places  27429 stars  1158153 | star height above the near edge (IDR): median 0.08, 75% 0.17, 90% 0.29; < 0.1: 59% | densest 0.1-row is the edge row in 92% of places
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 45/24/13/8%, by the session end 84/74/64/59%
+NQ-RDR picture states 307; visit-field columns (15 min, from 60 min on) with >= 2 stable price modes: 26 of 4912 (1%)
+          where those modes sit (u, 0.25 bins from -2): -2.00:3 -1.75:1 -1.25:8 -1.00:1 -0.75:1 -0.25:1 +0.00:8 +0.25:12 +0.50:3 +0.75:3 +1.00:3 +1.25:2 +1.50:1 +1.75:5 +2.00:6 +2.25:2
+NQ-ODR cont bounded places  21933 stars  1700142 | star height above the near edge (IDR): median 0.09, 75% 0.21, 90% 0.38; < 0.1: 52% | densest 0.1-row is the edge row in 98% of places | whole place crossed by the first bar: 6%
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 47/26/16/10%, by the session end 86/76/67/59%
+NQ-ODR cont open    places  21904 stars   961869 | star height above the near edge (IDR): median 0.11, 75% 0.26, 90% 0.50; < 0.1: 46% | densest 0.1-row is the edge row in 93% of places
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 55/34/23/15%, by the session end 87/76/69/61%
+NQ-ODR pull bounded places  18555 stars  1523267 | star height above the near edge (IDR): median 0.09, 75% 0.20, 90% 0.35; < 0.1: 52% | densest 0.1-row is the edge row in 95% of places | whole place crossed by the first bar: 5%
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 51/31/18/11%, by the session end 87/77/67/59%
+NQ-ODR pull open    places  21314 stars  1087393 | star height above the near edge (IDR): median 0.11, 75% 0.25, 90% 0.42; < 0.1: 48% | densest 0.1-row is the edge row in 84% of places
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 55/33/20/14%, by the session end 85/76/65/57%
+NQ-ODR picture states 314; visit-field columns (15 min, from 60 min on) with >= 2 stable price modes: 29 of 3140 (1%)
+          where those modes sit (u, 0.25 bins from -2): -1.75:1 -1.50:1 -1.25:1 -1.00:1 -0.75:13 -0.50:3 -0.25:2 +0.00:3 +0.25:12 +0.50:6 +0.75:3 +1.00:1 +1.25:2 +1.50:2 +1.75:3 +2.00:2 +2.25:1 +2.50:1 +2.75:1
+ES-RDR cont bounded places  28677 stars  2370298 | star height above the near edge (IDR): median 0.06, 75% 0.14, 90% 0.25; < 0.1: 62% | densest 0.1-row is the edge row in 99% of places | whole place crossed by the first bar: 3%
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 37/16/8/4%, by the session end 85/73/63/55%
+ES-RDR cont open    places  28504 stars  1272016 | star height above the near edge (IDR): median 0.08, 75% 0.17, 90% 0.32; < 0.1: 56% | densest 0.1-row is the edge row in 96% of places
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 45/23/13/8%, by the session end 84/71/62/55%
+ES-RDR pull bounded places  24316 stars  1918713 | star height above the near edge (IDR): median 0.08, 75% 0.16, 90% 0.28; < 0.1: 57% | densest 0.1-row is the edge row in 93% of places | whole place crossed by the first bar: 2%
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 47/22/11/7%, by the session end 88/77/67/57%
+ES-RDR pull open    places  27530 stars  1318871 | star height above the near edge (IDR): median 0.08, 75% 0.17, 90% 0.32; < 0.1: 56% | densest 0.1-row is the edge row in 89% of places
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 49/22/14/10%, by the session end 88/73/67/58%
+ES-RDR picture states 328; visit-field columns (15 min, from 60 min on) with >= 2 stable price modes: 33 of 5248 (1%)
+          where those modes sit (u, 0.25 bins from -2): -1.75:1 -1.50:13 -1.25:2 -0.75:5 -0.50:4 -0.25:4 +0.00:1 +0.25:6 +0.50:11 +0.75:3 +1.00:7 +1.25:4 +1.75:1 +2.00:1
+ES-ODR cont bounded places  22759 stars  1732977 | star height above the near edge (IDR): median 0.07, 75% 0.19, 90% 0.36; < 0.1: 55% | densest 0.1-row is the edge row in 99% of places | whole place crossed by the first bar: 6%
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 43/23/14/8%, by the session end 84/74/64/56%
+ES-ODR cont open    places  22743 stars   951584 | star height above the near edge (IDR): median 0.10, 75% 0.23, 90% 0.50; < 0.1: 49% | densest 0.1-row is the edge row in 92% of places
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 51/31/21/14%, by the session end 83/74/64/56%
+ES-ODR pull bounded places  19341 stars  1552044 | star height above the near edge (IDR): median 0.08, 75% 0.19, 90% 0.35; < 0.1: 53% | densest 0.1-row is the edge row in 94% of places | whole place crossed by the first bar: 5%
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 50/29/17/12%, by the session end 86/76/68/61%
+ES-ODR pull open    places  22165 stars  1082016 | star height above the near edge (IDR): median 0.11, 75% 0.25, 90% 0.36; < 0.1: 47% | densest 0.1-row is the edge row in 91% of places
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 55/34/16/11%, by the session end 86/77/63/55%
+ES-ODR picture states 294; visit-field columns (15 min, from 60 min on) with >= 2 stable price modes: 6 of 2940 (0%)
+          where those modes sit (u, 0.25 bins from -2): -0.50:3 +0.00:3 +1.00:2 +2.75:1
+YM-RDR cont bounded places  27132 stars  2047893 | star height above the near edge (IDR): median 0.07, 75% 0.15, 90% 0.27; < 0.1: 62% | densest 0.1-row is the edge row in 99% of places | whole place crossed by the first bar: 3%
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 38/17/8/5%, by the session end 83/71/62/53%
+YM-RDR cont open    places  26863 stars  1067754 | star height above the near edge (IDR): median 0.08, 75% 0.18, 90% 0.33; < 0.1: 55% | densest 0.1-row is the edge row in 93% of places
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 48/25/13/9%, by the session end 84/73/64/55%
+YM-RDR pull bounded places  22970 stars  1799549 | star height above the near edge (IDR): median 0.08, 75% 0.16, 90% 0.29; < 0.1: 58% | densest 0.1-row is the edge row in 94% of places | whole place crossed by the first bar: 3%
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 46/21/12/7%, by the session end 86/73/64/57%
+YM-RDR pull open    places  26275 stars  1171990 | star height above the near edge (IDR): median 0.09, 75% 0.20, 90% 0.36; < 0.1: 52% | densest 0.1-row is the edge row in 90% of places
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 52/28/17/11%, by the session end 86/71/62/55%
+YM-RDR picture states 301; visit-field columns (15 min, from 60 min on) with >= 2 stable price modes: 44 of 4816 (1%)
+          where those modes sit (u, 0.25 bins from -2): -2.00:4 -1.75:2 -1.50:1 -1.25:1 -0.50:2 -0.25:14 +0.00:15 +0.25:8 +0.50:4 +0.75:8 +1.25:15 +1.50:1 +2.00:1 +2.25:11 +2.50:4 +2.75:4
+YM-ODR cont bounded places  21577 stars  1633947 | star height above the near edge (IDR): median 0.09, 75% 0.20, 90% 0.37; < 0.1: 52% | densest 0.1-row is the edge row in 98% of places | whole place crossed by the first bar: 6%
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 48/26/15/9%, by the session end 85/75/65/57%
+YM-ODR cont open    places  21550 stars   891311 | star height above the near edge (IDR): median 0.12, 75% 0.26, 90% 0.50; < 0.1: 44% | densest 0.1-row is the edge row in 88% of places
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 58/36/24/16%, by the session end 86/76/68/59%
+YM-ODR pull bounded places  18274 stars  1491125 | star height above the near edge (IDR): median 0.09, 75% 0.20, 90% 0.35; < 0.1: 53% | densest 0.1-row is the edge row in 91% of places | whole place crossed by the first bar: 5%
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 52/29/18/11%, by the session end 90/80/71/63%
+YM-ODR pull open    places  20940 stars  1040810 | star height above the near edge (IDR): median 0.10, 75% 0.22, 90% 0.43; < 0.1: 49% | densest 0.1-row is the edge row in 92% of places
+          of the sessions that came, went 0.1/0.2/0.3/0.4 IDR deeper: in the first bar 53/32/22/14%, by the session end 85/74/66/58%
+YM-ODR picture states 248; visit-field columns (15 min, from 60 min on) with >= 2 stable price modes: 24 of 2480 (1%)
+          where those modes sit (u, 0.25 bins from -2): -2.00:2 -1.75:1 -1.25:4 -0.75:1 -0.50:4 -0.25:6 +0.00:7 +0.25:3 +0.50:2 +0.75:6 +1.00:3 +1.25:2 +1.50:2 +1.75:1 +2.00:1 +2.25:3 +2.50:3 +2.75:1
