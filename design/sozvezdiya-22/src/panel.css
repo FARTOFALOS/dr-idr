@@ -1,0 +1,52 @@
+/* Design 22: the panel of 21 with a match mark and quiet meanings on hover. */
+#dr21-root{position:relative;width:100%;height:100%;--p21-width:292px}
+#main{right:var(--p21-width)}
+#panel{width:var(--p21-width);padding:12px 12px 12px;font-size:13px;line-height:1.35;color:#D1D4DC}
+.p21-empty{color:#98A3B3;padding:8px 2px}
+.p21-h{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 6px;color:#A6AFBC;font-size:12px;font-weight:600;letter-spacing:.2px}
+.p21-h span{font-weight:400;color:#7F8896;font-size:11.5px}
+.p21-h.second{margin-top:14px;padding-top:10px;border-top:1px solid #252B34}
+.p21-link{position:relative;display:flex;align-items:baseline;gap:8px;padding:4px 6px;margin:0 -6px;border-radius:4px;cursor:pointer;font-variant-numeric:tabular-nums}
+.p21-link:hover,.p21-link.on{background:#1C2330}
+.p21-link.pinned{background:#243042}
+.p21-link .t{flex:1;min-width:0;color:#C9CFD8}
+.p21-link .t i{font-style:normal}
+.p21-link>b{font-weight:700;white-space:nowrap}
+.p21-link>b i{font-style:normal}
+.p21-link.dim .t{color:#8F98A6}
+.p21-dir{display:flex;align-items:baseline;gap:2px;margin:0 0 2px;color:#C9CFD8;font-size:12.5px;white-space:nowrap}
+.p21-dir .lb{flex:1}
+.p21-dir .p21-link.in{margin:0;padding:2px 6px}
+.p21-no{padding:2px 4px;color:#98A3B3}
+.p21-g{display:flex;align-items:center;gap:7px;margin:8px 0 2px;font-size:12px;font-weight:600;color:#C9CFD8}
+.p21-g i{width:8px;height:8px;border-radius:50%}
+.p21-link.place{display:grid;grid-template-columns:42px 1fr auto 74px;gap:6px;align-items:center;font-size:12.5px;overflow:hidden}
+.p21-link.place .bar{position:absolute;left:0;top:0;bottom:0;opacity:.09;border-radius:4px;pointer-events:none}
+.p21-link.place .z{color:#9AA4B2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p21-link.place .pr{color:#D1D4DC}
+.p21-link.place .tm{color:#AEB7C4;text-align:right}
+.p21-link.tgt .tm2,.p21-past{color:#8F98A6;font-size:12px;white-space:nowrap}
+.p21-past{margin-left:auto}
+.p21-note{color:#8F98A6;font-size:12px;padding:3px 0}
+#apibar{display:none;align-items:center;gap:8px;font-size:12px;color:#A3A8B3;white-space:nowrap}
+#dr21-root.api #apibar{display:flex}
+#dr21-root.api #scene,#dr21-root.api .version21,#dr21-root.api #step21{display:none}
+#apibar .err{color:#F28B82;font-weight:600}
+#apibar .auto{display:flex;align-items:center;gap:4px;cursor:pointer}
+#apibar button{height:26px;padding:0 9px;border-radius:5px;background:#161D26;color:#C9CFD8}
+#apibar button:hover{background:#25303B;color:#fff}
+#apibar button:disabled{opacity:.5}
+#step21{display:flex;gap:2px}
+#step21 button,#panel21toggle{padding:5px 7px;background:#161D26;border-radius:4px;color:#B7C1CE;font-size:12px;white-space:nowrap}
+#step21 button:hover,#panel21toggle:hover{background:#25303B;color:#fff}
+#dr21-root.panel21closed #panel{display:none}
+#dr21-root.panel21closed #main{right:0}
+#tb .version21{font-size:12px;color:#8C98A9}
+#cv{touch-action:none}
+@media(max-width:1200px){#dr21-root{--p21-width:268px}#tb{gap:5px}.seg button{padding:0 6px}#date{display:none}}
+@media(max-width:950px){#inst .off{display:none}#cfgb{font-size:12px;padding:0 6px}.version21{display:none}#tb .lbl{display:none}#tb{gap:4px}#scene button{font-size:12px}#back{font-size:11px;padding:0 5px}}
+@media(max-width:700px){html,body{height:auto;min-height:100%;overflow:auto}#dr21-root{height:1260px!important}#tb{height:90px;flex-wrap:wrap;align-content:center;gap:6px;white-space:normal}#main{top:90px;right:0;height:570px;bottom:auto}#panel{top:660px;left:0;width:100%;bottom:0;border-left:0;border-top:1px solid #252B34;padding:10px 14px}#dr21-root.panel21closed{height:660px!important}#menu,#cfgp{right:5px;top:85px;max-width:calc(100% - 10px)}#clock{margin-left:auto}#step21 button,#panel21toggle{min-height:30px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.p21-sub{color:#8F98A6;font-size:11.5px}
+.p22-match{font-style:normal;margin-left:6px;font-size:12px;cursor:help}.p22-match.m-p25{color:#8FD3BC}.p22-match.m-p50{color:#D8C17E}.p22-match.m-none{color:#E79A94}
+.p21-link[title],.p21-h span[title],.p21-note[title],.p21-dir .lb[title]{cursor:help}

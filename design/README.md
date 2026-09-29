@@ -1,8 +1,9 @@
-# DR Lab screen design — start here (state of 2026-09-28, night)
+# DR Lab screen design — start here (state of 2026-09-29)
 
 If you join the design work, read this page, then open the pages below. Everything in `design/` is a **mockup on
 synthetic data**, except that design 21 is also **the working screen of DR Lab on market data** since 2026-09-28
-(`lab/dist/index.html` is built from `design/sozvezdiya-21/src`).
+(`lab/dist/index.html` is built from `design/sozvezdiya-21/src`). **Design 22 «смысл числа»** (2026-09-29) is the current
+proposal: its meaning, pictures and open questions are in `meaning/04-dizajn-22.md` (Russian, no code needed).
 
 ## Where we are, in one paragraph
 
@@ -18,7 +19,9 @@ refined it round by round, reworked its right panel as 21 with a second agent, a
 
 | What | Where |
 |---|---|
-| All designs 1–20, numbered, each live inside the page (he refers to them by number) | `design/all-designs/ИСТОРИЯ.html` (open the file in a browser) |
+| All designs 1–22, numbered, each live inside the page (he refers to them by number) | `design/all-designs/ИСТОРИЯ.html` (open the file in a browser) |
+| Design 22 full screen (the current proposal) | `design/sozvezdiya-22/built/index.html` |
+| Design 22 explained with numbered pictures | `meaning/04-dizajn-22.md` |
 | Design 20 full screen | `design/sozvezdiya-2026-09-28/built/index.html` |
 | Design 21 (20 + the reworked right panel) | `design/sozvezdiya-21/built/index.html` |
 | Design 20: what is on screen, code map, build, checks | [`sozvezdiya-2026-09-28/README.md`](sozvezdiya-2026-09-28/README.md) |
@@ -34,7 +37,8 @@ design/
     images/                     snapshots of every design and state
     sources/                    sources that exist nowhere else: v1-sglazhennye (8-10), 17-19-svezhiy-vzglyad (page, notes, brief)
   sozvezdiya-2026-09-28/        design 20, the working variant (src/ -> built/index.html; snap/ git-ignored)
-  sozvezdiya-21/                design 21 = design 20 + the right panel of round 6 (src/panel21.js, panel21.css)
+  sozvezdiya-21/                design 21 = design 20 + the right panel of round 6 (src/panel21.js, panel21.css); the working screen
+  sozvezdiya-22/                design 22 = design 21 changed by the audit of 29.09 (src/app.js, panel.js, panel.css); a proposal
   clusters-2026-09-28/          designs 8-16 (canvas artboards, .dc.html) and the synthetic days gen_days.py used by 20
   semantic-2026-09/             designs 5-7, another session's semantic concept (CONCEPT.md, prototype.html)
   redesign-2026-09/             designs 1-4 (24-25.09); B′ (4) was chosen then, spec in docs/DESIGN.md
@@ -105,6 +109,13 @@ working screen on market data, push to GitHub». Done: `lab/scene21.py` + `lab/b
 definitions in `docs/SEMANTICS.md`, replaced rules in `docs/UI_RULES.md`, checks in `tests/smoke.py` and
 `tests/ui_check21.js`.
 
+**Round 8 — 29.09: the semantic audit and design 22.** The operator asked for a deep audit of the whole system (strategy,
+calculations, studies, designs, external sources), then passed on two texts of a semantic agent («линзы»,
+`meaning/lens/`), then asked for the next design built on all the semantic conclusions and for the repository to be
+readable by a semantic agent without code (GitHub as the intermediary). Done: `meaning/` (the semantic layer),
+`studies/audit_2026_09_29/`, design 22 in `design/sozvezdiya-22/` (a mockup; the working screen stays 21). What changed
+against 21 and why: `meaning/04-dizajn-22.md`; his decisions to take: `meaning/05-otkrytye-voprosy.md` (О1–О10).
+
 ## Open questions
 
 - **On market data** the places, times and targets are now real; watch whether the band limits, the 38 % core and
@@ -115,9 +126,9 @@ definitions in `docs/SEMANTICS.md`, replaced rules in `docs/UI_RULES.md`, checks
   median looked more jagged. If he wants more of that «heartbeat», ask before changing the definition.
 - **What goes on the right** is still his open question; now: session, day, «Дальше по похожим», «Места».
 - **Colours** are his to set (settings); defaults are muted mint (continuation) and coral (pullback).
-- **Undefined numbers** (place share, constellation core, 15-minute slice share, first-15-minutes share, the densest
-  time window of a price band) need lines in
-  `docs/SEMANTICS.md` before implementation.
+- The numbers of design 21 are defined in `docs/SEMANTICS.md` («Экран Созвездия»); those of design 22 in the same file
+  («Дизайн 22») and in `meaning/02-sobytiya.md` §3.
+- The operator's decisions on design 22: `meaning/05-otkrytye-voprosy.md`.
 - **Real data** will change the shapes: everything here is simulated; a session-end pile-up of extremes (15:30–16:00) in
   the mockups may or may not be real.
 - **Implementation** (later, with his go-ahead): the API must serve the similar sessions' extremes as points (the star
