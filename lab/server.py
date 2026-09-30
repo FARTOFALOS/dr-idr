@@ -56,7 +56,7 @@ class Handler(SimpleHTTPRequestHandler):
                         return self.json({'status': 'error', 'message': str(exc)}, 200)
                 at = params.get('at')
                 return self.json(live.state(inst, session, int(float(at)) if at not in (None, '') else None))
-            if url.path in ('/api/day', '/api/day/refresh', '/api/cohort', '/api/family'):
+            if url.path in ('/api/day', '/api/day/refresh', '/api/cohort', '/api/family', '/api/family-v1'):
                 import live, scene21
                 inst = params.get('instrument', 'NQ')
                 if url.path == '/api/day/refresh':
@@ -64,9 +64,14 @@ class Handler(SimpleHTTPRequestHandler):
                         live.fetch(inst)
                     except Exception as exc:
                         return self.json({'status': 'error', 'message': str(exc)}, 200)
-                if url.path in ('/api/cohort', '/api/family'):
+                if url.path in ('/api/cohort', '/api/family', '/api/family-v1'):
                     at = params.get('at')
-                    fn = scene21.cohort if url.path == '/api/cohort' else scene21.family
+                    if url.path == '/api/cohort':
+                        fn = scene21.cohort
+                    elif url.path == '/api/family-v1':
+                        fn = scene21.family_sem_v1
+                    else:
+                        fn = scene21.family
                     return self.json(fn(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None))
                 return self.json(scene21.day_view(inst))
             if url.path == '/api/spec':

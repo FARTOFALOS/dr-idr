@@ -294,6 +294,147 @@ def family(inst, session, at=None):
     return res
 
 
+
+# ---------- DR-LAB-SEM-1.0 experimental session map ----------
+def family_sem_v1(inst, session, at=None):
+    """Experimental SEM-1.0 snapshot for design 23.
+
+    Additive endpoint: design 22 and family() are unchanged.
+    Confirmation family: one fixed F, one R and one X event per historical member, measured after
+    that member's OWN confirmation through the end of its ADR/ODR/RDR horizon.
+    Break family: the same measurement starts after that member's own DR break and uses break direction.
+
+    R = deepest directed low; X = farthest directed high. Event time is the OPEN minute of the first
+    M5 attaining the final extreme. If any expected post-start M5 is missing, R/X are unknown.
+    A common-clock close film is returned separately.
+    """
+    if inst not in live.SYMBOLS:
+        raise ValueError("Unknown instrument")
+    if session not in SESS:
+        raise ValueError("Unknown session")
+    raw, d = _day_raw(inst)
+    if raw is None:
+        return dict(status="no_data")
+    B = _boxes(inst)
+    if B is None:
+        return dict(status="no_base", message="Нет базы сессий: python -B lab/build_boxes.py")
+
+    view = day_view(inst)
+    bars, now = view["bars"], view["now"]
+    is_live = at is None
+    obs = int(np.floor(now)) if is_live else int(at)
+    s = _state(bars, session, obs, now, is_live)
+    if s["status"] not in ("confirmed", "broken", "done") or not s.get("conf"):
+        return dict(status=s["status"], session=session, obs=obs, semantics="DR-LAB-SEM-1.0")
+
+    start, formed, end = SESS[session]
+    shift = SHIFT[session]
+    brk = bool(s.get("failed"))
+    side, wd = s["side"], view["weekday"]
+    t0 = s["failed"] if brk else s["conf"]
+    dplay = -side if brk else side
+    win = window_of(t0, formed)
+    cache_key = ("family_sem_v1", inst, session, view["date"], t0, side, brk)
+
+    if cache_key in _CACHE:
+        out = dict(_CACHE[cache_key])
+        out.update(obs=obs, o5=obs // 5 * 5, status_today=s["status"])
+        return out
+
+    path_grid = list(range(formed, end, 5))
+    mem = []
+    outcome = dict(held=0, broken=0, unknown=0, no_period=0)
+    for i, m in enumerate(B["boxes"]):
+        if m["session"] != session or not m["complete"] or m["conf"] is None or m["side"] != side:
+            continue
+        if brk:
+            if m["fail"] is None or window_of(m["fail"] - shift, formed) != win:
+                continue
+            if BREAK_WEEKDAY and m["weekday"] != wd:
+                continue
+            event_start = int(m["fail"])
+        else:
+            if m["weekday"] != wd or window_of(m["conf"] - shift, formed) != win:
+                continue
+            event_start = int(m["conf"])
+
+        a = _hist_bars(B, i)
+        width = m["idr_high"] - m["idr_low"]
+        if width <= 0:
+            continue
+        edge = m["idr_high"] if dplay == 1 else m["idr_low"]
+        cu = lambda v: float(dplay * (v - edge) / width)
+        by_close = {int(r[0]): r for r in a}
+
+        path_cl = []
+        for T in path_grid:
+            r = by_close.get(T + 5 + shift)
+            path_cl.append(None if r is None else round(cu(r[4]), 6))
+
+        hist_end = end + shift
+        expected = list(range(event_start + 5, hist_end + 1, 5))
+        if not expected:
+            ev_status = "no_period"
+            rows = np.empty((0, 5), dtype=float)
+        else:
+            missing = any(T not in by_close for T in expected)
+            ev_status = "unknown" if missing else "known"
+            rows = np.array([by_close[T] for T in expected if T in by_close], dtype=float)
+
+        r_u = x_u = tr = tx = None
+        if ev_status == "known" and len(rows):
+            phys_hi = rows[:, 2] if dplay == 1 else rows[:, 3]
+            phys_lo = rows[:, 3] if dplay == 1 else rows[:, 2]
+            hi_u = dplay * (phys_hi - edge) / width
+            lo_u = dplay * (phys_lo - edge) / width
+            ix = int(np.argmax(hi_u))
+            ir = int(np.argmin(lo_u))
+            x_u = round(float(hi_u[ix]), 6)
+            r_u = round(float(lo_u[ir]), 6)
+            tx = int(rows[ix, 0]) - 5 - shift
+            tr = int(rows[ir, 0]) - 5 - shift
+
+        outc = None
+        if not brk:
+            if m["fail"] is not None and int(m["fail"]) <= hist_end:
+                outc = "broken"
+            elif ev_status == "known":
+                outc = "held"
+            elif ev_status == "no_period":
+                outc = "no_period"
+            else:
+                outc = "unknown"
+            outcome[outc] += 1
+
+        mem.append(dict(
+            date=m["date"], conf=int(m["conf"]) - shift,
+            fail=None if m["fail"] is None else int(m["fail"]) - shift,
+            event_start=event_start - shift, event_status=ev_status,
+            r=r_u, tr=tr, x=x_u, tx=tx, outcome=outc, path_cl=path_cl
+        ))
+
+    clk = lambda t: f"{(t // 60) % 24:02d}:{t % 60:02d}"
+    days = ("пн", "вт", "ср", "чт", "пт", "сб", "вс")
+    w0 = formed + WINDOW * win
+    what = "слом DR" if brk else "подтверждение"
+    cond = f"{session} · {days[wd]} · {'лонг' if side == 1 else 'шорт'} · {what} {clk(w0)}–{clk(w0 + WINDOW)}"
+    width_today = s["width"]
+    edge_today = s["idrH"] if dplay == 1 else s["idrL"]
+    today = dict(start=start, formed=formed, end=end, conf=s["conf"], fail=s.get("failed"),
+                 side=side, direction=dplay, drH=s["drH"], drL=s["drL"],
+                 idrH=s["idrH"], idrL=s["idrL"], width=width_today, edge=edge_today)
+
+    out = dict(status="ok", semantics="DR-LAB-SEM-1.0", prototype=True,
+               mode="brk" if brk else "conf", session=session, t0=t0, side=side, weekday=wd,
+               window=[w0, w0 + WINDOW], path_grid=path_grid, n=len(mem), cond=cond,
+               today=today, outcome=None if brk else outcome, members=mem)
+    if len(_CACHE) > 200:
+        _CACHE.clear()
+    _CACHE[cache_key] = out
+    res = dict(out)
+    res.update(obs=obs, o5=obs // 5 * 5, status_today=s["status"])
+    return res
+
 def cohort(inst, session, at=None):
     if inst not in live.SYMBOLS: raise ValueError("Unknown instrument")
     if session not in SESS: raise ValueError("Unknown session")
