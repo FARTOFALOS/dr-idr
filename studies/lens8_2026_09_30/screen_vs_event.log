@@ -1,0 +1,23 @@
+Lens 9, 15.3: the working screen's star against the event «the near edge reached» (synthetic, M5 bars).
+Base map = the similar sessions of the screen (no target filter); the percentage a star enters is the place's share of them.
+
+-- path 3: K → отмена → L; close at t +0,20, top before t +0,40
+   A: status before  | new arrival: near edge -0,10 reached in the M5 11:05-11:10 | screen star at -0,22, drawn at 11:05 (the bar's open) | base share: counts as a new arrival, the old screen counts it
+   B: status before  | new arrival: near edge -0,50 reached in the M5 11:10-11:15 | screen star at -0,62, drawn at 11:10 (the bar's open) | base share: counts as a new arrival, the old screen counts it
+
+-- path 1: K → L, DR цел; close at t +0,20, top before t +0,40
+   A: status before  | new arrival: near edge -0,10 reached in the M5 11:05-11:10 | screen star at -0,18, drawn at 11:05 (the bar's open) | base share: counts as a new arrival, the old screen counts it
+   B: status before  | no new arrival | no screen star | base share: does not count as a new arrival, the old screen does not count it
+
+-- path 5: L достигнута до t; close at t +0,20, top before t +1,10
+   A: status before  | new arrival: near edge -0,10 reached in the M5 11:00-11:05 | screen star at -0,20, drawn at 11:00 (the bar's open) | base share: counts as a new arrival, the old screen counts it
+   B: status before  | no new arrival | no screen star | base share: does not count as a new arrival, the old screen does not count it
+
+-- path 12a: K был до t, новый приход после t; close at t +0,20, top before t +0,35
+   A: status before  | new arrival: near edge -0,10 reached in the M5 11:10-11:15 | screen star at -0,14, drawn at 11:10 (the bar's open) | base share: counts as a new arrival, the old screen counts it
+   B: status before  | no new arrival | no screen star | base share: does not count as a new arrival, the old screen does not count it
+
+-- path 7: на t уже внутри K; close at t -0,20, top before t +0,30
+   A: status inside  | no new arrival (inside at t) | screen star at -0,28, drawn at 11:00 (the bar's open) | base share: does not count as a new arrival, the old screen counts it
+   B: status before  | no new arrival | no screen star | base share: does not count as a new arrival, the old screen does not count it
+

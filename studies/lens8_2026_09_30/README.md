@@ -8,10 +8,11 @@ DR break. Research only: the working screen, rule 10, the places and the clouds 
 
 | File | What |
 |---|---|
-| `dogovor.md` | The frozen contract in Russian, version 1.1: groups, statuses, events, same-bar rules, unknowns, the denominator of every number; section 9 says what changed from 1.0 and why |
+| `dogovor.md` | The frozen contract in Russian, version 1.1: groups, statuses, events, same-bar rules, unknowns, the denominator of every number; section 9 says what changed from 1.0 and why; section 10 says how to read the 1.1 numbers after lens 9 and lists the candidates for 1.2 |
 | `contract.py` | The contract for one path and one area, written to be read (the reference) |
 | `synthetic_trace.py` | Part B: 21 synthetic paths (the directive's 13 and 8 extra edge cases), a trace row per path and area, the small-cohort numbers, the identity p_seq = p_adm × q, boundary / same-bar / re-anchoring / prefix-invariance checks → `synthetic_trace.log`; `--paths` writes the paths alone → `puti.md` |
 | `puti.md` | The synthetic paths without answers, for an independent reading |
+| `screen_vs_event.log` | Lens 9 (15.3), `synthetic_trace.py --screen`: for paths 3, 1, 5, 12a and 7, where the working screen's star would stand (the first entering bar's depth, at the bar's open) and where the event «the near edge reached» lies (the edge, in its M5 interval) |
 | `blind_check.md` | An independent reading of `puti.md` by a second agent that saw only `dogovor.md` 1.0 and `puti.md`: its table, its 14 ambiguities of the text, and the comparison |
 | `compare_blind.py` | The second reader's table against `contract.py`, row by row (1.0: one real difference; 1.1: none) |
 | `tape_diagnostic.py` | Parts C and D on the tape, NQ RDR: initial state against each place (8.1), minutes already lived inside an M5 (8.2), L already reached (8.3), incomplete observations (8.4), the A/B trader card → `tape_diagnostic.log`. Its vectorised code is checked against `contract.py` on sampled similar sessions |

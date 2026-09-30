@@ -89,6 +89,12 @@ against what happened next.
     version 1.1 after an independent blind reading of 21 synthetic paths), and the size of the mismatches already found
     on NQ RDR 2016–2025. Research only; nothing on the screen changed. The operator's three product decisions of the
     directive's §12 are open as О14, О13 and О9, with О15.
+  - Lens 9 (the auditor's cluster specification and its patch): the base map's event is «the first new arrival after a
+    closed M5 slice», with no chosen target; the lens 8 scenario is a separate module with its own group. The answer fills
+    the passports of six screen elements: the star, the contour's price axis and the place row's price show the first
+    entering bar's depth, not an arrival. Four requirements of the operator are relayed there (M5 as the minimum step, no
+    automatic setup, no own strategy yet, different histories up to the midpoint); they wait for his confirmation, and
+    the screen does not change before it (`meaning/lens/2026-09-30-otvet-9.md`, `docs/DECISIONS.md`).
 
 - **The working screen is «Созвездия» design 22 «смысл числа», on market data** (since 2026-09-29; design 21 from
   2026-09-28 before it). `http://127.0.0.1:8767` opens it (`lab/dist/index.html` + `sozvezdiya.js`, built from

@@ -6,6 +6,8 @@ synthetic traces), L = +1.0. Before 10:35 every bar lies inside [-1.0; +0.15].
 
 python -B synthetic_trace.py            the trace, the small-cohort numbers and the checks -> synthetic_trace.log
 python -B synthetic_trace.py --paths    the paths alone, without any answer -> puti.md (for an independent reading)
+python -B synthetic_trace.py --screen   lens 9 (15.3): for paths 3, 1, 5, 12a and 7, where the working screen's star would
+                                        stand and where the event «the near edge reached» lies -> screen_vs_event.log
 """
 from __future__ import annotations
 
@@ -190,9 +192,42 @@ def checks(res):
     return T_
 
 
+def screen_star(p, K):
+    """The working screen's star for one similar session and one pullback place (design 22, app.js arrivalsOf): the first
+    bar after t whose bottom is strictly below the near edge; price = that bar's bottom clamped into the band; time =
+    the bar's open. Returns (price, open minute) or None."""
+    lo, hi = K
+    for b in p["bars"]:
+        if b[0] > p["t"] and b[3] < hi: return max(b[3], lo), b[0] - 5
+    return None
+
+
+def illustrate():
+    out = ["Lens 9, 15.3: the working screen's star against the event «the near edge reached» (synthetic, M5 bars).",
+           "Base map = the similar sessions of the screen (no target filter); the percentage a star enters is the place's share of them.", ""]
+    for nm in ("3", "1", "5", "12a", "7"):
+        p = PATHS[[q["name"] for q in PATHS].index(nm)]
+        pre = [b for b in p["bars"] if b[0] <= p["t"]]
+        out.append(f"-- path {nm}: {DIRECTIVE[nm]}; close at t {fmt(pre[-1][4])}, top before t {fmt(max(b[2] for b in pre))}")
+        for K, an in ((A, "A"), (B, "B")):
+            r = classify(p, K, L)
+            st = screen_star(p, K)
+            ev = (f"new arrival: near edge {fmt(K[1])} reached in the M5 {clock(p['t'] + 5 * r['tau'])}-{clock(p['t'] + 5 * (r['tau'] + 1))}"
+                  if r["new"] else f"no new arrival ({r['status']} at t)" if r["status"] in ("inside", "beyond") else "no new arrival")
+            scr = f"screen star at {fmt(st[0])}, drawn at {clock(st[1])} (the bar's open)" if st else "no screen star"
+            out.append(f"   {an}: status {r['status']:7s} | {ev} | {scr} | base share: {'counts' if r['new'] else 'does not count'}"
+                       f" as a new arrival, the old screen {'counts it' if r['old'] else 'does not count it'}")
+        out.append("")
+    text = "\n".join(out)
+    (HERE / "screen_vs_event.log").write_text(text + "\n", encoding="utf-8")
+    print(text)
+
+
 if __name__ == "__main__":
     if "--paths" in sys.argv:
         write_paths(); sys.exit(0)
+    if "--screen" in sys.argv:
+        illustrate(); sys.exit(0)
     out, res = [], {}
     out.append("Строка: путь, область | префикс | статус на t | новый приход (свеча) | допустим | первое событие после прихода | "
                "исход | вклад в p_new/p_adm/q/p_seq (1, 0, ? = неизвестно, - = вне знаменателя) | прежний экран | причина")
