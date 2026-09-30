@@ -82,10 +82,15 @@ and DR intact, `brk` = DR broken, `wait` = before a confirmation), `session, obs
 minute), `n, band` (0.25 | 0.5 | null = the price could not be matched), `cond` (the similarity condition in words),
 `grid` (5-minute close minutes after `o5`), `u0` (today's position on the scale of the mode), `models`
 (`{up, down, used}` before a confirmation, else null) and `sims` — per similar session, in its own IDR units of the
-mode: `date, pos, mx, tmx, mn, tmn` (extremes after the minute and their day minutes), `cl, hi, lo` (per grid point),
+mode: `date, pos, mx, tmx, mn, tmn` (extremes after `o5` and their day minutes), `cl, hi, lo` (per grid point),
 `held` (conf: no later M5 close beyond its own opposite DR), `cross` (wait: side of its first later confirmation, 0 =
-none). Definitions: `docs/SEMANTICS.md` «Экран Созвездия». Design 22 (a proposal, `meaning/04-dizajn-22.md`) would add
-per session `uH, uL` (own DR high / low, wait) and `wick` (conf: a wick beyond its own opposite DR after the minute).
+none), `uH, uL` (wait: own DR high / low) and `wick` (conf: a wick beyond its own opposite DR after `o5`), the last
+three since design 22 became the working screen (2026-09-29). Definitions: `docs/SEMANTICS.md`, section of design 22.
+
+Time contract (checked 2026-09-30): today's state uses the M5 bars closed by the minute and the minute price (`u0`); a
+similar session is placed by its close at `o5` and measured from `o5`, so between M5 closes its future includes the
+whole current M5, up to 4 minutes that have already passed today. Time precision is M5. Unlike `live.py` `_overlay`
+(minute bars strictly after the minute).
 
 ### `/api/live` response
 
@@ -123,7 +128,7 @@ complete_n, median_retr, median_ext, median_rtime`.
 
 ## Front end (`lab/dist/`)
 
-- `index.html` + `sozvezdiya.js` — **the working screen «Созвездия» (design 21)**, built from `design/sozvezdiya-21/src`
+- `index.html` + `sozvezdiya.js` — **the working screen «Созвездия» (design 22)**, built from `design/sozvezdiya-22/src`
   by its `build.py` (edit there, never the built files): the whole trading day on a canvas, levels, stars, places and
   constellations, the fan, the right panel; data from `/api/day` and `/api/cohort`, refreshed after every M5 close while
   a session runs. Check with `tests/ui_check21.js`.

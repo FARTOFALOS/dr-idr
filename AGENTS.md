@@ -76,10 +76,14 @@ against what happened next.
     - the «70 %» line is asymmetric;
     - cross-filters select sessions by their future;
     - M7 retracement stays proprietary.
-  - The author's NQ key recomputed on our tape (`studies/lens6_2026_09_30/`) reproduces his shape only after his time
-    filter.
+  - The author's NQ key recomputed on our tape (`studies/lens6_2026_09_30/`) partly reproduces the shape of some of
+    his distributions, only after his time filter; the numbers do not match exactly.
   - The author's zones and times are the session's final extreme, the object of hard rule 10. How to transfer them is
     the operator's О13; О12 (reactions) is paused.
+  - Lens 7 (independent audit of 5-6): over-strong claims corrected (M7 table only a hypothesis, no global «no
+    clusters» / «no path memory», partial replication); the time contract documented (history from its last M5
+    close); event «passports» proposed. Found in code: tooltips still saying «окончательный экстремум» and
+    similar sessions already inside a pullback place counted as arrivals — both wait for the operator (О15).
 
 - **The working screen is «Созвездия» design 22 «смысл числа», on market data** (since 2026-09-29; design 21 from
   2026-09-28 before it). `http://127.0.0.1:8767` opens it (`lab/dist/index.html` + `sozvezdiya.js`, built from
@@ -108,7 +112,7 @@ lab/
   tv_fetch.mjs            reads M5/M1 bars from TradingView Desktop via Chrome DevTools (tradingview-mcp internals)
   engine.py               synthetic demo engine (python lab/server.py --data demo); never mixed with market data
   dist/                   front end: index.html + sozvezdiya.js (the working screen «Созвездия», built from
-                          design/sozvezdiya-21), classic.html + app.js + live.js + styles.css (the previous screen)
+                          design/sozvezdiya-22), classic.html + app.js + live.js + styles.css (the previous screen)
   .runtime/               git-ignored: built history, live candles, server logs
 studies/                  research scripts with their results (intermarket.py: NQ/ES/YM relations; m7_claims.py: the
                           author's claims and his time-and-price procedure on our tape; audit_2026_09_29/: geometry
@@ -164,10 +168,11 @@ stop-dr-lab.cmd                          # or kill the process listening on 8767
 start-dr-lab.cmd -NoBrowser              # the same path the operator's shortcut takes
 ```
 
-If you touched the page: edit `design/sozvezdiya-21/src` and run its `build.py` (it writes `lab/dist/index.html` and
+If you touched the page: edit `design/sozvezdiya-22/src` and run its `build.py` (never build `design/sozvezdiya-21`:
+it would overwrite the working screen) (it writes `lab/dist/index.html` and
 `sozvezdiya.js`), open http://127.0.0.1:8767 in a browser tool, wait ~6 s, evaluate `tests/ui_check21.js` and expect
 `problems: []`. Check at 1600×900 and 1920×1000 at least. Hover a constellation and every panel line, click a candle
-(replay) and «К текущему». The mockup (`design/sozvezdiya-21/built/index.html`) must keep working too. For
+(replay) and «К текущему». The mockup (`design/sozvezdiya-22/built/index.html`) must keep working too. For
 `/classic.html` the old check is `tests/ui_check.js`.
 
 ## Gotchas already paid for
