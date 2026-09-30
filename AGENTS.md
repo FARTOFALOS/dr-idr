@@ -157,8 +157,9 @@ design/                   mockups on synthetic data, designs 1-22, start at desi
    from closed M5 only; the current price from the forming M5; similar sessions measured strictly after the same
    minute. Replay must obey the same rule (bars after the replay minute are shown, never used). **Amended 2026-09-30
    (operator):** the clusters' statistics use closed M5 only. A slice is a closed M5. The family, fixed at the
-   confirmation, is read after that close. The live price is only drawn between closes. The working screen still matches
-   by the minute price until its change is approved (`meaning/02-sobytiya.md` §2, `meaning/08-semantika-klasterov.md`).
+   confirmation, is read after that close. The live price is only drawn between closes. Since the same evening the working screen shows
+   the family after a confirmation: the slice is the last closed M5 and today's position is its close; no match by
+   price (`meaning/08-semantika-klasterov.md`).
 7. **Descriptive numbers.** Frequencies are the history of similar sessions, not a forecast, not a trade. The UI does
    not print disclaimers (operator's decision), so the discipline lives in the code and in `docs/RESEARCH.md`: never
    add a number to the screen whose meaning is not defined in `docs/SEMANTICS.md`.
@@ -178,8 +179,13 @@ design/                   mockups on synthetic data, designs 1-22, start at desi
     window; it is fixed for the day. For every next M5 the object says which prices, in each session's own IDR scale,
     the family's M5 high–low ranges reached (`meaning/08-semantika-klasterov.md`). Every percentage is a share of that
     one family N: no re-matching by price or state, nothing renormalised to DR true. Filters by the lived path are a
-    separate research branch. First arrival is a derived number. The ban on the final extreme stays. The working screen
-    still shows first arrivals until its change is approved.
+    separate research branch. First arrival is a derived number. The ban on the final extreme stays. **Built the same
+    evening, with two more operator decisions:** the screen keeps design 22's picture and only the meaning changes
+    (stars = first touches of places by family sessions, constellations = their density, every share of N; never
+    redraw the picture when changing the meaning); the window is the TradingView label (open minute) of the confirming
+    M5, one window per confirmation (the author's rule; the old «both windows» sentence was our reconstruction); after
+    today's DR break the screen switches to the break family (same instrument, session, weekday and direction, the
+    break in the same 15-minute window).
 
 ## How to verify your change (always, before saying "done")
 

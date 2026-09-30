@@ -24,7 +24,7 @@
   const ORDER = ['ADR', 'ODR', 'RDR'];
   // yesterday's RDR box (synthetic): its levels run through the whole day as structure
   let PREV = API ? null : { k: 'PREV', name: 'RDR 23.09', start: -360, drH: 24518.5, drL: 24402.25, idrH: 24506, idrL: 24411.5 };
-  const A = { inst: 'NQ', day: null, D: null, cohorts: new Map(), pending: new Set(), auto: true, timer: 0, busy: false, error: null };
+  const A = { inst: 'NQ', day: null, D: null, cohorts: new Map(), fams: new Map(), pending: new Set(), auto: true, timer: 0, busy: false, error: null };
   const C = {
     bg: '#08090C', grid: '#1C2027', text: '#D1D4DC', text2: '#A3A8B3', text3: '#6F7582', axis: '#0B0C10',
     up: '#089981', dn: '#F23645', cont: '#5DB8FF', pull: '#FFB347', upS: '#A9B9E6', dnS: '#D7A3C9',
@@ -70,7 +70,7 @@
   const FONT = '-apple-system,BlinkMacSystemFont,"Trebuchet MS",Roboto,Ubuntu,sans-serif';
   const SCENES = [['conf', 'Подтверждено'], ['wait', 'До подтверждения'], ['brk', 'Слом DR']];
   const LAYERS = [
-    ['stars', 'Звёзды: похожие сессии', C.fan], ['cons', 'Созвездия и проценты', '#63C3A5'], ['fan', 'Веер и его медиана', C.fan],
+    ['stars', 'Звёзды: сессии истории', C.fan], ['cons', 'Созвездия и проценты', '#63C3A5'], ['fan', 'Веер и его медиана', C.fan],
     ['proj', 'Плотность по цене справа', '#DE8580'], ['strip', 'Полоса времени снизу', '#63C3A5'], ['std', 'STD', C.stdOn],
     ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VI (volume imbalance)', C.vib], ['hist', 'Шесть графиков истории (снизу)', C.text2], ['snap21', 'Контуры на момент подтверждения', '#AAB5C4']
   ];
@@ -300,10 +300,10 @@
     wait: [['up', 'Верх', 'mx', 'tmx'], ['dn', 'Низ', 'mn', 'tmn']] };
   // the match of today's price in the history: ±0,25 IDR, ±0,5 IDR or none (then no percentage is shown: on new days
   // such numbers were no better than a constant, the targets worse; meaning/03-dokazatelstva.md)
-  const MATCH = { p25: 'цена сопоставлена ±0,25 IDR', p50: 'цена сопоставлена ±0,5 IDR', none: 'цена не сопоставлена' };
+  const MATCH = { p25: 'цена сопоставлена ±0,25 IDR', p50: 'цена сопоставлена ±0,5 IDR', none: 'цена не сопоставлена', fam: 'доля всей семьи' };
   function finishOverlay(ov, pts) {
     ov.near = ov.end - ov.obs < 45 ? 5 : NEAR;
-    ov.match = ov.band === 0.25 ? 'p25' : ov.band === 0.5 ? 'p50' : 'none';
+    ov.match = ov.band === 'fam' ? 'fam' : ov.band === 0.25 ? 'p25' : ov.band === 0.5 ? 'p50' : 'none';
     ov.roles = pts.map(q => role(ov, q[0], q[1], null, arrivalsOf(ov, q[0])));
     ov.fan = fanOf(ov);
     if (ov.mode === 'conf') ov.holds = 100 * ov.sims.filter(p => p.held).length / ov.N;
@@ -319,7 +319,48 @@
     return ov;
   }
   // the working screen: the similar sessions of 2006-2025 at this minute, measured by the server (lab/scene21.py)
+  // THE POPULATION SINCE 2026-09-30 (operator; meaning/08-semantika-klasterov.md): after a confirmation the screen shows
+  // today's FAMILY — the same session, weekday and direction, confirmation in the same 15-minute window — fixed for the
+  // day, one denominator N (the whole family) for every number, no re-matching by price or state, nothing renormalised
+  // to DR true. Each session keeps its own position (no shift to today's price). A later M5 only moves the slice.
+  // After today's DR break the screen switches to the break (operator 2026-09-30): the family of sessions whose DR also
+  // broke in the same 15-minute window, from the break on, on the break's side («По слому / Против слома», as design 22).
+  // The picture is design 22's, unchanged (operator: change the meaning, not the drawing): stars = each family
+  // session's first touch of a place ahead, constellations = their density, places, fan and charts as before.
+  const famKey = (D, s) => D.d + '|fam|' + s.k + '|' + s.conf + '|' + s.side + '|' + (s.status === 'broken' && s.failed ? s.failed : '');
+  function familyOverlay(D, s) {
+    const brk = s.status === 'broken' && !!s.failed, fk = famKey(D, s), o5 = Math.floor(s.obs / 5) * 5, key = 'fam|' + s.k + '|' + o5 + '|' + s.status + '|' + (brk ? s.failed : '');
+    if (D.O[key]) return D.O[key];
+    const r = A.fams.get(fk);
+    if (!r) { requestFamily(fk, s); return null; }
+    if (r.status !== 'ok' || !r.n || r.mode !== (brk ? 'brk' : 'conf')) return null;
+    const G = r.grid, j0 = G.findIndex(T => T > o5), J = j0 < 0 ? G.length : j0;
+    const ov = { s, obs: s.obs, end: s.end, grid: G.slice(J), key, mode: brk ? 'brk' : 'conf', N: r.n, cond: r.cond, band: 'fam', film: true };
+    // the slice is the last closed M5 (AGENTS.md rule 6): today's position = its close, so the places ahead do not
+    // change between closes; the live price is only drawn
+    const bar5 = D.bars.find(z => z.t === o5 - 5), p5 = bar5 ? bar5.c : s.priceNow;
+    if (brk) { ov.u2p = s.nprice; ov.p2u = s.ncoord; ov.u0 = s.ncoord(p5); }
+    else { ov.u2p = s.price; ov.p2u = s.coord; ov.u0 = s.coord(p5); }
+    ov.sims = r.members.map(m => {
+      const hi = m.hi.slice(J), lo = m.lo.slice(J), cl = m.cl.slice(J);
+      let mx = -Infinity, mn = Infinity, tmx = null, tmn = null;
+      hi.forEach((v, j) => { if (v != null && v > mx) { mx = v; tmx = ov.grid[j]; } });
+      lo.forEach((v, j) => { if (v != null && v < mn) { mn = v; tmn = ov.grid[j]; } });
+      return { hi, lo, cl, mx: isFinite(mx) ? mx : ov.u0, mn: isFinite(mn) ? mn : ov.u0, tmx, tmn, xs: ov.u0, date: m.date.split('-').reverse().join('.'),
+        held: brk ? null : m.held, wick: brk ? null : lo.some(v => v != null && v < m.uOpp), cross: 0, uH: null, uL: null };
+    });
+    return (D.O[key] = finishOverlay(ov, brk ? PTS.brk : PTS.conf));
+  }
+  function requestFamily(fk, s) {
+    if (A.pending.has(fk)) return;
+    A.pending.add(fk);
+    fetch('/api/family?instrument=' + A.inst + '&session=' + s.k + (s.live ? '' : '&at=' + s.obs))
+      .then(r => r.json()).then(r => { A.fams.set(fk, r); if (A.fams.size > 30) A.fams.delete(A.fams.keys().next().value); })
+      .catch(() => A.fams.set(fk, { status: 'error' }))
+      .finally(() => { A.pending.delete(fk); redraw(true); });
+  }
   function apiOverlay(D, s) {
+    if (s.status !== 'waiting' && s.conf) return familyOverlay(D, s);
     const key = s.k + '|' + s.obs + '|' + (s.live ? 1 : 0), ck = D.d + '|' + key;
     if (D.O[key]) return D.O[key];
     const r = A.cohorts.get(ck);
@@ -362,7 +403,10 @@
         const edge = down ? z.hi : z.lo;
         for (let j = 0; j < ov.grid.length; j++) {
           const v = arr[j];
-          if (v != null && (down ? v < edge : v >= edge)) { pts.push({ u: down ? Math.max(v, z.lo + 1e-9) : Math.min(v, z.hi - 1e-9), t: ov.grid[j] - 5, i }); break; }
+          // the family (design 22 unchanged otherwise): a session may stand beyond the band at the moment, so it comes
+          // into the place only when its bar touches the band
+          const met = ov.film ? p.lo[j] != null && p.hi[j] != null && p.lo[j] < z.hi && p.hi[j] >= z.lo : v != null && (down ? v < edge : v >= edge);
+          if (met) { pts.push({ u: down ? Math.max(v, z.lo + 1e-9) : Math.min(v, z.hi - 1e-9), t: ov.grid[j] - 5, i }); break; }
         }
       }
     });
@@ -459,7 +503,8 @@
       if (!arr) continue;
       for (let j = 0; j < ov.grid.length; j++) {
         const v = arr[j];
-        if (v != null && (down ? v <= edge : v >= edge)) { const T = Math.floor((ov.grid[j] - 5) / 15) * 15; bins.set(T, (bins.get(T) || 0) + 1); n++; break; }
+        const met = ov.film ? p.lo[j] != null && p.hi[j] != null && p.lo[j] < k.hi && p.hi[j] >= k.lo : v != null && (down ? v <= edge : v >= edge);
+        if (met) { const T = Math.floor((ov.grid[j] - 5) / 15) * 15; bins.set(T, (bins.get(T) || 0) + 1); n++; break; }
       }
     }
     if (!n) return null;
@@ -1269,7 +1314,7 @@
     c.fillStyle = open || st.histH > 30 ? 'rgba(11,12,16,.97)' : '#0B0C10'; c.fillRect(0, y0, W, st.histH);
     c.fillStyle = st.histOver || st.histPin ? '#2A2F38' : C.grid; c.fillRect(0, y0, W, 1);
     c.font = '600 11.5px ' + FONT; c.textBaseline = 'middle'; c.fillStyle = st.histOver || st.histPin ? C.text : C.text3;
-    c.fillText((open ? '▾ ' : '▴ ') + 'История похожих' + (ov ? ' · ' + clk(ctx.obs) : '') + (ov && ov.match === 'none' ? ' · цена не сопоставлена' : ''), 10, y0 + 11);
+    c.fillText((open ? '▾ ' : '▴ ') + (ov && ov.film ? 'История семьи' : 'История похожих') + (ov ? ' · ' + clk(ctx.obs) : '') + (ov && ov.match === 'none' ? ' · цена не сопоставлена' : ''), 10, y0 + 11);
     if (!open || !ov || ov.match === 'none') return;
     const spec = histSpec(ov), n = spec.length, gap = 10, cw = (W - gap * (n + 1)) / n, top = y0 + 26, ch = st.histH - 32;
     const h = hv();
@@ -1408,36 +1453,37 @@
       const R = ov.roles.find(r => r.id === h.role), k = R && R.cons.find(q => q.id === h.id);
       if (!k) return '';
       const sl = h.k === 'con' && h.slice != null ? sliceOf(k, h.slice, ov.N) : null, hot = hotOf(ov, R, k), en = k.entry;
-      const ev = R.id === 'pull' || R.id === 'dn' ? 'окончательный минимум' : 'окончательный максимум';
-      if (ov.match === 'none') return '<b style="color:' + R.col + '">' + R.name + ' · ' + k.name + '</b><br>цена не сопоставлена: процентов нет' + mfoot(ov, ev + ' похожих');
+      const ev = ov.film ? 'цена семьи заходила в полосу места' : 'цена похожих сессий заходила в полосу места';
+      if (ov.match === 'none') return '<b style="color:' + R.col + '">' + R.name + ' · ' + k.name + '</b><br>цена не сопоставлена: процентов нет' + mfoot(ov, ev);
       return '<b style="color:' + R.col + '">' + R.name + ' · ' + k.name + '</b>' +
         '<br>вся полоса места: <b>' + pct(k.pct) + '</b>' + (k.corePct != null ? ' · яркое ядро: <b>' + pct(k.corePct) + '</b>' : '') +
         (hot ? ' · плотнее всего у ' + px(hot.p) + ': <b>' + pct(hot.binPct) + '</b>' : '') +
         (sl ? '<br>в ' + clk(sl.t0) + '–' + clk(sl.t1) + ' здесь: <b>' + pct(sl.pct) + '</b>' : '') +
         (en ? '<br>' + (en.now ? 'цена сейчас в этом месте' : 'впервые приходили сюда чаще всего <b>' + clk(en.t0) + '–' + clk(en.t1) + '</b>') : '') +
-        mfoot(ov, ev + ' попал в полосу места');
+        mfoot(ov, ev);
     }
-    if (h.k === 'typ') return '<b>Медиана закрытий похожих</b> · ' + clk(h.T) + ': ' + px(h.p) + '<br><span class="k">середина закрытий в каждую минуту, каждое от своего положения; это не путь одной сессии</span>';
+    if (h.k === 'typ') return ov.film ? '<b>Медиана закрытий семьи</b> · ' + clk(h.T) + ': ' + px(h.p) + '<br><span class="k">середина закрытий всей семьи в эту пятиминутку; это не путь одной сессии</span>'
+      : '<b>Медиана закрытий похожих</b> · ' + clk(h.T) + ': ' + px(h.p) + '<br><span class="k">середина закрытий в каждую минуту, каждое от своего положения; это не путь одной сессии</span>';
     if (h.k === 'fan') {
       const f = h.f;
-      return '<b>Веер · ' + clk(f.T) + '</b><br>у 60 % похожих закрытие было между ' + px(Math.min(ov.u2p(f.q20), ov.u2p(f.q80))) + ' и ' + px(Math.max(ov.u2p(f.q20), ov.u2p(f.q80))) + ' · середина ' + px(ov.u2p(f.q50)) +
-        '<br><span class="k">срез в эту минуту, не коридор: целиком внутри веера прошли ' + pct(ov.fanCover) + ' похожих</span>' + mfoot(ov, 'закрытие M5 в эту минуту');
+      return '<b>Веер · ' + clk(f.T) + '</b><br>у 60 % ' + (ov.film ? 'семьи' : 'похожих') + ' закрытие было между ' + px(Math.min(ov.u2p(f.q20), ov.u2p(f.q80))) + ' и ' + px(Math.max(ov.u2p(f.q20), ov.u2p(f.q80))) + ' · середина ' + px(ov.u2p(f.q50)) +
+        '<br><span class="k">срез в эту минуту, не коридор: целиком внутри веера прошли ' + pct(ov.fanCover) + (ov.film ? ' семьи' : ' похожих') + '</span>' + mfoot(ov, 'закрытие M5 в эту минуту');
     }
     if (h.k === 'star') {
-      const q = h.q, pair = ov.roles.map(R => ({ R, z: R.stars.find(w => w.i === q.i) }));
-      return '<b>Похожая сессия · ' + ov.sims[q.i].date + '</b> <span class="k">(синт.)</span><br>' + pair.map(({ R, z }) => '<span style="color:' + R.col + '">' + R.name + '</span> ' + clk(z.t) + ' · ' + px(z.p) + ' <span class="k">' + where(s, z.p) + '</span>').join('<br>');
+      const q = h.q, pair = ov.roles.map(R => ({ R, z: R.stars.find(w => w.i === q.i) })).filter(x => x.z);
+      return (ov.film ? '<b>Сессия семьи · ' + ov.sims[q.i].date + '</b><br>' : '<b>Похожая сессия · ' + ov.sims[q.i].date + '</b> <span class="k">(синт.)</span><br>') + pair.map(({ R, z }) => '<span style="color:' + R.col + '">' + R.name + '</span> ' + clk(z.t) + ' · ' + px(z.p) + ' <span class="k">' + where(s, z.p) + '</span>').join('<br>');
     }
     if (h.k === 'col' && h.src === 'strip') {
       const q = h.q;
       return '<b>' + clk(h.t0) + '–' + clk(h.t1) + '</b>' + (q.near ? ' <span class="k">первые минуты</span>' : '') + '<br>' +
         (ov.match === 'none' ? 'цена не сопоставлена: процентов нет' : ov.roles.map((R, i) => '<span style="color:' + R.col + '">' + R.name + '</span> ' + pct(q.v[i])).join(' · ')) +
-        mfoot(ov, 'окончательный экстремум был в эти 15 минут (у конца сессии их всегда больше)');
+        mfoot(ov, ov.film ? 'цена семьи впервые заходила в место в эти 15 минут' : 'цена похожих впервые заходила в место в эти 15 минут');
     }
     if (h.k === 'pband' && h.src === 'proj') {
       const R = bandRole(ov, h), tc = R && timeCluster(ov, R, h.pLo, h.pHi);
-      if (ov.match === 'none') return '<b>' + px(h.pLo) + '–' + px(h.pHi) + '</b><br>цена не сопоставлена: процентов нет' + mfoot(ov, 'окончательный экстремум в этой цене');
+      if (ov.match === 'none') return '<b>' + px(h.pLo) + '–' + px(h.pHi) + '</b><br>цена не сопоставлена: процентов нет' + mfoot(ov, 'первый приход на эту цену');
       return '<b>' + px(h.pLo) + '–' + px(h.pHi) + '</b> <span class="k">' + where(s, (h.pLo + h.pHi) / 2) + '</span><br>' + h.list.map(({ R: r, b }) => '<span style="color:' + r.col + '">' + r.name + '</span> ' + pct(b.pct)).join(' · ') +
-        (tc ? '<br><span class="k">когда здесь был экстремум чаще всего:</span> <b>' + clk(tc.t0) + '–' + clk(tc.t1) + '</b> — <b>' + pct(tc.pct) + '</b>' : '') + mfoot(ov, 'окончательный экстремум в этой цене, без первых минут');
+        (tc ? '<br><span class="k">когда сюда впервые приходили чаще всего:</span> <b>' + clk(tc.t0) + '–' + clk(tc.t1) + '</b> — <b>' + pct(tc.pct) + '</b>' : '') + mfoot(ov, 'первый приход на эту цену');
     }
     if (h.k === 'lvl') {
       const l = h.l, t = ov && ov.match !== 'none' ? ov.touch(l.p) : null;
@@ -1663,12 +1709,18 @@
     return res.sort((a, b) => Math.abs(a.p - s.priceNow) - Math.abs(b.p - s.priceNow));
   }
   function quant(a, f) { const v = a.slice().sort((x, y) => x - y); return v.length ? v[Math.min(v.length - 1, Math.round(f * (v.length - 1)))] : null; }
+  // after a confirmation the screen waits for the family (familyOverlay), not for similar sessions
+  function famMsg(ctx) {
+    const s = ctx.s, r = A.fams.get(famKey(ctx.D, s));
+    return !r ? 'Собираю семью…' : r.status === 'ok' ? 'В семье нет сессий' : 'Семья не собрана' + (r.message ? ': ' + r.message : '');
+  }
   function panelHtml(ctx) {
     const s = ctx.s, ov = ctx.ov;
     P21.links = [];
     if (!ov) {
       const msg = API && (!A.day || A.day.status !== 'ok') ? (A.day && A.day.message) || 'Загружаю свечи…' :
         s.status === 'forming' ? 'Коробка ещё формируется' : s.status === 'before' ? 'Сессия ещё не началась' :
+        API && s.status !== 'waiting' && s.conf && ['confirmed', 'broken'].includes(s.status) ? famMsg(ctx) :
         ['confirmed', 'broken', 'waiting'].includes(s.status) ? (API && A.cohorts.size ? 'Похожих сессий нет' : 'Ищу похожие сессии…') : s.status === 'noconf' ? 'Сессия закончилась без подтверждения' : 'Сессия закончилась';
       panel.innerHTML = '<div class="p21-empty">' + esc(msg) + '</div>';
       return;
@@ -1678,8 +1730,10 @@
     const hor = 'после ' + clk(ctx.obs) + ' до ' + clk(ov.end), m = MATCH[ov.match];
     const M = ev => ev + ' · ' + hor + ' · ' + m;                          // the meaning of a row, on hover
     const row = (text, val) => '<span class="t">' + text + '</span><b>' + val + '</b>';
-    const mark = { p25: '●', p50: '◐', none: '○' }[ov.match];
-    out.push('<div class="p21-h"><span title="' + esc(m + ' · ' + (ov.cond || '')) + '">Дальше по похожим <i class="p22-match m-' + ov.match + '">' + mark + '</i></span><span>после ' + clk(ctx.obs) + '</span></div>');
+    const mark = { p25: '●', p50: '◐', none: '○', fam: '' }[ov.match];
+    out.push(ov.film
+      ? '<div class="p21-h"><span title="' + esc('Все проценты — доля всей семьи: ' + (ov.cond || '') + '. Семья зафиксирована при подтверждении и за день не меняется.') + '">Семья · ' + esc(ov.cond || '') + '</span><span>после ' + clk(ctx.obs) + '</span></div>'
+      : '<div class="p21-h"><span title="' + esc(m + ' · ' + (ov.cond || '')) + '">Дальше по похожим <i class="p22-match m-' + ov.match + '">' + mark + '</i></span><span>после ' + clk(ctx.obs) + '</span></div>');
     if (none) out.push('<div class="p21-note" title="' + esc('Похожих, у которых цена была там же, где сегодня, в истории не набралось. Такие проценты на новых днях были не лучше постоянной оценки (цели — хуже), поэтому их нет. Прочерк — это отсутствие подходящей истории, а не ноль.') + '">цена не сопоставлена · процентов нет</div>');
     if (ov.mode === 'wait') {
       out.push('<div class="p21-dir"><span class="lb" title="' + esc(M('первое подтверждение позже (закрытие M5 за своим DR); «нет» — не было до конца сессии')) + '">Подтверждение</span>' +
@@ -1693,7 +1747,7 @@
     }
     for (const R of ov.roles) {
       const k = R.cons.slice().sort((a, b) => b.pct - a.pct)[0];
-      const ev = 'после этого момента цена похожих сессий заходила в эту полосу';
+      const ev = ov.film ? 'после этого момента цена семьи заходила в эту полосу' : 'после этого момента цена похожих сессий заходила в эту полосу';
       if (k && k.n) out.push(link({ k: 'place', role: R.id, id: k.id }, row('<i style="color:' + R.col + '">' + R.name.toLowerCase() + '</i> чаще всего заходила ' + k.name, P(k.pct)), '', M(ev)));
     }
     // the three places per side: share of the band, the densest price in it, and when its sessions first came there
@@ -1705,7 +1759,7 @@
       for (const k of R.cons.slice().sort((a, b) => b.sortP - a.sortP)) {
         const hot = k.n ? hotOf(ov, R, k) : null, en = k.entry;
         const when = k.now ? 'сейчас здесь' : !k.n ? '' : en && en.now ? 'сейчас' : en && !none ? clk(en.t0) + '–' + clk(en.t1) : '';
-        const ev = 'цена похожих сессий заходила в полосу «' + k.name + '» после этого момента; «впервые» — когда чаще всего заходила первый раз';
+        const ev = (ov.film ? 'цена семьи' : 'цена похожих сессий') + ' заходила в полосу «' + k.name + '» после этого момента; «впервые» — когда чаще всего заходила первый раз';
         out.push(link({ k: 'place', role: R.id, id: k.id },
           '<span class="bar" style="width:' + (none ? 0 : 100 * k.pct / mx).toFixed(1) + '%;background:' + R.col + '"></span><b style="color:' + R.col + '">' + (k.now ? '' : P(k.pct)) + '</b><span class="z">' + k.short + '</span><span class="pr">' + (hot && !none ? px(hot.p) : '—') + '</span><span class="tm">' + when + '</span>', 'place', M(ev)));
       }
@@ -1725,7 +1779,7 @@
     if (ov.mode === 'conf') {
       // the opposite side: the DR rule by M5 close, the wick beyond the DR, and the deep pullback (retirement −0,75)
       out.push('<div class="p21-h second">Противоположная сторона</div>');
-      out.push(link({ k: 'lvl', id: side === 1 ? 'drL' : 'drH', l: lvlObj(s, side === 1 ? 'drL' : 'drH') }, row('DR удержится до ' + clk(s.end), P(ov.holds)), '', M('ни одно закрытие M5 не ушло за противоположный край своего DR')));
+      out.push(link({ k: 'lvl', id: side === 1 ? 'drL' : 'drH', l: lvlObj(s, side === 1 ? 'drL' : 'drH') }, row((ov.film ? 'у семьи DR удержался до ' : 'DR удержится до ') + clk(s.end), P(ov.holds)), '', M('ни одно закрытие M5 не ушло за противоположный край своего DR')));
       if (ov.wick != null) out.push(link({ k: 'lvl', id: side === 1 ? 'drL' : 'drH', l: lvlObj(s, side === 1 ? 'drL' : 'drH') }, row('тенью за DR заходили', P(ov.wick)), 'dim', M('цена хотя бы тенью (low / high) зашла за противоположный край своего DR — так задевается стоп прямо за DR; сюда входят и сломы DR закрытием')));
       const pR = ov.u2p(-0.75), deep = ov.sims.filter(q => q.mn <= -0.75), heldAfter = deep.length >= 10 ? 100 * deep.filter(q => q.held).length / deep.length : null;
       const pull = ov.roles.find(r => r.id === 'pull');

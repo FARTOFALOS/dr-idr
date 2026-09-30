@@ -56,7 +56,7 @@ class Handler(SimpleHTTPRequestHandler):
                         return self.json({'status': 'error', 'message': str(exc)}, 200)
                 at = params.get('at')
                 return self.json(live.state(inst, session, int(float(at)) if at not in (None, '') else None))
-            if url.path in ('/api/day', '/api/day/refresh', '/api/cohort'):
+            if url.path in ('/api/day', '/api/day/refresh', '/api/cohort', '/api/family'):
                 import live, scene21
                 inst = params.get('instrument', 'NQ')
                 if url.path == '/api/day/refresh':
@@ -64,9 +64,10 @@ class Handler(SimpleHTTPRequestHandler):
                         live.fetch(inst)
                     except Exception as exc:
                         return self.json({'status': 'error', 'message': str(exc)}, 200)
-                if url.path == '/api/cohort':
+                if url.path in ('/api/cohort', '/api/family'):
                     at = params.get('at')
-                    return self.json(scene21.cohort(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None))
+                    fn = scene21.cohort if url.path == '/api/cohort' else scene21.family
+                    return self.json(fn(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None))
                 return self.json(scene21.day_view(inst))
             if url.path == '/api/spec':
                 path = ROOT.parent/'docs'/'SEMANTICS.md'

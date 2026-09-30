@@ -202,6 +202,98 @@ def _models_hist(B, i, k, obs_h, cache):
     return (not (whole[0] or cur[0]), not (whole[1] or cur[1]))
 
 
+WINDOW = 15            # the activation window of the family, minutes (the operator, 2026-09-30)
+BREAK_WEEKDAY = True   # the family after a DR break keeps the weekday (operator 2026-09-30: few sessions are fine, dashes where none)
+
+
+def window_of(close, formed):
+    """The 15-minute window of an event (a confirmation or a DR break) by the author's rule (operator 2026-09-30, after
+    the forensic check of the author's videos, studies/forensic_window_2026_09_30/): by the TradingView label of the M5,
+    i.e. its OPEN minute, counted from the start of the session's trading window (the box end), half-open
+    [formed + 15 b, formed + 15 (b + 1)); `close` is the M5's close minute. RDR: candles 10:30, 10:35, 10:40 (closes
+    10:35-10:45) -> 10:30-10:45; 10:45, 10:50, 10:55 (closes 10:50-11:00) -> 10:45-11:00. One window per event: the
+    candle that closes exactly at a boundary belongs to the window that ends there (the author: the 10:55 candle is «in
+    the first 30 minutes»; the 4:30 candle is «a different time bucket»). No double membership."""
+    return (close - 5 - formed) // WINDOW
+
+
+def family(inst, session, at=None):
+    """The main object of the working screen since 2026-09-30 (meaning/08-semantika-klasterov.md): today's family and its
+    whole clock-aligned M5 film.
+
+    After today's DR break (operator 2026-09-30) the screen plays the break: the family becomes the sessions whose DR
+    also broke — the same instrument, session, weekday (BREAK_WEEKDAY) and direction, the break in the same 15-minute
+    window (window_of) — and its film runs from today's break in the scale of the break's direction (0 = the opposite
+    IDR edge, positive = the break's way), as design 22's «По слому» mode. Such families are small (NQ RDR: a median of
+    4 sessions); the operator accepts that, and an empty one shows no numbers.
+
+    Family F = the same instrument, session, weekday and direction, confirmation in the same 15-minute window (window_of),
+    complete sessions of 2006-2025. It is fixed by today's confirmation t0 (known from closed M5 only) and does not change
+    during the day; one denominator N = |F| for every number. No re-matching by price or state, nothing renormalised to
+    DR true. The film: for every clock M5 after t0 up to the end of the session, each member's bar in its own scale
+    (d * (price - e) / w, e = its confirmation-side IDR edge, w = its IDR width): lo, hi, cl; None where it has no bar
+    (after its last bar the market was closed; before it, a missing bar). Today's slice only chooses which columns are
+    ahead; the film itself is the same all day, so the map at t0 (the Baseline) is never rewritten."""
+    if inst not in live.SYMBOLS: raise ValueError("Unknown instrument")
+    if session not in SESS: raise ValueError("Unknown session")
+    raw, d = _day_raw(inst)
+    if raw is None: return dict(status="no_data")
+    B = _boxes(inst)
+    if B is None: return dict(status="no_base", message="Нет базы сессий: python -B lab/build_boxes.py")
+    view = day_view(inst)
+    bars, now = view["bars"], view["now"]
+    is_live = at is None
+    obs = int(np.floor(now)) if is_live else int(at)
+    s = _state(bars, session, obs, now, is_live)
+    if s["status"] not in ("confirmed", "broken", "done") or not s.get("conf"):
+        return dict(status=s["status"], session=session, obs=obs)
+    start, formed, end = SESS[session]
+    shift = SHIFT[session]
+    brk = bool(s.get("failed"))
+    side, wd = s["side"], view["weekday"]
+    t0 = s["failed"] if brk else s["conf"]
+    d_ = -side if brk else side                               # the direction of play: after a break, the break's
+    b = window_of(t0, formed)
+    key = ("family", inst, session, view["date"], t0, side, brk)
+    if key in _CACHE:
+        out = dict(_CACHE[key]); out.update(obs=obs, o5=obs // 5 * 5, status_today=s["status"]); return out
+    grid = list(range(t0 + 5, end + 1, 5))
+    mem = []
+    for i, m in enumerate(B["boxes"]):
+        if m["session"] != session or not m["complete"] or m["conf"] is None or m["side"] != side: continue
+        if brk:
+            if m["fail"] is None or window_of(m["fail"] - shift, formed) != b: continue
+            if BREAK_WEEKDAY and m["weekday"] != wd: continue
+        elif m["weekday"] != wd or window_of(m["conf"] - shift, formed) != b: continue
+        a = _hist_bars(B, i)
+        w = m["idr_high"] - m["idr_low"]
+        e = m["idr_high"] if d_ == 1 else m["idr_low"]       # the IDR edge on the side of play
+        opp = m["dr_low"] if side == 1 else m["dr_high"]
+        at_close = {int(r[0]) - shift: r for r in a}
+        cu = lambda v: round(float(d_ * (v - e) / w), 3)
+        lo, hi, cl = [], [], []
+        for T in grid:
+            r = at_close.get(T)
+            if r is None: lo.append(None); hi.append(None); cl.append(None); continue
+            top, bot = (r[2], r[3]) if d_ == 1 else (r[3], r[2])
+            hi.append(cu(top)); lo.append(cu(bot)); cl.append(cu(r[4]))
+        mem.append(dict(date=m["date"], conf=int(m["conf"]) - shift, fail=None if m["fail"] is None else int(m["fail"]) - shift,
+                        held=None if brk else m["fail"] is None, uOpp=None if brk else cu(opp),
+                        last=int(a[-1, 0]) - shift, lo=lo, hi=hi, cl=cl))
+    clk = lambda t: f"{(t // 60) % 24:02d}:{t % 60:02d}"
+    days = ("пн", "вт", "ср", "чт", "пт", "сб", "вс")
+    w0 = formed + WINDOW * b
+    what = "слом DR" if brk else "подтверждение"
+    day = f" · {days[wd]}" if not brk or BREAK_WEEKDAY else ""
+    out = dict(status="ok", mode="brk" if brk else "conf", session=session, t0=t0, side=side, weekday=wd, window=[w0, w0 + WINDOW],
+               grid=grid, n=len(mem), cond=f"{session}{day} · {'лонг' if side == 1 else 'шорт'} · {what} {clk(w0)}–{clk(w0 + WINDOW)}",
+               members=mem)
+    if len(_CACHE) > 200: _CACHE.clear()
+    _CACHE[key] = out
+    res = dict(out); res.update(obs=obs, o5=obs // 5 * 5, status_today=s["status"])
+    return res
+
+
 def cohort(inst, session, at=None):
     if inst not in live.SYMBOLS: raise ValueError("Unknown instrument")
     if session not in SESS: raise ValueError("Unknown session")

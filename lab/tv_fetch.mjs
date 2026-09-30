@@ -11,7 +11,7 @@ const { evaluate, KNOWN_PATHS } = conn;
 const CHART = 'window.TradingViewApi._activeChartWidgetWV.value()';
 const BARS = KNOWN_PATHS.mainSeriesBars;
 const [symbol, countArg] = process.argv.slice(2);
-const count = Math.min(Number(countArg || 500), 1000);
+const count = Math.min(Number(countArg || 500), 3000);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const q = s => JSON.stringify(s);
 

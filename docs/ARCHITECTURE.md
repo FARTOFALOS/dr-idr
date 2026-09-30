@@ -9,7 +9,7 @@ plain arithmetic over the history base, so the same candles always give the same
 TradingView Desktop  --(Chrome DevTools, 127.0.0.1:9222)-->  lab/tv_fetch.mjs  (node, one shot per refresh)
                                                                    |
 browser page  <--HTTP 127.0.0.1:8767-->  lab/server.py (python)  --+--> lab/scene21.py --> boxes_* (every session, M5)
- (dist/*.js)                                  |                    |    (working screen «Созвездия»: /api/day, /api/cohort)
+ (dist/*.js)                                  |                    |    (working screen: /api/day, /api/family, /api/cohort)
                                               |                    +--> lab/live.py  --> lab/engine_market.py
                                               |                         (classic screen: /api/live)   (episodes in RAM)
                                               +--> lab/engine_market.py  (history dashboard of the classic screen)
@@ -65,7 +65,8 @@ Tick sizes: NQ, ES 0.25; YM 1. History bars carry the **close** minute of each M
 | `GET /api/live/refresh?...` | fetch from TradingView first, then the same as `/api/live` |
 | `GET /api/day?instrument=NQ` | working screen: the trading day's M5 bars from the last fetch and the previous trading day's RDR box |
 | `GET /api/day/refresh?instrument=NQ` | fetch from TradingView first, then the same as `/api/day` |
-| `GET /api/cohort?instrument=NQ&session=RDR[&at=<day minute>]` | working screen: the similar sessions of 2006–2025 at the live minute or the replay minute `at` |
+| `GET /api/cohort?instrument=NQ&session=RDR[&at=<day minute>]` | working screen: the similar sessions of 2006–2025 at the live minute or the replay minute `at` (used before a confirmation) |
+| `GET /api/family?instrument=NQ&session=RDR[&at=<day minute>]` | working screen since 2026-09-30: today's family (after a confirmation) or break family (after today's DR break) and its whole clock M5 film |
 
 ### `/api/day` response (`lab/scene21.day_view`)
 
@@ -92,6 +93,21 @@ similar session is placed by its close at `o5` and measured from `o5`, so betwee
 whole current M5, up to 4 minutes that have already passed today. Time precision is M5. Unlike `live.py` `_overlay`
 (minute bars strictly after the minute).
 
+### `/api/family` response (`lab/scene21.family`)
+
+`status`: `ok` | `no_data` | `no_base` | today's status when there is nothing to key on (`before`, `forming`, `waiting`,
+`noconf`). With `ok`: `mode` (`conf` = the confirmation family, `brk` = the break family after today's DR break),
+`session, t0` (the day minute of the activating M5 close: the confirmation, or the break), `side` (today's confirmation
+direction), `weekday, window` (`[start, end)` day minutes of the 15-minute window of the activating candle's TradingView
+label, `scene21.window_of`), `grid` (M5 close minutes from `t0 + 5` to the session end), `n` (the family size N), `cond`
+(the key in words), `members` — per family session: `date, conf, fail` (its confirmation and break close minutes on the
+day scale), `held` (conf: no M5 close beyond its opposite DR from its confirmation to the session end; null for brk),
+`uOpp` (conf: its opposite DR edge on its scale; null for brk), `last` (its last bar), and `lo, hi, cl` per grid point in
+its own IDR units of the mode (conf: 0 = its confirmation-side IDR edge, positive = the confirmation's way; brk: 0 = its
+opposite IDR edge, positive = the break's way), null where it has no bar; plus `obs, o5, status_today`. The film does not
+depend on the minute (cached per day and `t0`); the page takes the columns after the slice (the last closed M5) and
+draws them as design 22 does. Definitions: `docs/SEMANTICS.md`, «Семья на рабочем экране».
+
 ### `/api/live` response
 
 `status`: `no_data` | `no_session` | `forming` (DR window not closed) | `waiting` (DR formed, no confirmation) |
@@ -114,7 +130,8 @@ complete_n, median_retr, median_ext, median_rtime`.
 ## Live pipeline (`lab/live.py`)
 
 1. `fetch(inst)` runs `tv_fetch.mjs`: first it looks for a pane of the operator's layout that already shows the future
-   on 5 minutes (then 1 minute, aggregated to clock M5 and merged with older saved M5); only if none, it switches the
+   on 5 minutes (then 1 minute, aggregated to clock M5 and merged with older saved M5; the last 1500 bars, so the
+   trading day from 18:00 ET with the ADR box is covered); only if none, it switches the
    active chart to `CME_MINI:NQ1!` / `CME_MINI:ES1!` / `CBOT_MINI:YM1!` on 5 minutes, waits for the series itself to
    be ready (series `symbolInfo()` matches, not loading, bar count stable) and restores the chart. Saves
    `lab/.runtime/live/<inst>.json`.
@@ -130,7 +147,8 @@ complete_n, median_retr, median_ext, median_rtime`.
 
 - `index.html` + `sozvezdiya.js` — **the working screen «Созвездия» (design 22)**, built from `design/sozvezdiya-22/src`
   by its `build.py` (edit there, never the built files): the whole trading day on a canvas, levels, stars, places and
-  constellations, the fan, the right panel; data from `/api/day` and `/api/cohort`, refreshed after every M5 close while
+  constellations, the fan, the right panel; data from `/api/day`, `/api/family` (after a confirmation) and `/api/cohort`
+  (before one), refreshed after every M5 close while
   a session runs. Check with `tests/ui_check21.js`.
 - `classic.html` — **the previous screen**, kept at `/classic.html` (it was `index.html` until 2026-09-28): one page.
   `body.focus` (default) hides the research sidebar and headings; ☰ toggles it (`localStorage dr-lab-focus`).

@@ -83,6 +83,17 @@ else:
             ok = c.get("status") in ("ok", "before", "forming", "done", "noconf") and finite_json(c, f"cohort {session} {at}")
             if c.get("status") == "ok": ok = ok and c["n"] > 0 and len(c["sims"]["mx"]) == c["n"] and all(len(x) == len(c["grid"]) for x in c["sims"]["cl"])
             check(ok, f"cohort NQ {session} at {H.clock(at)}: {c.get('status')} {c.get('mode', '')} n={c.get('n')}")
+        for session, at in (("RDR", 700), ("RDR", 800), ("ODR", 300), ("ODR", 400)):
+            f = scene21.family("NQ", session, at)
+            ok = f.get("status") in ("ok", "before", "forming", "waiting", "noconf", "done") and finite_json(f, f"family {session} {at}")
+            if f.get("status") == "ok":
+                ok = ok and f["mode"] in ("conf", "brk") and f["n"] == len(f["members"]) and f["window"][1] - f["window"][0] == 15
+                ok = ok and all(len(m[k]) == len(f["grid"]) for m in f["members"] for k in ("lo", "hi", "cl"))
+            check(ok, f"family NQ {session} at {H.clock(at)}: {f.get('status')} {f.get('mode', '')} n={f.get('n')}")
+    # the family window: the TradingView label of the M5 (its open), one window per event (the author's rule, 2026-09-30)
+    wo = scene21.window_of
+    check([wo(c, 630) for c in (635, 645, 650, 660, 665)] == [0, 0, 1, 1, 2] and wo(245, 240) == 0 and wo(275, 240) == 2,
+          "family window by the candle label: 10:40 -> 10:30-10:45, 10:55 (closed 11:00) -> 10:45-11:00, 04:30 -> 04:30-04:45")
 
 node = shutil.which("node")
 if node:
