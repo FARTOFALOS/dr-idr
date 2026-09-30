@@ -1,0 +1,70 @@
+
+=== NQ · RDR · RDR · ср · лонг · подтверждение 11:45–12:00 · N = 25, t0 = 11:50, columns 50 (to 16:00), today u0 = +0.22
+DR held to the session end: 84 % · broke 16 %
+1. CURRENT SCREEN (first touch of places ahead; share = sessions that touched the band after t0, of N):
+   cont за +1.0          40 %  first-touch times median 14:00
+   cont +0.5…+1.0        68 %  first-touch times median 12:00
+   pull центр            68 %  first-touch times median 13:10
+   pull retirement       40 %  first-touch times median 14:45
+   contour of «за +1.0» (38 % of its peak): +0.97…+1.57 SD, 11:55–15:32
+   contour of «+0.5…+1.0» (38 % of its peak): +0.45…+0.65 SD, 11:55–12:10
+   contour of «центр» (38 % of its peak): -0.52…-0.24 SD, 12:25–15:50
+   contour of «retirement» (38 % of its peak): -1.02…-0.70 SD, 12:40–15:45
+2. CURATOR'S M5-CLOSE STATE DENSITY (each column = 100 % of the sessions present; mass = share of all session x M5 states):
+   states 1250 of 1250 (missing 0.0 %)
+   price projection Q, top cells: +0.1…+0.2 9.4 %, +0.0…+0.1 8.5 %, +0.2…+0.3 8.1 %, -0.1…+0.0 7.2 %
+   the first 30 minutes hold 12 % of all states; max column share 32 % at 11:50
+   densest region holding 30 % of states: 70 pieces; the largest 10 % of all states, -0.1…+0.5 SD, 11:50–12:35
+   densest region holding 50 % of states: 103 pieces; the largest 18 % of all states, -0.3…+0.5 SD, 11:50–13:10
+   closes at 12:20: median +0.27, 20-80 % +0.11…+0.46
+   closes at 13:50: median +0.19, 20-80 % -0.26…+0.70
+   closes at 16:00: median +0.00, 20-80 % -0.71…+0.56
+3. HIGH-LOW TOUCH FIELD (share of N whose bar touched the cell in that M5):
+   a column sums to 2.60…4.76 (x N) — one bar votes in several cells, so not 100 %
+   max cell 72 % at +0.1 SD, 11:55
+4. AUTHOR'S OBJECTS (per session ONE value; each histogram sums to 100 % of N; whole family, not only DR true):
+   max retracement (lowest point after t0 to the end): median -0.56, «70 %» line -0.89 (deeper went 30 %)
+     top cells: -0.9…-0.8 12 %, -0.3…-0.2 12 %, -0.8…-0.7 8 %
+     beyond the opposite IDR edge (< -1.0): 24 %; broke the DR: 16 %
+     time (15 min): 15:45–16:00 24 %, 11:45–12:00 16 %, 15:00–15:15 12 %; median 14:50
+   max extension (highest point after t0 to the end): median +0.81, «70 %» line +0.49 (reached by 70 %)
+     top cells: +0.3…+0.4 12 %, +0.4…+0.5 12 %, +0.5…+0.6 12 %
+     time (15 min): 12:00–12:15 24 %, 14:00–14:15 16 %, 15:30–15:45 16 %; median 14:05; in the last 30 minutes 20 %
+   a T&P-like zone (modal retracement cell + neighbours >= half of it): -0.9…-0.7 holds 20 % of sessions; their retracement times: 14:00–14:15 20 %, 14:15–14:30 20 % (of the zone)
+   reach ladder = the tail of the max-extension distribution: ≥+0.5: 68 %, ≥+1.0: 40 %, ≥+1.5: 20 %
+   figure: rdr_n25.png
+
+=== NQ · ODR · ODR · ср · лонг · подтверждение 04:00–04:15 · N = 187, t0 = 04:05, columns 53 (to 08:30), today u0 = +0.03
+DR held to the session end: 73 % · broke 27 %
+1. CURRENT SCREEN (first touch of places ahead; share = sessions that touched the band after t0, of N):
+   cont за +1.0          64 %  first-touch times median 04:38
+   cont +0.5…+1.0        87 %  first-touch times median 04:15
+   pull центр            73 %  first-touch times median 04:25
+   pull retirement       47 %  first-touch times median 05:20
+   contour of «за +1.0» (38 % of its peak): +0.95…+1.27 SD, 04:10–05:15
+   contour of «+0.5…+1.0» (38 % of its peak): +0.48…+1.03 SD, 04:10–04:30
+   contour of «центр» (38 % of its peak): -0.50…-0.22 SD, 04:10–04:32
+   contour of «retirement» (38 % of its peak): -1.00…-0.72 SD, 04:12–07:28
+2. CURATOR'S M5-CLOSE STATE DENSITY (each column = 100 % of the sessions present; mass = share of all session x M5 states):
+   states 9904 of 9911 (missing 0.1 %)
+   price projection Q, top cells: +0.0…+0.1 6.4 %, +0.1…+0.2 5.3 %, +0.2…+0.3 5.2 %, +0.5…+0.6 4.7 %
+   the first 30 minutes hold 11 % of all states; max column share 24 % at 04:05
+   densest region holding 30 % of states: 69 pieces; the largest 27 % of all states, -0.5…+0.9 SD, 04:05–07:15
+   densest region holding 50 % of states: 80 pieces; the largest 46 % of all states, -0.6…+1.1 SD, 04:05–08:30
+   closes at 04:35: median +0.29, 20-80 % -0.10…+0.80
+   closes at 06:05: median +0.32, 20-80 % -0.40…+1.26
+   closes at 08:30: median +0.51, 20-80 % -0.82…+1.76
+3. HIGH-LOW TOUCH FIELD (share of N whose bar touched the cell in that M5):
+   a column sums to 3.78…5.60 (x N) — one bar votes in several cells, so not 100 %
+   max cell 74 % at +0.0 SD, 04:05
+4. AUTHOR'S OBJECTS (per session ONE value; each histogram sums to 100 % of N; whole family, not only DR true):
+   max retracement (lowest point after t0 to the end): median -0.65, «70 %» line -1.29 (deeper went 30 %)
+     top cells: -0.5…-0.4 7 %, -0.1…+0.0 7 %, -0.3…-0.2 6 %
+     beyond the opposite IDR edge (< -1.0): 37 %; broke the DR: 27 %
+     time (15 min): 04:00–04:15 25 %, 07:30–07:45 10 %, 08:15–08:30 10 %; median 05:55
+   max extension (highest point after t0 to the end): median +1.34, «70 %» line +0.84 (reached by 70 %)
+     top cells: +0.6…+0.7 6 %, +0.3…+0.4 5 %, +0.8…+0.9 5 %
+     time (15 min): 08:15–08:30 20 %, 04:00–04:15 11 %, 08:00–08:15 9 %; median 06:40; in the last 30 minutes 29 %
+   a T&P-like zone (modal retracement cell + neighbours >= half of it): -0.7…+0.1 holds 47 % of sessions; their retracement times: 04:00–04:15 45 %, 07:30–07:45 8 % (of the zone)
+   reach ladder = the tail of the max-extension distribution: ≥+0.5: 87 %, ≥+1.0: 64 %, ≥+1.5: 45 %
+   figure: odr_n187.png
