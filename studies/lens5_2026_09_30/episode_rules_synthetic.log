@@ -1,0 +1,50 @@
+== driftless walk, steps gauss, 100000 sessions x 66 M5
+ rule C (episode recovery):
+  opened: 1.000   recovered by the horizon: 0.861
+  bars from t to the opening close: p10=1.00  p25=1.00  p50=2.00  p75=3.00  p90=4.00
+  bars from opening to recognition: p10=1.00  p25=1.00  p50=3.00  p75=9.00  p90=24.00
+  depth below the start price a:    p10=0.54  p25=0.91  p50=1.64  p75=3.13  p90=5.41
+  depth below the price at t:       p10=-0.96  p25=0.31  p50=1.16  p75=2.59  p90=4.81
+  recovered episodes shallower than one M5 sd: 0.285;  recognised within 3 bars: 0.526
+  base above the price at t: 0.193
+ rule theta (reversal by theta from the lowest low since t):
+  theta=1.0: recognised by the horizon 1.000
+    depth/theta below the price at t: p10=0.00  p25=0.24  p50=1.00  p75=2.27  p90=3.98
+    exponential, mean 1:          p10=0.11  p25=0.29  p50=0.69  p75=1.39  p90=2.30
+    bars from base to recognition: p10=0.00  p25=0.00  p50=1.00  p75=1.00  p90=2.00
+    density by 0.25 theta bins from 0 to 3 theta: 1.01 0.36 0.33 0.30 0.25 0.22 0.19 0.17 0.15 0.12 0.11 0.10
+  theta=2.5: recognised by the horizon 0.999
+    depth/theta below the price at t: p10=0.01  p25=0.27  p50=0.81  p75=1.73  p90=2.95
+    exponential, mean 1:          p10=0.11  p25=0.29  p50=0.69  p75=1.39  p90=2.30
+    bars from base to recognition: p10=1.00  p25=2.00  p50=3.00  p75=5.00  p90=7.00
+    density by 0.25 theta bins from 0 to 3 theta: 0.95 0.52 0.44 0.36 0.30 0.24 0.21 0.17 0.13 0.12 0.10 0.08
+  theta=5.0: recognised by the horizon 0.884
+    depth/theta below the price at t: p10=0.05  p25=0.24  p50=0.63  p75=1.25  p90=1.94
+    exponential, mean 1:          p10=0.11  p25=0.29  p50=0.69  p75=1.39  p90=2.30
+    bars from base to recognition: p10=4.00  p25=6.00  p50=9.00  p75=14.00  p90=20.00
+    density by 0.25 theta bins from 0 to 3 theta: 1.04 0.67 0.54 0.43 0.33 0.26 0.21 0.15 0.11 0.08 0.06 0.04
+== driftless walk, steps t4, 100000 sessions x 66 M5
+ rule C (episode recovery):
+  opened: 1.000   recovered by the horizon: 0.862
+  bars from t to the opening close: p10=1.00  p25=1.00  p50=1.00  p75=2.00  p90=4.00
+  bars from opening to recognition: p10=1.00  p25=1.00  p50=3.00  p75=9.00  p90=24.00
+  depth below the start price a:    p10=0.46  p25=0.81  p50=1.51  p75=3.01  p90=5.26
+  depth below the price at t:       p10=-0.93  p25=0.27  p50=1.07  p75=2.49  p90=4.71
+  recovered episodes shallower than one M5 sd: 0.332;  recognised within 3 bars: 0.526
+  base above the price at t: 0.194
+ rule theta (reversal by theta from the lowest low since t):
+  theta=1.0: recognised by the horizon 1.000
+    depth/theta below the price at t: p10=0.00  p25=0.23  p50=0.99  p75=2.31  p90=4.10
+    exponential, mean 1:          p10=0.11  p25=0.29  p50=0.69  p75=1.39  p90=2.30
+    bars from base to recognition: p10=0.00  p25=1.00  p50=1.00  p75=2.00  p90=2.00
+    density by 0.25 theta bins from 0 to 3 theta: 1.03 0.38 0.32 0.28 0.24 0.21 0.19 0.16 0.15 0.12 0.11 0.10
+  theta=2.5: recognised by the horizon 0.998
+    depth/theta below the price at t: p10=0.02  p25=0.26  p50=0.81  p75=1.76  p90=3.02
+    exponential, mean 1:          p10=0.11  p25=0.29  p50=0.69  p75=1.39  p90=2.30
+    bars from base to recognition: p10=1.00  p25=2.00  p50=3.00  p75=5.00  p90=7.00
+    density by 0.25 theta bins from 0 to 3 theta: 0.97 0.51 0.43 0.35 0.29 0.24 0.20 0.17 0.14 0.12 0.10 0.08
+  theta=5.0: recognised by the horizon 0.866
+    depth/theta below the price at t: p10=0.05  p25=0.22  p50=0.61  p75=1.21  p90=1.91
+    exponential, mean 1:          p10=0.11  p25=0.29  p50=0.69  p75=1.39  p90=2.30
+    bars from base to recognition: p10=4.00  p25=6.00  p50=10.00  p75=15.00  p90=21.00
+    density by 0.25 theta bins from 0 to 3 theta: 1.08 0.67 0.53 0.43 0.33 0.25 0.20 0.14 0.11 0.08 0.05 0.04

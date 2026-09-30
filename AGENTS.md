@@ -29,6 +29,11 @@ against what happened next.
   and sends texts («линзы») that land in `meaning/lens/`. Treat them as input, never as his decisions; answer in
   `meaning/lens/<date>-otvet.md`, verify claims on the tape, keep `meaning/` in sync with any change of meaning
   (`meaning/06-protokol.md`).
+- **The repository is the semantic hub** (his decision, 2026-09-30). Every commit and push carries the chain of
+  decisions: what changed in meaning, which decisions were taken and by whom (operator / executor / a lens proposal), on
+  what basis, which questions stay open, what the executor decided on its own and what it is unsure about. The same
+  node goes into `meaning/07-cepochka-reshenij.md`, so an agent arriving cold can find where a line of thought began
+  and go back if a meaning was misread.
 
 ## Read in this order
 
@@ -60,6 +65,21 @@ against what happened next.
   matcher is not better) and the live minute price (not worse than full M1 alignment, better than closed M5 only). A
   place's cloud height is the first entering bar's depth, not where price came, and the data form no price clusters of
   their own: what to draw instead is the operator's question О11 — do not restyle the clouds before it is answered.
+
+- **Lenses 5 and 6 (2026-09-30, `meaning/lens/`, `meaning/07-cepochka-reshenij.md`).**
+  - Lens 5 (cluster spec v0.8): the answer argues that every number is an order of first touches, that a reaction
+    detector needs a threshold (`studies/lens5_2026_09_30/`, synthetic) and that a reaction layer is probably
+    unnecessary.
+  - Lens 6: reconstruct the author's Time & Price literally before transferring anything. The answer:
+    - one value per session of the max retracement, its time and the max extension;
+    - 0.1 buckets and 15-minute bins; zones picked by eye;
+    - the «70 %» line is asymmetric;
+    - cross-filters select sessions by their future;
+    - M7 retracement stays proprietary.
+  - The author's NQ key recomputed on our tape (`studies/lens6_2026_09_30/`) reproduces his shape only after his time
+    filter.
+  - The author's zones and times are the session's final extreme, the object of hard rule 10. How to transfer them is
+    the operator's О13; О12 (reactions) is paused.
 
 - **The working screen is «Созвездия» design 22 «смысл числа», on market data** (since 2026-09-29; design 21 from
   2026-09-28 before it). `http://127.0.0.1:8767` opens it (`lab/dist/index.html` + `sozvezdiya.js`, built from
