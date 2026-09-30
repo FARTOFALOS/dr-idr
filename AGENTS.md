@@ -84,6 +84,11 @@ against what happened next.
     clusters» / «no path memory», partial replication); the time contract documented (history from its last M5
     close); event «passports» proposed. Found in code: tooltips still saying «окончательный экстремум» and
     similar sessions already inside a pullback place counted as arrivals — both wait for the operator (О15).
+  - Lens 8 (the curator's directive, `meaning/lens/2026-09-30-linza-8.md`): one frozen contract for «a new arrival in a
+    pullback place while the scenario is alive, then +1.0 before the DR break» (`studies/lens8_2026_09_30/dogovor.md`,
+    version 1.1 after an independent blind reading of 21 synthetic paths), and the size of the mismatches already found
+    on NQ RDR 2016–2025. Research only; nothing on the screen changed. The operator's three product decisions of the
+    directive's §12 are open as О14, О13 and О9, with О15.
 
 - **The working screen is «Созвездия» design 22 «смысл числа», on market data** (since 2026-09-29; design 21 from
   2026-09-28 before it). `http://127.0.0.1:8767` opens it (`lab/dist/index.html` + `sozvezdiya.js`, built from
@@ -196,6 +201,10 @@ it would overwrite the working screen) (it writes `lab/dist/index.html` and
   operator's browser may run an old `live.js` after your change.
 - **Do not pipe the launcher in bash** (`start-dr-lab.cmd | tail`): the hidden server inherits the pipe and the
   command never returns. Run it directly from PowerShell (`& start-dr-lab.cmd -NoBrowser`).
+- **Disk C: can fill up.** On 2026-09-30 it reached 0 bytes free and a study failed while writing its per-state
+  records. Keep such records compressed and small (`.json.gz`). The earlier big ones (audit, lens 4, the m7 cache) were
+  moved, not deleted, to `D:\dr-idr-runtime-archive\2026-09-30`; `studies/m7_claims.py` rebuilds its cache if it is
+  missing. Never touch `boxes_*`, `market_*` or `live/`: the screens read them.
 - **Label collisions.** Right-side level labels are laid out with a minimum gap (`labels` in `drawLive`); hover guides
   hide the labels they would cover and restore them after. New text on the chart must go through the same layout or
   be checked with `tests/ui_check.js`.

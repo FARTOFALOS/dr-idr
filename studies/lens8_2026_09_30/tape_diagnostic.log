@@ -1,0 +1,94 @@
+NQ RDR, test states (M5 closes, confirmed, DR intact): 38133; sessions 2355
+check: vectorised codes = contract.classify on 190745 sampled (state, similar session, area): mismatches 0; first close beyond DR after t = the recorded DR break: mismatches 0
+K and L touched inside one M5 bar (eligible similar sessions): 891; by minutes K first 265, L first 605, same minute 21, no minutes 0
+
+8.1 Initial state against each place ahead of today's price (mean over states of shares of N_base)
+    place  band   states | before inside beyond unknown | old screen | old with <= | new arrival (from before) on N_base | old - new
+    A      all     32031 |  95.9%   3.8%   0.3%   0.0% |     41.9% |     42.1% |     38.0% | +3.9 pt
+    A      ±0.25   24668 |  97.3%   2.7%   0.0%   0.0% |     43.8% |     44.0% |     41.3% | +2.5 pt
+    A      ±0.5     3916 |  96.5%   3.4%   0.0%   0.0% |     29.4% |     29.5% |     26.1% | +3.3 pt
+    A      none     3447 |  85.0%  12.3%   2.7%   0.0% |     42.8% |     43.0% |     28.0% | +14.8 pt
+    B      all     36991 |  99.1%   0.9%   0.0%   0.0% |     25.5% |     25.7% |     24.8% | +0.7 pt
+    B      ±0.25   28398 |  99.4%   0.6%   0.0%   0.0% |     27.4% |     27.6% |     27.0% | +0.4 pt
+    B      ±0.5     4676 |  98.5%   1.5%   0.0%   0.0% |     19.2% |     19.3% |     17.8% | +1.4 pt
+    B      none     3917 |  97.3%   2.7%   0.0%   0.0% |     20.0% |     20.2% |     17.4% | +2.6 pt
+    s1     all     38133 |  96.3%   2.2%   1.5%   0.0% |     48.4% |         — |     44.7% | +3.7 pt
+    s1     ±0.25   28686 | 100.0%   0.0%   0.0%   0.0% |     49.6% |         — |     49.6% | +0.0 pt
+    s1     ±0.5     5168 |  92.8%   7.2%   0.0%   0.0% |     51.0% |         — |     43.8% | +7.2 pt
+    s1     none     4279 |  76.0%  10.8%  13.2%   0.0% |     37.0% |         — |     13.0% | +24.0 pt
+    s2     all     38133 |  98.5%   1.5%   0.0%   0.0% |     22.8% |         — |     21.3% | +1.5 pt
+    s2     ±0.25   28686 | 100.0%   0.0%   0.0%   0.0% |     22.5% |         — |     22.5% | +0.0 pt
+    s2     ±0.5     5168 | 100.0%   0.0%   0.0%   0.0% |     22.8% |         — |     22.8% | +0.0 pt
+    s2     none     4279 |  86.5%  13.5%   0.0%   0.0% |     24.4% |         — |     10.9% | +13.5 pt
+
+8.2 Minute cut inside an M5 (the live screen): arrivals whose first touch was in minutes today has already lived
+    At an M5 close the similar sessions are measured from the same close: nothing is in the past by construction.
+    +2 min A   all   states  31979 | arrivals 2220237, in the first bar 465991, first touch in the lived minutes 357722 (16.1% of arrivals; 6.8 pt of the place's share on average) | no touch after the cut at all 6680, at the cut already at/over the edge 261336, minute order unknown 0
+    +2 min A   ±0.25 states  24581 | arrivals 1787699, in the first bar 276649, first touch in the lived minutes 186892 (10.5% of arrivals; 5.4 pt of the place's share on average) | no touch after the cut at all 4476, at the cut already at/over the edge 116086, minute order unknown 0
+    +2 min A   ±0.5  states   3876 | arrivals   67688, in the first bar  13597, first touch in the lived minutes  10975 (16.2% of arrivals; 5.0 pt of the place's share on average) | no touch after the cut at all 240, at the cut already at/over the edge 8215, minute order unknown 0
+    +2 min A   none  states   3522 | arrivals  364850, in the first bar 175745, first touch in the lived minutes 159855 (43.8% of arrivals; 18.1 pt of the place's share on average) | no touch after the cut at all 1964, at the cut already at/over the edge 137035, minute order unknown 0
+    +2 min B   all   states  36907 | arrivals 1405184, in the first bar 110651, first touch in the lived minutes  80048 (5.7% of arrivals; 1.9 pt of the place's share on average) | no touch after the cut at all 1985, at the cut already at/over the edge 54036, minute order unknown 0
+    +2 min B   ±0.25 states  28238 | arrivals 1133740, in the first bar  50503, first touch in the lived minutes  30434 (2.7% of arrivals; 1.5 pt of the place's share on average) | no touch after the cut at all 847, at the cut already at/over the edge 17943, minute order unknown 0
+    +2 min B   ±0.5  states   4668 | arrivals   58901, in the first bar  10100, first touch in the lived minutes   7792 (13.2% of arrivals; 2.6 pt of the place's share on average) | no touch after the cut at all 198, at the cut already at/over the edge 5337, minute order unknown 0
+    +2 min B   none  states   4001 | arrivals  212543, in the first bar  50048, first touch in the lived minutes  41822 (19.7% of arrivals; 4.0 pt of the place's share on average) | no touch after the cut at all 940, at the cut already at/over the edge 30756, minute order unknown 0
+    +2 min s1  all   states  38132 | arrivals 2512728, in the first bar 492783, first touch in the lived minutes 355791 (14.2% of arrivals; 7.0 pt of the place's share on average) | no touch after the cut at all 6683, at the cut already at/over the edge 272554, minute order unknown 0
+    +2 min s1  ±0.25 states  28539 | arrivals 2082747, in the first bar 231417, first touch in the lived minutes 111861 (5.4% of arrivals; 2.8 pt of the place's share on average) | no touch after the cut at all 4429, at the cut already at/over the edge 53352, minute order unknown 0
+    +2 min s1  ±0.5  states   5176 | arrivals  164219, in the first bar  56297, first touch in the lived minutes  44108 (26.9% of arrivals; 13.5 pt of the place's share on average) | no touch after the cut at all 1304, at the cut already at/over the edge 28807, minute order unknown 0
+    +2 min s1  none  states   4417 | arrivals  265762, in the first bar 205069, first touch in the lived minutes 199822 (75.2% of arrivals; 27.0 pt of the place's share on average) | no touch after the cut at all 950, at the cut already at/over the edge 190395, minute order unknown 0
+    +2 min s2  all   states  38132 | arrivals 1252031, in the first bar 157671, first touch in the lived minutes 145481 (11.6% of arrivals; 1.9 pt of the place's share on average) | no touch after the cut at all 1096, at the cut already at/over the edge 134691, minute order unknown 0
+    +2 min s2  ±0.25 states  28539 | arrivals  970111, in the first bar   6667, first touch in the lived minutes   1560 (0.2% of arrivals; 0.0 pt of the place's share on average) | no touch after the cut at all 138, at the cut already at/over the edge 801, minute order unknown 0
+    +2 min s2  ±0.5  states   5176 | arrivals   75159, in the first bar   2294, first touch in the lived minutes    637 (0.8% of arrivals; 0.2 pt of the place's share on average) | no touch after the cut at all 64, at the cut already at/over the edge 286, minute order unknown 0
+    +2 min s2  none  states   4417 | arrivals  206761, in the first bar 148710, first touch in the lived minutes 143284 (69.3% of arrivals; 15.8 pt of the place's share on average) | no touch after the cut at all 894, at the cut already at/over the edge 133604, minute order unknown 0
+    +4 min A   all   states  31877 | arrivals 2206875, in the first bar 465240, first touch in the lived minutes 432869 (19.6% of arrivals; 8.2 pt of the place's share on average) | no touch after the cut at all 14626, at the cut already at/over the edge 291192, minute order unknown 0
+    +4 min A   ±0.25 states  24429 | arrivals 1766108, in the first bar 273448, first touch in the lived minutes 246303 (13.9% of arrivals; 7.0 pt of the place's share on average) | no touch after the cut at all 10262, at the cut already at/over the edge 140937, minute order unknown 0
+    +4 min A   ±0.5  states   3890 | arrivals   68179, in the first bar  13787, first touch in the lived minutes  13028 (19.1% of arrivals; 5.9 pt of the place's share on average) | no touch after the cut at all 574, at the cut already at/over the edge 8992, minute order unknown 0
+    +4 min A   none  states   3558 | arrivals  372588, in the first bar 178005, first touch in the lived minutes 173538 (46.6% of arrivals; 19.5 pt of the place's share on average) | no touch after the cut at all 3790, at the cut already at/over the edge 141263, minute order unknown 0
+    +4 min B   all   states  36858 | arrivals 1399394, in the first bar 112346, first touch in the lived minutes 101973 (7.3% of arrivals; 2.5 pt of the place's share on average) | no touch after the cut at all 3947, at the cut already at/over the edge 61918, minute order unknown 0
+    +4 min B   ±0.25 states  28090 | arrivals 1122154, in the first bar  51151, first touch in the lived minutes  44336 (4.0% of arrivals; 2.1 pt of the place's share on average) | no touch after the cut at all 1794, at the cut already at/over the edge 23705, minute order unknown 0
+    +4 min B   ±0.5  states   4707 | arrivals   60255, in the first bar  10566, first touch in the lived minutes   9765 (16.2% of arrivals; 3.2 pt of the place's share on average) | no touch after the cut at all 418, at the cut already at/over the edge 5903, minute order unknown 0
+    +4 min B   none  states   4061 | arrivals  216985, in the first bar  50629, first touch in the lived minutes  47872 (22.1% of arrivals; 4.5 pt of the place's share on average) | no touch after the cut at all 1735, at the cut already at/over the edge 32310, minute order unknown 0
+    +4 min s1  all   states  38128 | arrivals 2517779, in the first bar 511827, first touch in the lived minutes 469745 (18.7% of arrivals; 9.2 pt of the place's share on average) | no touch after the cut at all 12596, at the cut already at/over the edge 335201, minute order unknown 0
+    +4 min s1  ±0.25 states  28369 | arrivals 2057959, in the first bar 224975, first touch in the lived minutes 187749 (9.1% of arrivals; 4.7 pt of the place's share on average) | no touch after the cut at all 8303, at the cut already at/over the edge 89435, minute order unknown 0
+    +4 min s1  ±0.5  states   5233 | arrivals  168415, in the first bar  57981, first touch in the lived minutes  54631 (32.4% of arrivals; 16.5 pt of the place's share on average) | no touch after the cut at all 2534, at the cut already at/over the edge 32258, minute order unknown 0
+    +4 min s1  none  states   4526 | arrivals  291405, in the first bar 228871, first touch in the lived minutes 227365 (78.0% of arrivals; 28.7 pt of the place's share on average) | no touch after the cut at all 1759, at the cut already at/over the edge 213508, minute order unknown 0
+    +4 min s2  all   states  38128 | arrivals 1266151, in the first bar 179054, first touch in the lived minutes 175176 (13.8% of arrivals; 2.2 pt of the place's share on average) | no touch after the cut at all 2371, at the cut already at/over the edge 156145, minute order unknown 0
+    +4 min s2  ±0.25 states  28369 | arrivals  958012, in the first bar   6542, first touch in the lived minutes   4616 (0.5% of arrivals; 0.1 pt of the place's share on average) | no touch after the cut at all 362, at the cut already at/over the edge 1705, minute order unknown 0
+    +4 min s2  ±0.5  states   5233 | arrivals   77752, in the first bar   2286, first touch in the lived minutes   1796 (2.3% of arrivals; 0.6 pt of the place's share on average) | no touch after the cut at all 192, at the cut already at/over the edge 747, minute order unknown 0
+    +4 min s2  none  states   4526 | arrivals  230387, in the first bar 170226, first touch in the lived minutes 168764 (73.3% of arrivals; 17.3 pt of the place's share on average) | no touch after the cut at all 1817, at the cut already at/over the edge 153693, minute order unknown 0
+
+8.3 L = +1.0 already reached by t
+    all states           states  38133 | similar sessions with L reached by t 30.5% | N_base mean 139 median 103 | N_scenario mean 104 median 73
+    today L not reached  states  26190 | similar sessions with L reached by t 17.6% | N_base mean 140 median 114 | N_scenario mean 119 median 88
+    today L reached      states  11943 | similar sessions with L reached by t 58.7% | N_base mean 137 median 84 | N_scenario mean 72 median 38
+    10:45-11:30: states   5126, today L reached 13.1%; where today not: similar with L reached 6.2%
+    11:45-13:00: states  11329, today L reached 26.2%; where today not: similar with L reached 13.5%
+    13:15-15:45: states  21678, today L reached 38.3%; where today not: similar with L reached 23.9%
+
+8.4 Incomplete observations
+    similar sessions left out only because the session is not complete: 1519 (session, state) pairs over 2 sessions; ends of data [910]; the event already decided before the cut: A 289 of 1519, B 0 of 1519
+    holiday sessions (market closed before 16:00) inside the similar sessions: 1.0% of N_base on average (counted as complete; after their close nothing can happen)
+    similar sessions with a missing M5 bar after t: 0.4% of N_base on average (17601 pairs)
+
+Part D and context: the scenario 'new arrival in K -> L=+1.0 before the DR break' where today's L is not reached and today is before K
+    each number on its known cases; unknown = share of N_scenario (new / adm / seq); today = what the test session itself did
+    group                         states | N_base N_sc | area | p_new  p_adm  q      p_seq | unknown new/adm/seq | today (realised): new adm q seq
+    CARD 11:00, price 0..+0.5       704 |   347   337 | A    |  60.8%  53.0%  19.8%  10.5% | 0.2%/0.2%/0.5% | 56.5% 50.1% 21.1% 10.5% | pooled q 19.9%
+    CARD 11:00, price 0..+0.5       704 |   347   337 | B    |  35.2%  30.1%   7.6%   2.3% | 0.2%/0.2%/0.5% | 32.0% 26.5% 7.6% 2.0% | pooled q 7.7%
+    all states                    20763 |   153   130 | A    |  44.1%  40.8%  10.7%   4.4% | 0.1%/0.1%/0.3% | 44.8% 41.9% 10.7% 4.5% | pooled q 13.5%
+    all states                    25226 |   141   120 | B    |  27.6%  25.7%   4.4%   1.1% | 0.3%/0.3%/0.4% | 26.0% 24.2% 3.6% 0.9% | pooled q 5.4%
+    10:45-11:30                    4020 |   267   254 | A    |  59.6%  52.5%  18.3%   9.6% | 0.1%/0.1%/0.4% | 58.7% 51.8% 19.7% 10.2% | pooled q 18.5%
+    10:45-11:30                    4413 |   253   241 | B    |  38.4%  33.5%   7.3%   2.4% | 0.2%/0.2%/0.4% | 35.6% 30.4% 6.7% 2.0% | pooled q 7.4%
+    11:45-13:00                    6724 |   160   137 | A    |  51.1%  46.9%  12.2%   5.7% | 0.0%/0.0%/0.2% | 50.7% 47.1% 12.0% 5.6% | pooled q 12.4%
+    11:45-13:00                    8097 |   149   128 | B    |  33.8%  31.5%   5.6%   1.8% | 0.2%/0.2%/0.3% | 31.2% 29.1% 4.0% 1.2% | pooled q 5.4%
+    13:15-15:45                   10019 |   102    75 | A    |  33.2%  32.0%   4.2%   1.3% | 0.1%/0.1%/0.3% | 35.3% 34.5% 4.0% 1.4% | pooled q 4.7%
+    13:15-15:45                   12716 |    97    72 | B    |  19.8%  19.3%   1.4%   0.3% | 0.3%/0.3%/0.4% | 19.3% 18.8% 1.3% 0.2% | pooled q 1.4%
+
+Time of the admissible arrival (card states): two different numbers
+    A: arrival   0- 30 min after t | of all N_scenario  22.2% | among admissible arrivals  42.0%
+    A: arrival  30- 90 min after t | of all N_scenario  15.5% | among admissible arrivals  29.3%
+    A: arrival  90-400 min after t | of all N_scenario  15.3% | among admissible arrivals  28.8%
+    A: median time from t to the admissible arrival 45 min
+    B: arrival   0- 30 min after t | of all N_scenario   2.8% | among admissible arrivals   9.7%
+    B: arrival  30- 90 min after t | of all N_scenario  10.1% | among admissible arrivals  33.3%
+    B: arrival  90-400 min after t | of all N_scenario  17.1% | among admissible arrivals  57.0%
+    B: median time from t to the admissible arrival 110 min
