@@ -156,8 +156,8 @@ design/                   mockups on synthetic data, designs 1-22, start at desi
 6. **Prefix honesty.** At an observed minute the overlay uses only what was known then: DR, confirmation and DR break
    from closed M5 only; the current price from the forming M5; similar sessions measured strictly after the same
    minute. Replay must obey the same rule (bars after the replay minute are shown, never used). **Amended 2026-09-30
-   (operator):** the clusters' statistics use closed M5 only. A slice is a closed M5; the similar sessions are taken at
-   the same close and measured after it; the live price is only drawn between closes. The working screen still matches
+   (operator):** the clusters' statistics use closed M5 only. A slice is a closed M5. The family, fixed at the
+   confirmation, is read after that close. The live price is only drawn between closes. The working screen still matches
    by the minute price until its change is approved (`meaning/02-sobytiya.md` §2, `meaning/08-semantika-klasterov.md`).
 7. **Descriptive numbers.** Frequencies are the history of similar sessions, not a forecast, not a trade. The UI does
    not print disclaimers (operator's decision), so the discipline lives in the code and in `docs/RESEARCH.md`: never
@@ -173,11 +173,13 @@ design/                   mockups on synthetic data, designs 1-22, start at desi
     answers a different question; on the screen it piled every cluster up at 15:50–16:00 and cost the operator a day of
     confusion (2026-09-29). Any new number must answer a question the operator asked, in the
     operator's words; if unsure, ask in one plain sentence before building.
-    **Amended 2026-09-30 (operator):** the base object is the path of the author's family per M5. The family is the same
-    session, direction and 15-minute confirmation window, counted from the start of the trading window; it is fixed for
-    the day. For every next M5 the object says which prices, in each session's own IDR scale, the family's M5 high–low
-    ranges reached (`meaning/08-semantika-klasterov.md`). First arrival is a derived number. The ban on the final extreme
-    stays. The working screen still shows first arrivals until its change is approved.
+    **Amended 2026-09-30 (operator):** the base object is the path of the author's family per M5. The family is
+    instrument × session × weekday × direction × 15-minute confirmation window, counted from the start of the trading
+    window; it is fixed for the day. For every next M5 the object says which prices, in each session's own IDR scale,
+    the family's M5 high–low ranges reached (`meaning/08-semantika-klasterov.md`). Every percentage is a share of that
+    one family N: no re-matching by price or state, nothing renormalised to DR true. Filters by the lived path are a
+    separate research branch. First arrival is a derived number. The ban on the final extreme stays. The working screen
+    still shows first arrivals until its change is approved.
 
 ## How to verify your change (always, before saying "done")
 

@@ -103,22 +103,36 @@ def family(today, history):
 
 
 def family_map(today_full, history, tn, H=780):
-    """Baseline at t0: the whole family, no further condition, clock M5 columns after t0.
-    Dynamic at tn > t0: the family members comparable with today's state known at tn (confirmed by tn, DR not broken by
-    tn, close at tn within 0.25 of today's), clock M5 columns after tn. Members of other windows never enter."""
+    """The main field at today's slice tn (the operator, 2026-09-30, meaning/lens/2026-09-30-linza-12.md): always the
+    whole family F, one denominator N = |F| for the day, clock M5 columns after tn. No re-matching and no exclusion by
+    what a member did before tn (a broken DR, another price): its divergence is part of the family. At t0 this is the
+    Baseline; later slices show what the same family did next."""
     today = prefix(today_full, tn)
     T0 = activation(today)
     if T0 is None or tn < T0: return dict(kind=None, t=tn)
     F = family(today, history)
-    if tn == T0:
-        C = F
-    else:
-        x = close_at(today, tn)
-        C = [h for h in F if activation(h) <= tn and not broken_by(h, tn) and close_at(h, tn) is not None
-             and abs(close_at(h, tn) - x) <= 0.25]
+    votes = Counter()
+    for h in F:
+        votes.update(session_cells(h, tn, H)[0])
+    N = len(F)
+    return dict(kind="baseline" if tn == T0 else "family", t=tn, N=N, members=sorted(h["name"] for h in F),
+                V={k: n / N for k, n in votes.items()} if N else {})
+
+
+def conditional_view(today_full, history, tn, dr_intact=True, near=0.25, H=780):
+    """A separate, labelled view inside the family: the members whose prefix at tn still matches today's (confirmed by
+    tn, DR intact as today, close at tn within `near` of today's). Excluded only by a known prefix mismatch, never by the
+    future. Shown as n of N; it never replaces the main field."""
+    today = prefix(today_full, tn)
+    T0 = activation(today)
+    if T0 is None or tn < T0: return dict(kind=None, t=tn)
+    F = family(today, history)
+    x = close_at(today, tn)
+    C = [h for h in F if activation(h) <= tn and (broken_by(h, tn) != dr_intact) and close_at(h, tn) is not None
+         and abs(close_at(h, tn) - x) <= near]
     votes = Counter()
     for h in C:
         votes.update(session_cells(h, tn, H)[0])
-    N = len(C)
-    return dict(kind="baseline" if tn == T0 else "dynamic", t=tn, N=N, family=sorted(h["name"] for h in F),
-                members=sorted(h["name"] for h in C), V={k: n / N for k, n in votes.items()} if N else {})
+    return dict(kind="conditional", t=tn, n=len(C), N=len(F), members=sorted(h["name"] for h in C),
+                label=f"{len(C)} из {len(F)}: DR цел, подтверждены к срезу, цена ±{near}".replace(".", ","),
+                V={k: m / len(C) for k, m in votes.items()} if C else {})

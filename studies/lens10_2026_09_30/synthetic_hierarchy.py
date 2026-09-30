@@ -7,7 +7,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from field import session_cells
-from hierarchy import Day, activation, bucket, cohort, family, family_map, map_at, prefix
+from hierarchy import Day, activation, broken_by, bucket, cohort, conditional_view, family, family_map, map_at, prefix
 
 HERE = Path(__file__).resolve().parent
 BOX = [-0.5, -0.3, -0.6, -0.2, -0.4, 0.0, -0.1, -0.3, 0.05, -0.2, 0.0, 0.1]      # 09:35 ... 10:30, all below DR high
@@ -93,27 +93,44 @@ def run():
     got = (f"по часам: h1 стоит на 10:50 (через 10 мин после своей активации), в колонке 10:50–10:55 его свеча 10:50–10:55 "
            f"{first(650)}; по времени от активации: h1 стоит на своём 10:40, в той же колонке его свеча 10:40–10:45 {first(640)}; "
            f"группа по часам {sorted(c_clock)}, по активации {sorted(c_event)}")
-    add("E развилка О17 (закрыта оператором: семья по окну, тесты F–I)", "разные свечи в одной колонке; группы могут различаться", got,
+    add("E развилка О17 (закрыта оператором: семья по окну, тесты F–L)", "разные свечи в одной колонке; группы могут различаться", got,
         c_clock.get(h1["name"]) == 650 and c_event.get(h1["name"]) == 640 and first(650) != first(640))
-    # F-H: the operator's answer to O17 — a 15-minute activation family, then M5 dynamics inside it
+    # F-L: the operator's answers (2026-09-30, meaning/lens/2026-09-30-linza-11.md and -12.md): a 15-minute activation
+    # family fixed for the day; the main field is always the whole family (one N), read further in clock M5 columns;
+    # filters by the lived path are separate conditional views «n из N»
     fam = family(prefix(TODAY_A, 650), HISTORY)
-    add("F семья по 15-минутному окну", "сегодня подтверждение 10:50 → окно 10:45–11:00: семья — подтверждения 10:45, 10:50, 10:55; 10:35, 10:40, 11:05, 11:20 — другие семьи",
-        f"окно {bucket(activation(TODAY_A))}; семья {sorted(h['name'] for h in fam)}",
-        sorted(h["name"] for h in fam) == ["h2 (10:45)", "h3 (10:50)", "h8 (10:50, слом 11:10)", "h9 (10:55)"])
+    names = sorted(h["name"] for h in fam)
+    add("F семья по 15-минутному окну", "подтверждение 10:50 → окно 10:45–11:00: семья — подтверждения 10:45, 10:50, 10:55; 10:35, 10:40, 11:05, 11:20 — другие семьи",
+        f"окно {bucket(activation(TODAY_A))}; семья {names}",
+        names == ["h2 (10:45)", "h3 (10:50)", "h8 (10:50, слом 11:10)", "h9 (10:55)"])
     maps = {t: family_map(TODAY_A, HISTORY, t) for t in range(650, 725, 5)}
-    union = set().union(*(set(m["members"]) for m in maps.values()))
-    add("G новая M5 не добавляет чужую семью", "за 10:50–11:55 в картах только члены семьи 10:45–11:00",
-        f"все участники карт {sorted(union)}", union <= {h["name"] for h in fam})
-    b0, d1 = maps[650], maps[655]
-    add("H исходная — вся семья; динамическая — её часть по сегодняшнему состоянию",
-        "10:50: вся семья, включая подтверждённую в 10:55; 10:55: только сопоставимые на 10:55",
-        f"10:50 {b0['kind']}: {b0['members']}; 10:55 {d1['kind']}: {d1['members']}",
-        b0["kind"] == "baseline" and b0["members"] == b0["family"] and set(d1["members"]) <= set(b0["family"]))
+    add("G новая M5 не меняет семью", "на каждом срезе 10:50–11:55 основное поле — та же семья, чужих нет",
+        f"составы на срезах одинаковы: {all(m['members'] == names for m in maps.values())}",
+        all(m["members"] == names for m in maps.values()))
+    add("H сломавшие DR остаются в основном поле", "h8 сломал DR в 11:10; на срезе 11:15 он в поле, N тот же",
+        f"11:15: {maps[675]['kind']}, N {maps[675]['N']}, h8 в поле: {'h8 (10:50, слом 11:10)' in maps[675]['members']}",
+        "h8 (10:50, слом 11:10)" in maps[675]["members"] and maps[675]["N"] == maps[650]["N"])
     h9 = HISTORY[8]
     first9 = sorted(k / 10 for k, j in session_cells(h9, 650, 780)[0] if j == 655)
     add("I люфт внутри окна (свойство, не ошибка)", "член семьи, подтверждённый в 10:55, в первой колонке исходной карты 10:50 проходит свою свечу подтверждения",
-        f"h9: закрытие 10:50 = {[b[4] for b in h9['bars'] if b[0] == 650][0]}, свеча 10:50–10:55 задевает {first9}, закрытие 10:55 = {[b[4] for b in h9['bars'] if b[0] == 655][0]}",
+        f"h9: закрытие 10:50 = {[x[4] for x in h9['bars'] if x[0] == 650][0]}, свеча 10:50–10:55 задевает {first9}, закрытие 10:55 = {[x[4] for x in h9['bars'] if x[0] == 655][0]}",
         activation(h9) == 655)
+    base, later = maps[650], maps[675]
+    tail = {k: v for k, v in base["V"].items() if k[1] > 675}
+    add("J исходная не переписывается", "поле на 11:15 — это колонки исходной карты после 11:15, те же числа",
+        f"клеток после 11:15 в исходной {len(tail)}, в поле 11:15 {len(later['V'])}, совпадают: {tail == later['V']}", tail == later["V"])
+    # K: one denominator, no DR-true renormalisation (the operator's example in small: of 4, 2 DR false, 1 reached +1.0)
+    toy = [session("k1", [0.05, 0.25, 0.60, 1.05, 0.90]), session("k2", [0.05, 0.25, 0.30, 0.40, 0.35]),
+           session("k3", [0.05, 0.25, -0.50, -1.30, -1.40]), session("k4", [0.05, 0.25, 0.00, -1.25, -1.35])]
+    reached = [h["name"] for h in toy if any(x[2] >= 1.0 for x in h["bars"] if x[0] > 640)]
+    dr_true = [h["name"] for h in toy if not broken_by(h, 780)]
+    add("K один знаменатель N, без пересчёта на DR true", "из 4 двое сломали DR, +1,0 достиг 1: на экране 25 %, а не 50 % среди DR true",
+        f"+1,0: {len(reached)}/{len(toy)} = {100 * len(reached) / len(toy):.0f} %; развилка DR true {len(dr_true)}/{len(toy)}",
+        len(reached) == 1 and len(dr_true) == 2)
+    cv = conditional_view(TODAY_A, HISTORY, 675)
+    add("L условный вид — отдельно, «n из N»", "на 11:15 фильтр по прожитому пути даёт часть семьи с подписью; основное поле не меняется",
+        f"{cv['label']}: {cv['members']}; основное поле на 11:15 — {maps[675]['N']} сессий",
+        cv["N"] == len(fam) and set(cv["members"]) <= set(names) and maps[675]["members"] == names)
     return R
 
 
