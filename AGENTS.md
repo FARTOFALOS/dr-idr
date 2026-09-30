@@ -147,7 +147,8 @@ design/                   mockups on synthetic data, designs 1-22, start at desi
 ## Hard rules (do not break; if a task seems to need it, ask the operator first)
 
 1. **Market data is never committed or published.** The tape and everything built from it (`lab/.runtime/`) stay
-   local. The repository is public.
+   local. The repository is public. Screenshots of the working screen are not market data in this sense: they go into
+   the repository when they serve a review (operator, 2026-09-30).
 2. **2026 stays hidden in the history base.** The build stops at 2025-12-31 ET; `tests/smoke.py` checks it. The 2026
    tape is the forward observation of the G3 research line.
 3. **No Volume** anywhere in the method.
