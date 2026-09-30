@@ -11,11 +11,11 @@ Baseline. Synthetic only; the working screen is unchanged.
 
 | File | What |
 |---|---|
-| `pasport-polya.md` | Step P1: the passport of the field and of the time hierarchy (Russian): t0 and tn, the group, columns, bins, the vote, V and the derived numbers, unknowns, gaps, brightness, what it does not claim, the open fork «clock time or time since activation» |
+| `pasport-polya.md` | Step P1: the passport of the field and of the time hierarchy (Russian): t0 and tn, the group, columns, bins, the vote, V and the derived numbers, unknowns, gaps, brightness, what it does not claim; the alignment of similar sessions settled by the operator (a 15-minute activation family, M5 inside it) |
 | `field.py` | The field for one or many sessions: bins, votes, V(k, j), V over a wide area and a window, first reach, session mass of a contour, gap crossings, unknown columns |
 | `synthetic_field.py` | Step P2: tests T1-T8 of the specification and five edge cases → `synthetic_field.log` |
-| `hierarchy.py` | Patch 2.1 on a toy history: activation t0, the Baseline once, a Dynamic map per later closed M5, each from today's prefix only; the matcher aligned by clock time (the screen now) or by time since activation |
-| `synthetic_hierarchy.py` | Tests A-D of the patch and E (the fork) → `synthetic_hierarchy.log` |
+| `hierarchy.py` | Patch 2.1 on a toy history: activation t0, the Baseline once, a Dynamic map per later closed M5, each from today's prefix only; the old alignments (clock time, time since activation) and the operator's family by the 15-minute window (`bucket`, `family`, `family_map`) |
+| `synthetic_hierarchy.py` | Tests A-D of the patch, E (the fork, closed by the operator) and F-I (the operator's answer: a 15-minute activation family fixed for the day, M5 clock columns inside it, the Baseline = the whole family, a Dynamic map = its part comparable at t, the slack inside the window) → `synthetic_hierarchy.log` |
 
 The same field on the tape was measured by lens 4 (`studies/lens4_2026_09_30/c12_stars_fields.py`, panel «Где цена
 бывала» of `meaning/img/lens4-pole-nq-rdr.png`; bins there are closed on both sides).

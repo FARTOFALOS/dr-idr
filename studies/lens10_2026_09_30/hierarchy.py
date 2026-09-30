@@ -83,3 +83,42 @@ class Day:
 
     def baseline_intact(self):
         return self.baseline == self._frozen
+
+
+# ---------- the operator's answer to O17 (2026-09-30): a 15-minute activation family, then M5 dynamics ----------
+BUCKET = 15
+
+
+def bucket(conf, start=FORMED):
+    """The 15-minute activation window of a confirmation, by the close minute of the confirming M5, counted from the start
+    of the session's trading window: [start + 15 b, start + 15 (b + 1)). RDR: a close at 10:45, 10:50 or 10:55 -> 10:45-11:00."""
+    return (conf - start) // BUCKET
+
+
+def family(today, history):
+    """The parent cohort: the historical sessions whose confirmation fell in today's activation window (same session
+    type and direction in the toy). Fixed for the whole day once today is confirmed."""
+    b = bucket(activation(today))
+    return [h for h in history if activation(h) is not None and bucket(activation(h)) == b]
+
+
+def family_map(today_full, history, tn, H=780):
+    """Baseline at t0: the whole family, no further condition, clock M5 columns after t0.
+    Dynamic at tn > t0: the family members comparable with today's state known at tn (confirmed by tn, DR not broken by
+    tn, close at tn within 0.25 of today's), clock M5 columns after tn. Members of other windows never enter."""
+    today = prefix(today_full, tn)
+    T0 = activation(today)
+    if T0 is None or tn < T0: return dict(kind=None, t=tn)
+    F = family(today, history)
+    if tn == T0:
+        C = F
+    else:
+        x = close_at(today, tn)
+        C = [h for h in F if activation(h) <= tn and not broken_by(h, tn) and close_at(h, tn) is not None
+             and abs(close_at(h, tn) - x) <= 0.25]
+    votes = Counter()
+    for h in C:
+        votes.update(session_cells(h, tn, H)[0])
+    N = len(C)
+    return dict(kind="baseline" if tn == T0 else "dynamic", t=tn, N=N, family=sorted(h["name"] for h in F),
+                members=sorted(h["name"] for h in C), V={k: n / N for k, n in votes.items()} if N else {})

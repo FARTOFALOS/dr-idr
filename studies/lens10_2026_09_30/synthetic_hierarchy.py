@@ -7,7 +7,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from field import session_cells
-from hierarchy import Day, activation, cohort, map_at, prefix
+from hierarchy import Day, activation, bucket, cohort, family, family_map, map_at, prefix
 
 HERE = Path(__file__).resolve().parent
 BOX = [-0.5, -0.3, -0.6, -0.2, -0.4, 0.0, -0.1, -0.3, 0.05, -0.2, 0.0, 0.1]      # 09:35 ... 10:30, all below DR high
@@ -93,8 +93,27 @@ def run():
     got = (f"по часам: h1 стоит на 10:50 (через 10 мин после своей активации), в колонке 10:50–10:55 его свеча 10:50–10:55 "
            f"{first(650)}; по времени от активации: h1 стоит на своём 10:40, в той же колонке его свеча 10:40–10:45 {first(640)}; "
            f"группа по часам {sorted(c_clock)}, по активации {sorted(c_event)}")
-    add("E развилка: часы или время от активации", "разные свечи в одной колонке; группы могут различаться", got,
+    add("E развилка О17 (закрыта оператором: семья по окну, тесты F–I)", "разные свечи в одной колонке; группы могут различаться", got,
         c_clock.get(h1["name"]) == 650 and c_event.get(h1["name"]) == 640 and first(650) != first(640))
+    # F-H: the operator's answer to O17 — a 15-minute activation family, then M5 dynamics inside it
+    fam = family(prefix(TODAY_A, 650), HISTORY)
+    add("F семья по 15-минутному окну", "сегодня подтверждение 10:50 → окно 10:45–11:00: семья — подтверждения 10:45, 10:50, 10:55; 10:35, 10:40, 11:05, 11:20 — другие семьи",
+        f"окно {bucket(activation(TODAY_A))}; семья {sorted(h['name'] for h in fam)}",
+        sorted(h["name"] for h in fam) == ["h2 (10:45)", "h3 (10:50)", "h8 (10:50, слом 11:10)", "h9 (10:55)"])
+    maps = {t: family_map(TODAY_A, HISTORY, t) for t in range(650, 725, 5)}
+    union = set().union(*(set(m["members"]) for m in maps.values()))
+    add("G новая M5 не добавляет чужую семью", "за 10:50–11:55 в картах только члены семьи 10:45–11:00",
+        f"все участники карт {sorted(union)}", union <= {h["name"] for h in fam})
+    b0, d1 = maps[650], maps[655]
+    add("H исходная — вся семья; динамическая — её часть по сегодняшнему состоянию",
+        "10:50: вся семья, включая подтверждённую в 10:55; 10:55: только сопоставимые на 10:55",
+        f"10:50 {b0['kind']}: {b0['members']}; 10:55 {d1['kind']}: {d1['members']}",
+        b0["kind"] == "baseline" and b0["members"] == b0["family"] and set(d1["members"]) <= set(b0["family"]))
+    h9 = HISTORY[8]
+    first9 = sorted(k / 10 for k, j in session_cells(h9, 650, 780)[0] if j == 655)
+    add("I люфт внутри окна (свойство, не ошибка)", "член семьи, подтверждённый в 10:55, в первой колонке исходной карты 10:50 проходит свою свечу подтверждения",
+        f"h9: закрытие 10:50 = {[b[4] for b in h9['bars'] if b[0] == 650][0]}, свеча 10:50–10:55 задевает {first9}, закрытие 10:55 = {[b[4] for b in h9['bars'] if b[0] == 655][0]}",
+        activation(h9) == 655)
     return R
 
 
