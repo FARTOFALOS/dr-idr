@@ -54,8 +54,7 @@
     ['Созвездия и звёзды', [['cont', 'Продолжение', 'color'], ['pull', 'Откат', 'color'], ['up', 'Верх (до подтверждения)', 'color'], ['dn', 'Низ (до подтверждения)', 'color'],
       ['starA', 'Звёзды · яркость', 'range', 0, 100], ['glowA', 'Свечение созвездий', 'range', 0, 60], ['bestA', 'Главное созвездие · заливка', 'range', 50, 250], ['bestCoreA', 'Главное созвездие · ядро', 'range', 0, 100], ['bestLineA', 'Главное созвездие · контур', 'range', 0, 100], ['otherA', 'Остальные созвездия · заливка', 'range', 10, 150], ['bracketA', 'Скобки мест · яркость', 'range', 0, 100], ['contourA', 'Контур созвездий', 'range', 0, 100],
       ['markA', 'Проценты в созвездиях · яркость', 'range', 10, 100], ['markSize', 'Проценты · размер', 'range', 50, 150]]],
-    ['Полоса, плотность, веер', [['stripA', 'Полоса времени снизу', 'range', 10, 100], ['projA', 'Плотность по цене справа', 'range', 10, 100],
-      ['fanA', 'Веер 20–80 %', 'range', 0, 100], ['typ', 'Медиана веера · цвет', 'color'], ['typA', 'Медиана веера · яркость', 'range', 10, 100]]],
+    ['Полоса и плотность', [['stripA', 'Полоса времени снизу', 'range', 10, 100], ['projA', 'Плотность по цене справа', 'range', 10, 100]]],
     ['Линии сессии', [['dr', 'DR · цвет', 'color'], ['drA', 'DR · яркость', 'range', 10, 100], ['drW', 'DR · толщина', 'range', 0.5, 3, 0.1],
       ['idr', 'IDR · цвет', 'color'], ['idrA', 'IDR · яркость', 'range', 10, 100], ['idrW', 'IDR · толщина', 'range', 0.5, 3, 0.1], ['idrDash', 'IDR · вид', 'dash'],
       ['mid', 'mid · цвет', 'color'], ['midA', 'mid · яркость', 'range', 10, 100], ['midDash', 'mid · вид', 'dash'],
@@ -69,7 +68,7 @@
   const FONT = '-apple-system,BlinkMacSystemFont,"Trebuchet MS",Roboto,Ubuntu,sans-serif';
   const SCENES = [['conf', 'Подтверждено'], ['wait', 'До подтверждения'], ['brk', 'Слом DR']];
   const LAYERS = [
-    ['stars', 'Звёзды: сессии истории', C.fan], ['cons', 'Созвездия и проценты', '#63C3A5'], ['fan', 'Веер и его медиана', C.fan],
+    ['stars', 'Звёзды: сессии истории', C.fan], ['cons', 'Созвездия и проценты', '#63C3A5'],
     ['proj', 'Плотность по цене справа', '#DE8580'], ['strip', 'Полоса времени снизу', '#63C3A5'], ['std', 'STD', C.stdOn],
     ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VI (volume imbalance)', C.vib], ['hist', 'Шесть графиков истории (снизу)', C.text2], ['snap21', 'Контуры на момент подтверждения', '#AAB5C4']
   ];
@@ -615,7 +614,7 @@
   // ---------- view state ----------
   const st = {
     scene: 'conf', dayK: 'A', session: 'RDR', rp: null, v0: 545, v1: 1005, p0: null, p1: null, auto: true,
-    L: { stars: true, cons: true, fan: true, proj: true, strip: true, std: true, prev: true, vib: true, hist: true },
+    L: { stars: true, cons: true, proj: true, strip: true, std: true, prev: true, vib: true, hist: true },
     hover: null, pin: null, mx: -1, my: -1, drag: null, stripH: 46, stripPin: false, menu: false,
     pal: 'mint', histH: 22, histPin: false, histOver: false, navHover: false
   };
@@ -717,7 +716,6 @@
     if (st.L.prev) drawPrev(c, ctx);
     if (st.L.vib) drawVib(c, ctx);
     if (ctx.ov) {
-      if (st.L.fan) drawFanBand(c, ctx.ov);
       if (st.L.cons) drawGlow(c, ctx.ov);
       drawHighlightBands(c, ctx);
       if (st.L.stars) drawStars(c, ctx.ov);
@@ -727,7 +725,6 @@
     drawSnapshot21(c, ctx);
     drawReference21(c, ctx);
     drawCandles(c, ctx);
-    if (ctx.ov && st.L.fan) drawTyp(c, ctx.ov);
     drawPills(c, ctx);
     drawNow(c, ctx);
     if (ctx.ov) {
@@ -813,28 +810,6 @@
     }
   }
   // the fan 20-80 % as a quiet filled band, as in design 21 (operator 2026-09-29: the 15-minute slices were irritating)
-  function drawFanBand(c, ov) {
-    const F = ov.fan;
-    if (!F.length) return;
-    const x0 = V.X(ov.obs), y0 = V.Y(ov.s.priceNow);
-    c.beginPath(); c.moveTo(x0, y0);
-    for (const f of F) c.lineTo(V.X(f.T), V.Y(ov.u2p(f.q80)));
-    for (let i = F.length - 1; i >= 0; i--) c.lineTo(V.X(F[i].T), V.Y(ov.u2p(F[i].q20)));
-    c.closePath();
-    c.fillStyle = 'rgba(209,212,220,' + (0.045 * cfg.fanA / 50).toFixed(4) + ')'; c.fill();
-  }
-  // the median path of the similar sessions as hollow ghost candles (body: median close to median close; wick: median high / low)
-  // the typical path: dash-dot, like the fan's middle line in design 1, but one real similar session, so it moves like price
-  // the median of the similar sessions' closes (SEMANTICS «веер»): how price went on the whole, as in design 1
-  function drawTyp(c, ov) {
-    const F = ov.fan;
-    if (!F.length) return;
-    const h = hv(), on = h && h.k === 'typ';
-    c.strokeStyle = rgba(cfg.typ, on ? 1 : cfg.typA / 100); c.lineWidth = on ? 2 : 1.5; c.setLineDash([6, 4]); c.lineJoin = 'round';
-    c.beginPath(); c.moveTo(V.X(ov.obs), V.Y(ov.s.priceNow));
-    for (const f of F) c.lineTo(V.X(f.T), V.Y(ov.u2p(f.q50)));
-    c.stroke(); c.setLineDash([]);
-  }
   function glowImg(g, col, ov, peak, only) {
     const cvs = document.createElement('canvas');
     cvs.width = g.nT; cvs.height = g.nU;
@@ -1397,20 +1372,6 @@
       let best = null, bd = 5;
       for (const R of ov.roles) for (const q of R.stars) { const d = Math.hypot(V.X(q.t) - x, V.Y(q.p) - y); if (d < bd) { bd = d; best = q; } }
       if (best && bd < 3.5) return { k: 'star', i: best.i, q: best };
-    }
-    if (st.L.fan && ov.fan.length) {
-      for (const f of ov.fan) {
-        if (f.T % 15) continue;
-        const fx = V.X(f.T), ya = V.Y(ov.u2p(f.q20)), yb = V.Y(ov.u2p(f.q80));
-        if (Math.abs(x - fx) <= 3.5 && y >= Math.min(ya, yb) - 3 && y <= Math.max(ya, yb) + 3) return { k: 'fan', T: f.T, f };
-      }
-      let px0 = V.X(ov.obs), py0 = V.Y(ov.s.priceNow);
-      for (const p of ov.fan) {
-        const px1 = V.X(p.T), py1 = V.Y(ov.u2p(p.q50)), dx = px1 - px0, dy = py1 - py0, L2 = dx * dx + dy * dy || 1;
-        const f = clamp(((x - px0) * dx + (y - py0) * dy) / L2, 0, 1);
-        if (Math.hypot(px0 + f * dx - x, py0 + f * dy - y) < 3.5) return { k: 'typ', T: p.T, p: ov.u2p(p.q50) };
-        px0 = px1; py0 = py1;
-      }
     }
     if (st.L.cons && x > V.X(ov.obs)) {
       const t = V.T(x), p = V.P(y);
