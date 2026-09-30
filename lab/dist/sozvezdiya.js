@@ -1998,6 +1998,7 @@
     if (['NQ', 'ES', 'YM'].includes(q.get('inst'))) A.inst = q.get('inst');
     if (SESS[q.get('session')]) { st.session = q.get('session'); st.userSession = true; }
     if (q.get('at')) { const [hh, mm] = q.get('at').split(':').map(Number); const t = hh * 60 + mm - (hh >= 18 ? 1440 : 0); st.rp = t; st.session = sessOf(t - 5) || st.session; st.userSession = true; fitSession(st.session); }
+    if (q.get('hist')) { st.histPin = true; st.histH = 176; }   // &hist=1: the six history charts pinned open (for snapshots)
     cfgPanel(); render(true); loadDay(false); return;
   }
   setScene(['conf', 'wait', 'brk'].includes(hp.get('scene')) ? hp.get('scene') : 'conf');
