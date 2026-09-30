@@ -95,6 +95,11 @@ against what happened next.
     entering bar's depth, not an arrival. Four requirements of the operator are relayed there (M5 as the minimum step, no
     automatic setup, no own strategy yet, different histories up to the midpoint); they wait for his confirmation, and
     the screen does not change before it (`meaning/lens/2026-09-30-otvet-9.md`, `docs/DECISIONS.md`).
+  - Lens 10 (time-first field, patch 2.1: Baseline at the activation M5, Dynamic maps after it) and, at the operator's
+    request, the executor's own synthesis of all lenses: **`meaning/08-semantika-klasterov.md`** — the base object is the
+    field «which prices the range of every next M5 of the similar sessions reached», first arrival is derived, the map at
+    t0 is a snapshot, never rewritten. Read it before touching the clusters. The screen still computes first arrivals
+    (rule 10 as written) until the operator confirms О16 and О17.
 
 - **The working screen is «Созвездия» design 22 «смысл числа», on market data** (since 2026-09-29; design 21 from
   2026-09-28 before it). `http://127.0.0.1:8767` opens it (`lab/dist/index.html` + `sozvezdiya.js`, built from
