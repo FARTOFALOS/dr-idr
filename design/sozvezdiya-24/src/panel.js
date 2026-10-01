@@ -49,6 +49,7 @@
           phrase: F.names[st.ev].toLowerCase() + ' ' + st.ev + ' не определено (нет свечи M5 на горизонте' + (D.none ? ' или нет периода' : '') + '); на графике не рисуется', horizon: F.from + ' до ' + clk(F.end) });
         out.push(link({ k: 'evrow' }, prow('не определено · нет свечи M5', pct(u.pct)), 'dim', u, plainTitle(u)));
       }
+      out.push(mcHtml(F));
       const tf = todayFacts(F, ctx);
       if (tf) out.push('<div class="p21-note" title="Наблюдённые закрытые свечи сегодняшнего дня после ' + (F.brk ? 'слома' : 'подтверждения') + ' до среза; не окончательные значения">' + tf + '</div>');
     }
@@ -60,6 +61,17 @@
     if (h && h.k === 'pt' && F.M[h.i]) out.push(memberHtml(F, F.M[h.i]));
     panel.innerHTML = out.join('');
     panelMarks();
+  }
+  // the automatic main cluster of the chosen event (meaning/11): its share when it got the name; otherwise why not, and
+  // its best block offered as an ordinary selected area (no name, spec §7.1)
+  function mcHtml(F) {
+    const m = mcOf(F);
+    if (!m || m.status === 'none') return '';
+    if (m.named) {
+      const p = mcPass(F, m);
+      return link({ k: 'mc' }, '<span class="t"><span><i style="color:' + cfg[st.ev] + '">▣</i> главный кластер</span><span class="p21-sub">' + esc(mcName(F, m.block)) + '</span></span><b>' + ppTxt(p) + '</b>', 'mc', p, plainTitle(p));
+    }
+    return '<div class="p21-note">главный кластер не установлен: ' + esc(mcWhy(F, m)) + ' · <a href="#" class="p24-a" data-mcarea="1">лучший блок как область</a></div>';
   }
   // today's own path after the activation (facts, not shares): the deepest and the farthest closed-M5 point so far
   function todayFacts(F, ctx) {
@@ -144,7 +156,7 @@
   // share of «на уровне или дальше» / «заходили» changes when the remaining hours start later (the snapshot does not).
   function detailObj(ctx) {
     const h = hv();
-    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow'].includes(h.k)) return h;
+    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow', 'mc'].includes(h.k)) return h;
     if (st.area) return { k: 'area', part: 'band' };
     return null;
   }
@@ -158,13 +170,36 @@
       (p.unknown_count ? dRow('неизвестно', pct(100 * p.unknown_count / p.N) + (p.binary ? '' : ' <span class="k">граница: до ' + pct(100 * (p.yes_count + p.unknown_count) / p.N) + '</span>')) : '') +
       dRow('знаменатель', 'вся семья, шаг доли ' + pct(100 / p.N));
   }
+  // the five conditions of the name with their numbers (meaning/11 §2) and the check of the rule on 2018-2025 (§6)
+  function mcRows(F, m) {
+    const c = m.checks, b = m.block, kb = b.k1 - b.k0, tb = b.b1 - b.b0, sh = n => pct(100 * n / F.N), list = a => a.map(sh).join(', ');
+    const ok = k => !c[k] ? '— не проверялось' : c[k].ok ? '✓' : '✗';
+    let s = dRow('правило', esc(m.rule) + ' <span class="k">блок ' + num(kb / 10, 1) + ' SD × ' + 15 * tb + ' мин, где известных событий больше всего; имя — только при У1–У5 (meaning/11)</span>');
+    if (c.U1) s += dRow('У1 гуще соседей', ok('U1') + ' без одной своей сессии ' + sh(m.yes - 1) + ' · соседи по цене ' + list(c.U1.price) + ' · по времени ' + (c.U1.time.length ? list(c.U1.time) : 'нет') + ' <span class="k">нужно вдвое больше среднего соседа</span>');
+    if (c.U2) s += dRow('У2 отрыв', ok('U2') + ' ' + (c.U2.rival ? sh(c.U2.lead) + ' <span class="k">ближайший соперник ' + mcName(F, { k0: c.U2.rival.k0, k1: c.U2.rival.k0 + kb, b0: c.U2.rival.b0, b1: c.U2.rival.b0 + tb }) + ' — ' + sh(c.U2.rival.yes) + (c.U2.rival.unknown ? ', и неизвестных, которые могли бы туда лечь, до ' + sh(c.U2.rival.unknown) : '') + '; нужно не меньше двух сессий</span>' : 'другого места нет'));
+    if (c.U3) s += dRow('У3 сетка', ok('U3') + ' то же место на ' + c.U3.same + ' из ' + c.U3.of + ' сеток <span class="k">сдвиг на 0,05 SD и на 5 / 10 мин</span>');
+    if (c.U4) s += dRow('У4 сессии', ok('U4') + ' то же место в ' + pct(100 * c.U4.same) + ' пересэмплирований <span class="k">нужно 80%</span>');
+    if (c.U5) {
+      const o = c.U5.older, n = c.U5.newer, nb = n.neighbours || [];
+      const small = n.n < 30 ? 'младшая половина меньше тридцати сессий' : '';
+      s += dRow('У5 новая история', ok('U5') + ' ' + [small, o.k0 != null ? 'старшая половина нашла ' + (o.same ? 'то же место' : 'другое место') : '',
+        n.yes != null ? 'в младшей в блоке ' + pct(100 * n.yes / n.n) + ' её сессий, у соседей в среднем ' + pct(100 * nb.reduce((a, x) => a + x, 0) / Math.max(1, nb.length) / n.n) + ', p ' + (n.p < 0.001 ? '< 0,001' : num(n.p, 3)) : ''].filter(Boolean).join(' · ') +
+        ' <span class="k">нужно: младшая половина от тридцати сессий, то же место, в 1,5 раза гуще соседей, p ≤ 0,05</span>');
+    }
+    const me = m.method;
+    if (me) {
+      const e = me.event || {};
+      s += dRow('проверка 2018–2025', (me.held ? 'выдержана' : 'не выдержана') + ' для ' + F.r.key.session + ' <span class="k">следующая сессия попадала в блок такого кластера ' + m.event + ' в ' + pct(100 * e.landed) + ' случаев при доле семьи ' + pct(100 * e.family_share) + ' — сбывалось ' + num(e.ratio, 2) + ' заявленной доли; в соседний блок того же размера — ' + pct(100 * e.neighbour) + '</span>');
+    } else s += dRow('проверка 2018–2025', F.brk ? 'семья слома не проверялась' : 'нет');
+    return s;
+  }
   function details(ctx) {
     const on = st.L.det;
     det.style.display = on ? '' : 'none';
     if (!on) return;
     const open = st.detPin || st.detOver, F = ctx.F, o = F ? detailObj(ctx) : null;
     det.classList.toggle('open', open);
-    let head = 'Детали', body = '', chart = null;
+    let head = 'Детали', body = '', chart = null, side = '';
     if (!F) head += ' · ' + statusMsg(ctx);
     else if (!o) {
       head += ' · слепок семьи';
@@ -215,15 +250,23 @@
       head += ' · исход DR';
       const nm = { held: 'удержался', broken: 'сломан', unknown: 'неизвестно', none: 'нет периода' }[o.cat];
       body = dRow('категория', nm) + dRow('доля', pct(100 * F.out[o.cat] / F.N)) + dRow('правило', 'закрытие M5 строго за своим противоположным DR; тень и равенство не ломают; слом не отменяется возвратом') + dRow('горизонт', F.from + ' до ' + clk(F.end));
+    } else if (o.k === 'mc' && mcOf(F) && mcOf(F).block) {
+      const m = mcOf(F);
+      head += ' · главный кластер ' + m.event + ' · ' + mcName(F, m.block);
+      body = passportRows(mcPass(F, m));
+      side = mcRows(F, m);
     } else if (o.k === 'evrow') {
       const D = F.ev[st.ev];
       head += ' · ' + F.names[st.ev] + ' ' + st.ev;
       body = dRow('событие', esc(F.what[st.ev])) + dRow('определено', pct(100 * D.known / F.N)) + dRow('неизвестно', pct(100 * D.unknown / F.N) + ' <span class="k">нет свечи M5 на горизонте</span>') + (D.none ? dRow('нет периода', pct(100 * D.none / F.N)) : '') + dRow('горизонт', F.from + ' до ' + clk(F.end));
     }
     dom('deth').innerHTML = '<span>' + (open ? '▾ ' : '▴ ') + esc(head) + '</span>' + (st.detPin ? '<span class="k">закреплено</span>' : '');
-    if (!open) { dom('dett').innerHTML = ''; return; }
+    const dx = dom('detx');
+    dx.style.display = open && side ? '' : 'none';
+    if (!open) { dom('dett').innerHTML = ''; dx.innerHTML = ''; return; }
     dom('dett').innerHTML = body;
-    drawDetChart(chart, F, ctx);
+    dx.innerHTML = side;                       // the right column: text instead of the small chart (the main cluster)
+    drawDetChart(side ? null : chart, F, ctx);
   }
   function drawDetChart(ch, F, ctx) {
     const cvd = dom('detc'), r = cvd.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
@@ -277,6 +320,12 @@
       if (e.target.closest('[data-hist]')) {
         if (A.src === 'live') histFallback();
         else ensureDates().then(list => { const i = list.findIndex(x => x >= A.date), d = list[Math.max(0, (i < 0 ? list.length : i) - 1)]; if (d) openHist(d); });
+        return;
+      }
+      if (e.target.closest('[data-mcarea]')) {                      // the best block as an ordinary selected area
+        e.preventDefault();
+        const m = mcOf(V.ctx.F);
+        if (m && m.block) { st.area = { k0: m.block.k0, k1: m.block.k1, b0: m.block.b0, b1: m.block.b1 }; st.pin = null; render(true); }
         return;
       }
       const v = e.target.closest('[data-view]');

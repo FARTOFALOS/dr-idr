@@ -41,6 +41,7 @@ from pathlib import Path
 
 import numpy as np
 
+import cluster24
 import scene21
 
 SEM_VERSION = "DR-LAB-SEM-1.0"
@@ -320,6 +321,9 @@ def _snapshot(inst, B, session, weekday, side, view, win, cutoff):
                    end="конец блока " + clk(end) + "; M5, закрывшаяся в " + clk(end) + ", входит",
                    time="открытие первой M5, достигшей цены", atom="существующая M5-свеча базы; дырка = целиком отсутствующая M5"),
         grid=grid, members=members, counts=counts, journal=dict(journal))
+    # the automatic main cluster of each event (meaning/11): its candidate, conditions У1-У5 and whether the check of
+    # 2018-2025 lets the screen give it the name; computed once per snapshot, so the slice never moves it
+    snap["clusters"] = {ev: cluster24.of_snapshot(snap, ev) for ev in ("R", "X")}
     if len(_SNAP) > 64: _SNAP.clear()
     _SNAP[key] = snap
     return snap

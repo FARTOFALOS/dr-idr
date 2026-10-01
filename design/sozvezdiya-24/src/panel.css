@@ -17,6 +17,10 @@
 .p21-link.dim .t{color:#8F98A6}
 .p21-link.ev{align-items:flex-start}
 .p21-link.ev .t{display:flex;flex-direction:column;gap:1px}
+.p21-link.mc{align-items:flex-start}
+.p21-link.mc .t{display:flex;flex-direction:column;gap:1px}
+.p24-a{color:#AEB8C6;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.p24-a:hover{color:#E6EAF0}
 .p21-link.fc{padding:2px 6px;font-size:12.5px;overflow:hidden}
 .p21-link.fc .bar{position:absolute;left:0;top:0;bottom:0;opacity:.12;border-radius:4px;pointer-events:none}
 .p21-link.fc.dim{cursor:default}
@@ -58,6 +62,8 @@
 #detb{display:flex;gap:14px;height:196px;padding:4px 10px 8px}
 #dett{flex:0 0 46%;overflow:hidden;font-size:12px;line-height:1.35}
 #detc{flex:1;height:100%;min-width:0}
+#detx{flex:1;min-width:0;overflow:hidden;font-size:12px;line-height:1.35}
+#detx .p24-dr{grid-template-columns:132px 1fr}
 .p24-dr{display:grid;grid-template-columns:118px 1fr;gap:8px;padding:1px 0}
 .p24-dr span{color:#6F7582}
 .p24-dr b{font-weight:500;color:#D1D4DC;overflow:hidden;text-overflow:ellipsis}

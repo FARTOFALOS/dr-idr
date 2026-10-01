@@ -3,7 +3,8 @@
 // With a family on screen it also checks the semantics of DR-LAB-SEM-1.0 on the live objects of the page:
 // the page and the server count the same; every percentage of the panel has a passport that reproduces it; R / X and
 // the price and time histograms are one table; each «Путь семьи» column is its own 100 %; an area's window never
-// exceeds its band; the tail of X equals «на уровне или дальше» on the same horizon; moving the slice rewrites nothing.
+// exceeds its band; the tail of X equals «на уровне или дальше» on the same horizon; moving the slice rewrites nothing;
+// the main cluster's number is its block's count, it is drawn only with its name, and the slice does not move it.
 (async () => {
   const problems = [], D = window.__d24;
   if (!D) return { problems: ['the screen did not start (window.__d24 missing)'] };
@@ -80,7 +81,7 @@
     if (!/Выбранная область/.test(panel.innerText)) problems.push('the selected area is not in the panel');
   }
   // 8) moving the slice rewrites nothing: the same snapshot, the same distributions
-  const sig = f => f ? f.r.snapshot_id + '|' + [...f.ev.R.cells.keys()].sort().join(',') + '|' + [...f.ev.X.cells.keys()].sort().join(',') : null;
+  const sig = f => f ? f.r.snapshot_id + '|' + [...f.ev.R.cells.keys()].sort().join(',') + '|' + [...f.ev.X.cells.keys()].sort().join(',') + '|' + JSON.stringify(f.mc) : null;
   const s0 = sig(F), steps = [];
   for (const dt of [15, 60, 120]) {
     const t = F.act0 + dt;
@@ -95,6 +96,23 @@
     el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })); D.render(false);
     if (!D.st.hover) problems.push('hover does nothing: ' + el.innerText.split('\n')[0]);
     el.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body }));
+  }
+  // 10) the main cluster (meaning/11): its number is the count of its block (a manual area of the block shows the same);
+  // drawn only with the name; the panel always says where it stands
+  for (const ev of ['R', 'X']) {
+    const m = D.mcOf(F, ev);
+    if (!m || !m.block) continue;
+    if (D.areaCount(F, ev, m.block) !== m.yes) problems.push('main cluster ' + ev + ': its number is not its block count');
+    if (m.named && (m.status !== 'earned' || m.failed.length)) problems.push('main cluster ' + ev + ' named without its conditions');
+  }
+  {
+    const m = D.mcOf(F, D.st.ev);
+    D.render(true);
+    const drawn = !!D.V.mcHit, inPanel = /главный кластер/.test(panel.innerText);
+    if (m && m.named && D.st.L.mc && D.st.mode === 'bounds' && !drawn) problems.push('a named main cluster is not drawn');
+    if (m && !m.named && drawn) problems.push('a main cluster is drawn without the name');
+    if (m && m.status !== 'none' && D.st.mode === 'bounds' && !inPanel) problems.push('the panel says nothing about the main cluster');
+    info.mainCluster = m ? { status: m.status, named: m.named, failed: m.failed } : null;
   }
   info.checkedSlices = steps;
   return { problems, info };

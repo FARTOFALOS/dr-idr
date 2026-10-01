@@ -204,6 +204,76 @@ for sess, win in (("ODR", 1), ("ADR", 1)):
     sn = snap(sess, 1, -1, "conf", win)
     check(sn["N"] >= 0 and sum(sn["counts"]["outcome"].values()) == sn["N"], f"{sess} Tue short window {win}: N {sn['N']}, outcome {sn['counts']['outcome']}, unknown R {sn['counts']['R']['unknown']}")
 
+# ---------- part 3: the automatic main cluster (lab/cluster24.py, meaning/11) ----------
+print()
+print("Part 3: the main cluster")
+import numpy as np  # noqa: E402
+import cluster24 as C  # noqa: E402
+
+F0, E0 = 630, 960                          # RDR: cells from 10:30, block end 16:00; family window 0
+
+
+def fam(n, cluster=0, where=(0, 0), extra=(), old_only=False, seed=7, spread=(-20, 20)):
+    """A synthetic family in date order: `cluster` members inside the block at price cells where[0]…+4 and time cells
+    where[1]…+3, the others spread over the family's time and prices; w = 10, so the price cell of v is v."""
+    rng = np.random.default_rng(seed)
+    pts = []
+    picks = set(rng.choice(n // 2 if old_only else n, cluster, replace=False).tolist()) if cluster else set()
+    for i in range(n):
+        if i in picks: k, b = where[0] + int(rng.integers(0, 5)), where[1] + int(rng.integers(0, 4))
+        else: k, b = int(rng.integers(*spread)), int(rng.integers(0, 22))
+        pts.append(("k", k, 10, F0 + 15 * b + 5 * int(rng.integers(1 if b == 0 else 0, 3))))
+    for e in extra: pts[e[0]] = e[1]
+    return pts
+
+
+clear = fam(120, 36)
+r1 = C.main_cluster(clear, "R", F0, E0, 0)
+check(r1["status"] == "earned" and r1["block"]["k0"] in (-1, 0, 1) and r1["block"]["b0"] in (0, 1), f"a clear concentration earns the name (failed {r1['failed']}, block {r1.get('block')})")
+inside = sum(1 for p in clear if r1["block"]["k0"] <= p[1] < r1["block"]["k1"] and r1["block"]["b0"] <= (p[3] - F0) // 15 < r1["block"]["b1"])
+check(inside == r1["yes"], f"the cluster's number = the known events inside its block ({inside} = {r1['yes']})")
+check(C.main_cluster(clear, "R", F0, E0, 0) == r1, "the same family gives the same cluster (fixed resampling seed)")
+r2 = C.main_cluster(fam(120, 0, seed=8), "R", F0, E0, 0)
+check(r2["status"] == "candidate", f"a family without a concentration earns nothing (failed {r2['failed']})")
+r3 = C.main_cluster(fam(40, 12), "R", F0, E0, 0)
+check(r3["status"] == "candidate" and "U5" in r3["failed"], f"a family under 60 sessions earns nothing: the newer half is under 30 (failed {r3['failed']})")
+two = fam(120, 0, seed=9)
+rng = np.random.default_rng(3)
+for i in range(0, 120, 4): two[i] = ("k", int(rng.integers(0, 5)), 10, F0 + 15 * int(rng.integers(0, 4)) + 5)
+for i in range(2, 120, 4): two[i] = ("k", -12 + int(rng.integers(0, 5)), 10, F0 + 15 * (10 + int(rng.integers(0, 4))))
+r4 = C.main_cluster(two, "R", F0, E0, 0)
+check(r4["status"] == "candidate" and ("U2" in r4["failed"] or "U4" in r4["failed"]), f"two equal concentrations: no main one (failed {r4['failed']})")
+r5 = C.main_cluster(fam(120, 30, old_only=True), "R", F0, E0, 0)
+check(r5["status"] == "candidate" and "U5" in r5["failed"], f"a concentration only in the older half does not hold on the newer one (failed {r5['failed']})")
+# the unknown put against the leader: two unknown sessions that could stand in the rival's block lower the lead by 2
+base = fam(120, 0, seed=11, spread=(-40, 40))
+for j, i in enumerate(range(0, 120, 6)): base[i] = ("k", j % 5, 10, F0 + 15 * (j % 4) + 5)            # 20 in the leader
+for j, i in enumerate(range(3, 120, 7)): base[i] = ("k", -15 + j % 5, 10, F0 + 15 * (12 + j % 4))      # 17 in the rival
+lead = C.main_cluster(base, "R", F0, E0, 0)["checks"]["U2"]
+unk = list(base)
+for i in (1, 7): unk[i] = ("u", None, 10, None, [F0 + 15 * 13])                                        # nothing observed
+lead_u = C.main_cluster(unk, "R", F0, E0, 0)["checks"]["U2"]
+check(lead["lead"] - lead_u["lead"] == 2 and lead_u["rival"]["unknown"] == 2, f"the unknown counts against the leader (lead {lead['lead']} -> {lead_u['lead']})")
+r6 = C.main_cluster(clear, "R", F0, E0, 0, after=4)
+check(r6.get("block") is None or r6["block"]["b0"] >= 4, "the study's 'inside the session' candidate starts an hour after the first block")
+# on the base: the cluster is part of the snapshot, its number is its block's count, the name follows the check
+dd = "2025-12-09"
+seen = {}
+for at in (700, 840, 955):
+    r = S.family("NQ", "RDR", at=at, date=dd, view="conf")
+    if r.get("status") != "ok": continue
+    for ev in ("R", "X"):
+        c = r["clusters"][ev]
+        seen.setdefault(ev, set()).add((c["status"], str(c.get("block")), c.get("yes"), c["named"]))
+        if c.get("block"):
+            b = c["block"]
+            n = sum(n for k, t, n in r["counts"][ev]["cells"] if b["k0"] <= k < b["k1"] and b["b0"] <= t < b["b1"])
+            check(n == c["yes"], f"base: {ev} cluster number = its block's count in the snapshot ({n} = {c['yes']})")
+        check(not c["named"] or (c["status"] == "earned" and C.CHECK["RDR"]["held"]), f"base: {ev} named only when earned and the check of RDR held")
+check(all(len(v) == 1 for v in seen.values()) and seen, "base: the cluster does not move with the slice")
+rb = S.family("NQ", "RDR", date="2025-12-17", view="auto")
+if rb.get("status") == "ok" and rb["view"] == "brk": check(not any(rb["clusters"][e]["named"] for e in ("R", "X")), "base: the break family gets no name (not checked)")
+
 print()
 print("ALL GOOD" if not failures else f"{len(failures)} FAILED")
 sys.exit(1 if failures else 0)

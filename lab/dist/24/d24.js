@@ -62,7 +62,7 @@
   const DASH_NAMES = { solid: 'сплошная', dash: 'штрих', dots: 'точки', dashdot: 'штрихпунктир' };
   const FONT = '-apple-system,BlinkMacSystemFont,"Trebuchet MS",Roboto,Ubuntu,sans-serif';
   const LAYERS = [
-    ['pts', 'Точки: одна сессия — одно событие', '#DE8580'], ['glow', 'Свечение точек (рисунок, без чисел)', '#9FB3D1'],
+    ['pts', 'Точки: одна сессия — одно событие', '#DE8580'], ['mc', 'Главный кластер (если получил имя)', '#E8C872'], ['glow', 'Свечение точек (рисунок, без чисел)', '#9FB3D1'],
     ['proj', 'Гистограмма цены справа', '#DE8580'], ['strip', 'Гистограмма времени снизу', '#63C3A5'], ['std', 'STD', C.stdOn],
     ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VI (volume imbalance)', C.vib], ['det', 'Детали (снизу)', C.text2]
   ];
@@ -247,12 +247,17 @@
     F.cellOfP = p => Math.floor(10 * F.p2u(p) + 1e-9);
     F.ev = { R: evDist(F, 'R'), X: evDist(F, 'X') };
     if (!brk) { F.out = { held: 0, broken: 0, unknown: 0, none: 0 }; for (const m of F.M) F.out[m.outcome]++; }
+    // the automatic main cluster of each event (meaning/11): found once by the server on the snapshot; its number is the
+    // share of its block, the same as a manual area of the same block
+    F.mc = r.clusters || {};
     // the same definitions computed twice: the page's counts must equal the server's (checked by tests/ui_check24.js)
     F.mismatch = [];
     for (const ev of ['R', 'X']) {
       const a = r.counts[ev], b = F.ev[ev];
       const sa = a.cells.map(c => c.join(',')).sort().join(';'), sb = [...b.cells.values()].map(c => [c.k, c.b, c.list.length].join(',')).sort().join(';');
       if (sa !== sb || a.unknown !== b.unknown || a.none !== b.none) F.mismatch.push(ev);
+      const mc = F.mc[ev];
+      if (mc && mc.block && areaCount(F, ev, mc.block) !== mc.yes) F.mismatch.push('cluster ' + ev);
     }
     if (F.out && JSON.stringify(F.out) !== JSON.stringify(r.counts.outcome)) F.mismatch.push('outcome');
     if (F.mismatch.length) console.error('design 24: the page and the server disagree on', F.mismatch);
@@ -404,7 +409,7 @@
   // ---------- view state ----------
   const st = {
     session: 'RDR', rp: null, v0: 545, v1: 1005, p0: null, p1: null, auto: true,
-    L: { pts: true, glow: false, proj: true, strip: true, std: true, prev: true, vib: true, det: true },
+    L: { pts: true, mc: true, glow: false, proj: true, strip: true, std: true, prev: true, vib: true, det: true },
     ev: 'R', mode: 'bounds', view: 'auto', area: null, tool: false, col: null,
     hover: null, pin: null, mx: -1, my: -1, drag: null, stripH: 46, stripPin: false, menu: false,
     detH: 22, detPin: false, detOver: false, navHover: false
@@ -514,6 +519,7 @@
     drawNow(c, ctx);
     if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, ctx);
     if (F && st.mode === 'bounds') drawPair(c, ctx);
+    if (F) drawCluster(c, ctx);
     if (F) drawArea(c, ctx);
     if (F && V.stripOn) drawStrip(c, ctx);
     drawTags(c, ctx);
@@ -745,6 +751,7 @@
       if (h.k === 'pcell') return q.k >= h.k0 && q.k < h.k1;
       if (h.k === 'tcell') return q.b >= h.b0 && q.b < h.b1;
       if (h.k === 'area') return inArea(q, st.area);
+      if (h.k === 'mc') { const m = mcOf(F); return !!(m && m.block) && inArea(q, m.block); }
       if (h.k === 'pt') return q.i === h.i;
       if (h.k === 'out') return q.m.outcome === h.cat;
       if (h.k === 'evrow') return true;
@@ -832,6 +839,27 @@
         (V.areaHit = V.areaHit || []).push({ box: [lx - 3, ly - 8, w + 6, 16], part: 'window' }, { box: [x0, ya, x1 - x0, yb - ya], part: 'frame' });
       }
     }
+    c.restore();
+  }
+  // the automatic main cluster of the chosen event (meaning/11), drawn only when it got the name: a frame on its block
+  // (0.5 SD x 60 minutes) with the block's share of the family — the same number a manual area of the block shows
+  function drawCluster(c, ctx) {
+    const F = ctx.F, m = mcOf(F);
+    V.mcHit = null;
+    if (!m || !m.named || !st.L.mc || st.mode !== 'bounds') return;
+    const col = cfg[st.ev], b = m.block, x0 = V.X(F.f + 15 * b.b0), x1 = V.X(F.f + 15 * b.b1), [ya, yb] = cellY(F, b.k0, b.k1);
+    const h = hv(), on = !!(h && h.k === 'mc');
+    c.save();
+    c.fillStyle = rgba(col, on ? 0.13 : 0.07); c.fillRect(x0, ya, x1 - x0, yb - ya);
+    c.strokeStyle = rgba(col, 0.95); c.lineWidth = on ? 2 : 1.5;
+    c.strokeRect(Math.round(x0) + 0.5, Math.round(ya) + 0.5, Math.round(x1 - x0), Math.round(yb - ya));
+    const t = 'главный кластер · ' + pct(100 * m.yes / F.N);
+    c.font = '700 12px ' + FONT; c.textBaseline = 'middle';
+    // over the block's right end: its left end stands at today's confirmation, where the confirmation tag is
+    const w = c.measureText(t).width, lx = clamp(x1 - w - 3, 3, V.plot.w - w - 8), ly = ya - 10 < 9 ? yb + 10 : ya - 10;
+    c.fillStyle = 'rgba(8,9,12,.85)'; c.fillRect(lx - 3, ly - 8, w + 6, 16);
+    c.fillStyle = col; c.fillText(t, lx, ly + 0.5);
+    V.mcHit = [{ box: [lx - 3, ly - 8, w + 6, 16], part: 'label' }, { box: [x0, ya, x1 - x0, yb - ya], part: 'frame' }];
     c.restore();
   }
   // the time histogram T_E(b) of the chosen event: 15-minute cells from the box end to the block end; passed cells
@@ -1075,6 +1103,8 @@
       if (x <= V.strip.x + V.strip.w) return { k: 'stripBg' };
     }
     if (st.area && V.areaHit) for (const a of V.areaHit) if (a.part !== 'frame' && x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3]) return { k: 'area', part: a.part };
+    const inBox = a => x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3];
+    if (V.mcHit && inBox(V.mcHit[0])) return { k: 'mc' };
     if (st.mode === 'bounds' && st.L.pts) {
       let best = null, bd = 5;
       for (const q of F.ev[st.ev].pts) { const d = Math.hypot(V.X(q.t + 2.5) - x, V.Y(q.p) - y); if (d < bd) { bd = d; best = q; } }
@@ -1088,6 +1118,7 @@
       if (j >= 0) { const k = F.cellOfP(V.P(y)), cd = filmOf(F)[j]; if (cd.cells.has(k)) return { k: 'fcell', j, kk: k }; const lv = lvlHit(ctx, y); if (lv) return lv; return { k: 'col', j }; }
     }
     if (st.area && V.areaHit) for (const a of V.areaHit) if (a.part === 'frame' && x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3]) { const lv = lvlHit(ctx, y); if (lv) return lv; return { k: 'area', part: 'window' }; }
+    if (V.mcHit && inBox(V.mcHit[1])) return lvlHit(ctx, y) || { k: 'mc' };
     return lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y);
   }
   function lvlHit(ctx, y) {
@@ -1149,6 +1180,7 @@
     }
     if (h.k === 'col' && F) { const cd = filmOf(F)[h.j]; return '<b>M5 ' + clk(cd.T - 5) + '–' + clk(cd.T) + '</b>' + (cd.unknown ? '<br><span class="k">нет свечи у ' + pct(100 * cd.unknown / F.N) + ' семьи</span>' : ''); }
     if (h.k === 'area' && F && st.area) return areaTip(F, ctx, h.part);
+    if (h.k === 'mc' && F) return mcTip(F);
     if (h.k === 'lvl' && h.l) {
       const l = h.l;
       let out = '<b>' + s.k + ' · ' + l.full + '</b> · ' + px(l.p);
@@ -1211,6 +1243,31 @@
     if (I.win) lines.push((part === 'window' ? '▸ ' : '') + 'в выбранном окне: ' + sentence(I.win));
     if (I.today) lines.push('<span class="k">' + I.today + '</span>');
     return lines.join('<br>');
+  }
+
+  // ---------- the automatic main cluster (meaning/11): the server's candidate, its conditions and its check ----------
+  const mcOf = (F, ev) => F && F.mc ? F.mc[ev || st.ev] || null : null;
+  const mcName = (F, b) => band(b.k0, b.k1) + ' SD × ' + clk(F.f + 15 * b.b0) + '–' + clk(F.f + 15 * b.b1);
+  const mcPass = (F, m) => evPass(F, m.event, 'main_cluster', [m.block.k0, m.block.k1], [F.f + 15 * m.block.b0, F.f + 15 * m.block.b1], m.yes);
+  // why the best block did not get the name: the first condition not met (У1 … У5), or the check of its session
+  function mcWhy(F, m) {
+    if (F.brk) return 'для семьи слома правило не проверялось';
+    if (m.status === 'earned') return 'проверка 2018–2025 не подтвердила правило для ' + F.r.key.session;
+    const f = m.failed.slice().sort()[0], c = m.checks[f] || {};
+    if (f === 'U1') return 'не вдвое гуще соседних блоков по цене и по времени';
+    if (f === 'U2') return (c.lead <= 0 ? 'другое место не слабее' : 'другое место почти так же плотно') + (c.rival && c.rival.unknown && c.lead + c.rival.unknown >= 2 ? ', если учесть неизвестные' : '');
+    if (f === 'U3') return 'место сдвигается вместе с сеткой';
+    if (f === 'U4') return 'при пересэмплировании сессий то же место только в ' + pct(100 * c.same) + ' раз (нужно 80%)';
+    const n = c.newer || {}, o = c.older || {};
+    return n.n < 30 ? 'семья мала для проверки на новой истории' : !o.same ? 'старшая половина семьи нашла другое место' : 'на младшей половине семьи не подтвердилось';
+  }
+  function mcTip(F) {
+    const m = mcOf(F);
+    if (!m || !m.block) return '';
+    const bn = areaCount(F, m.event, { k0: m.block.k0, k1: m.block.k1 }), me = m.method && m.method.event;
+    return '<b>Главный кластер · ' + mcName(F, m.block) + '</b><br>' + sentence(mcPass(F, m)) +
+      '<br><span class="k">вся полоса за всю сессию — ' + pct(100 * bn / F.N) + ' · условия У1–У5 выполнены</span>' +
+      (me ? '<br><span class="k">проверка 2018–2025: на следующей сессии сбывалось ' + num(me.ratio, 2) + ' от такой доли</span>' : '');
   }
 
   // ---------- toolbar and the day picker ----------
@@ -1321,6 +1378,7 @@
           phrase: F.names[st.ev].toLowerCase() + ' ' + st.ev + ' не определено (нет свечи M5 на горизонте' + (D.none ? ' или нет периода' : '') + '); на графике не рисуется', horizon: F.from + ' до ' + clk(F.end) });
         out.push(link({ k: 'evrow' }, prow('не определено · нет свечи M5', pct(u.pct)), 'dim', u, plainTitle(u)));
       }
+      out.push(mcHtml(F));
       const tf = todayFacts(F, ctx);
       if (tf) out.push('<div class="p21-note" title="Наблюдённые закрытые свечи сегодняшнего дня после ' + (F.brk ? 'слома' : 'подтверждения') + ' до среза; не окончательные значения">' + tf + '</div>');
     }
@@ -1332,6 +1390,17 @@
     if (h && h.k === 'pt' && F.M[h.i]) out.push(memberHtml(F, F.M[h.i]));
     panel.innerHTML = out.join('');
     panelMarks();
+  }
+  // the automatic main cluster of the chosen event (meaning/11): its share when it got the name; otherwise why not, and
+  // its best block offered as an ordinary selected area (no name, spec §7.1)
+  function mcHtml(F) {
+    const m = mcOf(F);
+    if (!m || m.status === 'none') return '';
+    if (m.named) {
+      const p = mcPass(F, m);
+      return link({ k: 'mc' }, '<span class="t"><span><i style="color:' + cfg[st.ev] + '">▣</i> главный кластер</span><span class="p21-sub">' + esc(mcName(F, m.block)) + '</span></span><b>' + ppTxt(p) + '</b>', 'mc', p, plainTitle(p));
+    }
+    return '<div class="p21-note">главный кластер не установлен: ' + esc(mcWhy(F, m)) + ' · <a href="#" class="p24-a" data-mcarea="1">лучший блок как область</a></div>';
   }
   // today's own path after the activation (facts, not shares): the deepest and the farthest closed-M5 point so far
   function todayFacts(F, ctx) {
@@ -1416,7 +1485,7 @@
   // share of «на уровне или дальше» / «заходили» changes when the remaining hours start later (the snapshot does not).
   function detailObj(ctx) {
     const h = hv();
-    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow'].includes(h.k)) return h;
+    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow', 'mc'].includes(h.k)) return h;
     if (st.area) return { k: 'area', part: 'band' };
     return null;
   }
@@ -1430,13 +1499,36 @@
       (p.unknown_count ? dRow('неизвестно', pct(100 * p.unknown_count / p.N) + (p.binary ? '' : ' <span class="k">граница: до ' + pct(100 * (p.yes_count + p.unknown_count) / p.N) + '</span>')) : '') +
       dRow('знаменатель', 'вся семья, шаг доли ' + pct(100 / p.N));
   }
+  // the five conditions of the name with their numbers (meaning/11 §2) and the check of the rule on 2018-2025 (§6)
+  function mcRows(F, m) {
+    const c = m.checks, b = m.block, kb = b.k1 - b.k0, tb = b.b1 - b.b0, sh = n => pct(100 * n / F.N), list = a => a.map(sh).join(', ');
+    const ok = k => !c[k] ? '— не проверялось' : c[k].ok ? '✓' : '✗';
+    let s = dRow('правило', esc(m.rule) + ' <span class="k">блок ' + num(kb / 10, 1) + ' SD × ' + 15 * tb + ' мин, где известных событий больше всего; имя — только при У1–У5 (meaning/11)</span>');
+    if (c.U1) s += dRow('У1 гуще соседей', ok('U1') + ' без одной своей сессии ' + sh(m.yes - 1) + ' · соседи по цене ' + list(c.U1.price) + ' · по времени ' + (c.U1.time.length ? list(c.U1.time) : 'нет') + ' <span class="k">нужно вдвое больше среднего соседа</span>');
+    if (c.U2) s += dRow('У2 отрыв', ok('U2') + ' ' + (c.U2.rival ? sh(c.U2.lead) + ' <span class="k">ближайший соперник ' + mcName(F, { k0: c.U2.rival.k0, k1: c.U2.rival.k0 + kb, b0: c.U2.rival.b0, b1: c.U2.rival.b0 + tb }) + ' — ' + sh(c.U2.rival.yes) + (c.U2.rival.unknown ? ', и неизвестных, которые могли бы туда лечь, до ' + sh(c.U2.rival.unknown) : '') + '; нужно не меньше двух сессий</span>' : 'другого места нет'));
+    if (c.U3) s += dRow('У3 сетка', ok('U3') + ' то же место на ' + c.U3.same + ' из ' + c.U3.of + ' сеток <span class="k">сдвиг на 0,05 SD и на 5 / 10 мин</span>');
+    if (c.U4) s += dRow('У4 сессии', ok('U4') + ' то же место в ' + pct(100 * c.U4.same) + ' пересэмплирований <span class="k">нужно 80%</span>');
+    if (c.U5) {
+      const o = c.U5.older, n = c.U5.newer, nb = n.neighbours || [];
+      const small = n.n < 30 ? 'младшая половина меньше тридцати сессий' : '';
+      s += dRow('У5 новая история', ok('U5') + ' ' + [small, o.k0 != null ? 'старшая половина нашла ' + (o.same ? 'то же место' : 'другое место') : '',
+        n.yes != null ? 'в младшей в блоке ' + pct(100 * n.yes / n.n) + ' её сессий, у соседей в среднем ' + pct(100 * nb.reduce((a, x) => a + x, 0) / Math.max(1, nb.length) / n.n) + ', p ' + (n.p < 0.001 ? '< 0,001' : num(n.p, 3)) : ''].filter(Boolean).join(' · ') +
+        ' <span class="k">нужно: младшая половина от тридцати сессий, то же место, в 1,5 раза гуще соседей, p ≤ 0,05</span>');
+    }
+    const me = m.method;
+    if (me) {
+      const e = me.event || {};
+      s += dRow('проверка 2018–2025', (me.held ? 'выдержана' : 'не выдержана') + ' для ' + F.r.key.session + ' <span class="k">следующая сессия попадала в блок такого кластера ' + m.event + ' в ' + pct(100 * e.landed) + ' случаев при доле семьи ' + pct(100 * e.family_share) + ' — сбывалось ' + num(e.ratio, 2) + ' заявленной доли; в соседний блок того же размера — ' + pct(100 * e.neighbour) + '</span>');
+    } else s += dRow('проверка 2018–2025', F.brk ? 'семья слома не проверялась' : 'нет');
+    return s;
+  }
   function details(ctx) {
     const on = st.L.det;
     det.style.display = on ? '' : 'none';
     if (!on) return;
     const open = st.detPin || st.detOver, F = ctx.F, o = F ? detailObj(ctx) : null;
     det.classList.toggle('open', open);
-    let head = 'Детали', body = '', chart = null;
+    let head = 'Детали', body = '', chart = null, side = '';
     if (!F) head += ' · ' + statusMsg(ctx);
     else if (!o) {
       head += ' · слепок семьи';
@@ -1487,15 +1579,23 @@
       head += ' · исход DR';
       const nm = { held: 'удержался', broken: 'сломан', unknown: 'неизвестно', none: 'нет периода' }[o.cat];
       body = dRow('категория', nm) + dRow('доля', pct(100 * F.out[o.cat] / F.N)) + dRow('правило', 'закрытие M5 строго за своим противоположным DR; тень и равенство не ломают; слом не отменяется возвратом') + dRow('горизонт', F.from + ' до ' + clk(F.end));
+    } else if (o.k === 'mc' && mcOf(F) && mcOf(F).block) {
+      const m = mcOf(F);
+      head += ' · главный кластер ' + m.event + ' · ' + mcName(F, m.block);
+      body = passportRows(mcPass(F, m));
+      side = mcRows(F, m);
     } else if (o.k === 'evrow') {
       const D = F.ev[st.ev];
       head += ' · ' + F.names[st.ev] + ' ' + st.ev;
       body = dRow('событие', esc(F.what[st.ev])) + dRow('определено', pct(100 * D.known / F.N)) + dRow('неизвестно', pct(100 * D.unknown / F.N) + ' <span class="k">нет свечи M5 на горизонте</span>') + (D.none ? dRow('нет периода', pct(100 * D.none / F.N)) : '') + dRow('горизонт', F.from + ' до ' + clk(F.end));
     }
     dom('deth').innerHTML = '<span>' + (open ? '▾ ' : '▴ ') + esc(head) + '</span>' + (st.detPin ? '<span class="k">закреплено</span>' : '');
-    if (!open) { dom('dett').innerHTML = ''; return; }
+    const dx = dom('detx');
+    dx.style.display = open && side ? '' : 'none';
+    if (!open) { dom('dett').innerHTML = ''; dx.innerHTML = ''; return; }
     dom('dett').innerHTML = body;
-    drawDetChart(chart, F, ctx);
+    dx.innerHTML = side;                       // the right column: text instead of the small chart (the main cluster)
+    drawDetChart(side ? null : chart, F, ctx);
   }
   function drawDetChart(ch, F, ctx) {
     const cvd = dom('detc'), r = cvd.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
@@ -1549,6 +1649,12 @@
       if (e.target.closest('[data-hist]')) {
         if (A.src === 'live') histFallback();
         else ensureDates().then(list => { const i = list.findIndex(x => x >= A.date), d = list[Math.max(0, (i < 0 ? list.length : i) - 1)]; if (d) openHist(d); });
+        return;
+      }
+      if (e.target.closest('[data-mcarea]')) {                      // the best block as an ordinary selected area
+        e.preventDefault();
+        const m = mcOf(V.ctx.F);
+        if (m && m.block) { st.area = { k0: m.block.k0, k1: m.block.k1, b0: m.block.b0, b1: m.block.b1 }; st.pin = null; render(true); }
         return;
       }
       const v = e.target.closest('[data-view]');
@@ -1676,6 +1782,7 @@
     if (h && h.k === 'pt') { pin(h); return; }
     if (h && (h.k === 'col' || h.k === 'fcell')) { st.col = st.col === h.j ? null : h.j; render(true); return; }
     if (h && h.k === 'area') { pin({ k: 'area', part: h.part }); return; }
+    if (h && h.k === 'mc') { pin({ k: 'mc' }); return; }
     const b = barAt(V.ctx, V.T(x));
     if (b && y >= V.Y(b.h) - 6 && y <= V.Y(b.l) + 6 && b.t + 5 <= NOW) { replayAt(b.t + 5); return; }
     if (h && ['lvl', 'prev', 'vib'].includes(h.k)) { pin(h); return; }
@@ -1842,7 +1949,7 @@
     render(true);
     schedule();
   }
-  window.__d24 = { st, A, render, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo };
+  window.__d24 = { st, A, render, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, mcOf, areaCount };
   initPanel24();
   // the address: #date=2025-12-17 (a history day) &inst=NQ &session=RDR &at=11:50 (replay) &ev=X &mode=path
   //              &area=3:6[:b0:b1] (price cells [3, 6) x time cells [b0, b1)) &hist=1 (details open)
@@ -1860,6 +1967,7 @@
     if (q.get('pt') != null && q.get('pt') !== '') st.pin = { k: 'pt', i: +q.get('pt') };      // &pt=5: the 6th session of the family pinned
     if (q.get('lvl')) st.pinLvl = q.get('lvl');                                               // &lvl=u2: a level pinned (drH, idrL, mid, u1 … d6)
     if (q.get('col') != null && q.get('col') !== '') st.col = +q.get('col');                   // &col=12: an M5 column of «Путь семьи» pinned
+    if (q.get('mc')) st.pin = { k: 'mc' };                                                    // &mc=1: the main cluster pinned (details)
     cfgPanel();
     if (/^\d{4}-\d\d-\d\d$/.test(q.get('date') || '')) { A.src = 'hist'; A.date = q.get('date'); A.jump = true; st.rpWanted = at; }
     else if (at != null) { st.rp = at; st.session = sessOf(at) || st.session; st.userSession = true; fitSession(st.session); }

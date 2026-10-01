@@ -254,8 +254,44 @@ def _end(out, checks, failed):
     return out
 
 
+# The check on sessions 2018-2025 (meaning/11 §6, studies/main_cluster_2026_10_01/check_2018_2025.json), per session of
+# confirmation families: M1 held or not, and what landed on the next sessions against the family's number (M2). The
+# screen gives the name «главный кластер» only where M1 held; the break family was not checked.
+CHECK = {
+    "ADR": dict(held=True, verdict="выдержано",
+                n=346, families=21, family_share=0.1904, landed=0.1705, ratio=0.895, ratio_5_95=[0.774, 1.013],
+                neighbour=0.0539, contrast=3.161, contrast_5_95=[2.643, 4.0],
+                events=dict(
+                    R=dict(n=230, families=13, family_share=0.1931, landed=0.1739, ratio=0.901, ratio_5_95=[0.789, 1.048],
+                           neighbour=0.0594, contrast=2.927, contrast_5_95=[2.239, 4.65]),
+                    X=dict(n=116, families=8, family_share=0.1852, landed=0.1638, ratio=0.884, ratio_5_95=[0.664, 1.073],
+                           neighbour=0.0431, contrast=3.8, contrast_5_95=[2.455, 6.0]))),
+    "ODR": dict(held=True, verdict="выдержано",
+                n=1156, families=46, family_share=0.1921, landed=0.1583, ratio=0.824, ratio_5_95=[0.735, 0.908],
+                neighbour=0.0548, contrast=2.889, contrast_5_95=[2.538, 3.289],
+                events=dict(
+                    R=dict(n=625, families=24, family_share=0.1896, landed=0.1696, ratio=0.894, ratio_5_95=[0.759, 1.022],
+                           neighbour=0.0571, contrast=2.972, contrast_5_95=[2.571, 3.424]),
+                    X=dict(n=531, families=22, family_share=0.195, landed=0.145, ratio=0.744, ratio_5_95=[0.673, 0.846],
+                           neighbour=0.0521, contrast=2.783, contrast_5_95=[2.36, 3.296]))),
+    "RDR": dict(held=True, verdict="выдержано",
+                n=1724, families=65, family_share=0.2103, landed=0.1879, ratio=0.894, ratio_5_95=[0.771, 1.013],
+                neighbour=0.0418, contrast=4.5, contrast_5_95=[3.665, 5.374],
+                events=dict(
+                    R=dict(n=836, families=32, family_share=0.2211, landed=0.2201, ratio=0.995, ratio_5_95=[0.872, 1.128],
+                           neighbour=0.0435, contrast=5.064, contrast_5_95=[4.301, 5.916]),
+                    X=dict(n=888, families=33, family_share=0.2001, landed=0.1577, ratio=0.788, ratio_5_95=[0.667, 0.922],
+                           neighbour=0.0402, contrast=3.925, contrast_5_95=[2.972, 5.106]))),
+}
+
+
 def of_snapshot(snap, ev):
-    """The main cluster of event ev of a snapshot of lab/scene24.py (its members are in date order)."""
+    """The main cluster of event ev of a snapshot of lab/scene24.py (its members are in date order), with the check of
+    its session and whether the screen may call it «главный кластер»."""
     sch = snap["schedule"]
     win = (snap["key"]["window"][0] - sch["formed"]) // WINDOW
-    return main_cluster(compact(snap["members"], ev, snap["grid"]), ev, sch["formed"], sch["end"], win)
+    out = main_cluster(compact(snap["members"], ev, snap["grid"]), ev, sch["formed"], sch["end"], win)
+    chk = CHECK.get(snap["key"]["session"]) if snap["view"] == "conf" else None
+    out["method"] = None if chk is None else dict(chk, event=chk["events"].get(ev))
+    out["named"] = out["status"] == "earned" and bool(chk and chk["held"])
+    return out

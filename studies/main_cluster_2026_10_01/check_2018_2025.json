@@ -1,0 +1,329 @@
+{
+ "period": [
+  "2018-01-01",
+  "2025-12-31"
+ ],
+ "after": 0,
+ "rule": "main-cluster-1",
+ "block": [
+  5,
+  4
+ ],
+ "targets": {
+  "ADR R": {
+   "n": 5734,
+   "earned": 230,
+   "n60": 2550,
+   "earned_share": 0.0401
+  },
+  "ADR X": {
+   "n": 5734,
+   "earned": 116,
+   "n60": 2550,
+   "earned_share": 0.0202
+  },
+  "ODR R": {
+   "n": 5716,
+   "earned": 625,
+   "n60": 2619,
+   "earned_share": 0.1093
+  },
+  "ODR X": {
+   "n": 5716,
+   "earned": 531,
+   "n60": 2619,
+   "earned_share": 0.0929
+  },
+  "RDR R": {
+   "n": 5503,
+   "earned": 836,
+   "n60": 2459,
+   "earned_share": 0.1519
+  },
+  "RDR X": {
+   "n": 5503,
+   "earned": 888,
+   "n60": 2459,
+   "earned_share": 0.1614
+  }
+ },
+ "earned": {
+  "ADR R": {
+   "n": 230,
+   "families": 13,
+   "family_share": 0.1931,
+   "landed": 0.1739,
+   "ratio": 0.901,
+   "ratio_5_95": [
+    0.789,
+    1.048
+   ],
+   "neighbour": 0.0594,
+   "contrast": 2.927,
+   "contrast_5_95": [
+    2.239,
+    4.65
+   ],
+   "first_block": 0.943
+  },
+  "ADR X": {
+   "n": 116,
+   "families": 8,
+   "family_share": 0.1852,
+   "landed": 0.1638,
+   "ratio": 0.884,
+   "ratio_5_95": [
+    0.664,
+    1.073
+   ],
+   "neighbour": 0.0431,
+   "contrast": 3.8,
+   "contrast_5_95": [
+    2.455,
+    6.0
+   ],
+   "first_block": 1.0
+  },
+  "ODR R": {
+   "n": 625,
+   "families": 24,
+   "family_share": 0.1896,
+   "landed": 0.1696,
+   "ratio": 0.894,
+   "ratio_5_95": [
+    0.759,
+    1.022
+   ],
+   "neighbour": 0.0571,
+   "contrast": 2.972,
+   "contrast_5_95": [
+    2.571,
+    3.424
+   ],
+   "first_block": 0.982
+  },
+  "ODR X": {
+   "n": 531,
+   "families": 22,
+   "family_share": 0.195,
+   "landed": 0.145,
+   "ratio": 0.744,
+   "ratio_5_95": [
+    0.673,
+    0.846
+   ],
+   "neighbour": 0.0521,
+   "contrast": 2.783,
+   "contrast_5_95": [
+    2.36,
+    3.296
+   ],
+   "first_block": 1.0
+  },
+  "RDR R": {
+   "n": 836,
+   "families": 32,
+   "family_share": 0.2211,
+   "landed": 0.2201,
+   "ratio": 0.995,
+   "ratio_5_95": [
+    0.872,
+    1.128
+   ],
+   "neighbour": 0.0435,
+   "contrast": 5.064,
+   "contrast_5_95": [
+    4.301,
+    5.916
+   ],
+   "first_block": 0.965
+  },
+  "RDR X": {
+   "n": 888,
+   "families": 33,
+   "family_share": 0.2001,
+   "landed": 0.1577,
+   "ratio": 0.788,
+   "ratio_5_95": [
+    0.667,
+    0.922
+   ],
+   "neighbour": 0.0402,
+   "contrast": 3.925,
+   "contrast_5_95": [
+    2.972,
+    5.106
+   ],
+   "first_block": 0.979
+  }
+ },
+ "not_earned_60": {
+  "ADR R": {
+   "n": 2323,
+   "families": 65,
+   "family_share": 0.1357,
+   "landed": 0.136,
+   "ratio": 1.002,
+   "ratio_5_95": [
+    0.917,
+    1.09
+   ],
+   "neighbour": 0.0445,
+   "contrast": 3.058,
+   "contrast_5_95": [
+    2.76,
+    3.573
+   ],
+   "first_block": 0.843
+  },
+  "ADR X": {
+   "n": 2435,
+   "families": 66,
+   "family_share": 0.134,
+   "landed": 0.1273,
+   "ratio": 0.95,
+   "ratio_5_95": [
+    0.834,
+    1.065
+   ],
+   "neighbour": 0.0578,
+   "contrast": 2.204,
+   "contrast_5_95": [
+    1.763,
+    2.68
+   ],
+   "first_block": 0.994
+  },
+  "ODR R": {
+   "n": 1997,
+   "families": 62,
+   "family_share": 0.1442,
+   "landed": 0.1427,
+   "ratio": 0.99,
+   "ratio_5_95": [
+    0.882,
+    1.085
+   ],
+   "neighbour": 0.0429,
+   "contrast": 3.327,
+   "contrast_5_95": [
+    3.0,
+    3.682
+   ],
+   "first_block": 0.919
+  },
+  "ODR X": {
+   "n": 2092,
+   "families": 60,
+   "family_share": 0.1643,
+   "landed": 0.1487,
+   "ratio": 0.905,
+   "ratio_5_95": [
+    0.821,
+    0.983
+   ],
+   "neighbour": 0.0476,
+   "contrast": 3.12,
+   "contrast_5_95": [
+    2.666,
+    3.585
+   ],
+   "first_block": 0.95
+  },
+  "RDR R": {
+   "n": 1628,
+   "families": 59,
+   "family_share": 0.185,
+   "landed": 0.2076,
+   "ratio": 1.122,
+   "ratio_5_95": [
+    1.002,
+    1.242
+   ],
+   "neighbour": 0.0469,
+   "contrast": 4.428,
+   "contrast_5_95": [
+    3.704,
+    5.196
+   ],
+   "first_block": 0.923
+  },
+  "RDR X": {
+   "n": 1573,
+   "families": 63,
+   "family_share": 0.1758,
+   "landed": 0.1558,
+   "ratio": 0.886,
+   "ratio_5_95": [
+    0.801,
+    0.976
+   ],
+   "neighbour": 0.0426,
+   "contrast": 3.657,
+   "contrast_5_95": [
+    3.39,
+    3.99
+   ],
+   "first_block": 0.957
+  }
+ },
+ "M1": {
+  "ADR": {
+   "verdict": "выдержано",
+   "n": 346,
+   "families": 21,
+   "family_share": 0.1904,
+   "landed": 0.1705,
+   "ratio": 0.895,
+   "ratio_5_95": [
+    0.774,
+    1.013
+   ],
+   "neighbour": 0.0539,
+   "contrast": 3.161,
+   "contrast_5_95": [
+    2.643,
+    4.0
+   ],
+   "first_block": 0.962
+  },
+  "ODR": {
+   "verdict": "выдержано",
+   "n": 1156,
+   "families": 46,
+   "family_share": 0.1921,
+   "landed": 0.1583,
+   "ratio": 0.824,
+   "ratio_5_95": [
+    0.735,
+    0.908
+   ],
+   "neighbour": 0.0548,
+   "contrast": 2.889,
+   "contrast_5_95": [
+    2.538,
+    3.289
+   ],
+   "first_block": 0.99
+  },
+  "RDR": {
+   "verdict": "выдержано",
+   "n": 1724,
+   "families": 65,
+   "family_share": 0.2103,
+   "landed": 0.1879,
+   "ratio": 0.894,
+   "ratio_5_95": [
+    0.771,
+    1.013
+   ],
+   "neighbour": 0.0418,
+   "contrast": 4.5,
+   "contrast_5_95": [
+    3.665,
+    5.374
+   ],
+   "first_block": 0.972
+  }
+ }
+}
