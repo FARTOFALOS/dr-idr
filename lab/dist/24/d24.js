@@ -1036,11 +1036,13 @@
           }
           c.stroke(); c.restore();
         }
-        const share = 100 * z.p_snapshot, fs = imp ? 12 : Math.round(clamp(12 + 0.45 * share, 15, 21)), sub = s === 'HOLDS' ? 'держится' : '';
+        // Historical mass and today's applicability are separate encodings: status may dim/dash a zone, but never
+        // removes or resizes its n/N label. This prevents p_snapshot from looking like today's conditional chance.
+        const share = 100 * z.p_snapshot, fs = Math.round(clamp(12 + 0.45 * share, 15, 21)), sub = s === 'HOLDS' ? 'держится' : '';
         c.font = '700 12px ' + FONT;
         const wN = c.measureText(z.label).width;
         c.font = '700 ' + fs + 'px ' + FONT;
-        const wS = imp ? 0 : c.measureText(pct(share)).width, wT = wN + (imp ? 0 : 5 + wS) + 10, hT = fs + 8 + (sub ? 13 : 0), bb = g.bb;
+        const wS = c.measureText(pct(share)).width, wT = wN + 5 + wS + 10, hT = fs + 8 + (sub ? 13 : 0), bb = g.bb;
         const cands = [[bb[2] - wT + 6, bb[1] - hT - 6], [bb[2] + 10, (bb[1] + bb[3]) / 2 - hT / 2], [bb[2] - wT + 6, bb[3] + 6], [bb[0] - 6, bb[1] - hT - 6], [bb[0] - wT - 10, (bb[1] + bb[3]) / 2 - hT / 2]];
         let best = null;
         for (const q of cands) {
@@ -1056,7 +1058,7 @@
         c.fillStyle = 'rgba(8,9,12,.6)'; roundRect(c, lx, ly, wT, hT, 4); c.fill();
         c.textBaseline = 'alphabetic';
         c.font = '700 12px ' + FONT; c.fillStyle = imp ? rgba(col, 0.7) : col; c.fillText(z.label, lx + 5, ly + 4 + fs * 0.86);
-        if (!imp) { c.font = '700 ' + fs + 'px ' + FONT; c.fillStyle = '#EEF1F5'; c.fillText(pct(share), lx + 10 + wN, ly + 4 + fs * 0.86); }
+        c.font = '700 ' + fs + 'px ' + FONT; c.fillStyle = imp ? 'rgba(238,241,245,.45)' : '#EEF1F5'; c.fillText(pct(share), lx + 10 + wN, ly + 4 + fs * 0.86);
         if (sub) { c.font = '600 10.5px ' + FONT; c.fillStyle = col; c.fillText(sub, lx + 5, ly + hT - 5); }
         c.restore();
         V.zoneHit.push({ box: [lx, ly, wT, hT], ev, i, loops: g.hit });
@@ -1697,13 +1699,15 @@
       '<div class="iq">в окне ' + clk(F.f + 15 * b0) + '–' + clk(F.f + 15 * b1) + ' свой экстремум поставили</div>' + twoBars(F, nX, nR, h.ev) +
       ifoot(F, ' · не шанс на сегодня');
   }
-  // two events on the same N side by side (two bars of one scale) and which of them is more in this place
+  // Two independent event-time shares on the same denominator N. They may overlap in the same session, so they are
+  // compared only as two measurements; they are never presented as competing parts of one 100 %.
   function twoBars(F, cX, cR, first) {
     const mx = Math.max(cX, cR, 1), row = (ev, c) => '<div class="ib"><i style="color:' + cfg[ev] + '">' + ev + ' · ' + F.names[ev].toLowerCase() + '</i><span><em style="width:' + (100 * c / mx).toFixed(1) + '%;background:' + cfg[ev] + '"></em></span><b>' + pct(100 * c / F.N) + '</b></div>';
     const rows = first === 'R' ? row('R', cR) + row('X', cX) : row('X', cX) + row('R', cR);
-    if (cX > cR * 1.15) return rows + '<div class="im" style="color:' + cfg.X + '">больше X: здесь чаще ставили ' + (F.brk ? 'дальнюю точку по слому' : 'вершину расширения') + '</div>';
-    if (cR > cX * 1.15) return rows + '<div class="im" style="color:' + cfg.R + '">больше R: здесь чаще ставили ' + (F.brk ? 'глубочайшую точку против слома' : 'дно отката') + '</div>';
-    return rows + '<div class="im">R и X примерно поровну</div>';
+    const gap = num(100 * Math.abs(cX - cR) / F.N, 1);
+    if (cX > cR * 1.15) return rows + '<div class="im" style="color:' + cfg.X + '">X-время встречалось в этом окне чаще на ' + gap + ' п.п. <span class="k">две отдельные доли N, не части одной сотни</span></div>';
+    if (cR > cX * 1.15) return rows + '<div class="im" style="color:' + cfg.R + '">R-время встречалось в этом окне чаще на ' + gap + ' п.п. <span class="k">две отдельные доли N, не части одной сотни</span></div>';
+    return rows + '<div class="im">R- и X-время близки <span class="k">две отдельные доли N, не складываются в 100 %</span></div>';
   }
   const yr = (F, c) => c.unknown ? pct(100 * c.yes / F.N) + '–' + pct(100 * (c.yes + c.unknown) / F.N) : pct(100 * c.yes / F.N);
   const ifoot = (F, more) => '<div class="if">доля всей семьи · ' + F.from + ' до ' + clk(F.end) + ' · шаг доли ' + pct(100 / F.N) + (more || '') + '</div>';
@@ -1715,6 +1719,9 @@
     dom('inst').innerHTML = ['NQ', 'ES', 'YM'].map(k => '<button data-i="' + k + '" class="' + (k === A.inst ? 'on' : '') + '">' + k + '</button>').join('');
     for (const b of dom('mode').querySelectorAll('button')) b.classList.toggle('on', b.dataset.m === st.mode);
     const nm = F ? F.names : ctx.s.failed ? { R: 'Против слома', X: 'По слому' } : { R: 'Откат', X: 'Расширение' };
+    // A freehand area belongs to the event currently in focus. Make that semantic choice explicit before the drag.
+    const ab = dom('areab');
+    if (ab) { ab.textContent = '▭ Область · ' + st.ev; ab.title = 'Выбрать область ' + st.ev + ' мышью: цена или цена × время; R/X меняется вместе с текущим фокусом'; }
     // R and X are on the chart together (operator 2026-10-01): the toolbar names them, there is no switch
     dom('ev').innerHTML = ['R', 'X'].map(e => '<span class="evc' + (st.mode === 'path' ? ' off' : '') + '" title="' + (F ? esc(F.what[e]) : '') + '"><i style="background:' + cfg[e] + '"></i>' + e + '<span> ' + nm[e].toLowerCase() + '</span></span>').join('');
     dom('areab').classList.toggle('on', st.tool);
@@ -1844,7 +1851,8 @@
     let sep = false;
     for (const r of rows) {
       if (!sep && r.z.time_end > sl) { sep = true; out.push('<div class="p24-now"><span></span>' + (sl >= F.end ? 'блок закончен' : 'сейчас ' + clk(sl)) + '<span></span></div>'); }
-      const p = zonePass(F, r.ev, r.z), big = r.s !== 'IMPOSSIBLE' && p.pct >= 15 ? ' big' : '';
+      // Historical mass controls its typography; today's status is encoded separately by zst-* opacity/style.
+      const p = zonePass(F, r.ev, r.z), big = p.pct >= 15 ? ' big' : '';
       out.push(link({ k: 'zone', ev: r.ev, i: r.i }, '<span class="t"><span><span class="zt">' + clk(r.z.time_start) + '–' + clk(r.z.time_end) + '</span> <i class="zn" style="color:' + cfg[r.ev] + '">' + r.z.label + '</i></span>' +
         '<span class="p21-sub">' + band(r.z.price_low, r.z.price_high) + ' SD · ' + ZST[r.s] + '</span></span><b class="zp' + big + '">' + ppTxt(p) + '</b>', 'mc zst-' + r.s, p, plainTitle(p)));
     }

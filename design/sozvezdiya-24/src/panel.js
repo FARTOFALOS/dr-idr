@@ -76,7 +76,8 @@
     let sep = false;
     for (const r of rows) {
       if (!sep && r.z.time_end > sl) { sep = true; out.push('<div class="p24-now"><span></span>' + (sl >= F.end ? 'блок закончен' : 'сейчас ' + clk(sl)) + '<span></span></div>'); }
-      const p = zonePass(F, r.ev, r.z), big = r.s !== 'IMPOSSIBLE' && p.pct >= 15 ? ' big' : '';
+      // Historical mass controls its typography; today's status is encoded separately by zst-* opacity/style.
+      const p = zonePass(F, r.ev, r.z), big = p.pct >= 15 ? ' big' : '';
       out.push(link({ k: 'zone', ev: r.ev, i: r.i }, '<span class="t"><span><span class="zt">' + clk(r.z.time_start) + '–' + clk(r.z.time_end) + '</span> <i class="zn" style="color:' + cfg[r.ev] + '">' + r.z.label + '</i></span>' +
         '<span class="p21-sub">' + band(r.z.price_low, r.z.price_high) + ' SD · ' + ZST[r.s] + '</span></span><b class="zp' + big + '">' + ppTxt(p) + '</b>', 'mc zst-' + r.s, p, plainTitle(p)));
     }
