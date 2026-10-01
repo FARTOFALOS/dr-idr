@@ -36,6 +36,12 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def redirect(self, where):
+        self.send_response(302)
+        self.send_header('Location', where)
+        self.send_header('Content-Length', '0')
+        self.end_headers()
+
     def do_GET(self):
         url = urlparse(self.path)
         params = {k:v[-1] for k,v in parse_qs(url.query).items()}
@@ -101,6 +107,12 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.json({'text':path.read_text(encoding='utf-8') if path.exists() else 'Смысловая спецификация готовится вместе с интерфейсом.'})
             if url.path.startswith('/api/'):
                 return self.json({'error':'Неизвестный запрос'},404)
+            # the working screen is design 24 since 2026-10-01 night (operator): the root opens it; design 22 stays next to
+            # it at /22/ (its built page is /index.html, unchanged); the fragment of the address is kept by the browser
+            if url.path == '/':
+                return self.redirect('/24/')
+            if url.path in ('/22', '/22/'):
+                return self.redirect('/index.html')
             return super().do_GET()
         except (ValueError, TypeError) as exc:
             self.json({'error': str(exc)},400)

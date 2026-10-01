@@ -555,6 +555,7 @@
     else panelMarks();
     showTip(st.hover);
     details(ctx);
+    if (st.geo) geoDump(ctx);
     placeNav();
   }
   const hv = () => st.hover || st.pin;
@@ -1123,7 +1124,7 @@
       for (const ev of ['X', 'R']) {
         const n = ev === 'X' ? nX : nR, o = ev === 'X' ? nR : nX;
         let a = 0.1 + 0.2 * Math.pow(n / mx, 0.7);
-        if (n > o * 1.2) a += 0.08;
+        if (n > o * 1.15) a += 0.08;                 // the same «more» as the inspector's (twoBars)
         if (past) a *= 0.5;
         if (lit || zl) a = Math.max(a, 0.5);
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
@@ -1590,7 +1591,7 @@
     return '';
   }
   // «на уровне или дальше» of a level (spec §5.4): on each session's whole horizon and on the common hours after the slice;
-  // the side is toward the level from today's close at the slice, and it is named
+  // the side is the sign of the level's u (levelUp: beyond the edge of play = along), and it is named
   function levelQuery(F, ctx, price, name) {
     const L = levelRat(F, price), up = levelUp(F, ctx, L), sl = sliceOf(ctx), dn = dirName(F, up);
     const ph = 'на ' + name + ' (' + sd(L.a / L.b) + ' SD) или дальше ' + dn + ' (свеча M5 дошла до уровня или дальше)';
@@ -1728,7 +1729,7 @@
     dom('date').textContent = ctx.D.date;
     const cmp = dom('cmp22');
     cmp.style.display = A.src === 'live' ? '' : 'none';
-    cmp.href = '/#inst=' + A.inst + '&session=' + st.session + (st.rp != null ? '&at=' + clk(st.rp) : '');
+    cmp.href = '/22/#inst=' + A.inst + '&session=' + st.session + (st.rp != null ? '&at=' + clk(st.rp) : '');
     dom('clock').innerHTML = A.src === 'hist'
       ? '<div style="display:flex;gap:6px"><div class="pill hs"><span class="dot"></span>' + (st.rp != null ? 'История ' + st.session + ' · ' + clk(ctx.obs) : 'История · день закрыт') + '</div>' + (st.rp != null ? '<button id="back">К концу дня</button>' : '') + '</div>'
       : ctx.live ? '<div class="pill"><span class="dot"></span><span id="live">LIVE ' + clk(NOW) + ' ET</span></div>'
@@ -1765,6 +1766,80 @@
   }
 
   /*__PANEL24__*/
+  // ---------- &geo=1: the screen's geometry for the annotated specification (spec/ekran-24/, tools/annotate.py) ----------
+  // Page pixels of every layer and block in this frame, written into <script id="geo" type="application/json"> so a
+  // headless browser can dump them next to its screenshot of the same address. Changes nothing on the screen.
+  function geoDump(ctx) {
+    const F = ctx.F, r0 = cv.getBoundingClientRect(), ox = r0.left, oy = r0.top, s = ctx.s;
+    const P = (x, y) => [Math.round(ox + x), Math.round(oy + y)];
+    const rect = el => { if (!el) return null; const r = el.getBoundingClientRect(); return r.width || r.height ? [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height)] : null; };
+    const G = { url: location.hash, W: innerWidth, H: innerHeight, mode: st.mode, view: F ? F.view : null, dom: {}, chart: {}, panel: {}, det: {} };
+    for (const id of ['inst', 'sess', 'date', 'mode', 'ev', 'areab', 'apibar', 'dayb', 'step21', 'panel21toggle', 'lay', 'cfgb', 'cmp22', 'clock', 'panel', 'insp', 'det', 'deth', 'nav']) G.dom[id] = rect(dom(id));
+    const pl = [...panel.children];
+    G.panel.blocks = pl.map(el => ({ cls: el.className, text: el.innerText.split('\n')[0].slice(0, 40), r: rect(el) }));
+    G.panel.links = [...panel.querySelectorAll('[data-l21]')].map(el => ({ text: el.innerText.split('\n')[0].slice(0, 40), r: rect(el) }));
+    G.panel.now = rect(panel.querySelector('.p24-now'));
+    G.panel.bar = rect(panel.querySelector('.p24-bar'));
+    G.panel.out = rect(panel.querySelector('.p24-out'));
+    G.panel.seg = rect(panel.querySelector('.p24-seg'));
+    G.panel.notes = [...panel.querySelectorAll('.p21-note')].map(rect);
+    G.det.cards = [...document.querySelectorAll('#detg .dcard')].map(el => ({ title: el.querySelector('.dt') ? el.querySelector('.dt').innerText : '', r: rect(el) }));
+    const C2 = G.chart;
+    C2.plot = [Math.round(ox), Math.round(oy), Math.round(V.plot.w), Math.round(V.plot.h)];
+    C2.axis = [Math.round(ox + V.plot.w), Math.round(oy), V.axisW, Math.round(V.plot.h)];
+    if (V.projW) C2.proj = [Math.round(ox + V.proj.x), Math.round(oy), V.projW, Math.round(V.plot.h)];
+    if (V.projCols) C2.projCols = { R: [Math.round(ox + V.projCols.R[0]), Math.round(ox + V.projCols.R[1])], X: [Math.round(ox + V.projCols.X[0]), Math.round(ox + V.projCols.X[1])] };
+    if (V.projBars) { C2.projRow = {}; for (const ev of ['R', 'X']) { const zs = F && F.zones[ev] ? F.zones[ev].zones : []; if (!zs.length) continue; const ks = zs[0].cell_mask.map(q => q[0]), mid = Math.round((Math.min(...ks) + Math.max(...ks)) / 2), b = V.projBars.find(q => q.ev === ev && q.k === mid) || V.projBars.find(q => q.ev === ev); if (b) C2.projRow[ev] = P(V.projCols[ev][0] + 18, (b.top + b.bot) / 2); } }
+    C2.band = V.stripOn ? [Math.round(ox), Math.round(oy + V.band.y), Math.round(V.band.w), Math.round(V.band.h)] : null;
+    C2.bandCy = V.bandCy != null ? Math.round(oy + V.bandCy) : null;
+    C2.taxis = [Math.round(ox), Math.round(oy + V.taxisY), Math.round(V.plot.w), V.timeH];
+    C2.legend = P(12, 14);
+    C2.status = P(12, 32);
+    if (s.drH != null) {
+      C2.box = [...P(V.X(s.start), V.Y(s.drH)), Math.round(V.X(s.formed) - V.X(s.start)), Math.round(V.Y(s.drL) - V.Y(s.drH))];
+      C2.drH = P(V.X(s.formed) + 120, V.Y(s.drH)); C2.drL = P(V.X(s.formed) + 120, V.Y(s.drL));
+      C2.idrH = P(V.X(s.formed) + 200, V.Y(s.idrH)); C2.idrL = P(V.X(s.formed) + 200, V.Y(s.idrL));
+      C2.mid = P(V.X(s.formed) + 260, V.Y(s.mid));
+      const w = s.idrH - s.idrL, side = s.side || 1;
+      C2.std = P(V.plot.w - 140, V.Y((side === 1 ? s.idrH : s.idrL) + side * w));
+      C2.axisDR = P(V.plot.w + 40, V.Y(s.drH)); C2.axisIDR = P(V.plot.w + 40, V.Y(s.idrH));
+      C2.fracs = P(V.X(s.start) - 14, V.Y(s.idrL + 0.3 * w));
+      if (s.priceNow != null) C2.priceNow = P(V.plot.w + 40, V.Y(s.priceNow));
+    }
+    if (s.conf) { const b = ctx.D.bars.find(q => q.t === s.conf - 5); if (b) C2.pill = P(V.X(b.t + 2.5), s.side === 1 ? V.Y(b.h) - 15 : V.Y(b.l) + 15); }
+    if (s.failed) { const b = ctx.D.bars.find(q => q.t === s.failed - 5); if (b) C2.brkPill = P(V.X(b.t + 2.5), s.side === 1 ? V.Y(b.l) + 15 : V.Y(b.h) - 15); }
+    C2.slice = P(V.X(sliceOf(ctx)), V.plot.h * 0.42);
+    C2.end = P(V.X(SESS[ctx.s.k].end), 70);
+    const lastBar = ctx.D.bars.filter(b => b.t + 5 <= (ctx.live ? NOW : ctx.obs)).pop();
+    if (lastBar) C2.candle = P(V.X(lastBar.t + 2.5), V.Y(lastBar.h) - 4);
+    if (F && st.mode === 'bounds') {
+      const CL = cloudsOf(F);
+      C2.zones = (V.zoneHit || []).map(z => { const g = CL[z.ev][z.i]; return { ev: z.ev, i: z.i, label: g.z.label, labelBox: [...P(z.box[0], z.box[1]), Math.round(z.box[2]), Math.round(z.box[3])], spot: P(g.kd.spot.x, g.kd.spot.y), bb: [...P(g.bb[0], g.bb[1]), Math.round(g.bb[2] - g.bb[0]), Math.round(g.bb[3] - g.bb[1])] }; });
+      C2.caps = (V.caps || []).map(q => ({ ev: q.ev, i: q.i, box: [...P(q.box[0], q.box[1]), Math.round(q.box[2]), Math.round(q.box[3])] }));
+      C2.hills = (V.hills || []).map(q => { const t = q.scr.reduce((a, p) => (q.ev === 'X' ? p[1] < a[1] : p[1] > a[1]) ? p : a, q.scr[0]); return { ev: q.ev, i: q.i, top: P(t[0], t[1] + (q.ev === 'X' ? 6 : -6)) }; });
+      if (V.bandCols && V.bandCols.length) { const T = F.ev.X.T, R = F.ev.R.T; let best = null; for (const c of V.bandCols) { const n = (T.get(c.b) || 0) + (R.get(c.b) || 0); if (!best || n > best.n) best = { c, n }; } C2.column = P((best.c.x0 + best.c.x1) / 2, V.bandCy - 10); }
+      if (V.stripUnk) C2.unk = P(V.stripUnk[0] + 7, V.stripUnk[1] + V.stripUnk[3] / 2);
+      const star = (ev, inZone, broken) => { const q = F.ev[ev].pts.find(p => !!F.zcell[ev].has(p.k + '|' + p.b) === inZone && (broken == null || (p.m.outcome === 'broken') === broken) && V.X(p.t + 2.5) > V.X(sliceOf(ctx)) + 20 && V.X(p.t + 2.5) < V.plot.w - 80 && V.Y(p.p) > 60 && V.Y(p.p) < V.plot.h - 20); return q ? P(V.X(q.t + 2.5), V.Y(q.p)) : null; };
+      C2.stars = { Rzone: star('R', true), Xzone: star('X', true), Rres: star('R', false, false), Xres: star('X', false, false), ring: star('R', false, true) || star('X', false, true) };
+      if (V.lk) { const t0 = F.f + 15 * V.lk.b; C2.link = { spot: P(V.lk.x, V.lk.y), line: P((V.X(t0) + V.X(t0 + 15)) / 2, (V.lk.y + V.plot.h) / 2), pill: P(V.X(t0), V.taxisY + 14) }; }
+      if (V.win && V.win.pA != null) C2.pricePill = P(V.plot.w + 40, V.Y(V.win.pA));
+      const h = hv();
+      if (h && h.k === 'pt' && F.M[h.i]) { const m = F.M[h.i], at = e => m[e].s === 'known' ? P(V.X(m[e].t + 2.5), V.Y(F.u2p(m[e].v / m.w))) : null; C2.pair = { R: at('R'), X: at('X') }; const j = F.grid.findIndex(T => T > m.act + 60 && m.path[F.grid.indexOf(T)]); if (j >= 0) C2.pair.path = P(V.X(F.grid[j] - 2.5), V.Y(F.u2p(m.path[j][2] / m.w))); }
+      if (st.area && V.areaHit) C2.area = V.areaHit.map(a => ({ part: a.part, box: [...P(a.box[0], a.box[1]), Math.round(a.box[2]), Math.round(a.box[3])] }));
+      if (h && h.k === 'lvl' && h.l) C2.level = P(V.plot.w - 300, V.Y(h.l.p));
+      if (h && h.k === 'pcell') { const b = (V.projBars || []).find(q => q.ev === h.ev && q.k === h.k0); if (b) C2.hovRow = P(V.projCols[h.ev][0] + 14, (b.top + b.bot) / 2); C2.hovBand = P(V.plot.w * 0.55, (cellY(F, h.k0, h.k1)[0] + cellY(F, h.k0, h.k1)[1]) / 2); }
+      if (h && h.k === 'tcell') { const c = (V.bandCols || []).find(q => q.b === h.b0); if (c) { C2.hovCol = P((c.x0 + c.x1) / 2, V.bandCy - 6); C2.hovColChart = P((c.x0 + c.x1) / 2, V.plot.h * 0.3); } }
+      if (h && h.k === 'zone') { const g = CL[h.ev][h.i]; C2.zoneCells = P(V.X(F.f + 15 * g.z.cell_mask[0][1] + 7.5), V.Y(F.u2p((g.z.cell_mask[0][0] + 0.5) / 10))); }
+    }
+    if (F && st.mode === 'path') {
+      const film = filmOf(F), j = Math.floor(film.length * 0.6), cd = film[j], k = [...cd.cells.keys()][0];
+      if (cd && k != null) C2.filmCell = P(V.X(cd.T - 2.5), (cellY(F, k, k + 1)[0] + cellY(F, k, k + 1)[1]) / 2);
+      if (V.projBars && V.projBars.length) { const b = V.projBars[Math.floor(V.projBars.length / 2)]; C2.filmCol = P(V.proj.x + 20, (b.top + b.bot) / 2); }
+    }
+    let el = document.getElementById('geo');
+    if (!el) { el = document.createElement('script'); el.type = 'application/json'; el.id = 'geo'; document.body.appendChild(el); }
+    el.textContent = JSON.stringify(G);
+  }
   function placeNav() {
     if (!V) return;
     nav.style.left = (V.plot.w / 2 - 50) + 'px';
@@ -1872,7 +1947,9 @@
     if (h && ['lvl', 'prev', 'vib'].includes(h.k)) { pin(h); return; }
     if (st.pin) { st.pin = null; st.hover = null; render(true); }
   }
-  const pinKey = h => h ? [h.k, h.i, h.id, h.j, h.part, h.cat, h.t, h.p].join('|') : '';
+  // R and X are on screen together: the event is part of the key (zone R2 is not zone X2), and so are the band, the
+  // window and the cell, so the passport of the first bottom window follows what is under the cursor
+  const pinKey = h => h ? [h.k, h.ev, h.i, h.id, h.j, h.part, h.cat, h.t, h.p, h.k0, h.b0, h.kk].join('|') : '';
   function pin(h) { st.pin = pinKey(st.pin) === pinKey(h) ? null : h; st.hover = null; tip.hidden = true; render(true); }
   cv.addEventListener('dblclick', e => {
     const [x, y] = local(e);
@@ -2053,6 +2130,7 @@
     if (q.get('col') != null && q.get('col') !== '') st.col = +q.get('col');                   // &col=12: an M5 column of «Путь семьи» pinned
     if (q.get('scope') === 'all') st.scope = 'all';                                         // &scope=all: the all-weekdays family
     if (q.get('zone')) st.pinZone = +q.get('zone');                                         // &zone=2: the second zone of the chosen event pinned
+    if (q.get('geo')) st.geo = true;                                                         // &geo=1: geometry for spec/ekran-24
     if (q.get('hov')) { const a = q.get('hov').split(':'); st.hover = a[0] === 'pcell' ? { k: 'pcell', ev: a[1], k0: +a[2], k1: +a[2] + 1, src: 'proj' } : a[0] === 'tcell' ? { k: 'tcell', b0: +a[1], b1: +a[1] + 1, src: 'strip' } : null; if (st.hover && st.hover.ev) st.ev = st.hover.ev; }   // review snapshots
     cfgPanel();
     if (/^\d{4}-\d\d-\d\d$/.test(q.get('date') || '')) { A.src = 'hist'; A.date = q.get('date'); A.jump = true; st.rpWanted = at; }

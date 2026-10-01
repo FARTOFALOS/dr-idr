@@ -10,9 +10,16 @@ specification, pushed to `main` on 2026-10-01; it is unchanged and runs next to 
 A separate version of the DR Lab screen, built 2026-10-01 at the operator's order: **design 22's working screen
 (candles, the day's DR / IDR, replay, the right panel, hover / pin, layers, settings) with its statistical layer replaced
 end to end by the semantic specification DR-LAB-SEM-1.0** ([`meaning/lens/2026-10-01-spec-v1/`](../../meaning/lens/2026-10-01-spec-v1/README.md)).
-Design 22 stays the working screen at `http://127.0.0.1:8767/` and is not changed (its files are untouched); design 24
-opens next to it at **`http://127.0.0.1:8767/24/`** — the desktop shortcut «DR Lab 24» (`start-dr-lab-24.cmd`, the same
-launcher with `-Page 24/`). «№22 ↗» in the toolbar opens design 22 on the same session and minute for comparison.
+**Since 2026-10-01 night design 24 is the working screen** (the operator; on branch `design-24`, not merged into
+`main` until he says so): `http://127.0.0.1:8767/` redirects to **`http://127.0.0.1:8767/24/`** (`lab/server.py`), so
+the shortcut «DR Lab» opens it, and «DR Lab 24» (`start-dr-lab-24.cmd`, the same launcher with `-Page 24/`) too.
+Design 22 is not changed (its files are untouched) and stays at `/22/` (= its built page `/index.html`); «№22 ↗» in
+the toolbar opens it on the same session and minute for comparison.
+
+**The full specification of this screen** — every element on annotated screenshots, what it means, how and from what
+it is counted, its denominator, the server and page code, how not to read it, the invariants and an audit procedure:
+[`../../spec/ekran-24/`](../../spec/ekran-24/README.md). Change an element → update its row there and re-shoot
+(`spec/ekran-24/tools/shots.py`, then `annotate.py`).
 
 It runs on market data only (no synthetic mockup): «История» opens **any trading date of 2006–2025 as if it were today**,
 its families taken only from earlier sessions, so the screen can be reviewed when the live session has no confirmation.
@@ -33,7 +40,8 @@ snapshot after a break), `&area=-4:-1` (price cells [−0,4; −0,1) SD) or `&ar
 box end), `&pt=3` (a family session pinned), `&lvl=u2` (a level pinned: drH, drL, idrH, idrL, mid, open, u1…u6, d1…d6),
 `&col=12` (an M5 column of «Путь семьи»), `&det=1` (details open), `&scope=all` (the all-weekdays family, an explicit
 choice), `&zone=2` (the second zone of the event in focus pinned), `&hov=pcell:X:9` or `&hov=tcell:8` (as if a price band of X or a
-15-minute window were hovered, for review snapshots). `window.__d24` exposes `st`, `cur()`, `passports()`,
+15-minute window were hovered, for review snapshots), `&geo=1` (the page writes the geometry of every layer and panel
+block into `<script id="geo">`, for `spec/ekran-24/tools/`). `window.__d24` exposes `st`, `cur()`, `passports()`,
 `zonesOf()`, `zoneStatus()`, `V` (this frame: `zoneHit`, `hills`, `projCols`, `lk`).
 
 Snapshots for the review: [`shots/`](shots/) (history days of NQ; screenshots of the tool, not the tape — AGENTS.md rule 1).

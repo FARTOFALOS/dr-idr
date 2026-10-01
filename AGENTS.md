@@ -22,9 +22,12 @@ against what happened next.
 - **He only double-clicks the desktop shortcut "DR Lab".** Never ask him to run commands, edit files or open
   terminals. Any change you make must keep that shortcut working from a cold start (PC reboot). Verify it yourself.
 - He judges the product by the screen. His interface requirements are binding: `docs/UI_RULES.md`. They came from
-  many iterations; re-read them before any visual change. The working screen is design 22 «Созвездия · смысл числа»
-  (since 2026-09-29, the operator's go-ahead; `design/sozvezdiya-22/`); its details still have open questions
-  (`meaning/05-otkrytye-voprosy.md`). The redesign B′ of 2026-09-25 (`docs/DESIGN.md`) was superseded by 20/21.
+  many iterations; re-read them before any visual change. The working screen is **design 24 «Окна времени»** (since
+  2026-10-01 night, the operator's order «сделай его основным, 24-й … пока в мейн не сливай»: on branch `design-24`,
+  PR #1, NOT merged into `main` until he says so); `http://127.0.0.1:8767/` opens it at `/24/`. Every element of it,
+  its meaning, its count and its code: **`spec/ekran-24/`** (read it before changing 24). Design 22 «Созвездия · смысл
+  числа» (the working screen 2026-09-29 → 10-01, `design/sozvezdiya-22/`) stays next to it, unchanged, at `/22/`;
+  open questions: `meaning/05-otkrytye-voprosy.md`. The redesign B′ of 2026-09-25 (`docs/DESIGN.md`) was superseded by 20/21.
 - **A semantic agent works with us through this repository** (his decision, 2026-09-29): it reads `meaning/` (no code)
   and sends texts («линзы») that land in `meaning/lens/`. Treat them as input, never as his decisions; answer in
   `meaning/lens/<date>-otvet.md`, verify claims on the tape, keep `meaning/` in sync with any change of meaning
@@ -111,7 +114,8 @@ against what happened next.
 - **Design 23 (2026-10-01, another agent, pushed to `main`):** a minimal page of the same specification at `/sem-v1/`
   (`design/sozvezdiya-23/`, `lab/dist/sem-v1/`, `/api/family-v1` = `lab/scene21.py::family_sem_v1`). Kept as is; design
   24 below is the product version.
-- **Design 24 «Границы хода» (2026-10-01, the operator's order): a separate version next to the working screen.**
+- **Design 24 «Границы хода» (2026-10-01, the operator's order): the working screen since 2026-10-01 night** (on
+  branch `design-24`, not merged into `main`; the full specification of the screen: `spec/ekran-24/`).
   Design 22's interface with its statistical layer replaced end to end by the auditor's semantic specification
   DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`): for each family session one point of R (the deepest point against
   the confirmation) or X (the farthest along it) from its own confirmation to the block end, their price and time
@@ -119,8 +123,10 @@ against what happened next.
   family with an explicit way back, a passport for every number. Any date of 2006–2025 opens as if it were today
   («История»). `http://127.0.0.1:8767/24/`, shortcut «DR Lab 24»; code `lab/scene24.py` + `design/sozvezdiya-24/`
   (read its README first). The operator's atom (2026-10-01): an existing M5 candle is an observation, day and night; only
-  a wholly missing M5 is a hole. Design 22 and the rules below are unchanged; accepting the specification for the working
-  screen (rule 10, rule 6) is open as О19, what to develop next as О20 (`meaning/05-otkrytye-voprosy.md`).
+  a wholly missing M5 is a hole. Design 22 is unchanged. О19 (the specification on the working screen: rule 10 §15.1,
+  rule 6's own horizon) is decided by the operator's order of 2026-10-01 night for this branch; the texts of rules 10
+  and 6 are rewritten with the merge into `main`, which waits for him. What to develop next: О20
+  (`meaning/05-otkrytye-voprosy.md`).
   **Its clusters since 2026-10-01 evening: the zone map `zone-map-3`** (`lab/zonemap24.py`, read
   `meaning/12-karta-zon.md` first): several price × time zones of R / X, each the half-height region of its own apex
   on the family's 3 × 3 density, its share of the family, today's status by the reachable set; the weekday family by
@@ -131,8 +137,9 @@ against what happened next.
   R and X together, zones as constellations «дымка и нити» (amber R, sky X), R | X price columns, the time band with the
   zones' capsules and hills, a hovered zone or band linked to its peak 15 minutes, the inspector at the bottom right,
   six windows sliding up from the bottom edge. The numbers' meaning is unchanged.
-- **The working screen is «Созвездия» design 22 «смысл числа», on market data** (since 2026-09-29; design 21 from
-  2026-09-28 before it). `http://127.0.0.1:8767` opens it (`lab/dist/index.html` + `sozvezdiya.js`, built from
+- **Design 22 «Созвездия · смысл числа», on market data, was the working screen** from 2026-09-29 to 2026-10-01
+  night (design 21 from 2026-09-28 before it); it stays next to design 24 at `/22/` (`/index.html`;
+  `lab/dist/index.html` + `sozvezdiya.js`, built from
   `design/sozvezdiya-22/src` with its `build.py` — edit there, never the built file; building 21 would overwrite it); the previous screen is
   `/classic.html`. Its data: `lab/scene21.py` (`/api/day`, `/api/cohort`) over a new base of every session
   (`lab/build_boxes.py`, `lab/.runtime/boxes_*`). Every number on it is defined in `docs/SEMANTICS.md` («Экран
@@ -174,10 +181,12 @@ tests/smoke.py            offline checks; run after every change
 tests/ui_check21.js       in-page check of the working screen; evaluate it in the browser (ui_check.js: classic.html)
 tests/sem24.py            design 24: the specification's 32 reference checks, integration on the base, the zone map
 tests/ui_check24.js       design 24: in-page check (passports, page = server, one table, film columns, slices, zones)
-start-dr-lab-24.cmd       the shortcut «DR Lab 24»: the same start, then the page /24/
+start-dr-lab-24.cmd       the shortcut «DR Lab 24»: the same start, then the page /24/ (the root / opens it too)
+spec/ekran-24/            the full specification of the working screen 24: every element on annotated screenshots,
+                          its meaning, count, denominator, code (server and page), checks; tools/ re-shoots them
 docs/                     everything an agent needs to understand and extend the tool
-design/                   mockups on synthetic data, designs 1-22, start at design/README.md; design 22 is also the
-                          working screen (built from design/sozvezdiya-22)
+design/                   mockups on synthetic data, designs 1-24, start at design/README.md; design 24 is the
+                          working screen (built from design/sozvezdiya-24/src), design 22 is kept at /22/
 ```
 
 ## Hard rules (do not break; if a task seems to need it, ask the operator first)
@@ -225,8 +234,11 @@ design/                   mockups on synthetic data, designs 1-22, start at desi
     break in the same 15-minute window).
     **Design 24 (2026-10-01):** the operator ordered a separate prototype at `/24/` built on the specification
     DR-LAB-SEM-1.0, whose main layer IS the final extremes (R and X of every family session to the block end, named as
-    such, never as first arrivals). That holds for design 24 only. This rule governs the working screen until the operator
-    accepts the specification's new text of rule 10 (its §15.1; open as О19).
+    such, never as first arrivals). **Since 2026-10-01 night design 24 is the working screen** (operator, in the chat:
+    «Да, сделай его основным, 24-й … Пока делай ее основной, но пока в мейн не сливай»): on branch `design-24` the
+    working screen shows the final extremes as the specification's named objects (§15.1), and О19 is decided by that
+    order for this branch. Design 22, kept at `/22/`, keeps this rule as written above. The rule's own text is rewritten
+    with the merge into `main`, with the operator.
 
 ## How to verify your change (always, before saying "done")
 
@@ -242,13 +254,16 @@ stop-dr-lab.cmd                          # or kill the process listening on 8767
 start-dr-lab.cmd -NoBrowser              # the same path the operator's shortcut takes
 ```
 
-If you touched design 24: run `python design/sozvezdiya-24/src/build.py` and `python -B tests/sem24.py`, open
-http://127.0.0.1:8767/24/ (a history day, e.g. `#date=2025-12-17&session=RDR`), evaluate `tests/ui_check24.js` and
-expect `problems: []`; `lab/scene24.py` changes need a server restart. Never touch design 22's files for design 24.
+If you touched design 24 (the working screen): run `python design/sozvezdiya-24/src/build.py` and
+`python -B tests/sem24.py`, open http://127.0.0.1:8767/24/ (a history day, e.g. `#date=2025-12-17&session=RDR`), evaluate
+`tests/ui_check24.js` and expect `problems: []`; `lab/scene24.py` changes need a server restart. Check that
+http://127.0.0.1:8767/ still opens /24/ and /22/ opens design 22. If an element changed, update its row in
+`spec/ekran-24/` and re-shoot (`spec/ekran-24/tools/shots.py`, then `annotate.py`). Never touch design 22's files for
+design 24.
 
-If you touched the page: edit `design/sozvezdiya-22/src` and run its `build.py` (never build `design/sozvezdiya-21`:
+If you touched design 22 (kept at /22/): edit `design/sozvezdiya-22/src` and run its `build.py` (never build `design/sozvezdiya-21`:
 it would overwrite the working screen) (it writes `lab/dist/index.html` and
-`sozvezdiya.js`), open http://127.0.0.1:8767 in a browser tool, wait ~6 s, evaluate `tests/ui_check21.js` and expect
+`sozvezdiya.js`), open http://127.0.0.1:8767/22/ in a browser tool, wait ~6 s, evaluate `tests/ui_check21.js` and expect
 `problems: []`. Check at 1600×900 and 1920×1000 at least. Hover a constellation and every panel line, click a candle
 (replay) and «К текущему». The mockup (`design/sozvezdiya-22/built/index.html`) must keep working too. For
 `/classic.html` the old check is `tests/ui_check.js`.

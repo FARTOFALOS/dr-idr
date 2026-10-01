@@ -2,8 +2,9 @@
 
 Design 24 = design 22's working screen (design/sozvezdiya-22) with its statistical layer replaced by the semantic
 specification DR-LAB-SEM-1.0 (meaning/lens/2026-10-01-specifikaciya-v1.md); data from lab/scene24.py (/api/d24/*).
-Design 22 stays the working screen at http://127.0.0.1:8767/ and is not touched; design 24 opens at /24/ (the desktop
-shortcut «DR Lab 24», start-dr-lab-24.cmd). There is no synthetic mockup: a date of 2006-2025 opens as if it were today.
+Since 2026-10-01 night design 24 is the working screen (operator): http://127.0.0.1:8767/ opens /24/; design 22 is kept
+untouched next to it at /22/. There is no synthetic mockup: a date of 2006-2025 opens as if it were today. Every element
+of the screen, its meaning, its count and its code: spec/ekran-24/.
 
 python build.py        (from this folder)
 """

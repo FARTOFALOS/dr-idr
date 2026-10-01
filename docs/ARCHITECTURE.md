@@ -9,8 +9,8 @@ plain arithmetic over the history base, so the same candles always give the same
 TradingView Desktop  --(Chrome DevTools, 127.0.0.1:9222)-->  lab/tv_fetch.mjs  (node, one shot per refresh)
                                                                    |
 browser page  <--HTTP 127.0.0.1:8767-->  lab/server.py (python)  --+--> lab/scene21.py --> boxes_* (every session, M5)
- (dist/*.js)                                  |                    |    (working screen: /api/day, /api/family, /api/cohort)
-                                              |                    +--> lab/scene24.py --> boxes_* (design 24 at /24/: /api/d24/*)
+ (dist/*.js)                                  |                    |    (design 22 at /22/: /api/day, /api/family, /api/cohort)
+                                              |                    +--> lab/scene24.py --> boxes_* (working screen 24 at /24/: /api/d24/*)
                                               |                    +--> lab/live.py  --> lab/engine_market.py
                                               |                         (classic screen: /api/live)   (episodes in RAM)
                                               +--> lab/engine_market.py  (history dashboard of the classic screen)
@@ -178,15 +178,18 @@ complete_n, median_retr, median_ext, median_rtime`.
 
 ## Front end (`lab/dist/`)
 
-- `index.html` + `sozvezdiya.js` — **the working screen «Созвездия» (design 22)**, built from `design/sozvezdiya-22/src`
+- `index.html` + `sozvezdiya.js` — **design 22 «Созвездия»** (the working screen 2026-09-29 → 10-01; since then at `/22/`,
+  which redirects here), built from `design/sozvezdiya-22/src`
   by its `build.py` (edit there, never the built files): the whole trading day on a canvas, levels, stars, places and
   constellations, the fan, the right panel; data from `/api/day`, `/api/family` (after a confirmation) and `/api/cohort`
   (before one), refreshed after every M5 close while
   a session runs. Check with `tests/ui_check21.js`.
-- `24/index.html` + `24/d24.js` — **design 24 «Границы хода»** at `/24/` (the shortcut «DR Lab 24», `start-dr-lab-24.cmd`
+- `24/index.html` + `24/d24.js` — **design 24 «Границы хода», the working screen since 2026-10-01 night** at `/24/`
+  (the root `/` redirects here; the shortcuts «DR Lab» and «DR Lab 24», `start-dr-lab-24.cmd`
   = `start-dr-lab.ps1 -Page 24/`), built from `design/sozvezdiya-24/src` by its `build.py`: design 22's screen with the
   statistical layer of DR-LAB-SEM-1.0; data from `/api/d24/*`; a history date opens as if it were today. Check with
-  `tests/ui_check24.js` (in the page) and `tests/sem24.py` (definitions). Design 22 is not changed by it.
+  `tests/ui_check24.js` (in the page) and `tests/sem24.py` (definitions). Design 22 is not changed by it. Every element,
+  its count and code: `spec/ekran-24/`.
 - `classic.html` — **the previous screen**, kept at `/classic.html` (it was `index.html` until 2026-09-28): one page.
   `body.focus` (default) hides the research sidebar and headings; ☰ toggles it (`localStorage dr-lab-focus`).
 - `app.js` — the history dashboard (sidebar filters, KPIs, bottom charts `drawPath/drawHeat/drawHist`, scenes view,

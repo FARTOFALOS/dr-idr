@@ -51,6 +51,10 @@
     if (h && h.k === 'lvl' && h.l) out.push(levelHtml(F, ctx, h.l));
     if (h && h.k === 'pt' && F.M[h.i]) out.push(memberHtml(F, F.M[h.i]));
     panel.innerHTML = out.join('');
+    // a new selection (area, level, history session) stands at the end of the panel, under the inspector's edge: scroll
+    // the panel to it once, when it appears (the layout stays; the panel keeps its own scroll otherwise)
+    const sk = (st.area ? [st.area.k0, st.area.k1, st.area.b0, st.area.b1, st.area.ev].join(',') : '') + '|' + pinKey(st.pin);
+    if (sk !== P24.selKey) { P24.selKey = sk; const el = panel.querySelector('.p24-sel'); if (el) panel.scrollTop = Math.min(panel.scrollHeight - panel.clientHeight, el.offsetTop - 8); }
     panelMarks();
   }
   // the zone map of the chosen event (zone-map-3): the family scope (weekday by default, all weekdays only by an explicit
@@ -113,7 +117,7 @@
     return '<div class="p21-h second">DR до ' + clk(F.end) + '<span>доля всей семьи</span></div>' + bar + '<div class="p24-out big">' + rows + '</div>';
   }
   function areaHtml(F, ctx) {
-    const I = areaInfo(F, ctx), out = ['<div class="p21-h second">Выбранная область <span><button class="p24-x" data-clear="area" title="Снять выбор (Esc)">✕</button></span></div>'];
+    const I = areaInfo(F, ctx), out = ['<div class="p21-h second p24-sel">Выбранная область <span><button class="p24-x" data-clear="area" title="Снять выбор (Esc)">✕</button></span></div>'];
     out.push('<div class="p21-note"><b style="color:#D1D4DC;font-weight:600">' + esc(I.name) + '</b>' + (I.prices ? ' · ' + px(I.prices[0]) + ' – ' + px(I.prices[1]) + ' · ' + esc(where(ctx.s, (I.prices[0] + I.prices[1]) / 2)) : '') + '</div>');
     if (I.band) out.push(link({ k: 'area', part: 'band' }, prow('<i style="color:' + cfg[I.ev] + '">' + I.ev + '</i> в полосе за всю сессию', ppTxt(I.band)), '', I.band, plainTitle(I.band)));
     if (I.win) out.push(link({ k: 'area', part: 'window' }, prow('<i style="color:' + cfg[I.ev] + '">' + I.ev + '</i> в выбранном окне', ppTxt(I.win)), '', I.win, plainTitle(I.win)));
@@ -126,14 +130,14 @@
   }
   function levelHtml(F, ctx, l) {
     const q = levelQuery(F, ctx, l.p, l.type === 'std' ? l.name : l.full), sl = sliceOf(ctx);
-    return '<div class="p21-h second">Уровень <span>' + esc(l.type === 'std' ? l.name : l.full) + ' · ' + px(l.p) + ' <button class="p24-x" data-clear="pin" title="Снять (Esc)">✕</button></span></div>' +
+    return '<div class="p21-h second p24-sel">Уровень <span>' + esc(l.type === 'std' ? l.name : l.full) + ' · ' + px(l.p) + ' <button class="p24-x" data-clear="pin" title="Снять (Esc)">✕</button></span></div>' +
       link({ k: 'lvl', id: l.id, l }, prow('дальше ' + dirName(F, q.up) + ' · вся сессия', ppTxt(q.full, true)), '', q.full, plainTitle(q.full)) +
       link({ k: 'lvl', id: l.id, l }, prow('дальше ' + dirName(F, q.up) + ' · ' + (sl >= F.end ? 'остатка нет' : 'после ' + clk(sl)), ppTxt(q.rest, true)), '', q.rest, plainTitle(q.rest)) +
       '<div class="p21-note">' + esc(q.today) + '</div>';
   }
   function memberHtml(F, m) {
     const ev = e => m[e].s === 'known' ? sd(m[e].v / m.w) + ' SD · ' + px(F.u2p(m[e].v / m.w)) + ' · ' + clk(m[e].t) : 'неизвестно';
-    return '<div class="p21-h second">Сессия семьи <span>' + esc(memberLine(F, m)) + ' <button class="p24-x" data-clear="pin" title="Снять (Esc)">✕</button></span></div>' +
+    return '<div class="p21-h second p24-sel">Сессия семьи <span>' + esc(memberLine(F, m)) + ' <button class="p24-x" data-clear="pin" title="Снять (Esc)">✕</button></span></div>' +
       '<div class="p24-mem"><div><i style="color:' + cfg.R + '">R</i> ' + F.names.R.toLowerCase() + ': ' + ev('R') + '</div><div><i style="color:' + cfg.X + '">X</i> ' + F.names.X.toLowerCase() + ': ' + ev('X') + '</div>' +
       '<div class="p21-sub">' + esc(orderText(F, m)) + '</div>' +
       (F.brk ? '' : '<div class="p21-sub">' + (m.outcome === 'broken' ? 'DR сломан ' + (m.brkKnown ? clk(m.brk) : '') : m.outcome === 'held' ? 'DR удержался до ' + clk(F.end) : 'исход DR неизвестен') + '</div>') +
