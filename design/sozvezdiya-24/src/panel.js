@@ -49,7 +49,7 @@
           phrase: F.names[st.ev].toLowerCase() + ' ' + st.ev + ' не определено (нет свечи M5 на горизонте' + (D.none ? ' или нет периода' : '') + '); на графике не рисуется', horizon: F.from + ' до ' + clk(F.end) });
         out.push(link({ k: 'evrow' }, prow('не определено · нет свечи M5', pct(u.pct)), 'dim', u, plainTitle(u)));
       }
-      out.push(mcHtml(F));
+      out.push(zonesHtml(F, ctx));
       const tf = todayFacts(F, ctx);
       if (tf) out.push('<div class="p21-note" title="Наблюдённые закрытые свечи сегодняшнего дня после ' + (F.brk ? 'слома' : 'подтверждения') + ' до среза; не окончательные значения">' + tf + '</div>');
     }
@@ -62,16 +62,24 @@
     panel.innerHTML = out.join('');
     panelMarks();
   }
-  // the automatic main cluster of the chosen event (meaning/11): its share when it got the name; otherwise why not, and
-  // its best block offered as an ordinary selected area (no name, spec §7.1)
-  function mcHtml(F) {
-    const m = mcOf(F);
-    if (!m || m.status === 'none') return '';
-    if (m.named) {
-      const p = mcPass(F, m);
-      return link({ k: 'mc' }, '<span class="t"><span><i style="color:' + cfg[st.ev] + '">▣</i> главный кластер</span><span class="p21-sub">' + esc(mcName(F, m.block)) + '</span></span><b>' + ppTxt(p) + '</b>', 'mc', p, plainTitle(p));
-    }
-    return '<div class="p21-note">главный кластер не установлен: ' + esc(mcWhy(F, m)) + ' · <a href="#" class="p24-a" data-mcarea="1">лучший блок как область</a></div>';
+  // the zone map of the chosen event (zone-map-3): the family scope (weekday by default, all weekdays only by an explicit
+  // click), every zone in the order of time with its share of the family and today's status, then the residual. No
+  // counts of sessions; a share is never a chance for today.
+  const scopeSwitch = () => '<span class="p24-seg sm"><button data-scope="weekday" class="' + (st.scope === 'weekday' ? 'on' : '') + '">день недели</button><button data-scope="all" class="' + (st.scope === 'all' ? 'on' : '') + '">все дни</button></span>';
+  function zonesHtml(F, ctx) {
+    const Zm = zonesOf(F);
+    if (!Zm) return '';
+    const S = zoneStatus(F, ctx, st.ev), out = ['<div class="p21-h second">Зоны ' + st.ev + scopeSwitch() + '</div>'];
+    if (!Zm.zones.length) out.push('<div class="p21-note">зон нет: ни одна область не набрала минимальной поддержки</div>');
+    Zm.zones.forEach((z, i) => {
+      const p = zonePass(F, st.ev, z);
+      out.push(link({ k: 'zone', ev: st.ev, i }, '<span class="t"><span><i style="color:' + cfg[st.ev] + '">▣</i> ' + z.label + ' · ' + clk(z.time_start) + '–' + clk(z.time_end) +
+        '</span><span class="p21-sub">' + band(z.price_low, z.price_high) + ' SD · сегодня ' + ZST[S[i]] + '</span></span><b>' + ppTxt(p) + '</b>', 'mc zst-' + S[i], p, plainTitle(p)));
+    });
+    const r = pp(F, { event_id: st.ev, region_kind: 'residual', exact_price_bounds: null, time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end),
+      yes_count: Zm.n_residual_total, display_scope: 'zone', phrase: F.names[st.ev].toLowerCase() + ' ' + st.ev + ' вне зон (остаток распределения)', horizon: F.from + ' до ' + clk(F.end) });
+    out.push(link({ k: 'evrow' }, prow('остаток · вне зон', pct(r.pct)), 'dim', r, plainTitle(r)));
+    return out.join('');
   }
   // today's own path after the activation (facts, not shares): the deepest and the farthest closed-M5 point so far
   function todayFacts(F, ctx) {
@@ -156,7 +164,7 @@
   // share of «на уровне или дальше» / «заходили» changes when the remaining hours start later (the snapshot does not).
   function detailObj(ctx) {
     const h = hv();
-    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow', 'mc'].includes(h.k)) return h;
+    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow', 'zone'].includes(h.k)) return h;
     if (st.area) return { k: 'area', part: 'band' };
     return null;
   }
@@ -170,27 +178,29 @@
       (p.unknown_count ? dRow('неизвестно', pct(100 * p.unknown_count / p.N) + (p.binary ? '' : ' <span class="k">граница: до ' + pct(100 * (p.yes_count + p.unknown_count) / p.N) + '</span>')) : '') +
       dRow('знаменатель', 'вся семья, шаг доли ' + pct(100 / p.N));
   }
-  // the five conditions of the name with their numbers (meaning/11 §2) and the check of the rule on 2018-2025 (§6)
-  function mcRows(F, m) {
-    const c = m.checks, b = m.block, kb = b.k1 - b.k0, tb = b.b1 - b.b0, sh = n => pct(100 * n / F.N), list = a => a.map(sh).join(', ');
-    const ok = k => !c[k] ? '— не проверялось' : c[k].ok ? '✓' : '✗';
-    let s = dRow('правило', esc(m.rule) + ' <span class="k">блок ' + num(kb / 10, 1) + ' SD × ' + 15 * tb + ' мин, где известных событий больше всего; имя — только при У1–У5 (meaning/11)</span>');
-    if (c.U1) s += dRow('У1 гуще соседей', ok('U1') + ' без одной своей сессии ' + sh(m.yes - 1) + ' · соседи по цене ' + list(c.U1.price) + ' · по времени ' + (c.U1.time.length ? list(c.U1.time) : 'нет') + ' <span class="k">нужно вдвое больше среднего соседа</span>');
-    if (c.U2) s += dRow('У2 отрыв', ok('U2') + ' ' + (c.U2.rival ? sh(c.U2.lead) + ' <span class="k">ближайший соперник ' + mcName(F, { k0: c.U2.rival.k0, k1: c.U2.rival.k0 + kb, b0: c.U2.rival.b0, b1: c.U2.rival.b0 + tb }) + ' — ' + sh(c.U2.rival.yes) + (c.U2.rival.unknown ? ', и неизвестных, которые могли бы туда лечь, до ' + sh(c.U2.rival.unknown) : '') + '; нужно не меньше двух сессий</span>' : 'другого места нет'));
-    if (c.U3) s += dRow('У3 сетка', ok('U3') + ' то же место на ' + c.U3.same + ' из ' + c.U3.of + ' сеток <span class="k">сдвиг на 0,05 SD и на 5 / 10 мин</span>');
-    if (c.U4) s += dRow('У4 сессии', ok('U4') + ' то же место в ' + pct(100 * c.U4.same) + ' пересэмплирований <span class="k">нужно 80%</span>');
-    if (c.U5) {
-      const o = c.U5.older, n = c.U5.newer, nb = n.neighbours || [];
-      const small = n.n < 30 ? 'младшая половина меньше тридцати сессий' : '';
-      s += dRow('У5 новая история', ok('U5') + ' ' + [small, o.k0 != null ? 'старшая половина нашла ' + (o.same ? 'то же место' : 'другое место') : '',
-        n.yes != null ? 'в младшей в блоке ' + pct(100 * n.yes / n.n) + ' её сессий, у соседей в среднем ' + pct(100 * nb.reduce((a, x) => a + x, 0) / Math.max(1, nb.length) / n.n) + ', p ' + (n.p < 0.001 ? '< 0,001' : num(n.p, 3)) : ''].filter(Boolean).join(' · ') +
-        ' <span class="k">нужно: младшая половина от тридцати сессий, то же место, в 1,5 раза гуще соседей, p ≤ 0,05</span>');
-    }
-    const me = m.method;
-    if (me) {
-      const e = me.event || {};
-      s += dRow('проверка 2018–2025', (me.held ? 'выдержана' : 'не выдержана') + ' для ' + F.r.key.session + ' <span class="k">следующая сессия попадала в блок такого кластера ' + m.event + ' в ' + pct(100 * e.landed) + ' случаев при доле семьи ' + pct(100 * e.family_share) + ' — сбывалось ' + num(e.ratio, 2) + ' заявленной доли; в соседний блок того же размера — ' + pct(100 * e.neighbour) + '</span>');
-    } else s += dRow('проверка 2018–2025', F.brk ? 'семья слома не проверялась' : 'нет');
+  // the passport of a zone (zone-map-3 §40) and, in the right column, its diagnostics: properties of the zone, never a
+  // permission to exist; the study figures are research, not a chance for today
+  function zoneRows(F, ctx, ev, i) {
+    const Zm = zonesOf(F, ev), z = Zm.zones[i], s = zoneStatus(F, ctx, ev)[i], sh = n => pct(100 * n / F.N);
+    return dRow('зона', esc(z.label + ' · ' + z.zone_id + ' · ' + z.algorithm_version)) +
+      dRow('семья', esc((z.family_scope === 'all' ? 'все дни недели' : 'день недели') + ' · ' + F.cond)) +
+      dRow('область', z.cell_mask.length + ' клеток 0,1 SD × 15 мин <span class="k">рамка ' + band(z.price_low, z.price_high) + ' SD × ' + clk(z.time_start) + '–' + clk(z.time_end) + ' — только подпись; членство — сами клетки</span>') +
+      dRow('вершина', 'клетка ' + band(z.peak_anchor[0], z.peak_anchor[0] + 1) + ' SD × ' + clk(F.f + 15 * z.peak_anchor[1]) + '–' + clk(F.f + 15 * z.peak_anchor[1] + 15)) +
+      dRow('доля семьи', pct(100 * z.p_snapshot) + ' <span class="k">шаг доли ' + pct(100 / F.N) + '; неизвестно у ' + sh(Zm.unknown_count) + ', нет периода у ' + sh(Zm.no_event_count) + '; вне зон ' + sh(Zm.n_residual_total) + '</span>') +
+      dRow('сегодня', ZST[s] + ' <span class="k">по сегодняшнему экстремуму после ' + (F.brk ? 'слома' : 'подтверждения') + ' и времени; не вероятность</span>') +
+      dRow('слепок', esc(z.snapshot_id + ' · семья ' + z.family_id));
+  }
+  function zoneDiag(F, ev, z) {
+    const g = z.grid_member_jaccard, b = z.bootstrap_recovery, f2 = v => v == null ? '—' : num(v, 2);
+    let s = dRow('сдвиг сетки', 'те же сессии на 0,05 SD — ' + f2(g.price_half) + ', на 5 мин — ' + f2(g.time_5) + ', на 10 мин — ' + f2(g.time_10) + ' <span class="k">Жаккар множеств сессий; 1 — та же зона</span>') +
+      dRow('пересэмплирование', 'в среднем ' + f2(b.mean) + ', не меньше 0,5 — в ' + (b.share_ge_half == null ? '—' : pct(100 * b.share_ge_half)) + ' из ' + b.of + ' повторов');
+    if (z.null_status === 'measured') {
+      s += dRow('путь без направления', 'на сессиях, не искавших зону: реальные ' + pct(100 * z.p_real_mask) + ', без направления ' + pct(100 * z.p_null_mask) +
+        ' · избыток ' + (z.null_excess >= 0 ? '+' : '−') + num(Math.abs(100 * z.null_excess), 1) + ' п.п. (5–95 %: ' + num(100 * z.null_interval[0], 1) + '…' + num(100 * z.null_interval[1], 1) + ')' +
+        ' <span class="k">различим с ' + num(100 * z.minimum_detectable_excess, 1) + ' п.п.; зона старшей половины совпала на ' + f2(z.null_frozen_overlap) + '</span>');
+    } else s += dRow('путь без направления', '<span class="k">' + esc(z.null_status.replace('not_applicable: ', 'не считается: ')) + '</span>');
+    const st2 = z.study_refs;
+    if (st2) s += dRow('исследование', '<span class="k">' + esc(st2.text) + '</span>');
     return s;
   }
   function details(ctx) {
@@ -250,11 +260,11 @@
       head += ' · исход DR';
       const nm = { held: 'удержался', broken: 'сломан', unknown: 'неизвестно', none: 'нет периода' }[o.cat];
       body = dRow('категория', nm) + dRow('доля', pct(100 * F.out[o.cat] / F.N)) + dRow('правило', 'закрытие M5 строго за своим противоположным DR; тень и равенство не ломают; слом не отменяется возвратом') + dRow('горизонт', F.from + ' до ' + clk(F.end));
-    } else if (o.k === 'mc' && mcOf(F) && mcOf(F).block) {
-      const m = mcOf(F);
-      head += ' · главный кластер ' + m.event + ' · ' + mcName(F, m.block);
-      body = passportRows(mcPass(F, m));
-      side = mcRows(F, m);
+    } else if (o.k === 'zone' && zonesOf(F, o.ev) && zonesOf(F, o.ev).zones[o.i]) {
+      const Zm = zonesOf(F, o.ev), z = Zm.zones[o.i];
+      head += ' · зона ' + z.label + ' · ' + zoneName(z);
+      body = zoneRows(F, ctx, o.ev, o.i);
+      side = zoneDiag(F, o.ev, z);
     } else if (o.k === 'evrow') {
       const D = F.ev[st.ev];
       head += ' · ' + F.names[st.ev] + ' ' + st.ev;
@@ -322,12 +332,8 @@
         else ensureDates().then(list => { const i = list.findIndex(x => x >= A.date), d = list[Math.max(0, (i < 0 ? list.length : i) - 1)]; if (d) openHist(d); });
         return;
       }
-      if (e.target.closest('[data-mcarea]')) {                      // the best block as an ordinary selected area
-        e.preventDefault();
-        const m = mcOf(V.ctx.F);
-        if (m && m.block) { st.area = { k0: m.block.k0, k1: m.block.k1, b0: m.block.b0, b1: m.block.b1 }; st.pin = null; render(true); }
-        return;
-      }
+      const sc = e.target.closest('[data-scope]');                // the explicit family scope (zone-map-3 §2.2)
+      if (sc) { st.scope = sc.dataset.scope; st.area = null; st.pin = null; st.hover = null; st.col = null; render(true); return; }
       const v = e.target.closest('[data-view]');
       if (v) { st.view = v.dataset.view; st.area = null; st.pin = null; st.hover = null; st.col = null; render(true); return; }
       const x = e.target.closest('[data-clear]');

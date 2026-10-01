@@ -41,8 +41,9 @@ from pathlib import Path
 
 import numpy as np
 
-import cluster24
+import cluster24  # noqa: F401  (main-cluster-1, kept for its archived studies; the screen shows the zone map)
 import scene21
+import zonemap24
 
 SEM_VERSION = "DR-LAB-SEM-1.0"
 SESS = scene21.SESS            # day minutes: (box start, box end = start of the trading window f, block end E)
@@ -53,6 +54,7 @@ DAYS = ("пн", "вт", "ср", "чт", "пт", "сб", "вс")
 RUNTIME = Path(__file__).resolve().parent / ".runtime"
 _MISSING = {}
 _SNAP = {}
+SCOPES = ("weekday", "all")    # zone-map-3 §2: the weekday family by default, all weekdays only on request
 
 
 def clk(t):
@@ -234,9 +236,10 @@ def dates(inst):
 
 
 # ---------- the snapshot of a family ----------
-def _snapshot(inst, B, session, weekday, side, view, win, cutoff):
-    """The family of the key and its measurements; independent of today's slice (spec §9.2, §13.1)."""
-    key = (inst, session, weekday, side, view, win, cutoff, source_version(inst, B)["built"])
+def _snapshot(inst, B, session, weekday, side, view, win, cutoff, scope="weekday"):
+    """The family of the key and its measurements; independent of today's slice (spec §9.2, §13.1). scope 'all' drops
+    the weekday from the key: another family, another N and snapshot (zone-map-3 §2.2), never a fallback."""
+    key = (inst, session, weekday, side, view, win, cutoff, scope, source_version(inst, B)["built"])
     if key in _SNAP: return _SNAP[key]
     start, formed, end = SESS[session]
     shift = SHIFT[session]
@@ -245,7 +248,7 @@ def _snapshot(inst, B, session, weekday, side, view, win, cutoff):
     members, journal = [], Counter()
     w_start, w_end = formed + WINDOW * win, formed + WINDOW * (win + 1)
     for i, m in enumerate(B["boxes"]):
-        if m["session"] != session or m["weekday"] != weekday or m["date"] >= cutoff: continue
+        if m["session"] != session or (scope == "weekday" and m["weekday"] != weekday) or m["date"] >= cutoff: continue
         gaps = miss.get(i, [])
         conf = None if m["conf"] is None else int(m["conf"]) - shift
         # the first confirmation is established when no whole M5 is missing before it (spec §3.2)
@@ -304,15 +307,15 @@ def _snapshot(inst, B, session, weekday, side, view, win, cutoff):
     if view == "conf": counts["outcome"] = {k: sum(1 for r in members if r["outcome"] == k) for k in ("held", "broken", "unknown", "none")}
     ids = [r["id"] for r in members]
     src = source_version(inst, B)
-    family_id = hashlib.sha1(json.dumps([SEM_VERSION, inst, session, weekday, side, view, win, cutoff, ids]).encode()).hexdigest()[:16]
+    family_id = hashlib.sha1(json.dumps([SEM_VERSION, inst, session, weekday if scope == "weekday" else "all", side, view, win, cutoff, ids]).encode()).hexdigest()[:16]
     measured = [[r["id"], r["R"], r["X"], r.get("outcome"), r["order"]] for r in members]
     snapshot_id = hashlib.sha1(json.dumps([family_id, src, measured], sort_keys=True).encode()).hexdigest()[:16]
     what = "подтверждение" if view == "conf" else "слом DR"
     snap = dict(
         status="ok", semantics=SEM_VERSION, source=src, view=view, family_id=family_id, snapshot_id=snapshot_id,
         key=dict(instrument=inst, session=session, weekday=weekday, direction="long" if side == 1 else "short",
-                 event="confirmation" if view == "conf" else "break", window=[w_start, w_end], cutoff=cutoff),
-        cond=f"{session} · {DAYS[weekday]} · {'лонг' if side == 1 else 'шорт'} · {what} {clk(w_start)}–{clk(w_end)}",
+                 event="confirmation" if view == "conf" else "break", window=[w_start, w_end], cutoff=cutoff, scope=scope),
+        cond=f"{session} · {DAYS[weekday] if scope == 'weekday' else 'все дни'} · {'лонг' if side == 1 else 'шорт'} · {what} {clk(w_start)}–{clk(w_end)}",
         N=N, ids=ids,
         scale=dict(orientation=side if view == "conf" else -side, edge="IDR на стороне подтверждения" if view == "conf" else "противоположный край IDR",
                    unit="ширина IDR", price_cell="1/10", time_cell=WINDOW, f=formed),
@@ -321,18 +324,46 @@ def _snapshot(inst, B, session, weekday, side, view, win, cutoff):
                    end="конец блока " + clk(end) + "; M5, закрывшаяся в " + clk(end) + ", входит",
                    time="открытие первой M5, достигшей цены", atom="существующая M5-свеча базы; дырка = целиком отсутствующая M5"),
         grid=grid, members=members, counts=counts, journal=dict(journal))
-    # the automatic main cluster of each event (meaning/11): its candidate, conditions У1-У5 and whether the check of
-    # 2018-2025 lets the screen give it the name; computed once per snapshot, so the slice never moves it
-    snap["clusters"] = {ev: cluster24.of_snapshot(snap, ev) for ev in ("R", "X")}
     if len(_SNAP) > 64: _SNAP.clear()
     _SNAP[key] = snap
     return snap
 
 
+def _today_zones(snap, bars, tick, d, e_px, w_px, act, slice_, formed, end):
+    """Today's provisional R and X after the activation, from closed M5 only, and the status of every zone at the slice
+    (zone-map-3 §24): HOLDS / POSSIBLE / IMPOSSIBLE by the reachable set; 'unknown' when a whole M5 is missing."""
+    tk = lambda p: int(round(p / tick))
+    e_t, w_t = tk(e_px), tk(w_px)
+    have = {int(b[0]) + 5: b for b in bars}
+    rows, gap = [], False
+    for T in range(act + 5, slice_ + 1, 5):
+        b = have.get(T)
+        if b is None: gap = True; continue
+        lo, hi = (b[3], b[2]) if d == 1 else (b[2], b[3])
+        rows.append((T, d * (tk(lo) - e_t), d * (tk(hi) - e_t)))
+    out = {}
+    for ev, zm in snap.get("zones", {}).items():
+        if gap:
+            out[ev] = dict(state="unknown", status=["STATUS_UNKNOWN"] * len(zm["zones"]))
+            continue
+        if rows:
+            j = min(range(len(rows)), key=lambda i: (rows[i][1], i)) if ev == "R" else min(range(len(rows)), key=lambda i: (-rows[i][2], i))
+            v = rows[j][1] if ev == "R" else rows[j][2]
+            q = zonemap24.cell_of(v, w_t, rows[j][0] - 5, formed)
+            out[ev] = dict(state="ok", q=list(q), v10=10 * v, w=w_t,
+                           status=[zonemap24.status(z["cell_mask"], ev, tuple(q), 10 * v, w_t, slice_, formed, end - 5) for z in zm["zones"]])
+        else:
+            out[ev] = dict(state="none", status=[zonemap24.status(z["cell_mask"], ev, None, None, w_t, slice_, formed, end - 5) for z in zm["zones"]])
+    return out
+
+
 def family(inst, session, at=None, date=None, view="auto"):
     """The request of design 24: today's state at the slice (closed M5 only, the rules of live.py) and the snapshot of
     its family. view: 'auto' = the break family after today's DR break, else the confirmation family; 'conf' = the
-    original confirmation snapshot (kept after a break, spec §9.3)."""
+    original confirmation snapshot (kept after a break, spec §9.3); a suffix ':all' asks for the all-weekdays family
+    (zone-map-3 §2.2, an explicit choice of the operator, never a fallback)."""
+    view, _, sc = (view or "auto").partition(":")
+    scope = "all" if sc == "all" else "weekday"
     if inst not in scene21.live.SYMBOLS: raise ValueError("Unknown instrument")
     if session not in SESS: raise ValueError("Unknown session")
     B = _base(inst)
@@ -353,7 +384,13 @@ def family(inst, session, at=None, date=None, view="auto"):
     v = "brk" if (view in ("auto", "brk") and brk) else "conf"
     win = today["brkWindow"] if v == "brk" else today["window"]
     cutoff = day["date"]
-    snap = _snapshot(inst, B, session, day["weekday"], side, v, win, cutoff)
+    snap = _snapshot(inst, B, session, day["weekday"], side, v, win, cutoff, scope)
+    # the zone maps of R and X (zone-map-3, meaning/12): once per snapshot (kept in it), so the slice never moves them
+    if "zones" not in snap: snap["zones"] = {e: zonemap24.evaluate(snap, e) for e in ("R", "X")}
     out = dict(snap)
-    out.update(today=today, available=dict(conf=True, brk=bool(brk)), weekday=day["weekday"])
+    d = side if v == "conf" else -side
+    e_px = (s["idrH"] if d == 1 else s["idrL"])
+    act = c0 if v == "conf" else brk
+    today["zones"] = _today_zones(snap, bars, float(day.get("tick") or 0.25), d, e_px, s["idrH"] - s["idrL"], act, today["slice"], formed, end)
+    out.update(today=today, available=dict(conf=True, brk=bool(brk), scopes=list(SCOPES)), weekday=day["weekday"])
     return out

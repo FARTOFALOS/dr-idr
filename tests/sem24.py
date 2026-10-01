@@ -8,6 +8,7 @@ Part 2: integration checks on the session base (lab/.runtime/boxes_*): the equal
 real families, including the two families of spec §12 (NQ RDR Wednesday long 11:45-12:00, NQ ODR Wednesday long
 04:00-04:15). Prints aggregates only (no dates, no paths). Exit code 0 = all good.
 """
+import json
 import sys
 from collections import Counter
 from fractions import Fraction as Q
@@ -204,75 +205,74 @@ for sess, win in (("ODR", 1), ("ADR", 1)):
     sn = snap(sess, 1, -1, "conf", win)
     check(sn["N"] >= 0 and sum(sn["counts"]["outcome"].values()) == sn["N"], f"{sess} Tue short window {win}: N {sn['N']}, outcome {sn['counts']['outcome']}, unknown R {sn['counts']['R']['unknown']}")
 
-# ---------- part 3: the automatic main cluster (lab/cluster24.py, meaning/11) ----------
+# ---------- part 3: the zone map (lab/zonemap24.py, zone-map-3, meaning/12) ----------
 print()
-print("Part 3: the main cluster")
-import numpy as np  # noqa: E402
-import cluster24 as C  # noqa: E402
-
-F0, E0 = 630, 960                          # RDR: cells from 10:30, block end 16:00; family window 0
+print("Part 3: the zone map")
+import random  # noqa: E402
+import zonemap24 as Z  # noqa: E402
 
 
-def fam(n, cluster=0, where=(0, 0), extra=(), old_only=False, seed=7, spread=(-20, 20)):
-    """A synthetic family in date order: `cluster` members inside the block at price cells where[0]…+4 and time cells
-    where[1]…+3, the others spread over the family's time and prices; w = 10, so the price cell of v is v."""
-    rng = np.random.default_rng(seed)
-    pts = []
-    picks = set(rng.choice(n // 2 if old_only else n, cluster, replace=False).tolist()) if cluster else set()
-    for i in range(n):
-        if i in picks: k, b = where[0] + int(rng.integers(0, 5)), where[1] + int(rng.integers(0, 4))
-        else: k, b = int(rng.integers(*spread)), int(rng.integers(0, 22))
-        pts.append(("k", k, 10, F0 + 15 * b + 5 * int(rng.integers(1 if b == 0 else 0, 3))))
-    for e in extra: pts[e[0]] = e[1]
-    return pts
+def zones_of(cells, N=None, b_lo=0, b_hi=40):
+    pts = [(k, b, f"s{i}") for i, (k, b) in enumerate(cells)]
+    return Z.zone_map(pts, N or len(pts), b_lo, b_hi)
 
 
-clear = fam(120, 36)
-r1 = C.main_cluster(clear, "R", F0, E0, 0)
-check(r1["status"] == "earned" and r1["block"]["k0"] in (-1, 0, 1) and r1["block"]["b0"] in (0, 1), f"a clear concentration earns the name (failed {r1['failed']}, block {r1.get('block')})")
-inside = sum(1 for p in clear if r1["block"]["k0"] <= p[1] < r1["block"]["k1"] and r1["block"]["b0"] <= (p[3] - F0) // 15 < r1["block"]["b1"])
-check(inside == r1["yes"], f"the cluster's number = the known events inside its block ({inside} = {r1['yes']})")
-check(C.main_cluster(clear, "R", F0, E0, 0) == r1, "the same family gives the same cluster (fixed resampling seed)")
-r2 = C.main_cluster(fam(120, 0, seed=8), "R", F0, E0, 0)
-check(r2["status"] == "candidate", f"a family without a concentration earns nothing (failed {r2['failed']})")
-r3 = C.main_cluster(fam(40, 12), "R", F0, E0, 0)
-check(r3["status"] == "candidate" and "U5" in r3["failed"], f"a family under 60 sessions earns nothing: the newer half is under 30 (failed {r3['failed']})")
-two = fam(120, 0, seed=9)
-rng = np.random.default_rng(3)
-for i in range(0, 120, 4): two[i] = ("k", int(rng.integers(0, 5)), 10, F0 + 15 * int(rng.integers(0, 4)) + 5)
-for i in range(2, 120, 4): two[i] = ("k", -12 + int(rng.integers(0, 5)), 10, F0 + 15 * (10 + int(rng.integers(0, 4))))
-r4 = C.main_cluster(two, "R", F0, E0, 0)
-check(r4["status"] == "candidate" and ("U2" in r4["failed"] or "U4" in r4["failed"]), f"two equal concentrations: no main one (failed {r4['failed']})")
-r5 = C.main_cluster(fam(120, 30, old_only=True), "R", F0, E0, 0)
-check(r5["status"] == "candidate" and "U5" in r5["failed"], f"a concentration only in the older half does not hold on the newer one (failed {r5['failed']})")
-# the unknown put against the leader: two unknown sessions that could stand in the rival's block lower the lead by 2
-base = fam(120, 0, seed=11, spread=(-40, 40))
-for j, i in enumerate(range(0, 120, 6)): base[i] = ("k", j % 5, 10, F0 + 15 * (j % 4) + 5)            # 20 in the leader
-for j, i in enumerate(range(3, 120, 7)): base[i] = ("k", -15 + j % 5, 10, F0 + 15 * (12 + j % 4))      # 17 in the rival
-lead = C.main_cluster(base, "R", F0, E0, 0)["checks"]["U2"]
-unk = list(base)
-for i in (1, 7): unk[i] = ("u", None, 10, None, [F0 + 15 * 13])                                        # nothing observed
-lead_u = C.main_cluster(unk, "R", F0, E0, 0)["checks"]["U2"]
-check(lead["lead"] - lead_u["lead"] == 2 and lead_u["rival"]["unknown"] == 2, f"the unknown counts against the leader (lead {lead['lead']} -> {lead_u['lead']})")
-r6 = C.main_cluster(clear, "R", F0, E0, 0, after=4)
-check(r6.get("block") is None or r6["block"]["b0"] >= 4, "the study's 'inside the session' candidate starts an hour after the first block")
-# on the base: the cluster is part of the snapshot, its number is its block's count, the name follows the check
-dd = "2025-12-09"
-seen = {}
-for at in (700, 840, 955):
-    r = S.family("NQ", "RDR", at=at, date=dd, view="conf")
-    if r.get("status") != "ok": continue
-    for ev in ("R", "X"):
-        c = r["clusters"][ev]
-        seen.setdefault(ev, set()).add((c["status"], str(c.get("block")), c.get("yes"), c["named"]))
-        if c.get("block"):
-            b = c["block"]
-            n = sum(n for k, t, n in r["counts"][ev]["cells"] if b["k0"] <= k < b["k1"] and b["b0"] <= t < b["b1"])
-            check(n == c["yes"], f"base: {ev} cluster number = its block's count in the snapshot ({n} = {c['yes']})")
-        check(not c["named"] or (c["status"] == "earned" and C.CHECK["RDR"]["held"]), f"base: {ev} named only when earned and the check of RDR held")
-check(all(len(v) == 1 for v in seen.values()) and seen, "base: the cluster does not move with the slice")
-rb = S.family("NQ", "RDR", date="2025-12-17", view="auto")
-if rb.get("status") == "ok" and rb["view"] == "brk": check(not any(rb["clusters"][e]["named"] for e in ("R", "X")), "base: the break family gets no name (not checked)")
+def blob(k, b, n, spread=1, seed=0):
+    rng = random.Random(seed)
+    return [(k + rng.randint(-spread, spread), b + rng.randint(-spread, spread)) for _ in range(n)]
+
+
+noise = [(k, b) for k, b in [(30, 2), (-25, 30), (12, 35), (-9, 20), (40, 12), (-40, 5)]]
+two = blob(0, 2, 30, seed=1) + blob(-15, 25, 24, seed=2) + noise
+m2 = zones_of(two)
+check(len(m2["zones"]) == 2 and m2["zones"][0]["time"][0] < m2["zones"][1]["time"][0], f"two separated concentrations: two zones in the order of time ({[z['n'] for z in m2['zones']]})")
+inz = [s for z in m2["zones"] for s in z["members"]]
+check(len(inz) == len(set(inz)), "one session is in at most one zone")
+check(len(inz) + len(m2["residual"]) == len(two), "zones + residual = all known events")
+check(all(f"s{i}" in m2["residual"] for i in range(54, 60)), "isolated points stay in the residual")
+ring = [(1, 1), (1, 2), (1, 3), (2, 1), (2, 3), (3, 1), (3, 2), (3, 3)] * 2           # nobody at (2, 2)
+mr = zones_of(ring)
+check(len(mr["zones"]) == 1 and (2, 2) in set(map(tuple, mr["zones"][0]["cells"])), "a cell no event occupied inside a concentration belongs to its zone (no hole)")
+ridge = blob(0, 2, 20, 0, 3) + blob(0, 4, 18, 0, 4) + blob(0, 3, 12, 0, 5)              # two peaks, a high saddle
+check(len(zones_of(ridge)["zones"]) == 1, "two peaks joined above half height are one ridge, one zone")
+apart = blob(0, 2, 20, 0, 3) + blob(0, 9, 18, 0, 4)                                       # a deep, empty valley
+check(len(zones_of(apart)["zones"]) == 2, "two peaks with an empty valley between them are two zones")
+small = blob(0, 2, 30, seed=6) + [(20, 20), (20, 21), (21, 20)]
+check(all(z["n"] >= 4 for z in zones_of(small)["zones"]) and "s32" in zones_of(small)["residual"], "a region under the minimum support stays residual")
+shuffled = list(two)
+random.Random(9).shuffle(shuffled)
+a1 = [sorted(map(tuple, z["cells"])) for z in zones_of(two)["zones"]]
+a2 = [sorted(map(tuple, z["cells"])) for z in zones_of(shuffled)["zones"]]
+check(a1 == a2, "the same events in another order give the same zones (no tie-break decides a region)")
+# today's status by the reachable set (V2 §23-24), R on a width of 10 ticks: cell k holds u in [k/10, (k+1)/10)
+cells_deep = [(k, b) for k in (-12, -11) for b in (20, 21)]                               # deeper, later
+cells_early = [(0, 1), (1, 1)]
+check(Z.status(cells_early, "R", (0, 1), 5, 10, 700, 630, 955) == "HOLDS", "status: today's provisional R in the zone = HOLDS")
+check(Z.status(cells_deep, "R", (-3, 1), -25, 10, 700, 630, 955) == "POSSIBLE", "status: a deeper zone still ahead in time = POSSIBLE")
+check(Z.status(cells_early, "R", (-3, 1), -25, 10, 700, 630, 955) == "IMPOSSIBLE", "status: a shallower zone whose time has passed = IMPOSSIBLE")
+check(Z.status([(-12, 2)], "R", (-3, 1), -25, 10, 700, 630, 955) == "IMPOSSIBLE", "status: a deeper zone whose time has passed = IMPOSSIBLE")
+check(Z.status(cells_deep, "R", None, None, 10, 700, 630, 955) == "POSSIBLE", "status: before the first M5 after the activation every zone ahead is POSSIBLE")
+check(Z.status([(3, 20)], "X", (2, 4), 25, 10, 700, 630, 955) == "POSSIBLE" and Z.status([(1, 20)], "X", (2, 4), 25, 10, 700, 630, 955) == "IMPOSSIBLE", "status: X mirrors R (a farther price, a later open)")
+# on the base: the snapshot's zones, their counts, the slice, the scope
+r1 = S.family("NQ", "RDR", at=700, date="2025-12-09", view="conf")
+r2 = S.family("NQ", "RDR", at=900, date="2025-12-09", view="conf")
+if r1.get("status") == "ok":
+    for e in ("R", "X"):
+        zm = r1["zones"][e]
+        known = {m["id"]: Z.cell_of(m[e]["v"], m["w"], m[e]["t"], S.SESS["RDR"][1]) for m in r1["members"] if m[e]["s"] == "known"}
+        ok = all(sum(1 for c in known.values() if tuple(c) in set(map(tuple, z["cell_mask"]))) == z["n_zone"] for z in zm["zones"])
+        check(ok, f"base: {e} every zone's share = the family's events in its exact cells")
+        check(sum(z["n_zone"] for z in zm["zones"]) + zm["n_residual_total"] + zm["unknown_count"] + zm["no_event_count"] == r1["N"], f"base: {e} zones + residual + unknown + none = N")
+        check(all(abs(z["p_snapshot"] - z["n_zone"] / r1["N"]) < 1e-12 for z in zm["zones"]), f"base: {e} p_snapshot = n / N")
+        check(all("p_forward" not in z for z in zm["zones"]), f"base: {e} no per-zone forward probability (V2 §32)")
+        check(len(r1["today"]["zones"][e]["status"]) == len(zm["zones"]), f"base: {e} a status for every zone at the slice")
+    sig = lambda r: json.dumps({e: [z["cell_mask"] for z in r["zones"][e]["zones"]] for e in ("R", "X")})
+    check(sig(r1) == sig(r2), "base: the zones do not move with the slice")
+    ra = S.family("NQ", "RDR", at=700, date="2025-12-09", view="conf:all")
+    check(ra["family_id"] != r1["family_id"] and ra["N"] > r1["N"] and ra["key"]["scope"] == "all" and r1["key"]["scope"] == "weekday",
+          f"base: all weekdays is another family (N {r1['N']} -> {ra['N']}), only on request")
+    z0 = r1["zones"]["R"]["zones"]
+    if z0: check(z0[0]["null_status"] == "measured" or z0[0]["null_status"].startswith("not_applicable"), "base: the null is measured on held-out sessions or named as not applicable")
 
 print()
 print("ALL GOOD" if not failures else f"{len(failures)} FAILED")

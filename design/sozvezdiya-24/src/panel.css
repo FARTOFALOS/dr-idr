@@ -29,6 +29,10 @@
 .p24-seg{display:flex;gap:2px;padding:3px;margin:2px 0 8px;background:#161A21;border-radius:7px}
 .p24-seg button{flex:1;height:26px;padding:0 6px;border-radius:5px;color:#A3A8B3;font-size:12px}
 .p24-seg button:hover{background:#1C212A;color:#D1D4DC}
+.p21-h .p24-seg.sm{margin:0;padding:2px;flex:0 0 auto}
+.p21-h .p24-seg.sm button{flex:0 0 auto;height:20px;padding:0 7px;font-size:11px;font-weight:500}
+.p21-link.zst-IMPOSSIBLE{opacity:.5}
+.p21-link.zst-HOLDS .p21-sub{color:#C9CFD8}
 .p24-seg button.on{background:#262B35;color:#fff}
 .p24-bar{display:flex;height:8px;margin:2px 0 4px;border-radius:3px;overflow:hidden;background:#1C2027}
 .p24-bar i{display:block;height:100%}

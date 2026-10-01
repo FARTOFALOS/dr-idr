@@ -61,7 +61,7 @@
   const DASH_NAMES = { solid: 'сплошная', dash: 'штрих', dots: 'точки', dashdot: 'штрихпунктир' };
   const FONT = '-apple-system,BlinkMacSystemFont,"Trebuchet MS",Roboto,Ubuntu,sans-serif';
   const LAYERS = [
-    ['pts', 'Точки: одна сессия — одно событие', '#DE8580'], ['mc', 'Главный кластер (если получил имя)', '#E8C872'], ['glow', 'Свечение точек (рисунок, без чисел)', '#9FB3D1'],
+    ['pts', 'Точки: одна сессия — одно событие', '#DE8580'], ['zones', 'Зоны R / X (карта зон)', '#E8C872'], ['glow', 'Свечение точек (рисунок, без чисел)', '#9FB3D1'],
     ['proj', 'Гистограмма цены справа', '#DE8580'], ['strip', 'Гистограмма времени снизу', '#63C3A5'], ['std', 'STD', C.stdOn],
     ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VI (volume imbalance)', C.vib], ['det', 'Детали (снизу)', C.text2]
   ];
@@ -212,13 +212,13 @@
   // open t, ties), DR outcome, order, the path per common clock M5 (directed low, high, close). The page maps a member's
   // u = v / w to today's price through today's IDR (spec §9.1: a coordinate transfer, not a forecast of prices).
   const wantView = s => s.failed && st.view !== 'conf' ? 'brk' : 'conf';
-  const famKey = (D, s, view) => D.d + '|' + s.k + '|' + s.conf + '|' + s.side + '|' + view + '|' + (view === 'brk' ? s.failed : '');
+  const famKey = (D, s, view) => D.d + '|' + s.k + '|' + s.conf + '|' + s.side + '|' + view + '|' + (view === 'brk' ? s.failed : '') + '|' + st.scope;
   const sliceOf = ctx => ctx.live ? Math.floor(NOW / 5) * 5 : ctx.obs;      // the last closed M5 (AGENTS.md rule 6)
   function requestFamily(fk, s, view) {
     if (A.pending.has(fk)) return;
     A.pending.add(fk);
     const at = s.live ? Math.floor(NOW / 5) * 5 : s.obs;
-    fetch('/api/d24/family?instrument=' + A.inst + '&session=' + s.k + '&at=' + at + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + view)
+    fetch('/api/d24/family?instrument=' + A.inst + '&session=' + s.k + '&at=' + at + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + view + (st.scope === 'all' ? ':all' : ''))
       .then(r => r.json()).then(r => { A.fams.set(fk, r); if (A.fams.size > 40) A.fams.delete(A.fams.keys().next().value); })
       .catch(() => A.fams.set(fk, { status: 'error', message: 'Локальный сервер не ответил' }))
       .finally(() => { A.pending.delete(fk); redraw(true); });
@@ -227,7 +227,7 @@
     if (!s.conf || !['confirmed', 'broken', 'done'].includes(s.status) || D.d === 'none') return null;
     const view = wantView(s), fk = famKey(D, s, view), r = A.fams.get(fk);
     if (!r) { requestFamily(fk, s, view); return null; }
-    if (r.status !== 'ok' || r.view !== view || !r.today || r.today.c0 !== s.conf || r.today.side !== s.side) return null;
+    if (r.status !== 'ok' || r.view !== view || (r.key.scope || 'weekday') !== st.scope || !r.today || r.today.c0 !== s.conf || r.today.side !== s.side) return null;
     if (!r._F) r._F = buildSnap(r, s, view);
     return r._F;
   }
@@ -246,17 +246,27 @@
     F.cellOfP = p => Math.floor(10 * F.p2u(p) + 1e-9);
     F.ev = { R: evDist(F, 'R'), X: evDist(F, 'X') };
     if (!brk) { F.out = { held: 0, broken: 0, unknown: 0, none: 0 }; for (const m of F.M) F.out[m.outcome]++; }
-    // the automatic main cluster of each event (meaning/11): found once by the server on the snapshot; its number is the
-    // share of its block, the same as a manual area of the same block
-    F.mc = r.clusters || {};
+    // the zone maps of R and X (zone-map-3, meaning/12): found once by the server on the snapshot; the page recounts
+    // every zone from the member points and compares (the zone is its exact region of cells, never its envelope)
+    F.zones = r.zones || {};
+    F.zcell = {};
+    for (const ev of ['R', 'X']) {
+      F.zcell[ev] = new Map();
+      const Zm = F.zones[ev];
+      if (Zm) Zm.zones.forEach((z, i) => { for (const [k, b] of z.cell_mask) F.zcell[ev].set(k + '|' + b, i); });
+    }
     // the same definitions computed twice: the page's counts must equal the server's (checked by tests/ui_check24.js)
     F.mismatch = [];
     for (const ev of ['R', 'X']) {
       const a = r.counts[ev], b = F.ev[ev];
       const sa = a.cells.map(c => c.join(',')).sort().join(';'), sb = [...b.cells.values()].map(c => [c.k, c.b, c.list.length].join(',')).sort().join(';');
       if (sa !== sb || a.unknown !== b.unknown || a.none !== b.none) F.mismatch.push(ev);
-      const mc = F.mc[ev];
-      if (mc && mc.block && areaCount(F, ev, mc.block) !== mc.yes) F.mismatch.push('cluster ' + ev);
+      const Zm = F.zones[ev];
+      if (Zm) {
+        const n = Zm.zones.map(() => 0);
+        for (const q of b.pts) { const i = F.zcell[ev].get(q.k + '|' + q.b); if (i != null) n[i]++; }
+        if (Zm.zones.some((z, i) => z.n_zone !== n[i]) || n.reduce((t, x) => t + x, 0) + Zm.n_residual_total + Zm.unknown_count + Zm.no_event_count !== F.N) F.mismatch.push('zones ' + ev);
+      }
     }
     if (F.out && JSON.stringify(F.out) !== JSON.stringify(r.counts.outcome)) F.mismatch.push('outcome');
     if (F.mismatch.length) console.error('design 24: the page and the server disagree on', F.mismatch);
@@ -408,8 +418,8 @@
   // ---------- view state ----------
   const st = {
     session: 'RDR', rp: null, v0: 545, v1: 1005, p0: null, p1: null, auto: true,
-    L: { pts: true, mc: true, glow: false, proj: true, strip: true, std: true, prev: true, vib: true, det: true },
-    ev: 'R', mode: 'bounds', view: 'auto', area: null, tool: false, col: null,
+    L: { pts: true, zones: true, glow: false, proj: true, strip: true, std: true, prev: true, vib: true, det: true },
+    ev: 'R', mode: 'bounds', view: 'auto', scope: 'weekday', area: null, tool: false, col: null,
     hover: null, pin: null, mx: -1, my: -1, drag: null, stripH: 46, stripPin: false, menu: false,
     detH: 22, detPin: false, detOver: false, navHover: false
   };
@@ -497,6 +507,7 @@
     if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
     const ctx = cur();
     if (st.pinLvl && ctx.s.drH != null) { const l = levels(ctx.s).find(z => z.id === st.pinLvl); if (l) st.pin = { k: 'lvl', id: l.id, l }; st.pinLvl = null; }
+    if (st.pinZone && ctx.F) { st.pin = { k: 'zone', ev: st.ev, i: st.pinZone - 1 }; st.pinZone = null; }
     V = geom(ctx);
     V.win = null;
     const c = g2;
@@ -518,7 +529,7 @@
     drawNow(c, ctx);
     if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, ctx);
     if (F && st.mode === 'bounds') drawPair(c, ctx);
-    if (F) drawCluster(c, ctx);
+    if (F) drawZones(c, ctx);
     if (F) drawArea(c, ctx);
     if (F && V.stripOn) drawStrip(c, ctx);
     drawTags(c, ctx);
@@ -750,7 +761,7 @@
       if (h.k === 'pcell') return q.k >= h.k0 && q.k < h.k1;
       if (h.k === 'tcell') return q.b >= h.b0 && q.b < h.b1;
       if (h.k === 'area') return inArea(q, st.area);
-      if (h.k === 'mc') { const m = mcOf(F); return !!(m && m.block) && inArea(q, m.block); }
+      if (h.k === 'zone') return h.ev === st.ev && F.zcell[h.ev].get(q.k + '|' + q.b) === h.i;
       if (h.k === 'pt') return q.i === h.i;
       if (h.k === 'out') return q.m.outcome === h.cat;
       if (h.k === 'evrow') return true;
@@ -840,26 +851,43 @@
     }
     c.restore();
   }
-  // the automatic main cluster of the chosen event (meaning/11), drawn only when it got the name: a frame on its block
-  // (0.5 SD x 60 minutes) with the block's share of the family — the same number a manual area of the block shows
-  function drawCluster(c, ctx) {
-    const F = ctx.F, m = mcOf(F);
-    V.mcHit = null;
-    if (!m || !m.named || !st.L.mc || st.mode !== 'bounds') return;
-    const col = cfg[st.ev], b = m.block, x0 = V.X(F.f + 15 * b.b0), x1 = V.X(F.f + 15 * b.b1), [ya, yb] = cellY(F, b.k0, b.k1);
-    const h = hv(), on = !!(h && h.k === 'mc');
-    c.save();
-    c.fillStyle = rgba(col, on ? 0.13 : 0.07); c.fillRect(x0, ya, x1 - x0, yb - ya);
-    c.strokeStyle = rgba(col, 0.95); c.lineWidth = on ? 2 : 1.5;
-    c.strokeRect(Math.round(x0) + 0.5, Math.round(ya) + 0.5, Math.round(x1 - x0), Math.round(yb - ya));
-    const t = 'главный кластер · ' + pct(100 * m.yes / F.N);
-    c.font = '700 12px ' + FONT; c.textBaseline = 'middle';
-    // over the block's right end: its left end stands at today's confirmation, where the confirmation tag is
-    const w = c.measureText(t).width, lx = clamp(x1 - w - 3, 3, V.plot.w - w - 8), ly = ya - 10 < 9 ? yb + 10 : ya - 10;
-    c.fillStyle = 'rgba(8,9,12,.85)'; c.fillRect(lx - 3, ly - 8, w + 6, 16);
-    c.fillStyle = col; c.fillText(t, lx, ly + 0.5);
-    V.mcHit = [{ box: [lx - 3, ly - 8, w + 6, 16], part: 'label' }, { box: [x0, ya, x1 - x0, yb - ya], part: 'frame' }];
-    c.restore();
+  // the zone map of the chosen event (zone-map-3): each zone is its exact region of cells, filled, its outline drawn
+  // where the neighbouring cell is outside, labelled «R1 · 19%». Today's status sets its weight: IMPOSSIBLE fades and is
+  // dashed, HOLDS is the brightest. The share is the family's (n / N), never a chance for today.
+  function drawZones(c, ctx) {
+    const F = ctx.F, Zm = F.zones[st.ev];
+    V.zoneHit = null;
+    if (!Zm || !Zm.zones.length || !st.L.zones || st.mode !== 'bounds') return;
+    const col = cfg[st.ev], S = zoneStatus(F, ctx, st.ev), h = hv(), up = F.u2p(0.1) > F.u2p(0);
+    V.zoneHit = [];
+    Zm.zones.forEach((z, i) => {
+      const s = S[i], on = !!(h && h.k === 'zone' && h.ev === st.ev && h.i === i);
+      const set = new Set(z.cell_mask.map(([k, b]) => k + '|' + b));
+      const fillA = s === 'IMPOSSIBLE' ? 0.03 : s === 'HOLDS' ? 0.17 : 0.08;
+      c.save();
+      c.fillStyle = rgba(col, on ? fillA + 0.08 : fillA);
+      c.strokeStyle = rgba(col, s === 'IMPOSSIBLE' ? 0.35 : 0.9); c.lineWidth = on ? 2 : s === 'HOLDS' ? 1.6 : 1.1;
+      c.setLineDash(s === 'IMPOSSIBLE' ? [3, 3] : []);
+      c.beginPath();
+      for (const [k, b] of z.cell_mask) {
+        const x0 = Math.round(V.X(F.f + 15 * b)) + 0.5, x1 = Math.round(V.X(F.f + 15 * b + 15)) + 0.5, [ya0, yb0] = cellY(F, k, k + 1);
+        const ya = Math.round(ya0) + 0.5, yb = Math.round(yb0) + 0.5;
+        c.fillRect(x0, ya, x1 - x0, yb - ya);
+        const above = (up ? k + 1 : k - 1) + '|' + b, below = (up ? k - 1 : k + 1) + '|' + b;
+        if (!set.has(above)) { c.moveTo(x0, ya); c.lineTo(x1, ya); }
+        if (!set.has(below)) { c.moveTo(x0, yb); c.lineTo(x1, yb); }
+        if (!set.has(k + '|' + (b - 1))) { c.moveTo(x0, ya); c.lineTo(x0, yb); }
+        if (!set.has(k + '|' + (b + 1))) { c.moveTo(x1, ya); c.lineTo(x1, yb); }
+      }
+      c.stroke(); c.setLineDash([]);
+      const t = z.label + ' · ' + pct(100 * z.p_snapshot), [ty] = cellY(F, z.price_low, z.price_high);
+      c.font = '700 12px ' + FONT; c.textBaseline = 'middle';
+      const w = c.measureText(t).width, lx = clamp(V.X(z.time_end) - w - 3, 3, V.plot.w - w - 8), ly = ty - 10 < 9 ? ty + 12 : ty - 10;
+      c.fillStyle = 'rgba(8,9,12,.85)'; c.fillRect(lx - 3, ly - 8, w + 6, 16);
+      c.fillStyle = rgba(col, s === 'IMPOSSIBLE' ? 0.45 : 1); c.fillText(t, lx, ly + 0.5);
+      V.zoneHit.push({ box: [lx - 3, ly - 8, w + 6, 16], i });
+      c.restore();
+    });
   }
   // the time histogram T_E(b) of the chosen event: 15-minute cells from the box end to the block end; passed cells
   // dimmer (they stay in the distribution); the unknown mass is a separate cell «?» after the block end
@@ -1103,7 +1131,8 @@
     }
     if (st.area && V.areaHit) for (const a of V.areaHit) if (a.part !== 'frame' && x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3]) return { k: 'area', part: a.part };
     const inBox = a => x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3];
-    if (V.mcHit && inBox(V.mcHit[0])) return { k: 'mc' };
+    const zl = (V.zoneHit || []).find(inBox);
+    if (zl) return { k: 'zone', ev: st.ev, i: zl.i };
     if (st.mode === 'bounds' && st.L.pts) {
       let best = null, bd = 5;
       for (const q of F.ev[st.ev].pts) { const d = Math.hypot(V.X(q.t + 2.5) - x, V.Y(q.p) - y); if (d < bd) { bd = d; best = q; } }
@@ -1117,7 +1146,10 @@
       if (j >= 0) { const k = F.cellOfP(V.P(y)), cd = filmOf(F)[j]; if (cd.cells.has(k)) return { k: 'fcell', j, kk: k }; const lv = lvlHit(ctx, y); if (lv) return lv; return { k: 'col', j }; }
     }
     if (st.area && V.areaHit) for (const a of V.areaHit) if (a.part === 'frame' && x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3]) { const lv = lvlHit(ctx, y); if (lv) return lv; return { k: 'area', part: 'window' }; }
-    if (V.mcHit && inBox(V.mcHit[1])) return lvlHit(ctx, y) || { k: 'mc' };
+    if (V.zoneHit && V.zoneHit.length) {                            // inside a zone's exact region
+      const i = F.zcell[st.ev].get(F.cellOfP(V.P(y)) + '|' + Math.floor((V.T(x) - F.f) / 15));
+      if (i != null) return lvlHit(ctx, y) || { k: 'zone', ev: st.ev, i };
+    }
     return lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y);
   }
   function lvlHit(ctx, y) {
@@ -1179,7 +1211,7 @@
     }
     if (h.k === 'col' && F) { const cd = filmOf(F)[h.j]; return '<b>M5 ' + clk(cd.T - 5) + '–' + clk(cd.T) + '</b>' + (cd.unknown ? '<br><span class="k">нет свечи у ' + pct(100 * cd.unknown / F.N) + ' семьи</span>' : ''); }
     if (h.k === 'area' && F && st.area) return areaTip(F, ctx, h.part);
-    if (h.k === 'mc' && F) return mcTip(F);
+    if (h.k === 'zone' && F) return zoneTip(F, ctx, h);
     if (h.k === 'lvl' && h.l) {
       const l = h.l;
       let out = '<b>' + s.k + ' · ' + l.full + '</b> · ' + px(l.p);
@@ -1244,29 +1276,57 @@
     return lines.join('<br>');
   }
 
-  // ---------- the automatic main cluster (meaning/11): the server's candidate, its conditions and its check ----------
-  const mcOf = (F, ev) => F && F.mc ? F.mc[ev || st.ev] || null : null;
-  const mcName = (F, b) => band(b.k0, b.k1) + ' SD × ' + clk(F.f + 15 * b.b0) + '–' + clk(F.f + 15 * b.b1);
-  const mcPass = (F, m) => evPass(F, m.event, 'main_cluster', [m.block.k0, m.block.k1], [F.f + 15 * m.block.b0, F.f + 15 * m.block.b1], m.yes);
-  // why the best block did not get the name: the first condition not met (У1 … У5), or the check of its session
-  function mcWhy(F, m) {
-    if (F.brk) return 'для семьи слома правило не проверялось';
-    if (m.status === 'earned') return 'проверка 2018–2025 не подтвердила правило для ' + F.r.key.session;
-    const f = m.failed.slice().sort()[0], c = m.checks[f] || {};
-    if (f === 'U1') return 'не вдвое гуще соседних блоков по цене и по времени';
-    if (f === 'U2') return (c.lead <= 0 ? 'другое место не слабее' : 'другое место почти так же плотно') + (c.rival && c.rival.unknown && c.lead + c.rival.unknown >= 2 ? ', если учесть неизвестные' : '');
-    if (f === 'U3') return 'место сдвигается вместе с сеткой';
-    if (f === 'U4') return 'при пересэмплировании сессий то же место только в ' + pct(100 * c.same) + ' раз (нужно 80%)';
-    const n = c.newer || {}, o = c.older || {};
-    return n.n < 30 ? 'семья мала для проверки на новой истории' : !o.same ? 'старшая половина семьи нашла другое место' : 'на младшей половине семьи не подтвердилось';
+  // ---------- the zone map (zone-map-3, meaning/12): the server's zones, today's status, the passport ----------
+  const ZST = { HOLDS: 'держится', POSSIBLE: 'возможна', IMPOSSIBLE: 'невозможна', STATUS_UNKNOWN: 'неизвестно: нет свечи M5' };
+  const zonesOf = (F, ev) => F && F.zones ? F.zones[ev || st.ev] || null : null;
+  const zoneName = z => band(z.price_low, z.price_high) + ' SD × ' + clk(z.time_start) + '–' + clk(z.time_end);
+  function zonePass(F, ev, z) {
+    const Zm = F.zones[ev];
+    return pp(F, { event_id: ev, region_kind: 'zone_mask', exact_price_bounds: null, time_bounds: null, cell_mask: z.cell_mask.length, zone_id: z.zone_id,
+      start_rule: F.from, end_rule: 'до ' + clk(F.end), yes_count: z.n_zone, unknown_count: Zm.unknown_count, no_event_count: Zm.no_event_count, display_scope: 'zone',
+      phrase: F.names[ev].toLowerCase() + ' ' + ev + ' в зоне ' + z.label + ' (её точная область в ' + band(z.price_low, z.price_high) + ' SD × ' + clk(z.time_start) + '–' + clk(z.time_end) + ', не весь прямоугольник)', horizon: F.from + ' до ' + clk(F.end) });
   }
-  function mcTip(F) {
-    const m = mcOf(F);
-    if (!m || !m.block) return '';
-    const bn = areaCount(F, m.event, { k0: m.block.k0, k1: m.block.k1 }), me = m.method && m.method.event;
-    return '<b>Главный кластер · ' + mcName(F, m.block) + '</b><br>' + sentence(mcPass(F, m)) +
-      '<br><span class="k">вся полоса за всю сессию — ' + pct(100 * bn / F.N) + ' · условия У1–У5 выполнены</span>' +
-      (me ? '<br><span class="k">проверка 2018–2025: на следующей сессии сбывалось ' + num(me.ratio, 2) + ' от такой доли</span>' : '');
+  // today's status of the zones of one event (zone-map-3 §24): today's provisional R or X from the closed M5 after the
+  // activation and the reachable set of the final event: HOLDS (it lies in the zone), POSSIBLE (a farther price at a
+  // later open can still land in the zone), IMPOSSIBLE; STATUS_UNKNOWN when a whole M5 is missing. At the slice of the
+  // request the server's statuses are compared with these.
+  function zoneStatus(F, ctx, ev) {
+    const Zm = F.zones[ev];
+    if (!Zm) return [];
+    const sl = sliceOf(ctx), rows = todayRows(F, ctx), w = F.w0t, last = F.end - 5;
+    let out;
+    if (rows.length !== Math.max(0, (sl - F.act0) / 5)) out = Zm.zones.map(() => 'STATUS_UNKNOWN');
+    else {
+      let q = null, v10 = null;
+      if (rows.length) {
+        let j = 0;
+        for (let i = 1; i < rows.length; i++) if (ev === 'R' ? rows[i].lo < rows[j].lo : rows[i].hi > rows[j].hi) j = i;
+        const v = ev === 'R' ? rows[j].lo : rows[j].hi;
+        q = fdiv(10 * v, w) + '|' + Math.floor((rows[j].T - 5 - F.f) / 15); v10 = 10 * v;
+      }
+      out = Zm.zones.map(z => {
+        if (q && z.cell_mask.some(([k, b]) => k + '|' + b === q)) return 'HOLDS';
+        if (sl > last) return 'IMPOSSIBLE';
+        for (const [k, b] of z.cell_mask) {
+          if (q && !(ev === 'R' ? k * w < v10 : (k + 1) * w > v10)) continue;
+          if (F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last) return 'POSSIBLE';
+        }
+        return 'IMPOSSIBLE';
+      });
+    }
+    const srv = F.r.today && F.r.today.zones && F.r.today.zones[ev];
+    if (srv && F.r.today.slice === sl && JSON.stringify(srv.status) !== JSON.stringify(out) && !F.mismatch.includes('zone status ' + ev)) {
+      F.mismatch.push('zone status ' + ev);
+      console.error('design 24: the page and the server disagree on the zone status', ev, srv.status, out);
+    }
+    return out;
+  }
+  function zoneTip(F, ctx, h) {
+    const Zm = F.zones[h.ev], z = Zm && Zm.zones[h.i];
+    if (!z) return '';
+    const s = zoneStatus(F, ctx, h.ev)[h.i];
+    return '<b>' + z.label + ' · ' + zoneName(z) + '</b><br>' + sentence(zonePass(F, h.ev, z)) +
+      '<br><span class="k">сегодня: ' + ZST[s] + ' · это доля семьи, не шанс на сегодня</span>';
   }
 
   // ---------- toolbar and the day picker ----------
@@ -1434,7 +1494,7 @@
     if (h && h.k === 'pt') { pin(h); return; }
     if (h && (h.k === 'col' || h.k === 'fcell')) { st.col = st.col === h.j ? null : h.j; render(true); return; }
     if (h && h.k === 'area') { pin({ k: 'area', part: h.part }); return; }
-    if (h && h.k === 'mc') { pin({ k: 'mc' }); return; }
+    if (h && h.k === 'zone') { pin(h); return; }
     const b = barAt(V.ctx, V.T(x));
     if (b && y >= V.Y(b.h) - 6 && y <= V.Y(b.l) + 6 && b.t + 5 <= NOW) { replayAt(b.t + 5); return; }
     if (h && ['lvl', 'prev', 'vib'].includes(h.k)) { pin(h); return; }
@@ -1601,7 +1661,7 @@
     render(true);
     schedule();
   }
-  window.__d24 = { st, A, render, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, mcOf, areaCount };
+  window.__d24 = { st, A, render, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus };
   initPanel24();
   // the address: #date=2025-12-17 (a history day) &inst=NQ &session=RDR &at=11:50 (replay) &ev=X &mode=path
   //              &area=3:6[:b0:b1] (price cells [3, 6) x time cells [b0, b1)) &hist=1 (details open)
@@ -1619,7 +1679,8 @@
     if (q.get('pt') != null && q.get('pt') !== '') st.pin = { k: 'pt', i: +q.get('pt') };      // &pt=5: the 6th session of the family pinned
     if (q.get('lvl')) st.pinLvl = q.get('lvl');                                               // &lvl=u2: a level pinned (drH, idrL, mid, u1 … d6)
     if (q.get('col') != null && q.get('col') !== '') st.col = +q.get('col');                   // &col=12: an M5 column of «Путь семьи» pinned
-    if (q.get('mc')) st.pin = { k: 'mc' };                                                    // &mc=1: the main cluster pinned (details)
+    if (q.get('scope') === 'all') st.scope = 'all';                                         // &scope=all: the all-weekdays family
+    if (q.get('zone')) st.pinZone = +q.get('zone');                                         // &zone=2: the second zone of the chosen event pinned
     cfgPanel();
     if (/^\d{4}-\d\d-\d\d$/.test(q.get('date') || '')) { A.src = 'hist'; A.date = q.get('date'); A.jump = true; st.rpWanted = at; }
     else if (at != null) { st.rp = at; st.session = sessOf(at) || st.session; st.userSession = true; fitSession(st.session); }

@@ -31,7 +31,9 @@ Then open `http://127.0.0.1:8767/24/` (after a server restart if `lab/scene24.py
 `#date=2025-12-17&session=RDR&at=11:30` (a history day at a slice), `&ev=X`, `&mode=path`, `&view=conf` (the original
 snapshot after a break), `&area=-4:-1` (price cells [−0,4; −0,1) SD) or `&area=-4:-1:4:9` (× 15-minute cells 4…8 from the
 box end), `&pt=3` (a family session pinned), `&lvl=u2` (a level pinned: drH, drL, idrH, idrL, mid, open, u1…u6, d1…d6),
-`&col=12` (an M5 column of «Путь семьи»), `&det=1` (details open). `window.__d24` exposes `st`, `cur()`, `passports()`.
+`&col=12` (an M5 column of «Путь семьи»), `&det=1` (details open), `&scope=all` (the all-weekdays family, an explicit
+choice), `&zone=2` (the second zone of the chosen event pinned). `window.__d24` exposes `st`, `cur()`, `passports()`,
+`zonesOf()`, `zoneStatus()`.
 
 Snapshots for the review: [`shots/`](shots/) (history days of NQ; screenshots of the tool, not the tape — AGENTS.md rule 1).
 
@@ -39,6 +41,7 @@ Snapshots for the review: [`shots/`](shots/) (history days of NQ; screenshots of
 
 | File | What |
 |---|---|
+| `lab/zonemap24.py` | The zone map of R and X, `zone-map-3` (meaning/12): one rule (the half-height region of its own apex on the 3 × 3 density), the passport and diagnostics of every zone (shifted grids, resampled sessions, a path-null on held-out sessions), today's status by the reachable set |
 | `lab/scene24.py` | The statistical layer: families F and F_break, events R / X per member, DR outcome, order, the M5 path, distributions, snapshot identity, journal of undetermined keys; the history day; integer ticks throughout |
 | `lab/server.py` | `/api/d24/day`, `/api/d24/family`, `/api/d24/dates` (design 22's routes unchanged) |
 | `src/app.js` | Design 22's `app.js` with the statistical layer replaced (data, points, histograms, «Путь семьи», area, passports, history day) |
@@ -62,6 +65,7 @@ Snapshots for the review: [`shots/`](shots/) (history days of NQ; screenshots of
 | — | **«Путь семьи»**: the family's M5 closes per common clock M5, each column its own 100 % (missing M5 = «нет свечи»), one fixed linear colour scale for all columns; the column right of the price scale shows the hovered (or pinned, or the slice's) M5; the range field V in its details | §5.3, §10.2 |
 | — | **Switch R / X** changes the points and both histograms together; in «Путь семьи» they are hidden | §10.1, §10.2 |
 | After a break: «По слому / Против слома» on the break family | The same family F_break with its own N, no «DR сломан» share inside it, and an explicit switch back to the original snapshot | §9.3 |
+| Constellations of 22, then «главный кластер» (meaning/11) | **The zone map** (meaning/12): every zone of the chosen event is its exact region of cells with its share of the family, in the order of time; the rest is the residual; today's status (держится / возможна / невозможна) sets the zone's weight; the family is the weekday one unless «все дни» is clicked | zone-map-3 |
 | Kept as in 22 | Candles of the day, DR / IDR / mid / STD / open lines, past sessions' DR / IDR, VI, pills, replay by candle, ← / →, −5м / +5м, wheel zoom, drag, layers, settings, the panel's manner (percentages only, every line a link) | §10, §15 |
 
 ## Passports (spec §13.3)

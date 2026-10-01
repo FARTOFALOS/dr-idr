@@ -4,7 +4,7 @@
 // the page and the server count the same; every percentage of the panel has a passport that reproduces it; R / X and
 // the price and time histograms are one table; each «Путь семьи» column is its own 100 %; an area's window never
 // exceeds its band; the tail of X equals «на уровне или дальше» on the same horizon; moving the slice rewrites nothing;
-// the main cluster's number is its block's count, it is drawn only with its name, and the slice does not move it.
+// every zone's share is its sessions in its exact cells, zones never overlap, and the slice does not move them.
 (async () => {
   const problems = [], D = window.__d24;
   if (!D) return { problems: ['the screen did not start (window.__d24 missing)'] };
@@ -81,7 +81,7 @@
     if (!/Выбранная область/.test(panel.innerText)) problems.push('the selected area is not in the panel');
   }
   // 8) moving the slice rewrites nothing: the same snapshot, the same distributions
-  const sig = f => f ? f.r.snapshot_id + '|' + [...f.ev.R.cells.keys()].sort().join(',') + '|' + [...f.ev.X.cells.keys()].sort().join(',') + '|' + JSON.stringify(f.mc) : null;
+  const sig = f => f ? f.r.snapshot_id + '|' + [...f.ev.R.cells.keys()].sort().join(',') + '|' + [...f.ev.X.cells.keys()].sort().join(',') + '|' + JSON.stringify(f.zones) : null;
   const s0 = sig(F), steps = [];
   for (const dt of [15, 60, 120]) {
     const t = F.act0 + dt;
@@ -97,22 +97,30 @@
     if (!D.st.hover) problems.push('hover does nothing: ' + el.innerText.split('\n')[0]);
     el.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body }));
   }
-  // 10) the main cluster (meaning/11): its number is the count of its block (a manual area of the block shows the same);
-  // drawn only with the name; the panel always says where it stands
+  // 10) the zone map (zone-map-3): each zone's share is its sessions in its exact cells (the page recounts it), zones never
+  // share a cell, zones + residual + unknown + none = N, every zone is drawn and listed, and today's status of the page
+  // equals the server's at the slice of the request (checked inside zoneStatus, reported as a mismatch)
   for (const ev of ['R', 'X']) {
-    const m = D.mcOf(F, ev);
-    if (!m || !m.block) continue;
-    if (D.areaCount(F, ev, m.block) !== m.yes) problems.push('main cluster ' + ev + ': its number is not its block count');
-    if (m.named && (m.status !== 'earned' || m.failed.length)) problems.push('main cluster ' + ev + ' named without its conditions');
+    const Zm = D.zonesOf(F, ev);
+    if (!Zm) { problems.push('no zone map for ' + ev); continue; }
+    const seen = new Set();
+    for (const z of Zm.zones) {
+      const cells = new Set(z.cell_mask.map(([k, b]) => k + '|' + b));
+      const n = F.ev[ev].pts.filter(q => cells.has(q.k + '|' + q.b)).length;
+      if (n !== z.n_zone) problems.push('zone ' + z.label + ': ' + n + ' points in its cells, the passport says ' + z.n_zone);
+      for (const c of cells) { if (seen.has(c)) problems.push('two zones share the cell ' + c); seen.add(c); }
+      if (Math.abs(z.p_snapshot - z.n_zone / N) > 1e-12) problems.push('zone ' + z.label + ': its share is not n / N');
+    }
+    if (Zm.zones.reduce((t, z) => t + z.n_zone, 0) + Zm.n_residual_total + Zm.unknown_count + Zm.no_event_count !== N) problems.push(ev + ': zones + residual + unknown + none != N');
   }
   {
-    const m = D.mcOf(F, D.st.ev);
     D.render(true);
-    const drawn = !!D.V.mcHit, inPanel = /главный кластер/.test(panel.innerText);
-    if (m && m.named && D.st.L.mc && D.st.mode === 'bounds' && !drawn) problems.push('a named main cluster is not drawn');
-    if (m && !m.named && drawn) problems.push('a main cluster is drawn without the name');
-    if (m && m.status !== 'none' && D.st.mode === 'bounds' && !inPanel) problems.push('the panel says nothing about the main cluster');
-    info.mainCluster = m ? { status: m.status, named: m.named, failed: m.failed } : null;
+    const Zm = D.zonesOf(F, D.st.ev), drawn = (D.V.zoneHit || []).length;
+    if (Zm && D.st.L.zones && D.st.mode === 'bounds' && Zm.zones.length !== drawn) problems.push('drawn zones ' + drawn + ' of ' + Zm.zones.length);
+    if (Zm && D.st.mode === 'bounds' && !/Зоны /.test(panel.innerText)) problems.push('the panel has no zone list');
+    info.zones = Zm ? Zm.zones.map(z => z.label + ' ' + Math.round(1000 * z.p_snapshot) / 10 + '%') : null;
+    info.zoneStatus = D.zoneStatus(F, D.cur(), D.st.ev);
+    if (F.mismatch.length) problems.push('page and server disagree on ' + F.mismatch.join(', '));
   }
   info.checkedSlices = steps;
   return { problems, info };
