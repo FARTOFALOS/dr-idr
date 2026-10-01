@@ -28,14 +28,34 @@ python -B tests/smoke.py                     # includes design 24's day, familie
 
 Then open `http://127.0.0.1:8767/24/` (after a server restart if `lab/scene24.py` or `lab/server.py` changed), evaluate
 `tests/ui_check24.js` in the page and expect `problems: []`. Address parameters for reviews and snapshots:
-`#date=2025-12-17&session=RDR&at=11:30` (a history day at a slice), `&ev=X`, `&mode=path`, `&view=conf` (the original
+`#date=2025-12-17&session=RDR&at=11:30` (a history day at a slice), `&ev=X` (the event in focus: which zone `&zone=` pins), `&mode=path`, `&view=conf` (the original
 snapshot after a break), `&area=-4:-1` (price cells [−0,4; −0,1) SD) or `&area=-4:-1:4:9` (× 15-minute cells 4…8 from the
 box end), `&pt=3` (a family session pinned), `&lvl=u2` (a level pinned: drH, drL, idrH, idrL, mid, open, u1…u6, d1…d6),
 `&col=12` (an M5 column of «Путь семьи»), `&det=1` (details open), `&scope=all` (the all-weekdays family, an explicit
-choice), `&zone=2` (the second zone of the chosen event pinned). `window.__d24` exposes `st`, `cur()`, `passports()`,
-`zonesOf()`, `zoneStatus()`.
+choice), `&zone=2` (the second zone of the event in focus pinned), `&hov=pcell:X:9` or `&hov=tcell:8` (as if a price band of X or a
+15-minute window were hovered, for review snapshots). `window.__d24` exposes `st`, `cur()`, `passports()`,
+`zonesOf()`, `zoneStatus()`, `V` (this frame: `zoneHit`, `hills`, `projCols`, `lk`).
 
 Snapshots for the review: [`shots/`](shots/) (history days of NQ; screenshots of the tool, not the tape — AGENTS.md rule 1).
+
+## The look «Окна времени» (operator, 2026-10-01 evening)
+
+The operator compared three full mockups (canvas «DR Lab · экран 24») and twelve constellation drawings (canvas «DR Lab ·
+созвездия») and chose «Окна времени» with «дымка и нити», amber R `#EBA06C`, sky X `#72A9EC`. Only the drawing and the
+interaction changed; every number keeps its object, denominator and passport (`meaning/10-dizajn-24.md` §2, §3а).
+
+| Element | What it is | Code |
+|---|---|---|
+| R and X together | no switch; the toolbar names both; the event under the cursor is «in focus» (`st.ev`) for the panel and the area | `drawPoints`, `toolbar`, `hit` |
+| Constellation | a zone of zone-map-3 drawn from its own points: density in screen space (σ 18 px) filled at 0.22 and 0.6 of its peak (blurred), the shortest tree joining its stars (0.5 px), on hover the 0.35 iso-line and the exact cells; dashed when IMPOSSIBLE; a label with the zone's share in a size that follows the share | `kde`, `iso`, `mst`, `cloudsOf`, `drawClouds`, `drawZones` |
+| Link | a hovered zone or price band: a ring on the densest spot, a line straight down to the peak 15 minutes (the time cell holding most of its sessions), lit to the time axis | `linkOf`, `drawLink` |
+| Price columns | R and X side by side, each its own 100 %; rows of a zone brighter, each zone's densest row larger, a tick for its price extent; the bar is the band's share over the whole horizon, never the zone's | `drawProjRX` |
+| Time band | under the chart (a quarter of the height): the zones' capsules over their whole time window with share and status (outer lanes, X above, R below); each zone's hill, the shape of its sessions' times (Gaussian 7 min, height normalised within its event, no number); the columns T_X up and T_R down on one square-root scale; «?» at the right | `drawBand`, `bandHills` |
+| Inspector | the fixed block at the bottom right: what is under the cursor (zone, band, 15 minutes, session, level), else what is pinned, else the snapshot; replaces the floating tooltip | `showTip`, `tipHtml`, `zoneTip`, `twoBars` |
+| Six windows | slide up when the mouse reaches the bottom edge, a click pins: the passport of the object or the snapshot; R and X as price × time cells with their zones' exact cells; what came first, R or X (100 %); «на уровне или дальше» on today's levels, whole horizon and after the slice; «Путь семьи» with today's closes | `details`, `detBody`, `orderHtml`, `ladderHtml`, `drawHeat`, `drawFilmMini` |
+| Panel | the snapshot, the DR outcome, the zones of R and X in one list by time with «сейчас HH:MM», residual and unknown per event, today's facts | `panelHtml`, `zonesHtml` |
+
+Snapshots of this look: `shots/1-okna-vremeni.png` … `6-put-semi.png` (history days of NQ).
 
 ## Files
 

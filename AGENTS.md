@@ -127,6 +127,10 @@ against what happened next.
   default, all weekdays only by the explicit switch (`view=…:all`). Its acceptance on sessions after 2025 is frozen in
   meaning/12 §6 (О24); the prospective log waits for the operator (О23). `main-cluster-1` (`lab/cluster24.py`,
   meaning/11) and the audits in `meaning/lens/2026-10-01-cluster-synthesis/`, `…-zone-map-2/` are the research behind it.
+  **Its look since 2026-10-01 night: «Окна времени»** (the operator's choice from mockups; `meaning/10-dizajn-24.md` §3а):
+  R and X together, zones as constellations «дымка и нити» (amber R, sky X), R | X price columns, the time band with the
+  zones' capsules and hills, a hovered zone or band linked to its peak 15 minutes, the inspector at the bottom right,
+  six windows sliding up from the bottom edge. The numbers' meaning is unchanged.
 - **The working screen is «Созвездия» design 22 «смысл числа», on market data** (since 2026-09-29; design 21 from
   2026-09-28 before it). `http://127.0.0.1:8767` opens it (`lab/dist/index.html` + `sozvezdiya.js`, built from
   `design/sozvezdiya-22/src` with its `build.py` — edit there, never the built file; building 21 would overwrite it); the previous screen is

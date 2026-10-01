@@ -18,6 +18,12 @@ made and how to check: [`sozvezdiya-24/README.md`](sozvezdiya-24/README.md); sna
 Since 2026-10-01 evening its clusters are the **zone map** `zone-map-3` (`meaning/12-karta-zon.md`): several price ×
 time zones of R / X with their share of the family and today's status; the weekday family by default, all weekdays
 only by an explicit click.
+Since the same night its look is the variant **«Окна времени»** the operator chose from three mockups (canvas «DR Lab ·
+экран 24»), with the constellation look he chose from twelve (canvas «DR Lab · созвездия»: «дымка и нити», amber R, sky
+X): R and X on screen together, zones drawn as constellations, the time band under the chart (X up, R down, every zone a
+hill), a hovered zone or price band linked to its peak 15 minutes, the inspector at the bottom right instead of a
+tooltip, six windows of the family sliding up from the bottom edge. The meaning of every number is unchanged
+(`meaning/10-dizajn-24.md` §3а).
 
 ## Where we are, in one paragraph
 

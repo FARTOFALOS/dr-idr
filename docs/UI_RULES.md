@@ -35,6 +35,11 @@ percentages (a bracket only on a selected band, carrying the band's share). It *
 main object, one screen, no text on text, no explanatory paragraphs, percentages and not counts in the right panel,
 every panel line a link, replay, one active pick (one selected area). The working screen and these rules are not
 changed by it.
+Since 2026-10-01 night (the operator's choice of the look «Окна времени») design 24 also **replaces** for itself: the R / X
+switch (both on screen together), the floating tooltip (an inspector in a fixed place at the bottom right: rule 16-17's
+«details go to the panel» taken literally), the one details area (six windows of the family that slide up when the mouse
+reaches the bottom edge, a click pins them, as design 22's history row did), the cell outlines of the zones (constellations
+drawn from the zones' own points; the exact cells on hover). Its colours: R amber `#EBA06C`, X sky `#72A9EC`.
 
 ## Layout
 

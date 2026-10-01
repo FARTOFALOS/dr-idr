@@ -1,6 +1,6 @@
 """Numbered markers on the design 24 snapshots for meaning/10-dizajn-24.md (the numbers are explained there).
 
-python meaning/img/annotate24.py      (after the snapshots in design/sozvezdiya-24/shots; history days of NQ, screenshots
+python meaning/img/annotate24.py      (after the snapshots in design/sozvezdiya-24/shots/v1, the first look of 24; history days of NQ, screenshots
                                        of the tool, which AGENTS.md rule 1 allows; no tape, no per-session data)
 """
 import os
@@ -8,7 +8,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SHOTS = os.path.join(HERE, '..', '..', 'design', 'sozvezdiya-24', 'shots')
+SHOTS = os.path.join(HERE, '..', '..', 'design', 'sozvezdiya-24', 'shots', 'v1')   # the look before «Окна времени»
 FONT = ImageFont.truetype(r'C:\Windows\Fonts\arialbd.ttf', 15)
 P = 1622   # the markers of the right panel stand on its left edge
 

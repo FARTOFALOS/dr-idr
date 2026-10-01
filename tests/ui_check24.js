@@ -1,4 +1,4 @@
-// UI check of design 24 «Границы хода» (http://127.0.0.1:8767/24/) for agents with a browser tool: evaluate this in the
+// UI check of design 24 «Границы хода» (variant «Окна времени» since 2026-10-01) (http://127.0.0.1:8767/24/) for agents with a browser tool: evaluate this in the
 // page after it has loaded (wait ~4 s). It returns the problems the operator must never see; problems: [] = good.
 // With a family on screen it also checks the semantics of DR-LAB-SEM-1.0 on the live objects of the page:
 // the page and the server count the same; every percentage of the panel has a passport that reproduces it; R / X and
@@ -61,11 +61,32 @@
   // 5) «Путь семьи»: each column is its own 100 % (cells + missing = N)
   const film = D.filmOf(F);
   for (const cd of film) { let n = cd.unknown; for (const l of cd.cells.values()) n += l.length; if (n !== N) { problems.push('film column ' + cd.T + ' holds ' + n + ' of ' + N); break; } }
-  // 6) R / X switch changes the map, the price histogram and the time histogram together; path mode hides them
+  // 6) R and X are on screen together (operator 2026-10-01, variant «Окна времени»): both events' zones are drawn and
+  // listed, both price columns exist, the time band holds both; path mode hides the band
   const save = { ev: D.st.ev, mode: D.st.mode, area: D.st.area, rp: D.st.rp, pin: D.st.pin, hover: D.st.hover };
-  D.st.ev = 'R'; D.render(true); const vR = D.V.stripOn, headR = panel.innerText;
-  D.st.ev = 'X'; D.render(true); const headX = panel.innerText;
-  if (headR === headX) problems.push('the R / X switch changes nothing in the panel');
+  D.st.hover = null; D.st.pin = null; D.render(true); const vR = D.V.stripOn;
+  const zr = (D.zonesOf(F, 'R') || { zones: [] }).zones.length, zx = (D.zonesOf(F, 'X') || { zones: [] }).zones.length;
+  if (D.st.L.zones && (D.V.zoneHit || []).length !== zr + zx) problems.push('drawn constellations ' + (D.V.zoneHit || []).length + ' of ' + (zr + zx) + ' zones of R and X');
+  if (D.st.L.strip && (D.V.hills || []).length !== zr + zx) problems.push('time band hills ' + (D.V.hills || []).length + ' of ' + (zr + zx));
+  if (D.st.L.strip && (D.V.caps || []).length !== zr + zx) problems.push('time band capsules ' + (D.V.caps || []).length + ' of ' + (zr + zx));
+  if (D.V.projW && !(D.V.projCols && D.V.projCols.R && D.V.projCols.X)) problems.push('the price column does not hold R and X side by side');
+  for (const [ev, n] of [['R', zr], ['X', zx]]) for (const z of (D.zonesOf(F, ev) || { zones: [] }).zones) if (!panel.innerText.includes(z.label)) problems.push('zone ' + z.label + ' missing from the panel list');
+  // the inspector reads what is hovered, in its fixed place (never a tooltip over the chart)
+  const insp = document.getElementById('insp');
+  if (!insp) problems.push('no inspector');
+  else {
+    const zz = (D.zonesOf(F, 'R') || D.zonesOf(F, 'X') || { zones: [] }).zones[0], zev = D.zonesOf(F, 'R') && D.zonesOf(F, 'R').zones.length ? 'R' : 'X';
+    if (zz) { D.st.hover = { k: 'zone', ev: zev, i: 0 }; D.render(true); if (!insp.innerText.includes(zz.label)) problems.push('the inspector does not read a hovered zone'); if (!D.V.lk) problems.push('a hovered zone has no link to its peak 15 minutes'); }
+    D.st.hover = { k: 'tcell', b0: 2, b1: 3, src: 'strip' }; D.render(true);
+    if (!/R ·/.test(insp.innerText) || !/X ·/.test(insp.innerText)) problems.push('the inspector of a 15-minute window does not show both R and X');
+    if (!document.getElementById('tip').hidden) problems.push('a floating tooltip is shown over the chart');
+    D.st.hover = null; D.render(true);
+  }
+  // the six windows slide up and hold six cards
+  D.st.detPin = true; D.render(true);
+  const cards = document.querySelectorAll('#detg .dcard').length;
+  if (cards !== 6) problems.push('the bottom windows hold ' + cards + ' cards, not 6');
+  D.st.detPin = false; D.render(true);
   D.st.mode = 'path'; D.render(true);
   if (D.V.stripOn) problems.push('the time histogram stays in «Путь семьи»');
   if (!/Путь семьи/.test(panel.innerText)) problems.push('the panel does not show the M5 column in «Путь семьи»');
@@ -75,7 +96,7 @@
   const E = F.ev[D.st.ev], top = [...E.P].sort((a, b) => b[1] - a[1])[0];
   if (top) {
     const bb = [...E.T].sort((a, b) => b[1] - a[1])[0][0];
-    D.st.area = { k0: top[0] - 1, k1: top[0] + 2, b0: bb, b1: bb + 2 }; D.render(true);
+    D.st.area = { k0: top[0] - 1, k1: top[0] + 2, b0: bb, b1: bb + 2, ev: D.st.ev }; D.render(true);
     const I = D.areaInfo(F, D.cur());
     if (I.win.yes_count > I.band.yes_count) problems.push('window share above its band share');
     if (!/Выбранная область/.test(panel.innerText)) problems.push('the selected area is not in the panel');
@@ -115,11 +136,11 @@
   }
   {
     D.render(true);
-    const Zm = D.zonesOf(F, D.st.ev), drawn = (D.V.zoneHit || []).length;
-    if (Zm && D.st.L.zones && D.st.mode === 'bounds' && Zm.zones.length !== drawn) problems.push('drawn zones ' + drawn + ' of ' + Zm.zones.length);
-    if (Zm && D.st.mode === 'bounds' && !/Зоны /.test(panel.innerText)) problems.push('the panel has no zone list');
-    info.zones = Zm ? Zm.zones.map(z => z.label + ' ' + Math.round(1000 * z.p_snapshot) / 10 + '%') : null;
-    info.zoneStatus = D.zoneStatus(F, D.cur(), D.st.ev);
+    const drawn = (D.V.zoneHit || []).length, all = ['R', 'X'].map(ev => D.zonesOf(F, ev)).filter(Boolean), nz = all.reduce((t, Zm) => t + Zm.zones.length, 0);
+    if (all.length && D.st.L.zones && D.st.mode === 'bounds' && nz !== drawn) problems.push('drawn zones ' + drawn + ' of ' + nz);
+    if (all.length && D.st.mode === 'bounds' && !/Зоны /.test(panel.innerText)) problems.push('the panel has no zone list');
+    info.zones = ['R', 'X'].map(ev => (D.zonesOf(F, ev) || { zones: [] }).zones.map(z => z.label + ' ' + Math.round(1000 * z.p_snapshot) / 10 + '%')).flat();
+    info.zoneStatus = { R: D.zoneStatus(F, D.cur(), 'R'), X: D.zoneStatus(F, D.cur(), 'X') };
     if (F.mismatch.length) problems.push('page and server disagree on ' + F.mismatch.join(', '));
   }
   info.checkedSlices = steps;

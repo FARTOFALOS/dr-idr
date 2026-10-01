@@ -120,8 +120,9 @@ for a, b in [('conf', 'conf'), ('wait', 'wait'), ('brk', 'brk'), ('conf_hl_3', '
 # ---------- 24: design 22's screen with the statistics of DR-LAB-SEM-1.0 (meaning/10-dizajn-24.md) ----------
 # It runs only on the local server (market data, never published), so the history shows its snapshots of history days
 # (screenshots of the tool, allowed by AGENTS.md rule 1), one at a time.
-S24 = [('1-rdr-otkat', 'обзор · откат R'), ('2-rdr-rasshirenie-oblast', 'расширение X · область'), ('3-put-semi', 'путь семьи'),
-       ('4-semya-sloma', 'семья слома'), ('5-uroven-detali', 'уровень · детали'), ('6-odr-sessiya', 'сессия семьи')]
+# Since 2026-10-01 night its look is «Окна времени» (meaning/10 §3а); the first look stays in shots/v1/.
+S24 = [('1-okna-vremeni', 'обзор · окна времени'), ('2-polosa-pik', 'полоса → пик времени'), ('3-zona-okna-semi', 'зона · шесть окон'),
+       ('4-semya-sloma', 'семья слома'), ('5-odr', 'ODR'), ('6-put-semi', 'путь семьи')]
 g24 = ('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>DR Lab · 24 · снимки</title><style>'
        ':root{color-scheme:dark}html,body{margin:0;height:100%;background:#08090C;color:#D1D4DC;font:14px -apple-system,"Trebuchet MS",Roboto,sans-serif}'
        '#t{position:absolute;left:8px;top:8px;display:flex;gap:4px;z-index:2}#t button{font:inherit;color:#A3A8B3;background:rgba(22,26,33,.92);'
