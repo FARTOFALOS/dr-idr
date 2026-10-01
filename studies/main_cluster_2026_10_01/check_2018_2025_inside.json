@@ -1,0 +1,269 @@
+{
+ "period": [
+  "2018-01-01",
+  "2025-12-31"
+ ],
+ "after": 4,
+ "rule": "main-cluster-1",
+ "block": [
+  5,
+  4
+ ],
+ "targets": {
+  "ADR R": {
+   "n": 5630,
+   "earned": 0,
+   "n60": 2550,
+   "earned_share": 0.0
+  },
+  "ADR X": {
+   "n": 5630,
+   "earned": 0,
+   "n60": 2550,
+   "earned_share": 0.0
+  },
+  "ODR R": {
+   "n": 5403,
+   "earned": 4,
+   "n60": 2619,
+   "earned_share": 0.0007
+  },
+  "ODR X": {
+   "n": 5403,
+   "earned": 1,
+   "n60": 2619,
+   "earned_share": 0.0002
+  },
+  "RDR R": {
+   "n": 5291,
+   "earned": 0,
+   "n60": 2459,
+   "earned_share": 0.0
+  },
+  "RDR X": {
+   "n": 5291,
+   "earned": 4,
+   "n60": 2459,
+   "earned_share": 0.0008
+  }
+ },
+ "earned": {
+  "ADR R": {
+   "n": 0
+  },
+  "ADR X": {
+   "n": 0
+  },
+  "ODR R": {
+   "n": 4,
+   "families": 1,
+   "family_share": 0.1286,
+   "landed": 0.0,
+   "ratio": 0.0,
+   "ratio_5_95": [
+    0.0,
+    0.0
+   ],
+   "neighbour": 0.0,
+   "contrast": null,
+   "contrast_5_95": [
+    0.0,
+    0.0
+   ],
+   "first_block": 0.0
+  },
+  "ODR X": {
+   "n": 1,
+   "families": 1,
+   "family_share": 0.1618,
+   "landed": 0.0,
+   "ratio": 0.0,
+   "ratio_5_95": [
+    0.0,
+    0.0
+   ],
+   "neighbour": 0.3333,
+   "contrast": 0.0,
+   "contrast_5_95": [
+    0.0,
+    0.0
+   ],
+   "first_block": 0.0
+  },
+  "RDR R": {
+   "n": 0
+  },
+  "RDR X": {
+   "n": 4,
+   "families": 1,
+   "family_share": 0.1281,
+   "landed": 0.25,
+   "ratio": 1.952,
+   "ratio_5_95": [
+    0.0,
+    2.619
+   ],
+   "neighbour": 0.0,
+   "contrast": "∞",
+   "contrast_5_95": [
+    0.0,
+    "∞"
+   ],
+   "first_block": 0.0
+  }
+ },
+ "not_earned_60": {
+  "ADR R": {
+   "n": 2550,
+   "families": 67,
+   "family_share": 0.0768,
+   "landed": 0.0518,
+   "ratio": 0.674,
+   "ratio_5_95": [
+    0.581,
+    0.747
+   ],
+   "neighbour": 0.039,
+   "contrast": 1.329,
+   "contrast_5_95": [
+    1.163,
+    1.458
+   ],
+   "first_block": 0.0
+  },
+  "ADR X": {
+   "n": 2550,
+   "families": 67,
+   "family_share": 0.0618,
+   "landed": 0.0302,
+   "ratio": 0.489,
+   "ratio_5_95": [
+    0.38,
+    0.593
+   ],
+   "neighbour": 0.0293,
+   "contrast": 1.031,
+   "contrast_5_95": [
+    0.834,
+    1.26
+   ],
+   "first_block": 0.0
+  },
+  "ODR R": {
+   "n": 2615,
+   "families": 65,
+   "family_share": 0.0935,
+   "landed": 0.0478,
+   "ratio": 0.511,
+   "ratio_5_95": [
+    0.445,
+    0.575
+   ],
+   "neighbour": 0.0371,
+   "contrast": 1.288,
+   "contrast_5_95": [
+    1.107,
+    1.496
+   ],
+   "first_block": 0.0
+  },
+  "ODR X": {
+   "n": 2618,
+   "families": 65,
+   "family_share": 0.0772,
+   "landed": 0.0359,
+   "ratio": 0.465,
+   "ratio_5_95": [
+    0.376,
+    0.554
+   ],
+   "neighbour": 0.036,
+   "contrast": 0.996,
+   "contrast_5_95": [
+    0.84,
+    1.185
+   ],
+   "first_block": 0.0
+  },
+  "RDR R": {
+   "n": 2459,
+   "families": 67,
+   "family_share": 0.0948,
+   "landed": 0.0541,
+   "ratio": 0.571,
+   "ratio_5_95": [
+    0.486,
+    0.655
+   ],
+   "neighbour": 0.0384,
+   "contrast": 1.407,
+   "contrast_5_95": [
+    1.19,
+    1.607
+   ],
+   "first_block": 0.0
+  },
+  "RDR X": {
+   "n": 2455,
+   "families": 67,
+   "family_share": 0.0967,
+   "landed": 0.077,
+   "ratio": 0.796,
+   "ratio_5_95": [
+    0.68,
+    0.907
+   ],
+   "neighbour": 0.0456,
+   "contrast": 1.688,
+   "contrast_5_95": [
+    1.434,
+    1.967
+   ],
+   "first_block": 0.0
+  }
+ },
+ "M1": {
+  "ADR": {
+   "verdict": "не проверено",
+   "n": 0
+  },
+  "ODR": {
+   "verdict": "не проверено",
+   "n": 5,
+   "families": 2,
+   "family_share": 0.1352,
+   "landed": 0.0,
+   "ratio": 0.0,
+   "ratio_5_95": [
+    0.0,
+    0.0
+   ],
+   "neighbour": 0.0667,
+   "contrast": 0.0,
+   "contrast_5_95": [
+    0.0,
+    0.0
+   ],
+   "first_block": 0.0
+  },
+  "RDR": {
+   "verdict": "не проверено",
+   "n": 4,
+   "families": 1,
+   "family_share": 0.1281,
+   "landed": 0.25,
+   "ratio": 1.952,
+   "ratio_5_95": [
+    0.0,
+    2.619
+   ],
+   "neighbour": 0.0,
+   "contrast": "∞",
+   "contrast_5_95": [
+    0.0,
+    "∞"
+   ],
+   "first_block": 0.0
+  }
+ }
+}

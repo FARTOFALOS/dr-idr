@@ -1,0 +1,189 @@
+
+## NQ: 166 families with N >= 20 (10563 of 13337 confirmed sessions = 79 %)
+
+confirmed main regions: families (sessions of the instrument in those families)
+| event | definition | real | memoryless | real by N 20-49 / 50-99 / 100+ | memoryless by N |
+|---|---|---|---|---|---|
+| R | M | 29 of 166 (22 %) | 37 of 166 (24 %) | 5/88 · 11/48 · 13/30 | 12/88 · 13/48 · 12/30 |
+| R | J | 32 of 166 (29 %) | 30 of 166 (26 %) | 4/88 · 10/48 · 18/30 | 2/88 · 12/48 · 16/30 |
+| R | G | 0 of 166 (0 %) | 0 of 166 (0 %) | 0/88 · 0/48 · 0/30 | 0/88 · 0/48 · 0/30 |
+| X | M | 20 of 166 (17 %) | 21 of 166 (16 %) | 4/88 · 5/48 · 11/30 | 6/88 · 5/48 · 10/30 |
+| X | J | 14 of 166 (15 %) | 24 of 166 (23 %) | 0/88 · 3/48 · 11/30 | 3/88 · 4/48 · 17/30 |
+| X | G | 0 of 166 (0 %) | 0 of 166 (0 %) | 0/88 · 0/48 · 0/30 | 0/88 · 0/48 · 0/30 |
+
+where the main region of all members lies (start = it begins in the first 30 min of the family's possible hours,
+end = it reaches the last 30 min): real | memoryless; all tested families, then the confirmed ones
+| event | definition | start / middle / end, real | memoryless | confirmed real | confirmed memoryless |
+|---|---|---|---|---|---|
+| R | M | 142 / 11 / 13 | 144 / 13 / 9 | 29 / 0 / 0 | 36 / 1 / 0 |
+| R | J | 129 / 31 / 6 | 121 / 34 / 11 | 32 / 0 / 0 | 30 / 0 / 0 |
+| R | G | 6 / 120 / 40 | 6 / 129 / 31 | 0 / 0 / 0 | 0 / 0 / 0 |
+| X | M | 144 / 16 / 6 | 144 / 10 / 12 | 20 / 0 / 0 | 21 / 0 / 0 |
+| X | J | 84 / 62 / 20 | 101 / 54 / 11 | 14 / 0 / 0 | 24 / 0 / 0 |
+| X | G | 16 / 120 / 30 | 8 / 116 / 42 | 0 / 0 / 0 | 0 / 0 / 0 |
+
+conditions met (families), real | memoryless
+| event | definition | first_decade_same_place | second_decade_holds | grid_shifts | resampling_and_one_session | beats_chance |
+|---|---|---|---|---|---|---|
+| R | M | 95 \| 93 | 38 \| 41 | 128 \| 129 | 94 \| 92 | 166 \| 166 |
+| R | J | 67 \| 59 | 41 \| 41 | 100 \| 95 | 63 \| 70 | 92 \| 95 |
+| R | G | 33 \| 37 | 5 \| 5 | 44 \| 44 | 1 \| 1 | 6 \| 8 |
+| X | M | 88 \| 82 | 34 \| 28 | 127 \| 128 | 72 \| 63 | 166 \| 166 |
+| X | J | 53 \| 57 | 23 \| 31 | 78 \| 87 | 32 \| 47 | 55 \| 71 |
+| X | G | 34 \| 46 | 2 \| 8 | 43 \| 41 | 1 \| 0 | 7 \| 7 |
+
+share of N in the first / last 30 minutes of the possible hours (N-weighted mean over tested families)
+  real/R: 18.9 % / 19.3 %
+  null/R: 19.2 % / 20.7 %
+  real/X: 22.0 % / 19.2 %
+  null/X: 19.6 % / 21.3 %
+
+main regions, median share of N and median ratio to its expectation (J: two histograms; G: memoryless)
+  R M real: share 12.7 %, ratio None
+  R M null: share 13.0 %, ratio None
+  R J real: share 15.0 %, ratio 3.92
+  R J null: share 14.1 %, ratio 4.17
+  R G real: share 7.4 %, ratio 16.0
+  R G null: share 6.7 %, ratio 18.18
+  X M real: share 12.0 %, ratio None
+  X M null: share 11.8 %, ratio None
+  X J real: share 10.0 %, ratio 5.14
+  X J null: share 11.4 %, ratio 4.5
+  X G real: share 7.2 %, ratio 20.0
+  X G null: share 6.2 %, ratio 25.0
+
+examples
+
+RDR ср long 11:45: N 25, known 25, decades 12 / 13; piles {'real/R': {'first30': 8.0, 'last30': 28.0}, 'real/X': {'first30': 28.0, 'last30': 20.0}, 'null/R': {'first30': 24.0, 'last30': 32.0}, 'null/X': {'first30': 12.0, 'last30': 44.0}}
+  real R M: -1.0..-0.7 SD x 15:00-15:45 16.0 % ratio None [end] second decade p 1.0 shifts [0.71, 0.64, 0.8] boot 0.34 loo 0.0 p_max None ..+.+ 
+  null R M: -0.2..+0.1 SD x 11:45-12:30 20.0 % ratio None [start] second decade p 0.0278 shifts [0.71, 0.8, 0.8] boot 0.615 loo 1.0 p_max None +++++ CONFIRMED
+  real R J: -1.0..-0.8 SD x 15:00-15:45 16.0 % ratio 4.17 [end] second decade p 1.0 shifts [0.0, 0.0, 0.8] boot 0.165 loo 0.0 p_max 0.36 ..... 
+  null R J: -0.2..+0.2 SD x 11:45-12:15 24.0 % ratio 2.78 [start] second decade p 1.0 shifts [0.0, 0.71, 0.5] boot 0.275 loo 0.0 p_max 0.13 ..... 
+  real R G: -1.0..-0.8 SD x 15:00-15:45 16.0 % ratio 7.14 [end] second decade p 1.0 shifts [0.33, 0.64, 0.8] boot 0.165 loo 0.0 p_max 0.7 ..+.. 
+  null R G: -0.7..-0.3 SD x 13:15-14:15 24.0 % ratio 4.88 [middle] second decade p 1.0 shifts [0.8, 0.0, 0.0] boot 0.17 loo 0.0 p_max 0.545 ..... 
+  real X M: +0.3..+0.6 SD x 11:45-12:30 24.0 % ratio None [start] second decade p 0.5177 shifts [0.38, 0.8, 0.8] boot 0.84 loo 1.0 p_max None +.+++ 
+  null X M: +1.4..+1.7 SD x 15:15-16:00 24.0 % ratio None [end] second decade p 0.5177 shifts [0.71, 0.8, 0.64] boot 0.635 loo 0.5 p_max None +.+++ 
+  real X J: +0.6..+0.9 SD x 13:00-14:15 12.0 % ratio 5.0 [middle] second decade p 1.0 shifts [0.0, 0.27, 0.8] boot 0.185 loo 0.0 p_max 0.26 ..... 
+  null X J: +0.2..+0.5 SD x 11:45-12:15 12.0 % ratio 8.33 [start] second decade p 0.065 shifts [0.71, 0.71, 0.71] boot 0.395 loo 0.17 p_max 0.01 +.+.+ 
+  real X G: +2.0..+2.2 SD x 14:15-15:45 12.0 % ratio 10.0 [end] second decade p 1.0 shifts [0.08, 0.0, 0.05] boot 0.06 loo 0.0 p_max 0.815 ..... 
+  null X G: +1.4..+1.9 SD x 15:00-16:00 36.0 % ratio 4.52 [end] second decade p 0.218 shifts [0.53, 0.85, 0.71] boot 0.285 loo 0.15 p_max 0.145 +.+.. 
+
+ODR ср long 04:00: N 187, known 182, decades 81 / 101; piles {'real/R': {'first30': 21.9, 'last30': 16.0}, 'real/X': {'first30': 18.7, 'last30': 27.8}, 'null/R': {'first30': 16.6, 'last30': 25.7}, 'null/X': {'first30': 21.9, 'last30': 18.7}}
+  real R M: -0.1..+0.2 SD x 04:00-04:45 9.6 % ratio None [start] second decade p 0.0066 shifts [0.71, 0.8, 0.8] boot 0.93 loo 0.5 p_max None +++++ CONFIRMED
+  null R M: -0.1..+0.2 SD x 04:00-04:45 9.6 % ratio None [start] second decade p 0.0749 shifts [0.71, 0.8, 0.8] boot 0.9 loo 1.0 p_max None +.+++ 
+  real R J: -0.1..+0.7 SD x 04:00-04:30 15.5 % ratio 2.99 [start] second decade p 0.001 shifts [0.88, 0.71, 0.71] boot 0.93 loo 0.75 p_max 0.005 +++++ CONFIRMED
+  null R J: -0.4..+0.4 SD x 04:00-05:30 22.5 % ratio 2.05 [start] second decade p 0.003 shifts [0.57, 0.89, 0.86] boot 0.62 loo 0.83 p_max 0.005 .++++ 
+  real R G: -3.2..-3.0 SD x 07:00-07:15 1.1 % ratio 50.0 [middle] second decade p 0.219 shifts [0.0, 0.0, 0.0] boot 0.11 loo 0.0 p_max 0.79 ..... 
+  null R G: -4.8..-4.5 SD x 07:30-08:00 1.6 % ratio 37.5 [middle] second decade p 1.0 shifts [0.0, 0.71, 0.0] boot 0.175 loo 0.0 p_max 0.28 ..... 
+  real X M: +0.1..+0.4 SD x 04:00-04:45 7.5 % ratio None [start] second decade p 0.4205 shifts [0.33, 0.8, 0.8] boot 0.42 loo 1.0 p_max None +.+.+ 
+  null X M: +0.2..+0.5 SD x 04:00-04:45 11.8 % ratio None [start] second decade p 0.001 shifts [0.71, 0.8, 0.8] boot 0.96 loo 1.0 p_max None +++++ CONFIRMED
+  real X J: +0.1..+0.7 SD x 04:00-04:30 12.8 % ratio 2.84 [start] second decade p 0.108 shifts [0.85, 0.71, 0.71] boot 0.73 loo 0.83 p_max 0.005 +.+++ 
+  null X J: +0.1..+0.6 SD x 04:00-04:45 14.4 % ratio 3.17 [start] second decade p 0.001 shifts [0.82, 0.33, 0.5] boot 0.895 loo 1.0 p_max 0.005 +++++ CONFIRMED
+  real X G: +4.2..+4.3 SD x 06:00-06:15 1.1 % ratio 66.67 [middle] second decade p 1.0 shifts [0.0, 0.0, 0.25] boot 0.125 loo 0.0 p_max 0.63 +.... 
+  null X G: +4.1..+4.2 SD x 04:45-05:00 1.1 % ratio 100.0 [middle] second decade p 0.593 shifts [0.33, 0.2, 0.5] boot 0.12 loo 0.0 p_max 0.41 ..... 
+
+## ES: 182 families with N >= 20 (11377 of 14276 confirmed sessions = 80 %)
+
+confirmed main regions: families (sessions of the instrument in those families)
+| event | definition | real | memoryless | real by N 20-49 / 50-99 / 100+ | memoryless by N |
+|---|---|---|---|---|---|
+| R | M | 39 of 182 (23 %) | 33 of 182 (19 %) | 10/95 · 16/56 · 13/31 | 7/95 · 17/56 · 9/31 |
+| R | J | 39 of 182 (27 %) | 39 of 182 (30 %) | 4/95 · 19/56 · 16/31 | 6/95 · 12/56 · 21/31 |
+| R | G | 1 of 182 (0 %) | 0 of 182 (0 %) | 0/95 · 1/56 · 0/31 | 0/95 · 0/56 · 0/31 |
+| X | M | 31 of 182 (20 %) | 28 of 182 (18 %) | 8/95 · 11/56 · 12/31 | 9/95 · 8/56 · 11/31 |
+| X | J | 13 of 182 (12 %) | 24 of 182 (20 %) | 2/95 · 1/56 · 10/31 | 2/95 · 7/56 · 15/31 |
+| X | G | 0 of 182 (0 %) | 0 of 182 (0 %) | 0/95 · 0/56 · 0/31 | 0/95 · 0/56 · 0/31 |
+
+where the main region of all members lies (start = it begins in the first 30 min of the family's possible hours,
+end = it reaches the last 30 min): real | memoryless; all tested families, then the confirmed ones
+| event | definition | start / middle / end, real | memoryless | confirmed real | confirmed memoryless |
+|---|---|---|---|---|---|
+| R | M | 155 / 8 / 19 | 163 / 10 / 9 | 39 / 0 / 0 | 33 / 0 / 0 |
+| R | J | 142 / 29 / 11 | 135 / 41 / 6 | 39 / 0 / 0 | 39 / 0 / 0 |
+| R | G | 13 / 132 / 37 | 16 / 128 / 38 | 0 / 1 / 0 | 0 / 0 / 0 |
+| X | M | 163 / 6 / 13 | 164 / 7 / 11 | 31 / 0 / 0 | 28 / 0 / 0 |
+| X | J | 98 / 70 / 14 | 116 / 57 / 9 | 13 / 0 / 0 | 24 / 0 / 0 |
+| X | G | 20 / 130 / 32 | 10 / 131 / 41 | 0 / 0 / 0 | 0 / 0 / 0 |
+
+conditions met (families), real | memoryless
+| event | definition | first_decade_same_place | second_decade_holds | grid_shifts | resampling_and_one_session | beats_chance |
+|---|---|---|---|---|---|---|
+| R | M | 115 \| 116 | 43 \| 41 | 146 \| 142 | 98 \| 97 | 182 \| 182 |
+| R | J | 103 \| 77 | 58 \| 53 | 116 \| 93 | 71 \| 69 | 110 \| 111 |
+| R | G | 50 \| 45 | 6 \| 5 | 44 \| 53 | 1 \| 0 | 8 \| 6 |
+| X | M | 112 \| 101 | 41 \| 32 | 141 \| 142 | 85 \| 77 | 182 \| 182 |
+| X | J | 52 \| 64 | 29 \| 33 | 80 \| 89 | 30 \| 48 | 60 \| 73 |
+| X | G | 44 \| 47 | 3 \| 5 | 43 \| 46 | 1 \| 1 | 10 \| 10 |
+
+share of N in the first / last 30 minutes of the possible hours (N-weighted mean over tested families)
+  real/R: 19.9 % / 20.2 %
+  null/R: 20.3 % / 21.3 %
+  real/X: 23.7 % / 19.6 %
+  null/X: 20.8 % / 22.2 %
+
+main regions, median share of N and median ratio to its expectation (J: two histograms; G: memoryless)
+  R M real: share 13.6 %, ratio None
+  R M null: share 13.3 %, ratio None
+  R J real: share 14.3 %, ratio 4.31
+  R J null: share 15.0 %, ratio 3.89
+  R G real: share 7.9 %, ratio 12.9
+  R G null: share 6.7 %, ratio 18.75
+  X M real: share 12.5 %, ratio None
+  X M null: share 11.5 %, ratio None
+  X J real: share 12.6 %, ratio 4.35
+  X J null: share 11.7 %, ratio 4.35
+  X G real: share 6.9 %, ratio 21.05
+  X G null: share 6.9 %, ratio 21.43
+
+## YM: 168 families with N >= 20 (10678 of 13512 confirmed sessions = 79 %)
+
+confirmed main regions: families (sessions of the instrument in those families)
+| event | definition | real | memoryless | real by N 20-49 / 50-99 / 100+ | memoryless by N |
+|---|---|---|---|---|---|
+| R | M | 28 of 168 (23 %) | 25 of 168 (16 %) | 3/89 · 9/49 · 16/30 | 10/89 · 6/49 · 9/30 |
+| R | J | 31 of 168 (28 %) | 29 of 168 (27 %) | 3/89 · 9/49 · 19/30 | 1/89 · 8/49 · 20/30 |
+| R | G | 0 of 168 (0 %) | 0 of 168 (0 %) | 0/89 · 0/49 · 0/30 | 0/89 · 0/49 · 0/30 |
+| X | M | 21 of 168 (17 %) | 24 of 168 (16 %) | 4/89 · 6/49 · 11/30 | 9/89 · 5/49 · 10/30 |
+| X | J | 13 of 168 (11 %) | 18 of 168 (17 %) | 3/89 · 3/49 · 7/30 | 1/89 · 4/49 · 13/30 |
+| X | G | 0 of 168 (0 %) | 0 of 168 (0 %) | 0/89 · 0/49 · 0/30 | 0/89 · 0/49 · 0/30 |
+
+where the main region of all members lies (start = it begins in the first 30 min of the family's possible hours,
+end = it reaches the last 30 min): real | memoryless; all tested families, then the confirmed ones
+| event | definition | start / middle / end, real | memoryless | confirmed real | confirmed memoryless |
+|---|---|---|---|---|---|
+| R | M | 140 / 13 / 15 | 142 / 13 / 13 | 28 / 0 / 0 | 24 / 0 / 1 |
+| R | J | 127 / 29 / 12 | 117 / 39 / 12 | 31 / 0 / 0 | 29 / 0 / 0 |
+| R | G | 3 / 136 / 29 | 14 / 114 / 40 | 0 / 0 / 0 | 0 / 0 / 0 |
+| X | M | 152 / 8 / 8 | 144 / 9 / 15 | 21 / 0 / 0 | 24 / 0 / 0 |
+| X | J | 89 / 64 / 15 | 94 / 59 / 15 | 13 / 0 / 0 | 18 / 0 / 0 |
+| X | G | 24 / 118 / 26 | 11 / 123 / 34 | 0 / 0 / 0 | 0 / 0 / 0 |
+
+conditions met (families), real | memoryless
+| event | definition | first_decade_same_place | second_decade_holds | grid_shifts | resampling_and_one_session | beats_chance |
+|---|---|---|---|---|---|---|
+| R | M | 93 \| 93 | 39 \| 35 | 126 \| 140 | 69 \| 83 | 168 \| 168 |
+| R | J | 66 \| 63 | 42 \| 44 | 106 \| 87 | 68 \| 57 | 90 \| 84 |
+| R | G | 33 \| 35 | 2 \| 2 | 40 \| 41 | 2 \| 0 | 8 \| 8 |
+| X | M | 86 \| 90 | 25 \| 30 | 137 \| 127 | 84 \| 66 | 168 \| 168 |
+| X | J | 45 \| 56 | 25 \| 25 | 64 \| 69 | 29 \| 38 | 62 \| 64 |
+| X | G | 42 \| 45 | 9 \| 5 | 42 \| 41 | 1 \| 0 | 8 \| 6 |
+
+share of N in the first / last 30 minutes of the possible hours (N-weighted mean over tested families)
+  real/R: 18.0 % / 19.8 %
+  null/R: 19.1 % / 22.4 %
+  real/X: 22.5 % / 18.3 %
+  null/X: 19.1 % / 21.4 %
+
+main regions, median share of N and median ratio to its expectation (J: two histograms; G: memoryless)
+  R M real: share 12.5 %, ratio None
+  R M null: share 12.7 %, ratio None
+  R J real: share 13.8 %, ratio 4.2
+  R J null: share 13.7 %, ratio 4.5
+  R G real: share 7.2 %, ratio 17.24
+  R G null: share 5.8 %, ratio 22.22
+  X M real: share 12.3 %, ratio None
+  X M null: share 11.3 %, ratio None
+  X J real: share 10.7 %, ratio 5.0
+  X J null: share 10.7 %, ratio 5.0
+  X G real: share 6.3 %, ratio 22.22
+  X G null: share 7.1 %, ratio 18.75

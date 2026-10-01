@@ -2,7 +2,9 @@
 # 1) TradingView Desktop with the debugging port 9222 (live candles), 2) the history base (built once),
 # 3) the local server on 127.0.0.1:8767 (hidden, logs in lab/.runtime), 4) the page.
 # Idempotent: whatever already runs is left as is. Everything stays on this computer.
-param([switch]$NoBrowser)
+# The root / opens the working screen, design 24 since 2026-10-01 night (the server redirects / to /24/); design 22 is at
+# /22/. -Page 24/ opens design 24 directly (the shortcut "DR Lab 24", start-dr-lab-24.cmd).
+param([switch]$NoBrowser, [string]$Page = '')
 
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
@@ -83,7 +85,7 @@ if (Test-Url 'http://127.0.0.1:8767/api/health') {
 }
 
 # 4. The page
-if (-not $NoBrowser) { Start-Process 'http://127.0.0.1:8767' }
-Write-Host '  [ok] http://127.0.0.1:8767'
+if (-not $NoBrowser) { Start-Process ('http://127.0.0.1:8767/' + $Page) }
+Write-Host ('  [ok] http://127.0.0.1:8767/' + $Page)
 Write-Host ''
 Start-Sleep -Seconds 2

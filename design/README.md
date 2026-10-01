@@ -1,11 +1,31 @@
-# DR Lab screen design — start here (state of 2026-09-29)
+# DR Lab screen design — start here (state of 2026-10-01)
 
 If you join the design work, read this page, then open the pages below. Everything in `design/` is a **mockup on
-synthetic data**, except that **design 22 «смысл числа» is the working screen of DR Lab on market data since
-2026-09-29** (`lab/dist/index.html` is built from `design/sozvezdiya-22/src`; design 21 was the working screen on
+synthetic data**, except the working screens: **design 24 «Окна времени» is the working screen since 2026-10-01
+night** (section below; on branch `design-24`, not merged into `main`; its full specification: `spec/ekran-24/`), and
+**design 22 «смысл числа» was the working screen of DR Lab on market data from 2026-09-29** (kept at `/22/`) (`lab/dist/index.html` is built from `design/sozvezdiya-22/src`; design 21 was the working screen on
 2026-09-28). Its meaning, pictures and open questions: `meaning/04-dizajn-22.md` (Russian, no code needed). **Stars,
 constellations and place percentages = where and when price of similar sessions CAME after this candle** (operator,
 2026-09-29); never the session's final extreme (AGENTS.md hard rule 10).
+
+## Design 24 «Границы хода» (2026-10-01)
+
+The working screen since 2026-10-01 night (the operator: «сделай его основным, 24-й … пока в мейн не сливай»): design 22's screen with the statistical layer
+of the semantic specification DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`). It runs on market data at
+`http://127.0.0.1:8767/24/` (the root `/` opens it; the shortcuts «DR Lab» and «DR Lab 24»); any date of 2006–2025 opens as if it were today, so it can be
+reviewed without a live confirmation. Code, the element-by-element table against design 22, the choices the executor
+made and how to check: [`sozvezdiya-24/README.md`](sozvezdiya-24/README.md); snapshots in
+[`sozvezdiya-24/shots/`](sozvezdiya-24/shots/). Design 22 is unchanged and kept at `/22/`. Every element of 24 on annotated screenshots, with its meaning, count,
+denominator, code and checks: [`../spec/ekran-24/`](../spec/ekran-24/README.md).
+Since 2026-10-01 evening its clusters are the **zone map** `zone-map-3` (`meaning/12-karta-zon.md`): several price ×
+time zones of R / X with their share of the family and today's status; the weekday family by default, all weekdays
+only by an explicit click.
+Since the same night its look is the variant **«Окна времени»** the operator chose from three mockups (canvas «DR Lab ·
+экран 24»), with the constellation look he chose from twelve (canvas «DR Lab · созвездия»: «дымка и нити», amber R, sky
+X): R and X on screen together, zones drawn as constellations, the time band under the chart (X up, R down, every zone a
+hill), a hovered zone or price band linked to its peak 15 minutes, the inspector at the bottom right instead of a
+tooltip, six windows of the family sliding up from the bottom edge. The meaning of every number is unchanged
+(`meaning/10-dizajn-24.md` §3а).
 
 ## Where we are, in one paragraph
 
@@ -21,7 +41,8 @@ refined it round by round, reworked its right panel as 21 with a second agent, a
 
 | What | Where |
 |---|---|
-| All designs 1–22, numbered, each live inside the page (he refers to them by number) | `design/all-designs/ИСТОРИЯ.html` (open the file in a browser) |
+| All designs 1–22 and 24, numbered, each live inside the page (24 as snapshots: it runs only on the local server) | `design/all-designs/ИСТОРИЯ.html` (open the file in a browser) |
+| Design 24: the meaning of its percentages with numbered pictures / the code | `meaning/10-dizajn-24.md` / [`sozvezdiya-24/README.md`](sozvezdiya-24/README.md) |
 | Design 22 full screen (the current proposal) | `design/sozvezdiya-22/built/index.html` |
 | Design 22 explained with numbered pictures | `meaning/04-dizajn-22.md` |
 | Design 20 full screen | `design/sozvezdiya-2026-09-28/built/index.html` |
@@ -41,6 +62,7 @@ design/
   sozvezdiya-2026-09-28/        design 20, the working variant (src/ -> built/index.html; snap/ git-ignored)
   sozvezdiya-21/                design 21 = design 20 + the right panel of round 6 (src/panel21.js, panel21.css); the working screen
   sozvezdiya-22/                design 22 = design 21 changed by the audit of 29.09 (src/app.js, panel.js, panel.css); a proposal
+  sozvezdiya-24/                design 24 = design 22's screen + DR-LAB-SEM-1.0 (src/ -> lab/dist/24/; shots/); next to the working screen
   clusters-2026-09-28/          designs 8-16 (canvas artboards, .dc.html) and the synthetic days gen_days.py used by 20
   semantic-2026-09/             designs 5-7, another session's semantic concept (CONCEPT.md, prototype.html)
   redesign-2026-09/             designs 1-4 (24-25.09); B′ (4) was chosen then, spec in docs/DESIGN.md
