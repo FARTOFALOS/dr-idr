@@ -30,7 +30,8 @@ refined it round by round, reworked its right panel as 21 with a second agent, a
 
 | What | Where |
 |---|---|
-| All designs 1–22, numbered, each live inside the page (he refers to them by number) | `design/all-designs/ИСТОРИЯ.html` (open the file in a browser) |
+| All designs 1–22 and 24, numbered, each live inside the page (24 as snapshots: it runs only on the local server) | `design/all-designs/ИСТОРИЯ.html` (open the file in a browser) |
+| Design 24: the meaning of its percentages with numbered pictures / the code | `meaning/10-dizajn-24.md` / [`sozvezdiya-24/README.md`](sozvezdiya-24/README.md) |
 | Design 22 full screen (the current proposal) | `design/sozvezdiya-22/built/index.html` |
 | Design 22 explained with numbered pictures | `meaning/04-dizajn-22.md` |
 | Design 20 full screen | `design/sozvezdiya-2026-09-28/built/index.html` |

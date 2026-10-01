@@ -1,5 +1,12 @@
 # Design 24 «Границы хода» — design 22's screen with the statistics of DR-LAB-SEM-1.0
 
+**The meaning, for agents without code: [`meaning/10-dizajn-24.md`](../../meaning/10-dizajn-24.md)** — where every
+percentage comes from, where and why it is fixed, how it is counted, every element on numbered pictures. This page is
+about the code. Work on 24 goes on branch `design-24` in its pull request (operator, 2026-10-01).
+
+Design 23 (`design/sozvezdiya-23/`, `/sem-v1/`, `/api/family-v1`) is another agent's first, minimal page of the same
+specification, pushed to `main` on 2026-10-01; it is unchanged and runs next to 24. Design 24 is the product version.
+
 A separate version of the DR Lab screen, built 2026-10-01 at the operator's order: **design 22's working screen
 (candles, the day's DR / IDR, replay, the right panel, hover / pin, layers, settings) with its statistical layer replaced
 end to end by the semantic specification DR-LAB-SEM-1.0** ([`meaning/lens/2026-10-01-spec-v1/`](../../meaning/lens/2026-10-01-spec-v1/README.md)).

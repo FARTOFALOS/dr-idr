@@ -102,6 +102,15 @@ against what happened next.
     day (the author's skeleton unchanged; a 15-minute activation family, then M5; `meaning/lens/2026-09-30-linza-11.md`);
     open: the weekday in the key (О18) and the go-ahead to implement.
 
+- **How work goes from 2026-10-01 (operator): design 24 is the semantic foundation, kept as a pull request.** Work on
+  24 happens on branch `design-24` (its PR into `main` on GitHub); each decision of the operator is a new commit in that
+  PR with its node in `meaning/07-cepochka-reshenij.md`. `main` keeps the design-22 era until he merges. The operator's
+  local checkout stays on `design-24` (both shortcuts need it). Before changing anything in 24, read
+  **`meaning/10-dizajn-24.md`** — where every percentage comes from, where and why it is fixed, how it is counted — and
+  do not change its section 2 without the operator.
+- **Design 23 (2026-10-01, another agent, pushed to `main`):** a minimal page of the same specification at `/sem-v1/`
+  (`design/sozvezdiya-23/`, `lab/dist/sem-v1/`, `/api/family-v1` = `lab/scene21.py::family_sem_v1`). Kept as is; design
+  24 below is the product version.
 - **Design 24 «Границы хода» (2026-10-01, the operator's order): a separate version next to the working screen.**
   Design 22's interface with its statistical layer replaced end to end by the auditor's semantic specification
   DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`): for each family session one point of R (the deepest point against
