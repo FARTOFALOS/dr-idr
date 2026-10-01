@@ -121,6 +121,12 @@ against what happened next.
   (read its README first). The operator's atom (2026-10-01): an existing M5 candle is an observation, day and night; only
   a wholly missing M5 is a hole. Design 22 and the rules below are unchanged; accepting the specification for the working
   screen (rule 10, rule 6) is open as О19, what to develop next as О20 (`meaning/05-otkrytye-voprosy.md`).
+  **Its clusters since 2026-10-01 evening: the zone map `zone-map-3`** (`lab/zonemap24.py`, read
+  `meaning/12-karta-zon.md` first): several price × time zones of R / X, each the half-height region of its own apex
+  on the family's 3 × 3 density, its share of the family, today's status by the reachable set; the weekday family by
+  default, all weekdays only by the explicit switch (`view=…:all`). Its acceptance on sessions after 2025 is frozen in
+  meaning/12 §6 (О24); the prospective log waits for the operator (О23). `main-cluster-1` (`lab/cluster24.py`,
+  meaning/11) and the audits in `meaning/lens/2026-10-01-cluster-synthesis/`, `…-zone-map-2/` are the research behind it.
 - **The working screen is «Созвездия» design 22 «смысл числа», on market data** (since 2026-09-29; design 21 from
   2026-09-28 before it). `http://127.0.0.1:8767` opens it (`lab/dist/index.html` + `sozvezdiya.js`, built from
   `design/sozvezdiya-22/src` with its `build.py` — edit there, never the built file; building 21 would overwrite it); the previous screen is
@@ -142,6 +148,8 @@ lab/
   server.py               local HTTP server 127.0.0.1:8767 (stdlib): static page + JSON API
   scene21.py              the working screen's data: the trading day from TradingView, similar sessions at a minute
   scene24.py              design 24's data (/api/d24/*): DR-LAB-SEM-1.0 families, R / X, DR outcome, path; history days
+  zonemap24.py            design 24's zone map zone-map-3 (meaning/12): zones, diagnostics, today's status
+  cluster24.py            main-cluster-1 (meaning/11): kept for its archived studies, not on the screen
   build_boxes.py          builds every session box (confirmed or not) with its M5 bars (once; ~20 s per instrument)
   build_market.py         builds the history base from the G3 market tape (once; ~30 s per instrument)
   engine_market.py        history queries over the built base (the research dashboard, API /api/query, /api/scene)
@@ -160,8 +168,8 @@ meaning/                  the semantic layer for agents without code (Russian): 
 README.md                 the front page on GitHub: what this is, who reads what, the current design picture
 tests/smoke.py            offline checks; run after every change
 tests/ui_check21.js       in-page check of the working screen; evaluate it in the browser (ui_check.js: classic.html)
-tests/sem24.py            design 24: the specification's 32 reference checks and integration checks on the base
-tests/ui_check24.js       design 24: in-page check (passports, page = server, one table, film columns, slices)
+tests/sem24.py            design 24: the specification's 32 reference checks, integration on the base, the zone map
+tests/ui_check24.js       design 24: in-page check (passports, page = server, one table, film columns, slices, zones)
 start-dr-lab-24.cmd       the shortcut «DR Lab 24»: the same start, then the page /24/
 docs/                     everything an agent needs to understand and extend the tool
 design/                   mockups on synthetic data, designs 1-22, start at design/README.md; design 22 is also the

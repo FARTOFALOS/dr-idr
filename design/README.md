@@ -15,6 +15,9 @@ of the semantic specification DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`
 reviewed without a live confirmation. Code, the element-by-element table against design 22, the choices the executor
 made and how to check: [`sozvezdiya-24/README.md`](sozvezdiya-24/README.md); snapshots in
 [`sozvezdiya-24/shots/`](sozvezdiya-24/shots/). Design 22 is unchanged and stays the working screen.
+Since 2026-10-01 evening its clusters are the **zone map** `zone-map-3` (`meaning/12-karta-zon.md`): several price ×
+time zones of R / X with their share of the family and today's status; the weekday family by default, all weekdays
+only by an explicit click.
 
 ## Where we are, in one paragraph
 

@@ -69,7 +69,7 @@ Tick sizes: NQ, ES 0.25; YM 1. History bars carry the **close** minute of each M
 | `GET /api/cohort?instrument=NQ&session=RDR[&at=<day minute>]` | working screen: the similar sessions of 2006–2025 at the live minute or the replay minute `at` (used before a confirmation) |
 | `GET /api/family?instrument=NQ&session=RDR[&at=<day minute>]` | working screen since 2026-09-30: today's family (after a confirmation) or break family (after today's DR break) and its whole clock M5 film |
 | `GET /api/d24/day?instrument=NQ[&date=YYYY-MM-DD][&refresh=1]` | design 24: the live day (as `/api/day`, `source: live`; `refresh=1` fetches from TradingView first) or a trading date of 2006–2025 from the session base (`source: history`: its three blocks' M5, the previous RDR box, `now` = 17:00) |
-| `GET /api/d24/family?instrument=NQ&session=RDR[&date=…][&at=<day minute>][&view=auto\|conf]` | design 24: today's state at the slice `at` and the snapshot of its family per DR-LAB-SEM-1.0 (`lab/scene24.py`) |
+| `GET /api/d24/family?instrument=NQ&session=RDR[&date=…][&at=<day minute>][&view=auto\|conf][:all]` | design 24: today's state at the slice `at` and the snapshot of its family per DR-LAB-SEM-1.0 (`lab/scene24.py`) with its zone maps (`lab/zonemap24.py`); `:all` = the all-weekdays family, an explicit choice |
 | `GET /api/d24/dates?instrument=NQ` | design 24: every trading date of the base with the sessions whose first confirmation is established that day (`[[date, "AOR"], …]`) |
 
 ### `/api/day` response (`lab/scene21.day_view`)
@@ -132,6 +132,14 @@ after the box), `counts` (`R`, `X`: `{cells: [[k, b, n]], known, unknown, none}`
 `{s: known | unknown | none, v (directed ticks), t (open minute of the first M5), ties}` (`bound` = observed so far when
 unknown); `path[j]` = `[low, high, close]` in directed ticks on `grid[j]`, or null where the M5 is missing; `oppv` its
 opposite DR in directed ticks. A member's u = v / w; the page carries it to today's price through today's IDR.
+`key.scope` is `weekday` (the default) or `all`; `available.scopes` lists both. `zones` (`zone-map-3`,
+`meaning/12-karta-zon.md`): for `R` and `X`, `{algorithm_version, family_scope, family_id, snapshot_id, event_id,
+N_family, n_residual_total, unknown_count, no_event_count, min_support, study_refs, zones: [...], residual_ids}`, each
+zone `{zone_id, label, peak_anchor, cell_mask: [[k, b]], price_low, price_high, time_start, time_end,
+member_session_ids, n_zone, p_snapshot, grid_member_jaccard, bootstrap_recovery, null_model_id, null_status,
+[null_frozen_overlap, null_validation_n, p_real_mask, p_null_mask, null_excess, null_interval,
+minimum_detectable_excess]}`. `today.zones`: per event `{state: ok | none | unknown, q, v10, w, status: [HOLDS |
+POSSIBLE | IMPOSSIBLE | STATUS_UNKNOWN per zone]}` at the request's slice; the page recomputes it at any slice.
 
 ### `/api/live` response
 
