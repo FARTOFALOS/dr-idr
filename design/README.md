@@ -7,6 +7,15 @@ synthetic data**, except that **design 22 «смысл числа» is the worki
 constellations and place percentages = where and when price of similar sessions CAME after this candle** (operator,
 2026-09-29); never the session's final extreme (AGENTS.md hard rule 10).
 
+## Design 24 «Границы хода» (2026-10-01)
+
+A separate version next to the working screen, at the operator's order: design 22's screen with the statistical layer
+of the semantic specification DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`). It runs on market data at
+`http://127.0.0.1:8767/24/` (the shortcut «DR Lab 24»); any date of 2006–2025 opens as if it were today, so it can be
+reviewed without a live confirmation. Code, the element-by-element table against design 22, the choices the executor
+made and how to check: [`sozvezdiya-24/README.md`](sozvezdiya-24/README.md); snapshots in
+[`sozvezdiya-24/shots/`](sozvezdiya-24/shots/). Design 22 is unchanged and stays the working screen.
+
 ## Where we are, in one paragraph
 
 The operator (a trader of the DR/IDR method, RDR and ODR sessions) wants DR Lab, his second screen next to TradingView,
@@ -41,6 +50,7 @@ design/
   sozvezdiya-2026-09-28/        design 20, the working variant (src/ -> built/index.html; snap/ git-ignored)
   sozvezdiya-21/                design 21 = design 20 + the right panel of round 6 (src/panel21.js, panel21.css); the working screen
   sozvezdiya-22/                design 22 = design 21 changed by the audit of 29.09 (src/app.js, panel.js, panel.css); a proposal
+  sozvezdiya-24/                design 24 = design 22's screen + DR-LAB-SEM-1.0 (src/ -> lab/dist/24/; shots/); next to the working screen
   clusters-2026-09-28/          designs 8-16 (canvas artboards, .dc.html) and the synthetic days gen_days.py used by 20
   semantic-2026-09/             designs 5-7, another session's semantic concept (CONCEPT.md, prototype.html)
   redesign-2026-09/             designs 1-4 (24-25.09); B′ (4) was chosen then, spec in docs/DESIGN.md

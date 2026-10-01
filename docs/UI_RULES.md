@@ -28,6 +28,14 @@ had crept into 21 against rule 4 («наведите, чтобы раскрыт�
 presentation choices (no percentage without a matched price, a place's share on its band, the fan as slices) change
 no binding rule; they become rules only when the operator accepts them.
 
+Design 24 (2026-10-01, a separate prototype at `/24/` by the operator's order; `design/sozvezdiya-24/README.md`)
+follows the specification DR-LAB-SEM-1.0 §15. It **replaces** for itself: the mandatory places, first touches as the
+source of the stars, the row of six history windows (one details area instead) and the old reading of the bracket
+percentages (a bracket only on a selected band, carrying the band's share). It **keeps** locality, the candles as the
+main object, one screen, no text on text, no explanatory paragraphs, percentages and not counts in the right panel,
+every panel line a link, replay, one active pick (one selected area). The working screen and these rules are not
+changed by it.
+
 ## Layout
 
 1. **The current session is the product.** The live session chart takes most of the screen. Focus mode (`body.focus`)

@@ -52,7 +52,7 @@ against what happened next.
 8. `docs/DESIGN.md` — the redesign of the screen the operator chose (variant B′): target layout, visual language,
    interactions, which UI rules it replaces, what the implementation needs; mockups in `design/redesign-2026-09/`.
 
-## Where the work stands (2026-09-30)
+## Where the work stands (2026-10-01)
 
 - **Semantic audit and design 22 (2026-09-29).** The operator asked for a deep audit of the whole system and then for
   the next design built on its conclusions, with the repository made readable for a semantic agent without code.
@@ -102,6 +102,16 @@ against what happened next.
     day (the author's skeleton unchanged; a 15-minute activation family, then M5; `meaning/lens/2026-09-30-linza-11.md`);
     open: the weekday in the key (О18) and the go-ahead to implement.
 
+- **Design 24 «Границы хода» (2026-10-01, the operator's order): a separate version next to the working screen.**
+  Design 22's interface with its statistical layer replaced end to end by the auditor's semantic specification
+  DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`): for each family session one point of R (the deepest point against
+  the confirmation) or X (the farthest along it) from its own confirmation to the block end, their price and time
+  histograms, the DR outcome, «Путь семьи» (M5 closes per common clock M5), one selected area, level questions, the break
+  family with an explicit way back, a passport for every number. Any date of 2006–2025 opens as if it were today
+  («История»). `http://127.0.0.1:8767/24/`, shortcut «DR Lab 24»; code `lab/scene24.py` + `design/sozvezdiya-24/`
+  (read its README first). The operator's atom (2026-10-01): an existing M5 candle is an observation, day and night; only
+  a wholly missing M5 is a hole. Design 22 and the rules below are unchanged; accepting the specification for the working
+  screen (rule 10, rule 6) is open as О19, what to develop next as О20 (`meaning/05-otkrytye-voprosy.md`).
 - **The working screen is «Созвездия» design 22 «смысл числа», on market data** (since 2026-09-29; design 21 from
   2026-09-28 before it). `http://127.0.0.1:8767` opens it (`lab/dist/index.html` + `sozvezdiya.js`, built from
   `design/sozvezdiya-22/src` with its `build.py` — edit there, never the built file; building 21 would overwrite it); the previous screen is
@@ -122,6 +132,7 @@ stop-dr-lab.cmd / .ps1    stop the local server
 lab/
   server.py               local HTTP server 127.0.0.1:8767 (stdlib): static page + JSON API
   scene21.py              the working screen's data: the trading day from TradingView, similar sessions at a minute
+  scene24.py              design 24's data (/api/d24/*): DR-LAB-SEM-1.0 families, R / X, DR outcome, path; history days
   build_boxes.py          builds every session box (confirmed or not) with its M5 bars (once; ~20 s per instrument)
   build_market.py         builds the history base from the G3 market tape (once; ~30 s per instrument)
   engine_market.py        history queries over the built base (the research dashboard, API /api/query, /api/scene)
@@ -129,7 +140,8 @@ lab/
   tv_fetch.mjs            reads M5/M1 bars from TradingView Desktop via Chrome DevTools (tradingview-mcp internals)
   engine.py               synthetic demo engine (python lab/server.py --data demo); never mixed with market data
   dist/                   front end: index.html + sozvezdiya.js (the working screen «Созвездия», built from
-                          design/sozvezdiya-22), classic.html + app.js + live.js + styles.css (the previous screen)
+                          design/sozvezdiya-22), 24/ (design 24, built from design/sozvezdiya-24),
+                          classic.html + app.js + live.js + styles.css (the previous screen)
   .runtime/               git-ignored: built history, live candles, server logs
 studies/                  research scripts with their results (intermarket.py: NQ/ES/YM relations; m7_claims.py: the
                           author's claims and his time-and-price procedure on our tape; audit_2026_09_29/: geometry
@@ -139,6 +151,9 @@ meaning/                  the semantic layer for agents without code (Russian): 
 README.md                 the front page on GitHub: what this is, who reads what, the current design picture
 tests/smoke.py            offline checks; run after every change
 tests/ui_check21.js       in-page check of the working screen; evaluate it in the browser (ui_check.js: classic.html)
+tests/sem24.py            design 24: the specification's 32 reference checks and integration checks on the base
+tests/ui_check24.js       design 24: in-page check (passports, page = server, one table, film columns, slices)
+start-dr-lab-24.cmd       the shortcut «DR Lab 24»: the same start, then the page /24/
 docs/                     everything an agent needs to understand and extend the tool
 design/                   mockups on synthetic data, designs 1-22, start at design/README.md; design 22 is also the
                           working screen (built from design/sozvezdiya-22)
@@ -187,6 +202,10 @@ design/                   mockups on synthetic data, designs 1-22, start at desi
     M5, one window per confirmation (the author's rule; the old «both windows» sentence was our reconstruction); after
     today's DR break the screen switches to the break family (same instrument, session, weekday and direction, the
     break in the same 15-minute window).
+    **Design 24 (2026-10-01):** the operator ordered a separate prototype at `/24/` built on the specification
+    DR-LAB-SEM-1.0, whose main layer IS the final extremes (R and X of every family session to the block end, named as
+    such, never as first arrivals). That holds for design 24 only. This rule governs the working screen until the operator
+    accepts the specification's new text of rule 10 (its §15.1; open as О19).
 
 ## How to verify your change (always, before saying "done")
 
@@ -201,6 +220,10 @@ Then, if you touched the server or `lab/*.py`: **restart the server** (it caches
 stop-dr-lab.cmd                          # or kill the process listening on 8767
 start-dr-lab.cmd -NoBrowser              # the same path the operator's shortcut takes
 ```
+
+If you touched design 24: run `python design/sozvezdiya-24/src/build.py` and `python -B tests/sem24.py`, open
+http://127.0.0.1:8767/24/ (a history day, e.g. `#date=2025-12-17&session=RDR`), evaluate `tests/ui_check24.js` and
+expect `problems: []`; `lab/scene24.py` changes need a server restart. Never touch design 22's files for design 24.
 
 If you touched the page: edit `design/sozvezdiya-22/src` and run its `build.py` (never build `design/sozvezdiya-21`:
 it would overwrite the working screen) (it writes `lab/dist/index.html` and

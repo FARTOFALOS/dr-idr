@@ -10,6 +10,7 @@ TradingView Desktop  --(Chrome DevTools, 127.0.0.1:9222)-->  lab/tv_fetch.mjs  (
                                                                    |
 browser page  <--HTTP 127.0.0.1:8767-->  lab/server.py (python)  --+--> lab/scene21.py --> boxes_* (every session, M5)
  (dist/*.js)                                  |                    |    (working screen: /api/day, /api/family, /api/cohort)
+                                              |                    +--> lab/scene24.py --> boxes_* (design 24 at /24/: /api/d24/*)
                                               |                    +--> lab/live.py  --> lab/engine_market.py
                                               |                         (classic screen: /api/live)   (episodes in RAM)
                                               +--> lab/engine_market.py  (history dashboard of the classic screen)
@@ -67,6 +68,9 @@ Tick sizes: NQ, ES 0.25; YM 1. History bars carry the **close** minute of each M
 | `GET /api/day/refresh?instrument=NQ` | fetch from TradingView first, then the same as `/api/day` |
 | `GET /api/cohort?instrument=NQ&session=RDR[&at=<day minute>]` | working screen: the similar sessions of 2006–2025 at the live minute or the replay minute `at` (used before a confirmation) |
 | `GET /api/family?instrument=NQ&session=RDR[&at=<day minute>]` | working screen since 2026-09-30: today's family (after a confirmation) or break family (after today's DR break) and its whole clock M5 film |
+| `GET /api/d24/day?instrument=NQ[&date=YYYY-MM-DD][&refresh=1]` | design 24: the live day (as `/api/day`, `source: live`; `refresh=1` fetches from TradingView first) or a trading date of 2006–2025 from the session base (`source: history`: its three blocks' M5, the previous RDR box, `now` = 17:00) |
+| `GET /api/d24/family?instrument=NQ&session=RDR[&date=…][&at=<day minute>][&view=auto\|conf]` | design 24: today's state at the slice `at` and the snapshot of its family per DR-LAB-SEM-1.0 (`lab/scene24.py`) |
+| `GET /api/d24/dates?instrument=NQ` | design 24: every trading date of the base with the sessions whose first confirmation is established that day (`[[date, "AOR"], …]`) |
 
 ### `/api/day` response (`lab/scene21.day_view`)
 
@@ -107,6 +111,27 @@ its own IDR units of the mode (conf: 0 = its confirmation-side IDR edge, positiv
 opposite IDR edge, positive = the break's way), null where it has no bar; plus `obs, o5, status_today`. The film does not
 depend on the minute (cached per day and `t0`); the page takes the columns after the slice (the last closed M5) and
 draws them as design 22 does. Definitions: `docs/SEMANTICS.md`, «Семья на рабочем экране».
+
+### `/api/d24/family` response (`lab/scene24.family`, design 24)
+
+The definitions are those of `meaning/lens/2026-10-01-spec-v1/` (DR-LAB-SEM-1.0), summarised in `docs/SEMANTICS.md`
+(«Дизайн 24»). The atom is an existing M5 candle of the session base; a wholly missing M5 on an event's horizon is a hole
+(operator, 2026-10-01). Everything is in integer ticks.
+
+`status`: `ok` | `no_data` | `no_base` | today's status when there is no family (`before`, `forming`, `waiting`, `noconf`).
+`today`: `{date, source, status, obs, slice, c0, side, window, brk, brkWindow, idrH, idrL, drH, drL}` (closed M5 only).
+With `ok`: `semantics` (`DR-LAB-SEM-1.0`), `source` (`{base, boxes, built, history}`), `view` (`conf` | `brk`),
+`available` (`{conf, brk}`), `family_id`, `snapshot_id`, `key` (`{instrument, session, weekday, direction, event,
+window: [start, end) day minutes, cutoff}` — members are strictly before `cutoff`, the viewed date), `cond`, `N`, `ids`
+(the session ids), `scale` (`{orientation, edge, unit, price_cell: "1/10", time_cell: 15, f}`), `schedule` (`{start,
+formed, end}`), `rules` (start, end, time of an event, the atom), `grid` (close minutes of the block's common clock M5
+after the box), `counts` (`R`, `X`: `{cells: [[k, b, n]], known, unknown, none}`; `order`; `outcome` for `conf`),
+`journal` (undetermined keys), and `members`, one per family session:
+`{id, date, w, act, conf, fail, confWin, R, X, order, orderDetail, missing, path, [oppv, outcome, brk, brkKnown, drv]}` —
+`w` its IDR width in ticks; `act` its own activation close (confirmation, or the break in `brk`); `R` / `X` =
+`{s: known | unknown | none, v (directed ticks), t (open minute of the first M5), ties}` (`bound` = observed so far when
+unknown); `path[j]` = `[low, high, close]` in directed ticks on `grid[j]`, or null where the M5 is missing; `oppv` its
+opposite DR in directed ticks. A member's u = v / w; the page carries it to today's price through today's IDR.
 
 ### `/api/live` response
 
@@ -150,6 +175,10 @@ complete_n, median_retr, median_ext, median_rtime`.
   constellations, the fan, the right panel; data from `/api/day`, `/api/family` (after a confirmation) and `/api/cohort`
   (before one), refreshed after every M5 close while
   a session runs. Check with `tests/ui_check21.js`.
+- `24/index.html` + `24/d24.js` — **design 24 «Границы хода»** at `/24/` (the shortcut «DR Lab 24», `start-dr-lab-24.cmd`
+  = `start-dr-lab.ps1 -Page 24/`), built from `design/sozvezdiya-24/src` by its `build.py`: design 22's screen with the
+  statistical layer of DR-LAB-SEM-1.0; data from `/api/d24/*`; a history date opens as if it were today. Check with
+  `tests/ui_check24.js` (in the page) and `tests/sem24.py` (definitions). Design 22 is not changed by it.
 - `classic.html` — **the previous screen**, kept at `/classic.html` (it was `index.html` until 2026-09-28): one page.
   `body.focus` (default) hides the research sidebar and headings; ☰ toggles it (`localStorage dr-lab-focus`).
 - `app.js` — the history dashboard (sidebar filters, KPIs, bottom charts `drawPath/drawHeat/drawHist`, scenes view,
