@@ -43,7 +43,7 @@
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
     boxFill: 'grad', boxA: 45, prevA: 46,
-    bandH: 12, bandRise: 40, bandA: 65, bandRoom: 14, padTop: 1.5, padBot: 2, rightPad: 12, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, zoneLblPos: 'auto', zoneNumA: 45, zoneNameA: 60, zoneSpentA: 55, calloutA: 80, capPct: 0, hillA: 35, doneC: '#5FA886', lineLbl: 11, prevLbl: 9,
+    bandH: 12, bandRise: 40, bandA: 65, bandRoom: 14, padTop: 1.5, padBot: 2, rightPad: 12, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, zoneLblPos: 'auto', zoneNumA: 45, zoneNameA: 60, zoneSpentA: 55, calloutA: 80, capPct: 0, hillA: 35, doneC: '#5FA886', alC: '#F5B841', alSound: 1, alVol: 70, lineLbl: 11, prevLbl: 9,
     fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, profH: 110, profVeil: 0, profA: 30, sideA: 70, domK: 200, domLine: 100, spentA: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
@@ -96,6 +96,7 @@
       ['prevDayA', 'Свечи вчера · яркость', 'range', 10, 100], ['midnightA', 'Полночь · линия', 'range', 0, 100]]],
     ['VI', [['viC', 'Цвет', 'color'], ['vibA', 'Яркость', 'range', 5, 60], ['vibNQ', 'NQ · разрыв тел от, пунктов', 'range', 0, 6, 0.25],
       ['vibES', 'ES · разрыв тел от, пунктов', 'range', 0, 3, 0.25], ['vibYM', 'YM · разрыв тел от, пунктов', 'range', 0, 20, 1]]],
+    ['Уведомления о цене', [['alC', 'Линия уведомления · цвет', 'color'], ['alSound', 'Звук', 'sel', { 1: 'включён', 0: 'выключен' }], ['alVol', 'Громкость, %', 'range', 0, 100, 5]]],
     ['Свечи и фон', [['upC', 'Свеча вверх', 'color'], ['dnC', 'Свеча вниз', 'color'], ['bg', 'Фон', 'color']]]
   ];
   const DASH_NAMES = { solid: 'сплошная', dash: 'штрих', dots: 'точки', dashdot: 'штрихпунктир' };
@@ -650,6 +651,7 @@
     if (F) drawArea(c, ctx);
     if (F && st.mini) drawMini(c, ctx);
     drawTags(c, ctx);
+    drawAlerts(c);
     drawCross(c);
     c.restore();
     if (F && V.stripOn) { c.save(); c.globalAlpha = cfg.bandA / 100; drawBand(c, ctx); c.restore(); }   // operator 2026-10-06: the band quieter
@@ -1755,7 +1757,17 @@
         } else axisTag(c, y, px(lastP), bg, '#fff');
       }
     }
+    for (const a of alList()) { const y = V.Y(a.p); if (y > 0 && y < H) axisTag(c, y, px(a.p), a.fired ? '#5A606B' : cfg.alC, '#0B0C10'); }
     if (st.mx >= 0 && st.my >= 0 && st.my < H && st.mx < V.plot.w) axisTag(c, st.my, px(V.P(st.my)), '#363A45', '#fff');
+    // the «+» left of the cursor's price on the scale: a click sets a price alert there (as in TradingView)
+    V.alPlus = null;
+    if (st.mx >= 0 && st.my >= 8 && st.my < H - 8 && st.mx < V.plot.w + V.axisW && !st.drag) {
+      const bx = V.plot.w - 18, by = st.my - 8;
+      V.alPlus = [bx, by, 16, 16];
+      const on = alPlusAt(st.mx, st.my);
+      c.fillStyle = on ? cfg.alC : '#262B35'; roundRect(c, bx, by, 16, 16, 3); c.fill();
+      c.strokeStyle = on ? '#0B0C10' : '#C9CDD4'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(bx + 4, by + 8); c.lineTo(bx + 12, by + 8); c.moveTo(bx + 8, by + 4); c.lineTo(bx + 8, by + 12); c.stroke();
+    }
     if (!st.auto) { c.fillStyle = '#262B35'; roundRect(c, x + V.axisW - 24, H - 22, 18, 16, 3); c.fill(); c.fillStyle = C.text2; c.font = '600 10px ' + FONT; c.fillText('A', x + V.axisW - 19, H - 13.5); }
   }
   // the column right of the price scale: the chosen event's price histogram P_E(k) by 0.1 SD (bounds), or the family's
@@ -2876,6 +2888,7 @@
     if (d) {
       const dx = x - d.x, dy = y - d.y, F = V.ctx.F;
       if (Math.abs(dx) + Math.abs(dy) > 3) d.moved = true;
+      if (d.zone === 'alDrag' && d.moved) { const a = alList().find(q => q.id === d.al); if (a) a.p = Math.round(V.P(y) / alTick()) * alTick(); redraw(true); return; }
       if (d.zone === 'draw' && F && d.moved) d.area = Object.assign(areaFromDrag(F, d.x, d.y, x, y), { ev: st.ev });
       else if (d.zone === 'proj' && F && d.moved && st.mode === 'bounds') { const ka = F.cellOfP(V.P(d.y)), kb = F.cellOfP(V.P(y)); d.area = { k0: Math.min(ka, kb), k1: Math.max(ka, kb) + 1, ev: ((V.projBars || []).find(q => d.y >= q.top - 1 && d.y <= q.bot + 1 && d.x >= q.x0 && d.x <= q.x1) || (V.projBars || []).find(q => d.y >= q.top - 1 && d.y <= q.bot + 1) || { ev: st.ev }).ev }; }
       else if (d.zone === 'strip' && F && d.moved) {
@@ -2903,6 +2916,8 @@
     st.hover = h && !['paxis', 'taxis', 'stripBg'].includes(h.k) ? h : (h && h.k === 'stripBg' ? h : null);
     if (st.hover && st.hover.ev) st.ev = st.hover.ev;      // the event in focus: what the panel and the area speak of
     cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk'].includes(h.k) ? 'pointer' : 'crosshair';
+    if (alPlusAt(x, y)) cv.style.cursor = 'pointer';
+    else { const al = alNear(x, y); if (al) cv.style.cursor = Math.abs(x - al.x) <= 8 ? 'pointer' : 'ns-resize'; }
     showTip(st.hover);
     if (key(st.hover) !== was) { animStrip(); redraw(true); } else redraw();
   });
@@ -2912,13 +2927,19 @@
     const [x, y] = local(e), F = V.ctx.F;
     let zone = x > V.plot.w && x < V.plot.w + V.axisW && y < V.plot.h ? 'paxis' : V.projW && x >= V.proj.x && y < V.plot.h ? 'proj' : y > V.taxisY ? 'taxis' : y > V.plot.h - (V.stripOn ? V.bandOv || 0 : 0) ? (V.stripOn && x <= V.plot.w ? 'strip' : 'none') : 'plot';
     if (zone === 'plot' && F && (st.tool || e.shiftKey)) zone = 'draw';
-    st.drag = { x, y, zone, v0: st.v0, v1: st.v1, p0: V.p0, p1: V.p1, moved: false, h: st.hover };
+    let al = null;
+    if (alPlusAt(x, y)) zone = 'alAdd';
+    else if ((al = alNear(x, y))) zone = Math.abs(x - al.x) <= 8 ? 'alDel' : 'alDrag';
+    st.drag = { x, y, zone, v0: st.v0, v1: st.v1, p0: V.p0, p1: V.p1, moved: false, h: st.hover, al: al && al.id };
     e.preventDefault();
   });
   window.addEventListener('mouseup', e => {
     const d = st.drag;
     if (!d) return;
     st.drag = null; cv.style.cursor = 'crosshair';
+    if (d.zone === 'alAdd') { alAdd(V.P(d.y)); return; }
+    if (d.zone === 'alDel') { ALERTS[A.inst] = alList().filter(q => q.id !== d.al); alSave(); redraw(true); return; }
+    if (d.zone === 'alDrag') { const a = alList().find(q => q.id === d.al); if (a && d.moved) { a.fired = null; alBase(a); alSave(); } redraw(true); return; }
     if (d.moved && d.area) { st.area = d.area; st.hover = null; render(true); return; }
     if (d.moved) { redraw(); return; }
     const [x, y] = local(e);
@@ -3118,9 +3139,86 @@
     } catch (e) { A.error = 'Локальный сервер не ответил'; }
     A.busy = false;
     render(true);
+    if (A.src === 'live') alCheck();
     schedule();
   }
-  window.__d24 = { st, A, render, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus };
+  // ---------- price alerts (operator 2026-10-06): as in TradingView, a «+» at the price under the cursor sets a line; when
+  // the price crosses it the screen chimes and shows a note (and a system notification if the tab is hidden). The price
+  // comes with the data (every minute with a 1- or 5-minute pane in TradingView, else every 5 minutes), so an alert may be
+  // late by that much: decisions are taken on the M5 close anyway. One-shot; a crossed line turns grey until moved or
+  // removed. Kept in this browser, per instrument; drag a line to move it (re-arms), × at its right end removes it.
+  const AL_KEY = 'drlab.d24.alerts';
+  let ALERTS = {};
+  try { ALERTS = JSON.parse(localStorage.getItem(AL_KEY) || '{}') || {}; } catch (e) { ALERTS = {}; }
+  const alSave = () => { try { localStorage.setItem(AL_KEY, JSON.stringify(ALERTS)); } catch (e) { /* not kept */ } };
+  const alList = () => (ALERTS[A.inst] = ALERTS[A.inst] || []);
+  const alTick = () => (A.day && A.day.tick) || 0.25;
+  function alBase(a) {
+    const D = day(), b = D.bars[D.bars.length - 1];
+    a.date = A.day && A.day.date; a.bt = b ? b.t : -1e9; a.bh = b ? b.h : -1e12; a.bl = b ? b.l : 1e12; a.ref = b ? b.c : a.p;
+  }
+  function alAdd(p) {
+    const a = { id: Date.now().toString(36), p: Math.round(p / alTick()) * alTick(), fired: null };
+    alBase(a); alList().push(a); alSave(); audioOn(); notifyAsk(); redraw(true);
+  }
+  function alCheck() {
+    if (A.src !== 'live' || !A.day || A.day.status !== 'ok') return;
+    const D = day(), last = D.bars[D.bars.length - 1], hits = [];
+    if (!last) return;
+    for (const a of alList()) {
+      if (a.fired) continue;
+      if (a.date !== A.day.date) { alBase(a); continue; }       // a new day: only prices from now on count
+      const up = a.p > a.ref;
+      for (const b of D.bars) {
+        if (b.t < a.bt) continue;
+        const ok = b.t > a.bt ? (up ? b.h >= a.p : b.l <= a.p) : (up ? b.h > a.bh && b.h >= a.p : b.l < a.bl && b.l <= a.p);
+        if (ok) { a.fired = { t: b.t }; hits.push(a); break; }
+      }
+      // not crossed: the forming candle's extremes become the baseline, so the next check counts only new prices
+      if (!a.fired) { if (last.t > a.bt) { a.bt = last.t; a.bh = last.h; a.bl = last.l; } else if (last.t === a.bt) { a.bh = Math.max(a.bh, last.h); a.bl = Math.min(a.bl, last.l); } }
+    }
+    alSave();
+    if (hits.length) alFire(hits);
+  }
+  let AC = null;
+  function audioOn() { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume(); } catch (e) { /* no sound */ } }
+  window.addEventListener('pointerdown', audioOn, { once: true });   // the browser allows sound after the first click
+  function chime() {
+    if (!AC || !+cfg.alSound) return;
+    const v = cfg.alVol / 100, t0 = AC.currentTime + 0.02;
+    [[0, 880], [0.16, 1320], [0.5, 880], [0.66, 1320], [1, 880], [1.16, 1320]].forEach(([d, f]) => {
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t0 + d); g.gain.linearRampToValueAtTime(0.3 * v, t0 + d + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d + 0.38);
+      o.connect(g); g.connect(AC.destination); o.start(t0 + d); o.stop(t0 + d + 0.42);
+    });
+  }
+  function notifyAsk() { try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch (e) { /* optional */ } }
+  function alFire(list) {
+    chime();
+    const txt = list.map(a => A.inst + ' ' + px(a.p) + ' · ' + clk(a.fired.t + 5)).join(', ');
+    try { if ('Notification' in window && Notification.permission === 'granted' && document.visibilityState !== 'visible') new Notification('DR Lab · цена дошла до линии', { body: txt }); } catch (e) { /* optional */ }
+    let el = document.getElementById('alToast');
+    if (!el) { el = document.createElement('div'); el.id = 'alToast'; el.title = 'закрыть'; document.body.appendChild(el); el.addEventListener('click', () => { el.hidden = true; }); }
+    el.textContent = 'Цена дошла до линии: ' + txt; el.hidden = false;
+    clearTimeout(el._t); el._t = setTimeout(() => { el.hidden = true; }, 120000);
+    redraw(true);
+  }
+  function drawAlerts(c) {
+    V.alHit = [];
+    for (const a of alList()) {
+      const y = Math.round(V.Y(a.p)) + 0.5;
+      if (y < 0 || y > V.plot.h) continue;
+      const col = a.fired ? '#8C929D' : cfg.alC, xx = V.plot.w - 12;
+      c.strokeStyle = rgba(col, a.fired ? 0.45 : 0.85); c.lineWidth = 1; c.setLineDash(a.fired ? [2, 4] : [6, 4]);
+      c.beginPath(); c.moveTo(0, y); c.lineTo(xx - 8, y); c.stroke(); c.setLineDash([]);
+      c.fillStyle = rgba(col, 0.95); c.font = '600 13px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'center'; c.fillText('×', xx, y - 0.5); c.textAlign = 'left';
+      V.alHit.push({ id: a.id, y, x: xx });
+    }
+  }
+  const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
+  const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
+  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus };
   initPanel24();
   // the address: #date=2025-12-17 (a history day) &inst=NQ &session=RDR &at=11:50 (replay) &ev=X &mode=path
   //              &area=3:6[:b0:b1] (price cells [3, 6) x time cells [b0, b1)) &hist=1 (details open)
