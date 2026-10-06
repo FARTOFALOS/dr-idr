@@ -740,7 +740,7 @@
     }
     c.textBaseline = 'middle'; c.textAlign = 'right';
     if (hpx > 90) for (let j = 1; j <= 9; j++) {
-      c.font = (j === 5 ? '700 11px ' : '10.5px ') + FONT; c.fillStyle = j === 5 ? C.mid : C.text3;
+      c.font = (j === 5 ? '700 9.5px ' : '8.5px ') + FONT; c.fillStyle = j === 5 ? C.mid : C.text3;   // small (operator 2026-10-06)
       c.fillText(num(j / 10, 1), xb, V.Y(s.idrL + j * w / 10));
     }
     c.textAlign = 'left';
@@ -1315,7 +1315,8 @@
       for (const l of levels(s)) {
         if (l.type === 'std' && (!stdShown(s, l) || l.j > 4)) continue;
         // today's DR / IDR named on their own lines, not as wide tags on the price scale (operator 2026-10-06)
-        if (l.type === 'dr' || l.type === 'idr') { items.push({ y: V.Y(l.p), text: (l.type === 'dr' ? 'DR ' : 'IDR ') + px(l.p), col: l.type === 'dr' ? '#E9ECF1' : '#AEB6C4', pr: 3, big: 1 }); continue; }
+        // operator 2026-10-06: the price stays on the price scale; the line ends with its name only
+        if (l.type === 'dr' || l.type === 'idr') { items.push({ y: V.Y(l.p), text: l.type === 'dr' ? 'DR' : 'IDR', col: l.type === 'dr' ? '#E9ECF1' : '#AEB6C4', pr: 3, big: 1 }); continue; }
         const col = l.type === 'mid' ? C.mid : l.type === 'open' ? C.open : play === l.dir ? C.stdOn : C.std;
         items.push({ y: V.Y(l.p), text: (l.type === 'std' ? '' : s.k + ' ') + l.name, col, pr: l.type === 'std' ? 1 : 2 });
       }
@@ -1369,9 +1370,13 @@
     const span = V.p1 - V.p0, step = niceStep(span, H, 46, [0.25, 0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100, 250, 500]);
     c.font = '10.5px ' + FONT; c.fillStyle = C.text2; c.textBaseline = 'middle';
     for (let p = Math.ceil(V.p0 / step) * step; p <= V.p1; p += step) { const y = V.Y(p); if (y > 8 && y < H - 8) c.fillText(px(p), x + 5, y); }
-    // operator 2026-10-06: the DR / IDR names and prices stand on their lines inside the chart (drawLevels), not as wide
-    // tags on the scale
+    // operator 2026-10-06: today's DR / IDR prices on the scale as narrow tags (price only); their names stand at the end
+    // of their lines inside the chart (drawTags)
     const s = ctx.s, tags = [];
+    if (s.drH != null) {
+      tags.push([V.Y(s.drH), px(s.drH), '#E9ECF1', '#0B0C10'], [V.Y(s.drL), px(s.drL), '#E9ECF1', '#0B0C10']);
+      tags.push([V.Y(s.idrH), px(s.idrH), '#39414E', '#E6EAF0'], [V.Y(s.idrL), px(s.idrL), '#39414E', '#E6EAF0']);
+    }
     const hh = hv(), wn = V.win;
     if (wn && wn.pA != null) { tags.push([V.Y(wn.pB), px(wn.pB), wn.col, '#0B0C10', 1], [V.Y(wn.pA), px(wn.pA), wn.col, '#0B0C10', 1]); }
     if (hh && hh.k === 'lvl' && hh.l) tags.push([V.Y(hh.l.p), px(hh.l.p), '#C9D1DD', '#0B0C10']);
