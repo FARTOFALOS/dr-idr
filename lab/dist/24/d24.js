@@ -1446,7 +1446,11 @@
       c.font = (q.big ? '600 ' + cfg.lineLbl + 'px ' : cfg.prevLbl + 'px ') + FONT;
       const w = c.measureText(q.text).width + 6;
       // no dark plate under a line's name (operator 2026-10-06): the text alone, a faint shadow keeps it readable
-      void w; c.save(); c.shadowColor = 'rgba(0,0,0,.85)'; c.shadowBlur = 3; c.fillStyle = q.col; c.fillText(q.text, xr - 2, y + 0.5); c.restore();
+      // as TradingView draws a labelled line (operator 2026-10-06): the line stops before its name and the name stands in
+      // the gap, never over the line — the line's last stretch under and after the name is cut out with the chart's
+      // background (a 3-px stripe along the line only, the candles around stay visible)
+      c.fillStyle = C.bg; c.fillRect(xr - w - 4, Math.round(q.y) - 1.5, V.plot.w - (xr - w - 4), 3);
+      c.save(); c.shadowColor = 'rgba(0,0,0,.85)'; c.shadowBlur = 3; c.fillStyle = q.col; c.fillText(q.text, xr - 2, y + 0.5); c.restore();
     }
     c.textAlign = 'left';
   }
