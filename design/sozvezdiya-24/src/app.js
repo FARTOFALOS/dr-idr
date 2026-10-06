@@ -137,8 +137,8 @@
       if (bB > aT + 1e-9 && b.l <= a.h + 1e-9) { lo = aT; hi = bB; dir = 1; }
       else if (bT < aB - 1e-9 && b.h >= a.l - 1e-9) { lo = bT; hi = aB; dir = -1; }
       else continue;
-      let fill = null;   // rebalanced: a later bar enters the zone, even with a wick
-      for (let j = i + 1; j < bars.length; j++) { const q = bars[j]; if (q.l < hi && q.h > lo) { fill = q.t; break; } }
+      let fill = null;   // rebalanced: a later bar enters the zone or touches its edge, even with a wick (operator 2026-10-06)
+      for (let j = i + 1; j < bars.length; j++) { const q = bars[j]; if (q.l <= hi + 1e-9 && q.h >= lo - 1e-9) { fill = q.t; break; } }
       vibs.push({ t: b.t, lo, hi, dir, fill });
     }
     return vibs;
@@ -711,10 +711,11 @@
       const x0 = V.X(v.t), x1 = v.fill != null ? V.X(v.fill + 5) : V.plot.w, y0 = V.Y(v.hi), y1 = V.Y(v.lo);
       if (x1 < 0 || x0 > V.plot.w) continue;
       const on = h && h.k === 'vib' && h.t === v.t;
-      const vf = cfg.vibA / 20;
-      c.fillStyle = rgba(C.vib, Math.min(1, on ? 0.34 * vf : v.fill != null ? 0.12 * vf : 0.2 * vf));
+      // a worked-out VI (touched) stops at the touch and takes the spent shade of the colour catalogue (entry 26)
+      const vf = cfg.vibA / 20, vc = v.fill != null ? stateCol(C.vib, 'spent') : C.vib;
+      c.fillStyle = rgba(vc, Math.min(1, on ? 0.34 * vf : v.fill != null ? 0.16 * vf : 0.2 * vf));
       c.fillRect(x0, y0 - 1, x1 - x0, Math.max(2, y1 - y0 + 2));
-      c.fillStyle = rgba(C.vib, Math.min(1, on ? 0.9 : (v.fill != null ? 0.25 : 0.5) * vf));
+      c.fillStyle = rgba(vc, Math.min(1, on ? 0.9 : (v.fill != null ? 0.35 : 0.5) * vf));
       c.fillRect(x0, y0 - 1, 1.5, Math.max(2, y1 - y0 + 2));
       // its name inside the rectangle at the right end, only when it fits (operator 2026-10-06)
       const hh = y1 - y0 + 2, xr = Math.min(x1, V.plot.w) - 4;
