@@ -1299,7 +1299,7 @@
         // a thin outline on the side that outweighs, even for a small tilt (3,8 against 3,2), stronger with the tilt but
         // always quiet (operator 2026-10-06: an outline takes the eye, so only the winner and only lightly)
         if (n > o && cfg.domLine > 0 && Math.abs(y - cy) > 3) {
-          c.strokeStyle = rgba(cfg[ev], Math.min(0.9, (0.28 + 0.4 * Math.min(1, 3 * dom)) * (past ? 0.6 : 1) * cfg.domLine / 100)); c.lineWidth = 1;
+          c.strokeStyle = rgba(cfg[ev], Math.min(0.9, (0.12 + 0.18 * Math.min(1, 3 * dom)) * (past ? 0.6 : 1) * cfg.domLine / 100)); c.lineWidth = 1;   // barely visible (operator 2026-10-06)
           c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir[ev], y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1));
         }
         if (lit && n) labels.push({ x: (x0 + x1) / 2, y: dir[ev] < 0 ? y - 7 : y + 8, t: pct(100 * n / N).replace('%', ''), col: cfg[ev] });
