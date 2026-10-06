@@ -211,6 +211,9 @@ def day_hist(inst, date):
         pi = B["idx"].get((B["rdr"][j], "RDR"))
         if pi is not None:
             q = B["boxes"][pi]
+            # operator 2026-10-06: the previous trading date's RDR candles one day before minute 0 (see scene21.day_view)
+            a = B["bars"][B["off"][pi]:B["off"][pi + 1]]
+            bars = [[int(r[0]) - 5 - SHIFT["RDR"] - 1440, r[1] * tick, r[2] * tick, r[3] * tick, r[4] * tick] for r in a.tolist()] + bars
             prev = dict(drH=q["dr_high"] * tick, drL=q["dr_low"] * tick, idrH=q["idr_high"] * tick, idrL=q["idr_low"] * tick,
                         open=q["open"] * tick, close=q["close"] * tick, name="RDR " + q["date"][8:10] + "." + q["date"][5:7], date=q["date"])
     return dict(status="ok", source="history", instrument=inst, tick=tick, date=date, weekday=wd, now=1020.0, fetched_at=None,

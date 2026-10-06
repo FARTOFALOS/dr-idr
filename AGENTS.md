@@ -137,6 +137,10 @@ against what happened next.
   R and X together, zones as constellations «дымка и нити» (amber R, sky X), R | X price columns, the time band with the
   zones' capsules and hills, a hovered zone or band linked to its peak 15 minutes, the inspector at the bottom right,
   six windows sliding up from the bottom edge. The numbers' meaning is unchanged.
+  **Before changing how screen 24 draws or behaves, read `meaning/13-zhurnal-vizualizacii.md`** (the operator,
+  2026-10-06): the journal of why each visual rule exists (the right edge anchored for every gesture, «↺» fitting the
+  candles and the live zones, one R/X price column with strength gradation, STD only on the side in play, ...). Add an
+  entry for every visual change: what is seen, why (the operator's question), how, what must not be lost.
 - **Design 22 «Созвездия · смысл числа», on market data, was the working screen** from 2026-09-29 to 2026-10-01
   night (design 21 from 2026-09-28 before it); it stays next to design 24 at `/22/` (`/index.html`;
   `lab/dist/index.html` + `sozvezdiya.js`, built from

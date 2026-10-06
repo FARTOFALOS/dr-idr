@@ -25,6 +25,10 @@ It runs on market data only (no synthetic mockup): «История» opens **an
 its families taken only from earlier sessions, so the screen can be reviewed when the live session has no confirmation.
 When the live day has none, the panel offers «Открыть … на истории» (the latest date on which that session confirmed).
 
+**Why each visual rule exists** (the right edge anchored, «↺», the one R/X column, STD on the side in play, ...):
+[`meaning/13-zhurnal-vizualizacii.md`](../../meaning/13-zhurnal-vizualizacii.md). Read it before changing the drawing
+or the mouse behaviour, and add an entry for every such change.
+
 ## Build, open, check
 
 ```bash

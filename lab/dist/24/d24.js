@@ -89,6 +89,14 @@
   const mixW = (hex, f) => { const c = rgb(hex).map(v => Math.round(v + (255 - v) * f)); return '#' + c.map(v => v.toString(16).padStart(2, '0')).join(''); };
   const rgba = (hex, a) => { const c = rgb(hex); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  // a percentage on the canvas: the number in its font, the «%» after it small and dim (operator 2026-10-06)
+  const pctW = (c, t, wt, fs) => { c.font = wt + fs.toFixed(1) + 'px ' + FONT; const a = c.measureText(t.replace('%', '')).width; c.font = '600 ' + (fs * 0.58).toFixed(1) + 'px ' + FONT; return a + 1 + c.measureText('%').width; };
+  function pctDraw(c, t, x, y, wt, fs, col) {
+    const num = t.replace('%', '');
+    c.font = wt + fs.toFixed(1) + 'px ' + FONT; c.fillStyle = col; c.fillText(num, x, y);
+    const wn = c.measureText(num).width;
+    c.save(); c.globalAlpha *= 0.55; c.font = '600 ' + (fs * 0.58).toFixed(1) + 'px ' + FONT; c.fillText('%', x + wn + 1, y); c.restore();
+  }
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const stepName = (j, above) => (above ? '+' : '−') + num(j * 0.5, 1);
   // exact floor division of integers (b > 0): the price cell of a directed value is floor(10 v / w)
@@ -204,6 +212,11 @@
     }
     return L;
   }
+  // the side in play: the confirmation's, after a break the break's, none before the confirmation
+  const playSide = s => (s.status === 'broken' || (s.status === 'done' && s.failed) ? s.nside : s.side) || 0;
+  // operator 2026-10-06: an STD level is shown only while it is valid, on the side in play (both sides before the
+  // confirmation); the levels against it (−0,5, −1 … for a long) are not drawn, named or hoverable
+  const stdShown = (s, l) => l.type !== 'std' || (st.L.std && (!playSide(s) || l.dir === playSide(s)));
   function where(s, p) {
     const L = levels(s).filter(l => l.type !== 'open').sort((a, b) => a.p - b.p), w = s.idrH - s.idrL;
     let best = null;
@@ -442,6 +455,16 @@
     const s = sess(D, st.session, obs, live), F = snapOf(D, s);
     return { D, obs, live, s, F };
   }
+  // the right edge of the time axis is anchored at the session end + 45 minutes (design 22's wheel; operator 2026-10-06:
+  // for every gesture): only the left edge moves, from the «↺» view (box start .. session end) to the previous day's RDR (LEFT_MOST)
+  const rightEdge = () => SESS[st.session].end + 45;
+  // operator 2026-10-06: the left edge goes back no further than the previous trading day's RDR (its box at 09:30
+  // yesterday, minute −870, plus a quarter of an hour): further left there is nothing to read, only black
+  const LEFT_MOST = -885;
+  function anchorRight(v0) {
+    const lim = rightEdge(), maxSpan = lim - LEFT_MOST, minSpan = Math.min(lim - (SESS[st.session].start - 25), maxSpan);
+    st.v1 = lim; st.v0 = lim - clamp(lim - v0, minSpan, maxSpan);
+  }
   function fitSession(k) { const S = SESS[k]; st.v0 = S.start - 25; st.v1 = S.end + 45; st.auto = true; st.p0 = st.p1 = null; }
   function selSession(k) {
     st.session = k; st.pin = null; st.hover = null; st.area = null; st.col = null; st.view = 'auto';
@@ -473,12 +496,14 @@
 
   // ---------- geometry ----------
   function geom(ctx) {
-    const W = cv.clientWidth, H = cv.clientHeight, handleH = st.L.det ? 22 : 0, axisW = 88, timeH = 28;
+    const W = cv.clientWidth, H = cv.clientHeight, handleH = st.L.det ? 22 : 0, axisW = 66, timeH = 28;
     const bounds = !!(ctx.F && ctx.F.N) && st.mode === 'bounds';
-    // the price column holds R and X side by side in «Границы хода» (each its own 100 %), one M5 column in «Путь семьи»
-    const projW = st.L.proj && ctx.F && ctx.F.N ? (bounds ? 150 : 96) : 0;
-    // the time band under the chart (variant «Окна времени»): about a quarter of the height (150-240 px): capsules, hills, columns
-    const bandH = bounds && st.L.strip ? Math.round(clamp((H - handleH - timeH) * 0.26, 150, 240)) : 0;
+    // the price column holds R and X in one column in «Границы хода» (each its own 100 %; operator 2026-10-06: one
+    // column, not two), one M5 column in «Путь семьи»
+    const projW = st.L.proj && ctx.F && ctx.F.N ? (bounds ? 116 : 96) : 0;
+    // the time band under the chart (variant «Окна времени»): capsules, hills, columns; operator 2026-10-06: the candles
+    // take the height, the band about an eighth of it (84-118 px)
+    const bandH = bounds && st.L.strip ? Math.round(clamp((H - handleH - timeH) * 0.13, 84, 118)) : 0;
     const plot = { x: 0, y: 0, w: W - axisW - projW, h: H - handleH - timeH - bandH };
     const G = { W, H, handleH, axisW, timeH, plot, projW, ctx, bandH, taxisY: plot.h + bandH };
     G.proj = { x: plot.w + axisW, y: 0, w: projW, h: plot.h };
@@ -503,13 +528,23 @@
     for (const b of ctx.D.bars) if (inV(b.t)) { lo = Math.min(lo, b.l); hi = Math.max(hi, b.h); }
     const s = ctx.s;
     if (s.drH != null) { lo = Math.min(lo, s.drL); hi = Math.max(hi, s.drH); }
-    if (ctx.F) for (const ev of ['R', 'X']) {
-      const ps = ctx.F.ev[ev].pts.map(q => q.p).sort((a, b) => a - b);
-      if (ps.length >= 3) { lo = Math.min(lo, ps[Math.floor(0.05 * (ps.length - 1))]); hi = Math.max(hi, ps[Math.ceil(0.95 * (ps.length - 1))]); }
+    // operator 2026-10-06: the «↺» view fits the candles, the box and the zones still ahead (status HOLDS or POSSIBLE,
+    // R and X: the constellations the trader looks at next); scattered points and impossible zones do not widen it,
+    // the points beyond the frame are named by ▲ / ▼ in the price column
+    if (ctx.F && isFinite(lo)) for (const ev of ['R', 'X']) {
+      const Zm = ctx.F.zones[ev], S = Zm ? zoneStatus(ctx.F, ctx, ev) : [];
+      if (Zm) Zm.zones.forEach((z, i) => {
+        if (S[i] === 'IMPOSSIBLE') return;
+        const ks = z.cell_mask.map(q => q[0]), a = ctx.F.u2p(Math.min(...ks) / 10), b = ctx.F.u2p((Math.max(...ks) + 1) / 10);
+        lo = Math.min(lo, a, b); hi = Math.max(hi, a, b);
+      });
     }
     if (!isFinite(lo)) { lo = 24400; hi = 24800; }
-    const pad = (hi - lo) * 0.07;
-    return [lo - pad, hi + pad + (hi - lo) * 0.03];
+    // room under the lowest content for the time band's columns and hills to rise into (bandOverlay): they never cover
+    // candles, the box or a live zone, so they need free space below them (operator 2026-10-06)
+    if (ctx.F && st.mode === 'bounds' && st.L.strip) lo -= (hi - lo) * 0.16;
+    const pad = (hi - lo) * 0.05;
+    return [lo - pad, hi + pad + (hi - lo) * 0.02];
   }
   const bodyW = S => { if (S >= 2.5 && S <= 4) return 3; const c = 1 - 0.2 * Math.atan(Math.max(4, S) - 4) / (Math.PI * 0.5); let w = Math.max(1, Math.min(Math.floor(S * c), Math.floor(S))); if (w >= 2 && w % 2 === 0) w -= 1; return w; };
 
@@ -529,6 +564,7 @@
     c.save(); c.beginPath(); c.rect(V.plot.x, V.plot.y, V.plot.w, V.plot.h); c.clip();
     const F = ctx.F;
     drawBoxes(c, ctx);
+    drawMidnight(c, 0, V.plot.h);
     if (st.L.prev) drawPrev(c, ctx);
     if (st.L.vib) drawVib(c, ctx);
     if (F && st.mode === 'path') drawFilm(c, ctx);
@@ -583,6 +619,23 @@
       c.fillStyle = k === ctx.s.k ? C.text2 : C.text3; c.font = '600 11px ' + FONT; c.textBaseline = 'bottom';
       c.fillText(k, x0 + 2, y0 - 3);
     }
+    // the previous trading day's RDR box (09:30-10:30 yesterday), quiet, when its candles are on the screen
+    if (PREV && ctx.D.bars.some(b => b.t >= PREV.start && b.t < PREV.formed)) {
+      const x0 = V.X(PREV.start), x1 = V.X(PREV.formed), y0 = V.Y(PREV.drH), y1 = V.Y(PREV.drL);
+      if (x1 > 0) {
+        const col = PREV.close == null || PREV.close === PREV.open ? '#8B93A1' : PREV.close > PREV.open ? C.up : C.dn;
+        c.fillStyle = rgba(col, 0.13 * cfg.boxA / 100); c.fillRect(x0, y0, x1 - x0, y1 - y0);
+        c.fillStyle = C.text3; c.font = '600 11px ' + FONT; c.textBaseline = 'bottom'; c.fillText(PREV.name, x0 + 2, y0 - 3);
+      }
+    }
+  }
+  // operator 2026-10-06: New York midnight as an orange dashed line over the whole height (chart and time band), so the
+  // dimmer candles of the previous trading day are clearly set apart; drawn under the candles
+  function drawMidnight(c, y0, y1) {
+    const x = Math.round(V.X(0)) + 0.5;
+    if (x < 0 || x > V.plot.w) return;
+    c.save(); c.strokeStyle = 'rgba(242,154,56,.55)'; c.lineWidth = 1; c.setLineDash([6, 3, 1, 3]);
+    c.beginPath(); c.moveTo(x, y0); c.lineTo(x, y1); c.stroke(); c.restore();
   }
   function prevList(ctx) {
     const i = ORDER.indexOf(ctx.s.k), out = PREV ? [{ k: 'PREV', name: PREV.name, col: C.PREV, s: PREV }] : [];
@@ -593,7 +646,7 @@
   function drawPrev(c, ctx) {
     const h = hv();
     for (const P of prevList(ctx)) {
-      const s = P.s, x0 = Math.max(V.plot.x, V.X(P.k === 'PREV' ? st.v0 : SESS[P.k].start)), x1 = V.plot.w;
+      const s = P.s, x0 = Math.max(V.plot.x, V.X(P.k === 'PREV' ? Math.max(st.v0, P.s.start) : SESS[P.k].start)), x1 = V.plot.w;
       if (x1 <= x0) continue;
       for (const [p, type] of [[s.drH, 'dr'], [s.drL, 'dr'], [s.idrH, 'idr'], [s.idrL, 'idr']]) {
         const on = h && h.k === 'prev' && h.id === P.k && Math.abs(h.p - p) < 1e-6, y = Math.round(V.Y(p)) + 0.5;
@@ -669,7 +722,7 @@
     for (const l of levels(s)) {
       const on = h && h.k === 'lvl' && h.id === l.id;
       if (l.type === 'std') {
-        if (!st.L.std) continue;
+        if (!stdShown(s, l)) continue;
         const inPlay = play === l.dir;
         line(l.p, C.std, on ? 1 : (inPlay ? cfg.stdA : cfg.stdOffA) / 100, 1, []);
       } else if (l.type === 'dr') line(l.p, C.dr, on ? 1 : cfg.drA / 100, +cfg.drW, []);
@@ -677,10 +730,19 @@
       else if (l.type === 'mid') line(l.p, C.mid, on ? 1 : cfg.midA / 100, 1.2, DASH[cfg.midDash] || []);
       else if (l.type === 'open') line(l.p, C.open, on ? 0.9 : 0.5, 1, [1, 6]);
     }
-    // the IDR fractions inside the box (0,1 ... 0,9 of the IDR), as in the Pine indicator
-    c.fillStyle = C.text3; c.font = '10px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right';
-    const w = s.idrH - s.idrL, xb = V.X(s.start) - 4;
-    if (w * V.plot.h / (V.p1 - V.p0) > 90) for (let j = 1; j <= 9; j++) if (j !== 5) c.fillText(num(j / 10, 1), xb, V.Y(s.idrL + j * w / 10));
+    // the IDR fractions inside the box (0,1 ... 0,9 of the IDR), as in the Pine indicator; operator 2026-10-06: a thin line
+    // for each over the box only (box start .. box end), the 0,5 (the IDR mid) clearly stronger
+    const w = s.idrH - s.idrL, xb = V.X(s.start) - 4, bx0 = V.X(s.start), bx1 = V.X(s.formed), hpx = w * V.plot.h / (V.p1 - V.p0);
+    if (hpx > 30 && bx1 > bx0) for (let j = 1; j <= 9; j++) {
+      const y = Math.round(V.Y(s.idrL + j * w / 10)) + 0.5;
+      c.strokeStyle = j === 5 ? rgba(C.mid, 0.85) : 'rgba(209,212,220,.16)'; c.lineWidth = j === 5 ? 1.4 : 1;
+      c.beginPath(); c.moveTo(Math.max(bx0, 0), y); c.lineTo(bx1, y); c.stroke();
+    }
+    c.textBaseline = 'middle'; c.textAlign = 'right';
+    if (hpx > 90) for (let j = 1; j <= 9; j++) {
+      c.font = (j === 5 ? '700 11px ' : '10.5px ') + FONT; c.fillStyle = j === 5 ? C.mid : C.text3;
+      c.fillText(num(j / 10, 1), xb, V.Y(s.idrL + j * w / 10));
+    }
     c.textAlign = 'left';
   }
   function brightLine(c, p, text) {
@@ -717,12 +779,13 @@
       const x = V.X(T - 2.5), y = V.Y(F.u2p(q[2] / m.w));
       if (first) { c.moveTo(x, y); first = false; } else c.lineTo(x, y);
     });
-    c.strokeStyle = 'rgba(236,240,246,.55)'; c.lineWidth = 1.2; c.stroke();
+    c.strokeStyle = 'rgba(236,240,246,.4)'; c.lineWidth = 1; c.stroke();
     F.grid.forEach((T, j) => {
       const q = m.path[j];
       if (!q) return;
       const x = Math.round(V.X(T - 2.5)) + 0.5, ya = V.Y(F.u2p(q[0] / m.w)), yb = V.Y(F.u2p(q[1] / m.w));
-      c.strokeStyle = T <= m.act ? 'rgba(236,240,246,.18)' : 'rgba(236,240,246,.42)'; c.lineWidth = 1;
+      // the session's M5 ranges: a quiet trace (operator 2026-10-06: they must not pull the eye off today's candles)
+      c.strokeStyle = T <= m.act ? 'rgba(236,240,246,.06)' : 'rgba(236,240,246,.14)'; c.lineWidth = 1;
       c.beginPath(); c.moveTo(x, Math.min(ya, yb)); c.lineTo(x, Math.max(ya, yb)); c.stroke();
     });
     const tag = (T, text, bg) => { const x = V.X(T - 2.5); c.font = '600 10.5px ' + FONT; const w = c.measureText(text).width + 8; c.fillStyle = bg; roundRect(c, x - w / 2, 70, w, 16, 3); c.fill(); c.fillStyle = '#0B0C10'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, x, 78.5); c.textAlign = 'left'; };
@@ -738,7 +801,8 @@
       const cx = Math.round(V.X(b.t + 2.5));
       if (cx < -bw || cx > V.plot.w + bw) continue;
       const future = !ctx.live && b.t + 5 > used;
-      const col = b.c >= b.o ? C.up : C.dn, a = future ? 0.22 : 1;
+      // operator 2026-10-06: the previous trading day's candles (before New York midnight) are context, drawn dimmer
+      const col = b.c >= b.o ? C.up : C.dn, a = (future ? 0.22 : 1) * (b.t < 0 ? 0.45 : 1);
       c.fillStyle = rgba(col, a);
       const yh = V.Y(b.h), yl = V.Y(b.l), yo = V.Y(b.o), yc = V.Y(b.c);
       c.fillRect(cx, yh, 1, Math.max(1, yl - yh));
@@ -793,7 +857,7 @@
   // brightness, the tooltip lists every session). A ring = that session broke its DR (the family is never thinned by it).
   // R and X together; the stars of a zone are brighter and a little larger than the residual ones
   function drawPoints(c, ctx) {
-    const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 2.4 * cfg.ptSize / 100;
+    const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100;
     for (const ev of ['R', 'X']) {
       const col = cfg[ev];
       for (const q of F.ev[ev].pts) {
@@ -803,7 +867,7 @@
         let a = (past ? cfg.pastA : cfg.ptA) / 100 * (inZone ? 1.1 : 0.62), r = R0 * (inZone ? 1 : 0.8);
         if (e === true) { a = Math.min(1, Math.max(a, 0.55) + 0.3); r = R0 * 1.3; } else if (e === false) a *= 0.28;
         a = Math.min(1, a);
-        if (!F.brk && q.m.outcome === 'broken') { c.strokeStyle = rgba(col, a); c.lineWidth = 1.3; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.stroke(); }
+        if (!F.brk && q.m.outcome === 'broken') { c.strokeStyle = rgba(col, a); c.lineWidth = 1; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.stroke(); }
         else { c.fillStyle = rgba(col, a); c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill(); }
       }
     }
@@ -917,7 +981,7 @@
   function drawClouds(c, ctx) {
     const F = ctx.F, CL = cloudsOf(F), h = hv(), fa = cfg.cloudA / 100, ta = cfg.threadA / 100;
     for (const ev of ['R', 'X']) {
-      const S = zoneStatus(F, ctx, ev), col = cfg[ev];
+      const S = zoneLook(F, ctx, ev), col = cfg[ev];
       CL[ev].forEach((g, i) => {
         if (!g) return;
         const k = cloudK(F, ev, i, h, g.z), dim = S[i] === 'IMPOSSIBLE' ? 0.35 : S[i] === 'HOLDS' ? 1.15 : 1;
@@ -933,35 +997,43 @@
   }
   // the link (operator 2026-10-01): hovering a zone or a price band runs from the densest spot of that cluster straight
   // down to its peak 15 minutes (the time cell holding most of its sessions), lit to the time axis in one move
+  // the time the hovered zone or price band points at (operator 2026-10-06; audit 2026-10-06): the peak 15 minutes among
+  // the family's events that are still AHEAD by the same rule as the column (their M5 closes after the slice, t + 5 > s)
+  // AND sit in a cell today's path still allows (reachOf); if there are none, the past peak, drawn red: that has
+  // already happened or can no longer happen today. qs = the family's points {k, b, t, p}; yc = a fixed y (a band)
+  function peakAhead(F, ctx, qs, ev, yc) {
+    const Rch = reachOf(F, ctx), ahead = qs.filter(q => q.t + 5 > Rch.sl && Rch.okCell(ev, q.k, q.b));
+    const past = !ahead.length, use = past ? qs : ahead, cnt = new Map();
+    for (const q of use) cnt.set(q.b, (cnt.get(q.b) || 0) + 1);
+    let b = null;
+    for (const [bb, n] of cnt) if (b == null || n > cnt.get(b) || (n === cnt.get(b) && bb < b)) b = bb;
+    if (b == null) return null;
+    const ps = use.filter(q => q.b === b);
+    return { b, n: cnt.get(b), past, x: ps.reduce((a, q) => a + V.X(q.t + 2.5), 0) / ps.length, y: yc != null ? yc : ps.reduce((a, q) => a + V.Y(q.p), 0) / ps.length };
+  }
   function linkOf(ctx) {
     const F = ctx.F, h = hv();
     V.lk = null;
     if (!F || st.mode !== 'bounds' || !h) return;
     if (h.k === 'zone' && h.ev) {
-      const g = (cloudsOf(F)[h.ev] || [])[h.i];
-      if (g) V.lk = { ev: h.ev, x: g.kd.spot.x, y: g.kd.spot.y, b: g.peak, n: g.peakN };
+      const pk = peakAhead(F, ctx, F.ev[h.ev].pts.filter(q => F.zcell[h.ev].get(q.k + '|' + q.b) === h.i), h.ev);
+      if (pk) V.lk = { ev: h.ev, x: pk.x, y: pk.y, b: pk.b, n: pk.n, past: pk.past };
     } else if (h.k === 'pcell' && h.ev) {
-      const sel = F.ev[h.ev].pts.filter(q => q.k >= h.k0 && q.k < h.k1), cnt = new Map();
-      for (const q of sel) cnt.set(q.b, (cnt.get(q.b) || 0) + 1);
-      let b = null;
-      for (const [bb, n] of cnt) if (b == null || n > cnt.get(b) || (n === cnt.get(b) && bb < b)) b = bb;
-      if (b != null) {
-        const ps = sel.filter(q => q.b === b);
-        V.lk = { ev: h.ev, x: ps.reduce((a, q) => a + V.X(q.t + 2.5), 0) / ps.length, y: (V.Y(F.u2p(h.k0 / 10)) + V.Y(F.u2p(h.k1 / 10))) / 2, b, n: cnt.get(b) };
-      }
+      const yc = (V.Y(F.u2p(h.k0 / 10)) + V.Y(F.u2p(h.k1 / 10))) / 2;
+      const pk = peakAhead(F, ctx, F.ev[h.ev].pts.filter(q => q.k >= h.k0 && q.k < h.k1), h.ev, yc);
+      if (pk) V.lk = { ev: h.ev, x: pk.x, y: yc, b: pk.b, n: pk.n, past: pk.past };
     }
-    if (V.lk) { const t0 = F.f + 15 * V.lk.b; V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1: t0 + 15, col: cfg[V.lk.ev] }); }
+    if (V.lk) { const t0 = F.f + 15 * V.lk.b; V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1: t0 + 15, col: V.lk.past ? '#F23645' : cfg[V.lk.ev] }); }
   }
   function drawLink(c, ctx) {
     const lk = V.lk;
     if (!lk) return;
-    const F = ctx.F, col = cfg[lk.ev], t0 = F.f + 15 * lk.b, xa = V.X(t0), xb = V.X(t0 + 15), xm = (xa + xb) / 2, yb = V.plot.h;
+    const F = ctx.F, col = lk.past ? '#F23645' : cfg[lk.ev], t0 = F.f + 15 * lk.b, xa = V.X(t0), xb = V.X(t0 + 15), yb = V.plot.h;
     const g = c.createLinearGradient(0, lk.y, 0, yb);
     g.addColorStop(0, rgba(col, 0.03)); g.addColorStop(1, rgba(col, 0.15));
     c.fillStyle = g; c.fillRect(xa, lk.y, xb - xa, yb - lk.y);
     c.strokeStyle = rgba(col, 0.45); c.lineWidth = 1; c.setLineDash([3, 3]);
     c.beginPath(); for (const x of [xa, xb]) { c.moveTo(Math.round(x) + 0.5, lk.y); c.lineTo(Math.round(x) + 0.5, yb); } c.stroke(); c.setLineDash([]);
-    c.strokeStyle = rgba(col, 0.85); c.lineWidth = 1.5; c.beginPath(); c.moveTo(xm, lk.y); c.lineTo(xm, yb); c.stroke();
     c.save(); c.shadowColor = rgba(col, 0.7); c.shadowBlur = 8; c.strokeStyle = col; c.lineWidth = 1.6;
     c.beginPath(); c.arc(lk.x, lk.y, 7, 0, 6.2832); c.stroke(); c.restore();
   }
@@ -1018,7 +1090,7 @@
     const over = (a, b) => a[0] < b[2] && a[2] > b[0] && a[1] < b[3] && a[3] > b[1];
     V.zoneHit = [];
     for (const ev of ['X', 'R']) {
-      const S = zoneStatus(F, ctx, ev), col = cfg[ev];
+      const S = zoneLook(F, ctx, ev), col = cfg[ev];
       CL[ev].forEach((g, i) => {
         if (!g) return;
         const z = g.z, s = S[i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === i);
@@ -1040,23 +1112,23 @@
         c.font = '700 12px ' + FONT;
         const wN = c.measureText(z.label).width;
         c.font = '700 ' + fs + 'px ' + FONT;
-        const wS = imp ? 0 : c.measureText(pct(share)).width, wT = wN + (imp ? 0 : 5 + wS) + 10, hT = fs + 8 + (sub ? 13 : 0), bb = g.bb;
+        const wS = imp ? 0 : pctW(c, pct(share), '700 ', fs), wT = wN + (imp ? 0 : 5 + wS) + 10, hT = fs + 8 + (sub ? 13 : 0), bb = g.bb;
         const cands = [[bb[2] - wT + 6, bb[1] - hT - 6], [bb[2] + 10, (bb[1] + bb[3]) / 2 - hT / 2], [bb[2] - wT + 6, bb[3] + 6], [bb[0] - 6, bb[1] - hT - 6], [bb[0] - wT - 10, (bb[1] + bb[3]) / 2 - hT / 2]];
         let best = null;
         for (const q of cands) {
           const r = [q[0], q[1], q[0] + wT, q[1] + hT];
-          if (r[1] < 44 || r[3] > V.plot.h - 6 || r[0] < 4 || r[2] > V.plot.w - 70) continue;
+          if (r[1] < 44 || r[3] > V.plot.h - 6 || r[0] < 4 || r[2] > V.plot.w - 112) continue;   // clear of the line names at the right edge
           if (bars.some(b => over(r, b)) || placed.some(b => over(r, b))) continue;
           best = q; break;
         }
-        if (!best) best = [clamp(cands[0][0], 4, V.plot.w - wT - 70), clamp(cands[0][1], 44, V.plot.h - hT - 6)];
+        if (!best) best = [clamp(cands[0][0], 4, V.plot.w - wT - 112), clamp(cands[0][1], 44, V.plot.h - hT - 6)];
         const [lx, ly] = best, k = cloudK(F, ev, i, h, z), op = k < 1 ? 0.4 + 0.5 * k : 1;
         placed.push([lx, ly, lx + wT, ly + hT]);
         c.save(); c.globalAlpha = op;
         c.fillStyle = 'rgba(8,9,12,.6)'; roundRect(c, lx, ly, wT, hT, 4); c.fill();
         c.textBaseline = 'alphabetic';
         c.font = '700 12px ' + FONT; c.fillStyle = imp ? rgba(col, 0.7) : col; c.fillText(z.label, lx + 5, ly + 4 + fs * 0.86);
-        if (!imp) { c.font = '700 ' + fs + 'px ' + FONT; c.fillStyle = '#EEF1F5'; c.fillText(pct(share), lx + 10 + wN, ly + 4 + fs * 0.86); }
+        if (!imp) pctDraw(c, pct(share), lx + 10 + wN, ly + 4 + fs * 0.86, '700 ', fs, '#EEF1F5');
         if (sub) { c.font = '600 10.5px ' + FONT; c.fillStyle = col; c.fillText(sub, lx + 5, ly + hT - 5); }
         c.restore();
         V.zoneHit.push({ box: [lx, ly, wT, hT], ev, i, loops: g.hit });
@@ -1091,9 +1163,29 @@
       return { z, i, pts, pk, pkT, b0: Math.min(...bs), b1: Math.max(...bs) + 1 };
     });
   }
+  // how far the time band may rise above its own strip into the chart: up to just under the lowest thing the trader reads
+  // there (the lowest candle in view, today's DR low, the lowest edge of a zone still ahead), at most 30 % of the chart
+  function bandOverlay(ctx) {
+    const F = ctx.F, s = ctx.s;
+    let yLow = 0;
+    for (const b of ctx.D.bars) if (b.t + 5 >= st.v0 && b.t <= st.v1) yLow = Math.max(yLow, V.Y(b.l));
+    if (s.drL != null) yLow = Math.max(yLow, V.Y(s.drL), V.Y(s.drH));
+    for (const ev of ['R', 'X']) {
+      const Zm = F.zones[ev], S = Zm ? zoneStatus(F, ctx, ev) : [];
+      if (Zm) Zm.zones.forEach((z, i) => {
+        if (S[i] === 'IMPOSSIBLE') return;
+        const ks = z.cell_mask.map(q => q[0]);
+        yLow = Math.max(yLow, V.Y(F.u2p(Math.min(...ks) / 10)), V.Y(F.u2p((Math.max(...ks) + 1) / 10)));
+      });
+    }
+    return Math.round(clamp(V.plot.h - yLow - 10, 0, V.plot.h * 0.3));
+  }
   function drawBand(c, ctx) {
-    const F = ctx.F, B = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, N = F.N, dir = { X: -1, R: 1 };
-    const S = { X: zoneStatus(F, ctx, 'X'), R: zoneStatus(F, ctx, 'R') }, H = { X: bandHills(F, ctx, 'X'), R: bandHills(F, ctx, 'R') };
+    const F = ctx.F, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, N = F.N, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
+    // the band's drawing area: its own strip plus the free height above it (operator 2026-10-06: the columns of X and R
+    // must be tall enough to compare, without covering the chart)
+    const ov = V.bandOv = bandOverlay(ctx), B = { x: B0.x, y: B0.y - ov, w: B0.w, h: B0.h + ov };
+    const S = { X: zoneLook(F, ctx, 'X'), R: zoneLook(F, ctx, 'R') }, H = { X: bandHills(F, ctx, 'X'), R: bandHills(F, ctx, 'R') };
     // the capsules' lanes first: a zone takes the first lane where it does not overlap an earlier one (two lanes at most)
     const caps = [], lanesUsed = { X: 0, R: 0 };
     for (const ev of ['X', 'R']) {
@@ -1106,11 +1198,16 @@
         caps.push({ ev, o, ln });
       });
     }
-    const LH = 20, top = B.y + 4 + lanesUsed.X * (LH + 2) + 4, bot = B.y + B.h - 4 - lanesUsed.R * (LH + 2) - 4;
+    // the band follows the side of today's activation: X on the side of the confirmation (above for a long, below for a
+    // short), R on the other (operator 2026-10-06), as on the chart
+    const upEv = dir.X < 0 ? 'X' : 'R', dnEv = upEv === 'X' ? 'R' : 'X';
+    const LH = 15, top = B.y + 3 + lanesUsed[upEv] * (LH + 2) + 2, bot = B.y + B.h - 3 - lanesUsed[dnEv] * (LH + 2) - 2;
     const cy = Math.round((top + bot) / 2) + 0.5, half = (bot - top) / 2 - 2;
     c.save(); c.beginPath(); c.rect(B.x, B.y, B.w, B.h); c.clip();
-    c.fillStyle = '#0A0B0F'; c.fillRect(B.x, B.y, B.w, B.h);
-    c.fillStyle = C.grid; c.fillRect(B.x, B.y, B.w, 1);
+    c.fillStyle = '#0A0B0F'; c.fillRect(B0.x, B0.y, B0.w, B0.h);
+    if (ov > 0) { const gr = c.createLinearGradient(0, B.y, 0, B0.y); gr.addColorStop(0, 'rgba(10,11,15,0)'); gr.addColorStop(1, 'rgba(10,11,15,.72)'); c.fillStyle = gr; c.fillRect(B.x, B.y, B.w, ov); }
+    c.fillStyle = C.grid; c.fillRect(B0.x, B0.y, B0.w, 1);
+    drawMidnight(c, B0.y, B0.y + B0.h);
     const T = { R: F.ev.R.T, X: F.ev.X.T }, mx = Math.max(1, ...T.R.values(), ...T.X.values());
     const yOf = (ev, n) => cy + dir[ev] * (1 + half * Math.sqrt(Math.min(1, Math.max(0, n) / mx)));
     // the columns
@@ -1131,7 +1228,7 @@
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, n);
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
-        if (lit && n) labels.push({ x: (x0 + x1) / 2, y: ev === 'X' ? y - 7 : y + 8, t: pct(100 * n / N).replace('%', ''), col: cfg[ev] });
+        if (lit && n) labels.push({ x: (x0 + x1) / 2, y: dir[ev] < 0 ? y - 7 : y + 8, t: pct(100 * n / N).replace('%', ''), col: cfg[ev] });
       }
     }
     // the hills: one height scale per event, its tallest hill filling its half (a shape, not a number)
@@ -1144,27 +1241,37 @@
       c.beginPath(); c.moveTo(scr[0][0], cy + dir[ev]);
       for (const p of scr) c.lineTo(p[0], p[1]);
       c.lineTo(scr[scr.length - 1][0], cy + dir[ev]); c.closePath();
-      const a = (imp ? 0.1 : s === 'HOLDS' ? 0.5 : 0.38) * (on ? 1.5 : other ? 0.45 : 1);
+      const a = (imp ? 0.05 : s === 'HOLDS' ? 0.5 : 0.38) * (on ? 1.5 : other ? 0.45 : 1);
       c.save(); c.shadowColor = rgba(col, imp ? 0 : 0.6); c.shadowBlur = on ? 18 : 12; c.fillStyle = rgba(col, Math.min(0.8, a)); c.fill(); c.restore();
-      c.strokeStyle = rgba(col, imp ? 0.35 : on ? 0.95 : other ? 0.3 : 0.6); c.lineWidth = on ? 1.4 : 1; c.setLineDash(imp ? [4, 3] : []);
+      c.strokeStyle = rgba(col, imp ? 0.18 : on ? 0.95 : other ? 0.3 : 0.6); c.lineWidth = on ? 1.4 : 1; c.setLineDash(imp ? [3, 4] : []);
       c.beginPath(); scr.forEach((p, j) => j ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.stroke(); c.setLineDash([]);
-      V.hills.push({ ev, i: o.i, scr, cy });
+      V.hills.push({ ev, i: o.i, scr, cy, up: dir[ev] < 0 });
     });
     for (const L of labels) { c.font = '700 10.5px ' + FONT; c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, L.y); c.textAlign = 'left'; }
-    // the capsules: the zone over its whole time window, its share and status inside
+    // the capsules: the zone over its whole time window, its share and status inside. Operator 2026-10-06: no outline on a
+    // live zone, only a soft fill whose saturation follows the zone's share (one scale for R and X); a hovered or pinned
+    // zone gets a hairline; a zone that is already IMPOSSIBLE today is a faint dashed trace with dim text, so the eye
+    // goes to the zones still ahead
     V.caps = [];
+    const capMax = Math.max(1e-9, ...caps.map(q => q.o.z.p_snapshot));
     for (const { ev, o, ln } of caps) {
       const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', hold = s === 'HOLDS', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = cfg[ev];
-      const x0 = V.X(F.f + 15 * o.b0) + 1, x1 = V.X(F.f + 15 * o.b1) - 1, y0 = ev === 'X' ? B.y + 4 + ln * (LH + 2) : B.y + B.h - 4 - (ln + 1) * (LH + 2) + 2, w = x1 - x0;
-      c.save(); c.globalAlpha = other ? 0.55 : 1;
-      c.fillStyle = rgba(col, imp ? 0.06 : on ? 0.4 : hold ? 0.28 : 0.17); roundRect(c, x0, y0, w, LH, LH / 2); c.fill();
-      c.strokeStyle = rgba(col, imp ? 0.4 : on ? 1 : 0.7); c.lineWidth = on ? 1.5 : 1; c.setLineDash(imp ? [4, 3] : []); roundRect(c, x0 + 0.5, y0 + 0.5, w - 1, LH - 1, LH / 2); c.stroke(); c.setLineDash([]);
+      const x0 = V.X(F.f + 15 * o.b0) + 1, x1 = V.X(F.f + 15 * o.b1) - 1, y0 = dir[ev] < 0 ? B.y + 3 + ln * (LH + 2) : B.y + B.h - 3 - (ln + 1) * (LH + 2) + 2, w = x1 - x0;
+      const r = Math.pow(o.z.p_snapshot / capMax, 0.7);
+      c.save(); c.globalAlpha = other ? 0.5 : 1;
+      if (imp && !on) {
+        c.strokeStyle = rgba(col, 0.22); c.lineWidth = 1; c.setLineDash([3, 4]); roundRect(c, x0 + 0.5, y0 + 0.5, w - 1, LH - 1, LH / 2); c.stroke(); c.setLineDash([]);
+      } else {
+        c.fillStyle = rgba(col, on ? 0.32 : 0.07 + 0.17 * r + (hold ? 0.06 : 0)); roundRect(c, x0, y0, w, LH, LH / 2); c.fill();
+        if (on) { c.strokeStyle = rgba(col, 0.6); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, w - 1, LH - 1, LH / 2); c.stroke(); }
+      }
       c.beginPath(); c.rect(x0 + 2, y0, w - 4, LH); c.clip();
       c.textBaseline = 'middle';
       let x = x0 + 9;
-      c.font = '700 12px ' + FONT; c.fillStyle = imp ? rgba(col, 0.7) : col; c.fillText(o.z.label, x, y0 + LH / 2 + 0.5); x += c.measureText(o.z.label).width + 6;
-      c.font = '700 13px ' + FONT; c.fillStyle = imp ? '#8C929D' : '#EEF1F5'; const sh = pct(100 * o.z.p_snapshot); c.fillText(sh, x, y0 + LH / 2 + 0.5); x += c.measureText(sh).width + 7;
-      if (hold) { c.font = '600 10.5px ' + FONT; c.fillStyle = col; c.fillText(ZST[s], x, y0 + LH / 2 + 0.5); }
+      c.font = '700 10.5px ' + FONT; c.fillStyle = imp ? rgba(col, 0.35) : rgba(col, 0.75 + 0.25 * r); c.fillText(o.z.label, x, y0 + LH / 2 + 0.5); x += c.measureText(o.z.label).width + 6;
+      const sh = pct(100 * o.z.p_snapshot), sfs = imp ? 10.5 : 10.5 + 1.5 * r;
+      pctDraw(c, sh, x, y0 + LH / 2 + 0.5, '700 ', sfs, imp ? 'rgba(140,146,157,.45)' : rgba('#EEF1F5', 0.65 + 0.35 * r)); x += pctW(c, sh, '700 ', sfs) + 7;
+      if (hold) { c.font = '600 9.5px ' + FONT; c.fillStyle = col; c.fillText(ZST[s], x, y0 + LH / 2 + 0.5); }
       c.restore();
       V.caps.push({ ev, i: o.i, box: [x0, y0, w, LH] });
     }
@@ -1175,27 +1282,28 @@
     if (xs > B.x && xs < B.x + B.w) { c.strokeStyle = 'rgba(209,212,220,.35)'; c.setLineDash([3, 4]); c.beginPath(); c.moveTo(xs, B.y + 1); c.lineTo(xs, B.y + B.h); c.stroke(); c.setLineDash([]); }
     c.font = '700 11px ' + FONT; c.textBaseline = 'middle';
     if (xF - 60 > B.x) {
-      c.fillStyle = cfg.X; c.fillText('X ' + F.names.X.toLowerCase(), Math.max(B.x + 6, xF - 110), cy - 12);
-      c.fillStyle = cfg.R; c.fillText('R ' + F.names.R.toLowerCase(), Math.max(B.x + 6, xF - 110), cy + 13);
+      c.font = '700 10px ' + FONT;
+      c.fillStyle = cfg.X; c.fillText('X ' + F.names.X.toLowerCase(), Math.max(B.x + 6, xF - 110), cy + dir.X * 9);
+      c.fillStyle = cfg.R; c.fillText('R ' + F.names.R.toLowerCase(), Math.max(B.x + 6, xF - 110), cy + dir.R * 9);
     }
     V.stripUnk = null;
     const uX = F.ev.X.unknown + F.ev.X.none, uR = F.ev.R.unknown + F.ev.R.none;
     if (uX + uR) {
       const x0 = Math.min(xE + 6, B.x + B.w - 40), w = 14;
       c.fillStyle = 'rgba(160,168,180,.45)';
-      c.fillRect(x0, yOf('X', uX), w, cy - 1 - yOf('X', uX)); c.fillRect(x0, cy + 1, w, yOf('R', uR) - cy - 1);
+      for (const [ev, u] of [['X', uX], ['R', uR]]) { const y = yOf(ev, u); c.fillRect(x0, Math.min(y, cy + dir[ev]), w, Math.abs(y - cy) - 1); }
       c.fillStyle = C.text2; c.font = '600 10.5px ' + FONT; c.fillText('?', x0 + w + 4, cy);
       V.stripUnk = [x0, top, w + 14, bot - top];
     }
     c.restore();
     V.bandCy = cy;
     // the corner under the price scale and the price columns: what the band holds
-    c.fillStyle = C.axis; c.fillRect(V.plot.w, B.y, V.W - V.plot.w, B.h);
-    c.fillStyle = C.grid; c.fillRect(V.plot.w, B.y, V.W - V.plot.w, 1); c.fillRect(V.plot.w, B.y, 1, B.h);
+    c.fillStyle = C.axis; c.fillRect(V.plot.w, B0.y, V.W - V.plot.w, B0.h);
+    c.fillStyle = C.grid; c.fillRect(V.plot.w, B0.y, V.W - V.plot.w, 1); c.fillRect(V.plot.w, B0.y, 1, B0.h);
     c.font = '600 11px ' + FONT; c.textBaseline = 'middle';
-    c.fillStyle = cfg.X; c.fillText('▲ X · зоны и когда', V.plot.w + 10, cy - 16);
-    c.fillStyle = cfg.R; c.fillText('▼ R · зоны и когда', V.plot.w + 10, cy + 16);
-    c.fillStyle = C.text3; c.font = '10.5px ' + FONT; c.fillText('доля семьи за 15 минут', V.plot.w + 10, cy);
+    c.fillStyle = cfg.X; c.fillText('▲ X · зоны и когда', V.plot.w + 10, B0.y + B0.h / 2 - 16);
+    c.fillStyle = cfg.R; c.fillText('▼ R · зоны и когда', V.plot.w + 10, B0.y + B0.h / 2 + 16);
+    c.fillStyle = C.text3; c.font = '10.5px ' + FONT; c.fillText('доля семьи за 15 минут', V.plot.w + 10, B0.y + B0.h / 2);
   }
   // names of the lines at their right end, just before the price scale, so nothing has to be scrolled to be read
   function drawTags(c, ctx) {
@@ -1203,8 +1311,9 @@
     if (s.drH != null) {
       const play = s.status === 'broken' ? s.nside : s.side || 0;
       for (const l of levels(s)) {
-        if (l.type === 'std' && (!st.L.std || l.j > 4)) continue;
-        if (l.type === 'dr' || l.type === 'idr') continue;   // today's DR / IDR are already named on the price scale (operator 2026-09-29)
+        if (l.type === 'std' && (!stdShown(s, l) || l.j > 4)) continue;
+        // today's DR / IDR named on their own lines, not as wide tags on the price scale (operator 2026-10-06)
+        if (l.type === 'dr' || l.type === 'idr') { items.push({ y: V.Y(l.p), text: (l.type === 'dr' ? 'DR ' : 'IDR ') + px(l.p), col: l.type === 'dr' ? '#E9ECF1' : '#AEB6C4', pr: 3, big: 1 }); continue; }
         const col = l.type === 'mid' ? C.mid : l.type === 'open' ? C.open : play === l.dir ? C.stdOn : C.std;
         items.push({ y: V.Y(l.p), text: (l.type === 'std' ? '' : s.k + ' ') + l.name, col, pr: l.type === 'std' ? 1 : 2 });
       }
@@ -1222,17 +1331,18 @@
     const placed = [];
     for (const q of vis.slice().sort((a, b) => b.pr - a.pr)) {
       let y = q.y;
-      for (let tries = 0; tries < 6 && placed.some(p => Math.abs(p.y - y) < 7); tries++) {
-        const hit_ = placed.find(p => Math.abs(p.y - y) < 7);
-        y = q.y >= hit_.y ? hit_.y + 7 : hit_.y - 7;
+      for (let tries = 0; tries < 6 && placed.some(p => Math.abs(p.y - y) < 12); tries++) {
+        const hit_ = placed.find(p => Math.abs(p.y - y) < 12);
+        y = q.y >= hit_.y ? hit_.y + 12 : hit_.y - 12;
       }
-      if (placed.some(p => Math.abs(p.y - y) < 6)) continue;
+      if (placed.some(p => Math.abs(p.y - y) < 11)) continue;
       placed.push({ y, q });
     }
-    c.font = '5px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right';
+    c.textBaseline = 'middle'; c.textAlign = 'right';
     for (const { y, q } of placed) {
-      const w = c.measureText(q.text).width + 4;
-      c.fillStyle = 'rgba(8,9,12,.8)'; c.fillRect(xr - w, y - 3.5, w + 2, 7);
+      c.font = (q.big ? '600 11px ' : '9px ') + FONT;
+      const w = c.measureText(q.text).width + 6;
+      c.fillStyle = 'rgba(8,9,12,.82)'; c.fillRect(xr - w, y - 6, w + 2, 12);
       c.fillStyle = q.col; c.fillText(q.text, xr - 2, y + 0.5);
     }
     c.textAlign = 'left';
@@ -1247,24 +1357,22 @@
   function niceStep(span, pxs, minPx, list) { for (const s of list) if (s * pxs / span >= minPx) return s; return list[list.length - 1]; }
   function axisTag(c, y, text, bg, fg) {
     const x = V.plot.w + 1, w = V.axisW - 2;
-    c.fillStyle = bg; roundRect(c, x, y - 9, w, 18, 3); c.fill();
-    c.fillStyle = fg; c.font = '600 11px ' + FONT; c.textBaseline = 'middle'; c.fillText(text, x + 6, y + 0.5);
+    c.fillStyle = bg; roundRect(c, x, y - 8, w, 16, 3); c.fill();
+    c.fillStyle = fg; c.font = '600 10.5px ' + FONT; c.textBaseline = 'middle'; c.fillText(text, x + 4, y + 0.5);
   }
   function drawPriceAxis(c, ctx) {
     const x = V.plot.w, H = V.plot.h;
     c.fillStyle = C.axis; c.fillRect(x, 0, V.axisW, H);
     c.fillStyle = C.grid; c.fillRect(x, 0, 1, H);
     const span = V.p1 - V.p0, step = niceStep(span, H, 46, [0.25, 0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100, 250, 500]);
-    c.font = '11px ' + FONT; c.fillStyle = C.text2; c.textBaseline = 'middle';
-    for (let p = Math.ceil(V.p0 / step) * step; p <= V.p1; p += step) { const y = V.Y(p); if (y > 8 && y < H - 8) c.fillText(px(p), x + 8, y); }
+    c.font = '10.5px ' + FONT; c.fillStyle = C.text2; c.textBaseline = 'middle';
+    for (let p = Math.ceil(V.p0 / step) * step; p <= V.p1; p += step) { const y = V.Y(p); if (y > 8 && y < H - 8) c.fillText(px(p), x + 5, y); }
+    // operator 2026-10-06: the DR / IDR names and prices stand on their lines inside the chart (drawLevels), not as wide
+    // tags on the scale
     const s = ctx.s, tags = [];
-    if (s.drH != null) {
-      tags.push([V.Y(s.drH), 'DR ' + px(s.drH), '#E9ECF1', '#0B0C10'], [V.Y(s.drL), 'DR ' + px(s.drL), '#E9ECF1', '#0B0C10']);
-      tags.push([V.Y(s.idrH), 'IDR ' + px(s.idrH), '#39414E', '#E6EAF0'], [V.Y(s.idrL), 'IDR ' + px(s.idrL), '#39414E', '#E6EAF0']);
-    }
     const hh = hv(), wn = V.win;
     if (wn && wn.pA != null) { tags.push([V.Y(wn.pB), px(wn.pB), wn.col, '#0B0C10', 1], [V.Y(wn.pA), px(wn.pA), wn.col, '#0B0C10', 1]); }
-    if (hh && hh.k === 'lvl' && hh.l) tags.push([V.Y(hh.l.p), hh.l.name + ' ' + px(hh.l.p), '#C9D1DD', '#0B0C10']);
+    if (hh && hh.k === 'lvl' && hh.l) tags.push([V.Y(hh.l.p), px(hh.l.p), '#C9D1DD', '#0B0C10']);
     if (hh && hh.k === 'prev') tags.push([V.Y(hh.p), px(hh.p), '#8C95A3', '#0B0C10']);
     const lastP = s.priceNow != null ? s.priceNow : null;
     if (lastP != null) { const b = ctx.D.bars.filter(q => q.t + 5 <= (ctx.live ? NOW + 5 : ctx.obs)).pop(); tags.push([V.Y(lastP), px(lastP), b && b.c >= b.o ? C.up : C.dn, '#fff']); }
@@ -1293,69 +1401,99 @@
     const sl = sliceOf(ctx), j = F.grid.indexOf(sl);
     return j >= 0 ? film[j] : film[0];
   }
-  // «Границы хода»: R and X side by side, each its own 100 % (their «?» is in the panel); the rows of a zone brighter, the
-  // densest row of each zone in a larger type, other rows small and quiet; a zone's price extent is a thin tick at the
-  // edge of its column. The bar is the share of the whole band over the whole horizon, never the zone's share.
+  // «Границы хода»: R and X in ONE column (operator 2026-10-06), each its own 100 % (their «?» is in the panel). One price
+  // row = one horizontal bar from the same edge: R's segment first (amber), X's right after it (sky), so where both have
+  // sessions at that price the two shares stand side by side in one bar. R's percentage always left of the bar, X's
+  // always right of it. Rows of a zone brighter, each zone's densest row in a larger type; a zone's price extent is a
+  // thin tick at the right edge. A segment is the share of the whole band over the whole horizon, never the zone's.
   function drawProjRX(c, ctx) {
-    const F = ctx.F, A_ = V.proj, h = hv(), sw = (A_.w - 12) / 2, top0 = 30, bot0 = A_.h - 16;
+    const F = ctx.F, A_ = V.proj, h = hv(), top0 = 40, bot0 = A_.h - 16, x0 = A_.x + 38, blen = A_.w - 38 - 36;
     c.fillStyle = C.axis; c.fillRect(A_.x, 0, A_.w, A_.h);
     c.fillStyle = C.grid; c.fillRect(A_.x, 0, 1, A_.h);
-    V.projBars = []; V.projCols = {}; V.projUnk = null; V.projEdge = null;
+    V.projBars = []; V.projCols = { X: [A_.x, A_.x + A_.w], R: [A_.x, A_.x + A_.w] }; V.projUnk = null; V.projEdge = null;
     c.save(); c.beginPath(); c.rect(A_.x, 0, A_.w, A_.h); c.clip();
-    const mx = Math.max(1, ...F.ev.R.P.values(), ...F.ev.X.P.values());
+    const info = {}, lanes = [], out = { X: [0, 0], R: [0, 0] };
     for (const ev of ['R', 'X']) {
-      const x0 = A_.x + (ev === 'R' ? 8 : 12 + sw), col = cfg[ev], D = F.ev[ev], Zm = F.zones[ev], blen = sw - 36;
-      const hzi = h && h.k === 'zone' && h.ev === ev ? h.i : null, zr = new Map(), peak = new Set(), spans = [];
-      V.projCols[ev] = [x0 - 6, x0 + sw];
+      const D = F.ev[ev], Zm = F.zones[ev], hzi = h && h.k === 'zone' && h.ev === ev ? h.i : null, zr = new Map(), peak = new Set();
       if (Zm) Zm.zones.forEach((z, i) => {
         const ks = z.cell_mask.map(q => q[0]), k0 = Math.min(...ks), k1 = Math.max(...ks) + 1;
         let bk = null;
         for (let k = k0; k < k1; k++) { zr.set(k, i); if (bk == null || (D.P.get(k) || 0) > (D.P.get(bk) || 0)) bk = k; }
         if (bk != null && D.P.get(bk)) peak.add(bk);
-        spans.push({ i, k0, k1 });
+        lanes.push({ i, k0, k1, ev, hot: hzi === i });
       });
-      let above = 0, below = 0;
-      const labels = [];
-      for (const [k, n] of D.P) {
-        const [top, bot] = cellY(F, k, k + 1);
-        if (bot < top0) { above += n; continue; }
-        if (top > bot0) { below += n; continue; }
-        const z = zr.get(k), on = !!(h && h.k === 'pcell' && h.ev === ev && k >= h.k0 && k < h.k1);
-        const inA = !!(st.area && st.area.ev === ev && isFinite(st.area.k0) && k >= st.area.k0 && k < st.area.k1);
-        let a = z != null ? 0.85 : 0.3;
-        if (hzi != null) a = z === hzi ? 1 : a * 0.4;
-        if (on || inA) a = 1;
-        const len = Math.max(2, blen * n / mx);
-        c.fillStyle = rgba(col, Math.min(1, a * cfg.projA / 90)); c.fillRect(x0, top + 0.5, len, Math.max(1, bot - top - 1));
-        V.projBars.push({ ev, k, top, bot });
-        const pk = peak.has(k);
-        if (on || pk || z != null || 100 * n / F.N >= 3) labels.push({ x: x0 + len + 3, y: (top + bot) / 2, n, pk, on, z, rowH: bot - top });
-      }
-      // the labels: the hovered and the zones' peaks first, never overlapping
-      const usedY = [];
-      for (const L of labels.sort((a, b) => (b.on - a.on) || (b.pk - a.pk) || (b.n - a.n))) {
-        const fs = L.on ? 12.5 : L.pk ? clamp(L.rowH, 11, 14) : L.z != null ? 11 : 10;
-        if (usedY.some(u => Math.abs(u[0] - L.y) < (u[1] + fs) / 2 + 1)) continue;
-        usedY.push([L.y, fs]);
-        c.font = (L.pk || L.on ? '700 ' : L.z != null ? '600 ' : '') + fs + 'px ' + FONT; c.textBaseline = 'middle';
-        c.fillStyle = L.on ? '#FFFFFF' : L.pk ? mixW(col, 0.45) : L.z != null ? col : C.text3;
-        const t = pct(100 * L.n / F.N);
-        c.fillText(t, Math.min(L.x, x0 + sw - c.measureText(t).width - 2), L.y + 0.5);
-      }
-      const lanes = [];
-      spans.sort((a, b) => a.k0 - b.k0).forEach(o => {
-        let ln = 0;
-        while (lanes[ln] != null && lanes[ln] > o.k0) ln++;
-        lanes[ln] = o.k1;
-        const [ya, yb] = cellY(F, o.k0, o.k1), y0 = Math.max(top0, ya), y1 = Math.min(bot0, yb);
-        if (y1 > y0) { c.fillStyle = rgba(col, hzi === o.i ? 1 : 0.7); c.fillRect(x0 - 4 - 3 * ln, y0, 2, y1 - y0); }
-      });
-      c.font = '700 11px ' + FONT; c.textBaseline = 'top'; c.fillStyle = col;
-      c.fillText(ev + ' · ' + (ev === 'R' ? (F.brk ? 'против' : 'откат') : (F.brk ? 'по слому' : 'расш.')), x0, 4);
-      c.font = '10px ' + FONT; c.fillStyle = C.text2;
-      if (above) c.fillText('▲ ' + pct(100 * above / F.N), x0, 17);
-      if (below) { c.textBaseline = 'bottom'; c.fillText('▼ ' + pct(100 * below / F.N), x0, A_.h - 3); }
+      info[ev] = { D, zr, peak, hzi };
     }
+    const keys = [...new Set([...F.ev.R.P.keys(), ...F.ev.X.P.keys()])];
+    const mx = Math.max(1, ...keys.map(k => (F.ev.R.P.get(k) || 0) + (F.ev.X.P.get(k) || 0)));
+    const m1 = Math.max(1, ...F.ev.R.P.values(), ...F.ev.X.P.values()), str = n => Math.pow(n / m1, 0.75);   // 0..1, one scale
+    // operator 2026-10-06: a band's sessions whose event is already behind today's slice (by the clock) vs still ahead;
+    // the segment keeps its whole length (the band's share), the passed part is faded, so «what is still ahead» reads
+    const Rch = reachOf(F, ctx), sl = Rch.sl, gone = { R: new Map(), X: new Map() };
+    for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) if (q.t + 5 <= sl) gone[ev].set(q.k, (gone[ev].get(q.k) || 0) + 1);
+    // audit 2026-10-06: a band where today's final event can no longer lie (today's R is already deeper, today's X already
+    // further) is faded whole and its label grey: this is what «the level has traded today» means
+    const labels = [];
+    for (const k of keys) {
+      const [top, bot] = cellY(F, k, k + 1);
+      if (bot < top0 || top > bot0) { for (const ev of ['R', 'X']) out[ev][bot < top0 ? 0 : 1] += info[ev].D.P.get(k) || 0; continue; }
+      let x = x0;
+      for (const ev of ['R', 'X']) {
+        const I = info[ev], n = I.D.P.get(k) || 0;
+        if (!n) continue;
+        const z = I.zr.get(k), on = !!(h && h.k === 'pcell' && h.ev === ev && k >= h.k0 && k < h.k1);
+        const inA = !!(st.area && st.area.ev === ev && isFinite(st.area.k0) && k >= st.area.k0 && k < st.area.k1);
+        const r = str(n);
+        let a = z != null ? 0.22 + 0.78 * r : 0.1 + 0.32 * r;     // a zone row from faint to full, a residual row stays quiet
+        if (I.hzi != null) a = z === I.hzi ? Math.max(a, 0.6) : a * 0.4;
+        if (on || inA) a = 1;
+        const len = Math.max(2, blen * n / mx), g = Rch.okK(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
+        c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
+        if (g) { c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.projA / 90) * 0.3); c.fillRect(x + la, top + 0.5, len - la, hh); }
+        V.projBars.push({ ev, k, top, bot, x0: x, x1: x + len });
+        const pk = I.peak.has(k);
+        if (on || pk || z != null || 100 * n / F.N >= 3) labels.push({ ev, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top });
+        x += len;
+      }
+    }
+    // the labels: R left of the bar, X right of it; per side the hovered and the zones' peaks first, never overlapping
+    const used = { R: [], X: [] };
+    for (const L of labels.sort((a, b) => (b.on - a.on) || (b.pk - a.pk) || (b.n - a.n))) {
+      // the label's size and brightness follow the share on the same scale as the bar: the strongest rows read first
+      // the strongest row of the column 14 px bold, the weakest zone rows about 9 px (linear in the share)
+      // the weight of a label follows what is still AHEAD in its band (the number stays the band's whole share); a band
+      // with nothing ahead is grey and small: it has played out today (operator 2026-10-06)
+      const dead = !L.on && L.ahead <= 0, r = str(L.ahead), q = L.ahead / m1, fs = L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q;
+      if (used[L.ev].some(u => Math.abs(u[0] - L.y) < (u[1] + fs) / 2 + 1)) continue;
+      used[L.ev].push([L.y, fs]);
+      const col = cfg[L.ev], wt = L.on || (!dead && q > 0.7) ? '700 ' : L.z != null && !dead ? '600 ' : '';
+      c.textBaseline = 'middle';
+      const t = pct(100 * L.n / F.N), tw = pctW(c, t, wt, fs);
+      pctDraw(c, t, L.ev === 'R' ? Math.max(A_.x + 3, x0 - 3 - tw) : Math.min(L.xe + 3, A_.x + A_.w - tw - 6), L.y + 0.5, wt, fs,
+        L.on ? '#FFFFFF' : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(col, 0.45 * r), 0.5 + 0.5 * r) : C.text3);
+    }
+    // the zones' price extents: thin ticks at the right edge, one lane per overlap
+    const ends = [];
+    lanes.sort((a, b) => a.k0 - b.k0).forEach(o => {
+      let ln = 0;
+      while (ends[ln] != null && ends[ln] > o.k0) ln++;
+      ends[ln] = o.k1;
+      const [ya, yb] = cellY(F, o.k0, o.k1), y0 = Math.max(top0, ya), y1 = Math.min(bot0, yb);
+      if (y1 > y0) { c.fillStyle = rgba(cfg[o.ev], o.hot ? 1 : 0.7); c.fillRect(A_.x + A_.w - 4 - 3 * ln, y0, 2, y1 - y0); }
+    });
+    // the heads (R on the left, X on the right, as their percentages) and the shares beyond the frame
+    c.textBaseline = 'top'; c.font = '700 10.5px ' + FONT;
+    c.fillStyle = cfg.R; c.fillText('R ' + (F.brk ? 'против' : 'откат'), A_.x + 5, 3);
+    const hx = 'X ' + (F.brk ? 'по слому' : 'расш.');
+    c.fillStyle = cfg.X; c.fillText(hx, A_.x + A_.w - c.measureText(hx).width - 5, 3);
+    const shares = (i, y, base) => {
+      c.font = '10px ' + FONT; c.textBaseline = base;
+      c.fillStyle = C.text2; c.fillText(i ? '▼' : '▲', A_.x + A_.w / 2 - 4, y);
+      if (out.R[i]) { c.fillStyle = cfg.R; c.fillText(pct(100 * out.R[i] / F.N), A_.x + 5, y); }
+      if (out.X[i]) { const t = pct(100 * out.X[i] / F.N); c.fillStyle = cfg.X; c.fillText(t, A_.x + A_.w - c.measureText(t).width - 5, y); }
+    };
+    if (out.X[0] + out.R[0]) shares(0, 18, 'top');
+    if (out.X[1] + out.R[1]) shares(1, A_.h - 3, 'bottom');
     c.restore();
   }
   function drawProj(c, ctx) {
@@ -1412,9 +1550,11 @@
     c.font = '11.5px ' + FONT; c.fillStyle = C.text2; c.textBaseline = 'middle'; c.textAlign = 'center';
     for (let t = Math.ceil(st.v0 / step) * step; t <= st.v1; t += step) { const x = V.X(t); if (x > 20 && x < W - 20 && !busy.some(b => Math.abs(V.X(b) - x) < 42)) c.fillText(t % 1440 === 0 ? ctx.D.dm : clk(t), x, y + V.timeH / 2); }
     const tag = (t, bg, fg, txt) => { const x = V.X(t), text = txt || clk(t); c.font = '600 11px ' + FONT; const w = c.measureText(text).width + 12; c.fillStyle = bg; roundRect(c, x - w / 2, y + 4, w, 20, 3); c.fill(); c.fillStyle = fg; c.fillText(text, x, y + 14.5); };
-    if (wn && wn.t0 != null) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
+    // operator 2026-10-06: the hovered cluster's time window is what the trader looks for, so it is drawn last, over the
+    // slice tag; the cursor's own time tag is left out while a window is shown
     tag(ctx.obs, ctx.live && !ctx.D.hist ? '#2A2F38' : ctx.D.hist ? C.hist : C.replay, ctx.live && !ctx.D.hist ? '#fff' : '#0B0C10');
-    if (st.mx >= 0 && st.mx < W && st.my < V.plot.h) tag(snapT(V.T(st.mx)) - 2.5, '#363A45', '#fff');
+    if (!(wn && wn.t0 != null) && st.mx >= 0 && st.mx < W && st.my < V.plot.h) tag(snapT(V.T(st.mx)) - 2.5, '#363A45', '#fff');
+    if (wn && wn.t0 != null) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
     c.textAlign = 'left';
     void h;
   }
@@ -1446,7 +1586,7 @@
       if (V.projUnk && y >= V.projUnk[1]) return { k: 'unk', src: 'proj' };
       if (st.mode === 'bounds') {
         // the two columns: R on the left, X on the right; a band of the event under the cursor
-        const ev = V.projCols && x >= V.projCols.X[0] ? 'X' : 'R', b = (V.projBars || []).find(q => q.ev === ev && y >= q.top - 1 && y <= q.bot + 1);
+        const row = (V.projBars || []).filter(q => y >= q.top - 1 && y <= q.bot + 1), b = row.find(q => x >= q.x0 && x <= q.x1) || (x < V.proj.x + 38 ? row.find(q => q.ev === 'R') : row.find(q => q.ev === 'X')) || row[0], ev = b ? b.ev : st.ev;
         if (b) return { k: 'pcell', ev, k0: b.k, k1: b.k + 1, src: 'proj' };
         const k = F.cellOfP(V.P(y));
         return { k: 'pcell', ev, k0: k, k1: k + 1, src: 'proj', empty: true };
@@ -1459,8 +1599,8 @@
     if (x > V.plot.w) return y < V.plot.h ? { k: 'paxis' } : null;
     if (y > V.taxisY) return { k: 'taxis' };
     if (!F) return y > V.plot.h ? null : lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y);
-    if (y > V.plot.h) {
-      // the time band: a zone's hill (its label first), else a 15-minute column (both events), «?» at the right
+    if (y > V.plot.h - (V.stripOn ? V.bandOv || 0 : 0) && x <= V.plot.w) {
+      // the time band (with its raised part over the free bottom of the chart): a zone's hill (its label first), else a 15-minute column (both events), «?» at the right
       if (!V.stripOn) return { k: 'taxis' };
       const inBox = a => x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3];
       const cp = (V.caps || []).find(inBox);
@@ -1472,7 +1612,7 @@
         let j = 1;
         while (j < H.scr.length - 1 && H.scr[j][0] < x) j++;
         const yh = H.scr[j][1];
-        if (H.ev === 'X' ? y < cy && y >= yh - 2 : y > cy && y <= yh + 2) return { k: 'zone', ev: H.ev, i: H.i, src: 'strip' };
+        if (H.up ? y < cy && y >= yh - 2 : y > cy && y <= yh + 2) return { k: 'zone', ev: H.ev, i: H.i, src: 'strip' };
       }
       const q = (V.bandCols || []).find(z => x >= z.x0 - 1 && x <= z.x1 + 1);
       if (q) return { k: 'tcell', b0: q.b, b1: q.b + 1, src: 'strip' };
@@ -1501,7 +1641,7 @@
     return lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y);
   }
   function lvlHit(ctx, y) {
-    for (const l of levels(ctx.s)) { if (l.type === 'std' && !st.L.std) continue; if (Math.abs(V.Y(l.p) - y) <= 3.5) return { k: 'lvl', id: l.id, l }; }
+    for (const l of levels(ctx.s)) { if (!stdShown(ctx.s, l)) continue; if (Math.abs(V.Y(l.p) - y) <= 3.5) return { k: 'lvl', id: l.id, l }; }
     return null;
   }
   function vibHit(ctx, x, y) {
@@ -1544,7 +1684,13 @@
       const vf = visitCount(F, h.k0, h.k1, null), vr = visitCount(F, h.k0, h.k1, sl), p0 = F.u2p(h.k0 / 10), p1 = F.u2p(h.k1 / 10);
       return '<div class="ih">Полоса ' + band(h.k0, h.k1) + ' SD</div><div class="is">' + px(Math.min(p0, p1)) + '–' + px(Math.max(p0, p1)) + ' · ' + where(s, F.u2p((h.k0 + h.k1) / 20)) + '</div>' +
         '<div class="iq">свой экстремум в этой полосе · ' + F.from + ' до ' + clk(F.end) + '</div>' + twoBars(F, nX, nR, ev) +
-        (lk ? '<div class="il" style="color:' + cfg[ev] + '">пик ' + ev + ' в полосе: ' + clk(F.f + 15 * lk.b) + '–' + clk(F.f + 15 * lk.b + 15) + ' · ' + pct(100 * lk.n / F.N) + ' семьи</div>' : '') +
+        (lk ? '<div class="il" style="color:' + (lk.past ? '#F23645' : cfg[ev]) + '">' + (lk.past ? 'уже прошло · пик ' : 'у семьи впереди · пик ') + ev + ' в полосе: ' + clk(F.f + 15 * lk.b) + '–' + clk(F.f + 15 * lk.b + 15) + ' · ' + pct(100 * lk.n / F.N) + ' семьи</div>' : '') +
+        (() => { const Rch = reachOf(F, ctx), gn = e => F.ev[e].pts.filter(q => q.k >= h.k0 && q.k < h.k1 && q.t + 5 <= sl).length, gX = gn('X'), gR = gn('R');
+          const off = e => !Rch.okK(e, h.k0), ttl = ' title="История похожих сессий по часам дня, не сегодняшний путь цены"';
+          const why = e => e === 'R' ? 'сегодняшний откат уже глубже' : 'сегодняшнее расширение уже дальше';
+          return (off(ev) ? '<div class="il" style="color:#F23645">сегодня ' + ev + ' здесь уже невозможен: ' + why(ev) + '</div>' : '') +
+            (sl >= F.end ? '' : '<div class="ir"' + ttl + '>у семьи позже ' + clk(sl) + '<b><span style="color:' + cfg.R + '">R ' + pct(100 * (nR - gR) / F.N) + '</span> · <span style="color:' + cfg.X + '">X ' + pct(100 * (nX - gX) / F.N) + '</span></b></div>' +
+            '<div class="ir dim"' + ttl + '>у семьи раньше ' + clk(sl) + '<b>R ' + pct(100 * gR / F.N) + ' · X ' + pct(100 * gX / F.N) + '</b></div>'); })() +
         '<div class="ir">заходили в полосу · вся сессия<b>' + yr(F, vf) + '</b></div><div class="ir">заходили · после ' + clk(sl) + '<b>' + yr(F, vr) + '</b></div>' + ifoot(F);
     }
     if (h.k === 'tcell' && F) {
@@ -1650,6 +1796,24 @@
   // activation and the reachable set of the final event: HOLDS (it lies in the zone), POSSIBLE (a farther price at a
   // later open can still land in the zone), IMPOSSIBLE; STATUS_UNKNOWN when a whole M5 is missing. At the slice of the
   // request the server's statuses are compared with these.
+  // what today's path still allows (audit 2026-10-06, the same rule as zone status): the FINAL R can only be as deep as
+  // today's deepest point after the confirmation or deeper, the final X only as far as today's furthest or further; a
+  // cell must also not be over by the clock. okK: the price band can still hold today's final event; okCell: and its
+  // 15 minutes are not over. Unknown today (a missing M5) → everything stays open
+  function reachOf(F, ctx) {
+    const sl = sliceOf(ctx), rows = todayRows(F, ctx), w = F.w0t, last = F.end - 5, known = rows.length === Math.max(0, (sl - F.act0) / 5);
+    const ext = { R: null, X: null };
+    if (known && rows.length) { ext.R = 10 * Math.min(...rows.map(r => r.lo)); ext.X = 10 * Math.max(...rows.map(r => r.hi)); }
+    const okK = (ev, k) => !known || (sl <= last && (ext[ev] == null || (ev === 'R' ? k * w < ext[ev] : (k + 1) * w > ext[ev])));
+    const okCell = (ev, k, b) => okK(ev, k) && (!known || (F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last));
+    return { sl, known, ext, okK, okCell };
+  }
+  // the look of a zone (drawing only; its status is not changed — A5): a POSSIBLE zone none of whose sessions sit in a
+  // cell still reachable today is drawn as IMPOSSIBLE (its window is over: 0 of its sessions ahead)
+  function zoneLook(F, ctx, ev) {
+    const S = zoneStatus(F, ctx, ev), Rch = reachOf(F, ctx);
+    return S.map((st_, i) => st_ !== 'POSSIBLE' ? st_ : F.ev[ev].pts.some(q => F.zcell[ev].get(q.k + '|' + q.b) === i && Rch.okCell(ev, q.k, q.b)) ? st_ : 'IMPOSSIBLE');
+  }
   function zoneStatus(F, ctx, ev) {
     const Zm = F.zones[ev];
     if (!Zm) return [];
@@ -1690,10 +1854,12 @@
     let nX = 0, nR = 0;
     for (let b = b0; b < b1; b++) { nX += F.ev.X.T.get(b) || 0; nR += F.ev.R.T.get(b) || 0; }
     const g = V ? (cloudsOf(F)[h.ev] || [])[h.i] : null, q0 = F.u2p(z.price_low / 10), q1 = F.u2p(z.price_high / 10);
+    const lkz = ctx ? peakAhead(F, ctx, F.ev[h.ev].pts.filter(q => F.zcell[h.ev].get(q.k + '|' + q.b) === h.i), h.ev) : null, look = ctx ? zoneLook(F, ctx, h.ev)[h.i] : s;
     return '<div class="ih"><span style="color:' + cfg[h.ev] + '">' + z.label + '</span> · ' + F.names[h.ev].toLowerCase() + ' · ' + clk(z.time_start) + '–' + clk(z.time_end) + '<span class="zs zs-' + s + '">' + ZST[s] + '</span></div>' +
       '<div class="is">' + band(z.price_low, z.price_high) + ' SD · ' + px(Math.min(q0, q1)) + '–' + px(Math.max(q0, q1)) + '</div>' +
       '<div class="ibig" style="color:' + cfg[h.ev] + '">' + ppTxt(p) + '<span>семьи в этой зоне</span></div>' +
-      (g ? '<div class="il" style="color:' + cfg[h.ev] + '">пиковые 15 минут ' + clk(F.f + 15 * g.peak) + '–' + clk(F.f + 15 * g.peak + 15) + ' · ' + pct(100 * g.peakN / F.N) + ' семьи</div>' : '') +
+      (s === 'POSSIBLE' && look === 'IMPOSSIBLE' ? '<div class="il" style="color:#F23645">окно зоны прошло: впереди 0 сессий зоны</div>' : '') +
+      (lkz ? '<div class="il" style="color:' + (lkz.past ? '#F23645' : cfg[h.ev]) + '">' + (lkz.past ? 'уже прошло · пиковые 15 минут ' : 'у семьи впереди · пиковые 15 минут ') + clk(F.f + 15 * lkz.b) + '–' + clk(F.f + 15 * lkz.b + 15) + ' · ' + pct(100 * lkz.n / F.N) + ' семьи</div>' : '') +
       '<div class="iq">в окне ' + clk(F.f + 15 * b0) + '–' + clk(F.f + 15 * b1) + ' свой экстремум поставили</div>' + twoBars(F, nX, nR, h.ev) +
       ifoot(F, ' · не шанс на сегодня');
   }
@@ -2295,21 +2461,21 @@
       const dx = x - d.x, dy = y - d.y, F = V.ctx.F;
       if (Math.abs(dx) + Math.abs(dy) > 3) d.moved = true;
       if (d.zone === 'draw' && F && d.moved) d.area = Object.assign(areaFromDrag(F, d.x, d.y, x, y), { ev: st.ev });
-      else if (d.zone === 'proj' && F && d.moved && st.mode === 'bounds') { const ka = F.cellOfP(V.P(d.y)), kb = F.cellOfP(V.P(y)); d.area = { k0: Math.min(ka, kb), k1: Math.max(ka, kb) + 1, ev: V.projCols && d.x >= V.projCols.X[0] ? 'X' : 'R' }; }
+      else if (d.zone === 'proj' && F && d.moved && st.mode === 'bounds') { const ka = F.cellOfP(V.P(d.y)), kb = F.cellOfP(V.P(y)); d.area = { k0: Math.min(ka, kb), k1: Math.max(ka, kb) + 1, ev: ((V.projBars || []).find(q => d.y >= q.top - 1 && d.y <= q.bot + 1 && d.x >= q.x0 && d.x <= q.x1) || (V.projBars || []).find(q => d.y >= q.top - 1 && d.y <= q.bot + 1) || { ev: st.ev }).ev }; }
       else if (d.zone === 'strip' && F && d.moved) {
         const b0 = clamp(Math.floor((V.T(d.x) - F.f) / 15), 0, F.nb - 1), b1 = clamp(Math.floor((V.T(x) - F.f) / 15), 0, F.nb - 1);
         const a = st.area && isFinite(st.area.k0) ? st.area : { k0: -Infinity, k1: Infinity };
         d.area = { k0: a.k0, k1: a.k1, b0: Math.min(b0, b1), b1: Math.max(b0, b1) + 1, ev: (st.area && st.area.ev) || st.ev };
       }
       else if (d.zone === 'plot') {
-        const span = d.v1 - d.v0; st.v0 = d.v0 - dx * span / V.plot.w; st.v1 = d.v1 - dx * span / V.plot.w;
+        // operator 2026-10-06: the right edge never leaves the session end; a horizontal drag only adds or removes history
+        anchorRight(d.v0 - dx * (d.v1 - d.v0) / V.plot.w);
         if (Math.abs(y - d.y) > 2 || !st.auto) { const ps = d.p1 - d.p0; st.auto = false; st.p0 = d.p0 + dy * ps / V.plot.h; st.p1 = d.p1 + dy * ps / V.plot.h; }
       } else if (d.zone === 'paxis') {
         const f = Math.exp(dy * 0.006), m = (d.p0 + d.p1) / 2, half = (d.p1 - d.p0) / 2 * f;
         st.auto = false; st.p0 = m - half; st.p1 = m + half;
       } else if (d.zone === 'taxis') {
-        const f = Math.exp(-dx * 0.005), span = clamp((d.v1 - d.v0) * f, 30, 1500);
-        st.v0 = d.v1 - span; st.v1 = d.v1;
+        anchorRight(rightEdge() - (d.v1 - d.v0) * Math.exp(-dx * 0.005));
       }
       cv.style.cursor = d.zone === 'plot' ? 'grabbing' : d.zone === 'paxis' ? 'ns-resize' : d.zone === 'taxis' ? 'ew-resize' : 'crosshair';
       tip.hidden = true;
@@ -2328,7 +2494,7 @@
   cv.addEventListener('mousedown', e => {
     if (e.button !== 0) return;
     const [x, y] = local(e), F = V.ctx.F;
-    let zone = x > V.plot.w && x < V.plot.w + V.axisW && y < V.plot.h ? 'paxis' : V.projW && x >= V.proj.x && y < V.plot.h ? 'proj' : y > V.taxisY ? 'taxis' : y > V.plot.h ? (V.stripOn && x <= V.plot.w ? 'strip' : 'none') : 'plot';
+    let zone = x > V.plot.w && x < V.plot.w + V.axisW && y < V.plot.h ? 'paxis' : V.projW && x >= V.proj.x && y < V.plot.h ? 'proj' : y > V.taxisY ? 'taxis' : y > V.plot.h - (V.stripOn ? V.bandOv || 0 : 0) ? (V.stripOn && x <= V.plot.w ? 'strip' : 'none') : 'plot';
     if (zone === 'plot' && F && (st.tool || e.shiftKey)) zone = 'draw';
     st.drag = { x, y, zone, v0: st.v0, v1: st.v1, p0: V.p0, p1: V.p1, moved: false, h: st.hover };
     e.preventDefault();
@@ -2382,13 +2548,11 @@
       const f = Math.exp(e.deltaY * 0.0015), m = (V.p0 + V.p1) / 2, half = (V.p1 - V.p0) / 2 * f;
       st.auto = false; st.p0 = m - half; st.p1 = m + half;
     } else if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-      const dt = (e.deltaX || e.deltaY) * (st.v1 - st.v0) / V.plot.w * 0.6; st.v0 += dt; st.v1 += dt;
+      anchorRight(st.v0 + (e.deltaX || e.deltaY) * (st.v1 - st.v0) / V.plot.w * 0.6);
     } else {
       // design 22 (operator 2026-09-29): the right edge stays at the session end + 45 minutes; the wheel only adds or
       // removes history on the left; zooming in stops at the «↺» view (box start .. session end)
-      const lim = SESS[st.session].end + 45, minSpan = lim - (SESS[st.session].start - 25);
-      const span = clamp((lim - st.v0) * Math.exp(e.deltaY * 0.0012), Math.min(minSpan, 1500), 1500);
-      st.v1 = lim; st.v0 = lim - span;
+      anchorRight(rightEdge() - (rightEdge() - st.v0) * Math.exp(e.deltaY * 0.0012));   // the same left limit as every gesture
     }
     redraw();
   }, { passive: false });
@@ -2399,7 +2563,7 @@
     if (!b) return;
     const z = +b.dataset.z;
     if (z === 0) { fitSession(st.session); if (st.session === 'RDR') { st.v0 = 545; st.v1 = 1005; } }
-    else { const f = z > 0 ? 1.35 : 1 / 1.35, span = clamp((st.v1 - st.v0) * f, 30, 1500); st.v0 = st.v1 - span; }
+    else anchorRight(rightEdge() - (st.v1 - st.v0) * (z > 0 ? 1.35 : 1 / 1.35));
     redraw();
   });
   function stepReplay(dt) {
@@ -2491,7 +2655,7 @@
     A.day = x;
     if (x.status !== 'ok') return;
     NOW = A.src === 'hist' ? 1020 : Math.floor(x.now);
-    PREV = x.prev ? { k: 'PREV', name: x.prev.name, start: -360, drH: x.prev.drH, drL: x.prev.drL, idrH: x.prev.idrH, idrL: x.prev.idrL } : null;
+    PREV = x.prev ? { k: 'PREV', name: x.prev.name, start: -870, formed: -810, drH: x.prev.drH, drL: x.prev.drL, idrH: x.prev.idrH, idrL: x.prev.idrL, open: x.prev.open, close: x.prev.close } : null;
     if (A.src === 'live') {
       if (!st.userSession && (first || st.rp == null)) st.session = sessionNow();
       if (first) { fitSession(st.session); if (st.session === 'RDR' && st.rp == null) { st.v0 = 545; st.v1 = 1005; } }
@@ -2514,7 +2678,7 @@
       } else A.day = x;
       if (A.src === 'hist' && x.status === 'ok') {
         NOW = 1020;
-        PREV = x.prev ? { k: 'PREV', name: x.prev.name, start: -360, drH: x.prev.drH, drL: x.prev.drL, idrH: x.prev.idrH, idrL: x.prev.idrL } : null;
+        PREV = x.prev ? { k: 'PREV', name: x.prev.name, start: -870, formed: -810, drH: x.prev.drH, drL: x.prev.drL, idrH: x.prev.idrH, idrL: x.prev.idrL, open: x.prev.open, close: x.prev.close } : null;
         if (A.jump) {
           // a history day opens at the confirmation of the chosen session: the family's snapshot as it was fixed then
           A.jump = false;
