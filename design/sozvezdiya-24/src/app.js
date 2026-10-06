@@ -594,6 +594,7 @@
     if (F && st.mode === 'bounds') drawPair(c, ctx);
     if (F) drawZones(c, ctx);
     if (F) drawArea(c, ctx);
+    if (F && st.mini) drawMini(c, ctx);
     drawTags(c, ctx);
     drawCross(c);
     c.restore();
@@ -861,6 +862,8 @@
       if (h.k === 'pt') return q.i === h.i;
       if (h.k === 'out') return q.m.outcome === h.cat;
       if (h.k === 'evrow') return true;
+      if (h.k === 'hcell') return h.ev === q.ev && q.k === h.kk && q.b === h.b;
+      if (h.k === 'order') { const o = q.m.order; return h.key === 'unknown' ? !['X_before_R', 'R_before_X', 'same_M5'].includes(o) : o === h.key; }
       if (h.k === 'lvl' && h.l && ctx) { const L = levelRat(F, h.l.p), up = levelUp(F, ctx, L); return reachOne(F, q.m, L, up, q.m.act) === 'yes'; }
     }
     if (st.area) return inArea(q, st.area) ? true : null;
@@ -1038,6 +1041,13 @@
       if (pk) V.lk = { ev: h.ev, x: pk.x, y: yc, b: pk.b, n: pk.n, past: pk.past };
     }
     if (V.lk) { const t0 = F.f + 15 * V.lk.b; V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1: t0 + 15, col: V.lk.past ? '#F23645' : cfg[V.lk.ev] }); }
+  }
+  // a cell of the six windows under the mouse, framed on the main chart: its price band × its time (operator 2026-10-06)
+  function drawMini(c, ctx) {
+    const m = st.mini, F = ctx.F, [ya, yb] = cellY(F, m.k0, m.k1), xa = V.X(m.t0), xb = V.X(m.t1);
+    c.save(); c.fillStyle = rgba(m.col, 0.16); c.fillRect(xa, ya, xb - xa, yb - ya);
+    c.strokeStyle = rgba(m.col, 0.95); c.lineWidth = 1.5; c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, xb - xa - 1), Math.max(2, yb - ya - 1));
+    c.restore();
   }
   function drawLink(c, ctx) {
     const lk = V.lk;

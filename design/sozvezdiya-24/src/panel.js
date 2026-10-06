@@ -288,7 +288,7 @@
     const rows = [['X_before_R', 'сначала максимум X, потом глубочайший R', cfg.X], ['R_before_X', 'сначала глубочайший R, потом максимум X', cfg.R], ['same_M5', 'в одной M5: порядок внутри свечи неизвестен', '#8C929D'], ['unknown', 'неизвестно: событие не определено', '#4A505B']];
     const P = rows.map(([k, t]) => pp(F, { event_id: 'order_' + k, region_kind: 'order', exact_price_bounds: null, time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end), yes_count: n[k], display_scope: 'details', phrase: 'порядок первых R и X: ' + t, horizon: F.from + ' до ' + clk(F.end) }));
     return '<div class="p24-bar wide">' + rows.map(([k, , c]) => n[k] ? '<i style="width:' + (100 * n[k] / F.N).toFixed(2) + '%;background:' + c + '"></i>' : '').join('') + '</div>' +
-      rows.map(([k, t, c], j) => '<div class="dq" title="' + esc(plainTitle(P[j])) + '"><i style="background:' + c + '"></i><span>' + t + '</span><b>' + pct(P[j].pct) + '</b></div>').join('');
+      rows.map(([k, t, c], j) => '<div class="dq" data-ord="' + k + '" title="' + esc(plainTitle(P[j])) + '"><i style="background:' + c + '"></i><span>' + t + '</span><b>' + pct(P[j].pct) + '</b></div>').join('');
   }
   // window 5: «на уровне или дальше» on today's levels (spec §5.4): nested shares, the whole horizon (pale) and after the
   // slice (bright); a level today already reached is marked with its time
@@ -301,7 +301,7 @@
     for (const l of list) {
       const nm = l.type === 'std' ? l.name : l.full, q = levelQuery(F, ctx, l.p, nm), up = q.up, col = up ? cfg.X : cfg.R;
       const tk = l.type === 'std' ? taken.find(z => z.t && z.name === l.name) : null;
-      rows.push('<div class="dl" title="' + esc(plainTitle(q.full)) + '"><span class="n">' + esc(l.type === 'std' ? 'STD ' + l.name : nm) + (tk ? ' <em>✓ ' + clk(tk.t) + '</em>' : '') + '</span><span class="b"><i style="width:' + (q.full.pct || 0).toFixed(1) + '%;background:' + rgba(col, 0.35) + '"></i><i style="width:' + (q.rest.pct || 0).toFixed(1) + '%;background:' + rgba(col, 0.9) + '"></i></span><b>' + ppTxt(q.full, true) + '</b><span class="r" style="color:' + col + '">' + ppTxt(q.rest, true) + '</span></div>');
+      rows.push('<div class="dl" data-lvl="' + l.id + '" title="' + esc(plainTitle(q.full)) + '"><span class="n">' + esc(l.type === 'std' ? 'STD ' + l.name : nm) + (tk ? ' <em>✓ ' + clk(tk.t) + '</em>' : '') + '</span><span class="b"><i style="width:' + (q.full.pct || 0).toFixed(1) + '%;background:' + rgba(col, 0.35) + '"></i><i style="width:' + (q.rest.pct || 0).toFixed(1) + '%;background:' + rgba(col, 0.9) + '"></i></span><b>' + ppTxt(q.full, true) + '</b><span class="r" style="color:' + col + '">' + ppTxt(q.rest, true) + '</span></div>');
     }
     return '<div class="dlh"><span></span><span>вся сессия</span><span>после ' + clk(sl) + '</span></div>' + rows.join('');
   }
@@ -324,6 +324,7 @@
     ks.sort((a, b) => a - b);
     const k0 = ks[Math.floor(0.03 * (ks.length - 1))], k1 = ks[Math.ceil(0.97 * (ks.length - 1))] + 1, mx = Math.max(...cells.map(q => q.list.length));
     const cw = (W - L - Rm) / F.nb, rh = (H - T - B) / (k1 - k0), X = b => L + b * cw, Y = k => T + (k1 - 1 - k) * rh;
+    dom(id)._g = { L, T, cw, rh, k0, k1, n: F.nb, ev };
     for (const q of cells) { if (q.k < k0 || q.k >= k1) continue; c.fillStyle = rgba(cfg[ev], 0.18 + 0.82 * Math.pow(q.list.length / mx, 0.7)); c.fillRect(X(q.b) + 0.5, Y(q.k) + 0.25, Math.max(1, cw - 1), Math.max(1, rh - 0.5)); }
     const Zm = F.zones[ev];
     if (Zm) Zm.zones.forEach(z => {
@@ -356,6 +357,7 @@
     all.sort((a, b) => a - b);
     const k0 = all[Math.floor(0.03 * (all.length - 1))], k1 = all[Math.ceil(0.97 * (all.length - 1))] + 1;
     const cw = (W - L - Rm) / film.length, rh = (H - T - B) / (k1 - k0), X = j => L + j * cw, Y = k => T + (k1 - 1 - k) * rh;
+    dom(id)._g = { L, T, cw, rh, k0, k1, n: film.length, film: true };
     film.forEach((cd, j) => { for (const [k, l] of cd.cells) { if (k < k0 || k >= k1) continue; c.fillStyle = rgba(cfg.path, Math.min(1, (0.1 + 0.9 * l.length / F.N) * cfg.heatA / 100)); c.fillRect(X(j), Y(k), cw + 0.3, rh + 0.3); } });
     c.fillStyle = '#FFFFFF';
     for (const q of todayRows(F, ctx)) { const j = F.grid.indexOf(q.T), k = 10 * q.cl / F.w0t; if (j < 0 || k < k0 || k >= k1) continue; c.beginPath(); c.arc(X(j) + cw / 2, Y(Math.floor(k)) + rh / 2, 2, 0, 6.2832); c.fill(); }
@@ -414,7 +416,35 @@
     dom('step21').addEventListener('click', e => { const b = e.target.closest('button'); if (b) stepReplay(Number(b.dataset.step)); });
     dom('panel21toggle').addEventListener('click', () => { const closed = dom('dr21-root').classList.toggle('panel21closed'); dom('panel21toggle').setAttribute('aria-pressed', String(!closed)); render(true); });
     det.addEventListener('mouseenter', () => { st.detOver = true; render(false); });
-    det.addEventListener('mouseleave', () => { st.detOver = false; render(false); });
+    det.addEventListener('mouseleave', () => { st.detOver = false; if (st.fromDet) { st.hover = null; st.mini = null; st.fromDet = false; } render(false); });
+    // operator 2026-10-06: what is under the mouse in a window is lit on the main chart, like a hovered zone: a cell of
+    // R / X «цена × время» → that band × 15 minutes framed (its whole constellation if the cell is in a zone); a row of
+    // «что было раньше» → the stars of those sessions; a level of «на уровне или дальше» → that level (and the sessions
+    // that reached it); a cell of «Путь семьи» → that band on that M5 framed
+    det.addEventListener('mousemove', e => {
+      const ctx = V && V.ctx, F = ctx && ctx.F;
+      if (!F) return;
+      let h = null, mini = null;
+      const cvs = e.target.closest('canvas'), row = e.target.closest('[data-ord],[data-lvl]');
+      if (cvs && cvs._g) {
+        const g = cvs._g, r = cvs.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+        const j = Math.floor((x - g.L) / g.cw), k = g.k1 - 1 - Math.floor((y - g.T) / g.rh);
+        if (j >= 0 && j < g.n && k >= g.k0 && k < g.k1) {
+          if (g.film) { const cd = filmOf(F)[j]; h = { k: 'fcell', j, kk: k }; mini = { k0: k, k1: k + 1, t0: cd.T - 5, t1: cd.T, col: cfg.path }; }
+          else {
+            const zi = F.zcell[g.ev].get(k + '|' + j);
+            h = zi != null ? { k: 'zone', ev: g.ev, i: zi } : { k: 'hcell', ev: g.ev, kk: k, b: j };
+            mini = { k0: k, k1: k + 1, t0: F.f + 15 * j, t1: F.f + 15 * j + 15, col: cfg[g.ev] };
+          }
+        }
+      } else if (row && row.dataset.ord) h = { k: 'order', key: row.dataset.ord };
+      else if (row && row.dataset.lvl) { const l = levels(ctx.s).find(z => z.id === row.dataset.lvl); if (l) h = { k: 'lvl', id: l.id, l }; }
+      const key = JSON.stringify([h, mini]);
+      if (key === st.detKey) return;
+      st.detKey = key; st.hover = h; st.mini = mini; st.fromDet = !!h;
+      if (h && h.ev) st.ev = h.ev;
+      redraw();
+    });
     dom('deth').addEventListener('click', () => { st.detPin = !st.detPin; render(false); });
     new ResizeObserver(() => redraw(true)).observe(cv);
   }
