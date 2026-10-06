@@ -44,7 +44,7 @@
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
     boxFill: 'grad', boxA: 45, prevA: 46,
     bandH: 13, bandRise: 30, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, lineLbl: 11, prevLbl: 9,
-    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, sideA: 70, domK: 200, domLine: 100, spentA: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
+    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, profH: 110, profVeil: 20, sideA: 70, domK: 200, domLine: 100, spentA: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
   const DASH = { solid: [], dash: [7, 4], dots: [1.5, 3.5], dashdot: [9, 3, 2, 3] };
@@ -77,7 +77,7 @@
       ['zoneLbl', 'Созвездия · размер подписи, %', 'range', 60, 160, 5], ['lineLbl', 'DR / IDR · размер названия, px', 'range', 8, 16, 0.5],
       ['prevLbl', 'Прошлые уровни · размер названия, px', 'range', 6, 14, 0.5], ['fracLbl', 'Доли IDR в коробке · размер, px', 'range', 6, 14, 0.5],
       ['fracLine', 'Доли IDR в коробке · линии', 'range', 0, 60]]],
-    ['День', [['prevDayA', 'Свечи вчера · яркость', 'range', 10, 100], ['midnightA', 'Полночь · линия', 'range', 0, 100], ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10]]],
+    ['День', [['prevDayA', 'Свечи вчера · яркость', 'range', 10, 100], ['midnightA', 'Полночь · линия', 'range', 0, 100], ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10], ['profH', 'Путь семьи · профиль полосы · высота, px', 'range', 24, 160], ['profVeil', 'Путь семьи · вуаль под профилем, %', 'range', 0, 80]]],
     ['График', [['upC', 'Свеча вверх', 'color'], ['dnC', 'Свеча вниз', 'color'], ['bg', 'Фон', 'color']]]
   ];
   const DASH_NAMES = { solid: 'сплошная', dash: 'штрих', dots: 'точки', dashdot: 'штрихпунктир' };
@@ -611,8 +611,9 @@
     drawMidnight(c, 0, V.plot.h);
     if (st.L.prev) drawPrev(c, ctx);
     if (st.L.vib) drawVib(c, ctx);
+    if (F) linkOf(ctx);
     if (F && st.mode === 'path') drawFilm(c, ctx);
-    if (F) { drawHighlight(c, ctx); linkOf(ctx); }
+    if (F) drawHighlight(c, ctx);
     drawLevels(c, ctx);
     drawReference(c, ctx);
     if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, ctx); drawMemberPath(c, ctx); }
@@ -731,7 +732,7 @@
   // «Путь семьи»: one column per common clock M5, one cell per 0.1 SD; colour = the share of N on one fixed linear scale
   // 0…100 % for every column (spec §9.2: no normalisation to a column's or a row's own maximum); passed hours dimmer
   function drawFilm(c, ctx) {
-    const F = ctx.F, sl = sliceOf(ctx), h = hv(), f = cfg.heatA / 100, col = cfg.path;
+    const F = ctx.F, sl = sliceOf(ctx), h = hv(), f = cfg.heatA / 100 * (V.lk && V.lk.row ? 0.35 : 1), col = cfg.path;
     for (const cd of filmOf(F)) {
       const x0 = V.X(cd.T - 5), x1 = V.X(cd.T);
       if (x1 < 0 || x0 > V.plot.w) continue;
@@ -1127,18 +1128,79 @@
     c.strokeStyle = rgba(m.col, 0.95); c.lineWidth = 1.5; c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, xb - xa - 1), Math.max(2, yb - ya - 1));
     c.restore();
   }
+  // «Путь семьи», a price band hovered in the column → its TIME PROFILE (operator 2026-10-06: brightness alone did not
+  // say when the band was most frequent). Each M5 of the band: how many of the family's sessions closed in this band then
+  // (n of N, each M5 its own 100 %). Bars over the band, height = n on one scale for the whole row; the M5 AHEAD coloured
+  // in five classes from the fewest to the most ahead (rare → most often), the passed M5 grey (spent); the three biggest
+  // M5 ahead named with time and n of N, the first framed. The rest of «Путь семьи» dims. Counts unchanged — only drawing.
+  const HEAT = ['#3B4B7A', '#2F7FA8', '#2FAE8E', '#9CCB4A', '#FFE45C'];
+  function drawBandProfile(c, ctx, lk) {
+    const F = ctx.F, row = lk.row, N = F.N || 1, mx = Math.max(1, ...row.map(q => q.n));
+    const ah = row.filter(q => !q.past), aMx = ah.length ? Math.max(...ah.map(q => q.n)) : 1, aMn = ah.length ? Math.min(...ah.map(q => q.n)) : 0;
+    const cls = n => aMx > aMn ? Math.min(4, Math.floor(5 * (n - aMn) / (aMx - aMn + 1e-9))) : 4;
+    const [ra, rb] = cellY(F, lk.k0, lk.k1);
+    const up = ra > 70, H = Math.max(24, Math.min(cfg.profH, up ? ra - 34 : V.plot.h - rb - 34));
+    const base = up ? ra : rb, sgn = up ? -1 : 1, hOf = q => Math.max(2, H * q.n / mx);
+    const colOf = q => q.past ? stateCol(HEAT[1], 'spent') : HEAT[cls(q.n)];
+    c.save();
+    if (cfg.profVeil) { c.fillStyle = rgba(C.bg, cfg.profVeil / 100); c.fillRect(0, 0, V.plot.w, V.plot.h); }
+    c.fillStyle = 'rgba(236,240,246,.06)'; c.fillRect(0, ra, V.plot.w, rb - ra);
+    for (const q of row) {
+      const xa = V.X(q.t0), xb = V.X(q.t1), w = Math.max(1, xb - xa - 1), col = colOf(q), hh = hOf(q);
+      c.fillStyle = rgba(col, q.past ? 0.5 : 0.95); c.fillRect(xa + 0.5, ra, w, Math.max(2, rb - ra));
+      c.fillStyle = rgba(col, q.past ? 0.45 : 0.85); c.fillRect(xa + 0.5, up ? base - hh - 1 : base + 1, w, hh);
+    }
+    // the scale: a dotted line at the row's maximum
+    const yTop = base + sgn * (H + 1), x0 = V.X(row[0].t0), x1 = V.X(row[row.length - 1].t1);
+    c.strokeStyle = 'rgba(236,240,246,.16)'; c.lineWidth = 1; c.setLineDash([2, 3]);
+    c.beginPath(); c.moveTo(x0, Math.round(yTop) + 0.5); c.lineTo(x1, Math.round(yTop) + 0.5); c.stroke(); c.setLineDash([]);
+    // the names: the three biggest M5 ahead, the past maximum if it is bigger; no two names closer than their width
+    const tops = [], taken = [];
+    const fits = xm => taken.every(x => Math.abs(x - xm) >= 84);
+    const pastMax = row.filter(q => q.past).sort((a, b) => b.n - a.n)[0];
+    for (const q of ah.slice().sort((a, b) => b.n - a.n || a.t0 - b.t0)) {
+      if (tops.length === 3) break;
+      const xm = (V.X(q.t0) + V.X(q.t1)) / 2;
+      if (fits(xm)) { tops.push(q); taken.push(xm); }
+    }
+    const label = (q, i, past) => {
+      const xa = V.X(q.t0), xb = V.X(q.t1), xm = (xa + xb) / 2, hh = hOf(q), y0 = up ? base - hh - 5 : base + hh + 5;
+      if (i === 0 && !past) {
+        c.strokeStyle = '#FFFFFF'; c.lineWidth = 1.5;
+        const ya = up ? base - hh - 2 : ra - 1, yb = up ? rb + 1 : base + hh + 2;
+        c.strokeRect(Math.round(xa) - 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xa) + 1), Math.round(yb - ya));
+      }
+      c.shadowColor = 'rgba(0,0,0,.95)'; c.shadowBlur = 4; c.textAlign = 'center'; c.textBaseline = up ? 'bottom' : 'top';
+      const fs = i === 0 ? 12 : 10.5;
+      c.font = '500 ' + (fs - 1.5) + 'px ' + FONT; c.fillStyle = past ? '#7A808B' : '#C3C8D0';
+      c.fillText(q.n + ' из ' + N + ' · ' + num(100 * q.n / N, 1) + '%', xm, y0);
+      c.font = (i === 0 ? '700 ' : '600 ') + fs + 'px ' + FONT; c.fillStyle = past ? '#8A909B' : i === 0 ? '#FFFFFF' : '#DDE1E7';
+      c.fillText((past ? 'было ' : '') + clk(q.t0) + '–' + clk(q.t1), xm, y0 + sgn * (fs + 1));
+      c.shadowBlur = 0;
+    };
+    if (pastMax && (!tops.length || pastMax.n > tops[0].n)) { const xm = (V.X(pastMax.t0) + V.X(pastMax.t1)) / 2; if (fits(xm)) label(pastMax, 1, true); }
+    tops.slice().reverse().forEach(q => label(q, tops.indexOf(q), false));
+    // legend under the band, at the start of the part ahead
+    if (ah.length) {
+      const lx = clamp(V.X(ah[0].t0), 4, V.plot.w - 260), ly = up ? rb + 6 : ra - 18;
+      c.font = '500 10px ' + FONT; c.textBaseline = 'top'; c.textAlign = 'left'; c.shadowColor = 'rgba(0,0,0,.95)'; c.shadowBlur = 3;
+      c.fillStyle = '#A3A8B3'; c.fillText('впереди: реже', lx, ly);
+      let xx = lx + c.measureText('впереди: реже').width + 6;
+      c.shadowBlur = 0;
+      HEAT.forEach(h => { c.fillStyle = h; c.fillRect(xx, ly + 1, 12, 9); xx += 14; });
+      c.shadowBlur = 3; c.fillStyle = '#A3A8B3'; c.fillText('чаще   ·   ' + aMn + '…' + aMx + ' из ' + N + ' на M5', xx + 4, ly);
+    }
+    c.restore();
+    c.save(); c.shadowColor = rgba('#FFFFFF', 0.6); c.shadowBlur = 8; c.strokeStyle = lk.past ? '#F23645' : '#FFFFFF'; c.lineWidth = 1.6;
+    c.beginPath(); c.arc(lk.x, lk.y, 7, 0, 6.2832); c.stroke(); c.restore();
+  }
   function drawLink(c, ctx) {
     const lk = V.lk;
     if (!lk) return;
     // operator 2026-10-06: the time × price cluster shows on the constellation itself — a soft box over the zone's (or
     // band's) prices on its peak 15 minutes, its time written above — instead of a column down to the time band
     const F = ctx.F, col = lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
-    if (lk.row && lk.k0 != null) {
-      // «Путь семьи»: every M5 of the hovered band lit by how often the family closed there then (each column its own
-      // 100 %); ahead bright, passed dim
-      const [ra, rb] = cellY(F, lk.k0, lk.k1), mxr = Math.max(1, ...lk.row.map(q => q.n));
-      for (const q of lk.row) { c.fillStyle = rgba(cfg.path, (0.1 + 0.75 * q.n / mxr) * (q.past ? 0.35 : 1)); c.fillRect(V.X(q.t0), ra, Math.max(1, V.X(q.t1) - V.X(q.t0)), rb - ra); }
-    }
+    if (lk.row && lk.k0 != null) { drawBandProfile(c, ctx, lk); return; }
     if (lk.k0 != null) {
       const [ya, yb] = cellY(F, lk.k0, lk.k1);
       const g = c.createLinearGradient(xa, 0, xb, 0);
