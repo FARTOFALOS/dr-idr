@@ -878,14 +878,21 @@
       c.fillRect(cx - (bw - 1) / 2, Math.min(yo, yc), bw, Math.max(1, Math.abs(yo - yc)));
     }
   }
+  // operator 2026-10-06: «лейбл 10:55 сильно сплошной, я не вижу за ним свечи» — a pill is a translucent tint with an
+  // outline in its colour and the text in that colour; candles show through it; its box is kept so zone names avoid it
   function pill(c, x, y, text, bg, fg, up) {
-    c.font = '600 11px ' + FONT;
-    const w = c.measureText(text).width + 12, h = 18, yy = up ? y - h - 6 : y + 6;
-    c.fillStyle = bg; roundRect(c, x - w / 2, yy, w, h, 4); c.fill();
-    c.fillStyle = fg; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, x, yy + h / 2 + 0.5); c.textAlign = 'left';
+    c.font = '600 10.5px ' + FONT;
+    const w = c.measureText(text).width + 10, h = 16, yy = up ? y - h - 6 : y + 6, m = String(bg).match(/[\d.]+/g) || [0, 0, 0];
+    const rgb = 'rgba(' + m[0] + ',' + m[1] + ',' + m[2] + ',';
+    c.fillStyle = rgb + '.18)'; roundRect(c, x - w / 2, yy, w, h, 4); c.fill();
+    c.strokeStyle = rgb + '.75)'; c.lineWidth = 1; roundRect(c, x - w / 2 + 0.5, yy + 0.5, w - 1, h - 1, 4); c.stroke();
+    c.save(); c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = 3;
+    c.fillStyle = fg === '#fff' ? mixW('#' + [m[0], m[1], m[2]].map(v => (+v).toString(16).padStart(2, '0')).join(''), 0.55) : fg; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, x, yy + h / 2 + 0.5); c.restore(); c.textAlign = 'left';
+    (V.pills = V.pills || []).push([x - w / 2 - 2, yy - 2, x + w / 2 + 2, yy + h + 2]);
   }
   function roundRect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
   function drawPills(c, ctx) {
+    V.pills = [];
     for (const k of ORDER) {
       const s = sess(ctx.D, k, ctx.obs, ctx.live);
       if (!s.conf) continue;
@@ -1278,6 +1285,15 @@
     const CL = cloudsOf(F), h = hv(), placed = [], used = ctx.live ? NOW + 5 : ctx.obs;
     const bars = ctx.D.bars.filter(b => b.t + 5 <= used && V.X(b.t + 5) > 0 && V.X(b.t) < V.plot.w).map(b => [V.X(b.t) - 2, V.Y(b.h) - 2, V.X(b.t + 5) + 2, V.Y(b.l) + 2]);
     const over = (a, b) => a[0] < b[2] && a[2] > b[0] && a[1] < b[3] && a[3] > b[1];
+    // operator 2026-10-06: «созвездие не должно перебивать своими процентами нынешнюю цену» — the last candles and the
+    // room right of them (where the next candles will stand) are kept clear of zone names, like the pills
+    const last = ctx.D.bars.filter(b => b.t + 5 <= used).slice(-4), live = [];
+    if (last.length) {
+      const yh = Math.min(...last.map(b => V.Y(b.h))), yl = Math.max(...last.map(b => V.Y(b.l)));
+      live.push([V.X(last[0].t) - 6, yh - 28, V.X(last[last.length - 1].t + 5) + 64, yl + 28]);
+    }
+    const pills = V.pills || [];
+    const cost = r => 4 * live.filter(b => over(r, b)).length + 4 * pills.filter(b => over(r, b)).length + 3 * placed.filter(b => over(r, b)).length + bars.filter(b => over(r, b)).length;
     V.zoneHit = [];
     for (const ev of ['X', 'R']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
@@ -1309,17 +1325,26 @@
         const wN = c.measureText(z.label).width;
         c.font = '700 ' + fs + 'px ' + FONT;
         const wS = pctW(c, pct(share), lw, fs), wT = wN + 5 + wS + 10, hT = fs + 8 + (sub ? 13 : 0), bb = g.bb;
-        const cands = [[bb[2] - wT + 6, bb[1] - hT - 6], [bb[2] + 10, (bb[1] + bb[3]) / 2 - hT / 2], [bb[2] - wT + 6, bb[3] + 6], [bb[0] - 6, bb[1] - hT - 6], [bb[0] - wT - 10, (bb[1] + bb[3]) / 2 - hT / 2]];
-        let best = null;
+        const ym = (bb[1] + bb[3]) / 2 - hT / 2, cands = [[bb[2] - wT + 6, bb[1] - hT - 6], [bb[2] + 10, ym], [bb[2] - wT + 6, bb[3] + 6], [bb[0] - 6, bb[1] - hT - 6], [bb[0] - wT - 10, ym],
+          [bb[2] - wT + 6, bb[1] - hT - 34], [bb[2] - wT + 6, bb[3] + 34], [bb[2] + 40, ym], [bb[0] - wT - 40, ym]];
+        for (const L of live) cands.push([L[2] + 8, ym], [L[2] + 8, L[1] - hT - 4], [L[2] + 8, L[3] + 4]);
+        let best = null, bestC = 1e9;
         for (const q of cands) {
           const r = [q[0], q[1], q[0] + wT, q[1] + hT];
           if (r[1] < 44 || r[3] > V.plot.h - 6 || r[0] < 4 || r[2] > V.plot.w - 112) continue;   // clear of the line names at the right edge
-          if (bars.some(b => over(r, b)) || placed.some(b => over(r, b))) continue;
-          best = q; break;
+          const cc = cost(r);
+          if (cc < bestC) { best = q; bestC = cc; }
+          if (!cc) break;
         }
         if (!best) best = [clamp(cands[0][0], 4, V.plot.w - wT - 112), clamp(cands[0][1], 44, V.plot.h - hT - 6)];
         const [lx, ly] = best, k = cloudK(F, ev, i, h, z), op = k < 1 ? 0.4 + 0.5 * k : 1;
         placed.push([lx, ly, lx + wT, ly + hT]);
+        // a name moved away from its constellation keeps a faint thread to it
+        {
+          const px = clamp((bb[0] + bb[2]) / 2, lx, lx + wT), py = clamp((bb[1] + bb[3]) / 2, ly, ly + hT);
+          const qx = clamp(px, bb[0], bb[2]), qy = clamp(py, bb[1], bb[3]);
+          if (Math.hypot(px - qx, py - qy) > 18) { c.save(); c.globalAlpha = op; c.strokeStyle = rgba(col, 0.35); c.lineWidth = 1; c.setLineDash([1.5, 3]); c.beginPath(); c.moveTo(px, py); c.lineTo(qx, qy); c.stroke(); c.restore(); }
+        }
         c.save(); c.globalAlpha = op;
         // no plate under a zone's label (operator 2026-10-06): the text alone, with a faint shadow to stay readable over candles
         c.shadowColor = 'rgba(0,0,0,' + (imp ? 0.35 : 0.75) + ')'; c.shadowBlur = 3;
