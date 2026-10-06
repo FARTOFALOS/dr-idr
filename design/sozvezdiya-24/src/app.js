@@ -43,7 +43,7 @@
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
     boxFill: 'grad', boxA: 45, prevA: 46,
     bandH: 13, bandRise: 30, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, lineLbl: 11, prevLbl: 9,
-    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, profH: 110, profVeil: 20, sideA: 70, domK: 200, domLine: 100, spentA: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
+    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, profH: 110, profVeil: 0, profA: 30, sideA: 70, domK: 200, domLine: 100, spentA: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
   const DASH = { solid: [], dash: [7, 4], dots: [1.5, 3.5], dashdot: [9, 3, 2, 3] };
@@ -55,6 +55,8 @@
   if (cfg.X === '#63C3A5') cfg.X = DEF.X;
   // operator 2026-10-06: every VI is drawn (the author: any gap between bodies); the old thresholds kept in a browser go once
   if (!cfg.vi0) { cfg.vibNQ = 0; cfg.vibES = 0; cfg.vibYM = 0; cfg.vi0 = 1; }
+  // operator 2026-10-06: the band profile is transparent, candles show through it — no veil by default
+  if (!cfg.prof0) { cfg.profVeil = 0; cfg.prof0 = 1; }
   const saveCfg = () => { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* not kept */ } };
   const SCHEMA = [
     ['События семьи', [['R', 'Откат R · цвет', 'color'], ['X', 'Продолжение X · цвет', 'color'], ['ptA', 'Точки · яркость', 'range', 10, 100],
@@ -76,7 +78,7 @@
       ['zoneLbl', 'Созвездия · размер подписи, %', 'range', 60, 160, 5], ['lineLbl', 'DR / IDR · размер названия, px', 'range', 8, 16, 0.5],
       ['prevLbl', 'Прошлые уровни · размер названия, px', 'range', 6, 14, 0.5], ['fracLbl', 'Доли IDR в коробке · размер, px', 'range', 6, 14, 0.5],
       ['fracLine', 'Доли IDR в коробке · линии', 'range', 0, 60]]],
-    ['День', [['prevDayA', 'Свечи вчера · яркость', 'range', 10, 100], ['midnightA', 'Полночь · линия', 'range', 0, 100], ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10], ['profH', 'Путь семьи · профиль полосы · высота, px', 'range', 24, 160], ['profVeil', 'Путь семьи · вуаль под профилем, %', 'range', 0, 80]]],
+    ['День', [['prevDayA', 'Свечи вчера · яркость', 'range', 10, 100], ['midnightA', 'Полночь · линия', 'range', 0, 100], ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10], ['profH', 'Путь семьи · профиль полосы · высота, px', 'range', 24, 160], ['profA', 'Путь семьи · профиль полосы · непрозрачность, %', 'range', 5, 100], ['profVeil', 'Путь семьи · вуаль под профилем, %', 'range', 0, 80]]],
     ['График', [['upC', 'Свеча вверх', 'color'], ['dnC', 'Свеча вниз', 'color'], ['bg', 'Фон', 'color']]]
   ];
   const DASH_NAMES = { solid: 'сплошная', dash: 'штрих', dots: 'точки', dashdot: 'штрихпунктир' };
@@ -616,6 +618,7 @@
     drawLevels(c, ctx);
     drawReference(c, ctx);
     if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, ctx); drawMemberPath(c, ctx); }
+    if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     drawPills(c, ctx);
     drawNow(c, ctx);
@@ -1133,7 +1136,10 @@
   // in five classes from the fewest to the most ahead (rare → most often), the passed M5 grey (spent); the three biggest
   // M5 ahead named with time and n of N, the first framed. The rest of «Путь семьи» dims. Counts unchanged — only drawing.
   const HEAT = ['#3B4B7A', '#2F7FA8', '#2FAE8E', '#9CCB4A', '#FFE45C'];
-  function drawBandProfile(c, ctx, lk) {
+  // operator 2026-10-06 (second look): «очень ярко — должно быть прозрачным, чтобы свечи за ним было видно». The body
+  // (bars, band row, scale) is drawn UNDER the candles, translucent (profA), each bar with a thin cap line in its colour
+  // so the shape still reads; the names, the frame and the ring stay on top (part 'top', from drawLink)
+  function drawBandProfile(c, ctx, lk, part) {
     const F = ctx.F, row = lk.row, N = F.N || 1, mx = Math.max(1, ...row.map(q => q.n));
     const ah = row.filter(q => !q.past), aMx = ah.length ? Math.max(...ah.map(q => q.n)) : 1, aMn = ah.length ? Math.min(...ah.map(q => q.n)) : 0;
     const cls = n => aMx > aMn ? Math.min(4, Math.floor(5 * (n - aMn) / (aMx - aMn + 1e-9))) : 4;
@@ -1142,17 +1148,24 @@
     const base = up ? ra : rb, sgn = up ? -1 : 1, hOf = q => Math.max(2, H * q.n / mx);
     const colOf = q => q.past ? stateCol(HEAT[1], 'spent') : HEAT[cls(q.n)];
     c.save();
-    if (cfg.profVeil) { c.fillStyle = rgba(C.bg, cfg.profVeil / 100); c.fillRect(0, 0, V.plot.w, V.plot.h); }
-    c.fillStyle = 'rgba(236,240,246,.06)'; c.fillRect(0, ra, V.plot.w, rb - ra);
-    for (const q of row) {
-      const xa = V.X(q.t0), xb = V.X(q.t1), w = Math.max(1, xb - xa - 1), col = colOf(q), hh = hOf(q);
-      c.fillStyle = rgba(col, q.past ? 0.5 : 0.95); c.fillRect(xa + 0.5, ra, w, Math.max(2, rb - ra));
-      c.fillStyle = rgba(col, q.past ? 0.45 : 0.85); c.fillRect(xa + 0.5, up ? base - hh - 1 : base + 1, w, hh);
+    if (part === 'body') {
+      const a = cfg.profA / 100;
+      if (cfg.profVeil) { c.fillStyle = rgba(C.bg, cfg.profVeil / 100); c.fillRect(0, 0, V.plot.w, V.plot.h); }
+      c.fillStyle = 'rgba(236,240,246,.04)'; c.fillRect(0, ra, V.plot.w, rb - ra);
+      for (const q of row) {
+        const xa = V.X(q.t0), xb = V.X(q.t1), w = Math.max(1, xb - xa - 1), col = colOf(q), hh = hOf(q), k = q.past ? 0.45 : 1;
+        const yb0 = up ? base - hh - 1 : base + 1, yCap = up ? yb0 : yb0 + hh - 1;
+        c.fillStyle = rgba(col, Math.min(1, 1.3 * a * k)); c.fillRect(xa + 0.5, ra, w, Math.max(2, rb - ra));
+        c.fillStyle = rgba(col, Math.min(1, a * k)); c.fillRect(xa + 0.5, yb0, w, hh);
+        c.fillStyle = rgba(col, Math.min(1, (0.35 + 1.5 * a) * k)); c.fillRect(xa + 0.5, yCap, w, 1.5);
+      }
+      // the scale: a dotted line at the row's maximum
+      const yTop = base + sgn * (H + 1), x0 = V.X(row[0].t0), x1 = V.X(row[row.length - 1].t1);
+      c.strokeStyle = 'rgba(236,240,246,.14)'; c.lineWidth = 1; c.setLineDash([2, 3]);
+      c.beginPath(); c.moveTo(x0, Math.round(yTop) + 0.5); c.lineTo(x1, Math.round(yTop) + 0.5); c.stroke(); c.setLineDash([]);
+      c.restore();
+      return;
     }
-    // the scale: a dotted line at the row's maximum
-    const yTop = base + sgn * (H + 1), x0 = V.X(row[0].t0), x1 = V.X(row[row.length - 1].t1);
-    c.strokeStyle = 'rgba(236,240,246,.16)'; c.lineWidth = 1; c.setLineDash([2, 3]);
-    c.beginPath(); c.moveTo(x0, Math.round(yTop) + 0.5); c.lineTo(x1, Math.round(yTop) + 0.5); c.stroke(); c.setLineDash([]);
     // the names: the three biggest M5 ahead, the past maximum if it is bigger; no two names closer than their width
     const tops = [], taken = [];
     const fits = xm => taken.every(x => Math.abs(x - xm) >= 84);
@@ -1165,7 +1178,7 @@
     const label = (q, i, past) => {
       const xa = V.X(q.t0), xb = V.X(q.t1), xm = (xa + xb) / 2, hh = hOf(q), y0 = up ? base - hh - 5 : base + hh + 5;
       if (i === 0 && !past) {
-        c.strokeStyle = '#FFFFFF'; c.lineWidth = 1.5;
+        c.strokeStyle = 'rgba(255,255,255,.6)'; c.lineWidth = 1;
         const ya = up ? base - hh - 2 : ra - 1, yb = up ? rb + 1 : base + hh + 2;
         c.strokeRect(Math.round(xa) - 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xa) + 1), Math.round(yb - ya));
       }
@@ -1199,7 +1212,7 @@
     // operator 2026-10-06: the time × price cluster shows on the constellation itself — a soft box over the zone's (or
     // band's) prices on its peak 15 minutes, its time written above — instead of a column down to the time band
     const F = ctx.F, col = lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
-    if (lk.row && lk.k0 != null) { drawBandProfile(c, ctx, lk); return; }
+    if (lk.row && lk.k0 != null) { drawBandProfile(c, ctx, lk, 'top'); return; }
     if (lk.k0 != null) {
       const [ya, yb] = cellY(F, lk.k0, lk.k1);
       const g = c.createLinearGradient(xa, 0, xb, 0);
