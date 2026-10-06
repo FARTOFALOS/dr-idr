@@ -42,7 +42,7 @@
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
     boxFill: 'grad', boxA: 45, prevA: 46,
-    bandH: 12, bandRise: 40, bandA: 65, bandRoom: 14, padTop: 1.5, padBot: 2, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, zoneLblPos: 'auto', zoneNumA: 45, zoneNameA: 60, zoneSpentA: 55, calloutA: 80, capPct: 0, lineLbl: 11, prevLbl: 9,
+    bandH: 12, bandRise: 40, bandA: 65, bandRoom: 14, padTop: 1.5, padBot: 2, rightPad: 12, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, zoneLblPos: 'auto', zoneNumA: 45, zoneNameA: 60, zoneSpentA: 55, calloutA: 80, capPct: 0, lineLbl: 11, prevLbl: 9,
     fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, profH: 110, profVeil: 0, profA: 30, sideA: 70, domK: 200, domLine: 100, spentA: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
@@ -61,6 +61,7 @@
   if (!cfg.z2) { cfg.bandH = DEF.bandH; cfg.bandRise = DEF.bandRise; cfg.z2 = 1; }
   // operator 2026-10-06 (later): the band's columns tall again, filling the free space down from the DR low; the zone
   // names by the price led out to the left (set once)
+  if (!cfg.z4) { cfg.rightPad = DEF.rightPad; cfg.z4 = 1; }
   if (!cfg.z3) { cfg.bandH = DEF.bandH; cfg.bandRise = DEF.bandRise; cfg.bandRoom = DEF.bandRoom; cfg.zoneLblPos = DEF.zoneLblPos; cfg.z3 = 1; }
   const saveCfg = () => { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* not kept */ } };
   // operator 2026-10-06: the settings grouped by the element of the screen, each group folds (its state kept in the
@@ -80,7 +81,7 @@
       ['domK', 'Контраст перевеса X/R, %', 'range', 0, 400, 10], ['domLine', 'Контур перевеса, %', 'range', 0, 200, 10],
       ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5],
       ['capPct', 'Капсулы зон · доля', 'sel', { 0: 'только имя', 1: 'имя и доля' }]]],
-    ['Масштаб «↺»', [['padTop', 'Запас сверху, %', 'range', 0, 8, 0.5], ['padBot', 'Запас снизу, %', 'range', 0, 8, 0.5], ['bandRoom', 'Место под лентой, % диапазона', 'range', 0, 20]]],
+    ['Масштаб «↺»', [['rightPad', 'Правый край после конца сессии, мин', 'range', 0, 45], ['padTop', 'Запас сверху, %', 'range', 0, 8, 0.5], ['padBot', 'Запас снизу, %', 'range', 0, 8, 0.5], ['bandRoom', 'Место под лентой, % диапазона', 'range', 0, 20]]],
     ['Путь семьи', [['path', 'Клетки · цвет', 'color'], ['heatA', 'Клетки · яркость (одна для всех колонок)', 'range', 20, 400, 10],
       ['profH', 'Профиль полосы · высота, px', 'range', 24, 160], ['profA', 'Профиль полосы · непрозрачность, %', 'range', 5, 100], ['profVeil', 'Вуаль под профилем, %', 'range', 0, 80]]],
     ['Уровни сессии: DR, IDR, mid, STD', [['dr', 'DR · цвет', 'color'], ['drA', 'DR · яркость', 'range', 10, 100], ['drW', 'DR · толщина', 'range', 0.5, 3, 0.1],
@@ -491,7 +492,7 @@
 
   // ---------- view state ----------
   const st = {
-    session: 'RDR', rp: null, v0: 545, v1: 1005, p0: null, p1: null, auto: true,
+    session: 'RDR', rp: null, v0: 545, v1: 975, p0: null, p1: null, auto: true,
     L: { pts: true, zones: true, proj: true, strip: true, std: true, prev: true, vib: true, det: true },
     ev: 'R', mode: 'bounds', view: 'auto', scope: 'weekday', area: null, tool: false, col: null,
     hover: null, pin: null, mx: -1, my: -1, drag: null, stripH: 46, stripPin: false, menu: false,
@@ -507,9 +508,9 @@
     const s = sess(D, st.session, obs, live), F = snapOf(D, s);
     return { D, obs, live, s, F };
   }
-  // the right edge of the time axis is anchored at the session end + 45 minutes (design 22's wheel; operator 2026-10-06:
+  // the right edge of the time axis is anchored at the session end + rightPad minutes (12; was 45 until 2026-10-06) (design 22's wheel; operator 2026-10-06:
   // for every gesture): only the left edge moves, from the «↺» view (box start .. session end) to the previous day's RDR (LEFT_MOST)
-  const rightEdge = () => SESS[st.session].end + 45;
+  const rightEdge = () => SESS[st.session].end + cfg.rightPad;
   // operator 2026-10-06: the left edge goes back no further than the previous trading day's RDR (its box at 09:30
   // yesterday, minute −870, plus a quarter of an hour): further left there is nothing to read, only black
   const LEFT_MOST = -885;
@@ -517,7 +518,7 @@
     const lim = rightEdge(), maxSpan = lim - LEFT_MOST, minSpan = Math.min(lim - (SESS[st.session].start - 25), maxSpan);
     st.v1 = lim; st.v0 = lim - clamp(lim - v0, minSpan, maxSpan);
   }
-  function fitSession(k) { const S = SESS[k]; st.v0 = S.start - 25; st.v1 = S.end + 45; st.auto = true; st.p0 = st.p1 = null; }
+  function fitSession(k) { const S = SESS[k]; st.v0 = S.start - 25; st.v1 = S.end + cfg.rightPad; st.auto = true; st.p0 = st.p1 = null; }
   function selSession(k) {
     st.session = k; st.pin = null; st.hover = null; st.area = null; st.col = null; st.view = 'auto';
     if (A.src === 'hist') { const s = sess(day(), k, NOW, false); st.rp = s.conf || null; }
@@ -630,9 +631,9 @@
     drawMidnight(c, 0, V.plot.h);
     if (st.L.prev) drawPrev(c, ctx);
     if (st.L.vib) drawVib(c, ctx);
-    if (F) linkOf(ctx);
+    // the corridor of a hovered band first (its prices on the scale), then the link (its time on the axis), then the film
+    if (F) { drawHighlight(c, ctx); linkOf(ctx); }
     if (F && st.mode === 'path') drawFilm(c, ctx);
-    if (F) drawHighlight(c, ctx);
     drawLevels(c, ctx);
     drawReference(c, ctx);
     if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, ctx); drawMemberPath(c, ctx); }
@@ -927,6 +928,12 @@
       c.strokeStyle = 'rgba(255,255,255,.12)'; c.setLineDash([2, 5]); c.lineWidth = 1;
       c.beginPath(); c.moveTo(xe, 0); c.lineTo(xe, V.plot.h); c.stroke(); c.setLineDash([]);
       // the text «конец <session> HH:MM» removed (operator 2026-10-06): the dotted line says it
+    }
+    const pNow = ctx.s.priceNow;
+    if (pNow != null) {
+      const b = ctx.D.bars.filter(q => q.t + 5 <= (ctx.live ? NOW + 5 : ctx.obs)).pop(), y = Math.round(V.Y(pNow)) + 0.5;
+      c.strokeStyle = rgba(b && b.c >= b.o ? C.up : C.dn, 0.8); c.lineWidth = 1; c.setLineDash([1, 3]);
+      c.beginPath(); c.moveTo(0, y); c.lineTo(V.plot.w, y); c.stroke(); c.setLineDash([]);
     }
     const x = Math.round(V.X(ctx.obs)) + 0.5;
     c.strokeStyle = ctx.live && !ctx.D.hist ? 'rgba(255,255,255,.14)' : rgba(ctx.D.hist ? C.hist : C.replay, 0.55); c.setLineDash([3, 4]); c.lineWidth = 1;
@@ -1389,12 +1396,12 @@
         let best = null, bestC = 1e9;
         for (const q of cands) {
           const r = [q[0], q[1], q[0] + wT, q[1] + hT];
-          if (r[1] < 44 || r[3] > V.plot.h - 6 || r[0] < 4 || r[2] > V.plot.w - 112) continue;   // clear of the line names at the right edge
+          if (r[1] < 44 || r[3] > V.plot.h - 6 || r[0] < 4 || r[2] > V.plot.w - 64) continue;   // clear of the line names at the right edge
           const cc = cost(r);
           if (cc < bestC) { best = q; bestC = cc; }
           if (!cc) break;
         }
-        if (!best) best = [clamp(cands[0][0], 4, V.plot.w - wT - 112), clamp(cands[0][1], 44, V.plot.h - hT - 6)];
+        if (!best) best = [clamp(cands[0][0], 4, V.plot.w - wT - 64), clamp(cands[0][1], 44, V.plot.h - hT - 6)];
         const [lx, ly] = best, k = cloudK(F, ev, i, h, z), op = k < 1 ? 0.4 + 0.5 * k : 1;
         placed.push([lx, ly, lx + wT, ly + hT]);
         c.save(); c.globalAlpha = op;
@@ -1426,7 +1433,7 @@
     const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
     c.font = lw + nfs + 'px ' + FONT;
     const wN = c.measureText(z.label).width, wS = pctW(c, pct(share), lw, fs), wT = wN + 4 + wS, hT = fs;
-    let lx = clamp(cx - wT / 2, 4, V.plot.w - 112 - wT), ly = clamp(cy - fs / 2, 30, V.plot.h - hT - 4), out = false;
+    let lx = clamp(cx - wT / 2, 4, V.plot.w - 64 - wT), ly = clamp(cy - fs / 2, 30, V.plot.h - hT - 4), out = false;
     const { placed, live, pills, bars, over } = env, R = (x, y) => [x - 2, y - 2, x + wT + 2, y + hT + 2];
     const hits = r => live.some(b => over(r, b)) || pills.some(b => over(r, b)) || placed.some(b => over(r, b));
     if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
@@ -1716,9 +1723,21 @@
     if (hh && hh.k === 'lvl' && hh.l) tags.push([V.Y(hh.l.p), px(hh.l.p), '#C9D1DD', '#0B0C10']);
     if (hh && hh.k === 'prev') tags.push([V.Y(hh.p), px(hh.p), '#8C95A3', '#0B0C10']);
     const lastP = s.priceNow != null ? s.priceNow : null;
-    if (lastP != null) { const b = ctx.D.bars.filter(q => q.t + 5 <= (ctx.live ? NOW + 5 : ctx.obs)).pop(); tags.push([V.Y(lastP), px(lastP), b && b.c >= b.o ? C.up : C.dn, '#fff']); }
     const hot = tags.filter(q => q[4]);
     for (const [y, t, bg, fg, hv_] of tags) if (y > 0 && y < H && (hv_ || !hot.some(q => Math.abs(q[0] - y) < 18))) axisTag(c, y, t, bg, fg);
+    // the last price on top of the other tags, with the countdown to the close of the current M5 under it (as TradingView)
+    if (lastP != null) {
+      const b = ctx.D.bars.filter(q => q.t + 5 <= (ctx.live ? NOW + 5 : ctx.obs)).pop(), y = V.Y(lastP), bg = b && b.c >= b.o ? C.up : C.dn;
+      if (y > 0 && y < H) {
+        if (ctx.live && A.src === 'live') {
+          const m = etMinute(), left = Math.max(0, Math.round((5 - (m % 5)) * 60)), cd = String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0');
+          const xx = V.plot.w + 1, w = V.axisW - 2;
+          c.fillStyle = bg; roundRect(c, xx, y - 8, w, 29, 3); c.fill();
+          c.fillStyle = '#fff'; c.textBaseline = 'middle'; c.font = '600 10.5px ' + FONT; c.fillText(px(lastP), xx + 4, y + 0.5);
+          c.font = '500 10px ' + FONT; c.fillStyle = 'rgba(255,255,255,.85)'; c.fillText(cd, xx + 4, y + 13.5);
+        } else axisTag(c, y, px(lastP), bg, '#fff');
+      }
+    }
     if (st.mx >= 0 && st.my >= 0 && st.my < H && st.mx < V.plot.w) axisTag(c, st.my, px(V.P(st.my)), '#363A45', '#fff');
     if (!st.auto) { c.fillStyle = '#262B35'; roundRect(c, x + V.axisW - 24, H - 22, 18, 16, 3); c.fill(); c.fillStyle = C.text2; c.font = '600 10px ' + FONT; c.fillText('A', x + V.axisW - 19, H - 13.5); }
   }
@@ -2371,6 +2390,7 @@
   let raf = 0, fullNext = false;
   const redraw = full => { fullNext = fullNext || !!full; if (!raf) raf = requestAnimationFrame(() => { raf = 0; const f = fullNext; fullNext = false; render(f); }); };
   function animStrip() { redraw(); }
+  setInterval(() => { if (A.src === 'live' && A.day && A.day.status === 'ok' && st.rp == null && document.visibilityState === 'visible' && !st.drag) redraw(); }, 1000);
   const local = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
   // an area from a drag on the chart: price cells x 15-minute cells, snapped to the grid of the distributions
   function areaFromDrag(F, x0, y0, x1, y1) {
@@ -2475,7 +2495,7 @@
     } else if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
       anchorRight(st.v0 + (e.deltaX || e.deltaY) * (st.v1 - st.v0) / V.plot.w * 0.6);
     } else {
-      // design 22 (operator 2026-09-29): the right edge stays at the session end + 45 minutes; the wheel only adds or
+      // design 22 (operator 2026-09-29): the right edge stays at the session end + rightPad minutes; the wheel only adds or
       // removes history on the left; zooming in stops at the «↺» view (box start .. session end)
       anchorRight(rightEdge() - (rightEdge() - st.v0) * Math.exp(e.deltaY * 0.0012));   // the same left limit as every gesture
     }
@@ -2487,7 +2507,7 @@
     const b = e.target.closest('button');
     if (!b) return;
     const z = +b.dataset.z;
-    if (z === 0) { fitSession(st.session); if (st.session === 'RDR') { st.v0 = 545; st.v1 = 1005; } }
+    if (z === 0) { fitSession(st.session); if (st.session === 'RDR') { st.v0 = 545; st.v1 = rightEdge(); } }
     else anchorRight(rightEdge() - (st.v1 - st.v0) * (z > 0 ? 1.35 : 1 / 1.35));
     redraw();
   });
@@ -2499,7 +2519,7 @@
   window.addEventListener('keydown', e => {
     if (e.target && /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
     if (e.key === 'Escape') { if (st.drag) st.drag = null; else if (st.pin) st.pin = null; else if (st.area) st.area = null; else if (st.tool) st.tool = false; else if (st.stripPin) st.stripPin = false; else if (st.rp != null && A.src === 'live') backLive(); animStrip(); render(true); }
-    else if (e.altKey && (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К')) { e.preventDefault(); fitSession(st.session); if (st.session === 'RDR') { st.v0 = 545; st.v1 = 1005; } redraw(); }
+    else if (e.altKey && (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К')) { e.preventDefault(); fitSession(st.session); if (st.session === 'RDR') { st.v0 = 545; st.v1 = rightEdge(); } redraw(); }
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); stepReplay(e.key === 'ArrowLeft' ? -5 : 5); }
   });
   root.addEventListener('click', e => {
@@ -2594,7 +2614,7 @@
     PREV = x.prev ? { k: 'PREV', name: x.prev.name, start: -870, formed: -810, drH: x.prev.drH, drL: x.prev.drL, idrH: x.prev.idrH, idrL: x.prev.idrL, open: x.prev.open, close: x.prev.close } : null;
     if (A.src === 'live') {
       if (!st.userSession && (first || st.rp == null)) st.session = sessionNow();
-      if (first) { fitSession(st.session); if (st.session === 'RDR' && st.rp == null) { st.v0 = 545; st.v1 = 1005; } }
+      if (first) { fitSession(st.session); if (st.session === 'RDR' && st.rp == null) { st.v0 = 545; st.v1 = rightEdge(); } }
     }
   }
   async function loadDay(refresh) {
@@ -2621,7 +2641,7 @@
           const s = sess(day(), st.session, 1020, false);
           if (st.rpWanted != null) { st.rp = st.rpWanted; st.rpWanted = null; } else st.rp = s.conf || null;
           fitSession(st.session);
-          if (st.session === 'RDR') { st.v0 = 545; st.v1 = 1005; }
+          if (st.session === 'RDR') { st.v0 = 545; st.v1 = rightEdge(); }
         }
       }
     } catch (e) { A.error = 'Локальный сервер не ответил'; }
