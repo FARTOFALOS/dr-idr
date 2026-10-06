@@ -118,6 +118,8 @@
     c.save(); c.globalAlpha *= 0.55; c.font = '600 ' + (fs * 0.58).toFixed(1) + 'px ' + FONT; c.fillText('%', x + wn + 1, y); c.restore();
   }
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  // the STD steps on the chart (operator 2026-10-06): 0,5 … 4,0 every half IDR, then 10 — in half-IDR steps j
+  const STD_STEPS = [1, 2, 3, 4, 5, 6, 7, 8, 20];
   const stepName = (j, above) => (above ? '+' : '−') + num(j * 0.5, 1);
   // exact floor division of integers (b > 0): the price cell of a directed value is floor(10 v / w)
   const fdiv = (a, b) => { let q = Math.floor(a / b); if (q * b > a) q--; else if ((q + 1) * b <= a) q++; return q; };
@@ -200,7 +202,7 @@
     if (fart != null) Object.assign(res, { farSoFar: far, farT: fart, farP: res.price(far) });
     const taken = (sd_, edge, from, to) => {
       const out = [];
-      for (let j = 1; j <= 6; j++) {
+      for (const j of STD_STEPS) {
         const L = edge + sd_ * j * w / 2, b = inSess.find(q => q.t + 5 > from && q.t + 5 <= to && (sd_ === 1 ? q.h >= L : q.l <= L));
         if (!b) { out.push({ j, t: null, name: stepName(j, sd_ === 1) }); break; }
         out.push({ j, t: b.t + 5, name: stepName(j, sd_ === 1) });
@@ -226,7 +228,7 @@
       { id: 'idrH', name: 'IDR', full: 'IDR high', p: s.idrH, type: 'idr' }, { id: 'idrL', name: 'IDR', full: 'IDR low', p: s.idrL, type: 'idr' },
       { id: 'mid', name: 'mid', full: 'середина IDR', p: s.mid, type: 'mid' }, { id: 'open', name: 'open', full: 'открытие сессии', p: s.open, type: 'open' }
     ];
-    for (let j = 1; j <= 6; j++) {
+    for (const j of STD_STEPS) {
       L.push({ id: 'u' + j, name: stepName(j, true), full: 'STD ' + stepName(j, true), p: s.idrH + j * w / 2, type: 'std', dir: 1, j });
       L.push({ id: 'd' + j, name: stepName(j, false), full: 'STD ' + stepName(j, false), p: s.idrL - j * w / 2, type: 'std', dir: -1, j });
     }
@@ -574,7 +576,12 @@
     }
     // operator 2026-10-06: the next STD not reached yet on the side in play is the trader's question («will it get
     // there?»), so it is always in the frame
-    if (isFinite(lo) && s.drH != null && st.L.std) { const nx = levels(s).find(l => stdState(s, l) === 'next'); if (nx) { lo = Math.min(lo, nx.p); hi = Math.max(hi, nx.p); } }
+    // … but only when it is near (within 30 % of the frame): a far one (+10) gets an edge marker instead (drawLevels), so
+    // the candles stay tall
+    if (isFinite(lo) && s.drH != null && st.L.std) {
+      const nx = levels(s).find(l => stdState(s, l) === 'next'), room = (hi - lo) * 0.3;
+      if (nx && nx.p <= hi + room && nx.p >= lo - room) { lo = Math.min(lo, nx.p); hi = Math.max(hi, nx.p); }
+    }
     if (!isFinite(lo)) { lo = 24400; hi = 24800; }
     // room under the lowest content for the time band's columns and hills to rise into (bandOverlay): they never cover
     // candles, the box or a live zone, so they need free space below them (operator 2026-10-06)
@@ -775,6 +782,17 @@
       else if (l.type === 'idr') line(l.p, sideCol(s, C.idr), on ? 1 : cfg.idrA / 100, +cfg.idrW, DASH[cfg.idrDash] || []);
       else if (l.type === 'mid') line(l.p, C.mid, on ? 1 : cfg.midA / 100, 1.2, DASH[cfg.midDash] || []);
       else if (l.type === 'open') line(l.p, C.open, on ? 0.9 : 0.5, 1, [1, 6]);
+    }
+    // the next STD beyond the frame: a marker at the chart's edge with its name and price (operator 2026-10-06)
+    if (st.L.std) {
+      const nx = levels(s).find(l => stdState(s, l) === 'next');
+      if (nx) {
+        const y = V.Y(nx.p), up = y < 0;
+        if (y < 0 || y > V.plot.h) {
+          c.save(); c.font = '600 ' + cfg.lineLbl + 'px ' + FONT; c.fillStyle = '#FFFFFF'; c.textAlign = 'right'; c.shadowColor = 'rgba(0,0,0,.85)'; c.shadowBlur = 3;
+          c.textBaseline = up ? 'top' : 'bottom'; c.fillText((up ? '↑ ' : '↓ ') + nx.name + ' · ' + px(nx.p), V.plot.w - 6, up ? 4 : V.plot.h - 4); c.restore();
+        }
+      }
     }
     // the IDR fractions inside the box (0,1 ... 0,9 of the IDR), as in the Pine indicator; operator 2026-10-06: a thin line
     // for each over the box only (box start .. box end), the 0,5 (the IDR mid) clearly stronger
@@ -1398,7 +1416,7 @@
         if (l.type === 'dr' || l.type === 'idr') { items.push({ y: V.Y(l.p), text: l.type === 'dr' ? 'DR' : 'IDR', col: sideCol(s, l.type === 'dr' ? '#E9ECF1' : '#AEB6C4'), pr: 3, big: 1 }); continue; }
         const col = l.type === 'mid' ? C.mid : l.type === 'open' ? C.open : play === l.dir ? C.stdOn : C.std;
         const ss = stdState(s, l);
-        items.push({ y: V.Y(l.p), text: (l.type === 'std' ? '' : s.k + ' ') + l.name + (ss === 'taken' ? ' ✓' : ''), col: ss === 'taken' ? C.text3 : ss === 'next' ? '#FFFFFF' : col, pr: ss === 'next' ? 3 : l.type === 'std' ? 1 : 2, big: ss === 'next' ? 1 : 0 });
+        items.push({ y: V.Y(l.p), text: (l.type === 'std' ? '' : s.k + ' ') + l.name, col: ss === 'taken' ? C.text3 : ss === 'next' ? '#FFFFFF' : col, pr: ss === 'next' ? 3 : l.type === 'std' ? 1 : 2, big: ss === 'next' ? 1 : 0 });
       }
     }
     if (st.L.prev) for (const P of prevList(ctx)) {
@@ -1426,8 +1444,8 @@
     for (const { y, q } of placed) {
       c.font = (q.big ? '600 ' + cfg.lineLbl + 'px ' : cfg.prevLbl + 'px ') + FONT;
       const w = c.measureText(q.text).width + 6;
-      c.fillStyle = 'rgba(8,9,12,.82)'; c.fillRect(xr - w, y - 6, w + 2, 12);
-      c.fillStyle = q.col; c.fillText(q.text, xr - 2, y + 0.5);
+      // no dark plate under a line's name (operator 2026-10-06): the text alone, a faint shadow keeps it readable
+      void w; c.save(); c.shadowColor = 'rgba(0,0,0,.85)'; c.shadowBlur = 3; c.fillStyle = q.col; c.fillText(q.text, xr - 2, y + 0.5); c.restore();
     }
     c.textAlign = 'left';
   }
