@@ -43,7 +43,7 @@
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
     boxFill: 'grad', boxA: 45, prevA: 46,
     bandH: 13, bandRise: 30, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, lineLbl: 11, prevLbl: 9,
-    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, sideA: 70, viC: '#F29A38', vibA: 20, vibNQ: 2, vibES: 0.5, vibYM: 5, upC: '#089981', dnC: '#F23645', bg: '#08090C'
+    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, sideA: 70, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
   const DASH = { solid: [], dash: [7, 4], dots: [1.5, 3.5], dashdot: [9, 3, 2, 3] };
@@ -53,6 +53,8 @@
   // the event colours chosen by the operator on 2026-10-01 (amber R, sky X) replace the earlier defaults kept in a browser
   if (cfg.R === '#DE8580') cfg.R = DEF.R;
   if (cfg.X === '#63C3A5') cfg.X = DEF.X;
+  // operator 2026-10-06: every VI is drawn (the author: any gap between bodies); the old thresholds kept in a browser go once
+  if (!cfg.vi0) { cfg.vibNQ = 0; cfg.vibES = 0; cfg.vibYM = 0; cfg.vi0 = 1; }
   const saveCfg = () => { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* not kept */ } };
   const SCHEMA = [
     ['События семьи', [['R', 'Откат R · цвет', 'color'], ['X', 'Продолжение X · цвет', 'color'], ['ptA', 'Точки · яркость', 'range', 10, 100],
@@ -97,6 +99,13 @@
   const rgb = hex => { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
   const mixW = (hex, f) => { const c = rgb(hex).map(v => Math.round(v + (255 - v) * f)); return '#' + c.map(v => v.toString(16).padStart(2, '0')).join(''); };
   const mixHex = (a, b, f) => { const x = rgb(a), y = rgb(b); return '#' + x.map((v, i) => Math.round(v + (y[i] - v) * f).toString(16).padStart(2, '0')).join(''); };
+  // THE COLOUR CATALOGUE BY STATE (operator 2026-10-06; meaning/13 entry 26): one rule for every element.
+  //   active (a zone still possible, a band still ahead, the next level) — the event's own colour (R amber, X sky);
+  //   HOLDS (today's extreme lies in the zone) — the same colour, lighter;
+  //   spent (an IMPOSSIBLE zone, a band passed or impossible today, a reached level) — a slate shade of its colour, quiet;
+  //   red — only the time pointer «уже прошло» (ring and window of a past peak); nowhere else
+  const SPENT = '#59606C';
+  const stateCol = (col, state) => state === 'IMPOSSIBLE' || state === 'spent' ? mixHex(col, SPENT, 0.72) : state === 'HOLDS' ? mixW(col, 0.25) : col;
   const rgba = (hex, a) => { const c = rgb(hex); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   // a percentage on the canvas: the number in its font, the «%» after it small and dim (operator 2026-10-06)
@@ -695,7 +704,7 @@
       if (x1 < 0 || x0 > V.plot.w) continue;
       const on = h && h.k === 'vib' && h.t === v.t;
       const vf = cfg.vibA / 20;
-      c.fillStyle = rgba(C.vib, Math.min(1, on ? 0.34 * vf : v.fill != null ? 0.09 * vf : 0.2 * vf));
+      c.fillStyle = rgba(C.vib, Math.min(1, on ? 0.34 * vf : v.fill != null ? 0.12 * vf : 0.2 * vf));
       c.fillRect(x0, y0 - 1, x1 - x0, Math.max(2, y1 - y0 + 2));
       c.fillStyle = rgba(C.vib, Math.min(1, on ? 0.9 : (v.fill != null ? 0.25 : 0.5) * vf));
       c.fillRect(x0, y0 - 1, 1.5, Math.max(2, y1 - y0 + 2));
@@ -897,8 +906,9 @@
   function drawPoints(c, ctx) {
     const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100;
     for (const ev of ['R', 'X']) {
-      const col = cfg[ev];
+      const col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent');
       for (const q of F.ev[ev].pts) {
+        const zi = F.zcell[ev].get(q.k + '|' + q.b), col = zi != null && look[zi] === 'IMPOSSIBLE' ? spent : col0;
         const x = V.X(q.t + 2.5), y = V.Y(q.p);
         if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
         const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx), inZone = F.zcell[ev].has(q.k + '|' + q.b);
@@ -1019,9 +1029,10 @@
   function drawClouds(c, ctx) {
     const F = ctx.F, CL = cloudsOf(F), h = hv(), fa = cfg.cloudA / 100, ta = cfg.threadA / 100;
     for (const ev of ['R', 'X']) {
-      const S = zoneLook(F, ctx, ev), col = cfg[ev];
+      const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
       CL[ev].forEach((g, i) => {
         if (!g) return;
+        const col = stateCol(col0, S[i]);
         const k = cloudK(F, ev, i, h, g.z), dim = S[i] === 'IMPOSSIBLE' ? 0.35 : S[i] === 'HOLDS' ? 1.15 : 1;
         c.save();
         c.filter = 'blur(14px)'; c.fillStyle = rgba(col, Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
@@ -1135,9 +1146,10 @@
     const over = (a, b) => a[0] < b[2] && a[2] > b[0] && a[1] < b[3] && a[3] > b[1];
     V.zoneHit = [];
     for (const ev of ['X', 'R']) {
-      const S = zoneLook(F, ctx, ev), col = cfg[ev];
+      const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
       CL[ev].forEach((g, i) => {
         if (!g) return;
+        const col = stateCol(col0, S[i]);
         const z = g.z, s = S[i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === i);
         if (on || imp) { c.save(); c.strokeStyle = rgba(col, on ? 0.6 : 0.3); c.lineWidth = 1; c.setLineDash(imp ? [4, 3] : []); loopsPath(c, g.ln); c.stroke(); c.restore(); }
         if (on) {
@@ -1283,7 +1295,7 @@
     V.hills = [];
     for (const ev of ['X', 'R']) H[ev].forEach(o => {
       if (!o) return;
-      const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = cfg[ev];
+      const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
       const scr = o.pts.map(([t, d]) => [V.X(t), cy + dir[ev] * (1 + 0.94 * half * d / hmax[ev])]);
       c.beginPath(); c.moveTo(scr[0][0], cy + dir[ev]);
       for (const p of scr) c.lineTo(p[0], p[1]);
@@ -1302,7 +1314,7 @@
     V.caps = [];
     const capMax = Math.max(1e-9, ...caps.map(q => q.o.z.p_snapshot));
     for (const { ev, o, ln } of caps) {
-      const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', hold = s === 'HOLDS', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = cfg[ev];
+      const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', hold = s === 'HOLDS', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
       const x0 = V.X(F.f + 15 * o.b0) + 1, x1 = V.X(F.f + 15 * o.b1) - 1, y0 = dir[ev] < 0 ? B.y + 3 + ln * (LH + 2) : B.y + B.h - 3 - (ln + 1) * (LH + 2) + 2, w = x1 - x0;
       const r = Math.pow(o.z.p_snapshot / capMax, 0.7);
       c.save(); c.globalAlpha = other ? 0.5 : 1;
@@ -1501,7 +1513,7 @@
         if (on || inA) a = 1;
         const len = Math.max(2, blen * n / mx), g = Rch.okK(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
-        if (g) { c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100); c.fillRect(x + la, top + 0.5, len - la, hh); }
+        if (g) { c.fillStyle = rgba(stateCol(cfg[ev], 'spent'), Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8)); c.fillRect(x + la, top + 0.5, len - la, hh); }
         V.projBars.push({ ev, k, top, bot, x0: x, x1: x + len });
         const pk = I.peak.has(k);
         if (on || pk || z != null || 100 * n / F.N >= 3) labels.push({ ev, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top });
