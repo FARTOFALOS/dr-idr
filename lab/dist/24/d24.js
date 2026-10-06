@@ -42,7 +42,9 @@
     ptA: 80, ptSize: 100, pastA: 35, cloudA: 100, threadA: 100, projA: 90, stripA: 80, heatA: 200,
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
-    boxFill: 'grad', boxA: 45, prevA: 46, viC: '#F29A38', vibA: 20, vibNQ: 2, vibES: 0.5, vibYM: 5, upC: '#089981', dnC: '#F23645', bg: '#08090C'
+    boxFill: 'grad', boxA: 45, prevA: 46,
+    bandH: 13, bandRise: 30, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, lineLbl: 11, prevLbl: 9,
+    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, viC: '#F29A38', vibA: 20, vibNQ: 2, vibES: 0.5, vibYM: 5, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
   const DASH = { solid: [], dash: [7, 4], dots: [1.5, 3.5], dashdot: [9, 3, 2, 3] };
@@ -65,6 +67,13 @@
       ['std', 'STD · цвет', 'color'], ['stdA', 'STD стороны в игре · яркость', 'range', 5, 100], ['stdOffA', 'STD другой стороны · яркость', 'range', 0, 100]]],
     ['Коробки сессий', [['boxFill', 'Заливка DR / IDR', 'boxfill'], ['boxA', 'Заливка · яркость', 'range', 0, 100]]],
     ['Прошлые сессии и VI', [['prevA', 'DR / IDR прошлых сессий · яркость', 'range', 5, 100], ['viC', 'VI · цвет', 'color'], ['vibA', 'VI · яркость', 'range', 5, 60], ['vibNQ', 'VI NQ · разрыв тел от, пунктов', 'range', 0, 6, 0.25], ['vibES', 'VI ES · разрыв тел от, пунктов', 'range', 0, 3, 0.25], ['vibYM', 'VI YM · разрыв тел от, пунктов', 'range', 0, 20, 1]]],
+    ['Лента времени и капсулы', [['bandH', 'Лента · высота, % экрана', 'range', 8, 30], ['bandRise', 'Лента · подъём в пустое место, % графика', 'range', 0, 50],
+      ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5]]],
+    ['Подписи', [['colSize', 'Колонка у цены · размер цифр, %', 'range', 60, 160, 5], ['passedA', 'Колонка · прошедшее и невозможное · яркость', 'range', 5, 80],
+      ['zoneLbl', 'Созвездия · размер подписи, %', 'range', 60, 160, 5], ['lineLbl', 'DR / IDR · размер названия, px', 'range', 8, 16, 0.5],
+      ['prevLbl', 'Прошлые уровни · размер названия, px', 'range', 6, 14, 0.5], ['fracLbl', 'Доли IDR в коробке · размер, px', 'range', 6, 14, 0.5],
+      ['fracLine', 'Доли IDR в коробке · линии', 'range', 0, 60]]],
+    ['День', [['prevDayA', 'Свечи вчера · яркость', 'range', 10, 100], ['midnightA', 'Полночь · линия', 'range', 0, 100], ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10]]],
     ['График', [['upC', 'Свеча вверх', 'color'], ['dnC', 'Свеча вниз', 'color'], ['bg', 'Фон', 'color']]]
   ];
   const DASH_NAMES = { solid: 'сплошная', dash: 'штрих', dots: 'точки', dashdot: 'штрихпунктир' };
@@ -503,7 +512,7 @@
     const projW = st.L.proj && ctx.F && ctx.F.N ? (bounds ? 116 : 96) : 0;
     // the time band under the chart (variant «Окна времени»): capsules, hills, columns; operator 2026-10-06: the candles
     // take the height, the band about an eighth of it (84-118 px)
-    const bandH = bounds && st.L.strip ? Math.round(clamp((H - handleH - timeH) * 0.13, 84, 118)) : 0;
+    const bandH = bounds && st.L.strip ? Math.round(clamp((H - handleH - timeH) * cfg.bandH / 100, 60, (H - handleH - timeH) * 0.4)) : 0;
     const plot = { x: 0, y: 0, w: W - axisW - projW, h: H - handleH - timeH - bandH };
     const G = { W, H, handleH, axisW, timeH, plot, projW, ctx, bandH, taxisY: plot.h + bandH };
     G.proj = { x: plot.w + axisW, y: 0, w: projW, h: plot.h };
@@ -634,7 +643,7 @@
   function drawMidnight(c, y0, y1) {
     const x = Math.round(V.X(0)) + 0.5;
     if (x < 0 || x > V.plot.w) return;
-    c.save(); c.strokeStyle = 'rgba(242,154,56,.55)'; c.lineWidth = 1; c.setLineDash([6, 3, 1, 3]);
+    c.save(); c.strokeStyle = rgba('#F29A38', cfg.midnightA / 100); c.lineWidth = 1; c.setLineDash([6, 3, 1, 3]);
     c.beginPath(); c.moveTo(x, y0); c.lineTo(x, y1); c.stroke(); c.restore();
   }
   function prevList(ctx) {
@@ -735,12 +744,12 @@
     const w = s.idrH - s.idrL, xb = V.X(s.start) - 4, bx0 = V.X(s.start), bx1 = V.X(s.formed), hpx = w * V.plot.h / (V.p1 - V.p0);
     if (hpx > 30 && bx1 > bx0) for (let j = 1; j <= 9; j++) {
       const y = Math.round(V.Y(s.idrL + j * w / 10)) + 0.5;
-      c.strokeStyle = j === 5 ? rgba(C.mid, 0.85) : 'rgba(209,212,220,.16)'; c.lineWidth = j === 5 ? 1.4 : 1;
+      c.strokeStyle = j === 5 ? rgba(C.mid, 0.85) : rgba('#D1D4DC', cfg.fracLine / 100); c.lineWidth = j === 5 ? 1.4 : 1;
       c.beginPath(); c.moveTo(Math.max(bx0, 0), y); c.lineTo(bx1, y); c.stroke();
     }
     c.textBaseline = 'middle'; c.textAlign = 'right';
     if (hpx > 90) for (let j = 1; j <= 9; j++) {
-      c.font = (j === 5 ? '700 9.5px ' : '8.5px ') + FONT; c.fillStyle = j === 5 ? C.mid : C.text3;   // small (operator 2026-10-06)
+      c.font = (j === 5 ? '700 ' + (cfg.fracLbl + 1) + 'px ' : cfg.fracLbl + 'px ') + FONT; c.fillStyle = j === 5 ? C.mid : C.text3;   // small (operator 2026-10-06)
       c.fillText(num(j / 10, 1), xb, V.Y(s.idrL + j * w / 10));
     }
     c.textAlign = 'left';
@@ -779,13 +788,13 @@
       const x = V.X(T - 2.5), y = V.Y(F.u2p(q[2] / m.w));
       if (first) { c.moveTo(x, y); first = false; } else c.lineTo(x, y);
     });
-    c.strokeStyle = 'rgba(236,240,246,.4)'; c.lineWidth = 1; c.stroke();
+    c.strokeStyle = rgba('#ECF0F6', Math.min(1, 0.4 * cfg.pathA / 100)); c.lineWidth = 1; c.stroke();
     F.grid.forEach((T, j) => {
       const q = m.path[j];
       if (!q) return;
       const x = Math.round(V.X(T - 2.5)) + 0.5, ya = V.Y(F.u2p(q[0] / m.w)), yb = V.Y(F.u2p(q[1] / m.w));
       // the session's M5 ranges: a quiet trace (operator 2026-10-06: they must not pull the eye off today's candles)
-      c.strokeStyle = T <= m.act ? 'rgba(236,240,246,.06)' : 'rgba(236,240,246,.14)'; c.lineWidth = 1;
+      c.strokeStyle = rgba('#ECF0F6', Math.min(1, (T <= m.act ? 0.06 : 0.14) * cfg.pathA / 100)); c.lineWidth = 1;
       c.beginPath(); c.moveTo(x, Math.min(ya, yb)); c.lineTo(x, Math.max(ya, yb)); c.stroke();
     });
     const tag = (T, text, bg) => { const x = V.X(T - 2.5); c.font = '600 10.5px ' + FONT; const w = c.measureText(text).width + 8; c.fillStyle = bg; roundRect(c, x - w / 2, 70, w, 16, 3); c.fill(); c.fillStyle = '#0B0C10'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, x, 78.5); c.textAlign = 'left'; };
@@ -802,7 +811,7 @@
       if (cx < -bw || cx > V.plot.w + bw) continue;
       const future = !ctx.live && b.t + 5 > used;
       // operator 2026-10-06: the previous trading day's candles (before New York midnight) are context, drawn dimmer
-      const col = b.c >= b.o ? C.up : C.dn, a = (future ? 0.22 : 1) * (b.t < 0 ? 0.45 : 1);
+      const col = b.c >= b.o ? C.up : C.dn, a = (future ? 0.22 : 1) * (b.t < 0 ? cfg.prevDayA / 100 : 1);
       c.fillStyle = rgba(col, a);
       const yh = V.Y(b.h), yl = V.Y(b.l), yo = V.Y(b.o), yc = V.Y(b.c);
       c.fillRect(cx, yh, 1, Math.max(1, yl - yh));
@@ -1110,7 +1119,7 @@
         }
         // Historical mass and today's applicability are separate encodings: status may dim/dash a zone, but never
         // removes or resizes its n/N label. This prevents p_snapshot from looking like today's conditional chance.
-        const share = 100 * z.p_snapshot, fs = Math.round(clamp(12 + 0.45 * share, 15, 21)), sub = s === 'HOLDS' ? 'держится' : '';
+        const share = 100 * z.p_snapshot, fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100), sub = s === 'HOLDS' ? 'держится' : '';
         c.font = '700 12px ' + FONT;
         const wN = c.measureText(z.label).width;
         c.font = '700 ' + fs + 'px ' + FONT;
@@ -1180,7 +1189,7 @@
         yLow = Math.max(yLow, V.Y(F.u2p(Math.min(...ks) / 10)), V.Y(F.u2p((Math.max(...ks) + 1) / 10)));
       });
     }
-    return Math.round(clamp(V.plot.h - yLow - 10, 0, V.plot.h * 0.3));
+    return Math.round(clamp(V.plot.h - yLow - 10, 0, V.plot.h * cfg.bandRise / 100));
   }
   function drawBand(c, ctx) {
     const F = ctx.F, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, N = F.N, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
@@ -1262,17 +1271,17 @@
       const r = Math.pow(o.z.p_snapshot / capMax, 0.7);
       c.save(); c.globalAlpha = other ? 0.5 : 1;
       if (imp && !on) {
-        c.strokeStyle = rgba(col, 0.22); c.lineWidth = 1; c.setLineDash([3, 4]); roundRect(c, x0 + 0.5, y0 + 0.5, w - 1, LH - 1, LH / 2); c.stroke(); c.setLineDash([]);
+        c.strokeStyle = rgba(col, Math.min(1, 0.3 * cfg.capA / 100)); c.lineWidth = 1; c.setLineDash([3, 4]); roundRect(c, x0 + 0.5, y0 + 0.5, w - 1, LH - 1, LH / 2); c.stroke(); c.setLineDash([]);
       } else {
-        c.fillStyle = rgba(col, on ? 0.32 : 0.07 + 0.17 * r + (hold ? 0.06 : 0)); roundRect(c, x0, y0, w, LH, LH / 2); c.fill();
+        c.fillStyle = rgba(col, Math.min(1, (on ? 0.34 : 0.12 + 0.22 * r + (hold ? 0.06 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, w, LH, LH / 2); c.fill();
         if (on) { c.strokeStyle = rgba(col, 0.6); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, w - 1, LH - 1, LH / 2); c.stroke(); }
       }
       c.beginPath(); c.rect(x0 + 2, y0, w - 4, LH); c.clip();
       c.textBaseline = 'middle';
       let x = x0 + 9;
-      c.font = '700 10.5px ' + FONT; c.fillStyle = imp ? rgba(col, 0.35) : rgba(col, 0.75 + 0.25 * r); c.fillText(o.z.label, x, y0 + LH / 2 + 0.5); x += c.measureText(o.z.label).width + 6;
+      c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(col, Math.min(1, (imp ? 0.45 : 0.85 + 0.15 * r) * cfg.capTxt / 100)); c.fillText(o.z.label, x, y0 + LH / 2 + 0.5); x += c.measureText(o.z.label).width + 6;
       const sh = pct(100 * o.z.p_snapshot), sfs = imp ? 10.5 : 10.5 + 1.5 * r;
-      pctDraw(c, sh, x, y0 + LH / 2 + 0.5, '700 ', sfs, imp ? 'rgba(140,146,157,.45)' : rgba('#EEF1F5', 0.65 + 0.35 * r)); x += pctW(c, sh, '700 ', sfs) + 7;
+      pctDraw(c, sh, x, y0 + LH / 2 + 0.5, '700 ', sfs, imp ? rgba('#8C929D', Math.min(1, 0.55 * cfg.capTxt / 100)) : rgba('#EEF1F5', Math.min(1, (0.8 + 0.2 * r) * cfg.capTxt / 100))); x += pctW(c, sh, '700 ', sfs) + 7;
       if (hold) { c.font = '600 9.5px ' + FONT; c.fillStyle = col; c.fillText(ZST[s], x, y0 + LH / 2 + 0.5); }
       c.restore();
       V.caps.push({ ev, i: o.i, box: [x0, y0, w, LH] });
@@ -1302,10 +1311,7 @@
     // the corner under the price scale and the price columns: what the band holds
     c.fillStyle = C.axis; c.fillRect(V.plot.w, B0.y, V.W - V.plot.w, B0.h);
     c.fillStyle = C.grid; c.fillRect(V.plot.w, B0.y, V.W - V.plot.w, 1); c.fillRect(V.plot.w, B0.y, 1, B0.h);
-    c.font = '600 11px ' + FONT; c.textBaseline = 'middle';
-    c.fillStyle = cfg.X; c.fillText('▲ X · зоны и когда', V.plot.w + 10, B0.y + B0.h / 2 - 16);
-    c.fillStyle = cfg.R; c.fillText('▼ R · зоны и когда', V.plot.w + 10, B0.y + B0.h / 2 + 16);
-    c.fillStyle = C.text3; c.font = '10.5px ' + FONT; c.fillText('доля семьи за 15 минут', V.plot.w + 10, B0.y + B0.h / 2);
+    // its explanation («▲ X · зоны и когда …») removed by the operator 2026-10-06: the names stand at the band's left
   }
   // names of the lines at their right end, just before the price scale, so nothing has to be scrolled to be read
   function drawTags(c, ctx) {
@@ -1343,7 +1349,7 @@
     }
     c.textBaseline = 'middle'; c.textAlign = 'right';
     for (const { y, q } of placed) {
-      c.font = (q.big ? '600 11px ' : '9px ') + FONT;
+      c.font = (q.big ? '600 ' + cfg.lineLbl + 'px ' : cfg.prevLbl + 'px ') + FONT;
       const w = c.measureText(q.text).width + 6;
       c.fillStyle = 'rgba(8,9,12,.82)'; c.fillRect(xr - w, y - 6, w + 2, 12);
       c.fillStyle = q.col; c.fillText(q.text, xr - 2, y + 0.5);
@@ -1456,7 +1462,7 @@
         if (on || inA) a = 1;
         const len = Math.max(2, blen * n / mx), g = Rch.okK(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
-        if (g) { c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.projA / 90) * 0.3); c.fillRect(x + la, top + 0.5, len - la, hh); }
+        if (g) { c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100); c.fillRect(x + la, top + 0.5, len - la, hh); }
         V.projBars.push({ ev, k, top, bot, x0: x, x1: x + len });
         const pk = I.peak.has(k);
         if (on || pk || z != null || 100 * n / F.N >= 3) labels.push({ ev, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top });
@@ -1470,7 +1476,7 @@
       // the strongest row of the column 14 px bold, the weakest zone rows about 9 px (linear in the share)
       // the weight of a label follows what is still AHEAD in its band (the number stays the band's whole share); a band
       // with nothing ahead is grey and small: it has played out today (operator 2026-10-06)
-      const dead = !L.on && L.ahead <= 0, r = str(L.ahead), q = L.ahead / m1, fs = L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q;
+      const dead = !L.on && L.ahead <= 0, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
       if (used[L.ev].some(u => Math.abs(u[0] - L.y) < (u[1] + fs) / 2 + 1)) continue;
       used[L.ev].push([L.y, fs]);
       const col = cfg[L.ev], wt = L.on || (!dead && q > 0.7) ? '700 ' : L.z != null && !dead ? '600 ' : '';
@@ -1566,24 +1572,11 @@
     void h;
   }
   function barAt(ctx, t) { const tt = Math.floor(t / 5) * 5; return ctx.D.bars.find(b => b.t === tt) || null; }
+  // the top-left corner (operator 2026-10-06): only the instrument, the timeframe and the session, small; the OHLC
+  // numbers and the «↑ 04:10 · взято …» line repeated what the chart, the scale and the panel already show
   function drawLegend(c, ctx) {
-    const s = ctx.s, used = ctx.live ? NOW + 5 : ctx.obs;
-    let b = st.mx >= 0 && st.mx < V.plot.w && st.my < V.plot.h ? barAt(ctx, V.T(st.mx)) : null;
-    if (!b) b = ctx.D.bars.filter(q => q.t + 5 <= used).pop();
-    c.textBaseline = 'top';
-    let x = 10;
-    const put = (t, col, bold) => { c.font = (bold ? '600 ' : '') + '12.5px ' + FONT; c.fillStyle = col; c.fillText(t, x, 8); x += c.measureText(t).width + 6; };
-    put(A.inst + '1! · 5 · ' + s.k, C.text, true);
-    if (b) { const col = b.c >= b.o ? C.up : C.dn; put('O', C.text3); put(px(b.o), col); put('H', C.text3); put(px(b.h), col); put('L', C.text3); put(px(b.l), col); put('C', C.text3); put(px(b.c), col); put(sgn(b.c - b.o), col); put(clk(b.t), C.text3); }
-    c.font = '12px ' + FONT; c.fillStyle = C.text2;
-    let line = '';
-    if (s.status === 'confirmed' || s.status === 'broken' || s.status === 'done') {
-      if (s.conf) line = (s.side === 1 ? '↑ ' : '↓ ') + clk(s.conf) + ' · взято ' + (s.taken.filter(q => q.t).map(q => q.name + ' в ' + clk(q.t)).join(' · ') || 'ничего');
-      if (s.failed) line = 'Слом DR ' + (s.side === 1 ? '↓ ' : '↑ ') + clk(s.failed) + ' · сторона анализа ' + (s.nside === 1 ? 'вверх' : 'вниз') + (s.takenN && s.takenN.some(q => q.t) ? ' · взято ' + s.takenN.filter(q => q.t).map(q => q.name + ' в ' + clk(q.t)).join(' · ') : '');
-    } else if (s.status === 'waiting') line = 'подтверждения нет · ' + (ctx.obs - s.formed) + ' мин после коробки';
-    else if (s.status === 'forming') line = 'коробка формируется';
-    else if (s.status === 'noconf') line = 'сессия закончилась без подтверждения';
-    if (line) c.fillText(line, 10, 28);
+    c.textBaseline = 'top'; c.font = '600 11px ' + FONT; c.fillStyle = C.text2;
+    c.fillText(A.inst + '1! · 5 · ' + ctx.s.k, 10, 8);
   }
 
   // ---------- hit test ----------
