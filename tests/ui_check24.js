@@ -20,6 +20,8 @@
   const info = { day: c.D.iso || c.D.date, session: D.st.session, status: c.s.status, slice: c.obs };
   const txt = () => panel.innerText;
   if (/NaN|undefined|Infinity/.test(txt())) problems.push('panel shows NaN / undefined');
+  const areaButton = document.getElementById('areab');
+  if (areaButton && !areaButton.innerText.includes('· ' + D.st.ev)) problems.push('area button does not name its current R/X event');
   if (/\d+\s*(из\s+\d|сесси[йи])/i.test(txt())) problems.push('panel shows session counts');
   if (!c.F) return { problems, info, note: 'no family on screen (status ' + c.s.status + ')' };
   const F = c.F, N = F.N;
