@@ -44,7 +44,7 @@
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
     boxFill: 'grad', boxA: 45, prevA: 46,
     bandH: 13, bandRise: 30, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, lineLbl: 11, prevLbl: 9,
-    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, viC: '#F29A38', vibA: 20, vibNQ: 2, vibES: 0.5, vibYM: 5, upC: '#089981', dnC: '#F23645', bg: '#08090C'
+    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, sideA: 70, viC: '#F29A38', vibA: 20, vibNQ: 2, vibES: 0.5, vibYM: 5, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
   const DASH = { solid: [], dash: [7, 4], dots: [1.5, 3.5], dashdot: [9, 3, 2, 3] };
@@ -64,6 +64,7 @@
     ['Линии сессии', [['dr', 'DR · цвет', 'color'], ['drA', 'DR · яркость', 'range', 10, 100], ['drW', 'DR · толщина', 'range', 0.5, 3, 0.1],
       ['idr', 'IDR · цвет', 'color'], ['idrA', 'IDR · яркость', 'range', 10, 100], ['idrW', 'IDR · толщина', 'range', 0.5, 3, 0.1], ['idrDash', 'IDR · вид', 'dash'],
       ['mid', 'mid · цвет', 'color'], ['midA', 'mid · яркость', 'range', 10, 100], ['midDash', 'mid · вид', 'dash'],
+      ['sideA', 'DR / IDR · цвет стороны активации, %', 'range', 0, 100, 5],
       ['std', 'STD · цвет', 'color'], ['stdA', 'STD стороны в игре · яркость', 'range', 5, 100], ['stdOffA', 'STD другой стороны · яркость', 'range', 0, 100]]],
     ['Коробки сессий', [['boxFill', 'Заливка DR / IDR', 'boxfill'], ['boxA', 'Заливка · яркость', 'range', 0, 100]]],
     ['Прошлые сессии и VI', [['prevA', 'DR / IDR прошлых сессий · яркость', 'range', 5, 100], ['viC', 'VI · цвет', 'color'], ['vibA', 'VI · яркость', 'range', 5, 60], ['vibNQ', 'VI NQ · разрыв тел от, пунктов', 'range', 0, 6, 0.25], ['vibES', 'VI ES · разрыв тел от, пунктов', 'range', 0, 3, 0.25], ['vibYM', 'VI YM · разрыв тел от, пунктов', 'range', 0, 20, 1]]],
@@ -96,6 +97,7 @@
   const band = (k0, k1) => sd(k0 / 10) + '…' + sd(k1 / 10);
   const rgb = hex => { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
   const mixW = (hex, f) => { const c = rgb(hex).map(v => Math.round(v + (255 - v) * f)); return '#' + c.map(v => v.toString(16).padStart(2, '0')).join(''); };
+  const mixHex = (a, b, f) => { const x = rgb(a), y = rgb(b); return '#' + x.map((v, i) => Math.round(v + (y[i] - v) * f).toString(16).padStart(2, '0')).join(''); };
   const rgba = (hex, a) => { const c = rgb(hex); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   // a percentage on the canvas: the number in its font, the «%» after it small and dim (operator 2026-10-06)
@@ -225,6 +227,10 @@
   const playSide = s => (s.status === 'broken' || (s.status === 'done' && s.failed) ? s.nside : s.side) || 0;
   // operator 2026-10-06: an STD level is shown only while it is valid, on the side in play (both sides before the
   // confirmation); the levels against it (−0,5, −1 … for a long) are not drawn, named or hoverable
+  // operator 2026-10-06: today's DR / IDR take the colour of the side in play (green for a long, red for a short, the
+  // break's side after a break), so the lines, their names and their price tags show where the session goes; before the
+  // confirmation they keep their own colour (settings). setting «sideA» = how strongly (0 = never)
+  const sideCol = (s, base) => { const p = playSide(s); return !p || !cfg.sideA ? base : mixHex(base, p > 0 ? C.up : C.dn, cfg.sideA / 100); };
   const stdShown = (s, l) => l.type !== 'std' || (st.L.std && (!playSide(s) || l.dir === playSide(s)));
   function where(s, p) {
     const L = levels(s).filter(l => l.type !== 'open').sort((a, b) => a.p - b.p), w = s.idrH - s.idrL;
@@ -734,8 +740,8 @@
         if (!stdShown(s, l)) continue;
         const inPlay = play === l.dir;
         line(l.p, C.std, on ? 1 : (inPlay ? cfg.stdA : cfg.stdOffA) / 100, 1, []);
-      } else if (l.type === 'dr') line(l.p, C.dr, on ? 1 : cfg.drA / 100, +cfg.drW, []);
-      else if (l.type === 'idr') line(l.p, C.idr, on ? 1 : cfg.idrA / 100, +cfg.idrW, DASH[cfg.idrDash] || []);
+      } else if (l.type === 'dr') line(l.p, sideCol(s, C.dr), on ? 1 : cfg.drA / 100, +cfg.drW, []);
+      else if (l.type === 'idr') line(l.p, sideCol(s, C.idr), on ? 1 : cfg.idrA / 100, +cfg.idrW, DASH[cfg.idrDash] || []);
       else if (l.type === 'mid') line(l.p, C.mid, on ? 1 : cfg.midA / 100, 1.2, DASH[cfg.midDash] || []);
       else if (l.type === 'open') line(l.p, C.open, on ? 0.9 : 0.5, 1, [1, 6]);
     }
@@ -1322,7 +1328,7 @@
         if (l.type === 'std' && (!stdShown(s, l) || l.j > 4)) continue;
         // today's DR / IDR named on their own lines, not as wide tags on the price scale (operator 2026-10-06)
         // operator 2026-10-06: the price stays on the price scale; the line ends with its name only
-        if (l.type === 'dr' || l.type === 'idr') { items.push({ y: V.Y(l.p), text: l.type === 'dr' ? 'DR' : 'IDR', col: l.type === 'dr' ? '#E9ECF1' : '#AEB6C4', pr: 3, big: 1 }); continue; }
+        if (l.type === 'dr' || l.type === 'idr') { items.push({ y: V.Y(l.p), text: l.type === 'dr' ? 'DR' : 'IDR', col: sideCol(s, l.type === 'dr' ? '#E9ECF1' : '#AEB6C4'), pr: 3, big: 1 }); continue; }
         const col = l.type === 'mid' ? C.mid : l.type === 'open' ? C.open : play === l.dir ? C.stdOn : C.std;
         items.push({ y: V.Y(l.p), text: (l.type === 'std' ? '' : s.k + ' ') + l.name, col, pr: l.type === 'std' ? 1 : 2 });
       }
@@ -1380,8 +1386,9 @@
     // of their lines inside the chart (drawTags)
     const s = ctx.s, tags = [];
     if (s.drH != null) {
-      tags.push([V.Y(s.drH), px(s.drH), '#E9ECF1', '#0B0C10'], [V.Y(s.drL), px(s.drL), '#E9ECF1', '#0B0C10']);
-      tags.push([V.Y(s.idrH), px(s.idrH), '#39414E', '#E6EAF0'], [V.Y(s.idrL), px(s.idrL), '#39414E', '#E6EAF0']);
+      const dbg = sideCol(s, '#E9ECF1'), ibg = playSide(s) && cfg.sideA ? mixHex('#39414E', playSide(s) > 0 ? C.up : C.dn, 0.55 * cfg.sideA / 100) : '#39414E';
+      tags.push([V.Y(s.drH), px(s.drH), dbg, '#0B0C10'], [V.Y(s.drL), px(s.drL), dbg, '#0B0C10']);
+      tags.push([V.Y(s.idrH), px(s.idrH), ibg, '#E6EAF0'], [V.Y(s.idrL), px(s.idrL), ibg, '#E6EAF0']);
     }
     const hh = hv(), wn = V.win;
     if (wn && wn.pA != null) { tags.push([V.Y(wn.pB), px(wn.pB), wn.col, '#0B0C10', 1], [V.Y(wn.pA), px(wn.pA), wn.col, '#0B0C10', 1]); }
