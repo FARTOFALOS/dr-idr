@@ -44,7 +44,7 @@
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
     boxFill: 'grad', boxA: 45, prevA: 46,
     bandH: 13, bandRise: 30, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, lineLbl: 11, prevLbl: 9,
-    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, sideA: 70, domK: 200, domLine: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
+    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, sideA: 70, domK: 200, domLine: 100, spentA: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
   const DASH = { solid: [], dash: [7, 4], dots: [1.5, 3.5], dashdot: [9, 3, 2, 3] };
@@ -60,7 +60,8 @@
   const SCHEMA = [
     ['События семьи', [['R', 'Откат R · цвет', 'color'], ['X', 'Продолжение X · цвет', 'color'], ['ptA', 'Точки · яркость', 'range', 10, 100],
       ['ptSize', 'Точки · размер', 'range', 50, 200], ['pastA', 'Прошедшие по часам · яркость', 'range', 5, 100],
-      ['cloudA', 'Созвездия · дымка', 'range', 20, 200], ['threadA', 'Созвездия · нити', 'range', 0, 300]]],
+      ['cloudA', 'Созвездия · дымка', 'range', 20, 200], ['threadA', 'Созвездия · нити', 'range', 0, 300],
+      ['spentA', 'Отработанные созвездия · яркость, %', 'range', 20, 200, 10]]],
     ['Гистограммы', [['projA', 'Цена справа · яркость', 'range', 10, 100], ['stripA', 'Лента времени · яркость', 'range', 10, 100]]],
     ['Путь семьи', [['path', 'Клетки · цвет', 'color'], ['heatA', 'Клетки · яркость (одна для всех колонок)', 'range', 20, 400, 10]]],
     ['Линии сессии', [['dr', 'DR · цвет', 'color'], ['drA', 'DR · яркость', 'range', 10, 100], ['drW', 'DR · толщина', 'range', 0.5, 3, 0.1],
@@ -106,7 +107,7 @@
   //   spent (an IMPOSSIBLE zone, a band passed or impossible today, a reached level) — a slate shade of its colour, quiet;
   //   red — only the time pointer «уже прошло» (ring and window of a past peak); nowhere else
   const SPENT = '#59606C';
-  const stateCol = (col, state) => state === 'IMPOSSIBLE' || state === 'spent' ? mixHex(col, SPENT, 0.72) : state === 'HOLDS' ? mixW(col, 0.25) : col;
+  const stateCol = (col, state) => state === 'IMPOSSIBLE' || state === 'spent' ? mixHex(col, SPENT, 0.55) : state === 'HOLDS' ? mixW(col, 0.25) : col;
   const rgba = (hex, a) => { const c = rgb(hex); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   // a percentage on the canvas: the number in its font, the «%» after it small and dim (operator 2026-10-06)
@@ -1034,7 +1035,8 @@
       CL[ev].forEach((g, i) => {
         if (!g) return;
         const col = stateCol(col0, S[i]);
-        const k = cloudK(F, ev, i, h, g.z), dim = S[i] === 'IMPOSSIBLE' ? 0.35 : S[i] === 'HOLDS' ? 1.15 : 1;
+        // a spent constellation stays readable as history (operator 2026-10-06: «чуть-чуть ярче»), setting «spentA»
+        const k = cloudK(F, ev, i, h, g.z), dim = S[i] === 'IMPOSSIBLE' ? 0.6 * cfg.spentA / 100 : S[i] === 'HOLDS' ? 1.15 : 1;
         c.save();
         c.filter = 'blur(14px)'; c.fillStyle = rgba(col, Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
         c.filter = 'blur(7px)'; c.fillStyle = rgba(col, Math.min(0.45, 0.13 * k * dim * fa)); loopsPath(c, g.g2); c.fill();
