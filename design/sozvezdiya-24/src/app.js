@@ -1131,7 +1131,7 @@
     } else if (h.k === 'pcell' && h.ev) {
       const yc = (V.Y(F.u2p(h.k0 / 10)) + V.Y(F.u2p(h.k1 / 10))) / 2;
       const pk = peakAhead(F, ctx, F.ev[h.ev].pts.filter(q => q.k >= h.k0 && q.k < h.k1), h.ev, yc);
-      if (pk) V.lk = { ev: h.ev, x: pk.x, y: yc, b: pk.b, n: pk.n, past: pk.past, k0: h.k0, k1: h.k1 };
+      if (pk) V.lk = { ev: h.ev, x: pk.x, y: yc, b: pk.b, n: pk.n, past: pk.past, k0: h.k0, k1: h.k1, src: 'pcell' };
     }
     if (V.lk) { const t0 = F.f + 15 * V.lk.b; V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1: t0 + 15, col: V.lk.past ? '#F23645' : cfg[V.lk.ev] }); }
   }
@@ -1225,15 +1225,22 @@
     // band's) prices on its peak 15 minutes, its time written above — instead of a column down to the time band
     const F = ctx.F, col = lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
     if (lk.row && lk.k0 != null) { drawBandProfile(c, ctx, lk, 'top'); return; }
-    if (lk.k0 != null) {
+    // operator 2026-10-06 (third look): no time written over the chart — the time is on the axis window; a band of the
+    // price column hovered → its peak 15 minutes as a soft column with two dashed edges down to the time band (as it was
+    // before entry 33); a hovered zone keeps its soft box on the constellation
+    if (lk.src === 'pcell') {
+      const yb = V.plot.h, g = c.createLinearGradient(0, lk.y, 0, yb);
+      g.addColorStop(0, rgba(col, 0.03)); g.addColorStop(1, rgba(col, 0.15));
+      c.fillStyle = g; c.fillRect(xa, lk.y, xb - xa, yb - lk.y);
+      c.strokeStyle = rgba(col, 0.45); c.lineWidth = 1; c.setLineDash([3, 3]);
+      c.beginPath(); for (const x of [xa, xb]) { c.moveTo(Math.round(x) + 0.5, lk.y); c.lineTo(Math.round(x) + 0.5, yb); } c.stroke(); c.setLineDash([]);
+    } else if (lk.k0 != null) {
       const [ya, yb] = cellY(F, lk.k0, lk.k1);
       const g = c.createLinearGradient(xa, 0, xb, 0);
       g.addColorStop(0, rgba(col, 0.06)); g.addColorStop(0.5, rgba(col, 0.16)); g.addColorStop(1, rgba(col, 0.06));
       c.fillStyle = g; c.fillRect(xa, ya, xb - xa, yb - ya);
       c.strokeStyle = rgba(col, 0.55); c.lineWidth = 1; c.setLineDash([3, 3]);
       c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xa) - 1), Math.max(2, Math.round(yb - ya) - 1)); c.setLineDash([]);
-      c.save(); c.font = '600 10.5px ' + FONT; c.fillStyle = col; c.textAlign = 'center'; c.textBaseline = 'bottom'; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 3;
-      c.fillText((lk.past ? 'было ' : '') + clk(t0) + '–' + clk(t1), (xa + xb) / 2, Math.max(12, ya - 3)); c.restore();
     }
     c.save(); c.shadowColor = rgba(col, 0.7); c.shadowBlur = 8; c.strokeStyle = col; c.lineWidth = 1.6;
     c.beginPath(); c.arc(lk.x, lk.y, 7, 0, 6.2832); c.stroke(); c.restore();
