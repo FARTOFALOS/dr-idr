@@ -43,7 +43,7 @@
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
     boxFill: 'grad', boxA: 45, prevA: 46,
     bandH: 13, bandRise: 30, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, lineLbl: 11, prevLbl: 9,
-    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, sideA: 70, domK: 200, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
+    fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, sideA: 70, domK: 200, domLine: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
   const DASH = { solid: [], dash: [7, 4], dots: [1.5, 3.5], dashdot: [9, 3, 2, 3] };
@@ -70,7 +70,7 @@
     ['Коробки сессий', [['boxFill', 'Заливка DR / IDR', 'boxfill'], ['boxA', 'Заливка · яркость', 'range', 0, 100]]],
     ['Прошлые сессии и VI', [['prevA', 'DR / IDR прошлых сессий · яркость', 'range', 5, 100], ['viC', 'VI · цвет', 'color'], ['vibA', 'VI · яркость', 'range', 5, 60], ['vibNQ', 'VI NQ · разрыв тел от, пунктов', 'range', 0, 6, 0.25], ['vibES', 'VI ES · разрыв тел от, пунктов', 'range', 0, 3, 0.25], ['vibYM', 'VI YM · разрыв тел от, пунктов', 'range', 0, 20, 1]]],
     ['Лента времени и капсулы', [['bandH', 'Лента · высота, % экрана', 'range', 8, 30], ['bandRise', 'Лента · подъём в пустое место, % графика', 'range', 0, 50],
-      ['domK', 'Лента · контраст перевеса X/R, %', 'range', 0, 400, 10], ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5]]],
+      ['domK', 'Лента · контраст перевеса X/R, %', 'range', 0, 400, 10], ['domLine', 'Лента · контур перевеса, %', 'range', 0, 200, 10], ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5]]],
     ['Подписи', [['colSize', 'Колонка у цены · размер цифр, %', 'range', 60, 160, 5], ['passedA', 'Колонка · прошедшее и невозможное · яркость', 'range', 5, 80],
       ['zoneLbl', 'Созвездия · размер подписи, %', 'range', 60, 160, 5], ['lineLbl', 'DR / IDR · размер названия, px', 'range', 8, 16, 0.5],
       ['prevLbl', 'Прошлые уровни · размер названия, px', 'range', 6, 14, 0.5], ['fracLbl', 'Доли IDR в коробке · размер, px', 'range', 6, 14, 0.5],
@@ -1291,6 +1291,12 @@
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, n);
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
+        // a thin outline on the side that outweighs, even for a small tilt (3,8 against 3,2), stronger with the tilt but
+        // always quiet (operator 2026-10-06: an outline takes the eye, so only the winner and only lightly)
+        if (n > o && cfg.domLine > 0 && Math.abs(y - cy) > 3) {
+          c.strokeStyle = rgba(cfg[ev], Math.min(0.9, (0.28 + 0.4 * Math.min(1, 3 * dom)) * (past ? 0.6 : 1) * cfg.domLine / 100)); c.lineWidth = 1;
+          c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir[ev], y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1));
+        }
         if (lit && n) labels.push({ x: (x0 + x1) / 2, y: dir[ev] < 0 ? y - 7 : y + 8, t: pct(100 * n / N).replace('%', ''), col: cfg[ev] });
       }
     }
