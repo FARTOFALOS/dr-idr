@@ -242,3 +242,13 @@ def status(cells, e, q, v10, w, t_next, formed, last_open):
         if q is not None and not (k * w < v10 if e == "R" else (k + 1) * w > v10): continue      # no extreme yet: any price
         if formed + 15 * b + 10 >= t_next and formed + 15 * b <= last_open: return "POSSIBLE"
     return "IMPOSSIBLE"
+
+
+def history_clock(cells, times, t_next, formed, last_open):
+    """DR-LAB-NOW-1.0 F2: the history clock of a zone — a property of the family's history, independent of today's
+    reachability (status above). times: the open minutes of the zone's family events; t_next: the slice (close of the
+    last closed M5). FUTURE_PRESENT = some event closes after the slice; FUTURE_EMPTY = none, but a cell of the zone is
+    still open in time; PAST_ONLY = none, and the zone's window is over."""
+    if any(t + 5 > t_next for t in times): return "FUTURE_PRESENT"
+    if any(formed + 15 * b + 10 >= t_next and formed + 15 * b <= last_open for _, b in cells): return "FUTURE_EMPTY"
+    return "PAST_ONLY"

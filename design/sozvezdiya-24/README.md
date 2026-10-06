@@ -29,6 +29,11 @@ When the live day has none, the panel offers «Открыть … на исто�
 [`meaning/13-zhurnal-vizualizacii.md`](../../meaning/13-zhurnal-vizualizacii.md). Read it before changing the drawing
 or the mouse behaviour, and add an entry for every such change.
 
+**The block «Сейчас»** in the panel (DR-LAB-NOW-1.0): after the path lived today, how much movement usually remained for
+comparable states of the family — the time baseline unless a path matcher passed the walk-forward gates (it did not:
+`TIME_BASELINE`). Server `lab/now24.py` (`/api/d24/now`), validator `lab/now24_validate.py`, meaning and the decisions
+taken while implementing: [`meaning/15-sloj-seichas.md`](../../meaning/15-sloj-seichas.md). Tests `tests/now24.py`.
+
 ## Build, open, check
 
 ```bash

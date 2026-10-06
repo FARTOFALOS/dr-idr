@@ -30,7 +30,7 @@
   };
   const ORDER = ['ADR', 'ODR', 'RDR'];
   let PREV = null;
-  const A = { inst: 'NQ', src: 'live', date: null, day: null, D: null, fams: new Map(), pending: new Set(), auto: true, timer: 0, busy: false, error: null, dates: null, jump: false };
+  const A = { inst: 'NQ', src: 'live', date: null, day: null, D: null, fams: new Map(), pending: new Set(), now: new Map(), nowPending: new Set(), auto: true, timer: 0, busy: false, error: null, dates: null, jump: false };
   const C = {
     bg: '#08090C', grid: '#1C2027', text: '#D1D4DC', text2: '#A3A8B3', text3: '#6F7582', axis: '#0B0C10',
     up: '#089981', dn: '#F23645', dr: '#EEF1F5', idr: '#AEBACB', mid: '#8B95A5', open: '#6B7380', std: '#5F6877', stdOn: '#A7B2C3',
@@ -126,7 +126,7 @@
   //   spent (an IMPOSSIBLE zone, a band passed or impossible today, a reached level) — a slate shade of its colour, quiet;
   //   red — only the time pointer «уже прошло» (ring and window of a past peak); nowhere else
   const SPENT = '#59606C';
-  const stateCol = (col, state) => state === 'IMPOSSIBLE' || state === 'spent' ? mixHex(col, SPENT, 0.55) : state === 'HOLDS' ? mixW(col, 0.25) : col;
+  const stateCol = (col, state) => state === 'IMPOSSIBLE' || state === 'spent' ? mixHex(col, SPENT, 0.55) : state === 'HOLDS' ? mixW(col, 0.25) : state === 'QUIET' ? mixHex(col, cfg.doneC, 0.5) : col;
   const rgba = (hex, a) => { const c = rgb(hex); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   // a percentage on the canvas: the number in its font, the «%» after it small and dim (operator 2026-10-06)
@@ -299,6 +299,22 @@
       .then(r => r.json()).then(r => { A.fams.set(fk, r); if (A.fams.size > 40) A.fams.delete(A.fams.keys().next().value); })
       .catch(() => A.fams.set(fk, { status: 'error', message: 'Локальный сервер не ответил' }))
       .finally(() => { A.pending.delete(fk); redraw(true); });
+  }
+  // DR-LAB-NOW-1.0: the layer «Сейчас» of the family on screen at the slice (lab/now24.py), one request per closed M5;
+  // the base map is never touched by it
+  function nowOf(ctx) {
+    const F = ctx.F;
+    if (!F) return null;
+    const sl = sliceOf(ctx), key = famKey(ctx.D, ctx.s, F.view) + '|' + sl, r = A.now.get(key);
+    if (r) return r;
+    if (!A.nowPending.has(key)) {
+      A.nowPending.add(key);
+      fetch('/api/d24/now?instrument=' + A.inst + '&session=' + ctx.s.k + '&at=' + sl + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + F.view + (st.scope === 'all' ? ':all' : ''))
+        .then(x => x.json()).then(x => { A.now.set(key, x); if (A.now.size > 80) A.now.delete(A.now.keys().next().value); })
+        .catch(() => A.now.set(key, { status: 'ERROR' }))
+        .finally(() => { A.nowPending.delete(key); redraw(true); });
+    }
+    return null;
   }
   function snapOf(D, s) {
     if (!s.conf || !['confirmed', 'broken', 'done'].includes(s.status) || D.d === 'none') return null;
@@ -642,6 +658,7 @@
     if (F) drawZones(c, ctx, 'under');
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
+    if (F) drawNowRange(c, ctx);
     drawPills(c, ctx);
     drawNow(c, ctx);
     if (F) drawLink(c, ctx);
@@ -774,10 +791,43 @@
       if (h && h.k === 'fcell' && h.j === cd.j) { const [ya, yb] = cellY(F, h.kk, h.kk + 1); c.strokeStyle = '#FFFFFF'; c.lineWidth = 1.5; c.strokeRect(x0 + 0.5, ya + 0.5, x1 - x0 - 1, yb - ya - 1); }
     }
   }
+  // «Сейчас» under the mouse in the panel: today's extreme so far (dashed) and the family's usual end if it goes further
+  // (the quartiles of the remaining movement of those that went further, a soft band); only while hovered
+  function drawNowLevels(c, ctx, ev) {
+    const F = ctx.F, n = nowOf(ctx), E = n && n[ev];
+    if (!E || !E.state) return;
+    const sgn = ev === 'R' ? -1 : 1, u0 = ev === 'R' ? E.state.r_seen : E.state.x_seen, col = cfg[ev], q = E.continuation.delta_if_new || {};
+    const y0 = Math.round(V.Y(F.u2p(u0))) + 0.5;
+    c.save(); c.strokeStyle = rgba(col, 0.8); c.lineWidth = 1; c.setLineDash([4, 3]);
+    c.beginPath(); c.moveTo(0, y0); c.lineTo(V.plot.w, y0); c.stroke(); c.setLineDash([]);
+    if (q.q25 != null && q.q75 != null) {
+      const ya = V.Y(F.u2p(u0 + sgn * q.q25)), yb = V.Y(F.u2p(u0 + sgn * q.q75)), ym = V.Y(F.u2p(u0 + sgn * q.q50));
+      c.fillStyle = rgba(col, 0.1); c.fillRect(0, Math.min(ya, yb), V.plot.w, Math.max(1, Math.abs(yb - ya)));
+      c.strokeStyle = rgba(col, 0.55); c.beginPath(); c.moveTo(0, Math.round(ym) + 0.5); c.lineTo(V.plot.w, Math.round(ym) + 0.5); c.stroke();
+      V.win = { t0: null, t1: null, pA: F.u2p(u0 + sgn * q.q25), pB: F.u2p(u0 + sgn * q.q75), col };
+    }
+    c.restore();
+  }
+  // spec §21.5: one quiet residual range from today's extreme, only when the remaining movement passed its own gate on the
+  // history (validated, path-conditioned) — never a new zone, no name
+  function drawNowRange(c, ctx) {
+    const F = ctx.F, n = nowOf(ctx);
+    if (!n || st.mode !== 'bounds') return;
+    for (const ev of ['R', 'X']) {
+      const E = n[ev];
+      if (!E || E.mode !== 'PATH_CONDITIONED' || !E.validation || E.validation.magnitude !== 'PATH' || !E.state) continue;
+      const d = E.continuation.delta, sgn = ev === 'R' ? -1 : 1, u0 = ev === 'R' ? E.state.r_seen : E.state.x_seen;
+      if (d.q25 == null) continue;
+      const x = V.plot.w - 70, y0 = V.Y(F.u2p(u0)), ya = V.Y(F.u2p(u0 + sgn * d.q25)), yb = V.Y(F.u2p(u0 + sgn * d.q75));
+      c.fillStyle = rgba(cfg[ev], 0.18); c.fillRect(x, Math.min(ya, yb), 4, Math.max(2, Math.abs(yb - ya)));
+      c.fillStyle = rgba(cfg[ev], 0.45); c.fillRect(x + 1.5, Math.min(y0, ya), 1, Math.abs(ya - y0));
+    }
+  }
   // a hovered price cell or band of the histogram runs across the chart; a hovered time cell runs down to the time axis
   function drawHighlight(c, ctx) {
     const F = ctx.F, h = hv();
     if (!h) return;
+    if (h.k === 'now') { drawNowLevels(c, ctx, h.ev); return; }
     const col = cfg[h.ev || st.ev];
     if (h.k === 'pcell') {
       const [ya, yb] = cellY(F, h.k0, h.k1);
@@ -970,7 +1020,7 @@
     for (const ev of ['R', 'X']) {
       const col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent');
       for (const q of F.ev[ev].pts) {
-        const zi = F.zcell[ev].get(q.k + '|' + q.b), col = zi != null && look[zi] === 'IMPOSSIBLE' ? spent : col0;
+        const zi = F.zcell[ev].get(q.k + '|' + q.b), col = zi != null && look[zi] === 'IMPOSSIBLE' ? spent : zi != null && look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
         const x = V.X(q.t + 2.5), y = V.Y(q.p);
         if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
         const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx), inZone = F.zcell[ev].has(q.k + '|' + q.b);
@@ -1096,7 +1146,7 @@
         if (!g) return;
         const col = stateCol(col0, S[i]);
         // a spent constellation stays readable as history (operator 2026-10-06: «чуть-чуть ярче»), setting «spentA»
-        const k = cloudK(F, ev, i, h, g.z), dim = S[i] === 'IMPOSSIBLE' ? 0.6 * cfg.spentA / 100 : S[i] === 'HOLDS' ? 1.15 : 1;
+        const k = cloudK(F, ev, i, h, g.z), dim = S[i] === 'IMPOSSIBLE' ? 0.6 * cfg.spentA / 100 : S[i] === 'QUIET' ? 0.7 : S[i] === 'HOLDS' ? 1.15 : 1;
         c.save();
         c.filter = 'blur(14px)'; c.fillStyle = rgba(col, Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
         c.filter = 'blur(7px)'; c.fillStyle = rgba(col, Math.min(0.45, 0.13 * k * dim * fa)); loopsPath(c, g.g2); c.fill();
@@ -1158,7 +1208,7 @@
       const z = F.zones[h.ev] && F.zones[h.ev].zones[h.i];
       if (z) {
         const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = F.f + 15 * Math.min(...bs), t1 = F.f + 15 * (Math.max(...bs) + 1);
-        const look = zoneLook(F, ctx, h.ev)[h.i], spent = look === 'IMPOSSIBLE';
+        const look = zoneStatus(F, ctx, h.ev)[h.i], spent = look === 'IMPOSSIBLE';
         V.lk = { ev: h.ev, src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS' };
         V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg[h.ev], 'spent') : cfg[h.ev] });
       }
@@ -1846,7 +1896,7 @@
         }
         V.projBars.push({ ev, k, top, bot, x0: x, x1: x + len });
         const pk = I.peak.has(k);
-        if (on || pk || z != null || 100 * n / F.N >= 3) labels.push({ ev, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top });
+        if (on || pk || z != null || 100 * n / F.N >= 3) labels.push({ ev, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top, ok: Rch.okK(ev, k) });
         x += len;
       }
     }
@@ -1857,14 +1907,16 @@
       // the strongest row of the column 14 px bold, the weakest zone rows about 9 px (linear in the share)
       // the weight of a label follows what is still AHEAD in its band (the number stays the band's whole share); a band
       // with nothing ahead is grey and small: it has played out today (operator 2026-10-06)
-      const dead = !L.on && L.ahead <= 0, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
+      // grey only when today's final event can no longer lie in the band (reachability); a band whose family events are
+      // all behind the clock but still reachable today is green (history clock) — DR-LAB-NOW-1.0 F2, the audit's D4
+      const dead = !L.on && L.ahead <= 0, gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
       if (used[L.ev].some(u => Math.abs(u[0] - L.y) < (u[1] + fs) / 2 + 1)) continue;
       used[L.ev].push([L.y, fs]);
       const col = cfg[L.ev], wt = L.on || (!dead && q > 0.7) ? '700 ' : L.z != null && !dead ? '600 ' : '';
       c.textBaseline = 'middle';
       const t = pct(100 * L.n / F.N), tw = pctW(c, t, wt, fs);
       pctDraw(c, t, L.ev === 'R' ? Math.max(A_.x + 3, x0 - 3 - tw) : Math.min(L.xe + 3, A_.x + A_.w - tw - 6), L.y + 0.5, wt, fs,
-        L.on ? '#FFFFFF' : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(col, 0.45 * r), 0.5 + 0.5 * r) : C.text3);
+        L.on ? '#FFFFFF' : gone ? rgba(cfg.doneC, 0.75) : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(col, 0.45 * r), 0.5 + 0.5 * r) : C.text3);
     }
     // the zones' price extents: thin ticks at the right edge, one lane per overlap
     const ends = [];
@@ -2181,19 +2233,46 @@
   // today's deepest point after the confirmation or deeper, the final X only as far as today's furthest or further; a
   // cell must also not be over by the clock. okK: the price band can still hold today's final event; okCell: and its
   // 15 minutes are not over. Unknown today (a missing M5) → everything stays open
+  // DR-LAB-NOW-1.0 F1 (2026-10-06): the band (and the cell) holding today's extreme stays reachable — the final event may
+  // stay exactly where it is, at the band's lower edge too and after the end of the block; only another band needs a
+  // strictly further new extreme still in time (the server's zone status, lab/zonemap24.py, already did so)
   function reachOf(F, ctx) {
     const sl = sliceOf(ctx), rows = todayRows(F, ctx), w = F.w0t, last = F.end - 5, known = rows.length === Math.max(0, (sl - F.act0) / 5);
-    const ext = { R: null, X: null };
-    if (known && rows.length) { ext.R = 10 * Math.min(...rows.map(r => r.lo)); ext.X = 10 * Math.max(...rows.map(r => r.hi)); }
-    const okK = (ev, k) => !known || (sl <= last && (ext[ev] == null || (ev === 'R' ? k * w < ext[ev] : (k + 1) * w > ext[ev])));
-    const okCell = (ev, k, b) => okK(ev, k) && (!known || (F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last));
-    return { sl, known, ext, okK, okCell };
+    const ext = { R: null, X: null }, cur = { R: null, X: null };
+    if (known && rows.length) {
+      let jR = 0, jX = 0;
+      for (let i = 1; i < rows.length; i++) { if (rows[i].lo < rows[jR].lo) jR = i; if (rows[i].hi > rows[jX].hi) jX = i; }
+      ext.R = 10 * rows[jR].lo; ext.X = 10 * rows[jX].hi;
+      cur.R = { k: fdiv(ext.R, w), b: Math.floor((rows[jR].T - 5 - F.f) / 15) }; cur.X = { k: fdiv(ext.X, w), b: Math.floor((rows[jX].T - 5 - F.f) / 15) };
+    }
+    const okK = (ev, k) => !known || (cur[ev] && k === cur[ev].k) || (sl <= last && (ext[ev] == null || (ev === 'R' ? k * w < ext[ev] : (k + 1) * w > ext[ev])));
+    const okCell = (ev, k, b) => !known || (cur[ev] && k === cur[ev].k && b === cur[ev].b) || (okK(ev, k) && F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last);
+    return { sl, known, ext, cur, okK, okCell };
   }
-  // the look of a zone (drawing only; its status is not changed — A5): a POSSIBLE zone none of whose sessions sit in a
-  // cell still reachable today is drawn as IMPOSSIBLE (its window is over: 0 of its sessions ahead)
+  // DR-LAB-NOW-1.0 F2 (2026-10-06): two independent axes, never one state.
+  //   reachability = the zone status (HOLDS / POSSIBLE / IMPOSSIBLE / STATUS_UNKNOWN): can today's final event still lie
+  //     there — a fact of today's path (zone-map-3 §24);
+  //   history clock = FUTURE_PRESENT (some of the zone's family events close after the slice) / FUTURE_EMPTY (none, but
+  //     the zone's time window is still open) / PAST_ONLY (none, and its window is over) — a property of the history.
+  // The drawn look: the status, except a POSSIBLE zone whose history is all behind the clock is drawn QUIET (green-tinted,
+  // dimmer) — it is still possible today and never called impossible. Supersedes entry 18's «POSSIBLE without sessions
+  // ahead drawn as IMPOSSIBLE» (the audit of 06.10 #2: empirical occupancy is not reachability).
+  function zoneClock(F, ctx, ev) {
+    const Zm = F.zones[ev];
+    if (!Zm) return [];
+    const sl = sliceOf(ctx), last = F.end - 5, ahead = Zm.zones.map(() => 0);
+    for (const q of F.ev[ev].pts) { const i = F.zcell[ev].get(q.k + '|' + q.b); if (i != null && q.t + 5 > sl) ahead[i]++; }
+    const out = Zm.zones.map((z, i) => ahead[i] ? 'FUTURE_PRESENT' : z.cell_mask.some(([, b]) => F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last) ? 'FUTURE_EMPTY' : 'PAST_ONLY');
+    const srv = F.r.today && F.r.today.zones && F.r.today.zones[ev];
+    if (srv && srv.clock && F.r.today.slice === sl && JSON.stringify(srv.clock) !== JSON.stringify(out) && !F.mismatch.includes('zone clock ' + ev)) {
+      F.mismatch.push('zone clock ' + ev);
+      console.error('design 24: the page and the server disagree on the zone history clock', ev, srv.clock, out);
+    }
+    return out;
+  }
   function zoneLook(F, ctx, ev) {
-    const S = zoneStatus(F, ctx, ev), Rch = reachOf(F, ctx);
-    return S.map((st_, i) => st_ !== 'POSSIBLE' ? st_ : F.ev[ev].pts.some(q => F.zcell[ev].get(q.k + '|' + q.b) === i && Rch.okCell(ev, q.k, q.b)) ? st_ : 'IMPOSSIBLE');
+    const S = zoneStatus(F, ctx, ev), K = zoneClock(F, ctx, ev);
+    return S.map((st_, i) => st_ === 'POSSIBLE' && K[i] !== 'FUTURE_PRESENT' ? 'QUIET' : st_);
   }
   function zoneStatus(F, ctx, ev) {
     const Zm = F.zones[ev];
@@ -2227,9 +2306,14 @@
     return out;
   }
   // the zone's time window against the slice, in words (the inspector, not the chart)
-  function winLine(F, ctx, ev, look, w0, w1) {
+  function winLine(F, ctx, ev, look, w0, w1, clock) {
     if (!ctx) return '';
     const sl = sliceOf(ctx), spent = stateCol(cfg[ev], 'spent'), w = clk(w0) + '–' + clk(w1);
+    // F3: the history clock of a zone still possible today (its own line; never «невозможна»)
+    const empty = look === 'POSSIBLE' && clock && clock !== 'FUTURE_PRESENT' ? '<div class="il" style="color:' + mixHex(cfg[ev], cfg.doneC, 0.5) + '">у этой базовой семьи все события зоны по часам уже были раньше; это не делает зону логически невозможной сегодня</div>' : '';
+    if (look === 'POSSIBLE' && sl >= w0 && sl < w1) return '<div class="il" style="color:' + cfg[ev] + '">окно зоны ' + w + ' · действует ещё ' + (w1 - sl) + ' мин</div>' + empty;
+    if (look === 'POSSIBLE' && sl < w0) return '<div class="il" style="color:' + cfg[ev] + '">окно зоны ' + w + ' · ещё не началось</div>' + empty;
+    if (look === 'POSSIBLE') return '<div class="il" style="color:' + cfg[ev] + '">окно зоны ' + w + '</div>' + empty;
     if (look === 'HOLDS') return '<div class="il" style="color:' + cfg[ev] + '">окно зоны ' + w + (sl >= w1 ? ' прошло' : '') + ' · сегодняшний ' + ev + ' сейчас в этой зоне</div>';
     if (sl >= w1) return '<div class="il" style="color:' + spent + '">окно зоны ' + w + ' закончилось</div>';
     if (look === 'IMPOSSIBLE') return '<div class="il" style="color:' + spent + '">окно зоны ' + w + ' · сегодня зона уже невозможна</div>';
@@ -2249,8 +2333,8 @@
     return '<div class="ih"><span style="color:' + cfg[h.ev] + '">' + z.label + '</span> · ' + F.names[h.ev].toLowerCase() + ' · ' + clk(z.time_start) + '–' + clk(z.time_end) + '<span class="zs zs-' + s + '">' + ZST[s] + '</span></div>' +
       '<div class="is">' + band(z.price_low, z.price_high) + ' SD · ' + px(Math.min(q0, q1)) + '–' + px(Math.max(q0, q1)) + '</div>' +
       '<div class="ibig" style="color:' + cfg[h.ev] + '">' + ppTxt(p) + '<span>семьи в этой зоне</span></div>' +
-      winLine(F, ctx, h.ev, look, F.f + 15 * b0, F.f + 15 * b1) +
-      (lkz && !lkz.past && look !== 'IMPOSSIBLE' ? '<div class="il" style="color:' + cfg[h.ev] + '">у семьи впереди · пиковые 15 минут ' + clk(F.f + 15 * lkz.b) + '–' + clk(F.f + 15 * lkz.b + 15) + ' · ' + pct(100 * lkz.n / F.N) + ' семьи</div>' : '') +
+      winLine(F, ctx, h.ev, s, F.f + 15 * b0, F.f + 15 * b1, ctx ? zoneClock(F, ctx, h.ev)[h.i] : null) +
+      (lkz && !lkz.past && s !== 'IMPOSSIBLE' ? '<div class="il" style="color:' + cfg[h.ev] + '">у семьи впереди · пиковые 15 минут ' + clk(F.f + 15 * lkz.b) + '–' + clk(F.f + 15 * lkz.b + 15) + ' · ' + pct(100 * lkz.n / F.N) + ' семьи</div>' : '') +
       '<div class="iq">в окне ' + clk(F.f + 15 * b0) + '–' + clk(F.f + 15 * b1) + ' свой экстремум поставили</div>' + twoBars(F, nX, nR, h.ev) +
       ifoot(F, ' · не шанс на сегодня');
   }
@@ -2370,6 +2454,7 @@
     out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F.cond) + '</span><span>' + (sl >= F.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
     if (s.failed) out.push(viewSwitch(s));
     if (F.out) out.push(outcomeHtml(F));
+    out.push(nowHtml(F, ctx));
     if (st.mode === 'bounds') {
       out.push(zonesHtml(F, ctx));
       const tf = todayFacts(F, ctx);
@@ -2435,6 +2520,40 @@
     let lo = rows[0], hi = rows[0];
     for (const q of rows) { if (q.lo < lo.lo) lo = q; if (q.hi > hi.hi) hi = q; }
     return 'сегодня пока: ' + (F.brk ? 'против слома ' : 'глубже всего ') + sd(lo.lo / F.w0t) + ' SD в ' + clk(lo.T - 5) + ' · ' + (F.brk ? 'по слому ' : 'дальше всего ') + sd(hi.hi / F.w0t) + ' SD в ' + clk(hi.T - 5);
+  }
+  // DR-LAB-NOW-1.0 §21: the quiet block «Сейчас» — after the path lived today, how much movement usually remained ahead
+  // for comparable states of this family (the time baseline unless a path matcher passed the walk-forward gates). Its
+  // support is always shown; it never rewrites the base map; it is not a trade.
+  const NOWST = { VALIDATED: 'путь проверен на истории', TIME_BASELINE: 'путь не добавил к базе по времени', NOT_VALIDATED: 'проверка на истории не прогнана',
+    NOT_TESTABLE: 'семьи слома малы для проверки пути', UNSTABLE: 'путь неустойчив к порогу', CELL_FALLBACK: 'в этой связке путь хуже базы',
+    NOT_VALIDATED_SCOPE: 'путь проверен только для дня недели', STALE: 'паспорт проверки устарел' };
+  function nowHtml(F, ctx) {
+    const n = nowOf(ctx), head = right => '<div class="p21-h second"><span title="DR-LAB-NOW-1.0: доли считаются заново на каждой закрытой M5 по уже прожитому сегодня пути; базовая карта и её проценты не меняются">Сейчас</span><span>' + right + '</span></div>';
+    if (!n) return '<div class="p24-nowblk">' + head('считаю…') + '</div>';
+    if (n.status !== 'OK' && n.status !== 'FROZEN_AT_BREAK') return '<div class="p24-nowblk">' + head('') + '<div class="p21-note">' + esc(n.note || n.message || 'нет данных') + '</div></div>';
+    const what = F.brk ? 'после слома' : 'после подтверждения', out = [];
+    const modes = ['R', 'X'].map(ev => n[ev] && n[ev].mode), path = modes.includes('PATH_CONDITIONED');
+    out.push(head('<span title="' + (path ? 'похожий уже прожитый путь' : 'только время ' + what + ': все сессии семьи к этому же часу') + '">' + (path ? 'похожий путь' : 'по времени') + '</span>' + (n.status === 'FROZEN_AT_BREAK' ? ' · на ' : ' · ') + n.cut.cut_clock_et));
+    if (n.status === 'FROZEN_AT_BREAK') out.push('<div class="p21-note">исходная семья: заморожено на последней M5 до слома DR</div>');
+    for (const ev of ['R', 'X']) {
+      const E = n[ev];
+      if (E && !E.continuation && E.note) { out.push('<div class="p21-note"><i style="color:' + cfg[ev] + '">' + ev + '</i> ' + esc(E.note) + '</div>'); continue; }
+      if (!E || !E.continuation) continue;
+      const C = E.continuation, p = C.p_new_extreme, b = C.p_new_bounds || [], sp = C.support;
+      const val = C.support.N_match_unknown ? pct(100 * b[0]) + '–' + pct(100 * b[1]) : p == null ? '—' : pct(100 * p);
+      const name = ev === 'R' ? (F.brk ? 'откат против слома углубится' : 'откат углубится') : (F.brk ? 'слом пойдёт дальше' : 'продолжение пойдёт дальше');
+      const sgn = ev === 'R' ? -1 : 1, u0 = ev === 'R' ? E.state.r_seen : E.state.x_seen, q = C.delta_if_new || {}, tm = C.time_to_new || {};
+      const lv = v => num(Math.round(F.u2p(u0 + sgn * v)), 0);   // whole points: a level to watch, not a quote
+      const sub = q.q50 != null && p ? 'если да: до ' + lv(q.q50) + ' · ' + lv(q.q25) + '…' + lv(q.q75) + (tm.q50_min != null ? ' · ~' + Math.round(tm.q50_min) + ' мин' : '') : '';
+      const support = E.mode === 'PATH_CONDITIONED' ? 'похожих ' + sp.N_match_total + ' из ' + sp.N_eligible + ' · ' + E.matcher : 'опора ' + sp.N_eligible + ' из ' + n.base.N_base;
+      out.push(link({ k: 'now', ev }, '<span class="t"><span><i style="color:' + cfg[ev] + '">' + ev + '</i> ' + name + '</span>' + (sub ? '<span class="p21-sub">' + sub + '</span>' : '') +
+        '<span class="p21-sub">' + support + (E.note ? ' · ' + esc(E.note) : '') + '</span></span><b>' + val + '</b>', 'mc', null,
+        'Доля сопоставимых сессий этой семьи, у которых после ' + n.cut.cut_clock_et + ' был ' + (ev === 'R' ? 'более глубокий R' : 'более дальний X') + ' (повтор того же уровня не считается). Не вероятность сделки.'));
+    }
+    const v = (n.R && n.R.validation) || {};
+    out.push('<div class="if" title="правила ' + esc(n.rules_id || '') + (v.tested_through ? ' · проверено на истории до ' + v.tested_through : '') + '">' + esc(NOWST[v.status] || v.status || '') + ' · не сделка</div>');
+    // the spec (§9.3, §21.2) requires the support next to every NOW number: the only place of the panel with session counts
+    return '<div class="p24-nowblk">' + out.join('') + '</div>';
   }
   // the DR outcome of the family (spec §5.2): four categories that add up to 100 % of N; one compact bar
   function outcomeHtml(F) {
@@ -3218,7 +3337,7 @@
   }
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
-  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus };
+  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus };
   initPanel24();
   // the address: #date=2025-12-17 (a history day) &inst=NQ &session=RDR &at=11:50 (replay) &ev=X &mode=path
   //              &area=3:6[:b0:b1] (price cells [3, 6) x time cells [b0, b1)) &hist=1 (details open)

@@ -81,6 +81,16 @@ class Handler(SimpleHTTPRequestHandler):
                         fn = scene21.family
                     return self.json(fn(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None))
                 return self.json(scene21.day_view(inst))
+            if url.path == '/api/d24/now':
+                # DR-LAB-NOW-1.0 (lab/now24.py): the layer «Сейчас» of the family at the slice; never the base map
+                import now24
+                inst = params.get('instrument', 'NQ')
+                date = params.get('date') or None
+                if date is not None and not re.fullmatch(r'20[0-2]\d-[01]\d-[0-3]\d', date):
+                    raise ValueError('date: YYYY-MM-DD')
+                at = params.get('at')
+                return self.json(now24.live(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None,
+                                            date, params.get('view', 'auto'), bool(params.get('debug'))))
             if url.path in ('/api/d24/day', '/api/d24/family', '/api/d24/dates'):
                 # design 24 (lab/scene24.py): the statistical layer of DR-LAB-SEM-1.0; `date` = a trading date of
                 # 2006-2025 shown as if it were today (its families use only earlier sessions), empty = the live day

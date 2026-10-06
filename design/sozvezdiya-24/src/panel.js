@@ -40,6 +40,7 @@
     out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F.cond) + '</span><span>' + (sl >= F.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
     if (s.failed) out.push(viewSwitch(s));
     if (F.out) out.push(outcomeHtml(F));
+    out.push(nowHtml(F, ctx));
     if (st.mode === 'bounds') {
       out.push(zonesHtml(F, ctx));
       const tf = todayFacts(F, ctx);
@@ -105,6 +106,40 @@
     let lo = rows[0], hi = rows[0];
     for (const q of rows) { if (q.lo < lo.lo) lo = q; if (q.hi > hi.hi) hi = q; }
     return 'сегодня пока: ' + (F.brk ? 'против слома ' : 'глубже всего ') + sd(lo.lo / F.w0t) + ' SD в ' + clk(lo.T - 5) + ' · ' + (F.brk ? 'по слому ' : 'дальше всего ') + sd(hi.hi / F.w0t) + ' SD в ' + clk(hi.T - 5);
+  }
+  // DR-LAB-NOW-1.0 §21: the quiet block «Сейчас» — after the path lived today, how much movement usually remained ahead
+  // for comparable states of this family (the time baseline unless a path matcher passed the walk-forward gates). Its
+  // support is always shown; it never rewrites the base map; it is not a trade.
+  const NOWST = { VALIDATED: 'путь проверен на истории', TIME_BASELINE: 'путь не добавил к базе по времени', NOT_VALIDATED: 'проверка на истории не прогнана',
+    NOT_TESTABLE: 'семьи слома малы для проверки пути', UNSTABLE: 'путь неустойчив к порогу', CELL_FALLBACK: 'в этой связке путь хуже базы',
+    NOT_VALIDATED_SCOPE: 'путь проверен только для дня недели', STALE: 'паспорт проверки устарел' };
+  function nowHtml(F, ctx) {
+    const n = nowOf(ctx), head = right => '<div class="p21-h second"><span title="DR-LAB-NOW-1.0: доли считаются заново на каждой закрытой M5 по уже прожитому сегодня пути; базовая карта и её проценты не меняются">Сейчас</span><span>' + right + '</span></div>';
+    if (!n) return '<div class="p24-nowblk">' + head('считаю…') + '</div>';
+    if (n.status !== 'OK' && n.status !== 'FROZEN_AT_BREAK') return '<div class="p24-nowblk">' + head('') + '<div class="p21-note">' + esc(n.note || n.message || 'нет данных') + '</div></div>';
+    const what = F.brk ? 'после слома' : 'после подтверждения', out = [];
+    const modes = ['R', 'X'].map(ev => n[ev] && n[ev].mode), path = modes.includes('PATH_CONDITIONED');
+    out.push(head('<span title="' + (path ? 'похожий уже прожитый путь' : 'только время ' + what + ': все сессии семьи к этому же часу') + '">' + (path ? 'похожий путь' : 'по времени') + '</span>' + (n.status === 'FROZEN_AT_BREAK' ? ' · на ' : ' · ') + n.cut.cut_clock_et));
+    if (n.status === 'FROZEN_AT_BREAK') out.push('<div class="p21-note">исходная семья: заморожено на последней M5 до слома DR</div>');
+    for (const ev of ['R', 'X']) {
+      const E = n[ev];
+      if (E && !E.continuation && E.note) { out.push('<div class="p21-note"><i style="color:' + cfg[ev] + '">' + ev + '</i> ' + esc(E.note) + '</div>'); continue; }
+      if (!E || !E.continuation) continue;
+      const C = E.continuation, p = C.p_new_extreme, b = C.p_new_bounds || [], sp = C.support;
+      const val = C.support.N_match_unknown ? pct(100 * b[0]) + '–' + pct(100 * b[1]) : p == null ? '—' : pct(100 * p);
+      const name = ev === 'R' ? (F.brk ? 'откат против слома углубится' : 'откат углубится') : (F.brk ? 'слом пойдёт дальше' : 'продолжение пойдёт дальше');
+      const sgn = ev === 'R' ? -1 : 1, u0 = ev === 'R' ? E.state.r_seen : E.state.x_seen, q = C.delta_if_new || {}, tm = C.time_to_new || {};
+      const lv = v => num(Math.round(F.u2p(u0 + sgn * v)), 0);   // whole points: a level to watch, not a quote
+      const sub = q.q50 != null && p ? 'если да: до ' + lv(q.q50) + ' · ' + lv(q.q25) + '…' + lv(q.q75) + (tm.q50_min != null ? ' · ~' + Math.round(tm.q50_min) + ' мин' : '') : '';
+      const support = E.mode === 'PATH_CONDITIONED' ? 'похожих ' + sp.N_match_total + ' из ' + sp.N_eligible + ' · ' + E.matcher : 'опора ' + sp.N_eligible + ' из ' + n.base.N_base;
+      out.push(link({ k: 'now', ev }, '<span class="t"><span><i style="color:' + cfg[ev] + '">' + ev + '</i> ' + name + '</span>' + (sub ? '<span class="p21-sub">' + sub + '</span>' : '') +
+        '<span class="p21-sub">' + support + (E.note ? ' · ' + esc(E.note) : '') + '</span></span><b>' + val + '</b>', 'mc', null,
+        'Доля сопоставимых сессий этой семьи, у которых после ' + n.cut.cut_clock_et + ' был ' + (ev === 'R' ? 'более глубокий R' : 'более дальний X') + ' (повтор того же уровня не считается). Не вероятность сделки.'));
+    }
+    const v = (n.R && n.R.validation) || {};
+    out.push('<div class="if" title="правила ' + esc(n.rules_id || '') + (v.tested_through ? ' · проверено на истории до ' + v.tested_through : '') + '">' + esc(NOWST[v.status] || v.status || '') + ' · не сделка</div>');
+    // the spec (§9.3, §21.2) requires the support next to every NOW number: the only place of the panel with session counts
+    return '<div class="p24-nowblk">' + out.join('') + '</div>';
   }
   // the DR outcome of the family (spec §5.2): four categories that add up to 100 % of N; one compact bar
   function outcomeHtml(F) {

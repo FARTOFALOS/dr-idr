@@ -137,7 +137,7 @@ against what happened next.
   R and X together, zones as constellations «дымка и нити» (amber R, sky X), R | X price columns, the time band with the
   zones' capsules and hills, a hovered zone or band linked to its peak 15 minutes, the inspector at the bottom right,
   six windows sliding up from the bottom edge. The numbers' meaning is unchanged.
-  **Before changing how screen 24 draws or behaves, read `meaning/13-zhurnal-vizualizacii.md`** (the operator,
+  **The layer «Сейчас» (NOW) of screen 24 is `meaning/15-sloj-seichas.md` (spec `meaning/lens/2026-10-06-now-1.0/`); its matchers and gates are frozen — a new matcher only with a new spec version.** **Before changing how screen 24 draws or behaves, read `meaning/13-zhurnal-vizualizacii.md`** (the operator,
   2026-10-06): the journal of why each visual rule exists (the right edge anchored for every gesture, «↺» fitting the
   candles and the live zones, one R/X price column with strength gradation, STD only on the side in play, ...). Add an
   entry for every visual change: what is seen, why (the operator's question), how, what must not be lost.

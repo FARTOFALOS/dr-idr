@@ -22,7 +22,9 @@
   if (/NaN|undefined|Infinity/.test(txt())) problems.push('panel shows NaN / undefined');
   const areaButton = document.getElementById('areab');
   if (areaButton && !areaButton.innerText.includes('· ' + D.st.ev)) problems.push('area button does not name its current R/X event');
-  if (/\d+\s*(из\s+\d|сесси[йи])/i.test(txt())) problems.push('panel shows session counts');
+  // session counts stay out of the panel, except the support of «Сейчас», which DR-LAB-NOW-1.0 §9.3 / §21.2 requires
+  const noNow = () => { const q = panel.cloneNode(true); q.querySelectorAll('.p24-nowblk').forEach(e => e.remove()); return q.innerText; };
+  if (/\d+\s*(из\s+\d|сесси[йи])/i.test(noNow())) problems.push('panel shows session counts');
   if (!c.F) return { problems, info, note: 'no family on screen (status ' + c.s.status + ')' };
   const F = c.F, N = F.N;
   info.family = F.cond; info.snapshot = F.r.snapshot_id;
@@ -103,6 +105,19 @@
     if (I.win.yes_count > I.band.yes_count) problems.push('window share above its band share');
     if (!/Выбранная область/.test(panel.innerText)) problems.push('the selected area is not in the panel');
   }
+  // DR-LAB-NOW-1.0 T14 / T15 on the page: the band (and cell) of today's extreme is always reachable; a zone is drawn
+  // impossible only when its status is IMPOSSIBLE (the history clock never makes a zone impossible)
+  const twoAxes = cc => {
+    const Rch = D.reachOf(cc.F, cc);
+    for (const ev of ['R', 'X']) {
+      const q = Rch.cur && Rch.cur[ev];
+      if (Rch.known && q && (!Rch.okK(ev, q.k) || !Rch.okCell(ev, q.k, q.b))) problems.push('T14: the band of today’s ' + ev + ' is not reachable at ' + clkOf(cc.obs));
+      const S = D.zoneStatus(cc.F, cc, ev), Lk = D.zoneLook(cc.F, cc, ev);
+      Lk.forEach((l, i) => { if (l === 'IMPOSSIBLE' && S[i] !== 'IMPOSSIBLE') problems.push('T15: zone ' + ev + (i + 1) + ' drawn impossible while ' + S[i]); });
+    }
+  };
+  const clkOf = t => String(Math.floor(((t % 1440) + 1440) % 1440 / 60)).padStart(2, '0') + ':' + String(((t % 60) + 60) % 60).padStart(2, '0');
+  if (!/Сейчас/.test(txt())) problems.push('the panel has no «Сейчас» block');
   // 8) moving the slice rewrites nothing: the same snapshot, the same distributions
   const sig = f => f ? f.r.snapshot_id + '|' + [...f.ev.R.cells.keys()].sort().join(',') + '|' + [...f.ev.X.cells.keys()].sort().join(',') + '|' + JSON.stringify(f.zones) : null;
   const s0 = sig(F), steps = [];
@@ -111,8 +126,11 @@
     if (t >= F.end) break;
     D.st.rp = t; const cc = await settle();
     if (cc.F && cc.F.view === F.view && sig(cc.F) !== s0) problems.push('the snapshot changed when the slice moved to ' + t);
+    if (cc.F) twoAxes(cc);
     steps.push(t);
   }
+  // T14 at the end of the block too: the band of today's extreme stays reachable after the last M5
+  D.st.rp = F.end; { const cc = await settle(); if (cc.F) twoAxes(cc); }
   Object.assign(D.st, save); D.render(true);
   // 9) every panel line lights something
   for (const el of [...panel.querySelectorAll('[data-l21]')].slice(0, 14)) {

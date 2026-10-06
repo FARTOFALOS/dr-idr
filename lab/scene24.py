@@ -345,18 +345,21 @@ def _today_zones(snap, bars, tick, d, e_px, w_px, act, slice_, formed, end):
         lo, hi = (b[3], b[2]) if d == 1 else (b[2], b[3])
         rows.append((T, d * (tk(lo) - e_t), d * (tk(hi) - e_t)))
     out = {}
+    times = {ev: {m["id"]: m[ev].get("t") for m in snap["members"] if m[ev]["s"] == "known"} for ev in ("R", "X")}
     for ev, zm in snap.get("zones", {}).items():
+        clock = [zonemap24.history_clock(z["cell_mask"], [times[ev][s] for s in z["member_session_ids"] if s in times[ev]], slice_, formed, end - 5)
+                 for z in zm["zones"]]
         if gap:
-            out[ev] = dict(state="unknown", status=["STATUS_UNKNOWN"] * len(zm["zones"]))
+            out[ev] = dict(state="unknown", status=["STATUS_UNKNOWN"] * len(zm["zones"]), clock=clock)
             continue
         if rows:
             j = min(range(len(rows)), key=lambda i: (rows[i][1], i)) if ev == "R" else min(range(len(rows)), key=lambda i: (-rows[i][2], i))
             v = rows[j][1] if ev == "R" else rows[j][2]
             q = zonemap24.cell_of(v, w_t, rows[j][0] - 5, formed)
-            out[ev] = dict(state="ok", q=list(q), v10=10 * v, w=w_t,
+            out[ev] = dict(state="ok", q=list(q), v10=10 * v, w=w_t, clock=clock,
                            status=[zonemap24.status(z["cell_mask"], ev, tuple(q), 10 * v, w_t, slice_, formed, end - 5) for z in zm["zones"]])
         else:
-            out[ev] = dict(state="none", status=[zonemap24.status(z["cell_mask"], ev, None, None, w_t, slice_, formed, end - 5) for z in zm["zones"]])
+            out[ev] = dict(state="none", clock=clock, status=[zonemap24.status(z["cell_mask"], ev, None, None, w_t, slice_, formed, end - 5) for z in zm["zones"]])
     return out
 
 

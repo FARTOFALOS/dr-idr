@@ -109,6 +109,15 @@ else:
                 cnt = f["counts"][ev]
                 ok = ok and sum(n for _, _, n in cnt["cells"]) + cnt["unknown"] + cnt["none"] == f["N"]
         check(ok, f"design 24 family NQ {session} 2025-12-17 at {H.clock(at)}: {f.get('status')} {f.get('view', '')} N={f.get('N')}")
+    # the layer «Сейчас» (lab/now24.py, DR-LAB-NOW-1.0): finite, its base N equals the family's, R and X both answered;
+    # the full acceptance tests are tests/now24.py
+    import now24  # noqa: E402
+    nw = now24.live("NQ", "RDR", 720, "2025-12-17")
+    fam = scene24.family("NQ", "RDR", 720, "2025-12-17")
+    ok = finite_json(nw, "d24 now") and nw.get("status") in ("OK", "FROZEN_AT_BREAK", "NO_PREFIX", "UNKNOWN_PREFIX", "HORIZON_OVER", "NO_FAMILY")
+    if nw.get("status") == "OK":
+        ok = ok and nw["base"]["N_base"] == fam["N"] and all(nw[ev]["continuation"]["support"]["N_eligible"] <= fam["N"] for ev in ("R", "X"))
+    check(ok, f"design 24 «Сейчас» NQ RDR 2025-12-17 12:00: {nw.get('status')} {nw.get('R', {}).get('mode', '')}")
 
 node = shutil.which("node")
 if node:
