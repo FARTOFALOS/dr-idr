@@ -1187,7 +1187,8 @@
         const [lx, ly] = best, k = cloudK(F, ev, i, h, z), op = k < 1 ? 0.4 + 0.5 * k : 1;
         placed.push([lx, ly, lx + wT, ly + hT]);
         c.save(); c.globalAlpha = op;
-        c.fillStyle = imp ? 'rgba(8,9,12,.12)' : 'rgba(8,9,12,.6)'; roundRect(c, lx, ly, wT, hT, 4); c.fill();
+        // no plate under a zone's label (operator 2026-10-06): the text alone, with a faint shadow to stay readable over candles
+        c.shadowColor = 'rgba(0,0,0,' + (imp ? 0.35 : 0.75) + ')'; c.shadowBlur = 3;
         c.textBaseline = 'alphabetic';
         c.font = lw + nfs + 'px ' + FONT; c.fillStyle = imp ? rgba(col, 0.55) : col; c.fillText(z.label, lx + 5, ly + 4 + fs * 0.86);
         pctDraw(c, pct(share), lx + 10 + wN, ly + 4 + fs * 0.86, lw, fs, imp ? 'rgba(200,205,214,.38)' : '#EEF1F5');
