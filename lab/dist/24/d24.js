@@ -619,7 +619,7 @@
     drawCandles(c, ctx);
     drawPills(c, ctx);
     drawNow(c, ctx);
-    if (F && st.mode === 'bounds') drawLink(c, ctx);
+    if (F) drawLink(c, ctx);
     if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, ctx);
     if (F && st.mode === 'bounds') drawPair(c, ctx);
     if (F) drawZones(c, ctx);
@@ -1085,7 +1085,28 @@
   function linkOf(ctx) {
     const F = ctx.F, h = hv();
     V.lk = null;
-    if (!F || st.mode !== 'bounds' || !h) return;
+    if (!F || !h) return;
+    // «Путь семьи» (operator 2026-10-06): a price band hovered in the column points at the M5 AHEAD where the family's
+    // closes in that band are most frequent (the same idea as a constellation's peak time); none ahead → the past one, red
+    if (st.mode === 'path') {
+      if (h.k === 'fcell' && h.src === 'proj') {
+        const film = filmOf(F), sl = sliceOf(ctx), k = h.kk;
+        let best = null, bestPast = null;
+        for (const cd of film) {
+          const n = (cd.cells.get(k) || []).length;
+          if (!n) continue;
+          if (cd.T > sl) { if (!best || n > best.n) best = { cd, n }; } else if (!bestPast || n > bestPast.n) bestPast = { cd, n };
+        }
+        const pk = best || bestPast;
+        if (pk) {
+          const [ya, yb] = cellY(F, k, k + 1);
+          V.lk = { ev: 'path', col: cfg.path, t0: pk.cd.T - 5, t1: pk.cd.T, k0: k, k1: k + 1, x: V.X(pk.cd.T - 2.5), y: (ya + yb) / 2, n: pk.n, past: !best };
+          V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0: V.lk.t0, t1: V.lk.t1, col: V.lk.past ? '#F23645' : cfg.path });
+        }
+      }
+      return;
+    }
+    if (st.mode !== 'bounds') return;
     if (h.k === 'zone' && h.ev) {
       const pk = peakAhead(F, ctx, F.ev[h.ev].pts.filter(q => F.zcell[h.ev].get(q.k + '|' + q.b) === h.i), h.ev);
       const ks = F.zones[h.ev] && F.zones[h.ev].zones[h.i] ? F.zones[h.ev].zones[h.i].cell_mask.map(q => q[0]) : [];
@@ -1109,7 +1130,7 @@
     if (!lk) return;
     // operator 2026-10-06: the time × price cluster shows on the constellation itself — a soft box over the zone's (or
     // band's) prices on its peak 15 minutes, its time written above — instead of a column down to the time band
-    const F = ctx.F, col = lk.past ? '#F23645' : cfg[lk.ev], t0 = F.f + 15 * lk.b, xa = V.X(t0), xb = V.X(t0 + 15);
+    const F = ctx.F, col = lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
     if (lk.k0 != null) {
       const [ya, yb] = cellY(F, lk.k0, lk.k1);
       const g = c.createLinearGradient(xa, 0, xb, 0);
@@ -1118,7 +1139,7 @@
       c.strokeStyle = rgba(col, 0.55); c.lineWidth = 1; c.setLineDash([3, 3]);
       c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xa) - 1), Math.max(2, Math.round(yb - ya) - 1)); c.setLineDash([]);
       c.save(); c.font = '600 10.5px ' + FONT; c.fillStyle = col; c.textAlign = 'center'; c.textBaseline = 'bottom'; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 3;
-      c.fillText((lk.past ? 'было ' : '') + clk(t0) + '–' + clk(t0 + 15), (xa + xb) / 2, Math.max(12, ya - 3)); c.restore();
+      c.fillText((lk.past ? 'было ' : '') + clk(t0) + '–' + clk(t1), (xa + xb) / 2, Math.max(12, ya - 3)); c.restore();
     }
     c.save(); c.shadowColor = rgba(col, 0.7); c.shadowBlur = 8; c.strokeStyle = col; c.lineWidth = 1.6;
     c.beginPath(); c.arc(lk.x, lk.y, 7, 0, 6.2832); c.stroke(); c.restore();
