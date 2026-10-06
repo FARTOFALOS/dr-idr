@@ -43,7 +43,7 @@
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
     boxFill: 'grad', boxA: 45, prevA: 46,
-    bandH: 10, bandRise: 20, bandA: 65, bandRoom: 7, padTop: 1.5, padBot: 2, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, lineLbl: 11, prevLbl: 9,
+    bandH: 10, bandRise: 20, bandA: 65, bandRoom: 7, padTop: 1.5, padBot: 2, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, zoneLblPos: 'in', zoneNumA: 45, zoneNameA: 60, zoneSpentA: 55, zoneSub: 0, lineLbl: 11, prevLbl: 9,
     fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, profH: 110, profVeil: 0, profA: 30, sideA: 70, domK: 200, domLine: 100, spentA: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
@@ -61,28 +61,37 @@
   // operator 2026-10-06: the candles take the most height; the time band lower, shorter, more transparent (set once)
   if (!cfg.z2) { cfg.bandH = DEF.bandH; cfg.bandRise = DEF.bandRise; cfg.z2 = 1; }
   const saveCfg = () => { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* not kept */ } };
+  // operator 2026-10-06: the settings grouped by the element of the screen, each group folds (its state kept in the
+  // browser), so the trader finds a setting by what he sees
   const SCHEMA = [
-    ['События семьи', [['R', 'Откат R · цвет', 'color'], ['X', 'Продолжение X · цвет', 'color'], ['ptA', 'Точки · яркость', 'range', 10, 100],
-      ['ptSize', 'Точки · размер', 'range', 50, 200], ['pastA', 'Прошедшие по часам · яркость', 'range', 5, 100],
-      ['cloudA', 'Созвездия · дымка', 'range', 20, 200], ['threadA', 'Созвездия · нити', 'range', 0, 300],
-      ['spentA', 'Отработанные созвездия · яркость, %', 'range', 20, 200, 10]]],
-    ['Гистограммы', [['projA', 'Цена справа · яркость', 'range', 10, 100], ['stripA', 'Лента времени · яркость', 'range', 10, 100]]],
-    ['Путь семьи', [['path', 'Клетки · цвет', 'color'], ['heatA', 'Клетки · яркость (одна для всех колонок)', 'range', 20, 400, 10]]],
-    ['Линии сессии', [['dr', 'DR · цвет', 'color'], ['drA', 'DR · яркость', 'range', 10, 100], ['drW', 'DR · толщина', 'range', 0.5, 3, 0.1],
+    ['Созвездия · цвет и дымка', [['R', 'Откат R · цвет', 'color'], ['X', 'Продолжение X · цвет', 'color'],
+      ['cloudA', 'Дымка', 'range', 20, 200], ['threadA', 'Нити', 'range', 0, 300], ['spentA', 'Отработанные · яркость дымки, %', 'range', 20, 200, 10]]],
+    ['Созвездия · подписи', [['zoneLblPos', 'Место подписи', 'sel', { in: 'внутри, под свечами', side: 'рядом' }],
+      ['zoneLbl', 'Размер, %', 'range', 60, 160, 5], ['zoneNumA', 'Проценты · непрозрачность, %', 'range', 10, 100, 5],
+      ['zoneNameA', 'Имя зоны · непрозрачность, %', 'range', 10, 100, 5], ['zoneSpentA', 'Отработанные · непрозрачность, %', 'range', 10, 100, 5],
+      ['zoneSub', 'Слово «держится»', 'sel', { 0: 'скрыть', 1: 'показывать' }]]],
+    ['Точки сессий', [['ptA', 'Яркость', 'range', 10, 100], ['ptSize', 'Размер', 'range', 50, 200], ['pastA', 'Прошедшие по часам · яркость', 'range', 5, 100],
+      ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10]]],
+    ['Колонка у цены', [['projA', 'Яркость', 'range', 10, 100], ['colSize', 'Размер цифр, %', 'range', 60, 160, 5], ['passedA', 'Прошедшее и невозможное · яркость', 'range', 5, 80]]],
+    ['Лента времени', [['stripA', 'Столбики · яркость', 'range', 10, 100], ['bandA', 'Вся лента · непрозрачность, %', 'range', 20, 100],
+      ['bandH', 'Высота, % экрана', 'range', 8, 30], ['bandRise', 'Подъём в пустое место, % графика', 'range', 0, 50],
+      ['domK', 'Контраст перевеса X/R, %', 'range', 0, 400, 10], ['domLine', 'Контур перевеса, %', 'range', 0, 200, 10],
+      ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5]]],
+    ['Масштаб «↺»', [['padTop', 'Запас сверху, %', 'range', 0, 8, 0.5], ['padBot', 'Запас снизу, %', 'range', 0, 8, 0.5], ['bandRoom', 'Место под лентой, % диапазона', 'range', 0, 20]]],
+    ['Путь семьи', [['path', 'Клетки · цвет', 'color'], ['heatA', 'Клетки · яркость (одна для всех колонок)', 'range', 20, 400, 10],
+      ['profH', 'Профиль полосы · высота, px', 'range', 24, 160], ['profA', 'Профиль полосы · непрозрачность, %', 'range', 5, 100], ['profVeil', 'Вуаль под профилем, %', 'range', 0, 80]]],
+    ['Уровни сессии: DR, IDR, mid, STD', [['dr', 'DR · цвет', 'color'], ['drA', 'DR · яркость', 'range', 10, 100], ['drW', 'DR · толщина', 'range', 0.5, 3, 0.1],
       ['idr', 'IDR · цвет', 'color'], ['idrA', 'IDR · яркость', 'range', 10, 100], ['idrW', 'IDR · толщина', 'range', 0.5, 3, 0.1], ['idrDash', 'IDR · вид', 'dash'],
       ['mid', 'mid · цвет', 'color'], ['midA', 'mid · яркость', 'range', 10, 100], ['midDash', 'mid · вид', 'dash'],
-      ['sideA', 'DR / IDR · цвет стороны активации, %', 'range', 0, 100, 5],
+      ['sideA', 'DR / IDR · цвет стороны активации, %', 'range', 0, 100, 5], ['lineLbl', 'DR / IDR · размер названия, px', 'range', 8, 16, 0.5],
       ['std', 'STD · цвет', 'color'], ['stdA', 'STD стороны в игре · яркость', 'range', 5, 100], ['stdOffA', 'STD другой стороны · яркость', 'range', 0, 100]]],
-    ['Коробки сессий', [['boxFill', 'Заливка DR / IDR', 'boxfill'], ['boxA', 'Заливка · яркость', 'range', 0, 100]]],
-    ['Прошлые сессии и VI', [['prevA', 'DR / IDR прошлых сессий · яркость', 'range', 5, 100], ['viC', 'VI · цвет', 'color'], ['vibA', 'VI · яркость', 'range', 5, 60], ['vibNQ', 'VI NQ · разрыв тел от, пунктов', 'range', 0, 6, 0.25], ['vibES', 'VI ES · разрыв тел от, пунктов', 'range', 0, 3, 0.25], ['vibYM', 'VI YM · разрыв тел от, пунктов', 'range', 0, 20, 1]]],
-    ['Лента времени и капсулы', [['bandH', 'Лента · высота, % экрана', 'range', 8, 30], ['bandRise', 'Лента · подъём в пустое место, % графика', 'range', 0, 50], ['bandA', 'Лента · непрозрачность, %', 'range', 20, 100], ['bandRoom', 'Место под лентой при ↺, % диапазона', 'range', 0, 20], ['padTop', 'Запас сверху при ↺, %', 'range', 0, 8, 0.5], ['padBot', 'Запас снизу при ↺, %', 'range', 0, 8, 0.5],
-      ['domK', 'Лента · контраст перевеса X/R, %', 'range', 0, 400, 10], ['domLine', 'Лента · контур перевеса, %', 'range', 0, 200, 10], ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5]]],
-    ['Подписи', [['colSize', 'Колонка у цены · размер цифр, %', 'range', 60, 160, 5], ['passedA', 'Колонка · прошедшее и невозможное · яркость', 'range', 5, 80],
-      ['zoneLbl', 'Созвездия · размер подписи, %', 'range', 60, 160, 5], ['lineLbl', 'DR / IDR · размер названия, px', 'range', 8, 16, 0.5],
-      ['prevLbl', 'Прошлые уровни · размер названия, px', 'range', 6, 14, 0.5], ['fracLbl', 'Доли IDR в коробке · размер, px', 'range', 6, 14, 0.5],
-      ['fracLine', 'Доли IDR в коробке · линии', 'range', 0, 60]]],
-    ['День', [['prevDayA', 'Свечи вчера · яркость', 'range', 10, 100], ['midnightA', 'Полночь · линия', 'range', 0, 100], ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10], ['profH', 'Путь семьи · профиль полосы · высота, px', 'range', 24, 160], ['profA', 'Путь семьи · профиль полосы · непрозрачность, %', 'range', 5, 100], ['profVeil', 'Путь семьи · вуаль под профилем, %', 'range', 0, 80]]],
-    ['График', [['upC', 'Свеча вверх', 'color'], ['dnC', 'Свеча вниз', 'color'], ['bg', 'Фон', 'color']]]
+    ['Коробка сессии', [['boxFill', 'Заливка DR / IDR', 'boxfill'], ['boxA', 'Заливка · яркость', 'range', 0, 100],
+      ['fracLbl', 'Доли IDR · размер, px', 'range', 6, 14, 0.5], ['fracLine', 'Доли IDR · линии', 'range', 0, 60]]],
+    ['Прошлые сессии и вчера', [['prevA', 'DR / IDR прошлых сессий · яркость', 'range', 5, 100], ['prevLbl', 'Их названия · размер, px', 'range', 6, 14, 0.5],
+      ['prevDayA', 'Свечи вчера · яркость', 'range', 10, 100], ['midnightA', 'Полночь · линия', 'range', 0, 100]]],
+    ['VI', [['viC', 'Цвет', 'color'], ['vibA', 'Яркость', 'range', 5, 60], ['vibNQ', 'NQ · разрыв тел от, пунктов', 'range', 0, 6, 0.25],
+      ['vibES', 'ES · разрыв тел от, пунктов', 'range', 0, 3, 0.25], ['vibYM', 'YM · разрыв тел от, пунктов', 'range', 0, 20, 1]]],
+    ['Свечи и фон', [['upC', 'Свеча вверх', 'color'], ['dnC', 'Свеча вниз', 'color'], ['bg', 'Фон', 'color']]]
   ];
   const DASH_NAMES = { solid: 'сплошная', dash: 'штрих', dots: 'точки', dashdot: 'штрихпунктир' };
   const FONT = '-apple-system,BlinkMacSystemFont,"Trebuchet MS",Roboto,Ubuntu,sans-serif';
@@ -624,6 +633,7 @@
     drawLevels(c, ctx);
     drawReference(c, ctx);
     if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, ctx); drawMemberPath(c, ctx); }
+    if (F) drawZones(c, ctx, 'under');
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     drawPills(c, ctx);
@@ -631,7 +641,7 @@
     if (F) drawLink(c, ctx);
     if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, ctx);
     if (F && st.mode === 'bounds') drawPair(c, ctx);
-    if (F) drawZones(c, ctx);
+    if (F) drawZones(c, ctx, 'over');
     if (F) drawArea(c, ctx);
     if (F && st.mini) drawMini(c, ctx);
     drawTags(c, ctx);
@@ -1291,9 +1301,11 @@
   // the zone map of R and X (zone-map-3) on the chart: each zone's label (its share of the family, in a size that follows
   // the share; a zone that can no longer hold today shows its name only, with a dashed iso-line) and, on hover or pin,
   // its iso-line and its exact cells. The share is the family's (n / N of its cells), never a chance for today.
-  function drawZones(c, ctx) {
-    const F = ctx.F;
-    V.zoneHit = null;
+  // phase 'under' (before the candles): the zone names inside their constellations (operator 2026-10-06, zoneLblPos 'in');
+  // phase 'over' (after the candles): outlines of the hovered / impossible zones and the names beside (zoneLblPos 'side')
+  function drawZones(c, ctx, phase) {
+    const F = ctx.F, inside = cfg.zoneLblPos === 'in';
+    if (phase === 'under') V.zoneHit = null;
     if (!st.L.zones || st.mode !== 'bounds') return;
     const CL = cloudsOf(F), h = hv(), placed = [], used = ctx.live ? NOW + 5 : ctx.obs;
     const bars = ctx.D.bars.filter(b => b.t + 5 <= used && V.X(b.t + 5) > 0 && V.X(b.t) < V.plot.w).map(b => [V.X(b.t) - 2, V.Y(b.h) - 2, V.X(b.t + 5) + 2, V.Y(b.l) + 2]);
@@ -1307,13 +1319,14 @@
     }
     const pills = V.pills || [];
     const cost = r => 4 * live.filter(b => over(r, b)).length + 4 * pills.filter(b => over(r, b)).length + 3 * placed.filter(b => over(r, b)).length + bars.filter(b => over(r, b)).length;
-    V.zoneHit = [];
+    if (phase === 'under') V.zoneHit = [];
     for (const ev of ['X', 'R']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
       CL[ev].forEach((g, i) => {
         if (!g) return;
         const col = stateCol(col0, S[i]);
         const z = g.z, s = S[i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === i);
+        if (phase === 'under') { if (inside) zoneMark(c, ctx, F, ev, i, g, z, s, col, h); return; }
         if (on || imp) { c.save(); c.strokeStyle = rgba(col, on ? 0.6 : 0.3); c.lineWidth = 1; c.setLineDash(imp ? [4, 3] : []); loopsPath(c, g.ln); c.stroke(); c.restore(); }
         if (on && false) {
           // the zone's exact cells are no longer outlined on hover (operator 2026-10-06: «прямоугольники с точками — не
@@ -1329,11 +1342,12 @@
           }
           c.stroke(); c.restore();
         }
+        if (inside) return;
         // Historical mass and today's applicability are separate encodings: status may dim/dash a zone, but never
         // removes or resizes its n/N label. This prevents p_snapshot from looking like today's conditional chance.
         // a spent zone's label (operator 2026-10-06): 20 % smaller, not bold, translucent, its plate almost clear, so what lies
         // under it on the chart (a VI, candles) stays visible
-        const share = 100 * z.p_snapshot, fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), sub = s === 'HOLDS' ? 'держится' : '', lw = imp ? '500 ' : '700 ', nfs = imp ? 10 : 12;
+        const share = 100 * z.p_snapshot, fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), sub = s === 'HOLDS' && cfg.zoneSub ? 'держится' : '', lw = imp ? '500 ' : '700 ', nfs = imp ? 10 : 12;
         c.font = lw + nfs + 'px ' + FONT;
         const wN = c.measureText(z.label).width;
         c.font = '700 ' + fs + 'px ' + FONT;
@@ -1352,12 +1366,6 @@
         if (!best) best = [clamp(cands[0][0], 4, V.plot.w - wT - 112), clamp(cands[0][1], 44, V.plot.h - hT - 6)];
         const [lx, ly] = best, k = cloudK(F, ev, i, h, z), op = k < 1 ? 0.4 + 0.5 * k : 1;
         placed.push([lx, ly, lx + wT, ly + hT]);
-        // a name moved away from its constellation keeps a faint thread to it
-        {
-          const px = clamp((bb[0] + bb[2]) / 2, lx, lx + wT), py = clamp((bb[1] + bb[3]) / 2, ly, ly + hT);
-          const qx = clamp(px, bb[0], bb[2]), qy = clamp(py, bb[1], bb[3]);
-          if (Math.hypot(px - qx, py - qy) > 18) { c.save(); c.globalAlpha = op; c.strokeStyle = rgba(col, 0.35); c.lineWidth = 1; c.setLineDash([1.5, 3]); c.beginPath(); c.moveTo(px, py); c.lineTo(qx, qy); c.stroke(); c.restore(); }
-        }
         c.save(); c.globalAlpha = op;
         // no plate under a zone's label (operator 2026-10-06): the text alone, with a faint shadow to stay readable over candles
         c.shadowColor = 'rgba(0,0,0,' + (imp ? 0.35 : 0.75) + ')'; c.shadowBlur = 3;
@@ -1369,6 +1377,29 @@
         V.zoneHit.push({ box: [lx, ly, wT, hT], ev, i, loops: g.hit });
       });
     }
+  }
+  // operator 2026-10-06: «проценты — внутри созвездия, фоном, этим же шрифтом; не такие яркие, белое слишком контрастно».
+  // The zone's name and share n/N stand at the centre of its stars, drawn UNDER the candles (candles always on top), in the
+  // zone's own colour, translucent, no shadow. Size grows with the share as before (entry 12); a spent zone 20 % smaller
+  // and dimmer (entry 31); «держится» only if switched on. All of it in ⚙ «Созвездия · подписи».
+  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h) {
+    const imp = s === 'IMPOSSIBLE', share = 100 * z.p_snapshot;
+    const ps = F.ev[ev].pts.filter(q => F.zcell[ev].get(q.k + '|' + q.b) === i);
+    let cx = (g.bb[0] + g.bb[2]) / 2, cy = (g.bb[1] + g.bb[3]) / 2;
+    if (ps.length) { cx = ps.reduce((a, q) => a + V.X(q.t + 2.5), 0) / ps.length; cy = ps.reduce((a, q) => a + V.Y(q.p), 0) / ps.length; }
+    const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
+    const sub = s === 'HOLDS' && cfg.zoneSub ? 'держится' : '';
+    c.font = lw + nfs + 'px ' + FONT;
+    const wN = c.measureText(z.label).width, wS = pctW(c, pct(share), lw, fs), wT = wN + 4 + wS, hT = fs + (sub ? 12 : 0);
+    const lx = clamp(cx - wT / 2, 4, V.plot.w - 112 - wT), ly = clamp(cy - fs / 2, 30, V.plot.h - hT - 4);
+    const k = cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1);
+    c.save(); c.globalAlpha = Math.min(1, op); c.textBaseline = 'alphabetic';
+    const yb = ly + fs * 0.86;
+    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, cfg.zoneNameA / 100); c.fillText(z.label, lx, yb);
+    pctDraw(c, pct(share), lx + wN + 4, yb, lw, fs, rgba(mixW(col, 0.35), cfg.zoneNumA / 100));
+    if (sub) { c.font = '600 ' + Math.max(8, nfs - 1) + 'px ' + FONT; c.fillStyle = rgba(col, cfg.zoneNameA / 100); c.fillText(sub, lx, ly + hT); }
+    c.restore();
+    V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 6], ev, i, loops: g.hit });
   }
   // ---------- the time band (variant «Окна времени», operator 2026-10-01) ----------
   // X above the centre, R below, in three layers:
@@ -2899,10 +2930,13 @@
       const v = cfg[k];
       if (type === 'color') return '<label class="cr"><span>' + n + '</span><input type="color" data-c="' + k + '" value="' + v + '"></label>';
       if (type === 'boxfill') return '<label class="cr"><span>' + n + '</span><select data-c="' + k + '">' + Object.keys(BOXFILL).map(d => '<option value="' + d + '"' + (d === v ? ' selected' : '') + '>' + BOXFILL[d] + '</option>').join('') + '</select></label>';
+      if (type === 'sel') return '<label class="cr"><span>' + n + '</span><select data-c="' + k + '">' + Object.keys(a).map(d => '<option value="' + d + '"' + (String(d) === String(v) ? ' selected' : '') + '>' + a[d] + '</option>').join('') + '</select></label>';
       if (type === 'dash') return '<label class="cr"><span>' + n + '</span><select data-c="' + k + '">' + Object.keys(DASH).map(d => '<option value="' + d + '"' + (d === v ? ' selected' : '') + '>' + DASH_NAMES[d] + '</option>').join('') + '</select></label>';
       return '<label class="cr"><span>' + n + '</span><input type="range" data-c="' + k + '" min="' + a + '" max="' + b + '" step="' + (step || 1) + '" value="' + v + '"><em>' + v + '</em></label>';
     };
-    dom('cfgp').innerHTML = '<div class="ch"><b>Настройки</b><button id="cfgReset">Сбросить</button></div>' + SCHEMA.map(([t, rows]) => '<div class="cg">' + t + '</div>' + rows.map(row).join('')).join('');
+    let open = {};
+    try { open = JSON.parse(localStorage.getItem('drlab.d24.cfgOpen') || '{}'); } catch (e) { /* optional */ }
+    dom('cfgp').innerHTML = '<div class="ch"><b>Настройки</b><button id="cfgReset">Сбросить</button></div>' + SCHEMA.map(([t, rows]) => '<details class="cgd"' + (open[t] ? ' open' : '') + ' data-g="' + t + '"><summary class="cg">' + t + '</summary>' + rows.map(row).join('') + '</details>').join('');
   }
   dom('cfgp').addEventListener('input', e => {
     const k = e.target.dataset.c;
@@ -2912,6 +2946,14 @@
     const em = e.target.parentNode.querySelector('em'); if (em) em.textContent = e.target.value;
     saveCfg(); redraw(true);
   });
+  dom('cfgp').addEventListener('toggle', e => {
+    const d = e.target;
+    if (!d || d.tagName !== 'DETAILS') return;
+    let open = {};
+    try { open = JSON.parse(localStorage.getItem('drlab.d24.cfgOpen') || '{}'); } catch (x) { /* optional */ }
+    open[d.dataset.g] = d.open;
+    try { localStorage.setItem('drlab.d24.cfgOpen', JSON.stringify(open)); } catch (x) { /* optional */ }
+  }, true);
   dom('cfgp').addEventListener('click', e => { const b = e.target.closest('button'); if (b && b.id === 'cfgReset') { Object.assign(cfg, DEF); saveCfg(); cfgPanel(); redraw(true); } });
   window.addEventListener('resize', () => redraw(true));
 
