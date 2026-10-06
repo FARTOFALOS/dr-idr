@@ -56,7 +56,7 @@
   if (cfg.X === '#63C3A5') cfg.X = DEF.X;
   const saveCfg = () => { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* not kept */ } };
   const SCHEMA = [
-    ['События семьи', [['R', 'Откат R · цвет', 'color'], ['X', 'Расширение X · цвет', 'color'], ['ptA', 'Точки · яркость', 'range', 10, 100],
+    ['События семьи', [['R', 'Откат R · цвет', 'color'], ['X', 'Продолжение X · цвет', 'color'], ['ptA', 'Точки · яркость', 'range', 10, 100],
       ['ptSize', 'Точки · размер', 'range', 50, 200], ['pastA', 'Прошедшие по часам · яркость', 'range', 5, 100],
       ['cloudA', 'Созвездия · дымка', 'range', 20, 200], ['threadA', 'Созвездия · нити', 'range', 0, 300]]],
     ['Гистограммы', [['projA', 'Цена справа · яркость', 'range', 10, 100], ['stripA', 'Лента времени · яркость', 'range', 10, 100]]],
@@ -231,6 +231,15 @@
   // break's side after a break), so the lines, their names and their price tags show where the session goes; before the
   // confirmation they keep their own colour (settings). setting «sideA» = how strongly (0 = never)
   const sideCol = (s, base) => { const p = playSide(s); return !p || !cfg.sideA ? base : mixHex(base, p > 0 ? C.up : C.dn, cfg.sideA / 100); };
+  // operator 2026-10-06: an STD level on the side in play is drawn by what it means NOW: 'taken' — reached today after
+  // the confirmation (or the break), no longer a question: quiet round dots (not dashes, which are IDR's); 'next' — the
+  // first one not reached yet, the trader's question «will it get there?»: the strongest; 'far' — the ones beyond it
+  function stdState(s, l) {
+    const p = playSide(s);
+    if (l.type !== 'std' || !p || l.dir !== p) return 'plain';
+    const e = ((s.failed ? s.takenN : s.taken) || []).find(z => z.j === l.j);
+    return e && e.t ? 'taken' : e ? 'next' : 'far';
+  }
   const stdShown = (s, l) => l.type !== 'std' || (st.L.std && (!playSide(s) || l.dir === playSide(s)));
   function where(s, p) {
     const L = levels(s).filter(l => l.type !== 'open').sort((a, b) => a.p - b.p), w = s.idrH - s.idrL;
@@ -274,7 +283,7 @@
     const F = {
       r, view, brk, N: r.N, f: r.schedule.formed, end: r.schedule.end, grid: r.grid, M: r.members, cond: r.cond,
       d0, e0, w0, tick, e0t: Math.round(e0 / tick), w0t: Math.round(w0 / tick), act0: brk ? s.failed : s.conf, side,
-      names: brk ? { R: 'Против слома', X: 'По слому' } : { R: 'Откат', X: 'Расширение' },
+      names: brk ? { R: 'Откат против слома', X: 'Продолжение слома' } : { R: 'Откат', X: 'Продолжение' },   // operator 2026-10-06; X = the author's max extension
       what: brk ? { R: 'самая глубокая точка против слома', X: 'самая дальняя точка по слому' } : { R: 'самая глубокая точка против подтверждения', X: 'самая дальняя точка по подтверждению' },
       from: brk ? 'от своего слома' : 'от своего подтверждения', nb: (r.schedule.end - r.schedule.formed) / 15
     };
@@ -554,6 +563,9 @@
         lo = Math.min(lo, a, b); hi = Math.max(hi, a, b);
       });
     }
+    // operator 2026-10-06: the next STD not reached yet on the side in play is the trader's question («will it get
+    // there?»), so it is always in the frame
+    if (isFinite(lo) && s.drH != null && st.L.std) { const nx = levels(s).find(l => stdState(s, l) === 'next'); if (nx) { lo = Math.min(lo, nx.p); hi = Math.max(hi, nx.p); } }
     if (!isFinite(lo)) { lo = 24400; hi = 24800; }
     // room under the lowest content for the time band's columns and hills to rise into (bandOverlay): they never cover
     // candles, the box or a live zone, so they need free space below them (operator 2026-10-06)
@@ -688,6 +700,12 @@
       c.fillRect(x0, y0 - 1, x1 - x0, Math.max(2, y1 - y0 + 2));
       c.fillStyle = rgba(C.vib, Math.min(1, on ? 0.9 : (v.fill != null ? 0.25 : 0.5) * vf));
       c.fillRect(x0, y0 - 1, 1.5, Math.max(2, y1 - y0 + 2));
+      // its name inside the rectangle at the right end, only when it fits (operator 2026-10-06)
+      const hh = y1 - y0 + 2, xr = Math.min(x1, V.plot.w) - 4;
+      if (v.fill == null && hh >= 10 && xr - Math.max(x0, 0) > 22) {
+        c.font = '600 ' + Math.min(10, hh - 2).toFixed(1) + 'px ' + FONT; c.fillStyle = rgba(C.vib, 0.95); c.textAlign = 'right'; c.textBaseline = 'middle';
+        c.fillText('VI', xr, (y0 + y1) / 2 + 0.5); c.textAlign = 'left';
+      }
     }
   }
   // the price of a cell edge k / 10 in today's scale; a band [k0, k1) as a top / bottom pair of screen y
@@ -739,8 +757,11 @@
       const on = h && h.k === 'lvl' && h.id === l.id;
       if (l.type === 'std') {
         if (!stdShown(s, l)) continue;
-        const inPlay = play === l.dir;
-        line(l.p, C.std, on ? 1 : (inPlay ? cfg.stdA : cfg.stdOffA) / 100, 1, []);
+        const inPlay = play === l.dir, ss = stdState(s, l);
+        if (ss === 'taken') { c.lineCap = 'round'; line(l.p, C.std, on ? 1 : 0.5 * cfg.stdA / 100, 1.6, [0.1, 4.5]); c.lineCap = 'butt'; }
+        else if (ss === 'next') line(l.p, mixW(C.stdOn, 0.35), on ? 1 : Math.min(1, 1.25 * cfg.stdA / 100), 1.6, []);
+        else if (ss === 'far') line(l.p, C.std, on ? 1 : 0.6 * cfg.stdA / 100, 1, []);
+        else line(l.p, C.std, on ? 1 : (inPlay ? cfg.stdA : cfg.stdOffA) / 100, 1, []);
       } else if (l.type === 'dr') line(l.p, sideCol(s, C.dr), on ? 1 : cfg.drA / 100, +cfg.drW, []);
       else if (l.type === 'idr') line(l.p, sideCol(s, C.idr), on ? 1 : cfg.idrA / 100, +cfg.idrW, DASH[cfg.idrDash] || []);
       else if (l.type === 'mid') line(l.p, C.mid, on ? 1 : cfg.midA / 100, 1.2, DASH[cfg.midDash] || []);
@@ -847,7 +868,7 @@
       const xe = Math.round(V.X(E)) + 0.5;
       c.strokeStyle = 'rgba(255,255,255,.12)'; c.setLineDash([2, 5]); c.lineWidth = 1;
       c.beginPath(); c.moveTo(xe, 0); c.lineTo(xe, V.plot.h); c.stroke(); c.setLineDash([]);
-      c.fillStyle = C.text3; c.font = '11px ' + FONT; c.textBaseline = 'top'; c.textAlign = 'right'; c.fillText('конец ' + ctx.s.k + ' ' + clk(E), xe - 5, 64); c.textAlign = 'left';
+      // the text «конец <session> HH:MM» removed (operator 2026-10-06): the dotted line says it
     }
     const x = Math.round(V.X(ctx.obs)) + 0.5;
     c.strokeStyle = ctx.live && !ctx.D.hist ? 'rgba(255,255,255,.14)' : rgba(ctx.D.hist ? C.hist : C.replay, 0.55); c.setLineDash([3, 4]); c.lineWidth = 1;
@@ -1335,12 +1356,13 @@
     if (s.drH != null) {
       const play = s.status === 'broken' ? s.nside : s.side || 0;
       for (const l of levels(s)) {
-        if (l.type === 'std' && (!stdShown(s, l) || l.j > 4)) continue;
+        if (l.type === 'std' && !stdShown(s, l)) continue;   // every drawn line is named (operator 2026-10-06)
         // today's DR / IDR named on their own lines, not as wide tags on the price scale (operator 2026-10-06)
         // operator 2026-10-06: the price stays on the price scale; the line ends with its name only
         if (l.type === 'dr' || l.type === 'idr') { items.push({ y: V.Y(l.p), text: l.type === 'dr' ? 'DR' : 'IDR', col: sideCol(s, l.type === 'dr' ? '#E9ECF1' : '#AEB6C4'), pr: 3, big: 1 }); continue; }
         const col = l.type === 'mid' ? C.mid : l.type === 'open' ? C.open : play === l.dir ? C.stdOn : C.std;
-        items.push({ y: V.Y(l.p), text: (l.type === 'std' ? '' : s.k + ' ') + l.name, col, pr: l.type === 'std' ? 1 : 2 });
+        const ss = stdState(s, l);
+        items.push({ y: V.Y(l.p), text: (l.type === 'std' ? '' : s.k + ' ') + l.name + (ss === 'taken' ? ' ✓' : ''), col: ss === 'taken' ? C.text3 : ss === 'next' ? '#FFFFFF' : col, pr: ss === 'next' ? 3 : l.type === 'std' ? 1 : 2, big: ss === 'next' ? 1 : 0 });
       }
     }
     if (st.L.prev) for (const P of prevList(ctx)) {
@@ -1350,7 +1372,8 @@
     if (st.L.vib) {
       const open = vibsKnown(ctx).filter(v => v.fill == null), pNow = s.priceNow != null ? s.priceNow : 0;
       const near = side => open.filter(v => side * ((v.lo + v.hi) / 2 - pNow) > 0).sort((a, b) => Math.abs((a.lo + a.hi) / 2 - pNow) - Math.abs((b.lo + b.hi) / 2 - pNow)).slice(0, 2);
-      for (const v of near(1).concat(near(-1))) items.push({ y: V.Y((v.lo + v.hi) / 2), text: 'VI', col: C.vib, pr: 0 });
+      // operator 2026-10-06: the VI name stands inside its own rectangle (drawVib) or nowhere, never shifted off it
+      void near;
     }
     const vis = items.filter(q => q.y > 8 && q.y < V.plot.h - 6).sort((a, b) => a.y - b.y);
     const placed = [];
@@ -1513,8 +1536,8 @@
     });
     // the heads (R on the left, X on the right, as their percentages) and the shares beyond the frame
     c.textBaseline = 'top'; c.font = '700 10.5px ' + FONT;
-    c.fillStyle = cfg.R; c.fillText('R ' + (F.brk ? 'против' : 'откат'), A_.x + 5, 3);
-    const hx = 'X ' + (F.brk ? 'по слому' : 'расш.');
+    c.fillStyle = cfg.R; c.fillText('R откат', A_.x + 5, 3);
+    const hx = 'X прод.';
     c.fillStyle = cfg.X; c.fillText(hx, A_.x + A_.w - c.measureText(hx).width - 5, 3);
     const shares = (i, y, base) => {
       c.font = '10px ' + FONT; c.textBaseline = base;
@@ -1704,7 +1727,7 @@
         (lk ? '<div class="il" style="color:' + (lk.past ? '#F23645' : cfg[ev]) + '">' + (lk.past ? 'уже прошло · пик ' : 'у семьи впереди · пик ') + ev + ' в полосе: ' + clk(F.f + 15 * lk.b) + '–' + clk(F.f + 15 * lk.b + 15) + ' · ' + pct(100 * lk.n / F.N) + ' семьи</div>' : '') +
         (() => { const Rch = reachOf(F, ctx), gn = e => F.ev[e].pts.filter(q => q.k >= h.k0 && q.k < h.k1 && q.t + 5 <= sl).length, gX = gn('X'), gR = gn('R');
           const off = e => !Rch.okK(e, h.k0), ttl = ' title="История похожих сессий по часам дня, не сегодняшний путь цены"';
-          const why = e => e === 'R' ? 'сегодняшний откат уже глубже' : 'сегодняшнее расширение уже дальше';
+          const why = e => e === 'R' ? 'сегодняшний откат уже глубже' : 'сегодняшнее продолжение уже дальше';
           return (off(ev) ? '<div class="il" style="color:#F23645">сегодня ' + ev + ' здесь уже невозможен: ' + why(ev) + '</div>' : '') +
             (sl >= F.end ? '' : '<div class="ir"' + ttl + '>у семьи позже ' + clk(sl) + '<b><span style="color:' + cfg.R + '">R ' + pct(100 * (nR - gR) / F.N) + '</span> · <span style="color:' + cfg.X + '">X ' + pct(100 * (nX - gX) / F.N) + '</span></b></div>' +
             '<div class="ir dim"' + ttl + '>у семьи раньше ' + clk(sl) + '<b>R ' + pct(100 * gR / F.N) + ' · X ' + pct(100 * gX / F.N) + '</b></div>'); })() +
@@ -1899,7 +1922,7 @@
     dom('sess').innerHTML = ORDER.map(k => '<button data-s="' + k + '" class="' + (k === st.session ? 'on' : '') + '">' + k + '</button>').join('');
     dom('inst').innerHTML = ['NQ', 'ES', 'YM'].map(k => '<button data-i="' + k + '" class="' + (k === A.inst ? 'on' : '') + '">' + k + '</button>').join('');
     for (const b of dom('mode').querySelectorAll('button')) b.classList.toggle('on', b.dataset.m === st.mode);
-    const nm = F ? F.names : ctx.s.failed ? { R: 'Против слома', X: 'По слому' } : { R: 'Откат', X: 'Расширение' };
+    const nm = F ? F.names : ctx.s.failed ? { R: 'Откат против слома', X: 'Продолжение слома' } : { R: 'Откат', X: 'Продолжение' };
     // A freehand area belongs to the event currently in focus. Make that semantic choice explicit before the drag.
     const ab = dom('areab');
     if (ab) { ab.textContent = '▭ Область · ' + st.ev; ab.title = 'Выбрать область ' + st.ev + ' мышью: цена или цена × время; R/X меняется вместе с текущим фокусом'; }
