@@ -42,7 +42,7 @@
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
     boxFill: 'grad', boxA: 45, prevA: 46,
-    bandH: 13, bandRise: 30, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, lineLbl: 11, prevLbl: 9,
+    bandH: 10, bandRise: 20, bandA: 65, bandRoom: 7, padTop: 1.5, padBot: 2, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, lineLbl: 11, prevLbl: 9,
     fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, profH: 110, profVeil: 0, profA: 30, sideA: 70, domK: 200, domLine: 100, spentA: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
@@ -57,6 +57,8 @@
   if (!cfg.vi0) { cfg.vibNQ = 0; cfg.vibES = 0; cfg.vibYM = 0; cfg.vi0 = 1; }
   // operator 2026-10-06: the band profile is transparent, candles show through it — no veil by default
   if (!cfg.prof0) { cfg.profVeil = 0; cfg.prof0 = 1; }
+  // operator 2026-10-06: the candles take the most height; the time band lower, shorter, more transparent (set once)
+  if (!cfg.z2) { cfg.bandH = DEF.bandH; cfg.bandRise = DEF.bandRise; cfg.z2 = 1; }
   const saveCfg = () => { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* not kept */ } };
   const SCHEMA = [
     ['События семьи', [['R', 'Откат R · цвет', 'color'], ['X', 'Продолжение X · цвет', 'color'], ['ptA', 'Точки · яркость', 'range', 10, 100],
@@ -72,7 +74,7 @@
       ['std', 'STD · цвет', 'color'], ['stdA', 'STD стороны в игре · яркость', 'range', 5, 100], ['stdOffA', 'STD другой стороны · яркость', 'range', 0, 100]]],
     ['Коробки сессий', [['boxFill', 'Заливка DR / IDR', 'boxfill'], ['boxA', 'Заливка · яркость', 'range', 0, 100]]],
     ['Прошлые сессии и VI', [['prevA', 'DR / IDR прошлых сессий · яркость', 'range', 5, 100], ['viC', 'VI · цвет', 'color'], ['vibA', 'VI · яркость', 'range', 5, 60], ['vibNQ', 'VI NQ · разрыв тел от, пунктов', 'range', 0, 6, 0.25], ['vibES', 'VI ES · разрыв тел от, пунктов', 'range', 0, 3, 0.25], ['vibYM', 'VI YM · разрыв тел от, пунктов', 'range', 0, 20, 1]]],
-    ['Лента времени и капсулы', [['bandH', 'Лента · высота, % экрана', 'range', 8, 30], ['bandRise', 'Лента · подъём в пустое место, % графика', 'range', 0, 50],
+    ['Лента времени и капсулы', [['bandH', 'Лента · высота, % экрана', 'range', 8, 30], ['bandRise', 'Лента · подъём в пустое место, % графика', 'range', 0, 50], ['bandA', 'Лента · непрозрачность, %', 'range', 20, 100], ['bandRoom', 'Место под лентой при ↺, % диапазона', 'range', 0, 20], ['padTop', 'Запас сверху при ↺, %', 'range', 0, 8, 0.5], ['padBot', 'Запас снизу при ↺, %', 'range', 0, 8, 0.5],
       ['domK', 'Лента · контраст перевеса X/R, %', 'range', 0, 400, 10], ['domLine', 'Лента · контур перевеса, %', 'range', 0, 200, 10], ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5]]],
     ['Подписи', [['colSize', 'Колонка у цены · размер цифр, %', 'range', 60, 160, 5], ['passedA', 'Колонка · прошедшее и невозможное · яркость', 'range', 5, 80],
       ['zoneLbl', 'Созвездия · размер подписи, %', 'range', 60, 160, 5], ['lineLbl', 'DR / IDR · размер названия, px', 'range', 8, 16, 0.5],
@@ -587,11 +589,14 @@
     if (!isFinite(lo)) { lo = 24400; hi = 24800; }
     // room under the lowest content for the time band's columns and hills to rise into (bandOverlay): they never cover
     // candles, the box or a live zone, so they need free space below them (operator 2026-10-06)
-    if (ctx.F && st.mode === 'bounds' && st.L.strip) lo -= (hi - lo) * 0.16;
-    const pad = (hi - lo) * 0.05;
-    return [lo - pad, hi + pad + (hi - lo) * 0.02];
+    // operator 2026-10-06 (second look): «используй площадь максимально, свечи длиннее» — the band's room is 7 % (was 16),
+    // the frame's margins 1.5 % above the top content and 2 % below the bottom (were 7 % and 5 %); zone names that do
+    // not fit above their constellation move to its side (drawZones)
+    const rng = hi - lo;
+    if (ctx.F && st.mode === 'bounds' && st.L.strip) lo -= rng * cfg.bandRoom / 100;
+    return [lo - rng * cfg.padBot / 100, hi + rng * cfg.padTop / 100];
   }
-  const bodyW = S => { if (S >= 2.5 && S <= 4) return 3; const c = 1 - 0.2 * Math.atan(Math.max(4, S) - 4) / (Math.PI * 0.5); let w = Math.max(1, Math.min(Math.floor(S * c), Math.floor(S))); if (w >= 2 && w % 2 === 0) w -= 1; return w; };
+  const bodyW = S => { if (S >= 2.5 && S <= 4) return 3; const c = 1 - 0.12 * Math.atan(Math.max(4, S) - 4) / (Math.PI * 0.5); let w = Math.max(1, Math.min(Math.floor(S * c), Math.floor(S))); if (w >= 2 && w % 2 === 0) w -= 1; return w; };
 
   // ---------- drawing ----------
   function render(full) {
@@ -631,7 +636,7 @@
     drawTags(c, ctx);
     drawCross(c);
     c.restore();
-    if (F && V.stripOn) drawBand(c, ctx);
+    if (F && V.stripOn) { c.save(); c.globalAlpha = cfg.bandA / 100; drawBand(c, ctx); c.restore(); }   // operator 2026-10-06: the band quieter
     drawPriceAxis(c, ctx);
     if (F && V.projW) drawProj(c, ctx);
     drawTimeAxis(c, ctx);
