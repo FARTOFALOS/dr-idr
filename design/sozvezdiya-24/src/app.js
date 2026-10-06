@@ -42,7 +42,7 @@
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
     boxFill: 'grad', boxA: 45, prevA: 46,
-    bandH: 12, bandRise: 40, bandA: 65, bandRoom: 14, padTop: 1.5, padBot: 2, rightPad: 12, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, zoneLblPos: 'auto', zoneNumA: 45, zoneNameA: 60, zoneSpentA: 55, calloutA: 80, capPct: 0, lineLbl: 11, prevLbl: 9,
+    bandH: 12, bandRise: 40, bandA: 65, bandRoom: 14, padTop: 1.5, padBot: 2, rightPad: 12, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, zoneLblPos: 'auto', zoneNumA: 45, zoneNameA: 60, zoneSpentA: 55, calloutA: 80, capPct: 0, hillA: 35, doneC: '#5FA886', lineLbl: 11, prevLbl: 9,
     fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, profH: 110, profVeil: 0, profA: 30, sideA: 70, domK: 200, domLine: 100, spentA: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
@@ -75,12 +75,12 @@
       ['calloutA', 'Выноски · непрозрачность, %', 'range', 20, 100, 5]]],
     ['Точки сессий', [['ptA', 'Яркость', 'range', 10, 100], ['ptSize', 'Размер', 'range', 50, 200], ['pastA', 'Прошедшие по часам · яркость', 'range', 5, 100],
       ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10]]],
-    ['Колонка у цены', [['projA', 'Яркость', 'range', 10, 100], ['colSize', 'Размер цифр, %', 'range', 60, 160, 5], ['passedA', 'Прошедшее и невозможное · яркость', 'range', 5, 80]]],
+    ['Колонка у цены', [['doneC', 'Уже проторговано по часам · цвет', 'color'], ['projA', 'Яркость', 'range', 10, 100], ['colSize', 'Размер цифр, %', 'range', 60, 160, 5], ['passedA', 'Прошедшее и невозможное · яркость', 'range', 5, 80]]],
     ['Лента времени', [['stripA', 'Столбики · яркость', 'range', 10, 100], ['bandA', 'Вся лента · непрозрачность, %', 'range', 20, 100],
       ['bandH', 'Высота, % экрана', 'range', 8, 30], ['bandRise', 'Подъём в пустое место, % графика', 'range', 0, 50],
       ['domK', 'Контраст перевеса X/R, %', 'range', 0, 400, 10], ['domLine', 'Контур перевеса, %', 'range', 0, 200, 10],
       ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5],
-      ['capPct', 'Капсулы зон · доля', 'sel', { 0: 'только имя', 1: 'имя и доля' }]]],
+      ['capPct', 'Капсулы зон · доля', 'sel', { 0: 'только имя', 1: 'имя и доля' }], ['hillA', 'Холмы зон · заливка, %', 'range', 0, 150, 5]]],
     ['Масштаб «↺»', [['rightPad', 'Правый край после конца сессии, мин', 'range', 0, 45], ['padTop', 'Запас сверху, %', 'range', 0, 8, 0.5], ['padBot', 'Запас снизу, %', 'range', 0, 8, 0.5], ['bandRoom', 'Место под лентой, % диапазона', 'range', 0, 20]]],
     ['Путь семьи', [['path', 'Клетки · цвет', 'color'], ['heatA', 'Клетки · яркость (одна для всех колонок)', 'range', 20, 400, 10],
       ['profH', 'Профиль полосы · высота, px', 'range', 24, 160], ['profA', 'Профиль полосы · непрозрачность, %', 'range', 5, 100], ['profVeil', 'Вуаль под профилем, %', 'range', 0, 80]]],
@@ -666,6 +666,7 @@
   const hv = () => st.hover || st.pin;
 
   function drawBoxes(c, ctx) {
+    V.boxLbl = [];   // the boxes' names, kept clear of the zone names (drawZones)
     for (const k of ORDER) {
       const s = sess(ctx.D, k, ctx.obs, ctx.live);
       if (s.drH == null || s.status === 'forming' && k !== ctx.s.k) continue;
@@ -686,6 +687,7 @@
       c.fillRect(x0, y0, x1 - x0, y1 - y0);
       c.fillStyle = k === ctx.s.k ? C.text2 : C.text3; c.font = '600 11px ' + FONT; c.textBaseline = 'bottom';
       c.fillText(k, x0 + 2, y0 - 3);
+      V.boxLbl.push([x0, y0 - 17, x0 + 6 + c.measureText(k).width, y0 - 1]);
     }
     // the previous trading day's RDR box (09:30-10:30 yesterday), quiet, when its candles are on the screen
     if (PREV && ctx.D.bars.some(b => b.t >= PREV.start && b.t < PREV.formed)) {
@@ -1260,7 +1262,9 @@
       // colour; a possible zone loses the passed part of its window; an impossible one is spent all over
       const cz = lk.hold ? mixW(cfg[lk.ev], 0.25) : cfg[lk.ev], cs = stateCol(cfg[lk.ev], 'spent');
       const xl = lk.hold ? xa : xs, live = !lk.spent && xb > xl;
-      if (xl > xa || lk.spent) { c.fillStyle = rgba(cs, 0.12); c.fillRect(xa, ya, (lk.spent ? xb : xl) - xa, yb - ya); }
+      // the passed part of a possible zone's window is GREEN (already traded by the clock); an impossible zone grey
+      if (lk.spent) { c.fillStyle = rgba(cs, 0.12); c.fillRect(xa, ya, xb - xa, yb - ya); }
+      else if (xl > xa) { c.fillStyle = rgba(cfg.doneC, 0.16); c.fillRect(xa, ya, xl - xa, yb - ya); }
       if (live) {
         const g = c.createLinearGradient(xl, 0, xb, 0);
         g.addColorStop(0, rgba(cz, 0.18)); g.addColorStop(1, rgba(cz, 0.07));
@@ -1354,7 +1358,7 @@
       const yh = Math.min(...last.map(b => V.Y(b.h))), yl = Math.max(...last.map(b => V.Y(b.l)));
       live.push([V.X(last[0].t) - 6, yh - 28, V.X(last[last.length - 1].t + 5) + 64, yl + 28]);
     }
-    const pills = V.pills || [];
+    const pills = (V.pills || []).concat(V.boxLbl || []);
     const cost = r => 4 * live.filter(b => over(r, b)).length + 4 * pills.filter(b => over(r, b)).length + 3 * placed.filter(b => over(r, b)).length + bars.filter(b => over(r, b)).length;
     if (phase === 'under') V.zoneHit = [];
     const env = { placed, live, pills, bars, over };
@@ -1435,22 +1439,32 @@
     const wN = c.measureText(z.label).width, wS = pctW(c, pct(share), lw, fs), wT = wN + 4 + wS, hT = fs;
     let lx = clamp(cx - wT / 2, 4, V.plot.w - 64 - wT), ly = clamp(cy - fs / 2, 30, V.plot.h - hT - 4), out = false;
     const { placed, live, pills, bars, over } = env, R = (x, y) => [x - 2, y - 2, x + wT + 2, y + hT + 2];
-    const hits = r => live.some(b => over(r, b)) || pills.some(b => over(r, b)) || placed.some(b => over(r, b));
+    // any candle under the name counts too (operator 2026-10-06: the first constellations lie on the candles of the first
+    // minutes after the confirmation, not only on the last ones)
+    const hits = r => live.some(b => over(r, b)) || pills.some(b => over(r, b)) || placed.some(b => over(r, b)) || bars.some(b => over(r, b));
     if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
       const sgn = (ev === 'X' ? -1 : 1) * (F.d0 > 0 ? 1 : -1);
       let best = null, bc = 1e9;
-      for (const dx of [34, 64, 100, 145, 200, 260]) for (const dy of [sgn * 26, sgn * 50, sgn * 78, 0, sgn * 110, -sgn * 26]) {
+      for (const dx of [80, 120, 170, 230, 300, 380]) for (const dy of [sgn * 40, sgn * 70, sgn * 100, sgn * 140, 0, -sgn * 40]) {
         const x = cx - dx - wT, y = cy + dy - hT / 2, r = R(x, y);
         if (x < 4 || y < 30 || y + hT > V.plot.h - 4) continue;
-        const cc = 5 * (live.filter(b => over(r, b)).length + pills.filter(b => over(r, b)).length + placed.filter(b => over(r, b)).length) + bars.filter(b => over(r, b)).length + dx / 120 + Math.abs(dy) / 120;
+        const cc = 5 * (live.filter(b => over(r, b)).length + pills.filter(b => over(r, b)).length + placed.filter(b => over(r, b)).length) + bars.filter(b => over(r, b)).length + dx / 300 + Math.abs(dy) / 300;
         if (cc < bc) { bc = cc; best = [x, y]; }
       }
       if (best) { [lx, ly] = best; out = true; }
     }
     placed.push(R(lx, ly));
+    // operator 2026-10-06: zoomed in, a constellation outside the frame keeps its name at the edge with a thin dash-dot
+    // line toward it (as the earlier threads did); a name pushed far from its centre gets the same line
+    const far = !out && (cx < 0 || cx > V.plot.w || cy < 0 || cy > V.plot.h || Math.hypot(clamp(cx, lx, lx + wT) - cx, clamp(cy, ly, ly + hT) - cy) > 24);
     const k = cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1);
     const aName = out ? cfg.calloutA / 100 : cfg.zoneNameA / 100, aNum = out ? cfg.calloutA / 100 * 0.95 : cfg.zoneNumA / 100;
     c.save(); c.globalAlpha = Math.min(1, op);
+    if (far) {
+      const ex = clamp(cx, lx - 3, lx + wT + 3), ey = clamp(cy, ly - 3, ly + hT + 3);
+      c.strokeStyle = rgba(col, 0.45); c.lineWidth = 1; c.setLineDash([6, 3, 1.5, 3]);
+      c.beginPath(); c.moveTo(ex, ey); c.lineTo(cx, cy); c.stroke(); c.setLineDash([]);
+    }
     if (out) {
       const ex = lx + wT + 4, ey = ly + hT / 2;
       c.strokeStyle = rgba(col, 0.5); c.lineWidth = 1; c.setLineDash([6, 3, 1.5, 3]);
@@ -1580,8 +1594,10 @@
       c.beginPath(); c.moveTo(scr[0][0], cy + dir[ev]);
       for (const p of scr) c.lineTo(p[0], p[1]);
       c.lineTo(scr[scr.length - 1][0], cy + dir[ev]); c.closePath();
-      const a = (imp ? 0.05 : s === 'HOLDS' ? 0.5 : 0.38) * (on ? 1.5 : other ? 0.45 : 1);
-      c.save(); c.shadowColor = rgba(col, imp ? 0 : 0.6); c.shadowBlur = on ? 18 : 12; c.fillStyle = rgba(col, Math.min(0.8, a)); c.fill(); c.restore();
+      // operator 2026-10-06: the hills' fill must not drown the columns standing in them — lighter than the columns,
+      // the glow only on the hovered zone (setting «Холмы зон · заливка»)
+      const a = (imp ? 0.05 : s === 'HOLDS' ? 0.5 : 0.38) * (on ? 1.5 : other ? 0.45 : 1) * (on ? 1 : cfg.hillA / 100);
+      c.save(); if (on) { c.shadowColor = rgba(col, 0.6); c.shadowBlur = 18; } c.fillStyle = rgba(col, Math.min(0.8, a)); c.fill(); c.restore();
       c.strokeStyle = rgba(col, imp ? 0.18 : on ? 0.95 : other ? 0.3 : 0.6); c.lineWidth = on ? 1.4 : 1; c.setLineDash(imp ? [3, 4] : []);
       c.beginPath(); scr.forEach((p, j) => j ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.stroke(); c.setLineDash([]);
       V.hills.push({ ev, i: o.i, scr, cy, up: dir[ev] < 0 });
@@ -1809,7 +1825,12 @@
         if (on || inA) a = 1;
         const len = Math.max(2, blen * n / mx), g = Rch.okK(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
-        if (g) { c.fillStyle = rgba(stateCol(cfg[ev], 'spent'), Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8)); c.fillRect(x + la, top + 0.5, len - la, hh); }
+        if (g) {
+          const dead = !Rch.okK(ev, k);
+          c.fillStyle = dead ? rgba(stateCol(cfg[ev], 'spent'), Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8))
+            : rgba(cfg.doneC, Math.min(1, Math.max(0.2, 0.75 * a * cfg.projA / 90 * cfg.passedA / 30)));
+          c.fillRect(x + la, top + 0.5, len - la, hh);
+        }
         V.projBars.push({ ev, k, top, bot, x0: x, x1: x + len });
         const pk = I.peak.has(k);
         if (on || pk || z != null || 100 * n / F.N >= 3) labels.push({ ev, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top });
