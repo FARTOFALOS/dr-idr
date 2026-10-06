@@ -1167,11 +1167,13 @@
         }
         // Historical mass and today's applicability are separate encodings: status may dim/dash a zone, but never
         // removes or resizes its n/N label. This prevents p_snapshot from looking like today's conditional chance.
-        const share = 100 * z.p_snapshot, fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100), sub = s === 'HOLDS' ? 'держится' : '';
-        c.font = '700 12px ' + FONT;
+        // a spent zone's label (operator 2026-10-06): 20 % smaller, not bold, translucent, its plate almost clear, so what lies
+        // under it on the chart (a VI, candles) stays visible
+        const share = 100 * z.p_snapshot, fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), sub = s === 'HOLDS' ? 'держится' : '', lw = imp ? '500 ' : '700 ', nfs = imp ? 10 : 12;
+        c.font = lw + nfs + 'px ' + FONT;
         const wN = c.measureText(z.label).width;
         c.font = '700 ' + fs + 'px ' + FONT;
-        const wS = pctW(c, pct(share), '700 ', fs), wT = wN + 5 + wS + 10, hT = fs + 8 + (sub ? 13 : 0), bb = g.bb;
+        const wS = pctW(c, pct(share), lw, fs), wT = wN + 5 + wS + 10, hT = fs + 8 + (sub ? 13 : 0), bb = g.bb;
         const cands = [[bb[2] - wT + 6, bb[1] - hT - 6], [bb[2] + 10, (bb[1] + bb[3]) / 2 - hT / 2], [bb[2] - wT + 6, bb[3] + 6], [bb[0] - 6, bb[1] - hT - 6], [bb[0] - wT - 10, (bb[1] + bb[3]) / 2 - hT / 2]];
         let best = null;
         for (const q of cands) {
@@ -1184,10 +1186,10 @@
         const [lx, ly] = best, k = cloudK(F, ev, i, h, z), op = k < 1 ? 0.4 + 0.5 * k : 1;
         placed.push([lx, ly, lx + wT, ly + hT]);
         c.save(); c.globalAlpha = op;
-        c.fillStyle = 'rgba(8,9,12,.6)'; roundRect(c, lx, ly, wT, hT, 4); c.fill();
+        c.fillStyle = imp ? 'rgba(8,9,12,.12)' : 'rgba(8,9,12,.6)'; roundRect(c, lx, ly, wT, hT, 4); c.fill();
         c.textBaseline = 'alphabetic';
-        c.font = '700 12px ' + FONT; c.fillStyle = imp ? rgba(col, 0.7) : col; c.fillText(z.label, lx + 5, ly + 4 + fs * 0.86);
-        pctDraw(c, pct(share), lx + 10 + wN, ly + 4 + fs * 0.86, '700 ', fs, imp ? 'rgba(238,241,245,.45)' : '#EEF1F5');
+        c.font = lw + nfs + 'px ' + FONT; c.fillStyle = imp ? rgba(col, 0.55) : col; c.fillText(z.label, lx + 5, ly + 4 + fs * 0.86);
+        pctDraw(c, pct(share), lx + 10 + wN, ly + 4 + fs * 0.86, lw, fs, imp ? 'rgba(200,205,214,.38)' : '#EEF1F5');
         if (sub) { c.font = '600 10.5px ' + FONT; c.fillStyle = col; c.fillText(sub, lx + 5, ly + hT - 5); }
         c.restore();
         V.zoneHit.push({ box: [lx, ly, wT, hT], ev, i, loops: g.hit });
