@@ -1069,11 +1069,12 @@
     if (!F || st.mode !== 'bounds' || !h) return;
     if (h.k === 'zone' && h.ev) {
       const pk = peakAhead(F, ctx, F.ev[h.ev].pts.filter(q => F.zcell[h.ev].get(q.k + '|' + q.b) === h.i), h.ev);
-      if (pk) V.lk = { ev: h.ev, x: pk.x, y: pk.y, b: pk.b, n: pk.n, past: pk.past };
+      const ks = F.zones[h.ev] && F.zones[h.ev].zones[h.i] ? F.zones[h.ev].zones[h.i].cell_mask.map(q => q[0]) : [];
+      if (pk) V.lk = { ev: h.ev, x: pk.x, y: pk.y, b: pk.b, n: pk.n, past: pk.past, k0: ks.length ? Math.min(...ks) : null, k1: ks.length ? Math.max(...ks) + 1 : null };
     } else if (h.k === 'pcell' && h.ev) {
       const yc = (V.Y(F.u2p(h.k0 / 10)) + V.Y(F.u2p(h.k1 / 10))) / 2;
       const pk = peakAhead(F, ctx, F.ev[h.ev].pts.filter(q => q.k >= h.k0 && q.k < h.k1), h.ev, yc);
-      if (pk) V.lk = { ev: h.ev, x: pk.x, y: yc, b: pk.b, n: pk.n, past: pk.past };
+      if (pk) V.lk = { ev: h.ev, x: pk.x, y: yc, b: pk.b, n: pk.n, past: pk.past, k0: h.k0, k1: h.k1 };
     }
     if (V.lk) { const t0 = F.f + 15 * V.lk.b; V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1: t0 + 15, col: V.lk.past ? '#F23645' : cfg[V.lk.ev] }); }
   }
@@ -1087,15 +1088,23 @@
   function drawLink(c, ctx) {
     const lk = V.lk;
     if (!lk) return;
-    const F = ctx.F, col = lk.past ? '#F23645' : cfg[lk.ev], t0 = F.f + 15 * lk.b, xa = V.X(t0), xb = V.X(t0 + 15), yb = V.plot.h;
-    const g = c.createLinearGradient(0, lk.y, 0, yb);
-    g.addColorStop(0, rgba(col, 0.03)); g.addColorStop(1, rgba(col, 0.15));
-    c.fillStyle = g; c.fillRect(xa, lk.y, xb - xa, yb - lk.y);
-    c.strokeStyle = rgba(col, 0.45); c.lineWidth = 1; c.setLineDash([3, 3]);
-    c.beginPath(); for (const x of [xa, xb]) { c.moveTo(Math.round(x) + 0.5, lk.y); c.lineTo(Math.round(x) + 0.5, yb); } c.stroke(); c.setLineDash([]);
+    // operator 2026-10-06: the time × price cluster shows on the constellation itself — a soft box over the zone's (or
+    // band's) prices on its peak 15 minutes, its time written above — instead of a column down to the time band
+    const F = ctx.F, col = lk.past ? '#F23645' : cfg[lk.ev], t0 = F.f + 15 * lk.b, xa = V.X(t0), xb = V.X(t0 + 15);
+    if (lk.k0 != null) {
+      const [ya, yb] = cellY(F, lk.k0, lk.k1);
+      const g = c.createLinearGradient(xa, 0, xb, 0);
+      g.addColorStop(0, rgba(col, 0.06)); g.addColorStop(0.5, rgba(col, 0.16)); g.addColorStop(1, rgba(col, 0.06));
+      c.fillStyle = g; c.fillRect(xa, ya, xb - xa, yb - ya);
+      c.strokeStyle = rgba(col, 0.55); c.lineWidth = 1; c.setLineDash([3, 3]);
+      c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xa) - 1), Math.max(2, Math.round(yb - ya) - 1)); c.setLineDash([]);
+      c.save(); c.font = '600 10.5px ' + FONT; c.fillStyle = col; c.textAlign = 'center'; c.textBaseline = 'bottom'; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 3;
+      c.fillText((lk.past ? 'было ' : '') + clk(t0) + '–' + clk(t0 + 15), (xa + xb) / 2, Math.max(12, ya - 3)); c.restore();
+    }
     c.save(); c.shadowColor = rgba(col, 0.7); c.shadowBlur = 8; c.strokeStyle = col; c.lineWidth = 1.6;
     c.beginPath(); c.arc(lk.x, lk.y, 7, 0, 6.2832); c.stroke(); c.restore();
   }
+
   // the selected area (spec §7.1): the bracket right of the block end spans the WHOLE price band and carries the band's
   // share of the event; a band x time window is a frame carrying its own joint share; a time window is a column
   function drawArea(c, ctx) {
@@ -1155,8 +1164,9 @@
         const col = stateCol(col0, S[i]);
         const z = g.z, s = S[i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === i);
         if (on || imp) { c.save(); c.strokeStyle = rgba(col, on ? 0.6 : 0.3); c.lineWidth = 1; c.setLineDash(imp ? [4, 3] : []); loopsPath(c, g.ln); c.stroke(); c.restore(); }
-        if (on) {
-          // the zone itself: its exact region of cells, quietly (the constellation is only its drawing)
+        if (on && false) {
+          // the zone's exact cells are no longer outlined on hover (operator 2026-10-06: «прямоугольники с точками — не
+          // нужно»); membership is still its cells (cell_mask), the time × price cluster is drawn by drawLink
           const set = new Set(z.cell_mask.map(([k, b]) => k + '|' + b)), up = F.u2p(0.1) > F.u2p(0);
           c.save(); c.strokeStyle = rgba(col, 0.32); c.lineWidth = 1; c.setLineDash([1.5, 2.5]); c.beginPath();
           for (const [k, b] of z.cell_mask) {
