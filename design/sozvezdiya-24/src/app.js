@@ -42,7 +42,7 @@
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
     boxFill: 'grad', boxA: 45, prevA: 46,
-    bandH: 10, bandRise: 20, bandA: 65, bandRoom: 7, padTop: 1.5, padBot: 2, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, zoneLblPos: 'in', zoneNumA: 45, zoneNameA: 60, zoneSpentA: 55, zoneSub: 0, lineLbl: 11, prevLbl: 9,
+    bandH: 12, bandRise: 40, bandA: 65, bandRoom: 14, padTop: 1.5, padBot: 2, capA: 100, capTxt: 100, colSize: 100, passedA: 30, zoneLbl: 100, zoneLblPos: 'auto', zoneNumA: 45, zoneNameA: 60, zoneSpentA: 55, calloutA: 80, capPct: 0, lineLbl: 11, prevLbl: 9,
     fracLbl: 8.5, fracLine: 16, prevDayA: 45, midnightA: 55, pathA: 100, profH: 110, profVeil: 0, profA: 30, sideA: 70, domK: 200, domLine: 100, spentA: 100, viC: '#F29A38', vibA: 20, vibNQ: 0, vibES: 0, vibYM: 0, upC: '#089981', dnC: '#F23645', bg: '#08090C'
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
@@ -59,23 +59,27 @@
   if (!cfg.prof0) { cfg.profVeil = 0; cfg.prof0 = 1; }
   // operator 2026-10-06: the candles take the most height; the time band lower, shorter, more transparent (set once)
   if (!cfg.z2) { cfg.bandH = DEF.bandH; cfg.bandRise = DEF.bandRise; cfg.z2 = 1; }
+  // operator 2026-10-06 (later): the band's columns tall again, filling the free space down from the DR low; the zone
+  // names by the price led out to the left (set once)
+  if (!cfg.z3) { cfg.bandH = DEF.bandH; cfg.bandRise = DEF.bandRise; cfg.bandRoom = DEF.bandRoom; cfg.zoneLblPos = DEF.zoneLblPos; cfg.z3 = 1; }
   const saveCfg = () => { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* not kept */ } };
   // operator 2026-10-06: the settings grouped by the element of the screen, each group folds (its state kept in the
   // browser), so the trader finds a setting by what he sees
   const SCHEMA = [
     ['Созвездия · цвет и дымка', [['R', 'Откат R · цвет', 'color'], ['X', 'Продолжение X · цвет', 'color'],
       ['cloudA', 'Дымка', 'range', 20, 200], ['threadA', 'Нити', 'range', 0, 300], ['spentA', 'Отработанные · яркость дымки, %', 'range', 20, 200, 10]]],
-    ['Созвездия · подписи', [['zoneLblPos', 'Место подписи', 'sel', { in: 'внутри, под свечами', side: 'рядом' }],
+    ['Созвездия · подписи', [['zoneLblPos', 'Место подписи', 'sel', { auto: 'внутри; у цены — выноской влево', in: 'всегда внутри', side: 'рядом' }],
       ['zoneLbl', 'Размер, %', 'range', 60, 160, 5], ['zoneNumA', 'Проценты · непрозрачность, %', 'range', 10, 100, 5],
       ['zoneNameA', 'Имя зоны · непрозрачность, %', 'range', 10, 100, 5], ['zoneSpentA', 'Отработанные · непрозрачность, %', 'range', 10, 100, 5],
-      ['zoneSub', 'Слово «держится»', 'sel', { 0: 'скрыть', 1: 'показывать' }]]],
+      ['calloutA', 'Выноски · непрозрачность, %', 'range', 20, 100, 5]]],
     ['Точки сессий', [['ptA', 'Яркость', 'range', 10, 100], ['ptSize', 'Размер', 'range', 50, 200], ['pastA', 'Прошедшие по часам · яркость', 'range', 5, 100],
       ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10]]],
     ['Колонка у цены', [['projA', 'Яркость', 'range', 10, 100], ['colSize', 'Размер цифр, %', 'range', 60, 160, 5], ['passedA', 'Прошедшее и невозможное · яркость', 'range', 5, 80]]],
     ['Лента времени', [['stripA', 'Столбики · яркость', 'range', 10, 100], ['bandA', 'Вся лента · непрозрачность, %', 'range', 20, 100],
       ['bandH', 'Высота, % экрана', 'range', 8, 30], ['bandRise', 'Подъём в пустое место, % графика', 'range', 0, 50],
       ['domK', 'Контраст перевеса X/R, %', 'range', 0, 400, 10], ['domLine', 'Контур перевеса, %', 'range', 0, 200, 10],
-      ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5]]],
+      ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5],
+      ['capPct', 'Капсулы зон · доля', 'sel', { 0: 'только имя', 1: 'имя и доля' }]]],
     ['Масштаб «↺»', [['padTop', 'Запас сверху, %', 'range', 0, 8, 0.5], ['padBot', 'Запас снизу, %', 'range', 0, 8, 0.5], ['bandRoom', 'Место под лентой, % диапазона', 'range', 0, 20]]],
     ['Путь семьи', [['path', 'Клетки · цвет', 'color'], ['heatA', 'Клетки · яркость (одна для всех колонок)', 'range', 20, 400, 10],
       ['profH', 'Профиль полосы · высота, px', 'range', 24, 160], ['profA', 'Профиль полосы · непрозрачность, %', 'range', 5, 100], ['profVeil', 'Вуаль под профилем, %', 'range', 0, 80]]],
@@ -1134,16 +1138,25 @@
       return;
     }
     if (st.mode !== 'bounds') return;
+    // operator 2026-10-06: «до какого времени этот кластер валидный?» — a hovered zone shows its WHOLE time window (the
+    // 15-minute cells it covers) over its prices: the part already passed in the spent shade, the part still ahead in its
+    // colour, the slice between them; the axis window names the whole window. No peak, no ring, no red: the zone's status
+    // (держится / возможна / невозможна) and its window can no longer read as two contradicting answers
     if (h.k === 'zone' && h.ev) {
-      const pk = peakAhead(F, ctx, F.ev[h.ev].pts.filter(q => F.zcell[h.ev].get(q.k + '|' + q.b) === h.i), h.ev);
-      const ks = F.zones[h.ev] && F.zones[h.ev].zones[h.i] ? F.zones[h.ev].zones[h.i].cell_mask.map(q => q[0]) : [];
-      if (pk) V.lk = { ev: h.ev, x: pk.x, y: pk.y, b: pk.b, n: pk.n, past: pk.past, k0: ks.length ? Math.min(...ks) : null, k1: ks.length ? Math.max(...ks) + 1 : null };
+      const z = F.zones[h.ev] && F.zones[h.ev].zones[h.i];
+      if (z) {
+        const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = F.f + 15 * Math.min(...bs), t1 = F.f + 15 * (Math.max(...bs) + 1);
+        const look = zoneLook(F, ctx, h.ev)[h.i], spent = look === 'IMPOSSIBLE';
+        V.lk = { ev: h.ev, src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS' };
+        V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg[h.ev], 'spent') : cfg[h.ev] });
+      }
+      return;
     } else if (h.k === 'pcell' && h.ev) {
       const yc = (V.Y(F.u2p(h.k0 / 10)) + V.Y(F.u2p(h.k1 / 10))) / 2;
       const pk = peakAhead(F, ctx, F.ev[h.ev].pts.filter(q => q.k >= h.k0 && q.k < h.k1), h.ev, yc);
       if (pk) V.lk = { ev: h.ev, x: pk.x, y: yc, b: pk.b, n: pk.n, past: pk.past, k0: h.k0, k1: h.k1, src: 'pcell' };
     }
-    if (V.lk) { const t0 = F.f + 15 * V.lk.b; V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1: t0 + 15, col: V.lk.past ? '#F23645' : cfg[V.lk.ev] }); }
+    if (V.lk && V.lk.b != null) { const t0 = F.f + 15 * V.lk.b; V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1: t0 + 15, col: V.lk.past ? '#F23645' : cfg[V.lk.ev] }); }
   }
   // a cell of the six windows under the mouse, framed on the main chart: its price band × its time (operator 2026-10-06)
   function drawMini(c, ctx) {
@@ -1234,6 +1247,24 @@
     // operator 2026-10-06: the time × price cluster shows on the constellation itself — a soft box over the zone's (or
     // band's) prices on its peak 15 minutes, its time written above — instead of a column down to the time band
     const F = ctx.F, col = lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
+    if (lk.src === 'zone') {
+      const [y0, y1] = cellY(F, lk.k0, lk.k1), ya = Math.min(y0, y1), yb = Math.max(y0, y1), xs = clamp(V.X(lk.sl), xa, xb);
+      // a zone that holds today's extreme is today's answer so far, whatever the clock: its whole window in its (lighter)
+      // colour; a possible zone loses the passed part of its window; an impossible one is spent all over
+      const cz = lk.hold ? mixW(cfg[lk.ev], 0.25) : cfg[lk.ev], cs = stateCol(cfg[lk.ev], 'spent');
+      const xl = lk.hold ? xa : xs, live = !lk.spent && xb > xl;
+      if (xl > xa || lk.spent) { c.fillStyle = rgba(cs, 0.12); c.fillRect(xa, ya, (lk.spent ? xb : xl) - xa, yb - ya); }
+      if (live) {
+        const g = c.createLinearGradient(xl, 0, xb, 0);
+        g.addColorStop(0, rgba(cz, 0.18)); g.addColorStop(1, rgba(cz, 0.07));
+        c.fillStyle = g; c.fillRect(xl, ya, xb - xl, yb - ya);
+      }
+      c.setLineDash([3, 3]); c.lineWidth = 1;
+      c.strokeStyle = rgba(cs, 0.55); c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xa) - 1), Math.max(2, Math.round(yb - ya) - 1));
+      if (live) { c.strokeStyle = rgba(cz, 0.75); c.strokeRect(Math.round(xl) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xl) - 1), Math.max(2, Math.round(yb - ya) - 1)); }
+      c.setLineDash([]);
+      return;
+    }
     if (lk.row && lk.k0 != null) { drawBandProfile(c, ctx, lk, 'top'); return; }
     // operator 2026-10-06 (third look): no time written over the chart — the time is on the axis window; a band of the
     // price column hovered → its peak 15 minutes as a soft column with two dashed edges down to the time band (as it was
@@ -1303,7 +1334,7 @@
   // phase 'under' (before the candles): the zone names inside their constellations (operator 2026-10-06, zoneLblPos 'in');
   // phase 'over' (after the candles): outlines of the hovered / impossible zones and the names beside (zoneLblPos 'side')
   function drawZones(c, ctx, phase) {
-    const F = ctx.F, inside = cfg.zoneLblPos === 'in';
+    const F = ctx.F, inside = cfg.zoneLblPos !== 'side';
     if (phase === 'under') V.zoneHit = null;
     if (!st.L.zones || st.mode !== 'bounds') return;
     const CL = cloudsOf(F), h = hv(), placed = [], used = ctx.live ? NOW + 5 : ctx.obs;
@@ -1319,13 +1350,14 @@
     const pills = V.pills || [];
     const cost = r => 4 * live.filter(b => over(r, b)).length + 4 * pills.filter(b => over(r, b)).length + 3 * placed.filter(b => over(r, b)).length + bars.filter(b => over(r, b)).length;
     if (phase === 'under') V.zoneHit = [];
+    const env = { placed, live, pills, bars, over };
     for (const ev of ['X', 'R']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
       CL[ev].forEach((g, i) => {
         if (!g) return;
         const col = stateCol(col0, S[i]);
         const z = g.z, s = S[i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === i);
-        if (phase === 'under') { if (inside) zoneMark(c, ctx, F, ev, i, g, z, s, col, h); return; }
+        if (phase === 'under') { if (inside) zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env); return; }
         if (on || imp) { c.save(); c.strokeStyle = rgba(col, on ? 0.6 : 0.3); c.lineWidth = 1; c.setLineDash(imp ? [4, 3] : []); loopsPath(c, g.ln); c.stroke(); c.restore(); }
         if (on && false) {
           // the zone's exact cells are no longer outlined on hover (operator 2026-10-06: «прямоугольники с точками — не
@@ -1346,7 +1378,7 @@
         // removes or resizes its n/N label. This prevents p_snapshot from looking like today's conditional chance.
         // a spent zone's label (operator 2026-10-06): 20 % smaller, not bold, translucent, its plate almost clear, so what lies
         // under it on the chart (a VI, candles) stays visible
-        const share = 100 * z.p_snapshot, fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), sub = s === 'HOLDS' && cfg.zoneSub ? 'держится' : '', lw = imp ? '500 ' : '700 ', nfs = imp ? 10 : 12;
+        const share = 100 * z.p_snapshot, fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), sub = '', lw = imp ? '500 ' : '700 ', nfs = imp ? 10 : 12;
         c.font = lw + nfs + 'px ' + FONT;
         const wN = c.measureText(z.label).width;
         c.font = '700 ' + fs + 'px ' + FONT;
@@ -1381,22 +1413,47 @@
   // The zone's name and share n/N stand at the centre of its stars, drawn UNDER the candles (candles always on top), in the
   // zone's own colour, translucent, no shadow. Size grows with the share as before (entry 12); a spent zone 20 % smaller
   // and dimmer (entry 31); «держится» only if switched on. All of it in ⚙ «Созвездия · подписи».
-  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h) {
+  // operator 2026-10-06 (later): the first constellations sit right at the confirmation, where the candles of the
+  // first minutes pile up; their names there make a heap. A name that would cover the last candles (and the room just
+  // after them), the confirmation pill or another name is led out to the LEFT — into the past, never over the time
+  // ahead — on a thin dash-dot line from a small ring at the constellation's centre: X toward the side of the
+  // confirmation, R away from it, each to the least crowded place. The others stay inside, as a background.
+  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env) {
     const imp = s === 'IMPOSSIBLE', share = 100 * z.p_snapshot;
     const ps = F.ev[ev].pts.filter(q => F.zcell[ev].get(q.k + '|' + q.b) === i);
     let cx = (g.bb[0] + g.bb[2]) / 2, cy = (g.bb[1] + g.bb[3]) / 2;
     if (ps.length) { cx = ps.reduce((a, q) => a + V.X(q.t + 2.5), 0) / ps.length; cy = ps.reduce((a, q) => a + V.Y(q.p), 0) / ps.length; }
     const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
-    const sub = s === 'HOLDS' && cfg.zoneSub ? 'держится' : '';
     c.font = lw + nfs + 'px ' + FONT;
-    const wN = c.measureText(z.label).width, wS = pctW(c, pct(share), lw, fs), wT = wN + 4 + wS, hT = fs + (sub ? 12 : 0);
-    const lx = clamp(cx - wT / 2, 4, V.plot.w - 112 - wT), ly = clamp(cy - fs / 2, 30, V.plot.h - hT - 4);
+    const wN = c.measureText(z.label).width, wS = pctW(c, pct(share), lw, fs), wT = wN + 4 + wS, hT = fs;
+    let lx = clamp(cx - wT / 2, 4, V.plot.w - 112 - wT), ly = clamp(cy - fs / 2, 30, V.plot.h - hT - 4), out = false;
+    const { placed, live, pills, bars, over } = env, R = (x, y) => [x - 2, y - 2, x + wT + 2, y + hT + 2];
+    const hits = r => live.some(b => over(r, b)) || pills.some(b => over(r, b)) || placed.some(b => over(r, b));
+    if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
+      const sgn = (ev === 'X' ? -1 : 1) * (F.d0 > 0 ? 1 : -1);
+      let best = null, bc = 1e9;
+      for (const dx of [34, 64, 100, 145, 200, 260]) for (const dy of [sgn * 26, sgn * 50, sgn * 78, 0, sgn * 110, -sgn * 26]) {
+        const x = cx - dx - wT, y = cy + dy - hT / 2, r = R(x, y);
+        if (x < 4 || y < 30 || y + hT > V.plot.h - 4) continue;
+        const cc = 5 * (live.filter(b => over(r, b)).length + pills.filter(b => over(r, b)).length + placed.filter(b => over(r, b)).length) + bars.filter(b => over(r, b)).length + dx / 120 + Math.abs(dy) / 120;
+        if (cc < bc) { bc = cc; best = [x, y]; }
+      }
+      if (best) { [lx, ly] = best; out = true; }
+    }
+    placed.push(R(lx, ly));
     const k = cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1);
-    c.save(); c.globalAlpha = Math.min(1, op); c.textBaseline = 'alphabetic';
+    const aName = out ? cfg.calloutA / 100 : cfg.zoneNameA / 100, aNum = out ? cfg.calloutA / 100 * 0.95 : cfg.zoneNumA / 100;
+    c.save(); c.globalAlpha = Math.min(1, op);
+    if (out) {
+      const ex = lx + wT + 4, ey = ly + hT / 2;
+      c.strokeStyle = rgba(col, 0.5); c.lineWidth = 1; c.setLineDash([6, 3, 1.5, 3]);
+      c.beginPath(); c.moveTo(cx, cy); c.lineTo(ex, ey); c.stroke(); c.setLineDash([]);
+      c.strokeStyle = rgba(col, 0.85); c.lineWidth = 1.2; c.beginPath(); c.arc(cx, cy, 3.5, 0, 6.2832); c.stroke();
+    }
+    c.textBaseline = 'alphabetic';
     const yb = ly + fs * 0.86;
-    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, cfg.zoneNameA / 100); c.fillText(z.label, lx, yb);
-    pctDraw(c, pct(share), lx + wN + 4, yb, lw, fs, rgba(mixW(col, 0.35), cfg.zoneNumA / 100));
-    if (sub) { c.font = '600 ' + Math.max(8, nfs - 1) + 'px ' + FONT; c.fillStyle = rgba(col, cfg.zoneNameA / 100); c.fillText(sub, lx, ly + hT); }
+    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, aName); c.fillText(z.label, lx, yb);
+    pctDraw(c, pct(share), lx + wN + 4, yb, lw, fs, rgba(mixW(col, 0.35), aNum));
     c.restore();
     V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 6], ev, i, loops: g.hit });
   }
@@ -1544,9 +1601,9 @@
       c.textBaseline = 'middle';
       let x = x0 + 9;
       c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(col, Math.min(1, (imp ? 0.45 : 0.85 + 0.15 * r) * cfg.capTxt / 100)); c.fillText(o.z.label, x, y0 + LH / 2 + 0.5); x += c.measureText(o.z.label).width + 6;
-      const sh = pct(100 * o.z.p_snapshot), sfs = imp ? 10.5 : 10.5 + 1.5 * r;
-      pctDraw(c, sh, x, y0 + LH / 2 + 0.5, '700 ', sfs, imp ? rgba('#8C929D', Math.min(1, 0.55 * cfg.capTxt / 100)) : rgba('#EEF1F5', Math.min(1, (0.8 + 0.2 * r) * cfg.capTxt / 100))); x += pctW(c, sh, '700 ', sfs) + 7;
-      if (hold) { c.font = '600 9.5px ' + FONT; c.fillStyle = col; c.fillText(ZST[s], x, y0 + LH / 2 + 0.5); }
+      // operator 2026-10-06: the share is on the constellation, the capsule carries only the zone's name and its time
+      // window (the share back with «Капсулы зон · доля»); no status word, the status is the capsule's look
+      if (+cfg.capPct) { const sh = pct(100 * o.z.p_snapshot), sfs = imp ? 10.5 : 10.5 + 1.5 * r; pctDraw(c, sh, x, y0 + LH / 2 + 0.5, '700 ', sfs, imp ? rgba('#8C929D', Math.min(1, 0.55 * cfg.capTxt / 100)) : rgba(mixW(cfg[ev], 0.35), Math.min(1, (0.8 + 0.2 * r) * cfg.capTxt / 100))); }
       c.restore();
       V.caps.push({ ev, i: o.i, box: [x0, y0, w, LH] });
     }
@@ -2116,6 +2173,16 @@
     }
     return out;
   }
+  // the zone's time window against the slice, in words (the inspector, not the chart)
+  function winLine(F, ctx, ev, look, w0, w1) {
+    if (!ctx) return '';
+    const sl = sliceOf(ctx), spent = stateCol(cfg[ev], 'spent'), w = clk(w0) + '–' + clk(w1);
+    if (look === 'HOLDS') return '<div class="il" style="color:' + cfg[ev] + '">окно зоны ' + w + (sl >= w1 ? ' прошло' : '') + ' · сегодняшний ' + ev + ' сейчас в этой зоне</div>';
+    if (sl >= w1) return '<div class="il" style="color:' + spent + '">окно зоны ' + w + ' закончилось</div>';
+    if (look === 'IMPOSSIBLE') return '<div class="il" style="color:' + spent + '">окно зоны ' + w + ' · сегодня зона уже невозможна</div>';
+    if (sl < w0) return '<div class="il" style="color:' + cfg[ev] + '">окно зоны ' + w + ' · ещё не началось</div>';
+    return '<div class="il" style="color:' + cfg[ev] + '">окно зоны ' + w + ' · действует ещё ' + (w1 - sl) + ' мин</div>';
+  }
   function zoneTip(F, ctx, h) {
     const Zm = F.zones[h.ev], z = Zm && Zm.zones[h.i];
     if (!z) return '';
@@ -2129,8 +2196,8 @@
     return '<div class="ih"><span style="color:' + cfg[h.ev] + '">' + z.label + '</span> · ' + F.names[h.ev].toLowerCase() + ' · ' + clk(z.time_start) + '–' + clk(z.time_end) + '<span class="zs zs-' + s + '">' + ZST[s] + '</span></div>' +
       '<div class="is">' + band(z.price_low, z.price_high) + ' SD · ' + px(Math.min(q0, q1)) + '–' + px(Math.max(q0, q1)) + '</div>' +
       '<div class="ibig" style="color:' + cfg[h.ev] + '">' + ppTxt(p) + '<span>семьи в этой зоне</span></div>' +
-      (s === 'POSSIBLE' && look === 'IMPOSSIBLE' ? '<div class="il" style="color:#F23645">окно зоны прошло: впереди 0 сессий зоны</div>' : '') +
-      (lkz ? '<div class="il" style="color:' + (lkz.past ? '#F23645' : cfg[h.ev]) + '">' + (lkz.past ? 'уже прошло · пиковые 15 минут ' : 'у семьи впереди · пиковые 15 минут ') + clk(F.f + 15 * lkz.b) + '–' + clk(F.f + 15 * lkz.b + 15) + ' · ' + pct(100 * lkz.n / F.N) + ' семьи</div>' : '') +
+      winLine(F, ctx, h.ev, look, F.f + 15 * b0, F.f + 15 * b1) +
+      (lkz && !lkz.past && look !== 'IMPOSSIBLE' ? '<div class="il" style="color:' + cfg[h.ev] + '">у семьи впереди · пиковые 15 минут ' + clk(F.f + 15 * lkz.b) + '–' + clk(F.f + 15 * lkz.b + 15) + ' · ' + pct(100 * lkz.n / F.N) + ' семьи</div>' : '') +
       '<div class="iq">в окне ' + clk(F.f + 15 * b0) + '–' + clk(F.f + 15 * b1) + ' свой экстремум поставили</div>' + twoBars(F, nX, nR, h.ev) +
       ifoot(F, ' · не шанс на сегодня');
   }
