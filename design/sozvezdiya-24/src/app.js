@@ -1099,7 +1099,9 @@
         const pk = best || bestPast;
         if (pk) {
           const [ya, yb] = cellY(F, k, k + 1);
-          V.lk = { ev: 'path', col: cfg.path, t0: pk.cd.T - 5, t1: pk.cd.T, k0: k, k1: k + 1, x: V.X(pk.cd.T - 2.5), y: (ya + yb) / 2, n: pk.n, past: !best };
+          // the band's whole time row (operator 2026-10-06: «нажимаю на кластер — загорается время, за которое он отвечает»)
+          const row = film.map(cd => ({ t0: cd.T - 5, t1: cd.T, n: (cd.cells.get(k) || []).length, past: cd.T <= sl })).filter(q => q.n);
+          V.lk = { ev: 'path', col: cfg.path, t0: pk.cd.T - 5, t1: pk.cd.T, k0: k, k1: k + 1, x: V.X(pk.cd.T - 2.5), y: (ya + yb) / 2, n: pk.n, past: !best, row };
           V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0: V.lk.t0, t1: V.lk.t1, col: V.lk.past ? '#F23645' : cfg.path });
         }
       }
@@ -1130,6 +1132,12 @@
     // operator 2026-10-06: the time × price cluster shows on the constellation itself — a soft box over the zone's (or
     // band's) prices on its peak 15 minutes, its time written above — instead of a column down to the time band
     const F = ctx.F, col = lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
+    if (lk.row && lk.k0 != null) {
+      // «Путь семьи»: every M5 of the hovered band lit by how often the family closed there then (each column its own
+      // 100 %); ahead bright, passed dim
+      const [ra, rb] = cellY(F, lk.k0, lk.k1), mxr = Math.max(1, ...lk.row.map(q => q.n));
+      for (const q of lk.row) { c.fillStyle = rgba(cfg.path, (0.1 + 0.75 * q.n / mxr) * (q.past ? 0.35 : 1)); c.fillRect(V.X(q.t0), ra, Math.max(1, V.X(q.t1) - V.X(q.t0)), rb - ra); }
+    }
     if (lk.k0 != null) {
       const [ya, yb] = cellY(F, lk.k0, lk.k1);
       const g = c.createLinearGradient(xa, 0, xb, 0);
