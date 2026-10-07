@@ -49,11 +49,12 @@ shown. Any date of 2006–2025 opens as if it were today («История»); c
    change of these profiles. Its machine form: **`contract/`** (start at `contract/README.md`), enforced by
    `lab/contract.py` and by screen 24. The text is the source of truth; where `contract/` disagrees with it,
    `contract/` is the defect. Do not edit the contract file (it is pinned by SHA-256); a new edition is the operator's.
-3. **The profile definitions it formalises:** DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`), the zone map
+3. **DR-LAB-SWPC-1.1** — `spec/DR-LAB-SWPC-1.1.md`, the operator-authorized implementation target for the visual presentation of screen 24. It sits between SC-1.1 meaning and the frontend: required operator discriminations, PresentationBindings, permitted/forbidden visual channels, M01–M18 machine obligations and H01–H12 perceptual acceptance tasks. It does **not** create C2/C3 or pre-accept the future UI; after implementation the operator performs the H tasks and accepts/rejects the view.
+4. **The profile definitions it formalises:** DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`), the zone map
    zone-map-3 (`meaning/12-karta-zon.md`), today's two axes (`meaning/14-vperedi-i-proshlo.md`), DR-LAB-NOW-1.0
    (`meaning/lens/2026-10-06-now-1.0/`, `meaning/15-sloj-seichas.md`; matchers, thresholds and gates frozen). Summaries:
    `meaning/10-dizajn-24.md`, `docs/SEMANTICS.md` (section «Дизайн 24»), `spec/ekran-24/` (every element of the screen).
-4. **Legacy surfaces stay outside SC-1.1 for now** (operator, 2026-10-07): design 22 at `/22/`, the classic screen
+5. **Legacy surfaces stay outside SC-1.1 for now** (operator, 2026-10-07): design 22 at `/22/`, the classic screen
    `/classic.html`, the research dashboard (`/api/query`, `/api/scene`), design 23 at `/sem-v1/`. Their own
    definitions are in `docs/SEMANTICS.md` (earlier sections); every response of theirs is marked
    `X-DR-Lab-Contract: …status=OUTSIDE_SC11`, and no SC-1.1 estimand may take their numbers as input.
@@ -63,13 +64,14 @@ shown. Any date of 2006–2025 opens as if it were today («История»); c
 0. `meaning/README.md` — the semantic layer (Russian, no code): what the numbers mean, the evidence, open questions.
 1. `AGENTS.md` — this file: what is normative, map, hard rules, how to verify, gotchas.
 2. `contract/README.md` — the machine contract: what it enforces, how to change it without breaking the screen.
-3. `meaning/10-dizajn-24.md`, then `spec/ekran-24/README.md` — screen 24: where every percentage comes from.
-4. `docs/ARCHITECTURE.md` — the stack, processes, data flow, API, the contract gate.
-5. `docs/SEMANTICS.md` — exact definitions of every object and number (section «Дизайн 24» for the working screen).
-6. `docs/UI_RULES.md` and `meaning/13-zhurnal-vizualizacii.md` — the operator's interface requirements.
-7. `docs/DECISIONS.md` — dated decisions and where they came from.
-8. `docs/RESEARCH.md` — what has been measured, what is not established.
-9. `docs/STRATEGY.md` — the DR/IDR method itself, formalized from the author's 156 videos and streams (Russian), what
+3. `spec/DR-LAB-SWPC-1.1.md` — current visual implementation target: what the trader must distinguish, what may attract attention, and how the result must be tested.
+4. `meaning/10-dizajn-24.md`, then `spec/ekran-24/README.md` — screen 24: where every percentage comes from.
+5. `docs/ARCHITECTURE.md` — the stack, processes, data flow, API, the contract gate.
+6. `docs/SEMANTICS.md` — exact definitions of every object and number (section «Дизайн 24» for the working screen).
+7. `docs/UI_RULES.md` and `meaning/13-zhurnal-vizualizacii.md` — the operator's interface requirements.
+8. `docs/DECISIONS.md` — dated decisions and where they came from.
+9. `docs/RESEARCH.md` — what has been measured, what is not established.
+10. `docs/STRATEGY.md` — the DR/IDR method itself, formalized from the author's 156 videos and streams (Russian), what
    our tape confirms (`studies/m7_claims.py`) and the decisions still open. `docs/DR_RULES_WEB.md` is an independent
    cross-check against public sources only.
 
@@ -88,6 +90,7 @@ shown. Any date of 2006–2025 opens as if it were today («История»); c
   (`lab/contract.py`), the page's contract layer, `tests/contract_sc11.py`. On screen only the words of «Сейчас»
   changed — the operator's: «В истории: R позже углублялся… / Если углублялся…», symmetric for X (K33: a historical
   share never speaks of today in forecast grammar) — and the order window got its «нет периода» row.
+- **Visual implementation target DR-LAB-SWPC-1.1** (2026-10-07): the operator authorized the next stage — implement the closed PresentationBindings and M01–M18 on the existing screen 24. Until H01–H12 are run with the operator, the resulting view is `PERCEPTUALLY_UNVERIFIED`; implementation permission is not perceptual acceptance.
 - **Open** (`meaning/05-otkrytye-voprosy.md`): what to develop next (О20: sequences, conditional forecasts, design);
   NOW-1.1 (a distance-from-extreme matcher, the operator decides); the zone map's prospective acceptance on sessions
   after 2025 (О23, О24: the 2026 tape stays closed); SC-1.1 for the legacy surfaces.
@@ -125,7 +128,9 @@ lab/
                           classic.html + app.js + live.js + styles.css (the classic screen, legacy)
   .runtime/               git-ignored: built history, live candles, server logs, NOW validation
 design/sozvezdiya-24/src  screen 24's source (app.js, panel.js, page.html, panel.css; build.py embeds the contract)
-spec/                     DR-LAB-SC-1.1 (normative) and 1.0 (previous edition), the analytical report behind them;
+spec/                     DR-LAB-SC-1.1 (normative) and 1.0 (previous edition); DR-LAB-SWPC-1.1 (current visual
+                          implementation target) and SWPC-1.0 (predecessor); deep-research-report (16).md as its
+                          analytical input;
                           ekran-24/: every element of screen 24 on annotated screenshots, its meaning, count, code
 meaning/                  the semantic layer for agents without code (Russian): start at meaning/README.md; lenses and
                           answers in meaning/lens/
