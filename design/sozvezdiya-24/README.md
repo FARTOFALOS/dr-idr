@@ -2,7 +2,9 @@
 
 **The meaning, for agents without code: [`meaning/10-dizajn-24.md`](../../meaning/10-dizajn-24.md)** — where every
 percentage comes from, where and why it is fixed, how it is counted, every element on numbered pictures. This page is
-about the code. Work on 24 goes on branch `design-24` in its pull request (operator, 2026-10-01).
+about the code. Since 2026-10-07 screen 24 is the main line of DR Lab on `main` (PR #1 merged by the operator), and
+every number on it is governed by the machine contract DR-LAB-SC-1.1: [`contract/README.md`](../../contract/README.md)
+(the page embeds `contract/build/page_registry.json` at build time and renders only its words).
 
 Design 23 (`design/sozvezdiya-23/`, `/sem-v1/`, `/api/family-v1`) is another agent's first, minimal page of the same
 specification, pushed to `main` on 2026-10-01; it is unchanged and runs next to 24. Design 24 is the product version.
@@ -10,8 +12,8 @@ specification, pushed to `main` on 2026-10-01; it is unchanged and runs next to 
 A separate version of the DR Lab screen, built 2026-10-01 at the operator's order: **design 22's working screen
 (candles, the day's DR / IDR, replay, the right panel, hover / pin, layers, settings) with its statistical layer replaced
 end to end by the semantic specification DR-LAB-SEM-1.0** ([`meaning/lens/2026-10-01-spec-v1/`](../../meaning/lens/2026-10-01-spec-v1/README.md)).
-**Since 2026-10-01 night design 24 is the working screen** (the operator; on branch `design-24`, not merged into
-`main` until he says so): `http://127.0.0.1:8767/` redirects to **`http://127.0.0.1:8767/24/`** (`lab/server.py`), so
+**Since 2026-10-01 night design 24 is the working screen** (the operator; merged into `main` on 2026-10-07):
+`http://127.0.0.1:8767/` redirects to **`http://127.0.0.1:8767/24/`** (`lab/server.py`), so
 the shortcut «DR Lab» opens it, and «DR Lab 24» (`start-dr-lab-24.cmd`, the same launcher with `-Page 24/`) too.
 Design 22 is not changed (its files are untouched) and stays at `/22/` (= its built page `/index.html`); «№22 ↗» in
 the toolbar opens it on the same session and minute for comparison.

@@ -2,7 +2,8 @@
 
 > **Superseded on 2026-09-28.** After B′ the operator asked for new variants; the working screen is now design 21
 > «Созвездия» (`lab/dist/index.html`, source `design/sozvezdiya-21/`, meaning in `docs/SEMANTICS.md`). His remarks
-> round by round are in `design/README.md`. This page stays as the record of B′.
+> round by round are in `design/README.md`. This page stays as the record of B′. Since 2026-10-07 the main line is
+> screen 24 «Границы хода» (`design/sozvezdiya-24/`, `spec/ekran-24/`).
 
 Status on 2026-09-25: the operator chose this design on an interactive canvas; **the running tool still follows
 `docs/UI_RULES.md`**. This file is the target for the implementation. Where it contradicts `docs/UI_RULES.md`, the

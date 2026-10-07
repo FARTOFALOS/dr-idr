@@ -1,7 +1,10 @@
 # Architecture
 
 Everything runs on the operator's Windows PC. No cloud, no database server, no LLM at run time: the numbers come from
-plain arithmetic over the history base, so the same candles always give the same screen.
+plain arithmetic over the history base, so the same candles always give the same screen. The main line is screen 24
+(`/24/`, the root redirects there) with its routes `/api/d24/*` behind the contract gate of DR-LAB-SC-1.1
+(`lab/contract.py`, `contract/README.md`); the other routes serve legacy surfaces (design 22, the classic screen, the
+research dashboard, design 23) and are marked `OUTSIDE_SC11`.
 
 ## Processes and ports
 
@@ -64,10 +67,10 @@ Tick sizes: NQ, ES 0.25; YM 1. History bars carry the **close** minute of each M
 | `GET /api/spec` | the text of `docs/SEMANTICS.md` (the "Модель системы" view) |
 | `GET /api/live?instrument=NQ&session=RDR[&at=<minute>]` | classic screen: live state from the last fetched candles; `at` = replay minute |
 | `GET /api/live/refresh?...` | fetch from TradingView first, then the same as `/api/live` |
-| `GET /api/day?instrument=NQ` | working screen: the trading day's M5 bars from the last fetch and the previous trading day's RDR box |
+| `GET /api/day?instrument=NQ` | design 22 (legacy, `/22/`): the trading day's M5 bars from the last fetch and the previous trading day's RDR box |
 | `GET /api/day/refresh?instrument=NQ` | fetch from TradingView first, then the same as `/api/day` |
-| `GET /api/cohort?instrument=NQ&session=RDR[&at=<day minute>]` | working screen: the similar sessions of 2006–2025 at the live minute or the replay minute `at` (used before a confirmation) |
-| `GET /api/family?instrument=NQ&session=RDR[&at=<day minute>]` | working screen since 2026-09-30: today's family (after a confirmation) or break family (after today's DR break) and its whole clock M5 film |
+| `GET /api/cohort?instrument=NQ&session=RDR[&at=<day minute>]` | design 22 (legacy): the similar sessions of 2006–2025 at the live minute or the replay minute `at` (used before a confirmation) |
+| `GET /api/family?instrument=NQ&session=RDR[&at=<day minute>]` | design 22 (legacy) since 2026-09-30: today's family (after a confirmation) or break family (after today's DR break) and its whole clock M5 film |
 | `GET /api/d24/day?instrument=NQ[&date=YYYY-MM-DD][&refresh=1]` | design 24: the live day (as `/api/day`, `source: live`; `refresh=1` fetches from TradingView first) or a trading date of 2006–2025 from the session base (`source: history`: its three blocks' M5, the previous RDR box, `now` = 17:00) |
 | `GET /api/d24/family?instrument=NQ&session=RDR[&date=…][&at=<day minute>][&view=auto\|conf][:all]` | design 24: today's state at the slice `at` and the snapshot of its family per DR-LAB-SEM-1.0 (`lab/scene24.py`) with its zone maps (`lab/zonemap24.py`); `:all` = the all-weekdays family, an explicit choice |
 | `GET /api/d24/dates?instrument=NQ` | design 24: every trading date of the base with the sessions whose first confirmation is established that day (`[[date, "AOR"], …]`) |
@@ -202,7 +205,7 @@ complete_n, median_retr, median_ext, median_rtime`.
   constellations, the fan, the right panel; data from `/api/day`, `/api/family` (after a confirmation) and `/api/cohort`
   (before one), refreshed after every M5 close while
   a session runs. Check with `tests/ui_check21.js`.
-- `24/index.html` + `24/d24.js` — **design 24 «Границы хода», the working screen since 2026-10-01 night** at `/24/`
+- `24/index.html` + `24/d24.js` — **screen 24 «Границы хода», the working screen since 2026-10-01 night and the main line on `main` since 2026-10-07** at `/24/`
   (the root `/` redirects here; the shortcuts «DR Lab» and «DR Lab 24», `start-dr-lab-24.cmd`
   = `start-dr-lab.ps1 -Page 24/`), built from `design/sozvezdiya-24/src` by its `build.py`: design 22's screen with the
   statistical layer of DR-LAB-SEM-1.0; data from `/api/d24/*`; a history date opens as if it were today. Check with

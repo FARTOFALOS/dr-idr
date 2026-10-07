@@ -1,16 +1,19 @@
-# DR Lab screen design — start here (state of 2026-10-01)
+# DR Lab screen design — start here (state of 2026-10-07)
 
 If you join the design work, read this page, then open the pages below. Everything in `design/` is a **mockup on
 synthetic data**, except the working screens: **design 24 «Окна времени» is the working screen since 2026-10-01
-night** (section below; on branch `design-24`, not merged into `main`; its full specification: `spec/ekran-24/`), and
-**design 22 «смысл числа» was the working screen of DR Lab on market data from 2026-09-29** (kept at `/22/`) (`lab/dist/index.html` is built from `design/sozvezdiya-22/src`; design 21 was the working screen on
-2026-09-28). Its meaning, pictures and open questions: `meaning/04-dizajn-22.md` (Russian, no code needed). **Stars,
-constellations and place percentages = where and when price of similar sessions CAME after this candle** (operator,
-2026-09-29); never the session's final extreme (AGENTS.md hard rule 10).
+night and the main line of DR Lab since 2026-10-07** (section below; merged into `main`; under the semantic contract
+DR-LAB-SC-1.1, `contract/README.md`; its full specification: `spec/ekran-24/`), and **design 22 «смысл числа» was the
+working screen of DR Lab on market data from 2026-09-29 to 2026-10-01** (kept unchanged at `/22/` as a legacy surface;
+`lab/dist/index.html` is built from `design/sozvezdiya-22/src`; design 21 was the working screen on 2026-09-28). Its
+meaning, pictures and open questions: `meaning/04-dizajn-22.md` (Russian, no code needed). On design 22 stars,
+constellations and place percentages = where and when price of similar sessions CAME after this candle (operator,
+2026-09-29); on screen 24 the base object is each session's named final R and X (AGENTS.md hard rule 10, rewritten
+2026-10-07).
 
 ## Design 24 «Границы хода» (2026-10-01)
 
-The working screen since 2026-10-01 night (the operator: «сделай его основным, 24-й … пока в мейн не сливай»): design 22's screen with the statistical layer
+The working screen since 2026-10-01 night, the main line since 2026-10-07 (merged into `main`; every number under DR-LAB-SC-1.1): design 22's screen with the statistical layer
 of the semantic specification DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`). It runs on market data at
 `http://127.0.0.1:8767/24/` (the root `/` opens it; the shortcuts «DR Lab» and «DR Lab 24»); any date of 2006–2025 opens as if it were today, so it can be
 reviewed without a live confirmation. Code, the element-by-element table against design 22, the choices the executor

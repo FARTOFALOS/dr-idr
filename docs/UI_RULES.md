@@ -28,8 +28,9 @@ had crept into 21 against rule 4 («наведите, чтобы раскрыт�
 presentation choices (no percentage without a matched price, a place's share on its band, the fan as slices) change
 no binding rule; they become rules only when the operator accepts them.
 
-Design 24 (2026-10-01 by the operator's order; **the working screen since 2026-10-01 night**, on branch `design-24`,
-not merged into `main`; `design/sozvezdiya-24/README.md`, every element: `spec/ekran-24/`)
+Design 24 (2026-10-01 by the operator's order; **the working screen since 2026-10-01 night, the main line on `main`
+since 2026-10-07**; `design/sozvezdiya-24/README.md`, every element: `spec/ekran-24/`, every visual rule with its reason:
+`meaning/13-zhurnal-vizualizacii.md`, which is binding for 24 together with this file)
 follows the specification DR-LAB-SEM-1.0 §15. It **replaces** for itself: the mandatory places, first touches as the
 source of the stars, the row of six history windows (one details area instead) and the old reading of the bracket
 percentages (a bracket only on a selected band, carrying the band's share). It **keeps** locality, the candles as the
