@@ -520,6 +520,22 @@ def k31():
 def k32():
     bad = [(e["id"], cs) for e in REG["estimands"] for cs in e["q4_case_set"] if C.admissible_claims(e["id"], cs) & {"PredictiveClaim", "DecisionClaim"}]
     check(not bad and not REG.get("policies") and not REG.get("authorities"), "K32 no policy and no authority: no estimand admits a decision (or a forecast) anywhere")
+
+    # Future guard: SC-1.1 stays closed even if an unrelated/generic record is accidentally added to the loaded
+    # registry. A later edition must introduce an explicit target/case-set/evidence/policy/authority binding and change
+    # the gate deliberately; mere record presence must never promote a historical number.
+    old_pred, old_pol, old_auth = REG.get("predictive_admissions", []), REG.get("policies", []), REG.get("authorities", [])
+    REG["predictive_admissions"] = [{"estimand": "EST:N-NEW-R", "validation": "VAL:NOW-1.0-WALKFORWARD"}]
+    REG["policies"] = [{"id": "POL:FORGED"}]
+    REG["authorities"] = [{"id": "AUTH:FORGED", "revoked": False}]
+    try:
+        c2 = C.admissible_claims("EST:N-NEW-R", "CS:NOW-ELIGIBLE-1")
+        c3 = C.admissible_claims("EST:B-RX-BAND-R", "CS:F-CONF-1")
+    finally:
+        REG["predictive_admissions"], REG["policies"], REG["authorities"] = old_pred, old_pol, old_auth
+    check("PredictiveClaim" not in c2 and "DecisionClaim" not in c3,
+          "K32 future guard: generic admission / policy / authority records cannot silently open C2 or C3 in SC-1.1")
+
     real = C.claim_form_of
     C.claim_form_of = lambda e: dict(real(e), claim_class="DecisionClaim", id="CF:FORGED") if e == "EST:B-RX-BAND-R" else real(e)
     try:

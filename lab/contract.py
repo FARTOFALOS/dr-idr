@@ -803,10 +803,14 @@ def verify_today_zones(fam, bars, tick, zones_ref):
 # admissible claims (computed from the evidence) against the declared claim form (an explicit normative object)
 # =====================================================================================================================
 def admissible_claims(estimand_id, case_set_id):
-    """The claim classes the evidence admits for one estimand on one case-set rule. No class is defaulted:
-    C0 needs a fixed composition (a base family or the universe) and a historical target; C1 needs a named
-    selection condition (prefix-available or retrospective — availability decides live use, not the class); C2 needs
-    a PredictiveAdmission for exactly this estimand; C3 needs a PolicySpecification. None of C2 / C3 exists."""
+    """The claim classes the evidence admits for one estimand on one case-set rule. No class is defaulted.
+
+    SC-1.1 instantiates only C0 / C1. Its schema names the future C2 / C3 objects, but this edition deliberately does
+    not infer either class from the mere presence of a generic PredictiveAdmission, PolicySpecification or authority
+    record. A later edition must bind the exact estimand + case-set/domain to its validation and human admission; C3
+    must additionally bind the concrete policy and action authority, and change this gate and its conformance tests
+    together. Until then the safe state is closed.
+    """
     est, cs = get(estimand_id), get(case_set_id)
     if est is None or cs is None: return set()
     if case_set_id not in est["q4_case_set"]: return set()
@@ -814,9 +818,6 @@ def admissible_claims(estimand_id, case_set_id):
     if est["q2_target"] == "FIXED_HISTORICAL_SET":
         if cs["role"] in ("BASE_FAMILY", "HISTORICAL_UNIVERSE"): out.add(C0)
         if cs["role"] in ("ELIGIBLE_AT_CUT", "MATCHED_AT_CUT", "OUTCOME_SUBGROUP", "RETROSPECTIVE_RESEARCH") and cs.get("condition_ru"): out.add(C1)
-    reg = registry() or {}
-    if any(a["estimand"] == estimand_id for a in reg.get("predictive_admissions", [])): out.add(C2)
-    if reg.get("policies"): out.add(C3)
     return out
 
 

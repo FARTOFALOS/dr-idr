@@ -2,9 +2,10 @@
 
 The normative text is `spec/DR-LAB-Semantic-Contract-1.1-(patched).md` (`DR-LAB-SC-1.1`). It is the source of truth:
 where this folder disagrees with it, this folder is the defect. Everything here represents that text in a form a
-program can check, and the server and screen 24 enforce it on every number they show. The operator accepted SC-1.1 as
-the semantic target of this work on 2026-10-07; the record of that act, its scope and what it does not establish are in
-`registry/00-editions.yaml` (the record preserves the act, it does not create it).
+program can check, and the server and screen 24 enforce it on every number they show. The operator accepted SC-1.1 on
+2026-10-07 as the normative semantic contract of the working profile DR Lab 24 — **BASE-24 and NOW-1.0** — and of
+every further change of those profiles; legacy surfaces remain outside it for now. The record of that act, its scope
+and what it does not establish are in `registry/00-editions.yaml` (the record preserves the act, it does not create it).
 
 ## What is where
 
@@ -13,7 +14,8 @@ schema/dr_lab_sc.yaml        the LinkML schema: every object of the contract as 
                              slots and rules, sc_ref = the clause it represents), the runtime records (ContractEnvelope,
                              StatisticalResultBundle, Estimate, SupportRecord, Claim ...) and the enums of the document
 schema/linkml-lint.yaml      the project's lint configuration
-registry/00-editions.yaml    editions (SC-1.0 previous, SC-1.1 accepted for this work, pinned by SHA-256), profiles, sources
+registry/00-editions.yaml    editions (SC-1.0 previous; SC-1.1 accepted for BASE-24 / NOW-1.0 and their future changes,
+                             pinned by SHA-256), profiles, sources
 registry/10-...yaml          observation sources, the clock, the DR/IDR rule, measurement frames and grids, knowledge cuts
 registry/20-...yaml          case sets (base families, NOW sets), comparisons (M1-M3), outcomes (P0.1-P0.3), regions
 registry/30-...yaml          trader questions, the 53 estimands (Q1-Q8 each) and their estimators
@@ -92,6 +94,10 @@ a target, a transfer to the future or an authority (§14.4): those stay with the
   NOW-1.0 — and of every further change of them; the legacy surfaces (/22/, the classic screen, the dashboard,
   /sem-v1/) stay outside it for now (`registry/00-editions.yaml`).
 - C2 (`PredictiveClaim`), C3 (`DecisionClaim`), policies and authorities are defined by the schema and instantiated
-  nowhere: no number of this tool admits a forecast or a decision (K28, K32, K33).
+  nowhere: no number of this tool admits a forecast or a decision (K28, K32, K33). The SC-1.1 runtime gate is also
+  **fail-closed for future claim classes**: merely adding a generic predictive-admission, policy or authority record
+  cannot silently activate C2/C3. A later contract edition must explicitly bind the exact estimand and case-set/domain
+  to its validation and human admission; C3 must additionally bind the concrete policy and action authority, with the
+  gate and conformance tests changed in the same edition.
 - The words of the NOW block are the operator's (2026-10-07, K33): «В истории: R позже углублялся… / Если
   углублялся…», symmetric for X.
