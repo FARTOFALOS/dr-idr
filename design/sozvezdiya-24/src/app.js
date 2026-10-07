@@ -297,22 +297,25 @@
     A.pending.add(fk);
     const at = s.live ? Math.floor(NOW / 5) * 5 : s.obs;
     fetch('/api/d24/family?instrument=' + A.inst + '&session=' + s.k + '&at=' + at + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + view + (st.scope === 'all' ? ':all' : ''))
-      .then(r => r.json()).then(r => { A.fams.set(fk, r); if (A.fams.size > 40) A.fams.delete(A.fams.keys().next().value); })
+      .then(r => r.json()).then(r => { r._fk = fk; r._ctx = 'fam|' + (A.respSeq = (A.respSeq || 0) + 1); A.fams.set(fk, r); if (A.fams.size > 40) A.fams.delete(A.fams.keys().next().value); })
       .catch(() => A.fams.set(fk, { status: 'error', message: 'Локальный сервер не ответил' }))
       .finally(() => { A.pending.delete(fk); redraw(true); });
   }
   // DR-LAB-NOW-1.0: the layer «Сейчас» of the family on screen at the slice (lab/now24.py), one request per closed M5;
   // the base map is never touched by it
+  const nowKey = ctx => famKey(ctx.D, ctx.s, ctx.F.view) + '|' + sliceOf(ctx);
   function nowOf(ctx) {
     const F = ctx.F;
     if (!F) return null;
-    const sl = sliceOf(ctx), key = famKey(ctx.D, ctx.s, F.view) + '|' + sl, r = A.now.get(key);
+    const sl = sliceOf(ctx), key = nowKey(ctx), r = A.now.get(key);
     if (r) return r;
     if (!A.nowPending.has(key)) {
       A.nowPending.add(key);
       fetch('/api/d24/now?instrument=' + A.inst + '&session=' + ctx.s.k + '&at=' + sl + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + F.view + (st.scope === 'all' ? ':all' : ''))
-        .then(x => x.json()).then(x => { A.now.set(key, x); if (A.now.size > 80) A.now.delete(A.now.keys().next().value); })
-        .catch(() => A.now.set(key, { status: 'ERROR' }))
+        .then(x => x.json()).then(x => { x._ctx = 'now|' + (A.respSeq = (A.respSeq || 0) + 1); A.now.set(key, x); if (A.now.size > 80) A.now.delete(A.now.keys().next().value); })
+        // SWPC-1.1 W13: a request that did not arrive says so in the block's place (not «нет данных», which reads as an
+        // answer); the base map stays as it is
+        .catch(() => A.now.set(key, { status: 'ERROR', message: 'Локальный сервер не ответил', _ctx: 'now|' + (A.respSeq = (A.respSeq || 0) + 1) }))
         .finally(() => { A.nowPending.delete(key); redraw(true); });
     }
     return null;
@@ -326,11 +329,17 @@
     // panel); one the server published with a violation (a withheld zone) is shown and the violation surfaced
     if (r._refused === undefined) {
       r._refused = regFault(r.contract) || (!r.contract.bundles ? 'конверт контракта без опубликованных чисел' : null);
-      if (r._refused) kViolate(r._refused);
-      else if (r.contract.status !== 'CONFORMANT') kViolate('сервер: ' + ((r.contract.violations || []).map(v => v.message).join('; ') || r.contract.status));
+      if (r._refused) kViolate(r._refused, null, r._ctx);
+      else if (r.contract.status !== 'CONFORMANT') kViolate('сервер: ' + ((r.contract.violations || []).map(v => v.message).join('; ') || r.contract.status), null, r._ctx);
     }
     if (r._refused) return null;
-    if (!r._F) r._F = buildSnap(r, s, view);
+    if (!r._F) {
+      r._F = buildSnap(r, s, view);
+      // DR-LAB-SWPC-1.1 M14: the page's own measurement of the family (its R / X tables, DR outcome, order) disagrees with
+      // what the server published: the whole family is withheld here, as the server's gate withholds a family it cannot
+      // re-derive (lab/contract.py: withheld=["family"]); the candles and the day's lines stay
+      if (r._F.held.has('family')) { r._refused = 'счёт страницы не совпал с пакетом сервера (' + r._F.mismatch.join(', ') + ')'; return null; }
+    }
     return r._F;
   }
   function buildSnap(r, s, view) {
@@ -364,21 +373,29 @@
       if (Zm) Zm.zones.forEach((z, i) => { for (const [k, b] of z.cell_mask) F.zcell[ev].set(k + '|' + b, i); });
     }
     // the same definitions computed twice: the page's counts must equal the server's (checked by tests/ui_check24.js)
-    F.mismatch = [];
+    // DR-LAB-SWPC-1.1 M14: a disagreement withholds exactly the unit it concerns, in the units of the server's own gate
+    // (lab/contract.py::_apply_withheld): the family's measurements → 'family'; one event's zone map → 'zones.<ev>';
+    // today's zone status and clock → 'today.zones'. What the server itself withheld arrives in its envelope.
+    F.mismatch = []; F.held = new Set();
+    F.miss = (what, unit) => { F.mismatch.push(what); F.held.add(unit); };
+    for (const v of r.contract.violations || []) for (const w of v.withheld || []) F.held.add(w);
     for (const ev of ['R', 'X']) {
       const a = r.counts[ev], b = F.ev[ev];
       const sa = a.cells.map(c => c.join(',')).sort().join(';'), sb = [...b.cells.values()].map(c => [c.k, c.b, c.list.length].join(',')).sort().join(';');
-      if (sa !== sb || a.unknown !== b.unknown || a.none !== b.none) F.mismatch.push(ev);
+      if (sa !== sb || a.unknown !== b.unknown || a.none !== b.none) F.miss(ev, 'family');
       const Zm = F.zones[ev];
       if (Zm) {
         const n = Zm.zones.map(() => 0);
         for (const q of b.pts) { const i = F.zcell[ev].get(q.k + '|' + q.b); if (i != null) n[i]++; }
-        if (Zm.zones.some((z, i) => z.n_zone !== n[i]) || n.reduce((t, x) => t + x, 0) + Zm.n_residual_total + Zm.unknown_count + Zm.no_event_count !== F.N) F.mismatch.push('zones ' + ev);
+        if (Zm.zones.some((z, i) => z.n_zone !== n[i]) || n.reduce((t, x) => t + x, 0) + Zm.n_residual_total + Zm.unknown_count + Zm.no_event_count !== F.N) F.miss('zones ' + ev, 'zones.' + ev);
       }
     }
-    if (F.out && JSON.stringify(F.out) !== JSON.stringify(r.counts.outcome)) F.mismatch.push('outcome');
+    if (F.out && JSON.stringify(F.out) !== JSON.stringify(r.counts.outcome)) F.miss('outcome', 'family');
     envCounts(F);
-    if (F.mismatch.length) { console.error('design 24: the page and the server disagree on', F.mismatch); kViolate('the page and the server disagree on ' + F.mismatch.join(', ')); }
+    if (F.mismatch.length) { console.error('design 24: the page and the server disagree on', F.mismatch); kViolate('the page and the server disagree on ' + F.mismatch.join(', '), null, r._ctx); }
+    // a zone map the page cannot reconcile is withheld for its event only: the other event's zones, the tables, the DR
+    // outcome and «Сейчас» stay (the response itself is never changed)
+    for (const ev of ['R', 'X']) if (F.held.has('zones.' + ev) && F.zones[ev]) { F.zones = Object.assign({}, F.zones); delete F.zones[ev]; F.zcell[ev] = new Map(); }
     return F;
   }
   // one event of the family: its points, its joint table price cell x time cell, and the unknown / no-period mass
@@ -510,14 +527,48 @@
   // is recomputed by the server's reference definitions (POST /api/d24/verify). A violation withholds the number («—»)
   // and stands at the top of the panel; it is never ignored.
   const SC11 = /*__SC11__*/null;
-  const K = { violations: [], seen: new Set() };
-  function kViolate(msg, p) {
+  // A violation belongs to the scene it was found in (DR-LAB-SWPC-1.1 M16): a passport's snapshot, one family response or
+  // one NOW response (each its own number: a new answer to the same request starts clean), or the page itself ('*': a page without its registry,
+  // a word outside the registry, the reference check unreachable). The notice and the «Сводка» button show only those
+  // of the scene on screen, so another day's or cut's prohibition never stands over this one; a withheld number stays
+  // withheld until a new, verified result replaces its object (the cached passport or response keeps its violation).
+  const K = { list: [], seen: new Set() };
+  function kViolate(msg, p, ctx) {
     if (p) { p.violation = msg; p.pct = null; p.pctHi = null; }
-    if (K.seen.has(msg)) return;
-    K.seen.add(msg); K.violations.push(msg);
-    if (K.violations.length > 50) K.violations.splice(0, 25);
+    const c = p ? p.snapshot_id : ctx || '*', key = c + '|' + msg;
+    if (K.seen.has(key)) return;
+    K.seen.add(key); K.list.push({ msg, ctx: c });
+    if (K.list.length > 200) for (const v of K.list.splice(0, 100)) K.seen.delete(v.ctx + '|' + v.msg);
     console.error('DR-LAB-SC-1.1:', msg);
     redraw(true);
+  }
+  // the contexts of the scene on screen: the page, the family response of the chosen session and view, its snapshot,
+  // and the NOW response at this cut
+  function ctxKeys(ctx) {
+    const out = new Set(['*']), s = ctx.s;
+    if (s.conf && ['confirmed', 'broken', 'done'].includes(s.status) && ctx.D.d !== 'none') {
+      const fk = famKey(ctx.D, s, wantView(s)), r = A.fams.get(fk);
+      if (r && r._ctx) out.add(r._ctx);
+      if (r && r.snapshot_id) out.add(r.snapshot_id);
+      const n = ctx.F ? A.now.get(nowKey(ctx)) : null;
+      if (n && n._ctx) out.add(n._ctx);
+    }
+    return out;
+  }
+  const kNow = ctx => { const keys = ctxKeys(ctx); return K.list.filter(v => keys.has(v.ctx)).map(v => v.msg); };
+  // everything that withholds or refuses a number of this scene (SWPC-1.1 §7.2, M15): the page's own violations, the
+  // server's refusal of the family, the server's refusal or withholding of «Сейчас» — the same reasons the panel shows
+  // in their places (the notice, the family's status line, the NOW block)
+  function integrity(ctx) {
+    const out = kNow(ctx).map(m => 'Контракт SC-1.1: ' + m), s = ctx.s;
+    if (s.conf && ['confirmed', 'broken', 'done'].includes(s.status) && ctx.D.d !== 'none') {
+      const r = A.fams.get(famKey(ctx.D, s, wantView(s)));
+      if (r && /^contract_/.test(r.status || '')) out.push(r.message || r.status);
+    }
+    const n = ctx.F ? A.now.get(nowKey(ctx)) : null;
+    if (n && /^CONTRACT_/.test(n.status || '')) out.push(n.note || n.message || n.status);
+    if (n) for (const ev of ['R', 'X']) if (n[ev] && n[ev].mode === 'WITHHELD') out.push('«Сейчас» ' + ev + ': ' + (n[ev].note || n[ev].mode));
+    return out;
   }
   const VW = F => F && F.brk ? 'BRK' : 'CONF';
   // the registered words: a claim form (by its estimand, EST:…) or a fact form (FF:…), one key, the view's variant if any
@@ -529,7 +580,7 @@
     if (/\{[A-Za-z0-9_]+\}/.test(out)) kViolate('a label without its value: ' + id + ' · ' + key);
     return out;
   }
-  const zst = s => lbl('FF:TODAY-Z', s);
+  const zst = s => s === 'WITHHELD' ? '—' : lbl('FF:TODAY-Z', s);       // a withheld status has no word (SWPC-1.1 M14)
   const parOf = b => { try { return JSON.parse(b.parameters || '{}'); } catch (e) { return {}; } };
   // the page's registry against a server envelope (lab/contract.py::Envelope): the same edition, the same registry
   function regFault(c) {
@@ -551,33 +602,38 @@
       const b = one('EST:B-RX-JOINT-' + ev), est = b && b.estimates[0];
       const sb = est && est.cells ? est.cells.map(c => [c.price_cell, c.time_cell, c.count].join(',')).sort().join(';') : '';
       const sp = [...F.ev[ev].cells.values()].map(c => [c.k, c.b, c.list.length].join(',')).sort().join(';');
-      if (!b || sb !== sp) F.mismatch.push('the bundle of ' + ev);
+      if (!b || sb !== sp) F.miss('the bundle of ' + ev, 'family');
       const Zm = F.zones[ev];
-      if (Zm) for (const z of Zm.zones) { const zb = one('EST:B-ZONE-' + ev, x => parOf(x).zone_id === z.zone_id); if (!zb || zb.estimates[0].numerator !== z.n_zone) F.mismatch.push('the bundle of zone ' + ev + ' ' + z.label); }
+      if (Zm) for (const z of Zm.zones) { const zb = one('EST:B-ZONE-' + ev, x => parOf(x).zone_id === z.zone_id); if (!zb || zb.estimates[0].numerator !== z.n_zone) F.miss('the bundle of zone ' + ev + ' ' + z.label, 'zones.' + ev); }
     }
-    if (F.out) { const c = cats(one('EST:B-DR')); if (c.HELD !== F.out.held || c.BROKEN !== F.out.broken || c.UNKNOWN !== F.out.unknown || c.NO_PERIOD !== F.out.none) F.mismatch.push('the bundle of the DR outcome'); }
+    if (F.out) { const c = cats(one('EST:B-DR')); if (c.HELD !== F.out.held || c.BROKEN !== F.out.broken || c.UNKNOWN !== F.out.unknown || c.NO_PERIOD !== F.out.none) F.miss('the bundle of the DR outcome', 'family'); }
     const c = cats(one('EST:B-ORDER')), n = orderCounts(F);
-    if (ORDER_CATS.some(k => (c[ORDER_TOK[k]] || 0) !== n[k])) F.mismatch.push('the bundle of the order');
+    if (ORDER_CATS.some(k => (c[ORDER_TOK[k]] || 0) !== n[k])) F.miss('the bundle of the order', 'family');
   }
   // a zone's diagnostic or study figure is shown only when the server published its bundle
   function hasBundle(F, est, pred) {
     const ok = (F.env.bundles || []).some(b => b.estimand === est && (!pred || pred(parOf(b))));
-    if (!ok) kViolate('no published bundle ' + est + ' for a figure on screen');
+    if (!ok) kViolate('no published bundle ' + est + ' for a figure on screen', null, F.r._ctx);
     return ok;
   }
+  // DR-LAB-SWPC-1.1 M14: a carrier drawn from a number follows that number's passport — withheld («—»), it no longer
+  // asserts its share by length, fill or glow. The passport is the one of the same estimand and parameters made on this
+  // snapshot (no passport = the number was never shown alone; its count is then proven by the reconciled table)
+  const ppHeld = (F, est, params) => { const p = P24.byKey.get(F.r.snapshot_id + '|' + est + '|' + JSON.stringify(params)); return !!(p && p.violation); };
+  const zoneHeld = (F, ev, i) => { const z = F.zones[ev] && F.zones[ev].zones[i]; return !!z && ppHeld(F, 'EST:B-ZONE-' + ev, { zone_id: z.zone_id }); };
   // a NOW number (lab/contract.py::attach_now, all C1) is shown only with its bundle on this cut, under the registered
   // claim form admissible there; the shown values must be the bundle's
   function nowBundle(n, est, role, C) {
     const c = n.contract, f = SC11 && SC11.forms[est], fault = regFault(c);
-    if (fault) { kViolate('«Сейчас»: ' + fault); return null; }
+    if (fault) { kViolate('«Сейчас»: ' + fault, null, n._ctx); return null; }
     const b = (c.bundles || []).find(x => x.estimand === est && parOf(x).role === role);
-    if (!b) { kViolate('«Сейчас»: no published bundle ' + est + ' (' + role + ') on this cut'); return null; }
-    if (!f || b.claim_form !== f.id || b.claim.claim_class !== f.claim_class || !(b.admissible_claims || []).includes(f.claim_class)) { kViolate('«Сейчас»: ' + est + ' published under another claim'); return null; }
+    if (!b) { kViolate('«Сейчас»: no published bundle ' + est + ' (' + role + ') on this cut', null, n._ctx); return null; }
+    if (!f || b.claim_form !== f.id || b.claim.claim_class !== f.claim_class || !(b.admissible_claims || []).includes(f.claim_class)) { kViolate('«Сейчас»: ' + est + ' published under another claim', null, n._ctx); return null; }
     if (C) {
       const pt = b.estimates.find(x => x.value_kind === 'POINT'), bd = b.estimates.find(x => x.value_kind === 'BOUNDS'), s0 = b.supports[0] || {};
       const d = (x, y) => x == null ? y != null : y == null || Math.abs(x - y) > 1e-4;
       if (d(pt ? pt.value : null, C.p_new_extreme) || (C.support.N_match_unknown && (!bd || d(bd.lower, C.p_new_bounds[0]) || d(bd.upper, C.p_new_bounds[1]))) || s0.n_eligible !== C.support.N_eligible) {
-        kViolate('«Сейчас» ' + est + ': the shown numbers are not those of its bundle'); return null;
+        kViolate('«Сейчас» ' + est + ': the shown numbers are not those of its bundle', null, n._ctx); return null;
       }
     }
     return b;
@@ -714,13 +770,13 @@
         if (r.status !== 'ok') { VQ.fails++; continue; }
         const byId = new Map(list.map(p => [p.id, p]));
         for (const p of list) p.checked = true;
-        if (r.snapshot_id !== sid) { kViolate('the reference recomputed another snapshot (' + r.snapshot_id + ') than the page’s ' + sid); continue; }
+        if (r.snapshot_id !== sid) { kViolate('the reference recomputed another snapshot (' + r.snapshot_id + ') than the page’s ' + sid, null, sid); continue; }
         for (const x of r.mismatches || []) kViolate('the reference recomputes another number: ' + x.estimand + ' ' + JSON.stringify(x.params || (byId.get(x.id) || {}).params || {}) + ' — ' + x.error, byId.get(x.id));
         VQ.fails = 0;
       }
     } catch (e) { VQ.fails++; }
     VQ.busy = false;
-    if (VQ.fails > 2) kViolate('the reference check of the page’s numbers is unavailable (POST /api/d24/verify): ' + ((VQ.last && (VQ.last.status || VQ.last.error)) || 'no answer'));
+    if (VQ.fails > 2) kViolate('the reference check of the page’s numbers is unavailable (POST /api/d24/verify): ' + ((VQ.last && (VQ.last.status || VQ.last.error)) || 'no answer'), null, '*');
     else if (P24.list.some(p => !p.checked && !p.violation && p.req)) verifySoon();
     return VQ.last;
   }
@@ -1000,6 +1056,7 @@
       if (x1 < 0 || x0 > V.plot.w) continue;
       const past = cd.T <= sl;
       for (const [k, list] of cd.cells) {
+        if (ppHeld(F, 'EST:B-CLOSE', { j: cd.j, k0: k, k1: k + 1 })) continue;     // a withheld close share: no cell (SWPC-1.1 M14)
         const [ya, yb] = cellY(F, k, k + 1), share = list.length / F.N;
         c.fillStyle = rgba(col, Math.min(1, (0.1 + 0.9 * share) * f * (past ? 0.55 : 1)));
         c.fillRect(x0 + 0.5, ya + 0.5, Math.max(1, x1 - x0 - 1), Math.max(1, yb - ya - 1));
@@ -1239,12 +1296,14 @@
   function drawPoints(c, ctx) {
     const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100;
     for (const ev of ['R', 'X']) {
-      const col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent');
+      const col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent'), held = look.map((_, i) => zoneHeld(F, ev, i));
       for (const q of F.ev[ev].pts) {
-        const zi = F.zcell[ev].get(q.k + '|' + q.b), col = zi != null && look[zi] === 'IMPOSSIBLE' ? spent : zi != null && look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
+        // the stars of a withheld zone are drawn as stars outside zones (their own session's point stays; the zone's
+        // emphasis would assert the withheld share)
+        const z0 = F.zcell[ev].get(q.k + '|' + q.b), zi = z0 != null && !held[z0] ? z0 : null, col = zi != null && look[zi] === 'IMPOSSIBLE' ? spent : zi != null && look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
         const x = V.X(q.t + 2.5), y = V.Y(q.p);
         if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
-        const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx), inZone = F.zcell[ev].has(q.k + '|' + q.b);
+        const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx), inZone = zi != null;
         let a = (past ? cfg.pastA : cfg.ptA) / 100 * (inZone ? 1.1 : 0.62), r = R0 * (inZone ? 1 : 0.8);
         if (e === true) { a = Math.min(1, Math.max(a, 0.55) + 0.3); r = R0 * 1.3; } else if (e === false) a *= 0.28;
         a = Math.min(1, a);
@@ -1364,7 +1423,7 @@
     for (const ev of ['R', 'X']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
       CL[ev].forEach((g, i) => {
-        if (!g) return;
+        if (!g || zoneHeld(F, ev, i)) return;        // a withheld zone's share is «—»: its haze and threads do not assert it
         const col = stateCol(col0, S[i]);
         // a spent constellation stays readable as history (operator 2026-10-06: «чуть-чуть ярче»), setting «spentA»
         const k = cloudK(F, ev, i, h, g.z), dim = S[i] === 'IMPOSSIBLE' ? 0.6 * cfg.spentA / 100 : S[i] === 'QUIET' ? 0.7 : S[i] === 'HOLDS' ? 1.15 : 1;
@@ -1427,7 +1486,7 @@
     // (держится / возможна / невозможна) and its window can no longer read as two contradicting answers
     if (h.k === 'zone' && h.ev) {
       const z = F.zones[h.ev] && F.zones[h.ev].zones[h.i];
-      if (z) {
+      if (z && !zoneHeld(F, h.ev, h.i)) {          // a withheld zone draws no window (its inspector says «—»)
         const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = F.f + 15 * Math.min(...bs), t1 = F.f + 15 * (Math.max(...bs) + 1);
         const look = zoneStatus(F, ctx, h.ev)[h.i], spent = look === 'IMPOSSIBLE';
         V.lk = { ev: h.ev, src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS' };
@@ -1471,6 +1530,7 @@
       if (cfg.profVeil) { c.fillStyle = rgba(C.bg, cfg.profVeil / 100); c.fillRect(0, 0, V.plot.w, V.plot.h); }
       c.fillStyle = 'rgba(236,240,246,.04)'; c.fillRect(0, ra, V.plot.w, rb - ra);
       for (const q of row) {
+        if (ppHeld(F, 'EST:B-CLOSE', { j: q.j, k0: lk.k0, k1: lk.k1 })) continue;   // a withheld close share: no bar (SWPC-1.1 M14)
         const xa = V.X(q.t0), xb = V.X(q.t1), w = Math.max(1, xb - xa - 1), col = colOf(q), hh = hOf(q), k = q.past ? 0.45 : 1;
         const yb0 = up ? base - hh - 1 : base + 1, yCap = up ? yb0 : yb0 + hh - 1;
         c.fillStyle = rgba(col, Math.min(1, 1.3 * a * k)); c.fillRect(xa + 0.5, ra, w, Math.max(2, rb - ra));
@@ -1645,7 +1705,7 @@
         const col = stateCol(col0, S[i]);
         const z = g.z, s = S[i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === i);
         if (phase === 'under') { if (inside) zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env); return; }
-        if (on || imp) { c.save(); c.strokeStyle = rgba(col, on ? 0.6 : 0.3); c.lineWidth = 1; c.setLineDash(imp ? [4, 3] : []); loopsPath(c, g.ln); c.stroke(); c.restore(); }
+        if ((on || imp) && !zoneHeld(F, ev, i)) { c.save(); c.strokeStyle = rgba(col, on ? 0.6 : 0.3); c.lineWidth = 1; c.setLineDash(imp ? [4, 3] : []); loopsPath(c, g.ln); c.stroke(); c.restore(); }
         if (on && false) {
           // the zone's exact cells are no longer outlined on hover (operator 2026-10-06: «прямоугольники с точками — не
           // нужно»); membership is still its cells (cell_mask), the time × price cluster is drawn by drawLink
@@ -1842,6 +1902,8 @@
       const lit = (h && h.k === 'tcell' && b >= h.b0 && b < h.b1) || (lk && lk.b === b), zl = h && h.k === 'zone' && F.zones[h.ev] && F.zones[h.ev].zones[h.i] && F.zones[h.ev].zones[h.i].cell_mask.some(([, bb]) => bb === b);
       for (const ev of ['X', 'R']) {
         const n = ev === 'X' ? nX : nR, o = ev === 'X' ? nR : nX;
+        // a withheld window share (its passport «—», SWPC-1.1 M14) draws no column; its place stays empty
+        if (n && ppHeld(F, 'EST:B-RX-WINDOW-' + ev, { b0: b, b1: b + 1 })) { if (lit) labels.push({ x: (x0 + x1) / 2, y: cy + dir[ev] * 9, t: '—', col: cfg[ev] }); continue; }
         // the balance inside the 15 minutes (operator 2026-10-06): the larger side brighter, the smaller dimmer, the more
         // so the stronger the tilt (setting «контраст перевеса»); a drawing of the same two shares, not a new number
         const dom = n + o > 0 ? (n - o) / (n + o) : 0;
@@ -1864,7 +1926,7 @@
     const hmax = { X: Math.max(1e-9, ...H.X.filter(Boolean).map(o => o.pk)), R: Math.max(1e-9, ...H.R.filter(Boolean).map(o => o.pk)) };
     V.hills = [];
     for (const ev of ['X', 'R']) H[ev].forEach(o => {
-      if (!o) return;
+      if (!o || zoneHeld(F, ev, o.i)) return;          // a withheld zone (SWPC-1.1 M14): no hill
       const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
       const scr = o.pts.map(([t, d]) => [V.X(t), cy + dir[ev] * (1 + 0.94 * half * d / hmax[ev])]);
       c.beginPath(); c.moveTo(scr[0][0], cy + dir[ev]);
@@ -1886,6 +1948,7 @@
     V.caps = [];
     const capMax = Math.max(1e-9, ...caps.map(q => q.o.z.p_snapshot));
     for (const { ev, o, ln } of caps) {
+      if (zoneHeld(F, ev, o.i)) continue;               // a withheld zone (SWPC-1.1 M14): no capsule
       const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', hold = s === 'HOLDS', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
       const x0 = V.X(F.f + 15 * o.b0) + 1, x1 = V.X(F.f + 15 * o.b1) - 1, y0 = dir[ev] < 0 ? B.y + 3 + ln * (LH + 2) : B.y + B.h - 3 - (ln + 1) * (LH + 2) + 2, w = x1 - x0;
       const r = Math.pow(o.z.p_snapshot / capMax, 0.7);
@@ -2078,6 +2141,7 @@
     for (const ev of ['R', 'X']) {
       const D = F.ev[ev], Zm = F.zones[ev], hzi = h && h.k === 'zone' && h.ev === ev ? h.i : null, zr = new Map(), peak = new Set();
       if (Zm) Zm.zones.forEach((z, i) => {
+        if (zoneHeld(F, ev, i)) return;                // a withheld zone (SWPC-1.1 M14): its rows are drawn as rows outside zones
         const ks = z.cell_mask.map(q => q[0]), k0 = Math.min(...ks), k1 = Math.max(...ks) + 1;
         let bk = null;
         for (let k = k0; k < k1; k++) { zr.set(k, i); if (bk == null || (D.P.get(k) || 0) > (D.P.get(bk) || 0)) bk = k; }
@@ -2113,6 +2177,8 @@
         if (I.hzi != null) a = z === I.hzi ? Math.max(a, 0.6) : a * 0.4;
         if (on || inA) a = 1;
         const len = Math.max(2, blen * n / mx), g = Rch.okK(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
+        // a withheld band share (its passport «—», SWPC-1.1 M14): no bar; the next segment keeps its place, the label says «—»
+        if (ppHeld(F, 'EST:B-RX-BAND-' + ev, { k0: k, k1: k + 1 })) { labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk: false, on, z, rowH: bot - top, ok: Rch.okK(ev, k) }); x += len; continue; }
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
         if (g) {
           const dead = !Rch.okK(ev, k);
@@ -2185,7 +2251,7 @@
       const len = Math.max(1, W * b.n / mx);
       const on = h && ((h.k === 'pcell' && b.k >= h.k0 && b.k < h.k1) || (h.k === 'fcell' && b.k === h.kk)) || (st.area && isFinite(st.area.k0) && b.k >= st.area.k0 && b.k < st.area.k1 && st.mode === 'bounds');
       c.fillStyle = rgba(d.col, on ? 1 : Math.min(1, (0.18 + 0.72 * b.n / mx) * cfg.projA / 90));
-      c.fillRect(A_.x + 3, top + 0.5, len, Math.max(1, bot - top - 1));
+      if (!ppHeld(F, 'EST:B-CLOSE', { j: d.cd.j, k0: b.k, k1: b.k + 1 })) c.fillRect(A_.x + 3, top + 0.5, len, Math.max(1, bot - top - 1));   // withheld: no bar, the label «—»
       V.projBars.push({ k: b.k, top, bot });
       labels.push({ y: (top + bot) / 2, x: A_.x + 6 + len, n: b.n, k: b.k });
     }
@@ -2460,8 +2526,9 @@
   // DR-LAB-NOW-1.0 F1 (2026-10-06): the band (and the cell) holding today's extreme stays reachable — the final event may
   // stay exactly where it is, at the band's lower edge too and after the end of the block; only another band needs a
   // strictly further new extreme still in time (the server's zone status, lab/zonemap24.py, already did so)
+  // DR-LAB-SWPC-1.1 M14: with today's zone status withheld ('today.zones'), today's reachability is not asserted either
   function reachOf(F, ctx) {
-    const sl = sliceOf(ctx), rows = todayRows(F, ctx), w = F.w0t, last = F.end - 5, known = rows.length === Math.max(0, (sl - F.act0) / 5);
+    const sl = sliceOf(ctx), rows = todayRows(F, ctx), w = F.w0t, last = F.end - 5, known = !F.held.has('today.zones') && rows.length === Math.max(0, (sl - F.act0) / 5);
     const ext = { R: null, X: null }, cur = { R: null, X: null };
     if (known && rows.length) {
       let jR = 0, jX = 0;
@@ -2484,14 +2551,16 @@
   function zoneClock(F, ctx, ev) {
     const Zm = F.zones[ev];
     if (!Zm) return [];
+    if (F.held.has('today.zones')) return Zm.zones.map(() => null);
     const sl = sliceOf(ctx), last = F.end - 5, ahead = Zm.zones.map(() => 0);
     for (const q of F.ev[ev].pts) { const i = F.zcell[ev].get(q.k + '|' + q.b); if (i != null && q.t + 5 > sl) ahead[i]++; }
     const out = Zm.zones.map((z, i) => ahead[i] ? 'FUTURE_PRESENT' : z.cell_mask.some(([, b]) => F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last) ? 'FUTURE_EMPTY' : 'PAST_ONLY');
     const srv = F.r.today && F.r.today.zones && F.r.today.zones[ev];
     if (srv && srv.clock && F.r.today.slice === sl && JSON.stringify(srv.clock) !== JSON.stringify(out) && !F.mismatch.includes('zone clock ' + ev)) {
-      F.mismatch.push('zone clock ' + ev);
+      F.miss('zone clock ' + ev, 'today.zones');
       console.error('design 24: the page and the server disagree on the zone history clock', ev, srv.clock, out);
-      kViolate('the page and the server disagree on the history clock of the zones ' + ev);
+      kViolate('the page and the server disagree on the history clock of the zones ' + ev, null, F.r._ctx);
+      return Zm.zones.map(() => null);
     }
     return out;
   }
@@ -2499,9 +2568,13 @@
     const S = zoneStatus(F, ctx, ev), K = zoneClock(F, ctx, ev);
     return S.map((st_, i) => st_ === 'POSSIBLE' && K[i] !== 'FUTURE_PRESENT' ? 'QUIET' : st_);
   }
+  // DR-LAB-SWPC-1.1 M14: today's status withheld (by the server's gate, or found here: the page's status at the slice of the
+  // request differs from the server's) is not asserted — no status word («—»), no state look, today's reachability open;
+  // the zones' shares, their n / N and their drawing as history stay
   function zoneStatus(F, ctx, ev) {
     const Zm = F.zones[ev];
     if (!Zm) return [];
+    if (F.held.has('today.zones')) return Zm.zones.map(() => 'WITHHELD');
     const sl = sliceOf(ctx), rows = todayRows(F, ctx), w = F.w0t, last = F.end - 5;
     let out;
     if (rows.length !== Math.max(0, (sl - F.act0) / 5)) out = Zm.zones.map(() => 'STATUS_UNKNOWN');
@@ -2525,9 +2598,10 @@
     }
     const srv = F.r.today && F.r.today.zones && F.r.today.zones[ev];
     if (srv && F.r.today.slice === sl && JSON.stringify(srv.status) !== JSON.stringify(out) && !F.mismatch.includes('zone status ' + ev)) {
-      F.mismatch.push('zone status ' + ev);
+      F.miss('zone status ' + ev, 'today.zones');
       console.error('design 24: the page and the server disagree on the zone status', ev, srv.status, out);
-      kViolate('the page and the server disagree on today\'s status of the zones ' + ev);
+      kViolate('the page and the server disagree on today\'s status of the zones ' + ev, null, F.r._ctx);
+      return Zm.zones.map(() => 'WITHHELD');
     }
     return out;
   }
@@ -2570,10 +2644,12 @@
   // compared only as two measurements (B-RX-DIFF); they are never presented as competing parts of one 100 %.
   function twoBars(F, pX, pR, first, rg) {
     const cX = pX.yes_count, cR = pR.yes_count, mx = Math.max(cX, cR, 1), D = 'EST:B-RX-DIFF';
-    const row = (ev, p) => '<div class="ib"><i style="color:' + cfg[ev] + '">' + lbl(p.estimand, 'two_row', { ev, name: F.names[ev].toLowerCase() }) + '</i><span><em style="width:' + (100 * p.yes_count / mx).toFixed(1) + '%;background:' + cfg[ev] + '"></em></span><b>' + ppTxt(p) + '</b></div>';
+    // a withheld share (SWPC-1.1 M14) keeps its row with «—» and no bar
+    const row = (ev, p) => '<div class="ib"><i style="color:' + cfg[ev] + '">' + lbl(p.estimand, 'two_row', { ev, name: F.names[ev].toLowerCase() }) + '</i><span><em style="width:' + (p.pct == null ? 0 : 100 * p.yes_count / mx).toFixed(1) + '%;background:' + cfg[ev] + '"></em></span><b>' + ppTxt(p) + '</b></div>';
     const rows = first === 'R' ? row('R', pR) + row('X', pX) : row('X', pX) + row('R', pR);
     const d = pp(F, { estimand: D, params: rg, event_id: 'X_minus_R', region_kind: 'difference', start_rule: F.from, end_rule: 'до ' + clk(F.end), yes_count: cX - cR, display_scope: 'inspector' });
-    const gap = d.pct == null ? '—' : num(Math.abs(d.pct), 1);
+    if (pX.pct == null || pR.pct == null || d.pct == null) return rows;       // no comparison drawn from a withheld share
+    const gap = num(Math.abs(d.pct), 1);
     if (cX > cR * 1.15) return rows + '<div class="im" style="color:' + cfg.X + '">' + lbl(D, 'more_X', { gap }) + ' <span class="k">' + lbl(D, 'k_parts') + '</span></div>';
     if (cR > cX * 1.15) return rows + '<div class="im" style="color:' + cfg.R + '">' + lbl(D, 'more_R', { gap }) + ' <span class="k">' + lbl(D, 'k_parts') + '</span></div>';
     return rows + '<div class="im">' + lbl(D, 'close') + ' <span class="k">' + lbl(D, 'k_sum') + '</span></div>';
@@ -2611,6 +2687,23 @@
       : ctx.live ? '<div class="pill"><span class="dot"></span><span id="live">LIVE ' + clk(NOW) + ' ET</span></div>'
         : '<div style="display:flex;gap:6px"><div class="pill rp"><span class="dot"></span>Повтор ' + ctx.s.k + ' · ' + clk(ctx.obs) + '</div><button id="back">К текущему</button></div>';
     dom('menu').innerHTML = LAYERS.map(([k, n, col]) => '<label><input type="checkbox" data-l="' + k + '"' + (st.L[k] ? ' checked' : '') + '><span class="sw" style="background:' + col + '"></span>' + n + '</label>').join('');
+    // DR-LAB-SWPC-1.1 §8.4 (W01, A1): the cut is never hidden — when the clock's pill would leave the window (a break
+    // day's longer event names at 1600 px) the event names of the toolbar fold, as they already do below 1500 px
+    // measured only when what decides it changes (the window, the clock, the event names), so a full render forces no layout
+    const tbar = dom('tb'), pillEl = dom('clock').querySelector('.pill'), fit = [window.innerWidth, dom('clock').textContent, dom('ev').textContent, dom('dayb').textContent].join('|');
+    if (fit !== P24.fit) {
+      P24.fit = fit; tbar.classList.remove('tight');
+      if (pillEl && pillEl.getBoundingClientRect().right > window.innerWidth) tbar.classList.add('tight');
+    }
+    // DR-LAB-SWPC-1.1 §7.2 (NEW_SWPC): with the summary hidden, its own button carries the scene's contract state — a
+    // steady «!» and an outline while a number of this scene is withheld or refused, its name and tooltip giving the reason
+    // in the panel's own words and where it stands; with no violation the name only says why the panel would show no
+    // numbers (W09, W13). Nothing opens, scrolls, sounds or blinks by itself, and no layer setting hides it
+    const tg = dom('panel21toggle'), closed = root.classList.contains('panel21closed'), kv = closed ? integrity(ctx) : [];
+    const why = !closed ? '' : kv.length ? kv[kv.length - 1] + (kv.length > 1 ? ' · ещё ' + (kv.length - 1) : '') + ' · откройте «Сводку»: причина вверху' : !ctx.F || !ctx.F.N ? statusMsg(ctx) : '';
+    tg.classList.toggle('sc-alert', kv.length > 0);
+    tg.title = why ? 'Сводка · ' + why : '';
+    tg.setAttribute('aria-label', why ? 'Сводка · ' + why : 'Сводка');
   }
   function dayPicker() {
     const d = A.date || '2025-12-17';
@@ -2974,16 +3067,21 @@
     }
   }
   async function loadDay(refresh) {
+    // DR-LAB-SWPC-1.1 M02 (W01): only the answer to the latest request may become the day on screen — a late answer for
+    // the day, instrument or minute asked before is dropped, never drawn under the new name
+    const seq = A.daySeq = (A.daySeq || 0) + 1;
     A.busy = true; A.error = null; toolbar(cur());
     const first = !A.day;
     try {
       const q = '/api/d24/day?instrument=' + A.inst + (A.src === 'hist' ? '&date=' + A.date : '');
       let x = await (await fetch(q)).json();
+      if (seq !== A.daySeq) return;
       if (A.src === 'live') {
         const stale = x.status !== 'ok' || Date.now() - Date.parse(x.fetched_at) > 180000;
         if (refresh || stale) {
           if (x.status === 'ok' && first) { takeDay(x, true); render(true); }      // the saved day at once, the refresh after
           const y = await (await fetch(q + '&refresh=1')).json();
+          if (seq !== A.daySeq) return;
           if (y.status === 'error') A.error = /CDP|9222|TradingView/.test(y.message || '') ? 'TradingView не отвечает: свечи последнего обновления' : (y.message || '').slice(0, 80); else x = y;
         }
         takeDay(x, first && !A.day);
@@ -3000,7 +3098,7 @@
           if (st.session === 'RDR') { st.v0 = 545; st.v1 = rightEdge(); }
         }
       }
-    } catch (e) { A.error = 'Локальный сервер не ответил'; }
+    } catch (e) { if (seq !== A.daySeq) return; A.error = 'Локальный сервер не ответил'; }
     A.busy = false;
     render(true);
     if (A.src === 'live') alCheck();
@@ -3084,7 +3182,8 @@
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
   window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)
-    contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: K.violations.slice(), unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),
+    // violations: those of the scene on screen (SWPC-1.1 M16); all: every one found since the page opened
+    contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),
     verify: () => verifyNow(), lbl, cfg };
   initPanel24();
   // the address: #date=2025-12-17 (a history day) &inst=NQ &session=RDR &at=11:50 (replay) &ev=X &mode=path
@@ -3098,7 +3197,9 @@
     if (q.get('mode') === 'path') st.mode = 'path';
     if (q.get('view') === 'conf') st.view = 'conf';
     if (q.get('det')) { st.detPin = true; }
-    const at = q.get('at') ? (() => { const [hh, mm] = q.get('at').split(':').map(Number); return hh * 60 + mm - (hh >= 18 ? 1440 : 0); })() : null;
+    // the replay slice is always the close of an M5 (AGENTS.md rule 6, SC-1.1 CUT:LAST-CLOSED-M5-1): «&at=22:31» shows 22:30;
+    // a minute between closes made the page and the reference count the clock of the family differently (SWPC-1.1 M03)
+    const at = q.get('at') ? (() => { const [hh, mm] = q.get('at').split(':').map(Number); return Math.floor((hh * 60 + mm - (hh >= 18 ? 1440 : 0)) / 5) * 5; })() : null;
     if (q.get('area')) { const a = q.get('area').split(':').map(Number); st.area = a.length >= 4 ? { k0: a[0], k1: a[1], b0: a[2], b1: a[3] } : { k0: a[0], k1: a[1] }; }
     if (q.get('pt') != null && q.get('pt') !== '') st.pin = { k: 'pt', i: +q.get('pt') };      // &pt=5: the 6th session of the family pinned
     if (q.get('lvl')) st.pinLvl = q.get('lvl');                                               // &lvl=u2: a level pinned (drH, idrL, mid, u1 … d6)

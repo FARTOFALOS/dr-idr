@@ -65,6 +65,7 @@
 .p24-dr b{font-weight:500;color:#D1D4DC;overflow:hidden;text-overflow:ellipsis}
 .p24-dr .k{color:#6F7582;font-weight:400}
 @media(max-width:1500px){.evc span{display:none}#tb{gap:6px}.seg button{padding:0 7px}#apibar .feed{max-width:170px}}
+#tb.tight .evc span{display:none}  /* DR-LAB-SWPC-1.1 §8.4: the clock with the cut would leave the window (toolbar()) */
 @media(max-width:1300px){#dr21-root{--p21-width:268px}#date{display:none}#apibar .auto{display:none}#cmp22{display:none!important}}
 @media(max-width:1100px){#tb .version24,#tb .lbl{display:none}#apibar{display:none}#areab{font-size:0;padding:0 8px}#areab::before{content:'▭';font-size:13px}}
 @media(max-width:700px){#insp{display:none}#panel{bottom:0}html,body{height:auto;min-height:100%;overflow:auto}#dr21-root{height:1300px!important}#tb{height:auto;min-height:90px;flex-wrap:wrap;align-content:center;gap:6px;padding:6px 10px;white-space:normal}#main{top:120px;right:0;height:570px;bottom:auto}#panel{top:690px;left:0;width:100%;bottom:0;border-left:0;border-top:1px solid #252B34;padding:10px 14px}#dr21-root.panel21closed{height:690px!important}#menu,#cfgp,#dayp{right:5px;left:5px;top:115px;width:auto;max-width:calc(100% - 10px)}#clock{margin-left:auto}#step21 button,#panel21toggle{min-height:30px}}
@@ -133,5 +134,9 @@
 .evc{display:flex;align-items:center;gap:6px;height:26px;padding:0 9px;border-radius:5px;color:#C9CFD8;font-size:12.5px}
 .evc i{width:8px;height:8px;border-radius:50%}
 .evc.off{opacity:.45}
+/* DR-LAB-SWPC-1.1 §7.2: the hidden summary's own button while a number of this scene is withheld or refused — a steady «!»
+   and an outline in the colour of the contract notice; the badge stands outside the flow, so no button moves */
+#panel21toggle.sc-alert{position:relative;box-shadow:inset 0 0 0 1px rgba(242,54,69,.85);color:#F2A0A6}
+#panel21toggle.sc-alert::after{content:'!';position:absolute;top:-6px;right:-6px;width:14px;height:14px;border-radius:50%;background:#F23645;color:#fff;font:700 10px/14px -apple-system,BlinkMacSystemFont,"Trebuchet MS",Roboto,Ubuntu,sans-serif;text-align:center;pointer-events:none}
 /* DR-LAB-SC-1.1: a violation of the machine contract (a withheld number, another registry, a mismatch with the reference) */
 .p24-sc{margin:0 0 8px;padding:5px 8px;border:1px solid rgba(242,54,69,.5);border-radius:5px;background:rgba(242,54,69,.08);color:#F2A0A6;font-size:11.5px;line-height:1.35;overflow-wrap:anywhere}

@@ -49,7 +49,7 @@ shown. Any date of 2006–2025 opens as if it were today («История»); c
    change of these profiles. Its machine form: **`contract/`** (start at `contract/README.md`), enforced by
    `lab/contract.py` and by screen 24. The text is the source of truth; where `contract/` disagrees with it,
    `contract/` is the defect. Do not edit the contract file (it is pinned by SHA-256); a new edition is the operator's.
-3. **DR-LAB-SWPC-1.1** — `spec/DR-LAB-SWPC-1.1.md`, the operator-authorized implementation target for the visual presentation of screen 24. It sits between SC-1.1 meaning and the frontend: required operator discriminations, PresentationBindings, permitted/forbidden visual channels, M01–M18 machine obligations and H01–H12 perceptual acceptance tasks. It does **not** create C2/C3 or pre-accept the future UI; after implementation the operator performs the H tasks and accepts/rejects the view.
+3. **DR-LAB-SWPC-1.1** — `spec/DR-LAB-SWPC-1.1.md`, the operator-authorized contract of the visual presentation of screen 24. It sits between SC-1.1 meaning and the frontend: required operator discriminations, PresentationBindings, permitted/forbidden visual channels, M01–M18 machine obligations and H01–H12 perceptual acceptance tasks. It does **not** create C2/C3 or pre-accept the UI. Implemented on 2026-10-07: the text stays the only source (`tests/swpc11.py` reads its tables), M01–M18 are executed by `tests/swpc11_browser.mjs`, the binding passports are `spec/ekran-24/12-swpc.md`; the view is `PERCEPTUALLY_UNVERIFIED` until the operator runs H01–H12 (`meaning/16-priyomka-swpc.md`).
 4. **The profile definitions it formalises:** DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`), the zone map
    zone-map-3 (`meaning/12-karta-zon.md`), today's two axes (`meaning/14-vperedi-i-proshlo.md`), DR-LAB-NOW-1.0
    (`meaning/lens/2026-10-06-now-1.0/`, `meaning/15-sloj-seichas.md`; matchers, thresholds and gates frozen). Summaries:
@@ -64,7 +64,7 @@ shown. Any date of 2006–2025 opens as if it were today («История»); c
 0. `meaning/README.md` — the semantic layer (Russian, no code): what the numbers mean, the evidence, open questions.
 1. `AGENTS.md` — this file: what is normative, map, hard rules, how to verify, gotchas.
 2. `contract/README.md` — the machine contract: what it enforces, how to change it without breaking the screen.
-3. `spec/DR-LAB-SWPC-1.1.md` — current visual implementation target: what the trader must distinguish, what may attract attention, and how the result must be tested.
+3. `spec/DR-LAB-SWPC-1.1.md` — the presentation contract of screen 24: what the trader must distinguish, what may attract attention, and how the result is tested (its passports: `spec/ekran-24/12-swpc.md`).
 4. `meaning/10-dizajn-24.md`, then `spec/ekran-24/README.md` — screen 24: where every percentage comes from.
 5. `docs/ARCHITECTURE.md` — the stack, processes, data flow, API, the contract gate.
 6. `docs/SEMANTICS.md` — exact definitions of every object and number (section «Дизайн 24» for the working screen).
@@ -90,7 +90,11 @@ shown. Any date of 2006–2025 opens as if it were today («История»); c
   (`lab/contract.py`), the page's contract layer, `tests/contract_sc11.py`. On screen only the words of «Сейчас»
   changed — the operator's: «В истории: R позже углублялся… / Если углублялся…», symmetric for X (K33: a historical
   share never speaks of today in forecast grammar) — and the order window got its «нет периода» row.
-- **Visual implementation target DR-LAB-SWPC-1.1** (2026-10-07): the operator authorized the next stage — implement the closed PresentationBindings and M01–M18 on the existing screen 24. Until H01–H12 are run with the operator, the resulting view is `PERCEPTUALLY_UNVERIFIED`; implementation permission is not perceptual acceptance.
+- **DR-LAB-SWPC-1.1 implemented** (2026-10-07, `meaning/07` node «SWPC-1.1 — реализация»): no number changed; a
+  withheld number takes its drawing with it (in the server's units), a violation shows only on its own scene, the hidden
+  «Сводка» carries a steady «!» with the reason, a late day answer is dropped, «Сейчас» without an answer says so, the
+  cut never leaves the toolbar (`meaning/13` № 49–51). M01–M18 pass (74 checks; the base build fails 18 of them). The
+  view is `PERCEPTUALLY_UNVERIFIED` until the operator runs H01–H12 (`meaning/16-priyomka-swpc.md`).
 - **Open** (`meaning/05-otkrytye-voprosy.md`): what to develop next (О20: sequences, conditional forecasts, design);
   NOW-1.1 (a distance-from-extreme matcher, the operator decides); the zone map's prospective acceptance on sessions
   after 2025 (О23, О24: the 2026 tape stays closed); SC-1.1 for the legacy surfaces.
@@ -128,10 +132,12 @@ lab/
                           classic.html + app.js + live.js + styles.css (the classic screen, legacy)
   .runtime/               git-ignored: built history, live candles, server logs, NOW validation
 design/sozvezdiya-24/src  screen 24's source (app.js, panel.js, page.html, panel.css; build.py embeds the contract)
-spec/                     DR-LAB-SC-1.1 (normative) and 1.0 (previous edition); DR-LAB-SWPC-1.1 (current visual
-                          implementation target) and SWPC-1.0 (predecessor); deep-research-report (16).md as its
-                          analytical input;
-                          ekran-24/: every element of screen 24 on annotated screenshots, its meaning, count, code
+spec/                     DR-LAB-SC-1.1 (normative) and 1.0 (previous edition); DR-LAB-SWPC-1.1 (the presentation
+                          contract, implemented 2026-10-07) and SWPC-1.0 (predecessor); deep-research-report (16).md as
+                          its analytical input;
+                          ekran-24/: every element of screen 24 on annotated screenshots, its meaning, count, code;
+                          12-swpc.md: the binding passports B01-B16 (generated by tests/swpc11.py); img/swpc/: base vs
+                          candidate shots of the states SWPC-1.1 changed
 meaning/                  the semantic layer for agents without code (Russian): start at meaning/README.md; lenses and
                           answers in meaning/lens/
 docs/                     architecture, definitions, UI rules, decisions, research, the method
@@ -142,6 +148,9 @@ tests/contract_sc11.py    DR-LAB-SC-1.1: products = sources, the enforcement map
                           envelopes (LinkML in a temporary folder), the stale state, the page's contract layer
 tests/sem24.py            screen 24: the specification's 32 reference checks, integration on the base, the zone map
 tests/now24.py            screen 24: the acceptance tests of «Сейчас» (DR-LAB-NOW-1.0)
+tests/swpc11.py           DR-LAB-SWPC-1.1: the document's tables (W, B, M, H, §9 routes) vs the registry and the code,
+                          the engineering record of B01-B16 and the passports it generates (spec/ekran-24/12-swpc.md)
+tests/swpc11_browser.mjs  DR-LAB-SWPC-1.1 M01-M18 and ui_check24.js in a throw-away headless Chrome (node, no deps)
 tests/ui_check24.js       screen 24: in-page check (passports, page = server, one table, film columns, slices, zones,
                           the contract layer: every passport recomputed by the reference, K16, K30, K33)
 tests/ui_check21.js       design 22 (legacy) in-page check; ui_check.js: the classic screen
@@ -219,9 +228,26 @@ python -B tests/contract_sc11.py                            # expect ALL GOOD
 If you touched screen 24: run `python design/sozvezdiya-24/src/build.py`, `python -B tests/sem24.py` and
 `python -B tests/now24.py`; open http://127.0.0.1:8767/24/ (a history day, e.g. `#date=2025-12-17&inst=NQ&session=RDR`)
 in a browser tool at 1600×900 and 1920×1000, evaluate `tests/ui_check24.js` and expect `problems: []` (one known
-exception: the toolbar is 2–11 px wider than 1600 px in «История» mode, since before 2026-10-07). Check that
+exception: the toolbar is 2–11 px wider than 1600 px in «История» mode, since before 2026-10-07; the clock with the cut
+itself never leaves the window, `meaning/13` № 51). Check that
 http://127.0.0.1:8767/ still opens /24/ and /22/ opens design 22. If an element changed, update its row in
 `spec/ekran-24/`, add an entry to `meaning/13`, and re-shoot (`spec/ekran-24/tools/shots.py`, then `annotate.py`).
+
+DR-LAB-SWPC-1.1 (the presentation contract of screen 24) after any change of screen 24:
+
+```bash
+python -B tests/swpc11.py                 # the document's tables vs the SC-1.1 registry and the code; the binding passports
+node tests/swpc11_browser.mjs             # M01-M18 + ui_check24.js in a throw-away headless Chrome (the server must run)
+```
+
+The browser checks never touch the operator's browser or settings: a temporary profile, faults injected only between
+the page and the server. `SWPC_SERVE=<git ref>` runs the same checks on the build committed at that ref; `… same`
+compares the base (`4526d30`) and the candidate pixel by pixel on random unfamiliar scenes; `… shots` re-shoots
+`spec/ekran-24/img/swpc/`; `plan` / `session-open` / `show` / `tick` / `session-close` run the operator's H01–H12
+session (`meaning/16-priyomka-swpc.md`; the operator reads only `meaning/16a-list-zadanij.md` before it). The candidate
+under acceptance is the branch `swpc-1.1` with its passport `spec/ekran-24/swpc-kandidat.json`; `main` stays the base
+until the operator accepts. If a binding's code or channels changed, update its record in `tests/swpc11.py` and run it
+with `--write` (it regenerates `spec/ekran-24/12-swpc.md`).
 
 Legacy surfaces: design 22 — edit `design/sozvezdiya-22/src`, run its `build.py` (it writes `lab/dist/index.html` and
 `sozvezdiya.js`; never build `design/sozvezdiya-21`), evaluate `tests/ui_check21.js` at `/22/`. The classic screen —
@@ -263,6 +289,13 @@ Legacy surfaces: design 22 — edit `design/sozvezdiya-22/src`, run its `build.p
   `boxes_*`, `market_*` or `live/`: the screens read them.
 - **Label collisions on the chart.** New text on the chart is a visual change: the operator's rule is no new labels
   over the chart unasked (`meaning/13`); design 22 and the classic screen lay labels out with a minimum gap.
+- **A violation belongs to its scene** (SWPC-1.1 M16, 2026-10-07). Screen 24 tags each contract violation with the
+  passport's snapshot, the family or NOW response it came from, or the page itself; the notice and the «Сводка» sign
+  show only those of the scene on screen. Until then one day's violation stayed over every other day until reload. A
+  disagreement withholds in the server's own units (`family`, `zones.<ev>`, `today.zones`, a NOW event, a passport)
+  and the drawing of a withheld number goes with it; do not add a second model of dependencies.
+- **Late answers.** Only the answer to the latest `/api/d24/day` request may become the day (`loadDay`); families and
+  NOW are cached by their keys. On 2026-10-07 a late answer of an earlier day replaced the day just opened.
 
 ## Relation to G3
 
