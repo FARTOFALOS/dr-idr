@@ -6,6 +6,11 @@ plain arithmetic over the history base, so the same candles always give the same
 (`lab/contract.py`, `contract/README.md`); the other routes serve legacy surfaces (design 22, the classic screen, the
 research dashboard, design 23) and are marked `OUTSIDE_SC11`.
 
+**Presentation layer status (07.10.2026):** `spec/DR-LAB-SWPC-1.1.md` is the current implementation target between
+SC-1.1 semantic truth and the screen-24 frontend. It is not a runtime service yet: the engineer must bind existing
+components to its PresentationBindings and M01–M18, then the operator performs H01–H12. Until that work is accepted,
+the current frontend remains the product baseline.
+
 ## Processes and ports
 
 ```
