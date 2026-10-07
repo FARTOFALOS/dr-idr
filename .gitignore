@@ -4,3 +4,5 @@ __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
+# the LinkML environment of the machine contract (contract/setup-linkml.ps1 recreates it)
+.venv-linkml/

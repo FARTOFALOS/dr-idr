@@ -1,0 +1,86 @@
+# DR-LAB-SC-1.1 registry · V3 validation records: what was checked, on which history, with which control, and in
+# which lifecycle state. Structure, computational invariants, statistical transfer and policy fitness are different
+# evidence (V3); none of these records admits a PredictiveClaim (no PredictiveAdmission exists).
+registry_part: validation
+
+validations:
+  - id: VAL:NOW-1.0-WALKFORWARD
+    version: "1.0"
+    sc_ref: ["V3", "§12.2", "K28"]
+    grounds: RESEARCH_RESULT
+    title_ru: проверка NOW-1.0 walk-forward на истории
+    validates: [CMP:M1-1, CMP:M2-1, CMP:M3-1, CMP:B0-1, EST:N-NEW-R, EST:N-NEW-X, EST:N-DELTA-Q-R, EST:N-DELTA-Q-X, EST:N-TIME-R, EST:N-TIME-X]
+    validation_kind: STATISTICAL_TRANSFER
+    protocol_ru: "каждая историческая сессия как «сегодня», аналоги только из более ранних дат, семья ≥ 40, все закрытые M5 после активации; бинарный допуск — положительный Brier skill к B0, 95%-й недельный интервал разницы целиком в пользу кандидата, покрытие с опорой ≥ 20 не меньше 50 % срезов; величина и время — свои проверки; соседние допуски 0,20 / 0,30 — проверка хрупкости"
+    corpus_ru: "NQ, ES, YM × ADR, ODR, RDR, 2009–2025, 719 302 записи цель × M5; единица пересэмплирования — календарная неделя"
+    corpus_seen_before: true
+    result_ru: "исходная семья R и X — TIME_BASELINE (путь не добавил к базе по времени); семьи слома — NOT_TESTABLE; все дни недели не проверялись (NOT_VALIDATED_SCOPE)"
+    lifecycle: NOT_PROMOTED
+    runtime_artifact: "lab/.runtime/now24_validation.json (local, never committed; the server reads its decisions)"
+    source_refs: [SRC:NOW-PROVERKA, SRC:M15, SRC:CODE-NOW24]
+  - id: VAL:NOW-E1-EXPLORATION
+    version: "1.0"
+    sc_ref: ["V3", "K28"]
+    grounds: HYPOTHESIS
+    title_ru: разведочный сравнитель E1 (расстояние от сделанного экстремума)
+    validates: ["hypothesis E1 for a future NOW-1.1"]
+    validation_kind: RESEARCH_EXPLORATORY
+    protocol_ru: "тот же walk-forward; E1: |(c − r) истории − (c − r) сегодня| ≤ 0,10 (у X — x − c)"
+    corpus_ru: "та же история 2009–2025, уже использованная NOW-1.0"
+    corpus_seen_before: true
+    result_ru: "Brier skill к B0 +0,062 (R) и +0,089 (X), покрытие 12–14 %; придуман после просмотра результатов NOW-1.0"
+    lifecycle: HYPOTHESIS
+    note: "not a matcher of NOW-1.0 and not promotable on the same history; a new specification version and a forward check on new sessions are required"
+    source_refs: [SRC:M15, SRC:NOW-PROVERKA]
+  - id: VAL:ZM3-STUDY
+    version: "zone_map_3_2026_10_01"
+    sc_ref: ["V3"]
+    grounds: RESEARCH_RESULT
+    title_ru: исследование статусов зон zone-map-3
+    validates: [ALG:ZONE-MAP-3, EST:ZM3-STUDY]
+    validation_kind: RESEARCH_EXPLORATORY
+    protocol_ru: "как часто зона каждого статуса через 30 / 60 / 120 минут после подтверждения потом получала окончательный экстремум цели"
+    corpus_ru: "цели 2018–2025, карты по дню недели"
+    corpus_seen_before: true
+    result_ru: "таблица STUDY в lab/zonemap24.py; показывается только в деталях зоны с пометкой «разведка, не шанс на сегодня»"
+    lifecycle: RESEARCH_EXPLORATORY
+    source_refs: [SRC:ZM3-STUDY, SRC:M12]
+  - id: VAL:ZM3-PROSPECTIVE
+    version: "zone-map-3"
+    sc_ref: ["V3", "§14.2"]
+    grounds: DR_LAB_DECISION
+    title_ru: проспективная приёмка zone-map-3 (объявлена, не проводилась)
+    validates: [ALG:ZONE-MAP-3]
+    validation_kind: STATISTICAL_TRANSFER
+    protocol_ru: "пороги приёмки на сессиях после 2025 заморожены в meaning/12 §6 до появления таких сессий"
+    corpus_ru: "сессии после 2025 — закрытый год и журнал новых сессий не открываются (решение оператора О23, О24)"
+    corpus_seen_before: false
+    result_ru: "не проводилась"
+    lifecycle: FROZEN
+    source_refs: [SRC:M12]
+  - id: VAL:SEM-1.0-REFERENCE
+    version: "1"
+    sc_ref: ["V3"]
+    grounds: IMPLEMENTATION_FACT
+    title_ru: 32 эталонные проверки DR-LAB-SEM-1.0 на функциях экрана 24
+    validates: [OUT:FINAL-R-1, OUT:FINAL-X-1, OUT:DR-OUTCOME-1, OUT:FIRST-ORDER-1, OUT:REACH-FULL-1, OUT:VISIT-FULL-1, OUT:CROSS-FULL-1, GRID:K10-J15-1]
+    validation_kind: COMPUTATIONAL_INVARIANT
+    protocol_ru: "синтетические пути в целых тиках, проверки спецификации и равенства §14 на семьях базы (tests/sem24.py)"
+    corpus_ru: "синтетика и агрегаты базы сессий"
+    corpus_seen_before: true
+    result_ru: "выполняется при каждой проверке; зелёный тест удостоверяет свои предикаты, а не верность вопроса"
+    lifecycle: VALIDATED_FOR_PROFILE
+    source_refs: [SRC:SEM-1.0, SRC:CODE-SCENE24]
+  - id: VAL:SC-1.1-CONFORMANCE
+    version: "1.1"
+    sc_ref: ["V3", "§13", "§14.4"]
+    grounds: CONTRACT_FORMALISATION
+    title_ru: проверки соответствия DR-LAB-SC-1.1 (K01–K33, карта обязательств, синхронность артефактов)
+    validates: [DR-LAB-SC-1.1]
+    validation_kind: COMPUTATIONAL_INVARIANT
+    protocol_ru: "tests/contract_sc11.py: различающие примеры K01–K33 на рабочем коде и эталонных определениях, покрытие пунктов контракта, сверка реестра с маршрутами сервера, LinkML-валидация реальных ответов, пересборка артефактов"
+    corpus_ru: "синтетика; реальные ответы сервера проверяются во временной папке и в репозиторий не попадают"
+    corpus_seen_before: true
+    result_ru: "необходимое, не достаточное свидетельство: проверяет структуру и вычислительные инварианты, не верность вопроса и не перенос на будущее"
+    lifecycle: VALIDATED_FOR_PROFILE
+    source_refs: [SRC:SC-1.1, SRC:CODE-CONTRACT]

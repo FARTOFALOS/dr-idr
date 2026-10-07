@@ -1,0 +1,336 @@
+# DR-LAB-SC-1.1 registry · §14.4 the enforcement map: every obligation with the mechanisms and the exact checks that
+# enforce it (structural schema / path computation / provenance reconciliation / statistical check / human acceptance);
+# §13 the discriminating examples K01-K33 (their texts verbatim from the document; tests/contract_sc11.py checks that
+# they still are) with the checks that execute them; coverage notes for clauses deliberately not instantiated.
+# A check is test:<file>::<function>, test:<file>#<marker>, runtime:<file>::<name>, page:<file>::<function>,
+# build:<file>[::<function>], schema:<class> or human:<role>; tests/contract_sc11.py fails if a named check does not exist.
+registry_part: obligations
+
+obligations:
+  - id: OB:SOURCE-OF-TRUTH
+    sc_ref: ["§14.4", "§14.1"]
+    obligation_kind: REQUIREMENT
+    statement_ru: "Источник истины — текст DR-LAB-SC-1.1; исполняемый контракт привязан к его SHA-256 (LF). Изменённый текст без пересогласования останавливает сборку; изменённый источник (схема, реестр, документ) делает рантайм CONTRACT_STALE: статистика не публикуется, наблюдения отдаются."
+    enforcement:
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "build:contract/tools/build.py::build"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "runtime:lab/contract.py::_check_stale"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "runtime:lab/contract.py::stale_response"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "test:tests/contract_sc11.py::test_pins_and_products"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "test:tests/contract_sc11.py::test_stale_fails_closed"}
+    residual_ru: "Пересогласование изменённого текста со схемой — человеческая работа; машина только останавливает выпуск."
+  - id: OB:OBJECTS-AND-LINKS
+    sc_ref: ["§14.4", "§1.2"]
+    obligation_kind: REQUIREMENT
+    statement_ru: "Объекты контракта и их обязательные связи выражены классами и обязательными ссылками; каждая ссылка реестра разрешается в объект своего класса; правила классов (условные обязательные поля) исполняются."
+    enforcement:
+      - {mechanism: STRUCTURAL_SCHEMA, check: "schema:Registry"}
+      - {mechanism: STRUCTURAL_SCHEMA, check: "build:contract/tools/build.py::references"}
+      - {mechanism: STRUCTURAL_SCHEMA, check: "test:tests/contract_sc11.py::test_registry_structure"}
+  - id: OB:NAMED-VERSIONS
+    sc_ref: ["§14.4", "§14.1", "K09", "K30"]
+    obligation_kind: INVARIANT
+    statement_ru: "У каждой спецификации — версия; идентичность семьи связывает правило и участников, идентичность снимка — измерения, идентичность зоны — снимок, событие, вершину и версию алгоритма. Изменение смысла под прежним идентификатором отклоняется."
+    enforcement:
+      - {mechanism: STRUCTURAL_SCHEMA, check: "schema:Specification"}
+      - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::verify_snapshot"}
+      - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::verify_zones"}
+      - {mechanism: PATH_COMPUTATION, check: "test:tests/contract_sc11.py::k09"}
+      - {mechanism: PATH_COMPUTATION, check: "test:tests/contract_sc11.py::k30"}
+  - id: OB:CLAIM-ADMISSION
+    sc_ref: ["§14.4", "§10.1", "C0", "C1", "C2", "C3"]
+    obligation_kind: INVARIANT
+    statement_ru: "Класс утверждения не назначается по умолчанию: допустимые классы вычисляются из свидетельства (состав, цель, условие отбора, допуск прогноза, политика); число публикуется только под явной формой реестра допустимого класса; без PredictiveAdmission нет C2, без PolicySpecification и полномочия нет C3."
+    enforcement:
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "runtime:lab/contract.py::admissible_claims"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "runtime:lab/contract.py::Envelope"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "build:contract/tools/build.py::semantic_checks"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "page:design/sozvezdiya-24/src/app.js::bindPassport"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "page:design/sozvezdiya-24/src/app.js::nowBundle"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "test:tests/contract_sc11.py::k28"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "test:tests/contract_sc11.py::k32"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "test:tests/contract_sc11.py::k33"}
+    residual_ru: "Допуск C2 (PredictiveAdmission) и C3 (политика, полномочие) — только человеческое решение новой редакцией; в SC-1.1 их нет."
+  - id: OB:COMPONENT-UNKNOWN
+    sc_ref: ["§14.4", "E2", "V2.1", "V2.2"]
+    obligation_kind: INVARIANT
+    statement_ru: "Неизвестность компонентная: существование, величина и первое время имеют свои опоры; UNKNOWN и NO_PERIOD не смешиваются и не становятся нулём или NO; доля полного набора с неизвестными — границы, а не точка."
+    enforcement:
+      - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::ref_final_extreme"}
+      - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::ref_residual"}
+      - {mechanism: STATISTICAL_CHECK, check: "runtime:lab/contract.py::est_binary_bounds"}
+      - {mechanism: STRUCTURAL_SCHEMA, check: "schema:ComponentSupport"}
+      - {mechanism: PATH_COMPUTATION, check: "page:design/sozvezdiya-24/src/app.js::bindPassport"}
+      - {mechanism: PATH_COMPUTATION, check: "test:tests/contract_sc11.py::k12"}
+      - {mechanism: PATH_COMPUTATION, check: "test:tests/contract_sc11.py::k13"}
+      - {mechanism: PATH_COMPUTATION, check: "test:tests/contract_sc11.py::k15"}
+      - {mechanism: STATISTICAL_CHECK, check: "test:tests/contract_sc11.py::k16"}
+      - {mechanism: PATH_COMPUTATION, check: "test:tests/contract_sc11.py::k23"}
+      - {mechanism: STATISTICAL_CHECK, check: "test:tests/contract_sc11.py::k29"}
+  - id: OB:PROVENANCE
+    sc_ref: ["§14.4", "§1.3", "§12.3"]
+    obligation_kind: REQUIREMENT
+    statement_ru: "Каждое опубликованное число — пакет: вывод (операция, эталонное определение, версии входов: снимок наблюдений, снимок набора, реестр, код), оценки, опоры и утверждение; пакет валиден по схеме."
+    enforcement:
+      - {mechanism: STRUCTURAL_SCHEMA, check: "schema:StatisticalResultBundle"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "runtime:lab/contract.py::Envelope"}
+      - {mechanism: STRUCTURAL_SCHEMA, check: "test:tests/contract_sc11.py::test_live_envelopes"}
+  - id: OB:NO-UNDECLARED-NUMBER
+    sc_ref: ["§12.3", "§14.4"]
+    obligation_kind: FORBIDDEN_TRANSFORMATION
+    statement_ru: "Число маршрута SC-1.1 без объявленного смысла (кодировки поля) не выпускается: ответ становится нарушением, статистика снимается."
+    enforcement:
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "runtime:lab/contract.py::finalize"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "runtime:lab/contract.py::undeclared_numbers"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "test:tests/contract_sc11.py::test_routes_and_encodings"}
+  - id: OB:REFERENCE-RECOMPUTATION
+    sc_ref: ["P1", "K31", "§14.4"]
+    obligation_kind: INVARIANT
+    statement_ru: "Структурная валидность не удостоверяет смысл: на границе выпуска снимок семьи, исходы, порядок, зоны, сегодняшние статусы и числа «Сейчас» пересчитываются эталонными определениями из первичных записей; несовпадение снимает затронутое."
+    enforcement:
+      - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::verify_snapshot"}
+      - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::verify_zones"}
+      - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::verify_today_zones"}
+      - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::verify_forecast"}
+      - {mechanism: PATH_COMPUTATION, check: "test:tests/contract_sc11.py::k31"}
+  - id: OB:PAGE-PASSPORTS
+    sc_ref: ["§12.3", "§13", "§14.4"]
+    obligation_kind: REQUIREMENT
+    statement_ru: "Каждое число экрана — паспорт зарегистрированной оценки с параметрами, счётами и N; форма утверждения допустима на наборе семьи; страница сверяет свои счёты с пакетами сервера, а каждый паспорт пересчитывается эталоном сервера (POST /api/d24/verify); нарушение снимает число и стоит вверху панели."
+    enforcement:
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "page:design/sozvezdiya-24/src/app.js::pp"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "page:design/sozvezdiya-24/src/app.js::envCounts"}
+      - {mechanism: PATH_COMPUTATION, check: "page:design/sozvezdiya-24/src/app.js::verifyNow"}
+      - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::verify_passports"}
+      - {mechanism: PATH_COMPUTATION, check: "test:tests/ui_check24.js#SC11"}
+  - id: OB:PAGE-WORDS
+    sc_ref: ["§12.3", "§13", "K33"]
+    obligation_kind: REQUIREMENT
+    statement_ru: "Слова рядом с каждым числом — зарегистрированные подписи его формы утверждения или формы факта; страница показывает только их, встраивая реестр страницы при сборке и сверяя его хеш с конвертами сервера."
+    enforcement:
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "page:design/sozvezdiya-24/src/app.js::lbl"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "page:design/sozvezdiya-24/src/app.js::regFault"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "build:design/sozvezdiya-24/src/build.py"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "test:tests/contract_sc11.py::test_page_contract"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "test:tests/ui_check24.js#SC11"}
+    residual_ru: "Выбор самих слов в пределах класса утверждения — решение оператора; машина проверяет, что показаны зарегистрированные."
+  - id: OB:LEGACY-QUARANTINE
+    sc_ref: ["§0.2", "§12.3"]
+    obligation_kind: FORBIDDEN_TRANSFORMATION
+    statement_ru: "Каждый маршрут сервера объявлен; устаревшие маршруты — изолированный профиль со своей маркировкой OUTSIDE_SC11; ни одна оценка SC-1.1 не берёт их числа на вход."
+    enforcement:
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "runtime:lab/contract.py::header_for"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "test:tests/contract_sc11.py::test_routes_and_encodings"}
+  - id: OB:STATISTICAL-TRANSFER
+    sc_ref: ["V3", "§12.2", "K28"]
+    obligation_kind: REQUIREMENT
+    statement_ru: "Перенос NOW на сегодня допускается только по записанной проверке на истории (walk-forward) с её решением; отсутствие проверки или провал оставляет базу по времени; исследование не продвигается на той же истории."
+    enforcement:
+      - {mechanism: STATISTICAL_CHECK, check: "runtime:lab/contract.py::attach_now"}
+      - {mechanism: STATISTICAL_CHECK, check: "test:tests/contract_sc11.py::k28"}
+      - {mechanism: HUMAN_ACCEPTANCE, check: "human:operator"}
+    residual_ru: "Честность отбора истории и смысл цели структурой не удостоверяются (§14.4): записи проверки — свидетельство, а не разрешение."
+  - id: OB:HUMAN-ACCEPTANCE
+    sc_ref: ["§14.1", "§14.3", "D1"]
+    obligation_kind: REQUIREMENT
+    statement_ru: "Принятие редакции, защищённых смыслов, торговой политики и полномочий — человеческий акт с указанием принявшего, источника, редакции и области; запись в реестре его не создаёт."
+    enforcement:
+      - {mechanism: HUMAN_ACCEPTANCE, check: "human:operator"}
+      - {mechanism: STRUCTURAL_SCHEMA, check: "schema:AcceptanceRecord"}
+    residual_ru: "Не проверяется машиной и не изображается проверенным."
+
+examples:
+  - id: K01
+    sc_ref: ["K01", "H1", "S2"]
+    situation_ru: "Свеча 10:55–11:00 подтверждает RDR; следующая 11:00–11:05 подтверждает другой случай"
+    expected_ru: "Окна 10:45–11:00 и 11:00–11:15; событие известно только на закрытии"
+    checks: ["test:tests/contract_sc11.py::k01", "runtime:lab/contract.py::ref_window"]
+  - id: K02
+    sc_ref: ["K02", "S2"]
+    situation_ru: "Тень вышла за DR, close ровно на границе"
+    expected_ru: "Нет подтверждения/слома; строгое закрытие за границей меняет результат"
+    checks: ["test:tests/contract_sc11.py::k02", "runtime:lab/contract.py::today_state", "runtime:lab/contract.py::derive_base"]
+  - id: K03
+    sc_ref: ["K03", "P0.1"]
+    situation_ru: "Цена на активирующей M5 глубже всех последующих"
+    expected_ru: "Эта глубина не входит в постактивационный R"
+    checks: ["test:tests/contract_sc11.py::k03", "runtime:lab/contract.py::ref_final_extreme"]
+  - id: K04
+    sc_ref: ["K04", "P0.1"]
+    situation_ru: "Новый экстремум на M5, закрывшейся в H, и ещё один на открывшейся в H"
+    expected_ru: "Первый входит; второй не меняет результат блока"
+    checks: ["test:tests/contract_sc11.py::k04", "runtime:lab/contract.py::ref_final_extreme"]
+  - id: K05
+    sc_ref: ["K05", "O2"]
+    situation_ru: "ADR переходит полночь; даты по UTC/ET расходятся"
+    expected_ru: "Торговая дата определяется O2, не календарной частью UTC; DST не фиксированным сдвигом"
+    checks: ["test:tests/contract_sc11.py::k05", "schema:TemporalFrame"]
+  - id: K06
+    sc_ref: ["K06", "M0"]
+    situation_ru: "IDR `[100,110]`, лонг; цена 107.5"
+    expected_ru: "u=−0.25; отражение цены и направления даёт тот же u; нормированные low≤high"
+    checks: ["test:tests/contract_sc11.py::k06", "runtime:lab/contract.py::ref_directed"]
+  - id: K07
+    sc_ref: ["K07", "M1"]
+    situation_ru: "u=−0.01 при клетке 0.1"
+    expected_ru: "Индекс −1, не 0; округлённая подпись не меняет клетку"
+    checks: ["test:tests/contract_sc11.py::k07", "runtime:lab/contract.py::ref_cell"]
+  - id: K08
+    sc_ref: ["K08", "E0", "E1"]
+    situation_ru: "Замена всех сегодняшних свечей после t"
+    expected_ru: "Не меняет PrefixState, семейный ключ, выбранный matcher и выпущенный ответ на t"
+    checks: ["test:tests/contract_sc11.py::k08", "runtime:lab/contract.py::ref_now_sets"]
+  - id: K09
+    sc_ref: ["K09", "H2", "§14.1"]
+    situation_ru: "Замена хвоста исторического аналога после t"
+    expected_ru: "Не меняет его префикс/допустимость/membership на t; может менять outcome. Для уже сохранённого BASE-снимка — новая версия данных, а не тихая перезапись"
+    checks: ["test:tests/contract_sc11.py::k09", "runtime:lab/contract.py::verify_snapshot"]
+  - id: K10
+    sc_ref: ["K10", "E0", "H3"]
+    situation_ru: "Подтверждения семьи разнесены на 10 минут, cut=11:50"
+    expected_ru: "Все сравниваются на собственных 11:50; возраст остаётся разным"
+    checks: ["test:tests/contract_sc11.py::k10", "runtime:lab/contract.py::ref_prefix"]
+  - id: K11
+    sc_ref: ["K11", "H1"]
+    situation_ru: "Пропуск до первого наблюдённого подтверждения допускает более раннее событие"
+    expected_ru: "Ключ не угадывается; случай попадает в журнал неопределённых ключей"
+    checks: ["test:tests/contract_sc11.py::k11", "runtime:lab/contract.py::ref_family"]
+  - id: K12
+    sc_ref: ["K12", "E2", "V2.1"]
+    situation_ru: "Пропуск после достоверной активации"
+    expected_ru: "N_base прежний; окончательный R/X UNKNOWN; NOW допускает случай только при полном нужном префиксе"
+    checks: ["test:tests/contract_sc11.py::k12", "runtime:lab/contract.py::ref_final_extreme", "runtime:lab/contract.py::ref_prefix"]
+  - id: K13
+    sc_ref: ["K13", "E2", "P0.2"]
+    situation_ru: "Есть наблюдённое достижение и другая отсутствующая M5"
+    expected_ru: "Достижение YES; конечная величина может быть UNKNOWN; отсутствие достижения на неполном пути не становится NO"
+    checks: ["test:tests/contract_sc11.py::k13", "runtime:lab/contract.py::ref_reach"]
+  - id: K14
+    sc_ref: ["K14", "P0.2"]
+    situation_ru: "После пропуска виден слом DR"
+    expected_ru: "Исход BROKEN; первое время слома может оставаться неизвестным"
+    checks: ["test:tests/contract_sc11.py::k14", "runtime:lab/contract.py::ref_dr_outcome"]
+  - id: K15
+    sc_ref: ["K15", "E2", "P0.2"]
+    situation_ru: "Активация в H / все ожидаемые после активации свечи отсутствуют"
+    expected_ru: "В первом случае NO_PERIOD; во втором UNKNOWN"
+    checks: ["test:tests/contract_sc11.py::k15", "runtime:lab/contract.py::ref_first_order"]
+  - id: K16
+    sc_ref: ["K16", "V2.1"]
+    situation_ru: "N=10; 3 YES, 5 NO, 2 UNKNOWN"
+    expected_ru: "Доля полного набора в [30 %,50 %]; 37,5 % — только среди восьми известных; не точная доля десяти"
+    checks: ["test:tests/contract_sc11.py::k16", "runtime:lab/contract.py::est_binary_bounds", "page:design/sozvezdiya-24/src/app.js::bindPassport", "test:tests/ui_check24.js#K16"]
+  - id: K17
+    sc_ref: ["K17", "P2", "V1"]
+    situation_ru: "N=25; в полосе 5 точек, в её временном окне 2"
+    expected_ru: "Доля полосы 20 %, области 8 %; число 20 % не подписывает меньший контур"
+    checks: ["test:tests/contract_sc11.py::k17", "runtime:lab/contract.py::est_count_over_n", "test:tests/ui_check24.js#K17"]
+  - id: K18
+    sc_ref: ["K18", "P0.2"]
+    situation_ru: "Один путь посетил две полосы и несколько раз повторил итоговый R"
+    expected_ru: "Два отдельных посещения YES; один итоговый R-голос; первые и повторные времена различаются"
+    checks: ["test:tests/contract_sc11.py::k18", "runtime:lab/contract.py::ref_visit"]
+  - id: K19
+    sc_ref: ["K19", "§12.4/B-RX"]
+    situation_ru: "N=10; два R и три X в одном окне, одна сессия дала оба"
+    expected_ru: "Разность долей 10 п.п.; сумма 50 % не доля уникальных сессий с «любым событием» (она 40 %)"
+    checks: ["test:tests/contract_sc11.py::k19", "runtime:lab/contract.py::verify_passports", "page:design/sozvezdiya-24/src/app.js::twoBars"]
+  - id: K20
+    sc_ref: ["K20", "P0.2"]
+    situation_ru: "Одинаковые итоговые цены R/X, но разные первые времена; затем повтор X"
+    expected_ru: "Первые отношения порядка могут различаться; повтор после R проверяется отдельно; маршрут сделки из пары не следует"
+    checks: ["test:tests/contract_sc11.py::k20", "runtime:lab/contract.py::ref_order_detail"]
+  - id: K21
+    sc_ref: ["K21", "P0.2"]
+    situation_ru: "R и X на одной M5"
+    expected_ru: "SAME_M5; порядок неизвестен, цвет свечи его не восстанавливает"
+    checks: ["test:tests/contract_sc11.py::k21", "runtime:lab/contract.py::ref_first_order"]
+  - id: K22
+    sc_ref: ["K22", "P0.2"]
+    situation_ru: "Гэп с M5 целиком выше L, ранее цена была ниже"
+    expected_ru: "«На L или дальше» YES; буквального пересечения свечой может не быть"
+    checks: ["test:tests/contract_sc11.py::k22", "runtime:lab/contract.py::ref_cross"]
+  - id: K23
+    sc_ref: ["K23", "P0.3"]
+    situation_ru: "Новый хвост только повторяет r_seen; другой вариант ниже на один тик"
+    expected_ru: "Первый new_R=NO при полном остатке; второй YES; delta и tau имеют собственную известность"
+    checks: ["test:tests/contract_sc11.py::k23", "runtime:lab/contract.py::ref_residual"]
+  - id: K24
+    sc_ref: ["K24", "E3"]
+    situation_ru: "r_seen=−0.1, область `[−0.1,0)` содержит его первую M5, её окно уже прошло"
+    expected_ru: "Область может HOLDS; не становится невозможной только из-за времени"
+    checks: ["test:tests/contract_sc11.py::k24", "runtime:lab/contract.py::ref_reachability", "test:tests/ui_check24.js#K24"]
+  - id: K25
+    sc_ref: ["K25", "E3", "E4"]
+    situation_ru: "Зона логически возможна, но известных исторических событий после t нет"
+    expected_ru: "POSSIBLE и FUTURE_EMPTY совместимы; N и доля зоны прежние"
+    checks: ["test:tests/contract_sc11.py::k25", "runtime:lab/contract.py::ref_history_clock", "test:tests/ui_check24.js#K25"]
+  - id: K26
+    sc_ref: ["K26", "H1", "§12.1"]
+    situation_ru: "Сегодняшний DR сломан, затем цена вернулась"
+    expected_ru: "Исходный слом сохраняется; F_break имеет отдельный N/шкалу; возврат к исходной карте возвращает прежний snapshot"
+    checks: ["test:tests/contract_sc11.py::k26", "runtime:lab/contract.py::verify_snapshot"]
+  - id: K27
+    sc_ref: ["K27", "§12.2", "V2"]
+    situation_ru: "В базовой семье 19 случаев; NOW нашёл 19 сопоставимых"
+    expected_ru: "Базовая доля определима; для NOW срабатывает его собственное ограничение опоры, не скрывающее BASE"
+    checks: ["test:tests/contract_sc11.py::k27", "runtime:lab/contract.py::attach_now"]
+  - id: K28
+    sc_ref: ["K28", "H3", "V3", "C2"]
+    situation_ru: "M1 даёт красивое число на одной сцене, но проверка не прошла; E1 подобран после просмотра результата"
+    expected_ru: "Нет повышения до принятого path-прогноза; B0/fallback по профилю; E1 — исследовательская гипотеза"
+    checks: ["test:tests/contract_sc11.py::k28", "runtime:lab/contract.py::attach_now", "runtime:lab/contract.py::admissible_claims"]
+  - id: K29
+    sc_ref: ["K29", "V2.2"]
+    situation_ru: "Среди четырёх известных delta значения 0,0,0.2,0.4"
+    expected_ru: "Медиана всей известной группы 0.1 при линейном квантиле; медиана «если новый» 0.3. Это разные величины и опоры"
+    checks: ["test:tests/contract_sc11.py::k29", "runtime:lab/contract.py::ref_quantile"]
+  - id: K30
+    sc_ref: ["K30", "P3", "§14.1"]
+    situation_ru: "Изменены размер окна/яркость/контур, исходные участники прежние"
+    expected_ru: "Все счётчики прежние; если поменялась mask, это новая область/версия результата"
+    checks: ["test:tests/contract_sc11.py::k30", "runtime:lab/contract.py::verify_zones", "test:tests/ui_check24.js#K30"]
+  - id: K31
+    sc_ref: ["K31", "P1", "§14.4"]
+    situation_ru: "Структурно валидный объект говорит FINAL_R, но рассчитан из посещений"
+    expected_ru: "Структурная проверка недостаточна; семантическое соответствие отклоняется"
+    checks: ["test:tests/contract_sc11.py::k31", "runtime:lab/contract.py::verify_snapshot", "runtime:lab/contract.py::attach_family"]
+  - id: K32
+    sc_ref: ["K32", "C3", "D0", "D1"]
+    situation_ru: "Историческая доля 80 %, нет PolicySpecification и полномочия исполнения"
+    expected_ru: "Нет DecisionClaim о выгодном входе и нет разрешения на ордер"
+    checks: ["test:tests/contract_sc11.py::k32", "runtime:lab/contract.py::admissible_claims", "build:contract/tools/build.py::semantic_checks"]
+  - id: K33
+    sc_ref: ["K33", "C1", "C2", "§10.1"]
+    situation_ru: "NOW/B0 даёт условную историческую долю 31,3 %, а подпись UI сформулирована как «R откат углубится — 31,3 %»"
+    expected_ru: "Пока нет отдельного допущенного `PredictiveClaim`, результат остаётся C1: допустима формулировка вида «после этого среза новый R наблюдался у 31,3 % допустимых исторических случаев». Прогнозная грамматика о сегодняшнем будущем требует C2 и его оснований"
+    checks: ["test:tests/contract_sc11.py::k33", "runtime:lab/contract.py::admissible_claims", "page:design/sozvezdiya-24/src/app.js::nowBundle", "test:tests/ui_check24.js#K33"]
+
+coverage_notes:
+  - clause: "C2"
+    sc_ref: ["C2"]
+    coverage: NOT_INSTANTIATED
+    reason_ru: "Класс PredictiveClaim и PredictiveAdmission есть в схеме; в реестре SC-1.1 нет ни одного допуска, поэтому ни одна оценка не допускает C2 (сборка отклоняет любой допуск без новой редакции)."
+  - clause: "C3"
+    sc_ref: ["C3"]
+    coverage: NOT_INSTANTIATED
+    reason_ru: "Класс DecisionClaim есть в схеме; без PolicySpecification и ActionAuthorityReference он недопустим нигде (K32)."
+  - clause: "D0"
+    sc_ref: ["D0"]
+    coverage: NOT_INSTANTIATED
+    reason_ru: "PolicySpecification определена схемой; политик в этой редакции нет (§14.3: принятие торговой политики не присваивается)."
+  - clause: "D1"
+    sc_ref: ["D1"]
+    coverage: NOT_INSTANTIATED
+    reason_ru: "ActionAuthorityReference определена схемой; полномочий исполнения нет."
+  - clause: "D2"
+    sc_ref: ["D2"]
+    coverage: OUT_OF_SCOPE
+    reason_ru: "PolicyDecision не выражена классом: без политики решения по ней не существует; добавление политики требует новой редакции, где появится и запись решения."
+  - clause: "§14.3"
+    sc_ref: ["§14.3"]
+    coverage: OUT_OF_SCOPE
+    reason_ru: "Формулы закрытого M7, допуск E1, закрытый 2026 год, торговая политика, слияние design-24 в main и публикация вне области этой редакции."
+  - clause: "§15.1"
+    sc_ref: ["§15.1"]
+    coverage: EDITORIAL
+    reason_ru: "Источники и пределы проверки самого документа; машинный контракт хранит хеш документа и источники, но не повторяет их проверку."

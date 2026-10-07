@@ -1,0 +1,151 @@
+# DR-LAB-SC-1.1 registry · layers 0-3: observation sources, the temporal frame, the strategy rule, the measurement
+# frames and grid, the knowledge cuts. Values are the profile's (BASE-24 / NOW-1.0), checked against the code by
+# tests/contract_sc11.py (the registry declares, the code implements, the test compares).
+registry_part: layers-0-3
+
+observation_sources:
+  - id: OBS:G3-TAPE
+    version: "dr-lab-boxes-1"
+    sc_ref: ["O0", "O3"]
+    grounds: DR_LAB_DECISION
+    title_ru: историческая лента G3 (минуты NQ, ES, YM), собранная в M5 базы сессий
+    source_kind: HISTORICAL_TAPE
+    provider: "G3 market tape (FARTOFALOS/g3-market-research, data/market), read-only; built by lab/build_market.py and lab/build_boxes.py into lab/.runtime (never committed)"
+    instruments:
+      - {instrument: NQ, series: "G3 continuous NQ (M1)", tick_size: 0.25, roll_adjustment: "unknown: the roll / back-adjustment of the continuous series is not certified in DR Lab"}
+      - {instrument: ES, series: "G3 continuous ES (M1)", tick_size: 0.25, roll_adjustment: "unknown: the roll / back-adjustment of the continuous series is not certified in DR Lab"}
+      - {instrument: YM, series: "G3 continuous YM (M1)", tick_size: 1.0, roll_adjustment: "unknown: the roll / back-adjustment of the continuous series is not certified in DR Lab"}
+    bar_interval_minutes: 5
+    label_meaning: CLOSE_OF_INTERVAL
+    availability_rule: "an M5 is known at its close (its open + 5 minutes); history is replayed by close times"
+    aggregation_rule: "clock M5 buckets by the open minute of M1 bars; an M5 exists if at least one of its M1 exists (the atom: an existing M5 is an observation, day and night); a hole is a wholly missing M5"
+    admissible_from: "2006-01-01"
+    admissible_to: "2025-12-31"
+    excluded_years: [2026]
+    volume_used: false
+    unknown_properties:
+      - "the actual time old records arrived from the provider (replay is by candle close times, not a reconstruction of availability)"
+      - "the roll and adjustment method of the continuous series"
+      - "the history of provider corrections"
+    source_refs: [SRC:CODE-BUILD-MARKET, SRC:CODE-BUILD-BOXES, SRC:AGENTS, SRC:OPERATOR-ATOM-2026-10-01]
+  - id: OBS:TV-LIVE
+    version: "tv-fetch-1"
+    sc_ref: ["O0"]
+    grounds: DR_LAB_DECISION
+    title_ru: текущие свечи TradingView оператора
+    source_kind: LIVE_FEED
+    provider: "TradingView Desktop through its debugging port (lab/tv_fetch.mjs, lab/live.py); saved to lab/.runtime/live (never committed, never written into the history base)"
+    instruments:
+      - {instrument: NQ, series: "CME_MINI:NQ1!", tick_size: 0.25, roll_adjustment: "unknown: TradingView continuous contract"}
+      - {instrument: ES, series: "CME_MINI:ES1!", tick_size: 0.25, roll_adjustment: "unknown: TradingView continuous contract"}
+      - {instrument: YM, series: "CBOT_MINI:YM1!", tick_size: 1.0, roll_adjustment: "unknown: TradingView continuous contract"}
+    bar_interval_minutes: 5
+    label_meaning: OPEN_OF_INTERVAL
+    availability_rule: "an M5 is closed when now >= its open + 5 minutes; the forming M5 is drawn, never used in statistics"
+    aggregation_rule: "the operator's M5 pane, or M1 aggregated to clock M5 by open minute (lab/tv_fetch.mjs)"
+    volume_used: false
+    unknown_properties:
+      - "late corrections of the provider"
+      - "equivalence with the G3 tape: the same ticker of two sources is not an equivalence"
+    source_refs: [SRC:CODE-LIVE, SRC:AGENTS]
+
+temporal_frames:
+  - id: TF:ET-M5-1
+    version: "1"
+    sc_ref: ["O2", "O1"]
+    grounds: DR_LAB_DECISION
+    title_ru: часы метода — America/New_York, M5 по метке открытия
+    timezone: America/New_York
+    trading_date_rule: "RDR and ODR belong to their ET calendar date; ADR (19:30-20:30 the evening before) belongs to the next date; the live trading day starts 18:00 ET the evening before"
+    label_meaning: OPEN_OF_INTERVAL
+    availability_rule: "the close of an M5 = its open + 5 minutes; a slice is the close of the last closed M5; the computer's clock never changes the method's clock"
+    dst_rule: "conversion through the zone America/New_York (daylight saving time follows the zone), never a fixed UTC offset"
+    record_form:
+      encoding: "API: [open label minute, open, high, low, close] in day minutes ET and prices; base: [close minute (+1440 for ADR after midnight), o, h, l, c] in integer ticks"
+      label_meaning: OPEN_OF_INTERVAL
+      closed_rule: "an M5 is closed iff its open + 5 <= now (live) or <= the replay slice (a history day)"
+      ohlc_invariant: "low <= open, close <= high; OHLC holds no order of trades inside the M5"
+    source_refs: [SRC:CODE-BUILD-MARKET, SRC:CODE-SCENE21, SRC:SC-1.1]
+
+strategy_rules:
+  - id: RULE:DRIDR-24-1
+    version: "24.1"
+    sc_ref: ["S0", "S1", "S2"]
+    grounds: DR_LAB_DECISION
+    title_ru: DR / IDR, подтверждение и слом в профиле экрана 24
+    blocks:
+      - {block: ADR, formation_start: -270, formation_end: -210, block_end: 120, history_minute_shift: 1440, trading_date_offset_days: 1, formation_m5_count: 12}
+      - {block: ODR, formation_start: 180, formation_end: 240, block_end: 510, history_minute_shift: 0, trading_date_offset_days: 0, formation_m5_count: 12}
+      - {block: RDR, formation_start: 570, formation_end: 630, block_end: 960, history_minute_shift: 0, trading_date_offset_days: 0, formation_m5_count: 12}
+    box_rule: "over the 12 M5 of the formation window (opens from its start inclusive to its end exclusive): DR_high = max(high), DR_low = min(low), IDR_high = max(open, close), IDR_low = min(open, close); w = IDR_high - IDR_low > 0, otherwise the session gets no valid key; an incomplete window gets none either"
+    confirmation_rule: "the first M5 after the box whose close is strictly beyond DR (close > DR_high: up; close < DR_low: down); a wick or an equal close is not a confirmation; one search for both sides, the earliest close beyond either edge; established only if no whole M5 of the block is missing before it"
+    break_rule: "after the confirmation the first M5 closing strictly beyond its own opposite DR; absorbing: a later return never undoes it; the opposite DR is not the coordinate -1 (that is the opposite IDR edge)"
+    early_close_calendar: NOT_CERTIFIED
+    weekend_rule: "trading dates on Saturday and Sunday are not sessions"
+    source_refs: [SRC:SEM-1.0, SRC:STRATEGY, SRC:PINE-TM, SRC:CODE-BUILD-BOXES, SRC:CODE-SCENE21]
+
+measurement_frames:
+  - id: MF:CONFIRMATION-1
+    version: "1"
+    sc_ref: ["M0"]
+    grounds: DR_LAB_DECISION
+    title_ru: шкала семьи подтверждения
+    activation_kind: CONFIRMATION
+    origin_rule: "e = the IDR edge on the confirmation side (IDR_high for a long, IDR_low for a short)"
+    direction_rule: "d = +1 for a long, -1 for a short; for a short the physical high and low swap roles"
+    unit: "w = the IDR width of the session in ticks; SD = one IDR width (not a statistical standard deviation)"
+    forward_formula: "u = d * (p - e) / w; in ticks a directed value v = d * (p - e) goes out with w"
+    inverse_formula: "p = e + d * w * u"
+    transfer_rule: "a history point keeps its u and is drawn with today's e0, d0, w0: a mapping of the relative coordinate, not a statement about the same absolute move or about reaching a price today"
+    source_refs: [SRC:SEM-1.0, SRC:M10-P]
+  - id: MF:BREAK-1
+    version: "1"
+    sc_ref: ["M0"]
+    grounds: DR_LAB_DECISION
+    title_ru: шкала семьи слома
+    activation_kind: DR_BREAK
+    origin_rule: "e = the opposite IDR edge of the original confirmation (0 = the opposite IDR edge)"
+    direction_rule: "d = minus the original direction (the break's way is positive)"
+    unit: "w = the IDR width of the session in ticks"
+    forward_formula: "u = d * (p - e) / w"
+    inverse_formula: "p = e + d * w * u"
+    transfer_rule: "as for the confirmation frame, with today's break frame"
+    source_refs: [SRC:SEM-1.0, SRC:M10-P]
+
+measurement_grids:
+  - id: GRID:K10-J15-1
+    version: "1"
+    sc_ref: ["M1"]
+    grounds: DR_LAB_DECISION
+    title_ru: клетки 0,1 SD × 15 минут от конца коробки
+    price_cell_numerator: 1
+    price_cell_denominator: 10
+    time_cell_minutes: 15
+    time_origin: "f = the end of the box (the start of the trading window); J_b = [f + 15 b, f + 15 (b + 1)) by the open minute of the event's M5"
+    price_index_rule: "k = floor(10 v / w) with v, w integer ticks; negative values floor down, never toward zero; a level u = a / b is tested as v * b >= a * w"
+    boundary_rule: "half-open cells [k/10, (k+1)/10) and [f + 15 b, f + 15 b + 15); a rounded screen price never enters a test; a screen scale change never changes the grid"
+    source_refs: [SRC:SEM-1.0, SRC:M10-P]
+
+knowledge_cuts:
+  - id: CUT:LAST-CLOSED-M5-1
+    version: "1"
+    sc_ref: ["E0", "E1"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: срез — последняя закрытая M5
+    cut_rule: "t = the close of the last closed M5 of the target session; the forming price is drawn between closes only; DR, the confirmation and the DR break come from closed M5 only"
+    forming_m5_in_statistics: false
+    historical_alignment: OWN_HORIZON
+    modes: [LIVE, HISTORY_DAY_REPLAY_BY_CLOSE]
+    honesty_level: "replay by candle close times; not a claim that the provider's real availability at that time is reconstructed"
+    source_refs: [SRC:AGENTS, SRC:SEM-1.0]
+  - id: CUT:NOW-COMMON-CLOCK-1
+    version: "1"
+    sc_ref: ["E0", "E1", "H3"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: срез NOW — те же часы ET собственной сессии
+    cut_rule: "the historical cut is the same clock time ET of each member's own session (never activation + today's age); a member needs its own activation known, at least one later M5 and a complete prefix from its own activation to t"
+    forming_m5_in_statistics: false
+    historical_alignment: COMMON_SESSION_CLOCK
+    modes: [LIVE, HISTORY_DAY_REPLAY_BY_CLOSE, RESEARCH_WALK_FORWARD]
+    honesty_level: "today's bars after the cut never enter (a replayed history day has them in its data and they are cut off)"
+    source_refs: [SRC:NOW-1.0, SRC:M15]

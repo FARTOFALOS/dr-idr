@@ -1,0 +1,278 @@
+{
+  "spec_version": "DR-LAB-SEM-1.0",
+  "synthetic": {
+    "passed": 32,
+    "cases": [
+      "same_extreme_values_different_order",
+      "session_end_excludes_next_block",
+      "confirmation_bar_excluded",
+      "own_confirmation_changes_event",
+      "window_by_open_label",
+      "adr_wrap_keeps_window",
+      "half_open_price_boundary",
+      "time_boundary_has_no_minus_one",
+      "all_tied_times_preserved",
+      "single_event_uses_first_time",
+      "same_bar_order_unknown",
+      "missing_bar_invalidates_final_extreme",
+      "missing_without_observed_break_not_held",
+      "observed_break_survives_missing",
+      "wick_not_DR_break",
+      "equal_opposite_DR_not_break",
+      "no_future_event_is_none",
+      "empty_lifetime_is_not_evidence_DR_held",
+      "empty_remaining_horizon_has_no_reach",
+      "hit_with_other_missing_is_known_yes",
+      "no_hit_with_missing_is_unknown",
+      "beyond_is_not_literal_intersection",
+      "range_can_cover_multiple_bins",
+      "full_N_with_unknown",
+      "unknown_share_bounds",
+      "price_band_not_joint_region",
+      "70_percent_not_exact_at_N25",
+      "long_short_reflection",
+      "today_prefix_invariant_to_future_replacement",
+      "forming_M5_does_not_change_statistics",
+      "member_with_two_places_counted_once_in_union",
+      "levels_are_nested"
+    ]
+  },
+  "historical": [
+    {
+      "session": "RDR",
+      "N": 25,
+      "quality_on_existing_M5": {
+        "known": 25,
+        "missing_m5": 0,
+        "legacy_complete": 25,
+        "outcome_broken": 4,
+        "outcome_held": 21
+      },
+      "minimum_start_contract_changes": {
+        "minimum_price": 3,
+        "minimum_time": 3
+      },
+      "order_known_events": {
+        "maximum_first": 17,
+        "all_maximum_before_all_minimum": 16,
+        "minimum_first": 8,
+        "all_minimum_before_all_maximum": 8
+      },
+      "wick_beyond_own_DR": 5,
+      "wick_beyond_but_held": 1,
+      "old_clock_zone_minus09_minus07": 5,
+      "old_clock_same_zone_and_1400_1430": 2,
+      "grid_diagnostics": [
+        {
+          "price_width": "1/10",
+          "time_width_min": 15,
+          "price_phase": "0",
+          "time_phase_min": 0,
+          "occupied_cells": 25,
+          "singletons": 25,
+          "largest_cell_n": 1,
+          "largest_cell_pct_of_N": 4.0,
+          "number_of_equal_modes": 25
+        },
+        {
+          "price_width": "1/10",
+          "time_width_min": 15,
+          "price_phase": "1/20",
+          "time_phase_min": 5,
+          "occupied_cells": 25,
+          "singletons": 25,
+          "largest_cell_n": 1,
+          "largest_cell_pct_of_N": 4.0,
+          "number_of_equal_modes": 25
+        },
+        {
+          "price_width": "1/10",
+          "time_width_min": 15,
+          "price_phase": "0",
+          "time_phase_min": 10,
+          "occupied_cells": 25,
+          "singletons": 25,
+          "largest_cell_n": 1,
+          "largest_cell_pct_of_N": 4.0,
+          "number_of_equal_modes": 25
+        },
+        {
+          "price_width": "1/5",
+          "time_width_min": 30,
+          "price_phase": "0",
+          "time_phase_min": 0,
+          "occupied_cells": 21,
+          "singletons": 18,
+          "largest_cell_n": 3,
+          "largest_cell_pct_of_N": 12.0,
+          "number_of_equal_modes": 1
+        },
+        {
+          "price_width": "1/5",
+          "time_width_min": 30,
+          "price_phase": "1/10",
+          "time_phase_min": 15,
+          "occupied_cells": 23,
+          "singletons": 21,
+          "largest_cell_n": 2,
+          "largest_cell_pct_of_N": 8.0,
+          "number_of_equal_modes": 2
+        }
+      ],
+      "epochs": [
+        {
+          "years": [
+            2006,
+            2015
+          ],
+          "known_events": 12,
+          "largest_cell_n": 1
+        },
+        {
+          "years": [
+            2016,
+            2025
+          ],
+          "known_events": 13,
+          "largest_cell_n": 1
+        }
+      ],
+      "bootstrap_2000": {
+        "warning": "in-sample resampling diagnostic, not validation of a market cluster",
+        "anchor_rule": "lexicographically first among tied modal cells; no claim of a uniquely best cell",
+        "original_tied_modes": 25,
+        "anchor_cell": [
+          -25,
+          59
+        ],
+        "anchor_among_bootstrap_modes_pct": 7.4,
+        "anchor_share_percentile_2_5_97_5": [
+          0.0,
+          12.0
+        ]
+      }
+    },
+    {
+      "session": "ODR",
+      "N": 187,
+      "quality_on_existing_M5": {
+        "known": 182,
+        "missing_m5": 7,
+        "legacy_complete": 187,
+        "outcome_held": 133,
+        "unknown": 5,
+        "outcome_unknown": 3,
+        "outcome_broken": 51
+      },
+      "minimum_start_contract_changes": {
+        "minimum_price": 28,
+        "minimum_time": 30
+      },
+      "order_known_events": {
+        "maximum_first": 83,
+        "all_maximum_before_all_minimum": 79,
+        "minimum_first": 98,
+        "all_minimum_before_all_maximum": 98,
+        "same_M5": 1
+      },
+      "wick_beyond_own_DR": 59,
+      "wick_beyond_but_held": 10,
+      "old_clock_zone_minus09_minus07": 10,
+      "old_clock_same_zone_and_1400_1430": 0,
+      "grid_diagnostics": [
+        {
+          "price_width": "1/10",
+          "time_width_min": 15,
+          "price_phase": "0",
+          "time_phase_min": 0,
+          "occupied_cells": 150,
+          "singletons": 127,
+          "largest_cell_n": 4,
+          "largest_cell_pct_of_N": 2.139,
+          "number_of_equal_modes": 2
+        },
+        {
+          "price_width": "1/10",
+          "time_width_min": 15,
+          "price_phase": "1/20",
+          "time_phase_min": 5,
+          "occupied_cells": 144,
+          "singletons": 118,
+          "largest_cell_n": 6,
+          "largest_cell_pct_of_N": 3.2086,
+          "number_of_equal_modes": 1
+        },
+        {
+          "price_width": "1/10",
+          "time_width_min": 15,
+          "price_phase": "0",
+          "time_phase_min": 10,
+          "occupied_cells": 152,
+          "singletons": 131,
+          "largest_cell_n": 4,
+          "largest_cell_pct_of_N": 2.139,
+          "number_of_equal_modes": 2
+        },
+        {
+          "price_width": "1/5",
+          "time_width_min": 30,
+          "price_phase": "0",
+          "time_phase_min": 0,
+          "occupied_cells": 99,
+          "singletons": 56,
+          "largest_cell_n": 11,
+          "largest_cell_pct_of_N": 5.8824,
+          "number_of_equal_modes": 1
+        },
+        {
+          "price_width": "1/5",
+          "time_width_min": 30,
+          "price_phase": "1/10",
+          "time_phase_min": 15,
+          "occupied_cells": 109,
+          "singletons": 69,
+          "largest_cell_n": 8,
+          "largest_cell_pct_of_N": 4.2781,
+          "number_of_equal_modes": 1
+        }
+      ],
+      "epochs": [
+        {
+          "years": [
+            2006,
+            2015
+          ],
+          "known_events": 81,
+          "largest_cell_n": 2
+        },
+        {
+          "years": [
+            2016,
+            2025
+          ],
+          "known_events": 101,
+          "largest_cell_n": 3
+        }
+      ],
+      "bootstrap_2000": {
+        "warning": "in-sample resampling diagnostic, not validation of a market cluster",
+        "anchor_rule": "lexicographically first among tied modal cells; no claim of a uniquely best cell",
+        "original_tied_modes": 2,
+        "anchor_cell": [
+          0,
+          17
+        ],
+        "anchor_among_bootstrap_modes_pct": 22.5,
+        "anchor_share_percentile_2_5_97_5": [
+          0.0,
+          4.278074866310161
+        ]
+      }
+    }
+  ],
+  "limits": [
+    "Existing M5 completeness only; underlying M1 coverage not certified.",
+    "No automatic cluster is certified by this probe.",
+    "No code, UI, history or governance changes."
+  ]
+}

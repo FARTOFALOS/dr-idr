@@ -1,0 +1,73 @@
+ADR: 3947 confirmed sessions with an established first confirmation; null builder mismatches 0
+  ADR пн long  20:30 N 116  real/R/M:+ real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:+ null/R/J:. null/R/G:. null/X/M:+ null/X/J:. null/X/G:.  (144 s)
+  ADR пн short 20:30 N 111  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (98 s)
+  ADR вт long  20:30 N 151  real/R/M:+ real/R/J:+ real/R/G:. real/X/M:. real/X/J:+ real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (154 s)
+  ADR вт short 20:30 N 131  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:+ null/X/G:.  (207 s)
+  ADR ср long  20:30 N 135  real/R/M:. real/R/J:. real/R/G:. real/X/M:+ real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (155 s)
+  ADR ср short 20:30 N 153  real/R/M:. real/R/J:+ real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:+ null/R/G:. null/X/M:. null/X/J:+ null/X/G:.  (134 s)
+  ADR чт long  20:30 N 137  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (102 s)
+  ADR чт short 20:30 N 126  real/R/M:. real/R/J:. real/R/G:. real/X/M:+ real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:+ null/X/G:.  (96 s)
+  ADR пт long  20:30 N 134  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:+ null/X/G:.  (80 s)
+  ADR пт short 20:30 N 142  real/R/M:+ real/R/J:+ real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (81 s)
+  ADR пн long  20:45 N  84  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (44 s)
+  ADR пн short 20:45 N  68  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (47 s)
+  ADR вт long  20:45 N  75  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (35 s)
+  ADR вт short 20:45 N  79  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:+ null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (40 s)
+  ADR ср long  20:45 N  71  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (47 s)
+  ADR ср short 20:45 N  69  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:+ null/R/G:. null/X/M:. null/X/J:+ null/X/G:.  (55 s)
+  ADR чт long  20:45 N  85  real/R/M:. real/R/J:+ real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (104 s)
+  ADR чт short 20:45 N  71  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:+ null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (87 s)
+  ADR пт long  20:45 N  75  real/R/M:. real/R/J:. real/R/G:. real/X/M:+ real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (90 s)
+  ADR пт short 20:45 N  71  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (69 s)
+  ADR пн long  21:00 N  47  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:+ null/R/J:. null/R/G:. null/X/M:+ null/X/J:. null/X/G:.  (23 s)
+  ADR пн short 21:00 N  60  real/R/M:+ real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (54 s)
+  ADR вт long  21:00 N  67  real/R/M:. real/R/J:+ real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (36 s)
+  ADR вт short 21:00 N  49  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (57 s)
+  ADR ср long  21:00 N  61  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (62 s)
+  ADR ср short 21:00 N  39  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:+ null/X/J:. null/X/G:.  (26 s)
+  ADR чт long  21:00 N  61  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:+ null/R/J:. null/R/G:. null/X/M:+ null/X/J:. null/X/G:.  (33 s)
+  ADR чт short 21:00 N  51  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (57 s)
+  ADR пт long  21:00 N  43  real/R/M:+ real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (50 s)
+  ADR пт short 21:00 N  43  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (36 s)
+  ADR пн long  21:15 N  35  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (18 s)
+  ADR пн short 21:15 N  34  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (20 s)
+  ADR вт long  21:15 N  30  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (24 s)
+  ADR вт short 21:15 N  31  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (20 s)
+  ADR ср long  21:15 N  43  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (25 s)
+  ADR ср short 21:15 N  30  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (32 s)
+  ADR чт long  21:15 N  41  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:+ null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (21 s)
+  ADR чт short 21:15 N  33  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (26 s)
+  ADR пт long  21:15 N  41  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (24 s)
+  ADR пт short 21:15 N  29  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (46 s)
+  ADR пн long  21:30 N  34  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (17 s)
+  ADR пн short 21:30 N  27  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:+ null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (17 s)
+  ADR вт long  21:30 N  29  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (25 s)
+  ADR вт short 21:30 N  23  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (15 s)
+  ADR ср long  21:30 N  26  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (21 s)
+  ADR ср short 21:30 N  27  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (19 s)
+  ADR чт long  21:30 N  23  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (18 s)
+  ADR чт short 21:30 N  25  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (16 s)
+  ADR пт long  21:30 N  28  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (27 s)
+  ADR пт short 21:30 N  20  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (25 s)
+  ADR пн long  21:45 N  25  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (11 s)
+  ADR вт short 21:45 N  20  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (16 s)
+  ADR ср long  21:45 N  22  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (12 s)
+  ADR чт long  21:45 N  21  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (12 s)
+  ADR пт long  21:45 N  24  real/R/M:. real/R/J:. real/R/G:. real/X/M:. real/X/J:. real/X/G:. null/R/M:. null/R/J:. null/R/G:. null/X/M:. null/X/J:. null/X/G:.  (12 s)
+done in 2835 s
+piles/real/R   share of N in the first / last 30 minutes of the possible hours: 18.3 % / 13.6 %
+piles/real/X   share of N in the first / last 30 minutes of the possible hours: 21.3 % / 13.6 %
+piles/null/R   share of N in the first / last 30 minutes of the possible hours: 18.3 % / 16.0 %
+piles/null/X   share of N in the first / last 30 minutes of the possible hours: 19.0 % / 17.3 %
+real/R/M     families  55 confirmed   5 by N {'20-49': [1, 30], '50-99': [1, 15], '100-': [3, 10]} sessions  13.0% main {'start': 52, 'middle': 3} confirmed {'start': 5} share median 10.0
+real/R/J     families  55 confirmed   5 by N {'20-49': [0, 30], '50-99': [2, 15], '100-': [3, 10]} sessions  15.2% main {'start': 38, 'end': 3, 'middle': 14} confirmed {'start': 5} share median 10.6
+real/R/G     families  55 confirmed   0 by N {'20-49': [0, 30], '50-99': [0, 15], '100-': [0, 10]} sessions   0.0% main {'middle': 44, 'end': 8, 'start': 3} confirmed {} share median None
+real/X/M     families  55 confirmed   3 by N {'20-49': [0, 30], '50-99': [1, 15], '100-': [2, 10]} sessions   8.5% main {'start': 48, 'middle': 5, 'end': 2} confirmed {'start': 3} share median 9.3
+real/X/J     families  55 confirmed   1 by N {'20-49': [0, 30], '50-99': [0, 15], '100-': [1, 10]} sessions   3.8% main {'start': 24, 'end': 8, 'middle': 23} confirmed {'start': 1} share median 12.6
+real/X/G     families  55 confirmed   0 by N {'20-49': [0, 30], '50-99': [0, 15], '100-': [0, 10]} sessions   0.0% main {'middle': 44, 'end': 7, 'start': 4} confirmed {} share median None
+null/R/M     families  55 confirmed   6 by N {'20-49': [3, 30], '50-99': [2, 15], '100-': [1, 10]} sessions   9.4% main {'start': 49, 'end': 4, 'middle': 2} confirmed {'start': 5, 'middle': 1} share median 12.45
+null/R/J     families  55 confirmed   3 by N {'20-49': [0, 30], '50-99': [2, 15], '100-': [1, 10]} sessions   7.4% main {'start': 37, 'middle': 12, 'end': 6} confirmed {'start': 3} share median 15.0
+null/R/G     families  55 confirmed   0 by N {'20-49': [0, 30], '50-99': [0, 15], '100-': [0, 10]} sessions   0.0% main {'middle': 44, 'end': 9, 'start': 2} confirmed {} share median None
+null/X/M     families  55 confirmed   4 by N {'20-49': [2, 30], '50-99': [1, 15], '100-': [1, 10]} sessions   6.7% main {'start': 48, 'end': 5, 'middle': 2} confirmed {'start': 4} share median 10.9
+null/X/J     families  55 confirmed   5 by N {'20-49': [0, 30], '50-99': [1, 15], '100-': [4, 10]} sessions  15.5% main {'middle': 22, 'start': 31, 'end': 2} confirmed {'start': 5} share median 8.5
+null/X/G     families  55 confirmed   0 by N {'20-49': [0, 30], '50-99': [0, 15], '100-': [0, 10]} sessions   0.0% main {'start': 3, 'middle': 40, 'end': 12} confirmed {} share median None

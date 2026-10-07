@@ -1,0 +1,62 @@
+{
+ "ADR R": {
+  "targets": 2550,
+  "zones": 5392,
+  "hole_share_of_envelope": 0.502,
+  "mask_share_of_envelope": 0.454,
+  "landed_in_mask": 237,
+  "landed_in_hole": 163,
+  "hole_over_mask": 0.688,
+  "mean_zone_mass": 0.0952
+ },
+ "ADR X": {
+  "targets": 2550,
+  "zones": 4984,
+  "hole_share_of_envelope": 0.476,
+  "mask_share_of_envelope": 0.487,
+  "landed_in_mask": 224,
+  "landed_in_hole": 142,
+  "hole_over_mask": 0.634,
+  "mean_zone_mass": 0.1008
+ },
+ "ODR R": {
+  "targets": 2619,
+  "zones": 8864,
+  "hole_share_of_envelope": 0.521,
+  "mask_share_of_envelope": 0.419,
+  "landed_in_mask": 386,
+  "landed_in_hole": 282,
+  "hole_over_mask": 0.731,
+  "mean_zone_mass": 0.0998
+ },
+ "ODR X": {
+  "targets": 2619,
+  "zones": 6521,
+  "hole_share_of_envelope": 0.438,
+  "mask_share_of_envelope": 0.519,
+  "landed_in_mask": 342,
+  "landed_in_hole": 175,
+  "hole_over_mask": 0.512,
+  "mean_zone_mass": 0.1117
+ },
+ "RDR R": {
+  "targets": 2459,
+  "zones": 6785,
+  "hole_share_of_envelope": 0.452,
+  "mask_share_of_envelope": 0.49,
+  "landed_in_mask": 459,
+  "landed_in_hole": 175,
+  "hole_over_mask": 0.381,
+  "mean_zone_mass": 0.1117
+ },
+ "RDR X": {
+  "targets": 2459,
+  "zones": 6906,
+  "hole_share_of_envelope": 0.436,
+  "mask_share_of_envelope": 0.507,
+  "landed_in_mask": 407,
+  "landed_in_hole": 183,
+  "hole_over_mask": 0.45,
+  "mean_zone_mass": 0.1144
+ }
+}

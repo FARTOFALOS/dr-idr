@@ -1,0 +1,607 @@
+# DR-LAB-SC-1.1 registry · layers 4-5: case-set rules, state comparisons, outcome projections, regions, the zone
+# algorithm. Each OutcomeSpecification names its reference definition in lab/contract.py (the executable form of
+# this definition, versioned with it) and the production implementations the gate compares against it.
+registry_part: layers-4-5
+
+case_sets:
+  - id: CS:UNIVERSE-1
+    version: "1"
+    sc_ref: ["H1", "H0"]
+    grounds: DR_LAB_DECISION
+    role: HISTORICAL_UNIVERSE
+    key_fields: [INSTRUMENT, BLOCK, DATE_BEFORE_TARGET]
+    history_rule: "sessions of the session base of the instrument and block: complete box, w > 0, weekdays, trading dates 2006-01-01 .. 2025-12-31 strictly before the target date"
+    condition_ru: "все сессии базы этого инструмента и блока раньше показанного дня (2006–2025)"
+    condition_availability: AT_ACTIVATION
+    live_use: PERMITTED
+    profile: PROFILE:BASE-24
+    source_refs: [SRC:CODE-BUILD-BOXES, SRC:AGENTS]
+  - id: CS:F-CONF-1
+    version: "1"
+    sc_ref: ["H1", "§12.1"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: базовая семья подтверждения (день недели)
+    role: BASE_FAMILY
+    parent: [CS:UNIVERSE-1]
+    key_fields: [INSTRUMENT, BLOCK, WEEKDAY, DIRECTION, CONFIRMATION_WINDOW, DATE_BEFORE_TARGET]
+    activation_kind: CONFIRMATION
+    weekday_scope: WEEKDAY
+    history_rule: "trading dates strictly before the target date and not after 2025-12-31 ET"
+    condition_ru: "инструмент × блок × день недели торговой даты × направление × 15-минутное окно подтверждения (по метке открытия подтверждающей M5 от конца коробки: floor((c − 5 − f) / 15))"
+    condition_availability: AT_ACTIVATION
+    live_use: PERMITTED
+    undetermined_rule: "a session whose first confirmation cannot be established (a whole M5 missing before it) gets no key and is counted in the journal of undetermined keys; a known confirmation with a later hole stays in F"
+    profile: PROFILE:BASE-24
+    source_refs: [SRC:SEM-1.0, SRC:M10-P, SRC:AGENTS]
+  - id: CS:F-CONF-ALL-1
+    version: "1"
+    sc_ref: ["H1", "§12.1"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: базовая семья подтверждения (все дни недели — явный выбор)
+    role: BASE_FAMILY
+    parent: [CS:UNIVERSE-1]
+    key_fields: [INSTRUMENT, BLOCK, DIRECTION, CONFIRMATION_WINDOW, DATE_BEFORE_TARGET]
+    activation_kind: CONFIRMATION
+    weekday_scope: ALL_WEEKDAYS
+    history_rule: "as CS:F-CONF-1 without the weekday; another family, another N and snapshot; only on the operator's explicit switch, never a fallback"
+    condition_ru: "инструмент × блок × направление × 15-минутное окно подтверждения, все дни недели"
+    condition_availability: AT_ACTIVATION
+    live_use: PERMITTED
+    undetermined_rule: "as CS:F-CONF-1"
+    profile: PROFILE:BASE-24
+    source_refs: [SRC:M12]
+  - id: CS:F-BREAK-1
+    version: "1"
+    sc_ref: ["H1", "§12.1", "K26"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: семья слома (день недели)
+    role: BASE_FAMILY
+    parent: [CS:UNIVERSE-1]
+    key_fields: [INSTRUMENT, BLOCK, WEEKDAY, DIRECTION, BREAK_WINDOW, DATE_BEFORE_TARGET]
+    activation_kind: DR_BREAK
+    weekday_scope: WEEKDAY
+    history_rule: "as CS:F-CONF-1; the window of the break replaces the window of the confirmation (it is no extra filter); its own N, its own activation of every case, the break orientation"
+    condition_ru: "инструмент × блок × день недели × исходное направление × 15-минутное окно слома DR"
+    condition_availability: AT_ACTIVATION
+    live_use: PERMITTED
+    undetermined_rule: "a session whose break cannot be established (a whole M5 missing between its confirmation and the break, or after a confirmation without a break) is counted in the journal"
+    profile: PROFILE:BASE-24
+    source_refs: [SRC:SEM-1.0, SRC:M10-P]
+  - id: CS:F-BREAK-ALL-1
+    version: "1"
+    sc_ref: ["H1", "§12.1"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: семья слома (все дни недели — явный выбор)
+    role: BASE_FAMILY
+    parent: [CS:UNIVERSE-1]
+    key_fields: [INSTRUMENT, BLOCK, DIRECTION, BREAK_WINDOW, DATE_BEFORE_TARGET]
+    activation_kind: DR_BREAK
+    weekday_scope: ALL_WEEKDAYS
+    history_rule: "as CS:F-BREAK-1 without the weekday"
+    condition_ru: "инструмент × блок × исходное направление × 15-минутное окно слома DR, все дни недели"
+    condition_availability: AT_ACTIVATION
+    live_use: PERMITTED
+    undetermined_rule: "as CS:F-BREAK-1"
+    profile: PROFILE:BASE-24
+    source_refs: [SRC:M12]
+  - id: CS:NOW-ELIGIBLE-1
+    version: "1.0"
+    sc_ref: ["H1", "H3", "§12.2"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: допустимые к срезу (B0)
+    role: ELIGIBLE_AT_CUT
+    parent: [CS:F-CONF-1, CS:F-CONF-ALL-1, CS:F-BREAK-1, CS:F-BREAK-ALL-1]
+    history_rule: "members of the active base family"
+    condition_ru: "собственная активация уже известна, есть хотя бы одна следующая M5, префикс от собственной активации до общего часового среза t полон; в исходной семье случай к t ещё не закрылся за своим противоположным DR"
+    condition_availability: PREFIX_AT_CUT
+    live_use: PERMITTED
+    comparison: CMP:B0-1
+    profile: PROFILE:NOW-1.0
+    source_refs: [SRC:NOW-1.0, SRC:M15]
+  - id: CS:NOW-MATCH-M1-1
+    version: "1.0"
+    sc_ref: ["H1", "H3", "§12.2"]
+    grounds: OPERATOR_REQUIREMENT
+    role: MATCHED_AT_CUT
+    parent: [CS:NOW-ELIGIBLE-1]
+    history_rule: "the eligible set"
+    condition_ru: "M1: для R |r_hist − r_today| ≤ 0,25 SD (для X — то же по x), на общем часовом срезе"
+    condition_availability: PREFIX_AT_CUT
+    live_use: PERMITTED
+    comparison: CMP:M1-1
+    profile: PROFILE:NOW-1.0
+    source_refs: [SRC:NOW-1.0]
+  - id: CS:NOW-MATCH-M2-1
+    version: "1.0"
+    sc_ref: ["H1", "H3", "§12.2"]
+    grounds: OPERATOR_REQUIREMENT
+    role: MATCHED_AT_CUT
+    parent: [CS:NOW-ELIGIBLE-1]
+    history_rule: "the eligible set"
+    condition_ru: "M2: оба ограничения M1 одновременно"
+    condition_availability: PREFIX_AT_CUT
+    live_use: PERMITTED
+    comparison: CMP:M2-1
+    profile: PROFILE:NOW-1.0
+    source_refs: [SRC:NOW-1.0]
+  - id: CS:NOW-MATCH-M3-1
+    version: "1.0"
+    sc_ref: ["H1", "H3", "§12.2"]
+    grounds: OPERATOR_REQUIREMENT
+    role: MATCHED_AT_CUT
+    parent: [CS:NOW-ELIGIBLE-1]
+    history_rule: "the eligible set"
+    condition_ru: "M3: M2 и сопоставимые закрытия на тех же последних (до шести, не меньше трёх) M5 после активации: среднее отличие ≤ 0,20, максимальное ≤ 0,35 SD"
+    condition_availability: PREFIX_AT_CUT
+    live_use: PERMITTED
+    comparison: CMP:M3-1
+    profile: PROFILE:NOW-1.0
+    source_refs: [SRC:NOW-1.0]
+  - id: CS:NOW-DELTA-KNOWN-1
+    version: "1.0"
+    sc_ref: ["H1", "V2.2", "§12.4/N-DELTA"]
+    grounds: CONTRACT_FORMALISATION
+    role: OUTCOME_SUBGROUP
+    parent: [CS:NOW-ELIGIBLE-1, CS:NOW-MATCH-M1-1, CS:NOW-MATCH-M2-1, CS:NOW-MATCH-M3-1]
+    history_rule: "members of the NOW set whose final extreme is known (the whole horizon after the activation observed)"
+    condition_ru: "известна окончательная добавка (весь горизонт после активации наблюдён); нули — у тех, у кого нового экстремума не было"
+    condition_availability: PREFIX_AND_RETROSPECTIVE
+    live_use: FORBIDDEN
+    profile: PROFILE:NOW-1.0
+    source_refs: [SRC:SC-1.1, SRC:NOW-1.0]
+  - id: CS:NOW-NEW-YES-DELTA-1
+    version: "1.0"
+    sc_ref: ["H1", "V2.2", "§12.4/N-IF-NEW"]
+    grounds: CONTRACT_FORMALISATION
+    role: OUTCOME_SUBGROUP
+    parent: [CS:NOW-ELIGIBLE-1, CS:NOW-MATCH-M1-1, CS:NOW-MATCH-M2-1, CS:NOW-MATCH-M3-1]
+    history_rule: "members of the NOW set with new = YES and a known final delta"
+    condition_ru: "после среза был строго новый экстремум, и его окончательная добавка известна («если новый случился»)"
+    condition_availability: PREFIX_AND_RETROSPECTIVE
+    live_use: FORBIDDEN
+    profile: PROFILE:NOW-1.0
+    source_refs: [SRC:SC-1.1, SRC:NOW-1.0]
+  - id: CS:NOW-NEW-YES-TAU-1
+    version: "1.0"
+    sc_ref: ["H1", "V2.2", "§12.4/N-TIME"]
+    grounds: CONTRACT_FORMALISATION
+    role: OUTCOME_SUBGROUP
+    parent: [CS:NOW-ELIGIBLE-1, CS:NOW-MATCH-M1-1, CS:NOW-MATCH-M2-1, CS:NOW-MATCH-M3-1]
+    history_rule: "members of the NOW set with new = YES and a known first M5 of the new extreme"
+    condition_ru: "после среза был строго новый экстремум, и его первая M5 известна (без пропуска до неё)"
+    condition_availability: PREFIX_AND_RETROSPECTIVE
+    live_use: FORBIDDEN
+    profile: PROFILE:NOW-1.0
+    source_refs: [SRC:SC-1.1, SRC:NOW-1.0]
+  - id: CS:ZM3-STUDY-1
+    version: "1"
+    sc_ref: ["H1", "V3"]
+    grounds: RESEARCH_RESULT
+    role: RETROSPECTIVE_RESEARCH
+    parent: [CS:F-CONF-1]
+    history_rule: "target sessions 2018-2025 of the weekday maps, each with its own family before it"
+    condition_ru: "исследование zone_map_3_2026_10_01: цели 2018–2025, зоны со статусом через 30 / 60 / 120 минут после подтверждения; корпус видели при выборе идеи"
+    condition_availability: RETROSPECTIVE
+    live_use: FORBIDDEN
+    profile: PROFILE:BASE-24
+    source_refs: [SRC:ZM3-STUDY]
+
+comparisons:
+  - id: CMP:B0-1
+    version: "1.0"
+    sc_ref: ["H3", "§12.2"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: B0 — только время после активации, без сравнения цены и пути
+    alignment: COMMON_SESSION_CLOCK
+    features: ["none: every eligible member at the same clock cut ET"]
+    feature_availability: PREFIX_AT_CUT
+    frozen: true
+    weights: NONE
+    source_refs: [SRC:NOW-1.0]
+  - id: CMP:M1-1
+    version: "1.0"
+    sc_ref: ["H3", "§12.2"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: M1 — тот же экстремум
+    alignment: COMMON_SESSION_CLOCK
+    features: ["R: r_seen; X: x_seen (own extremes after the own activation up to t, in own IDR widths)"]
+    feature_availability: PREFIX_AT_CUT
+    tolerance: "|a / w_a - b / w_b| <= 1/4 inclusive, exact in integers: 4 |a w_b - b w_a| <= w_a w_b"
+    frozen: true
+    weights: NONE
+    source_refs: [SRC:NOW-1.0, SRC:CODE-NOW24]
+  - id: CMP:M2-1
+    version: "1.0"
+    sc_ref: ["H3", "§12.2"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: M2 — то же состояние
+    alignment: COMMON_SESSION_CLOCK
+    features: ["r_seen and x_seen together"]
+    feature_availability: PREFIX_AT_CUT
+    tolerance: "both M1 constraints"
+    frozen: true
+    weights: NONE
+    source_refs: [SRC:NOW-1.0]
+  - id: CMP:M3-1
+    version: "1.0"
+    sc_ref: ["H3", "§12.2"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: M3 — тот же недавний путь
+    alignment: COMMON_SESSION_CLOCK
+    features: ["M2", "the closes of the last n = min(6, today's M5 after its activation) common clock M5, n >= 3, all after the member's own activation"]
+    feature_availability: PREFIX_AT_CUT
+    tolerance: "mean |close difference| <= 0.20 and max <= 0.35 IDR width, exact in integers"
+    frozen: true
+    weights: NONE
+    source_refs: [SRC:NOW-1.0, SRC:CODE-NOW24]
+
+outcomes:
+  - id: OUT:FINAL-R-1
+    version: "1"
+    sc_ref: ["P0.1", "P0.2", "P1", "K03", "K04"]
+    grounds: DR_LAB_DECISION
+    title_ru: окончательный R (откат)
+    projection: FINAL_EXTREME
+    event: R
+    contribution: ONE_POINT
+    horizon_start: OWN_ACTIVATION_CLOSE_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: REPEATS_KEPT_NO_EXTRA_VOTE
+    components: [ENDPOINT, FIRST_TIME]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_final_extreme"
+    implementations: ["lab/scene24.py::measure", "design/sozvezdiya-24/src/app.js::evDist"]
+    statuses: "KNOWN: R = min directed low over the horizon, its time = the open of the first M5 reaching it, every tie kept; UNKNOWN: a whole M5 missing on the horizon (an observed minimum is a one-sided bound only); NO_PERIOD: no M5 on the horizon. A positive R is admissible (no clipping to 0)"
+    source_refs: [SRC:SEM-1.0, SRC:M10-P]
+  - id: OUT:FINAL-X-1
+    version: "1"
+    sc_ref: ["P0.1", "P0.2", "P1"]
+    grounds: DR_LAB_DECISION
+    title_ru: окончательный X (продолжение)
+    projection: FINAL_EXTREME
+    event: X
+    contribution: ONE_POINT
+    horizon_start: OWN_ACTIVATION_CLOSE_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: REPEATS_KEPT_NO_EXTRA_VOTE
+    components: [ENDPOINT, FIRST_TIME]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_final_extreme"
+    implementations: ["lab/scene24.py::measure", "design/sozvezdiya-24/src/app.js::evDist"]
+    statuses: "as R with the max directed high; a negative X is admissible"
+    source_refs: [SRC:SEM-1.0, SRC:M10-P]
+  - id: OUT:DR-OUTCOME-1
+    version: "1"
+    sc_ref: ["P0.2", "S2", "K14", "K15"]
+    grounds: DR_LAB_DECISION
+    title_ru: исход DR
+    projection: DR_OUTCOME
+    event: DR
+    contribution: ONE_CATEGORY
+    horizon_start: OWN_ACTIVATION_CLOSE_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [CATEGORY, FIRST_TIME]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_dr_outcome"
+    implementations: ["lab/scene24.py::measure", "design/sozvezdiya-24/src/app.js::buildSnap"]
+    statuses: "BROKEN: an observed M5 closed strictly beyond its own opposite DR (stands with holes elsewhere; a wick or equality is no break; a return never undoes it); HELD: the whole horizon observed without it; UNKNOWN; NO_PERIOD. The first break time is known only without an earlier hole"
+    source_refs: [SRC:SEM-1.0]
+  - id: OUT:FIRST-ORDER-1
+    version: "1"
+    sc_ref: ["P0.2", "K20", "K21"]
+    grounds: DR_LAB_DECISION
+    title_ru: порядок первых R и X
+    projection: FIRST_ORDER
+    event: ORDER
+    contribution: ONE_CATEGORY
+    horizon_start: OWN_ACTIVATION_CLOSE_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [CATEGORY]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_first_order"
+    implementations: ["lab/scene24.py::measure", "design/sozvezdiya-24/src/panel.js::orderHtml"]
+    statuses: "R_BEFORE_X / X_BEFORE_R by the first times of the final points when they are different M5; SAME_M5 (the order inside the candle is unknown; its colour does not restore it); UNKNOWN; NO_PERIOD. About first achievements only: no repeats, no path, no trade sequence"
+    source_refs: [SRC:SEM-1.0, SRC:SC-1.1]
+  - id: OUT:CLOSE-AT-M5-1
+    version: "1"
+    sc_ref: ["P0.2", "§12.4/B-CLOSE"]
+    grounds: DR_LAB_DECISION
+    title_ru: закрытие семьи на общей M5 j
+    projection: CLOSE_AT_M5
+    event: CLOSE
+    contribution: ONE_CELL_AT_M5
+    horizon_start: BOX_END
+    horizon_end: SINGLE_M5
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [MEMBERSHIP]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_close_cell"
+    implementations: ["design/sozvezdiya-24/src/app.js::filmOf"]
+    statuses: "one price cell of close_u on the common clock M5 j, or a missing M5; members whose own activation is still ahead at j are a marked phase, never removed from N"
+    source_refs: [SRC:SEM-1.0, SRC:M10-P]
+  - id: OUT:RANGE-AT-M5-1
+    version: "1"
+    sc_ref: ["P0.2"]
+    grounds: DR_LAB_DECISION
+    title_ru: диапазон M5 на общей M5 j
+    projection: RANGE_AT_M5
+    event: RANGE
+    contribution: BAND_INDICATORS_AT_M5
+    horizon_start: BOX_END
+    horizon_end: SINGLE_M5
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [MEMBERSHIP]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_range_touch"
+    implementations: ["design/sozvezdiya-24/src/app.js::rangeField"]
+    statuses: "an indicator per named band: low_u < band top and high_u >= band bottom; one M5 can touch several bands; a missing M5 is unknown"
+    source_refs: [SRC:SEM-1.0]
+  - id: OUT:REACH-FULL-1
+    version: "1"
+    sc_ref: ["P0.2", "§12.4/B-LEVEL", "K13", "K22"]
+    grounds: DR_LAB_DECISION
+    title_ru: на уровне L или дальше — весь собственный горизонт
+    projection: AT_LEVEL_OR_BEYOND
+    event: LEVEL
+    contribution: ONE_BINARY_VOTE
+    horizon_start: OWN_ACTIVATION_CLOSE_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [EXISTENCE]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_reach"
+    implementations: ["lab/scene24.py::reach", "design/sozvezdiya-24/src/app.js::reachOne"]
+    statuses: "YES: an observed M5 has high_u >= L along (u > 0) or low_u <= L against (u <= 0), evidence stands with holes elsewhere; NO: fully observed without it (an empty horizon is NO); UNKNOWN: not reached and an M5 missing"
+    source_refs: [SRC:SEM-1.0, SRC:M10-P]
+  - id: OUT:REACH-REST-1
+    version: "1"
+    sc_ref: ["P0.2", "§12.4/B-LEVEL"]
+    grounds: DR_LAB_DECISION
+    title_ru: на уровне L или дальше — общий остаток после t
+    projection: AT_LEVEL_OR_BEYOND
+    event: LEVEL
+    contribution: ONE_BINARY_VOTE
+    horizon_start: COMMON_CUT_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [EXISTENCE]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_reach"
+    implementations: ["design/sozvezdiya-24/src/app.js::reachOne"]
+    statuses: "as OUT:REACH-FULL-1 over the M5 closing in (t, H] on the common clock, for every member of F alike (the accepted screen: «на общих часах после среза — M5, закрывшиеся после t до конца блока», spec/ekran-24/04-polosa.md; the explicitly named alternative horizon of P0.1 / §12.4 B-LEVEL)"
+    source_refs: [SRC:SEM-1.0, SRC:M10-P]
+  - id: OUT:CROSS-FULL-1
+    version: "1"
+    sc_ref: ["P0.2", "K22"]
+    grounds: DR_LAB_DECISION
+    title_ru: буквальное пересечение уровня свечой
+    projection: LITERAL_LEVEL_CROSSING
+    event: CROSS
+    contribution: ONE_BINARY_VOTE
+    horizon_start: OWN_ACTIVATION_CLOSE_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [EXISTENCE]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_cross"
+    implementations: ["lab/scene24.py::crosses", "design/sozvezdiya-24/src/app.js::crossOne"]
+    statuses: "YES: an M5 with low_u <= L <= high_u; a gap between candles draws no touch; NO / UNKNOWN as for reach"
+    source_refs: [SRC:SEM-1.0]
+  - id: OUT:VISIT-FULL-1
+    version: "1"
+    sc_ref: ["P0.2", "§12.4/B-VISIT", "K18"]
+    grounds: DR_LAB_DECISION
+    title_ru: посещение полосы — весь собственный горизонт
+    projection: BAND_VISIT
+    event: VISIT
+    contribution: ONE_BINARY_VOTE
+    horizon_start: OWN_ACTIVATION_CLOSE_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [EXISTENCE]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_visit"
+    implementations: ["lab/scene24.py::visits", "design/sozvezdiya-24/src/app.js::visitOne"]
+    statuses: "YES: an M5 with low_u < h and high_u >= l for the band [l, h); not the final R and not a qualified new entry; UNKNOWN when not seen and an M5 missing"
+    source_refs: [SRC:SEM-1.0]
+  - id: OUT:VISIT-REST-1
+    version: "1"
+    sc_ref: ["P0.2", "§12.4/B-VISIT"]
+    grounds: DR_LAB_DECISION
+    title_ru: посещение полосы — общий остаток после t
+    projection: BAND_VISIT
+    event: VISIT
+    contribution: ONE_BINARY_VOTE
+    horizon_start: COMMON_CUT_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [EXISTENCE]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_visit"
+    implementations: ["design/sozvezdiya-24/src/app.js::visitOne"]
+    statuses: "as OUT:VISIT-FULL-1 over the M5 closing in (t, H] on the common clock, for every member of F alike (spec/ekran-24/04-polosa.md, 08-oblast-i-uroven.md)"
+    source_refs: [SRC:SEM-1.0]
+  - id: OUT:ZONE-MEMBERSHIP-1
+    version: "1"
+    sc_ref: ["P3", "§12.4/B-ZONE", "K17", "K30"]
+    grounds: DR_LAB_DECISION
+    title_ru: окончательная точка R / X в точной маске зоны
+    projection: ALGORITHMIC_REGION_MEMBERSHIP
+    event: R
+    contribution: ONE_POINT
+    horizon_start: OWN_ACTIVATION_CLOSE_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [MEMBERSHIP]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_zone_map"
+    implementations: ["lab/zonemap24.py::zone_map", "design/sozvezdiya-24/src/app.js::buildSnap"]
+    statuses: "the known final point of the event (R or X, named by the estimand) lies in a cell of the zone's exact mask; the residual is every other known point; UNKNOWN / NO_PERIOD stay in N without a place"
+    source_refs: [SRC:M12]
+  - id: OUT:CLOCK-SPLIT-1
+    version: "1"
+    sc_ref: ["E4", "§12.4/B-CLOCK"]
+    grounds: DR_LAB_DECISION
+    title_ru: события семьи раньше / позже общего часового среза
+    projection: CLOCK_SPLIT
+    event: R
+    contribution: ONE_POINT
+    horizon_start: OWN_ACTIVATION_CLOSE_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [MEMBERSHIP]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_clock_split"
+    implementations: ["design/sozvezdiya-24/src/app.js::zoneClock", "design/sozvezdiya-24/src/app.js::tipHtml"]
+    statuses: "EARLIER: event_open + 5 <= t; LATER: otherwise; both parts over the same N_base; the unknown mass is never spread"
+    source_refs: [SRC:M14, SRC:SC-1.1]
+  - id: OUT:ZONE-STABILITY-1
+    version: "1"
+    sc_ref: ["P3", "V3"]
+    grounds: DR_LAB_DECISION
+    title_ru: диагностики зоны (сдвиг сетки, пересэмплирование, путь без направления)
+    projection: REGION_STABILITY
+    event: R
+    contribution: ONE_MEMBERSHIP
+    horizon_start: OWN_ACTIVATION_CLOSE_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [MEMBERSHIP]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::check_zone_diagnostics"
+    implementations: ["lab/zonemap24.py::evaluate", "lab/zonemap24.py::_null"]
+    statuses: "properties of a zone, never a permission to exist: Jaccard of member sets on shifted grids and resampled sessions; a held-out path-null on sessions that did not shape the zone"
+    source_refs: [SRC:M12]
+  - id: OUT:NEW-R-1
+    version: "1.0"
+    sc_ref: ["P0.3", "§12.4/N-NEW", "K23"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: строго новый R после среза
+    projection: RESIDUAL_NEW_EXTREME
+    event: NEW_R
+    contribution: ONE_BINARY_VOTE
+    horizon_start: COMMON_CUT_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: TIE_IS_NOT_NEW
+    components: [EXISTENCE]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_residual"
+    implementations: ["lab/now24.py::series"]
+    statuses: "YES: after t an observed M5 has low_u < r_seen (one own tick deeper is new, an equal repeat is not), evidence stands with other holes; NO: the remainder fully observed without it (an empty remainder of an established state is NO); UNKNOWN"
+    source_refs: [SRC:NOW-1.0, SRC:SC-1.1]
+  - id: OUT:NEW-X-1
+    version: "1.0"
+    sc_ref: ["P0.3", "§12.4/N-NEW"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: строго новый X после среза
+    projection: RESIDUAL_NEW_EXTREME
+    event: NEW_X
+    contribution: ONE_BINARY_VOTE
+    horizon_start: COMMON_CUT_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: TIE_IS_NOT_NEW
+    components: [EXISTENCE]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_residual"
+    implementations: ["lab/now24.py::series"]
+    statuses: "as NEW_R with high_u > x_seen"
+    source_refs: [SRC:NOW-1.0]
+  - id: OUT:DELTA-R-1
+    version: "1.0"
+    sc_ref: ["P0.3", "§12.4/N-DELTA", "§12.4/N-IF-NEW", "K29"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: добавочный откат dR = r_seen − R_final
+    projection: RESIDUAL_DELTA
+    event: DELTA_R
+    contribution: ONE_MAGNITUDE
+    horizon_start: COMMON_CUT_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: TIE_IS_NOT_NEW
+    components: [MAGNITUDE]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_residual"
+    implementations: ["lab/now24.py::series"]
+    statuses: "KNOWN when the whole horizon after the activation is observed (0 when no new extreme); UNKNOWN otherwise, even when new = YES; an additional movement from the case's own extreme, not an absolute final point and not a distance from its close"
+    source_refs: [SRC:NOW-1.0, SRC:SC-1.1]
+  - id: OUT:DELTA-X-1
+    version: "1.0"
+    sc_ref: ["P0.3", "§12.4/N-DELTA", "§12.4/N-IF-NEW"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: добавочное продолжение dX = X_final − x_seen
+    projection: RESIDUAL_DELTA
+    event: DELTA_X
+    contribution: ONE_MAGNITUDE
+    horizon_start: COMMON_CUT_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: TIE_IS_NOT_NEW
+    components: [MAGNITUDE]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_residual"
+    implementations: ["lab/now24.py::series"]
+    statuses: "as DELTA_R mirrored"
+    source_refs: [SRC:NOW-1.0]
+  - id: OUT:TAU-R-1
+    version: "1.0"
+    sc_ref: ["P0.3", "§12.4/N-TIME", "V2.2"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: время до первого нового R
+    projection: RESIDUAL_TIME_TO_NEW
+    event: TAU_R
+    contribution: ONE_DURATION
+    horizon_start: COMMON_CUT_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: TIE_IS_NOT_NEW
+    components: [FIRST_TIME]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_residual"
+    implementations: ["lab/now24.py::series"]
+    statuses: "KNOWN: clock M5 steps from t to the first strictly new extreme (the first future step is 1; minutes = 5 tau; holes never compress the clock); UNKNOWN: a hole before the first observed new extreme, or the existence unknown; NO_EVENT: no new extreme on a fully observed remainder (never tau = 0)"
+    source_refs: [SRC:NOW-1.0, SRC:SC-1.1]
+  - id: OUT:TAU-X-1
+    version: "1.0"
+    sc_ref: ["P0.3", "§12.4/N-TIME"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: время до первого нового X
+    projection: RESIDUAL_TIME_TO_NEW
+    event: TAU_X
+    contribution: ONE_DURATION
+    horizon_start: COMMON_CUT_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: TIE_IS_NOT_NEW
+    components: [FIRST_TIME]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_residual"
+    implementations: ["lab/now24.py::series"]
+    statuses: "as TAU_R mirrored"
+    source_refs: [SRC:NOW-1.0]
+
+regions:
+  - {id: REG:WHOLE-1, version: "1", sc_ref: ["P2"], grounds: DR_LAB_DECISION, region_kind: WHOLE_DISTRIBUTION, grid: GRID:K10-J15-1, bounds_rule: "every cell of the event's table (its own 100 % with the unknown mass)", origin: WHOLE}
+  - {id: REG:PRICE-BAND-1, version: "1", sc_ref: ["P2", "K17"], grounds: DR_LAB_DECISION, region_kind: PRICE_BAND, grid: GRID:K10-J15-1, bounds_rule: "price cells k0 <= k < k1, unbounded in time (never the time bounds of a drawn core)", origin: OPERATOR_SELECTION}
+  - {id: REG:TIME-WINDOW-1, version: "1", sc_ref: ["P2"], grounds: DR_LAB_DECISION, region_kind: TIME_WINDOW, grid: GRID:K10-J15-1, bounds_rule: "time cells b0 <= b < b1 of the event's first M5, all prices", origin: FIXED_GRID}
+  - {id: REG:JOINT-1, version: "1", sc_ref: ["P2", "K17"], grounds: DR_LAB_DECISION, region_kind: JOINT_PRICE_TIME, grid: GRID:K10-J15-1, bounds_rule: "cells with k0 <= k < k1 and b0 <= b < b1; its share never exceeds its band's", origin: OPERATOR_SELECTION}
+  - {id: REG:ZONE-MASK-1, version: "1", sc_ref: ["P2", "P3"], grounds: DR_LAB_DECISION, region_kind: ZONE_MASK, grid: GRID:K10-J15-1, bounds_rule: "the zone's exact cell mask; its bounding box is a drawing, not membership", origin: ALGORITHM, density_algorithm: ALG:ZONE-MAP-3}
+  - {id: REG:RESIDUAL-1, version: "1", sc_ref: ["P2", "P3"], grounds: DR_LAB_DECISION, region_kind: RESIDUAL_OUTSIDE_ZONES, grid: GRID:K10-J15-1, bounds_rule: "every known event outside all zones of the map", origin: ALGORITHM, density_algorithm: ALG:ZONE-MAP-3}
+  - {id: REG:UNDETERMINED-1, version: "1", sc_ref: ["P2", "V2.1"], grounds: DR_LAB_DECISION, region_kind: UNDETERMINED_MASS, bounds_rule: "UNKNOWN and NO_PERIOD cases: kept in N, given no coordinate", origin: WHOLE}
+  - {id: REG:OUT-OF-FRAME-1, version: "1", sc_ref: ["P2"], grounds: IMPLEMENTATION_FACT, region_kind: OUT_OF_FRAME, grid: GRID:K10-J15-1, bounds_rule: "price cells above (or below) the visible price range of the chart at that moment; the region is the frame's, the count is the family's", origin: SCREEN_FRAME}
+  - {id: REG:LEVEL-1, version: "1", sc_ref: ["P2", "P0.2"], grounds: DR_LAB_DECISION, region_kind: LEVEL, bounds_rule: "u >= L along when L > 0, u <= L against when L <= 0, L = a / b exact (today's level in the snapshot's scale)", origin: TODAY_LEVEL}
+  - {id: REG:M5-CELL-1, version: "1", sc_ref: ["P2", "§12.4/B-CLOSE"], grounds: DR_LAB_DECISION, region_kind: M5_CELL, grid: GRID:K10-J15-1, bounds_rule: "price cell k on one common clock M5 j", origin: FIXED_GRID}
+  - {id: REG:NONE-1, version: "1", sc_ref: ["P2"], grounds: DR_LAB_DECISION, region_kind: NONE, bounds_rule: "no region: a category or a residual question of a whole set", origin: WHOLE}
+
+density_algorithms:
+  - id: ALG:ZONE-MAP-3
+    version: "zone-map-3"
+    sc_ref: ["P3"]
+    grounds: DR_LAB_DECISION
+    title_ru: карта зон zone-map-3
+    grid: GRID:K10-J15-1
+    density_rule: "D(cell) = the number of the family's known events of one kind in the 3 x 3 cells around the cell, at every cell, empty ones included"
+    region_rule: "a zone is a connected (8-neighbourhood) region whose D is at least half of the region's own maximum and which holds no cell above it: the half-height region of its own apex; regions never overlap and need no tie-break"
+    min_support_rule: "n_zone >= max(4, ceil(0.05 N)); otherwise its sessions stay in the residual; share = n_zone / N_base"
+    order_rule: "by start time, then share, then nearness to u = 0; label E1, E2 … in that order"
+    diagnostics: ["grid shifts: half a price cell, 5 and 10 minutes, Jaccard of member sets", "50 resamplings of sessions, mean Jaccard and share >= 0.5", "held-out path-null: the older half finds the region, the newer half against 200 sign-flipped copies of its own paths (sign-flip-1)"]
+    seed_rule: "every random procedure seeded from the version, the family, the snapshot, the event and the test"
+    frozen: true
+    source_refs: [SRC:M12, SRC:CODE-ZONEMAP24]

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DR Lab · 24</title>
+<style>
+:root{--bg:#08090C;--panel:#0E1014;--raised:#161A21;--hover:#1C212A;--line:#1C2027;--line2:#2A2F38;--text:#D1D4DC;--text2:#A3A8B3;--text3:#6F7582;--replay:#F7C948;--hist:#8FB4FF;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:13px/1.35 -apple-system,BlinkMacSystemFont,"Trebuchet MS",Roboto,Ubuntu,sans-serif;user-select:none}
+button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer;padding:0}
+#tb{position:absolute;left:0;right:0;top:0;height:40px;display:flex;align-items:center;gap:8px;padding:0 10px;background:var(--panel);border-bottom:1px solid var(--line);white-space:nowrap}
+.seg{display:flex;gap:2px;padding:3px;background:var(--raised);border-radius:7px}
+.seg button{height:26px;padding:0 9px;border-radius:5px;color:var(--text2)}
+.seg button:hover{background:var(--hover);color:var(--text)}
+.seg button.on{background:#262B35;color:#fff}
+.seg button.off{opacity:.45;cursor:default}
+.seg button i{font-style:normal;font-weight:700}
+.lbl{color:var(--text3);font-size:12px}
+.sp{flex:1}
+.pill{display:flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:6px;background:var(--raised)}
+.pill .dot{width:7px;height:7px;border-radius:50%;background:#089981}
+.pill.rp{background:rgba(247,201,72,.12);color:var(--replay)}
+.pill.rp .dot{background:var(--replay)}
+.pill.hs{background:rgba(143,180,255,.12);color:var(--hist)}
+.pill.hs .dot{background:var(--hist)}
+#live{color:var(--text2)}
+#back{height:28px;padding:0 10px;border-radius:6px;background:var(--raised);color:var(--text)}
+#back:hover{background:var(--hover)}
+#lay,#cfgb,#dayb,#areab,#cmp22{height:28px;padding:0 10px;border-radius:6px;background:var(--raised);color:var(--text)}
+#lay:hover,#lay.on,#cfgb:hover,#cfgb.on,#dayb:hover,#dayb.on,#areab:hover,#cmp22:hover{background:var(--hover)}
+#areab.on{background:#2B3445;color:#fff;box-shadow:inset 0 0 0 1px #5E6C84}
+#dayb.hs{color:var(--hist)}
+#cmp22{display:flex;align-items:center;text-decoration:none;color:var(--text2);font-size:12px}
+#menu{position:absolute;top:38px;right:180px;width:300px;padding:6px;background:#12151B;border:1px solid var(--line2);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.6);z-index:20}
+#menu[hidden]{display:none}
+#menu label{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:5px;cursor:pointer}
+#menu label:hover{background:var(--hover)}
+#menu input{accent-color:#5DB8FF;margin:0}
+#menu .sw{width:14px;height:8px;border-radius:2px;flex:0 0 14px}
+#dayp{position:absolute;top:38px;right:260px;width:300px;padding:10px 12px;background:#12151B;border:1px solid var(--line2);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.6);z-index:22}
+#dayp[hidden]{display:none}
+#dayp .dr{display:flex;align-items:center;gap:6px;margin:6px 0}
+#dayp input[type=date]{flex:1;background:var(--raised);color:var(--text);border:1px solid var(--line2);border-radius:5px;padding:4px 6px;font:inherit;color-scheme:dark}
+#dayp button{height:28px;padding:0 10px;border-radius:5px;background:var(--raised)}
+#dayp button:hover{background:var(--hover)}
+#dayp .k{color:var(--text3);font-size:12px}
+#main{position:absolute;left:0;top:40px;right:300px;bottom:0}
+#cv{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
+#tip{position:absolute;pointer-events:none;z-index:10;max-width:380px;padding:8px 10px;border-radius:7px;background:rgba(18,21,27,.96);border:1px solid var(--line2);box-shadow:0 6px 20px rgba(0,0,0,.5);font-size:12.5px;line-height:1.45;white-space:normal}
+#tip[hidden]{display:none}
+#tip b{font-weight:600}
+#tip .k{color:var(--text3)}
+#tip .big{font-size:18px;font-weight:700;line-height:1.1}
+#nav{position:absolute;display:flex;gap:4px;padding:4px;border-radius:8px;background:rgba(18,21,27,.9);border:1px solid var(--line2);opacity:0;transition:opacity .15s;z-index:5}
+#nav.show{opacity:1}
+#nav button{width:28px;height:26px;border-radius:5px;color:var(--text2);font-size:15px}
+#nav button:hover{background:var(--hover);color:#fff}
+#panel{position:absolute;right:0;top:40px;bottom:0;width:300px;overflow-y:auto;background:var(--panel);border-left:1px solid var(--line);padding:12px 14px 20px}
+#cfgp{position:absolute;top:38px;right:180px;width:360px;max-height:calc(100% - 50px);overflow-y:auto;padding:8px 12px 12px;background:rgba(18,21,27,.62);border:1px solid var(--line2);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.35);z-index:21}
+#cfgp[hidden]{display:none}
+#alToast{position:fixed;top:46px;left:50%;transform:translateX(-50%);padding:7px 14px;border-radius:6px;background:rgba(245,184,65,.16);border:1px solid rgba(245,184,65,.85);color:#F7D58A;font-size:13px;font-weight:600;z-index:40;cursor:pointer;backdrop-filter:blur(4px)}
+#alToast[hidden]{display:none}
+#cfgp .ch{display:flex;align-items:center;justify-content:space-between;padding:4px 0 8px;border-bottom:1px solid var(--line2)}
+#cfgp .ch button{padding:4px 10px;border-radius:5px;background:var(--raised)}
+#cfgp .ch button:hover{background:var(--hover)}
+#cfgp .cg{margin:10px 0 4px;color:var(--text3);font-size:11px;letter-spacing:.5px;text-transform:uppercase}
+#cfgp .cgd{border-bottom:1px solid var(--line2);padding-bottom:4px}
+#cfgp summary.cg{cursor:pointer;list-style:none;padding:6px 0 4px;margin:4px 0 0;color:var(--text2)}
+#cfgp summary.cg::-webkit-details-marker{display:none}
+#cfgp summary.cg::before{content:'\25B8';display:inline-block;width:14px;color:var(--text3)}
+#cfgp details[open]>summary.cg::before{content:'\25BE'}
+#cfgp summary.cg:hover{color:var(--text)}
+#cfgp .cr{display:grid;grid-template-columns:1fr 120px 30px;align-items:center;gap:8px;padding:3px 0;font-size:12.5px}
+#cfgp .cr span{color:var(--text2)}
+#cfgp .cr input[type=color]{grid-column:2 / 4;width:100%;height:22px;padding:0;border:1px solid var(--line2);border-radius:4px;background:none;cursor:pointer}
+#cfgp .cr select{grid-column:2 / 4;background:var(--raised);color:var(--text);border:1px solid var(--line2);border-radius:4px;padding:3px}
+#cfgp .cr input[type=range]{width:120px;accent-color:#9AA6B8}
+#cfgp .cr em{font-style:normal;color:var(--text3);font-size:11px;text-align:right}
+.dim{color:var(--text3)}
+/*__PANEL24CSS__*/
+</style>
+</head>
+<body>
+<div id="dr21-root" aria-label="DR Lab — вариант 24">
+<div id="tb">
+  <div class="seg" id="inst"></div>
+  <div class="seg" id="sess"></div>
+  <span class="lbl" id="date"></span>
+  <span class="lbl version24">№ 24</span>
+  <div class="seg" id="mode"><button data-m="bounds">Границы хода</button><button data-m="path">Путь семьи</button></div>
+  <div class="seg" id="ev"></div>
+  <button type="button" id="areab" title="Выбрать область R мышью: цена или цена × время; R/X меняется вместе с текущим фокусом">▭ Область · R</button>
+  <div class="sp"></div>
+  <div id="apibar"></div>
+  <button type="button" id="dayb">История</button>
+  <div id="step21"><button type="button" data-step="-5" aria-label="На пять минут назад">−5м</button><button type="button" data-step="5" aria-label="На пять минут вперёд">+5м</button></div>
+  <button type="button" id="panel21toggle" aria-pressed="true">Сводка</button>
+  <button id="lay">Слои ▾</button>
+  <button id="cfgb" title="Настройки">⚙</button>
+  <a id="cmp22" href="/22/" target="_blank" rel="noopener" title="Открыть №22 рядом для сравнения">№22 ↗</a>
+  <div id="clock"></div>
+</div>
+<div id="menu" hidden></div>
+<div id="cfgp" hidden></div>
+<div id="dayp" hidden></div>
+<div id="main"><canvas id="cv" role="img" aria-label="Свечной график с событиями семьи, уровнями DR и IDR"></canvas><div id="tip" hidden></div><div id="nav"><button data-z="1" title="Отдалить">−</button><button data-z="-1" title="Приблизить">+</button><button data-z="0" title="Сбросить вид (Alt+R)">↺</button></div><div id="det"><div id="deth"></div><div id="detg"></div></div></div>
+<aside id="panel"></aside>
+<div id="insp" aria-live="polite"></div>
+<script src="d24.js"></script>
+</div>
+</body>
+</html>

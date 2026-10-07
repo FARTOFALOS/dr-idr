@@ -1,0 +1,13 @@
+# linkml-lint configuration for the contract schema (used by contract/tools/build.py)
+extends: recommended
+rules:
+  # SC-1.1 status tokens are upper case (KNOWN, NO_PERIOD, HOLDS ...): the schema keeps the contract's tokens.
+  # R and X are the contract's own names of the two final events; the claim class names equal the class names
+  # because ClaimForm.claim_class designates a class
+  standard_naming:
+    level: error
+    permissible_values_upper_case: true
+    exclude: [R, X, DescriptiveClaim, ConditionalDescriptiveClaim, PredictiveClaim, DecisionClaim]
+  # descriptions are required where they carry meaning; containers and value objects may go without
+  recommended:
+    level: disabled

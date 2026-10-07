@@ -95,6 +95,11 @@ def day_view(inst):
         if P.weekday() > 4: continue
         mp = ((d["et"] - P) / pd.Timedelta(minutes=1)).to_numpy()
         rows = [[int(round(t)), float(o), float(h), float(l), float(c)] for t, (o, h, l, c) in zip(mp, b[:, 1:5]) if 570 <= t < 630]
+        # operator 2026-10-06: the screen scrolls back to the previous trading day's RDR and no further, so its candles
+        # from 09:30 to 18:00 come along, placed one day before today's minute 0 (after a weekend Friday sits right
+        # before Sunday's evening: the clock on the axis stays right, the closed days are not drawn as empty space)
+        early = [[int(round(t)) - 1440, float(o), float(h), float(l), float(c)] for t, (o, h, l, c) in zip(mp, b[:, 1:5]) if 570 <= t < 1080]
+        bars = [r for r in early if r[0] < -360] + bars
         bx = _box(rows, 570, 630)
         if bx: prev = dict(bx, name="RDR " + P.strftime("%d.%m"), date=str(P.date())); break
         if rows: break

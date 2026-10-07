@@ -1,0 +1,250 @@
+# DR-LAB-SC-1.1 registry · every route of the local server (lab/server.py) with its profile, and the meaning of
+# every numeric field of the SC-1.1 routes. tests/contract_sc11.py fails if a route of server.py is missing here; the
+# runtime gate fails a response if a number of an SC-1.1 route matches no field encoding below.
+#
+# Path syntax: keys separated by dots; [*] = every element of an array, [n] = element n, {*} = every value of an
+# object. The contract section of a response is typed by the schema (class ContractEnvelope) and is not listed here.
+# Legacy routes are a quarantined profile, never an exemption: their own definitions, their listed disagreements with
+# SC-1.1, a marking header on every response, and no SC-1.1 estimand may take their numbers as input.
+registry_part: surfaces
+
+surfaces:
+  - id: API:/api/d24/family
+    sc_ref: ["§12.1", "§12.3"]
+    route: /api/d24/family
+    surface_profile: SC11_BASE_24
+    definitions: SRC:SEMANTICS-24
+    estimands: [EST:B-RX-JOINT-R, EST:B-RX-JOINT-X, EST:B-DR, EST:B-ORDER, EST:B-ZONE-R, EST:B-ZONE-X, EST:B-ZONE-RESIDUAL-R, EST:B-ZONE-RESIDUAL-X, EST:ZD-GRID-R, EST:ZD-GRID-X, EST:ZD-BOOT-R, EST:ZD-BOOT-X, EST:ZD-NULL-R, EST:ZD-NULL-X, EST:ZM3-STUDY]
+    marking: "body.contract (ContractEnvelope) + header X-DR-Lab-Contract"
+  - id: API:/api/d24/now
+    sc_ref: ["§12.2", "§12.3"]
+    route: /api/d24/now
+    surface_profile: SC11_NOW_1_0
+    definitions: SRC:NOW-1.0
+    estimands: [EST:N-NEW-R, EST:N-NEW-X, EST:N-NO-NEW-R, EST:N-NO-NEW-X, EST:N-DELTA-Q-R, EST:N-DELTA-Q-X, EST:N-DELTA-GE-R, EST:N-DELTA-GE-X, EST:N-IF-NEW-R, EST:N-IF-NEW-X, EST:N-TIME-R, EST:N-TIME-X]
+    marking: "body.contract (ContractEnvelope) + header X-DR-Lab-Contract"
+  - id: API:/api/d24/day
+    sc_ref: ["O1", "O3", "S1"]
+    route: /api/d24/day
+    surface_profile: SC11_OBSERVATION
+    definitions: SRC:SEMANTICS-24
+    marking: "body.contract (ContractEnvelope: observation and session records, no statistic) + header X-DR-Lab-Contract"
+  - id: API:/api/d24/dates
+    sc_ref: ["S2", "H1"]
+    route: /api/d24/dates
+    surface_profile: SC11_OBSERVATION
+    definitions: SRC:SEMANTICS-24
+    marking: "header X-DR-Lab-Contract; dates with an established first confirmation (S2, H1 journal rule); no number"
+  - id: API:/api/contract
+    sc_ref: ["§14.4"]
+    route: /api/contract
+    surface_profile: SC11_CONTRACT_SERVICE
+    definitions: SRC:SC-1.1
+    marking: "the compiled registry (contract/build/registry.json) with its stamps and the runtime status"
+  - id: API:/api/d24/verify
+    sc_ref: ["§14.4"]
+    route: /api/d24/verify
+    surface_profile: SC11_CONTRACT_SERVICE
+    definitions: SRC:SC-1.1
+    marking: "POST: recomputes page passports by the reference definitions (used by tests/ui_check24.js); read-only"
+  - id: API:/api/health
+    sc_ref: ["IMPLEMENTATION"]
+    route: /api/health
+    surface_profile: SERVICE
+    definitions: SRC:AGENTS
+    marking: "no statistic; the launcher polls it"
+  - id: API:/api/spec
+    sc_ref: ["IMPLEMENTATION"]
+    route: /api/spec
+    surface_profile: SERVICE
+    definitions: SRC:SEMANTICS-24
+    marking: "the text of docs/SEMANTICS.md; no statistic"
+  - id: API:/api/query
+    sc_ref: ["§0.2"]
+    route: /api/query
+    surface_profile: LEGACY_RESEARCH_DASHBOARD
+    definitions: SRC:SEMANTICS-DASHBOARD
+    legacy_discrepancies_ru:
+      - "фильтры X-ray (retr, ext, rtime, etime) отбирают сессии по их будущему: в SC-1.1 это только явно названный ретроспективный срез, не живой отбор"
+      - "доли «DR true» и распределения не имеют паспортов T1 / V1 / V2 контракта"
+    marking: "header X-DR-Lab-Contract: profile=LEGACY_RESEARCH_DASHBOARD; status=OUTSIDE_SC11"
+  - id: API:/api/scene
+    sc_ref: ["§0.2"]
+    route: /api/scene
+    surface_profile: LEGACY_RESEARCH_DASHBOARD
+    definitions: SRC:SEMANTICS-DASHBOARD
+    legacy_discrepancies_ru: ["одна сессия с минутными барами; наблюдения без паспорта ObservationSnapshot"]
+    marking: "header X-DR-Lab-Contract: profile=LEGACY_RESEARCH_DASHBOARD; status=OUTSIDE_SC11"
+  - id: API:/api/live
+    sc_ref: ["§0.2"]
+    route: /api/live
+    surface_profile: LEGACY_CLASSIC
+    definitions: SRC:SEMANTICS-CLASSIC
+    legacy_discrepancies_ru:
+      - "похожие сессии отбираются по положению в IDR на минуту наблюдения с допуском ±0,25, затем ±0,5 и без предела, если их меньше 40: автоматическое расширение ради N, которое H1 запрещает для наборов SC-1.1"
+      - "кластеры и зоны top-3 (0,1 и 0,2 IDR) выделяются автоматически без паспорта алгоритма P3"
+      - "используется цена формирующейся M5, а не только закрытые M5"
+    marking: "header X-DR-Lab-Contract: profile=LEGACY_CLASSIC; status=OUTSIDE_SC11"
+  - id: API:/api/live/refresh
+    sc_ref: ["§0.2"]
+    route: /api/live/refresh
+    surface_profile: LEGACY_CLASSIC
+    definitions: SRC:SEMANTICS-CLASSIC
+    legacy_discrepancies_ru: ["as /api/live"]
+    marking: "header X-DR-Lab-Contract: profile=LEGACY_CLASSIC; status=OUTSIDE_SC11"
+  - id: API:/api/day
+    sc_ref: ["§0.2"]
+    route: /api/day
+    surface_profile: LEGACY_SCREEN_22
+    definitions: SRC:SEMANTICS-22
+    legacy_discrepancies_ru: ["свечи дня для /22/; те же наблюдения, что /api/d24/day, без паспорта ObservationSnapshot"]
+    marking: "header X-DR-Lab-Contract: profile=LEGACY_SCREEN_22; status=OUTSIDE_SC11"
+  - id: API:/api/day/refresh
+    sc_ref: ["§0.2"]
+    route: /api/day/refresh
+    surface_profile: LEGACY_SCREEN_22
+    definitions: SRC:SEMANTICS-22
+    legacy_discrepancies_ru: ["as /api/day"]
+    marking: "header X-DR-Lab-Contract: profile=LEGACY_SCREEN_22; status=OUTSIDE_SC11"
+  - id: API:/api/cohort
+    sc_ref: ["§0.2"]
+    route: /api/cohort
+    surface_profile: LEGACY_SCREEN_22
+    definitions: SRC:SEMANTICS-22
+    legacy_discrepancies_ru:
+      - "когорта похожих до подтверждения пересобирается по состоянию на минуту: правило сравнения без паспорта H3 и без проверки V3"
+    marking: "header X-DR-Lab-Contract: profile=LEGACY_SCREEN_22; status=OUTSIDE_SC11"
+  - id: API:/api/family
+    sc_ref: ["§0.2"]
+    route: /api/family
+    surface_profile: LEGACY_SCREEN_22
+    definitions: SRC:SEMANTICS-22
+    legacy_discrepancies_ru:
+      - "экран 22 живёт по тексту правила 10 до слияния в main: звёзды — первые касания мест, проценты мест — первые прибытия; это не объекты BASE-24 и в паспорта SC-1.1 не переводятся"
+      - "проценты мест одной стороны не делят сотню (meaning/10 §1)"
+    marking: "header X-DR-Lab-Contract: profile=LEGACY_SCREEN_22; status=OUTSIDE_SC11"
+  - id: API:/api/family-v1
+    sc_ref: ["§0.2"]
+    route: /api/family-v1
+    surface_profile: LEGACY_SEM_V1
+    definitions: SRC:DESIGN-23
+    legacy_discrepancies_ru: ["первая проба DR-LAB-SEM-1.0 другим агентом (дизайн 23); её счёт не сверяется со шлюзом SC-1.1; продуктовая версия — BASE-24"]
+    marking: "header X-DR-Lab-Contract: profile=LEGACY_SEM_V1; status=OUTSIDE_SC11"
+
+encodings:
+  # ------------------------------------------------------------------ /api/d24/family
+  - {id: FE:F.N, sc_ref: ["H2"], surface: API:/api/d24/family, path: "N", field_kind: DENOMINATOR, target: "CaseSetSnapshot.n_members"}
+  - {id: FE:F.weekday, sc_ref: ["H1"], surface: API:/api/d24/family, path: "weekday", field_kind: IDENTIFIER, target: "trading date weekday of the viewed day"}
+  - {id: FE:F.source.boxes, sc_ref: ["O3"], surface: API:/api/d24/family, path: "source.boxes", field_kind: PROVENANCE, target: "ObservationSnapshot.content_version (number of session instances)"}
+  - {id: FE:F.source.built, sc_ref: ["O3"], surface: API:/api/d24/family, path: "source.built", field_kind: PROVENANCE, target: "ObservationSnapshot.content_version (build time)"}
+  - {id: FE:F.key.weekday, sc_ref: ["H1"], surface: API:/api/d24/family, path: "key.weekday", field_kind: IDENTIFIER, target: "CaseSetSpecification key weekday"}
+  - {id: FE:F.key.window, sc_ref: ["H1"], surface: API:/api/d24/family, path: "key.window[*]", field_kind: IDENTIFIER, target: "CaseSetSpecification key window [start, end) day minutes"}
+  - {id: FE:F.scale.orientation, sc_ref: ["M0"], surface: API:/api/d24/family, path: "scale.orientation", field_kind: MEASUREMENT, target: "MeasurementFrameRecord.direction (of the family's scale)"}
+  - {id: FE:F.scale.time_cell, sc_ref: ["M1"], surface: API:/api/d24/family, path: "scale.time_cell", field_kind: MEASUREMENT, target: "MeasurementGrid.time_cell_minutes"}
+  - {id: FE:F.scale.f, sc_ref: ["M1"], surface: API:/api/d24/family, path: "scale.f", field_kind: MEASUREMENT, target: "MeasurementGrid.time_origin (box end f)"}
+  - {id: FE:F.schedule, sc_ref: ["S1"], surface: API:/api/d24/family, path: "schedule.{*}", field_kind: STRATEGY_OBJECT, target: "SessionBlock"}
+  - {id: FE:F.grid, sc_ref: ["M1", "§12.4/B-CLOSE"], surface: API:/api/d24/family, path: "grid[*]", field_kind: MEASUREMENT, target: "common clock M5 close minutes after the box"}
+  - {id: FE:F.m.w, sc_ref: ["M0", "H0"], surface: API:/api/d24/family, path: "members[*].w", field_kind: CASE_RECORD, target: "HistoricalCase IDR width (ticks)"}
+  - {id: FE:F.m.act, sc_ref: ["S2", "H0"], surface: API:/api/d24/family, path: "members[*].act", field_kind: CASE_RECORD, target: "HistoricalCase own activation close"}
+  - {id: FE:F.m.conf, sc_ref: ["S2"], surface: API:/api/d24/family, path: "members[*].conf", field_kind: CASE_RECORD, target: "HistoricalCase own confirmation close"}
+  - {id: FE:F.m.fail, sc_ref: ["S2"], surface: API:/api/d24/family, path: "members[*].fail", field_kind: CASE_RECORD, target: "HistoricalCase own DR break close"}
+  - {id: FE:F.m.confWin, sc_ref: ["H1"], surface: API:/api/d24/family, path: "members[*].confWin", field_kind: CASE_RECORD, target: "HistoricalCase confirmation window"}
+  - id: FE:F.m.RX.s
+    sc_ref: ["P1", "E2"]
+    surface: API:/api/d24/family
+    path: "members[*].{*}.s"
+    field_kind: CASE_RECORD
+    target: "OutcomeRecord FINAL-R / FINAL-X endpoint status"
+    token_map: [{code_token: known, contract_value: KNOWN}, {code_token: unknown, contract_value: UNKNOWN}, {code_token: none, contract_value: NO_PERIOD}]
+  - {id: FE:F.m.RX.v, sc_ref: ["P1"], surface: API:/api/d24/family, path: "members[*].{*}.v", field_kind: CASE_RECORD, target: "OutcomeRecord FINAL-R / FINAL-X value (directed ticks; u = v / w)"}
+  - {id: FE:F.m.RX.t, sc_ref: ["P1"], surface: API:/api/d24/family, path: "members[*].{*}.t", field_kind: CASE_RECORD, target: "OutcomeRecord first open minute"}
+  - {id: FE:F.m.RX.ties, sc_ref: ["P1", "P0.1"], surface: API:/api/d24/family, path: "members[*].{*}.ties[*]", field_kind: CASE_RECORD, target: "OutcomeRecord repeated open minutes (kept, no extra vote)"}
+  - {id: FE:F.m.RX.bound, sc_ref: ["P0.1"], surface: API:/api/d24/family, path: "members[*].{*}.bound", field_kind: CASE_RECORD, target: "one-sided bound of an UNKNOWN endpoint (never a final point)"}
+  - id: FE:F.m.order
+    sc_ref: ["P0.2"]
+    surface: API:/api/d24/family
+    path: "members[*].order"
+    field_kind: CASE_RECORD
+    target: "OutcomeRecord FIRST-ORDER category"
+    token_map: [{code_token: R_before_X, contract_value: R_BEFORE_X}, {code_token: X_before_R, contract_value: X_BEFORE_R}, {code_token: same_M5, contract_value: SAME_M5}, {code_token: unknown, contract_value: UNKNOWN}, {code_token: no_period, contract_value: NO_PERIOD}]
+  - {id: FE:F.m.missing, sc_ref: ["E2"], surface: API:/api/d24/family, path: "members[*].missing", field_kind: CASE_RECORD, target: "number of wholly missing M5 on the case's horizon"}
+  - {id: FE:F.m.path, sc_ref: ["O1", "M0", "H0"], surface: API:/api/d24/family, path: "members[*].path[*][*]", field_kind: CASE_RECORD, target: "directed (low, high, close) ticks per common clock M5 (null = a wholly missing M5)"}
+  - {id: FE:F.m.oppv, sc_ref: ["S2", "M0"], surface: API:/api/d24/family, path: "members[*].oppv", field_kind: CASE_RECORD, target: "own opposite DR in directed ticks"}
+  - {id: FE:F.m.drv, sc_ref: ["S1", "M0"], surface: API:/api/d24/family, path: "members[*].drv", field_kind: CASE_RECORD, target: "own DR on the side of play in directed ticks"}
+  - id: FE:F.m.outcome
+    sc_ref: ["P0.2"]
+    surface: API:/api/d24/family
+    path: "members[*].outcome"
+    field_kind: CASE_RECORD
+    target: "OutcomeRecord DR-OUTCOME category"
+    token_map: [{code_token: held, contract_value: HELD}, {code_token: broken, contract_value: BROKEN}, {code_token: unknown, contract_value: UNKNOWN}, {code_token: none, contract_value: NO_PERIOD}]
+  - {id: FE:F.m.brk, sc_ref: ["S2", "K14"], surface: API:/api/d24/family, path: "members[*].brk", field_kind: CASE_RECORD, target: "the observed break close (first time known only when brkKnown)"}
+  - {id: FE:F.counts.cells.k, sc_ref: ["M1"], surface: API:/api/d24/family, path: "counts.{*}.cells[*][0]", field_kind: MEASUREMENT, target: "price cell k"}
+  - {id: FE:F.counts.cells.b, sc_ref: ["M1"], surface: API:/api/d24/family, path: "counts.{*}.cells[*][1]", field_kind: MEASUREMENT, target: "time cell b"}
+  - {id: FE:F.counts.cells.n, sc_ref: ["V2.1", "§12.4/B-RX"], surface: API:/api/d24/family, path: "counts.{*}.cells[*][2]", field_kind: STATISTIC, target: "EST:B-RX-JOINT-R | EST:B-RX-JOINT-X cell count"}
+  - {id: FE:F.counts.known, sc_ref: ["V2.1"], surface: API:/api/d24/family, path: "counts.{*}.known", field_kind: SUPPORT_COUNT, target: "EST:B-RX-JOINT-* ENDPOINT known"}
+  - {id: FE:F.counts.unknown, sc_ref: ["V2.1"], surface: API:/api/d24/family, path: "counts.{*}.unknown", field_kind: SUPPORT_COUNT, target: "EST:B-RX-JOINT-* ENDPOINT unknown"}
+  - {id: FE:F.counts.none, sc_ref: ["V2.1"], surface: API:/api/d24/family, path: "counts.{*}.none", field_kind: SUPPORT_COUNT, target: "EST:B-RX-JOINT-* ENDPOINT no_period"}
+  - {id: FE:F.counts.order, sc_ref: ["P0.2"], surface: API:/api/d24/family, path: "counts.order.{*}", field_kind: STATISTIC, target: "EST:B-ORDER category count"}
+  - {id: FE:F.counts.outcome, sc_ref: ["§12.4/B-DR"], surface: API:/api/d24/family, path: "counts.outcome.{*}", field_kind: STATISTIC, target: "EST:B-DR category count"}
+  - {id: FE:F.journal, sc_ref: ["H1", "H2", "K11"], surface: API:/api/d24/family, path: "journal.{*}", field_kind: SUPPORT_COUNT, target: "CaseSetSnapshot.exclusions (undetermined keys)"}
+  - {id: FE:F.z.N, sc_ref: ["H2", "P3"], surface: API:/api/d24/family, path: "zones.{*}.N_family", field_kind: DENOMINATOR, target: "N_base of the zone map"}
+  - {id: FE:F.z.nres, sc_ref: ["P3"], surface: API:/api/d24/family, path: "zones.{*}.n_residual_total", field_kind: STATISTIC, target: "EST:B-ZONE-RESIDUAL-R | EST:B-ZONE-RESIDUAL-X count"}
+  - {id: FE:F.z.unk, sc_ref: ["P3", "V2.1"], surface: API:/api/d24/family, path: "zones.{*}.unknown_count", field_kind: SUPPORT_COUNT, target: "ENDPOINT unknown"}
+  - {id: FE:F.z.none, sc_ref: ["P3", "V2.1"], surface: API:/api/d24/family, path: "zones.{*}.no_event_count", field_kind: SUPPORT_COUNT, target: "ENDPOINT no_period"}
+  - {id: FE:F.z.need, sc_ref: ["P3"], surface: API:/api/d24/family, path: "zones.{*}.min_support", field_kind: PARAMETER, target: "ALG:ZONE-MAP-3 minimum support max(4, ceil(0.05 N))"}
+  - {id: FE:F.z.rshare, sc_ref: ["P3"], surface: API:/api/d24/family, path: "zones.{*}.residual_share", field_kind: STATISTIC, target: "EST:B-ZONE-RESIDUAL-R | EST:B-ZONE-RESIDUAL-X share"}
+  - {id: FE:F.zz.N, sc_ref: ["P3"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].N_family", field_kind: DENOMINATOR, target: "N_base"}
+  - {id: FE:F.zz.nres, sc_ref: ["P3"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].n_residual_total", field_kind: STATISTIC, target: "EST:B-ZONE-RESIDUAL-R | EST:B-ZONE-RESIDUAL-X count (copied into each zone)"}
+  - {id: FE:F.zz.unk, sc_ref: ["P3"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].unknown_count", field_kind: SUPPORT_COUNT, target: "ENDPOINT unknown"}
+  - {id: FE:F.zz.none, sc_ref: ["P3"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].no_event_count", field_kind: SUPPORT_COUNT, target: "ENDPOINT no_period"}
+  - {id: FE:F.zz.need, sc_ref: ["P3"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].min_support", field_kind: PARAMETER, target: "ALG:ZONE-MAP-3 minimum support"}
+  - {id: FE:F.zz.anchor, sc_ref: ["P3"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].peak_anchor[*]", field_kind: MEASUREMENT, target: "DensityRegion apex cell (k, b) — names the zone"}
+  - {id: FE:F.zz.mask, sc_ref: ["P3", "P2"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].cell_mask[*][*]", field_kind: MEASUREMENT, target: "DensityRegion exact mask (k, b)"}
+  - {id: FE:F.zz.bounds, sc_ref: ["P2"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].{price_low,price_high,time_start,time_end}", field_kind: MEASUREMENT, target: "bounding frame of the mask (a drawing, not membership)"}
+  - {id: FE:F.zz.n, sc_ref: ["§12.4/B-ZONE"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].n_zone", field_kind: STATISTIC, target: "EST:B-ZONE-R | EST:B-ZONE-X count"}
+  - {id: FE:F.zz.p, sc_ref: ["§12.4/B-ZONE"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].p_snapshot", field_kind: STATISTIC, target: "EST:B-ZONE-R | EST:B-ZONE-X share n_zone / N_base"}
+  - {id: FE:F.zz.grid, sc_ref: ["P3", "V3"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].grid_member_jaccard.{*}", field_kind: DIAGNOSTIC, target: "EST:ZD-GRID-R | EST:ZD-GRID-X"}
+  - {id: FE:F.zz.boot, sc_ref: ["P3", "V3"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].bootstrap_recovery.{*}", field_kind: DIAGNOSTIC, target: "EST:ZD-BOOT-R | EST:ZD-BOOT-X"}
+  - {id: FE:F.zz.null, sc_ref: ["P3", "V3"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].{null_frozen_overlap,null_validation_n,p_real_mask,p_null_mask,null_excess,minimum_detectable_excess}", field_kind: DIAGNOSTIC, target: "EST:ZD-NULL-R | EST:ZD-NULL-X"}
+  - {id: FE:F.zz.nullint, sc_ref: ["P3", "V3"], surface: API:/api/d24/family, path: "zones.{*}.zones[*].null_interval[*]", field_kind: DIAGNOSTIC, target: "EST:ZD-NULL-R | EST:ZD-NULL-X year-bootstrap interval of the excess"}
+  - {id: FE:F.today.cut, sc_ref: ["E0"], surface: API:/api/d24/family, path: "today.{obs,slice}", field_kind: TIME, target: "KnowledgeCut (observed minute; slice = the close of the last closed M5)"}
+  - {id: FE:F.today.session, sc_ref: ["S1", "S2"], surface: API:/api/d24/family, path: "today.{c0,side,window,brk,brkWindow,idrH,idrL,drH,drL}", field_kind: STRATEGY_OBJECT, target: "StrategySessionRecord of the viewed day"}
+  - {id: FE:F.today.zq, sc_ref: ["E1", "E3"], surface: API:/api/d24/family, path: "today.zones.{*}.q[*]", field_kind: PREFIX_STATE, target: "PrefixState cell (k, b) of today's provisional extreme"}
+  - {id: FE:F.today.zv, sc_ref: ["E1"], surface: API:/api/d24/family, path: "today.zones.{*}.{v10,w}", field_kind: PREFIX_STATE, target: "PrefixState 10 v and w (ticks)"}
+  # ------------------------------------------------------------------ /api/d24/now
+  - {id: FE:N.cut, sc_ref: ["E0"], surface: API:/api/d24/now, path: "cut.{cut,today_elapsed_m5}", field_kind: TIME, target: "KnowledgeCut close minute and the state age in M5 (kept separately)"}
+  - {id: FE:N.base, sc_ref: ["H2", "K27"], surface: API:/api/d24/now, path: "base.N_base", field_kind: DENOMINATOR, target: "N_base of the base family (never replaced)"}
+  - {id: FE:N.state, sc_ref: ["E1"], surface: API:/api/d24/now, path: "{*}.state.{*}", field_kind: PREFIX_STATE, target: "today's PrefixState r_seen, x_seen, last_close (in IDR widths)"}
+  - {id: FE:N.support, sc_ref: ["V2", "V2.2"], surface: API:/api/d24/now, path: "{*}.{continuation,baseline}.support.{*}", field_kind: SUPPORT_COUNT, target: "SupportRecord components of the NOW set"}
+  - {id: FE:N.rsupport, sc_ref: ["V2", "V2.2"], surface: API:/api/d24/now, path: "{*}.research.{*}.support.{*}", field_kind: SUPPORT_COUNT, target: "SupportRecord components of a research set"}
+  - {id: FE:N.pnew, sc_ref: ["§12.4/N-NEW"], surface: API:/api/d24/now, path: "{*}.{continuation,baseline}.p_new_extreme", field_kind: STATISTIC, target: "EST:N-NEW-R | EST:N-NEW-X point among known"}
+  - {id: FE:N.pbounds, sc_ref: ["§12.4/N-NEW", "V2.1"], surface: API:/api/d24/now, path: "{*}.{continuation,baseline}.p_new_bounds[*]", field_kind: STATISTIC, target: "EST:N-NEW-R | EST:N-NEW-X bounds over D"}
+  - {id: FE:N.rpnew, sc_ref: ["§12.4/N-NEW"], surface: API:/api/d24/now, path: "{*}.research.{*}.p_new_extreme", field_kind: STATISTIC, target: "EST:N-NEW-R | EST:N-NEW-X point among known (research)"}
+  - {id: FE:N.rpbounds, sc_ref: ["§12.4/N-NEW", "V2.1"], surface: API:/api/d24/now, path: "{*}.research.{*}.p_new_bounds[*]", field_kind: STATISTIC, target: "EST:N-NEW-R | EST:N-NEW-X bounds over D (research)"}
+  - {id: FE:N.pno, sc_ref: ["§12.4/N-NEW"], surface: API:/api/d24/now, path: "{*}.{continuation,baseline}.p_no_new_extreme", field_kind: STATISTIC, target: "EST:N-NO-NEW-R | EST:N-NO-NEW-X"}
+  - {id: FE:N.rpno, sc_ref: ["§12.4/N-NEW"], surface: API:/api/d24/now, path: "{*}.research.{*}.p_no_new_extreme", field_kind: STATISTIC, target: "EST:N-NO-NEW-R | EST:N-NO-NEW-X (research)"}
+  - {id: FE:N.dq, sc_ref: ["§12.4/N-DELTA"], surface: API:/api/d24/now, path: "{*}.{continuation,baseline}.delta.{q25,q50,q75}", field_kind: STATISTIC, target: "EST:N-DELTA-Q-R | EST:N-DELTA-Q-X"}
+  - {id: FE:N.rdq, sc_ref: ["§12.4/N-DELTA"], surface: API:/api/d24/now, path: "{*}.research.{*}.delta.{q25,q50,q75}", field_kind: STATISTIC, target: "EST:N-DELTA-Q-R | EST:N-DELTA-Q-X (research)"}
+  - {id: FE:N.dge, sc_ref: ["§12.4/N-DELTA"], surface: API:/api/d24/now, path: "{*}.{continuation,baseline}.delta.{p_ge_0_10,p_ge_0_20,p_ge_0_40}", field_kind: STATISTIC, target: "EST:N-DELTA-GE-R | EST:N-DELTA-GE-X"}
+  - {id: FE:N.rdge, sc_ref: ["§12.4/N-DELTA"], surface: API:/api/d24/now, path: "{*}.research.{*}.delta.{p_ge_0_10,p_ge_0_20,p_ge_0_40}", field_kind: STATISTIC, target: "EST:N-DELTA-GE-R | EST:N-DELTA-GE-X (research)"}
+  - {id: FE:N.ifq, sc_ref: ["§12.4/N-IF-NEW"], surface: API:/api/d24/now, path: "{*}.{continuation,baseline}.delta_if_new.{q25,q50,q75}", field_kind: STATISTIC, target: "EST:N-IF-NEW-R | EST:N-IF-NEW-X"}
+  - {id: FE:N.rifq, sc_ref: ["§12.4/N-IF-NEW"], surface: API:/api/d24/now, path: "{*}.research.{*}.delta_if_new.{q25,q50,q75}", field_kind: STATISTIC, target: "EST:N-IF-NEW-R | EST:N-IF-NEW-X (research)"}
+  - {id: FE:N.ifn, sc_ref: ["V2.2"], surface: API:/api/d24/now, path: "{*}.{continuation,baseline}.delta_if_new.{n,n_unknown}", field_kind: SUPPORT_COUNT, target: "SupportRecord MAGNITUDE among new = YES"}
+  - {id: FE:N.rifn, sc_ref: ["V2.2"], surface: API:/api/d24/now, path: "{*}.research.{*}.delta_if_new.{n,n_unknown}", field_kind: SUPPORT_COUNT, target: "SupportRecord MAGNITUDE among new = YES (research)"}
+  - {id: FE:N.tq, sc_ref: ["§12.4/N-TIME"], surface: API:/api/d24/now, path: "{*}.{continuation,baseline}.time_to_new.{q25_m5,q50_m5,q75_m5,q25_min,q50_min,q75_min}", field_kind: STATISTIC, target: "EST:N-TIME-R | EST:N-TIME-X"}
+  - {id: FE:N.rtq, sc_ref: ["§12.4/N-TIME"], surface: API:/api/d24/now, path: "{*}.research.{*}.time_to_new.{q25_m5,q50_m5,q75_m5,q25_min,q50_min,q75_min}", field_kind: STATISTIC, target: "EST:N-TIME-R | EST:N-TIME-X (research)"}
+  - {id: FE:N.tn, sc_ref: ["V2.2"], surface: API:/api/d24/now, path: "{*}.{continuation,baseline}.time_to_new.{n,n_unknown,n_no_event}", field_kind: SUPPORT_COUNT, target: "SupportRecord FIRST_TIME among new = YES"}
+  - {id: FE:N.rtn, sc_ref: ["V2.2"], surface: API:/api/d24/now, path: "{*}.research.{*}.time_to_new.{n,n_unknown,n_no_event}", field_kind: SUPPORT_COUNT, target: "SupportRecord FIRST_TIME among new = YES (research)"}
+  - {id: FE:N.val, sc_ref: ["V3"], surface: API:/api/d24/now, path: "{*}.validation.{brier_skill,magnitude_skill,time_skill}", field_kind: VALIDATION_EVIDENCE, target: "VAL:NOW-1.0-WALKFORWARD decision record"}
+  # ------------------------------------------------------------------ /api/d24/day
+  - {id: FE:D.tick, sc_ref: ["O0"], surface: API:/api/d24/day, path: "tick", field_kind: MEASUREMENT, target: "InstrumentSeries.tick_size"}
+  - {id: FE:D.weekday, sc_ref: ["O2"], surface: API:/api/d24/day, path: "weekday", field_kind: IDENTIFIER, target: "weekday of the trading date"}
+  - {id: FE:D.now, sc_ref: ["E0"], surface: API:/api/d24/day, path: "now", field_kind: TIME, target: "the live minute (17:00 for a closed history day)"}
+  - {id: FE:D.interval, sc_ref: ["O0"], surface: API:/api/d24/day, path: "source_interval", field_kind: PROVENANCE, target: "bar interval read from the source (5 or 1 aggregated)"}
+  - {id: FE:D.bars.t, sc_ref: ["O1", "O2"], surface: API:/api/d24/day, path: "bars[*][0]", field_kind: TIME, target: "ObservationRecord open label minute"}
+  - {id: FE:D.bars.ohlc, sc_ref: ["O1"], surface: API:/api/d24/day, path: "bars[*][1]", field_kind: OBSERVATION, target: "ObservationRecord open"}
+  - {id: FE:D.bars.h, sc_ref: ["O1"], surface: API:/api/d24/day, path: "bars[*][2]", field_kind: OBSERVATION, target: "ObservationRecord high"}
+  - {id: FE:D.bars.l, sc_ref: ["O1"], surface: API:/api/d24/day, path: "bars[*][3]", field_kind: OBSERVATION, target: "ObservationRecord low"}
+  - {id: FE:D.bars.c, sc_ref: ["O1"], surface: API:/api/d24/day, path: "bars[*][4]", field_kind: OBSERVATION, target: "ObservationRecord close"}
+  - {id: FE:D.prev, sc_ref: ["S1"], surface: API:/api/d24/day, path: "prev.{drH,drL,idrH,idrL,open,close}", field_kind: STRATEGY_OBJECT, target: "the previous trading day's RDR box"}

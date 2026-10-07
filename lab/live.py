@@ -30,14 +30,18 @@ LEVELS = [round(x, 2) for x in np.arange(-1.5, 3.001, 0.25)]
 _lock = threading.Lock()
 
 
+def _tv(inst, extra=()):
+    with _lock:
+        return subprocess.run(["node", str(ROOT / "tv_fetch.mjs"), SYMBOLS[inst], "1500", *extra], capture_output=True, text=True,
+                              timeout=90, encoding="utf-8")
+
+
 def fetch(inst):
     """Pull bars of the instrument from TradingView Desktop in one node process (tv_fetch.mjs). A pane of the user's
     layout that already shows the future on 5 or 1 minute is read without switching anything; otherwise the active
     chart is switched to 5 minutes for 2-4 s and restored."""
     if inst not in SYMBOLS: raise ValueError("Unknown instrument")
-    with _lock:
-        r = subprocess.run(["node", str(ROOT / "tv_fetch.mjs"), SYMBOLS[inst], "1500"], capture_output=True, text=True,
-                           timeout=90, encoding="utf-8")
+    r = _tv(inst)
     try:
         d = json.loads(r.stdout.strip().splitlines()[-1])
     except (json.JSONDecodeError, IndexError):
@@ -52,11 +56,26 @@ def fetch(inst):
             k = t - t % 300
             if k not in m5: m5[k] = [k, o, h, l, c]
             else: m5[k][2] = max(m5[k][2], h); m5[k][3] = min(m5[k][3], l); m5[k][4] = c
-        old = _load(inst)
-        if old:
-            for b in old["bars"]:
-                if b[0] < min(m5): m5[b[0]] = b
         bars = [m5[k] for k in sorted(m5)]
+    # operator 2026-10-06: the screen shows the previous trading day back to its RDR, so older M5 are never dropped: the
+    # previous file's bars before the new window are kept whatever the interval of this fetch (four days at most)
+    old = _load(inst)
+    if old and bars:
+        first, keep_from = bars[0][0], bars[-1][0] - 4 * 86400
+        bars = [b for b in old["bars"] if keep_from <= b[0] < first] + bars
+    # once a day: when less than 22 hours are known (a 1-minute pane holds few bars), read 5-minute bars to reach back
+    # to the previous trading day's RDR (this may switch the active chart to 5 minutes for 2-4 s, as «Обновить» does)
+    if bars and bars[-1][0] - bars[0][0] < 22 * 3600:
+        flag, today = LIVE / f"{inst.lower()}_backfill.txt", pd.Timestamp.now(tz="UTC").strftime("%Y-%m-%d")
+        if not flag.exists() or flag.read_text(encoding="utf-8").strip() != today:
+            LIVE.mkdir(parents=True, exist_ok=True); flag.write_text(today, encoding="utf-8")
+            try:
+                d5 = json.loads(_tv(inst, ("need5",)).stdout.strip().splitlines()[-1])
+                if d5.get("success"):
+                    first = bars[0][0]
+                    bars = [[int(x[0]), float(x[1]), float(x[2]), float(x[3]), float(x[4])] for x in d5["bars"] if int(x[0]) < first] + bars
+            except Exception:
+                pass
     out = dict(instrument=inst, symbol=SYMBOLS[inst], feed=d.get("feed"), switched=bool(d.get("switched")), source_interval=interval,
                fetched_at=pd.Timestamp.now(tz="UTC").isoformat(), bars=bars)
     LIVE.mkdir(parents=True, exist_ok=True)

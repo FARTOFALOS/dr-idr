@@ -95,9 +95,44 @@ else:
     check([wo(c, 630) for c in (635, 645, 650, 660, 665)] == [0, 0, 1, 1, 2] and wo(245, 240) == 0 and wo(275, 240) == 2,
           "family window by the candle label: 10:40 -> 10:30-10:45, 10:55 (closed 11:00) -> 10:45-11:00, 04:30 -> 04:30-04:45")
 
+    # design 24 (lab/scene24.py, DR-LAB-SEM-1.0): a history day opened as today, its families, one snapshot per day;
+    # the full semantic checks are tests/sem24.py
+    import scene24  # noqa: E402
+    d24 = scene24.day_view("NQ", "2025-12-17")
+    check(d24.get("status") == "ok" and len(d24["bars"]) > 100 and finite_json(d24, "d24 day"), f"design 24 history day: {len(d24.get('bars', []))} bars")
+    for session, at in (("RDR", 700), ("ODR", 300), ("ADR", -150)):
+        f = scene24.family("NQ", session, at, "2025-12-17")
+        ok = f.get("status") in ("ok", "before", "forming", "waiting", "noconf") and finite_json(f, f"d24 family {session}")
+        if f.get("status") == "ok":
+            ok = ok and f["N"] == len(f["members"]) and all(m["date"] < "2025-12-17" for m in f["members"])
+            for ev in ("R", "X"):
+                cnt = f["counts"][ev]
+                ok = ok and sum(n for _, _, n in cnt["cells"]) + cnt["unknown"] + cnt["none"] == f["N"]
+        check(ok, f"design 24 family NQ {session} 2025-12-17 at {H.clock(at)}: {f.get('status')} {f.get('view', '')} N={f.get('N')}")
+    # the layer «Сейчас» (lab/now24.py, DR-LAB-NOW-1.0): finite, its base N equals the family's, R and X both answered;
+    # the full acceptance tests are tests/now24.py
+    import now24  # noqa: E402
+    nw = now24.live("NQ", "RDR", 720, "2025-12-17")
+    fam = scene24.family("NQ", "RDR", 720, "2025-12-17")
+    ok = finite_json(nw, "d24 now") and nw.get("status") in ("OK", "FROZEN_AT_BREAK", "NO_PREFIX", "UNKNOWN_PREFIX", "HORIZON_OVER", "NO_FAMILY")
+    if nw.get("status") == "OK":
+        ok = ok and nw["base"]["N_base"] == fam["N"] and all(nw[ev]["continuation"]["support"]["N_eligible"] <= fam["N"] for ev in ("R", "X"))
+    check(ok, f"design 24 «Сейчас» NQ RDR 2025-12-17 12:00: {nw.get('status')} {nw.get('R', {}).get('mode', '')}")
+    # DR-LAB-SC-1.1 (contract/README.md): the compiled contract represents its sources (otherwise the server publishes no
+    # statistic) and screen 24 is built with the same registry (otherwise it refuses every family); the conformance
+    # tests are tests/contract_sc11.py
+    import contract  # noqa: E402
+    page = json.loads((ROOT / "contract" / "build" / "page_registry.json").read_text(encoding="utf-8"))
+    check(not contract.stale(), "DR-LAB-SC-1.1 compiled from its sources" + ("" if not contract.stale() else ": " + "; ".join(contract.stale()[:3]) + " (run contract/tools/build.py)"))
+    built = (LAB / "dist" / "24" / "d24.js").read_text(encoding="utf-8")
+    check(page["registry_hash"] == contract.registry_hash() and f'"registry_hash": "{page["registry_hash"]}"' in built,
+          "screen 24 is built with the contract's registry (else run design/sozvezdiya-24/src/build.py)")
+    check(fam.get("contract", {}).get("status") == "CONFORMANT" and nw.get("contract", {}).get("status") == "CONFORMANT",
+          f"the family and «Сейчас» leave through the contract gate: {fam.get('contract', {}).get('status')}, {nw.get('contract', {}).get('status')}")
+
 node = shutil.which("node")
 if node:
-    for js in ("dist/app.js", "dist/live.js", "dist/sozvezdiya.js", "tv_fetch.mjs"):
+    for js in ("dist/app.js", "dist/live.js", "dist/sozvezdiya.js", "dist/24/d24.js", "tv_fetch.mjs"):
         r = subprocess.run([node, "--check", str(LAB / js)], capture_output=True, text=True)
         check(r.returncode == 0, f"syntax {js}")
 else:
