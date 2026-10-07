@@ -1,0 +1,5600 @@
+{
+    "$defs": {
+        "AcceptanceRecord": {
+            "additionalProperties": false,
+            "description": "Evidence of a human decision: who, through which channel, when, the exact words, the scope and the exclusions. The record preserves evidence; it does not create the decision (\u00a714.1, Section A of AGENTS instructions).",
+            "properties": {
+                "actor_role": {
+                    "$ref": "#/$defs/ActorRole"
+                },
+                "channel": {
+                    "type": "string"
+                },
+                "date": {
+                    "format": "date",
+                    "type": "string"
+                },
+                "exclusions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "not_established": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "quote": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "scope": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "actor_role",
+                "channel",
+                "date",
+                "quote",
+                "scope"
+            ],
+            "title": "AcceptanceRecord",
+            "type": "object"
+        },
+        "ActionAuthorityReference": {
+            "additionalProperties": false,
+            "description": "Stored evidence of a valid human permission for a class of consequences. The record creates no authority; none may be derived from an API key, a test, a policy or this contract (D1).",
+            "properties": {
+                "consequence_class": {
+                    "type": "string"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "human_act": {
+                    "$ref": "#/$defs/AcceptanceRecord"
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "revoked": {
+                    "type": "boolean"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "human_act",
+                "consequence_class",
+                "revoked",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "ActionAuthorityReference",
+            "type": "object"
+        },
+        "ActivationEvent": {
+            "additionalProperties": false,
+            "description": "A strategy event detected on a closed M5; its occurrence and the knowledge of its first time are separate.",
+            "properties": {
+                "direction": {
+                    "$ref": "#/$defs/Direction"
+                },
+                "evidence_close_minute": {
+                    "type": "integer"
+                },
+                "first_time_known": {
+                    "type": "boolean"
+                },
+                "kind": {
+                    "$ref": "#/$defs/ActivationKind"
+                },
+                "window_index": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "kind",
+                "direction",
+                "evidence_close_minute",
+                "window_index",
+                "first_time_known"
+            ],
+            "title": "ActivationEvent",
+            "type": "object"
+        },
+        "ActivationKind": {
+            "description": "",
+            "enum": [
+                "CONFIRMATION",
+                "DR_BREAK"
+            ],
+            "title": "ActivationKind",
+            "type": "string"
+        },
+        "ActorRole": {
+            "description": "",
+            "enum": [
+                "OPERATOR",
+                "EXECUTOR_AGENT",
+                "SEMANTIC_LENS",
+                "METHOD_AUTHOR"
+            ],
+            "title": "ActorRole",
+            "type": "string"
+        },
+        "Alignment": {
+            "description": "",
+            "enum": [
+                "COMMON_SESSION_CLOCK",
+                "OWN_HORIZON",
+                "BOX_END_CLOCK"
+            ],
+            "title": "Alignment",
+            "type": "string"
+        },
+        "ApiSurface": {
+            "additionalProperties": false,
+            "description": "One route of the local server and the profile its content belongs to. Every route is declared; a legacy route is a quarantined profile (its own definitions, its known disagreements with SC-1.1), never an exemption.",
+            "properties": {
+                "definitions": {
+                    "type": "string"
+                },
+                "estimands": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "legacy_discrepancies_ru": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "marking": {
+                    "type": "string"
+                },
+                "route": {
+                    "type": "string"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "surface_profile": {
+                    "$ref": "#/$defs/SurfaceProfile"
+                }
+            },
+            "required": [
+                "id",
+                "sc_ref",
+                "route",
+                "surface_profile",
+                "definitions",
+                "marking"
+            ],
+            "title": "ApiSurface",
+            "type": "object"
+        },
+        "AuthorityNeed": {
+            "description": "",
+            "enum": [
+                "NONE_DESCRIPTIVE"
+            ],
+            "title": "AuthorityNeed",
+            "type": "string"
+        },
+        "BinaryKnowledge": {
+            "description": "",
+            "enum": [
+                "YES",
+                "NO",
+                "UNKNOWN"
+            ],
+            "title": "BinaryKnowledge",
+            "type": "string"
+        },
+        "Block": {
+            "description": "",
+            "enum": [
+                "ADR",
+                "ODR",
+                "RDR"
+            ],
+            "title": "Block",
+            "type": "string"
+        },
+        "CalendarStatus": {
+            "description": "",
+            "enum": [
+                "CERTIFIED",
+                "NOT_CERTIFIED"
+            ],
+            "title": "CalendarStatus",
+            "type": "string"
+        },
+        "CaseSetRole": {
+            "description": "",
+            "enum": [
+                "HISTORICAL_UNIVERSE",
+                "BASE_FAMILY",
+                "ELIGIBLE_AT_CUT",
+                "MATCHED_AT_CUT",
+                "OUTCOME_SUBGROUP",
+                "RETROSPECTIVE_RESEARCH"
+            ],
+            "title": "CaseSetRole",
+            "type": "string"
+        },
+        "CaseSetSnapshot": {
+            "additionalProperties": false,
+            "description": "The immutable result of a case-set rule on a snapshot of history: rule, cutoff, the unique participants, the exclusions with reasons. N is the number of unique participants and nothing else (H2).",
+            "properties": {
+                "cut_close_minute": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "cutoff_date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "data_revision": {
+                    "type": "string"
+                },
+                "exclusions": {
+                    "items": {
+                        "$ref": "#/$defs/Exclusion"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "family_id": {
+                    "type": "string"
+                },
+                "n_members": {
+                    "minimum": 0,
+                    "type": "integer"
+                },
+                "parent_snapshot": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "snapshot_id": {
+                    "type": "string"
+                },
+                "spec": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "spec",
+                "family_id",
+                "snapshot_id",
+                "n_members",
+                "data_revision"
+            ],
+            "title": "CaseSetSnapshot",
+            "type": "object"
+        },
+        "CaseSetSpecification": {
+            "additionalProperties": false,
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "role": {
+                                "const": "BASE_FAMILY"
+                            }
+                        },
+                        "required": [
+                            "role"
+                        ]
+                    },
+                    "then": {
+                        "properties": {
+                            "condition_availability": {
+                                "const": "AT_ACTIVATION"
+                            },
+                            "live_use": {
+                                "const": "PERMITTED"
+                            }
+                        },
+                        "required": [
+                            "condition_availability",
+                            "live_use"
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "role": {
+                                "const": "ELIGIBLE_AT_CUT"
+                            }
+                        },
+                        "required": [
+                            "role"
+                        ]
+                    },
+                    "then": {
+                        "properties": {
+                            "condition_availability": {
+                                "const": "PREFIX_AT_CUT"
+                            },
+                            "parent": {
+                                "items": {},
+                                "type": "array"
+                            }
+                        },
+                        "required": [
+                            "parent",
+                            "condition_availability"
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "role": {
+                                "const": "MATCHED_AT_CUT"
+                            }
+                        },
+                        "required": [
+                            "role"
+                        ]
+                    },
+                    "then": {
+                        "properties": {
+                            "comparison": {},
+                            "condition_availability": {
+                                "const": "PREFIX_AT_CUT"
+                            },
+                            "parent": {
+                                "items": {},
+                                "type": "array"
+                            }
+                        },
+                        "required": [
+                            "parent",
+                            "comparison",
+                            "condition_availability"
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "role": {
+                                "const": "OUTCOME_SUBGROUP"
+                            }
+                        },
+                        "required": [
+                            "role"
+                        ]
+                    },
+                    "then": {
+                        "properties": {
+                            "live_use": {
+                                "const": "FORBIDDEN"
+                            },
+                            "parent": {
+                                "items": {},
+                                "type": "array"
+                            }
+                        },
+                        "required": [
+                            "parent",
+                            "live_use"
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "role": {
+                                "const": "RETROSPECTIVE_RESEARCH"
+                            }
+                        },
+                        "required": [
+                            "role"
+                        ]
+                    },
+                    "then": {
+                        "properties": {
+                            "condition_availability": {
+                                "const": "RETROSPECTIVE"
+                            },
+                            "live_use": {
+                                "const": "FORBIDDEN"
+                            }
+                        },
+                        "required": [
+                            "condition_availability",
+                            "live_use"
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "condition_availability": {
+                                "const": "RETROSPECTIVE"
+                            }
+                        },
+                        "required": [
+                            "condition_availability"
+                        ]
+                    },
+                    "then": {
+                        "properties": {
+                            "live_use": {
+                                "const": "FORBIDDEN"
+                            }
+                        },
+                        "required": [
+                            "live_use"
+                        ]
+                    }
+                }
+            ],
+            "description": "The exact membership condition of a set of historical cases and its role. Roles never stand in for each other. The availability of the condition decides whether the set may be used live or for prediction; it does not decide whether a description of the set is conditional (a retrospective condition still yields C1).",
+            "properties": {
+                "activation_kind": {
+                    "$ref": "#/$defs/ActivationKind"
+                },
+                "comparison": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "condition_availability": {
+                    "$ref": "#/$defs/ConditionAvailability"
+                },
+                "condition_ru": {
+                    "type": "string"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "history_rule": {
+                    "type": "string"
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "key_fields": {
+                    "items": {
+                        "$ref": "#/$defs/KeyField"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "live_use": {
+                    "$ref": "#/$defs/LiveUse"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "parent": {
+                    "description": "the sets this one may be selected from; a snapshot names the concrete one",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "profile": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/$defs/CaseSetRole"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "undetermined_rule": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                },
+                "weekday_scope": {
+                    "$ref": "#/$defs/WeekdayScope"
+                }
+            },
+            "required": [
+                "role",
+                "history_rule",
+                "condition_ru",
+                "condition_availability",
+                "live_use",
+                "profile",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "CaseSetSpecification",
+            "type": "object"
+        },
+        "CategoryCount": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "count": {
+                    "minimum": 0,
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "category",
+                "count"
+            ],
+            "title": "CategoryCount",
+            "type": "object"
+        },
+        "CellCount": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "count": {
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "price_cell": {
+                    "type": "integer"
+                },
+                "time_cell": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "price_cell",
+                "count"
+            ],
+            "title": "CellCount",
+            "type": "object"
+        },
+        "CheckOutcome": {
+            "description": "",
+            "enum": [
+                "PASS",
+                "FAIL"
+            ],
+            "title": "CheckOutcome",
+            "type": "string"
+        },
+        "CheckResult": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "check": {
+                    "type": "string"
+                },
+                "checked": {
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "outcome": {
+                    "$ref": "#/$defs/CheckOutcome"
+                }
+            },
+            "required": [
+                "check",
+                "outcome"
+            ],
+            "title": "CheckResult",
+            "type": "object"
+        },
+        "Claim": {
+            "additionalProperties": false,
+            "description": "A permitted statement about an estimate. Four classes with different admission conditions, not one flag: the class is designated by claim_class and each class requires its own grounds. A claim is not a free caption.",
+            "properties": {
+                "applies_to_ru": {
+                    "type": "string"
+                },
+                "claim_class": {
+                    "enum": [
+                        "Claim"
+                    ],
+                    "type": "string"
+                },
+                "claim_form": {
+                    "type": "string"
+                },
+                "estimand": {
+                    "type": "string"
+                },
+                "forbidden_readings_ru": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "statement_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "claim_class",
+                "claim_form",
+                "statement_ru",
+                "estimand",
+                "applies_to_ru",
+                "forbidden_readings_ru"
+            ],
+            "title": "Claim",
+            "type": "object"
+        },
+        "ClaimClassName": {
+            "description": "",
+            "enum": [
+                "DescriptiveClaim",
+                "ConditionalDescriptiveClaim",
+                "PredictiveClaim",
+                "DecisionClaim"
+            ],
+            "title": "ClaimClassName",
+            "type": "string"
+        },
+        "ClaimForm": {
+            "additionalProperties": false,
+            "description": "An explicit normative statement form: what may be said about an estimand, in which class, in which words, with which visible parts, and which neighbouring reading is not permitted. The machine never invents a claim: it computes which claim classes the evidence admits and checks the declared form against them. A form outside the admissible set is not published.",
+            "if": {
+                "properties": {
+                    "claim_class": {
+                        "const": "ConditionalDescriptiveClaim"
+                    }
+                },
+                "required": [
+                    "claim_class"
+                ]
+            },
+            "properties": {
+                "acceptance": {
+                    "$ref": "#/$defs/FormAcceptance"
+                },
+                "claim_class": {
+                    "$ref": "#/$defs/ClaimClassName"
+                },
+                "condition_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "estimand": {
+                    "type": "string"
+                },
+                "forbidden_readings_ru": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "labels": {
+                    "items": {
+                        "$ref": "#/$defs/LabelTemplate"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "price_transfer": {
+                    "$ref": "#/$defs/PriceTransfer"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "statement_ru": {
+                    "type": "string"
+                },
+                "subject_ru": {
+                    "type": "string"
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "value_form": {
+                    "$ref": "#/$defs/ValueForm"
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "estimand",
+                "claim_class",
+                "subject_ru",
+                "statement_ru",
+                "value_form",
+                "price_transfer",
+                "forbidden_readings_ru",
+                "acceptance",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "then": {
+                "properties": {
+                    "condition_ru": {}
+                },
+                "required": [
+                    "condition_ru"
+                ]
+            },
+            "title": "ClaimForm",
+            "type": "object"
+        },
+        "ComponentSupport": {
+            "additionalProperties": false,
+            "description": "The counts of one knowledge component over the set it is counted on. There is no single \"known\": existence, magnitude and first time are separate components (E2).",
+            "properties": {
+                "component": {
+                    "$ref": "#/$defs/KnowledgeComponent"
+                },
+                "condition_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "known": {
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "no": {
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "no_event": {
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "no_period": {
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "of": {
+                    "minimum": 0,
+                    "type": "integer"
+                },
+                "unknown": {
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "yes": {
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "component",
+                "of"
+            ],
+            "title": "ComponentSupport",
+            "type": "object"
+        },
+        "ConditionAvailability": {
+            "description": "",
+            "enum": [
+                "AT_ACTIVATION",
+                "PREFIX_AT_CUT",
+                "RETROSPECTIVE",
+                "PREFIX_AND_RETROSPECTIVE"
+            ],
+            "title": "ConditionAvailability",
+            "type": "string"
+        },
+        "ConditionalDescriptiveClaim": {
+            "additionalProperties": false,
+            "description": "A description of the historical outcomes of an explicitly selected subgroup. Its condition and new denominator are never hidden; the condition may be prefix-available or retrospective, and it says which (C1).",
+            "properties": {
+                "applies_to_ru": {
+                    "type": "string"
+                },
+                "claim_class": {
+                    "enum": [
+                        "ConditionalDescriptiveClaim"
+                    ],
+                    "type": "string"
+                },
+                "claim_form": {
+                    "type": "string"
+                },
+                "condition_availability": {
+                    "$ref": "#/$defs/ConditionAvailability"
+                },
+                "condition_ru": {
+                    "type": "string"
+                },
+                "cut_close_minute": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "estimand": {
+                    "type": "string"
+                },
+                "forbidden_readings_ru": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "parent_case_set": {
+                    "type": "string"
+                },
+                "selected_case_set": {
+                    "type": "string"
+                },
+                "statement_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "parent_case_set",
+                "selected_case_set",
+                "condition_ru",
+                "condition_availability",
+                "claim_class",
+                "claim_form",
+                "statement_ru",
+                "estimand",
+                "applies_to_ru",
+                "forbidden_readings_ru"
+            ],
+            "title": "ConditionalDescriptiveClaim",
+            "type": "object"
+        },
+        "ConformanceExample": {
+            "additionalProperties": false,
+            "description": "One discriminating example of \u00a713 with the checks that execute it.",
+            "properties": {
+                "checks": {
+                    "items": {
+                        "pattern": "^(test|runtime|page|schema|build|human):[^\\s]+$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "expected_ru": {
+                    "type": "string"
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "situation_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "sc_ref",
+                "situation_ru",
+                "expected_ru",
+                "checks"
+            ],
+            "title": "ConformanceExample",
+            "type": "object"
+        },
+        "ContractEdition": {
+            "additionalProperties": false,
+            "description": "One edition of the normative document, pinned by the SHA-256 of its LF-normalised text.",
+            "properties": {
+                "acceptances": {
+                    "items": {
+                        "$ref": "#/$defs/AcceptanceRecord"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "document_path": {
+                    "type": "string"
+                },
+                "document_sha256_lf": {
+                    "pattern": "^[0-9a-f]{64}$",
+                    "type": "string"
+                },
+                "edition_status": {
+                    "$ref": "#/$defs/EditionStatus"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "supersedes": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "document_path",
+                "document_sha256_lf",
+                "edition_status",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "ContractEdition",
+            "type": "object"
+        },
+        "ContractEnvelope": {
+            "additionalProperties": false,
+            "description": "The contract section of a response: the edition and registry it was checked against, its status, the records it is about and one result bundle per published statistic. Status CONTRACT_STALE or a blocking violation means the affected statistics are not published.",
+            "if": {
+                "properties": {
+                    "status": {
+                        "const": "CONTRACT_STALE"
+                    }
+                },
+                "required": [
+                    "status"
+                ]
+            },
+            "properties": {
+                "bundles": {
+                    "items": {
+                        "$ref": "#/$defs/StatisticalResultBundle"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "case_sets": {
+                    "items": {
+                        "$ref": "#/$defs/CaseSetSnapshot"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "checks": {
+                    "items": {
+                        "$ref": "#/$defs/CheckResult"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "cut": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/KnowledgeCut"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "edition": {
+                    "type": "string"
+                },
+                "frame": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/MeasurementFrameRecord"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "history_clock": {
+                    "items": {
+                        "$ref": "#/$defs/HistoryClockAssessment"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "observation": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ObservationSnapshot"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "prefix": {
+                    "items": {
+                        "$ref": "#/$defs/PrefixState"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "profile": {
+                    "type": "string"
+                },
+                "reachability": {
+                    "items": {
+                        "$ref": "#/$defs/ReachabilityAssessment"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "regions": {
+                    "items": {
+                        "$ref": "#/$defs/DensityRegion"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "registry_hash": {
+                    "type": "string"
+                },
+                "request": {
+                    "$ref": "#/$defs/QuestionRequest"
+                },
+                "route": {
+                    "type": "string"
+                },
+                "session": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/StrategySessionRecord"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "status": {
+                    "$ref": "#/$defs/ContractStatus"
+                },
+                "violations": {
+                    "items": {
+                        "$ref": "#/$defs/Violation"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "edition",
+                "registry_hash",
+                "status",
+                "route",
+                "profile",
+                "request"
+            ],
+            "then": {
+                "not": {
+                    "required": [
+                        "bundles"
+                    ]
+                },
+                "properties": {
+                    "bundles": {
+                        "items": {},
+                        "type": "array"
+                    }
+                }
+            },
+            "title": "ContractEnvelope",
+            "type": "object"
+        },
+        "ContractObligation": {
+            "additionalProperties": false,
+            "description": "One MUST / MUST-NOT of the contract with the mechanisms that enforce it. An obligation enforced only by a human is listed as such and never presented as machine-checked.",
+            "properties": {
+                "enforcement": {
+                    "items": {
+                        "$ref": "#/$defs/EnforcementCheck"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "obligation_kind": {
+                    "$ref": "#/$defs/ObligationKind"
+                },
+                "residual_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "statement_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "sc_ref",
+                "statement_ru",
+                "obligation_kind",
+                "enforcement"
+            ],
+            "title": "ContractObligation",
+            "type": "object"
+        },
+        "ContractStatus": {
+            "description": "",
+            "enum": [
+                "CONFORMANT",
+                "VIOLATION",
+                "CONTRACT_STALE"
+            ],
+            "title": "ContractStatus",
+            "type": "string"
+        },
+        "ContributionKind": {
+            "description": "",
+            "enum": [
+                "ONE_POINT",
+                "ONE_CATEGORY",
+                "ONE_BINARY_VOTE",
+                "ONE_CELL_AT_M5",
+                "BAND_INDICATORS_AT_M5",
+                "ONE_MAGNITUDE",
+                "ONE_DURATION",
+                "ONE_MEMBERSHIP"
+            ],
+            "title": "ContributionKind",
+            "type": "string"
+        },
+        "CoverageNote": {
+            "additionalProperties": false,
+            "description": "A clause of the contract deliberately not represented by a schema element, and why.",
+            "properties": {
+                "clause": {
+                    "type": "string"
+                },
+                "coverage": {
+                    "$ref": "#/$defs/CoverageStatus"
+                },
+                "reason_ru": {
+                    "type": "string"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "sc_ref",
+                "clause",
+                "coverage",
+                "reason_ru"
+            ],
+            "title": "CoverageNote",
+            "type": "object"
+        },
+        "CoverageStatus": {
+            "description": "",
+            "enum": [
+                "REPRESENTED",
+                "NOT_INSTANTIATED",
+                "OUT_OF_SCOPE",
+                "EDITORIAL"
+            ],
+            "title": "CoverageStatus",
+            "type": "string"
+        },
+        "DecisionClaim": {
+            "additionalProperties": false,
+            "description": "A statement that an action or abstention fits a goal and a policy in this scene. Needs a PolicySpecification; an actual action needs a separate human authority (C3).",
+            "properties": {
+                "action_ru": {
+                    "type": "string"
+                },
+                "applies_to_ru": {
+                    "type": "string"
+                },
+                "authority": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "claim_class": {
+                    "enum": [
+                        "DecisionClaim"
+                    ],
+                    "type": "string"
+                },
+                "claim_form": {
+                    "type": "string"
+                },
+                "criterion_ru": {
+                    "type": "string"
+                },
+                "estimand": {
+                    "type": "string"
+                },
+                "forbidden_readings_ru": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "policy": {
+                    "type": "string"
+                },
+                "statement_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "policy",
+                "criterion_ru",
+                "action_ru",
+                "claim_class",
+                "claim_form",
+                "statement_ru",
+                "estimand",
+                "applies_to_ru",
+                "forbidden_readings_ru"
+            ],
+            "title": "DecisionClaim",
+            "type": "object"
+        },
+        "DenominatorRule": {
+            "description": "",
+            "enum": [
+                "N_BASE_UNIQUE_MEMBERS",
+                "N_ELIGIBLE_AT_CUT",
+                "N_MATCH_AT_CUT",
+                "KNOWN_COMPONENT_SUPPORT",
+                "NONE_LOGICAL"
+            ],
+            "title": "DenominatorRule",
+            "type": "string"
+        },
+        "DensityAlgorithmSpecification": {
+            "additionalProperties": false,
+            "description": "A named algorithm that finds concentrations of one event kind of one composition at a given scale. A density is no probability of a reversal; a new algorithm or parameter is a new version of the result (P3).",
+            "properties": {
+                "density_rule": {
+                    "type": "string"
+                },
+                "diagnostics": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "frozen": {
+                    "type": "boolean"
+                },
+                "grid": {
+                    "type": "string"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "min_support_rule": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "order_rule": {
+                    "type": "string"
+                },
+                "region_rule": {
+                    "type": "string"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "seed_rule": {
+                    "type": "string"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "grid",
+                "density_rule",
+                "region_rule",
+                "min_support_rule",
+                "order_rule",
+                "diagnostics",
+                "seed_rule",
+                "frozen",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "DensityAlgorithmSpecification",
+            "type": "object"
+        },
+        "DensityRegion": {
+            "additionalProperties": false,
+            "description": "One zone found by a named algorithm on one snapshot and event; its identity includes its exact mask.",
+            "properties": {
+                "algorithm": {
+                    "type": "string"
+                },
+                "event": {
+                    "$ref": "#/$defs/EventKind"
+                },
+                "mask_verified": {
+                    "type": "boolean"
+                },
+                "min_support": {
+                    "type": "integer"
+                },
+                "n_cells": {
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "n_zone": {
+                    "minimum": 0,
+                    "type": "integer"
+                },
+                "snapshot_id": {
+                    "type": "string"
+                },
+                "zone_id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "zone_id",
+                "algorithm",
+                "event",
+                "snapshot_id",
+                "n_cells",
+                "n_zone",
+                "min_support",
+                "mask_verified"
+            ],
+            "title": "DensityRegion",
+            "type": "object"
+        },
+        "DerivationRecord": {
+            "additionalProperties": false,
+            "description": "Which operation produced the outputs from which inputs (versions), with which parameters, and how the result was verified. Names the meaning kept and the information lost; never hides a future input behind a cache (\u00a71.3).",
+            "properties": {
+                "derivation_id": {
+                    "type": "string"
+                },
+                "executed_at_utc": {
+                    "type": "string"
+                },
+                "information_lost_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "inputs": {
+                    "items": {
+                        "$ref": "#/$defs/InputVersion"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "operation": {
+                    "type": "string"
+                },
+                "reference_definition": {
+                    "type": "string"
+                },
+                "verification": {
+                    "$ref": "#/$defs/VerificationStatus"
+                }
+            },
+            "required": [
+                "derivation_id",
+                "operation",
+                "reference_definition",
+                "inputs",
+                "executed_at_utc",
+                "verification"
+            ],
+            "title": "DerivationRecord",
+            "type": "object"
+        },
+        "DescriptiveClaim": {
+            "additionalProperties": false,
+            "description": "A statement about the measured record of a fixed historical composition, without transfer (C0).",
+            "properties": {
+                "applies_to_ru": {
+                    "type": "string"
+                },
+                "case_set_snapshot": {
+                    "type": "string"
+                },
+                "claim_class": {
+                    "enum": [
+                        "DescriptiveClaim"
+                    ],
+                    "type": "string"
+                },
+                "claim_form": {
+                    "type": "string"
+                },
+                "estimand": {
+                    "type": "string"
+                },
+                "forbidden_readings_ru": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "statement_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "case_set_snapshot",
+                "claim_class",
+                "claim_form",
+                "statement_ru",
+                "estimand",
+                "applies_to_ru",
+                "forbidden_readings_ru"
+            ],
+            "title": "DescriptiveClaim",
+            "type": "object"
+        },
+        "Direction": {
+            "description": "",
+            "enum": [
+                "LONG",
+                "SHORT"
+            ],
+            "title": "Direction",
+            "type": "string"
+        },
+        "DrOutcome": {
+            "description": "",
+            "enum": [
+                "BROKEN",
+                "HELD",
+                "UNKNOWN",
+                "NO_PERIOD"
+            ],
+            "title": "DrOutcome",
+            "type": "string"
+        },
+        "EditionStatus": {
+            "description": "",
+            "enum": [
+                "ACCEPTED_FOR_THIS_WORK",
+                "ACCEPTED_FOR_PROFILES",
+                "PREVIOUS_EDITION",
+                "PROPOSED"
+            ],
+            "title": "EditionStatus",
+            "type": "string"
+        },
+        "EndpointKnowledge": {
+            "description": "",
+            "enum": [
+                "KNOWN",
+                "UNKNOWN",
+                "NO_PERIOD"
+            ],
+            "title": "EndpointKnowledge",
+            "type": "string"
+        },
+        "EnforcementCheck": {
+            "additionalProperties": false,
+            "description": "Where an obligation is checked; check = test:..., runtime:..., page:..., schema:... or human:...",
+            "properties": {
+                "check": {
+                    "pattern": "^(test|runtime|page|schema|build|human):[^\\s]+$",
+                    "type": "string"
+                },
+                "mechanism": {
+                    "$ref": "#/$defs/EnforcementMechanism"
+                }
+            },
+            "required": [
+                "mechanism",
+                "check"
+            ],
+            "title": "EnforcementCheck",
+            "type": "object"
+        },
+        "EnforcementMechanism": {
+            "description": "",
+            "enum": [
+                "STRUCTURAL_SCHEMA",
+                "PATH_COMPUTATION",
+                "PROVENANCE_RECONCILIATION",
+                "STATISTICAL_CHECK",
+                "HUMAN_ACCEPTANCE"
+            ],
+            "title": "EnforcementMechanism",
+            "type": "string"
+        },
+        "EstimandSpecification": {
+            "additionalProperties": false,
+            "description": "The exact quantity to describe or estimate, before a method and before a number. Its eight slots q1..q8 are the eight answers every T1 must give. A change of denominator, event or horizon is another estimand (T1).",
+            "properties": {
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "parameters": {
+                    "items": {
+                        "$ref": "#/$defs/ParameterDeclaration"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "profile": {
+                    "type": "string"
+                },
+                "q1_formalised_part_ru": {
+                    "type": "string"
+                },
+                "q2_target": {
+                    "$ref": "#/$defs/TargetKind"
+                },
+                "q3_unit": {
+                    "$ref": "#/$defs/UnitOfAnalysis"
+                },
+                "q4_case_set": {
+                    "description": "the case-set rules this estimand may be evaluated on; an estimate names the concrete snapshot",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "q4_denominator": {
+                    "$ref": "#/$defs/DenominatorRule"
+                },
+                "q5_outcome": {
+                    "type": "string"
+                },
+                "q5_region": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "q6_cut": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "q6_time_ru": {
+                    "type": "string"
+                },
+                "q7_measure": {
+                    "$ref": "#/$defs/SummaryMeasure"
+                },
+                "q8_order_ru": {
+                    "type": "string"
+                },
+                "q8_unknown": {
+                    "$ref": "#/$defs/UnknownPolicy"
+                },
+                "q8_weights": {
+                    "$ref": "#/$defs/WeightPolicy"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "question",
+                "q1_formalised_part_ru",
+                "q2_target",
+                "q3_unit",
+                "q4_case_set",
+                "q4_denominator",
+                "q5_outcome",
+                "q6_time_ru",
+                "q7_measure",
+                "q8_unknown",
+                "q8_weights",
+                "q8_order_ru",
+                "profile",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "EstimandSpecification",
+            "type": "object"
+        },
+        "Estimate": {
+            "additionalProperties": false,
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "value_kind": {
+                                "const": "NO_ESTIMATE"
+                            }
+                        },
+                        "required": [
+                            "value_kind"
+                        ]
+                    },
+                    "then": {
+                        "not": {
+                            "required": [
+                                "value"
+                            ]
+                        },
+                        "properties": {
+                            "no_estimate_reason": {},
+                            "value": {}
+                        },
+                        "required": [
+                            "no_estimate_reason"
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "value_kind": {
+                                "const": "POINT"
+                            }
+                        },
+                        "required": [
+                            "value_kind"
+                        ]
+                    },
+                    "then": {
+                        "properties": {
+                            "denominator": {
+                                "minimum": 1
+                            },
+                            "value": {}
+                        },
+                        "required": [
+                            "value",
+                            "denominator"
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "value_kind": {
+                                "const": "BOUNDS"
+                            }
+                        },
+                        "required": [
+                            "value_kind"
+                        ]
+                    },
+                    "then": {
+                        "properties": {
+                            "denominator": {
+                                "minimum": 1
+                            },
+                            "lower": {},
+                            "upper": {}
+                        },
+                        "required": [
+                            "lower",
+                            "upper",
+                            "denominator"
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "value_kind": {
+                                "const": "INDEX"
+                            }
+                        },
+                        "required": [
+                            "value_kind"
+                        ]
+                    },
+                    "then": {
+                        "not": {
+                            "required": [
+                                "denominator"
+                            ]
+                        },
+                        "properties": {
+                            "denominator": {},
+                            "value": {}
+                        },
+                        "required": [
+                            "value"
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "value_kind": {
+                                "const": "STORED_TABLE"
+                            }
+                        },
+                        "required": [
+                            "value_kind"
+                        ]
+                    },
+                    "then": {
+                        "not": {
+                            "required": [
+                                "value"
+                            ]
+                        },
+                        "properties": {
+                            "table_ru": {},
+                            "value": {}
+                        },
+                        "required": [
+                            "table_ru"
+                        ]
+                    }
+                }
+            ],
+            "description": "A concrete result of an estimator: a number, bounds, a distribution, quantiles, or no estimate with a reason. N = 0 gives no estimate; a dash is never 0 %; exact counts come before any rounding (V1).",
+            "properties": {
+                "categories": {
+                    "items": {
+                        "$ref": "#/$defs/CategoryCount"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "cells": {
+                    "items": {
+                        "$ref": "#/$defs/CellCount"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "denominator": {
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "estimate_id": {
+                    "type": "string"
+                },
+                "estimator": {
+                    "type": "string"
+                },
+                "lower": {
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "no_estimate_reason": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "numerator": {
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "quantiles": {
+                    "items": {
+                        "$ref": "#/$defs/QuantileValue"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "table_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "upper": {
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "value": {
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "value_kind": {
+                    "$ref": "#/$defs/ValueKind"
+                }
+            },
+            "required": [
+                "estimate_id",
+                "estimator",
+                "value_kind",
+                "unit"
+            ],
+            "title": "Estimate",
+            "type": "object"
+        },
+        "EstimatorRule": {
+            "description": "",
+            "enum": [
+                "COUNT_OVER_N",
+                "CATEGORY_COUNTS_OVER_N",
+                "JOINT_CELL_COUNTS_OVER_N",
+                "BINARY_BOUNDS_OVER_N",
+                "POINT_AMONG_KNOWN_AND_BOUNDS",
+                "LINEAR_QUANTILES_AMONG_KNOWN",
+                "THRESHOLD_SHARE_AMONG_KNOWN",
+                "ALGORITHMIC_REGION_SHARE",
+                "JACCARD_RECOVERY",
+                "HELD_OUT_NULL_EXCESS",
+                "LOGICAL_ASSESSMENT",
+                "STORED_RESEARCH_TABLE"
+            ],
+            "title": "EstimatorRule",
+            "type": "string"
+        },
+        "EstimatorSpecification": {
+            "additionalProperties": false,
+            "description": "The procedure, fixed beforehand, that obtains an estimate of a T1 from admissible data. Handling of the unknown never silently changes the target set (V0).",
+            "properties": {
+                "estimands": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "implementations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "reference_definition": {
+                    "type": "string"
+                },
+                "rounding_ru": {
+                    "type": "string"
+                },
+                "rule": {
+                    "$ref": "#/$defs/EstimatorRule"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "unknown_handling_ru": {
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "estimands",
+                "rule",
+                "unknown_handling_ru",
+                "rounding_ru",
+                "implementations",
+                "reference_definition",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "EstimatorSpecification",
+            "type": "object"
+        },
+        "EventKind": {
+            "description": "",
+            "enum": [
+                "R",
+                "X",
+                "DR",
+                "ORDER",
+                "CLOSE",
+                "RANGE",
+                "LEVEL",
+                "CROSS",
+                "VISIT",
+                "NEW_R",
+                "NEW_X",
+                "DELTA_R",
+                "DELTA_X",
+                "TAU_R",
+                "TAU_X"
+            ],
+            "title": "EventKind",
+            "type": "string"
+        },
+        "Exclusion": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "count": {
+                    "minimum": 0,
+                    "type": "integer"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "reason",
+                "count"
+            ],
+            "title": "Exclusion",
+            "type": "object"
+        },
+        "FactForm": {
+            "additionalProperties": false,
+            "description": "The form of a statement of an observed fact (today's prefix, a reachability or history-clock status, a session's own record). Facts are not statistics: they carry no claim class and no percentage (\u00a710: a fact of observation refers directly to E1/P1/E3; \u00a712.4 TODAY-Z).",
+            "properties": {
+                "acceptance": {
+                    "$ref": "#/$defs/FormAcceptance"
+                },
+                "forbidden_readings_ru": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "labels": {
+                    "items": {
+                        "$ref": "#/$defs/LabelTemplate"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "record_class": {
+                    "type": "string"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "statement_ru": {
+                    "type": "string"
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "record_class",
+                "statement_ru",
+                "forbidden_readings_ru",
+                "acceptance",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "FactForm",
+            "type": "object"
+        },
+        "FieldEncoding": {
+            "additionalProperties": false,
+            "description": "The meaning of one field (JSON path) of a route's existing body: which contract object or estimand it carries and how its tokens map to the contract's values. A number of a contract route not declared here is a violation.",
+            "properties": {
+                "field_kind": {
+                    "$ref": "#/$defs/FieldKind"
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "surface": {
+                    "type": "string"
+                },
+                "target": {
+                    "type": "string"
+                },
+                "token_map": {
+                    "items": {
+                        "$ref": "#/$defs/TokenMapping"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id",
+                "sc_ref",
+                "surface",
+                "path",
+                "field_kind",
+                "target"
+            ],
+            "title": "FieldEncoding",
+            "type": "object"
+        },
+        "FieldKind": {
+            "description": "",
+            "enum": [
+                "STATISTIC",
+                "SUPPORT_COUNT",
+                "DENOMINATOR",
+                "CASE_RECORD",
+                "OBSERVATION",
+                "STRATEGY_OBJECT",
+                "PARAMETER",
+                "IDENTIFIER",
+                "PROVENANCE",
+                "TIME",
+                "VALIDATION_EVIDENCE",
+                "DIAGNOSTIC",
+                "ASSESSMENT",
+                "PREFIX_STATE",
+                "MEASUREMENT"
+            ],
+            "title": "FieldKind",
+            "type": "string"
+        },
+        "FirstOrder": {
+            "description": "",
+            "enum": [
+                "R_BEFORE_X",
+                "X_BEFORE_R",
+                "SAME_M5",
+                "UNKNOWN",
+                "NO_PERIOD"
+            ],
+            "title": "FirstOrder",
+            "type": "string"
+        },
+        "FirstTimeKnowledge": {
+            "description": "",
+            "enum": [
+                "KNOWN",
+                "UNKNOWN",
+                "NO_EVENT",
+                "NO_PERIOD"
+            ],
+            "title": "FirstTimeKnowledge",
+            "type": "string"
+        },
+        "FormAcceptance": {
+            "description": "",
+            "enum": [
+                "ACCEPTED_BY_OPERATOR",
+                "INHERITED_FROM_ACCEPTED_SCREEN",
+                "PROPOSED_BY_EXECUTOR"
+            ],
+            "title": "FormAcceptance",
+            "type": "string"
+        },
+        "GroundsCategory": {
+            "description": "",
+            "enum": [
+                "OPERATOR_REQUIREMENT",
+                "AUTHOR_RULE",
+                "DR_LAB_DECISION",
+                "IMPLEMENTATION_FACT",
+                "RESEARCH_RESULT",
+                "HYPOTHESIS",
+                "PROPOSAL",
+                "SUPERSEDED_DEFINITION",
+                "UNRESOLVED_DISCREPANCY",
+                "CONTRACT_FORMALISATION"
+            ],
+            "title": "GroundsCategory",
+            "type": "string"
+        },
+        "HistoryClockAssessment": {
+            "additionalProperties": false,
+            "description": "The split of a region's known family events into before / after the common clock cut; another axis than E3.",
+            "properties": {
+                "cut_close_minute": {
+                    "type": "integer"
+                },
+                "event": {
+                    "$ref": "#/$defs/EventKind"
+                },
+                "history_clock": {
+                    "$ref": "#/$defs/HistoryClockStatus"
+                },
+                "region_id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "region_id",
+                "event",
+                "history_clock",
+                "cut_close_minute"
+            ],
+            "title": "HistoryClockAssessment",
+            "type": "object"
+        },
+        "HistoryClockStatus": {
+            "description": "",
+            "enum": [
+                "FUTURE_PRESENT",
+                "FUTURE_EMPTY",
+                "PAST_ONLY"
+            ],
+            "title": "HistoryClockStatus",
+            "type": "string"
+        },
+        "HorizonEnd": {
+            "description": "",
+            "enum": [
+                "BLOCK_END_CLOSE_INCLUSIVE",
+                "SINGLE_M5",
+                "NOT_APPLICABLE"
+            ],
+            "title": "HorizonEnd",
+            "type": "string"
+        },
+        "HorizonStart": {
+            "description": "",
+            "enum": [
+                "OWN_ACTIVATION_CLOSE_EXCLUSIVE",
+                "COMMON_CUT_EXCLUSIVE",
+                "BOX_END",
+                "SINGLE_M5",
+                "NOT_APPLICABLE"
+            ],
+            "title": "HorizonStart",
+            "type": "string"
+        },
+        "InputKind": {
+            "description": "",
+            "enum": [
+                "OBSERVATION_SNAPSHOT",
+                "CASE_SET_SNAPSHOT",
+                "REGISTRY",
+                "CODE",
+                "VALIDATION",
+                "TODAY_PREFIX",
+                "PARAMETERS"
+            ],
+            "title": "InputKind",
+            "type": "string"
+        },
+        "InputVersion": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "input_kind": {
+                    "$ref": "#/$defs/InputKind"
+                },
+                "ref": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "input_kind",
+                "ref",
+                "version"
+            ],
+            "title": "InputVersion",
+            "type": "object"
+        },
+        "Instrument": {
+            "description": "",
+            "enum": [
+                "NQ",
+                "ES",
+                "YM"
+            ],
+            "title": "Instrument",
+            "type": "string"
+        },
+        "InstrumentSeries": {
+            "additionalProperties": false,
+            "description": "One instrument of a source with its series and price step.",
+            "properties": {
+                "instrument": {
+                    "$ref": "#/$defs/Instrument"
+                },
+                "roll_adjustment": {
+                    "type": "string"
+                },
+                "series": {
+                    "type": "string"
+                },
+                "tick_size": {
+                    "minimum": 0,
+                    "type": "number"
+                }
+            },
+            "required": [
+                "instrument",
+                "series",
+                "tick_size",
+                "roll_adjustment"
+            ],
+            "title": "InstrumentSeries",
+            "type": "object"
+        },
+        "KeyField": {
+            "description": "",
+            "enum": [
+                "INSTRUMENT",
+                "BLOCK",
+                "WEEKDAY",
+                "DIRECTION",
+                "CONFIRMATION_WINDOW",
+                "BREAK_WINDOW",
+                "DATE_BEFORE_TARGET"
+            ],
+            "title": "KeyField",
+            "type": "string"
+        },
+        "KnowledgeComponent": {
+            "description": "",
+            "enum": [
+                "ENDPOINT",
+                "EXISTENCE",
+                "MAGNITUDE",
+                "FIRST_TIME",
+                "CATEGORY",
+                "MEMBERSHIP"
+            ],
+            "title": "KnowledgeComponent",
+            "type": "string"
+        },
+        "KnowledgeCut": {
+            "additionalProperties": false,
+            "description": "The cut of a response \u2014 the close of the last closed M5 \u2014 with its mode; age after activation is separate.",
+            "properties": {
+                "cut_clock_et": {
+                    "pattern": "^[0-2][0-9]:[0-5][0-9]$",
+                    "type": "string"
+                },
+                "cut_close_minute": {
+                    "type": "integer"
+                },
+                "frozen_reason": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "mode": {
+                    "$ref": "#/$defs/ObservationMode"
+                },
+                "spec": {
+                    "type": "string"
+                },
+                "state_age_m5": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "target_session": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "spec",
+                "target_session",
+                "cut_close_minute",
+                "cut_clock_et",
+                "mode"
+            ],
+            "title": "KnowledgeCut",
+            "type": "object"
+        },
+        "KnowledgeCutSpecification": {
+            "additionalProperties": false,
+            "description": "The boundary of information allowed for an observer and a question; the age after the activation is kept separately; the many roles of time are never one field (E0).",
+            "properties": {
+                "cut_rule": {
+                    "type": "string"
+                },
+                "forming_m5_in_statistics": {
+                    "type": "boolean"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "historical_alignment": {
+                    "$ref": "#/$defs/Alignment"
+                },
+                "honesty_level": {
+                    "type": "string"
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "modes": {
+                    "items": {
+                        "$ref": "#/$defs/ObservationMode"
+                    },
+                    "type": "array"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "cut_rule",
+                "forming_m5_in_statistics",
+                "historical_alignment",
+                "modes",
+                "honesty_level",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "KnowledgeCutSpecification",
+            "type": "object"
+        },
+        "LabelMeaning": {
+            "description": "",
+            "enum": [
+                "OPEN_OF_INTERVAL",
+                "CLOSE_OF_INTERVAL"
+            ],
+            "title": "LabelMeaning",
+            "type": "string"
+        },
+        "LabelTemplate": {
+            "additionalProperties": false,
+            "description": "The words shown next to a number on one surface; placeholders {name} are filled with values of the bundle. Text around a number is not composed freely: the page renders exactly a registered template.",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "surface": {
+                    "$ref": "#/$defs/Surface"
+                },
+                "text_ru": {
+                    "type": "string"
+                },
+                "view": {
+                    "$ref": "#/$defs/ViewScope"
+                }
+            },
+            "required": [
+                "surface",
+                "view",
+                "key",
+                "text_ru"
+            ],
+            "title": "LabelTemplate",
+            "type": "object"
+        },
+        "Lifecycle": {
+            "description": "",
+            "enum": [
+                "HYPOTHESIS",
+                "RESEARCH_EXPLORATORY",
+                "VALIDATED_FOR_PROFILE",
+                "NOT_PROMOTED",
+                "NOT_TESTABLE",
+                "FROZEN"
+            ],
+            "title": "Lifecycle",
+            "type": "string"
+        },
+        "LiveUse": {
+            "description": "",
+            "enum": [
+                "PERMITTED",
+                "FORBIDDEN"
+            ],
+            "title": "LiveUse",
+            "type": "string"
+        },
+        "MeasurementFrameRecord": {
+            "additionalProperties": false,
+            "description": "The frame of the family on screen and of today's case (e, d, w); a transfer keeps u and uses today's frame.",
+            "properties": {
+                "direction": {
+                    "maximum": 1,
+                    "minimum": -1,
+                    "type": "integer"
+                },
+                "origin_price": {
+                    "type": "number"
+                },
+                "spec": {
+                    "type": "string"
+                },
+                "tick_size": {
+                    "type": "number"
+                },
+                "width_ticks": {
+                    "minimum": 1,
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "spec",
+                "origin_price",
+                "direction",
+                "width_ticks",
+                "tick_size"
+            ],
+            "title": "MeasurementFrameRecord",
+            "type": "object"
+        },
+        "MeasurementFrameSpecification": {
+            "additionalProperties": false,
+            "description": "The rule choosing origin e, direction d and unit w (the IDR width) of a case. u = d (p - e) / w, p = e + d w u; the transform is invertible only with e, d, w kept (M0).",
+            "properties": {
+                "activation_kind": {
+                    "$ref": "#/$defs/ActivationKind"
+                },
+                "direction_rule": {
+                    "type": "string"
+                },
+                "forward_formula": {
+                    "type": "string"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "inverse_formula": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "origin_rule": {
+                    "type": "string"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "transfer_rule": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "activation_kind",
+                "origin_rule",
+                "direction_rule",
+                "unit",
+                "forward_formula",
+                "inverse_formula",
+                "transfer_rule",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "MeasurementFrameSpecification",
+            "type": "object"
+        },
+        "MeasurementGrid": {
+            "additionalProperties": false,
+            "description": "An explicit partition of the coordinates into cells for aggregation, separate from the observations.",
+            "properties": {
+                "boundary_rule": {
+                    "type": "string"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "price_cell_denominator": {
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "price_cell_numerator": {
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "price_index_rule": {
+                    "type": "string"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "time_cell_minutes": {
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "time_origin": {
+                    "type": "string"
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "price_cell_numerator",
+                "price_cell_denominator",
+                "time_cell_minutes",
+                "time_origin",
+                "price_index_rule",
+                "boundary_rule",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "MeasurementGrid",
+            "type": "object"
+        },
+        "ObligationKind": {
+            "description": "",
+            "enum": [
+                "INVARIANT",
+                "FORBIDDEN_TRANSFORMATION",
+                "REQUIREMENT"
+            ],
+            "title": "ObligationKind",
+            "type": "string"
+        },
+        "ObservationMode": {
+            "description": "",
+            "enum": [
+                "LIVE",
+                "HISTORY_DAY_REPLAY_BY_CLOSE",
+                "RESEARCH_WALK_FORWARD"
+            ],
+            "title": "ObservationMode",
+            "type": "string"
+        },
+        "ObservationRecordForm": {
+            "additionalProperties": false,
+            "description": "The form of one observation record as the API encodes it (an M5 with OHLC). low <= open, close <= high; a forming candle differs from a closed one; OHLC holds no order of trades inside the M5.",
+            "properties": {
+                "closed_rule": {
+                    "type": "string"
+                },
+                "encoding": {
+                    "type": "string"
+                },
+                "label_meaning": {
+                    "$ref": "#/$defs/LabelMeaning"
+                },
+                "ohlc_invariant": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "encoding",
+                "label_meaning",
+                "closed_rule",
+                "ohlc_invariant"
+            ],
+            "title": "ObservationRecordForm",
+            "type": "object"
+        },
+        "ObservationSnapshot": {
+            "additionalProperties": false,
+            "description": "The fixed version of the records a response used and what is known about missing intervals.",
+            "properties": {
+                "closed_through_minute": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "content_version": {
+                    "type": "string"
+                },
+                "forming_m5_present": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "history_range": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "mode": {
+                    "$ref": "#/$defs/ObservationMode"
+                },
+                "source": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "source",
+                "content_version",
+                "mode"
+            ],
+            "title": "ObservationSnapshot",
+            "type": "object"
+        },
+        "ObservationSource": {
+            "additionalProperties": false,
+            "description": "A concrete provider/channel and its recording convention. The same ticker of two sources does not make them equivalent; a source of data never becomes an authority on the strategy. Unknown properties stay unknown.",
+            "properties": {
+                "admissible_from": {
+                    "format": "date",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "admissible_to": {
+                    "format": "date",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "aggregation_rule": {
+                    "type": "string"
+                },
+                "availability_rule": {
+                    "type": "string"
+                },
+                "bar_interval_minutes": {
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "excluded_years": {
+                    "items": {
+                        "type": "integer"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "instruments": {
+                    "items": {
+                        "$ref": "#/$defs/InstrumentSeries"
+                    },
+                    "type": "array"
+                },
+                "label_meaning": {
+                    "$ref": "#/$defs/LabelMeaning"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_kind": {
+                    "$ref": "#/$defs/SourceKind"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "unknown_properties": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                },
+                "volume_used": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "source_kind",
+                "provider",
+                "instruments",
+                "bar_interval_minutes",
+                "label_meaning",
+                "availability_rule",
+                "aggregation_rule",
+                "volume_used",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "ObservationSource",
+            "type": "object"
+        },
+        "OutcomeSpecification": {
+            "additionalProperties": false,
+            "description": "Which property of the path is measured and what one case contributes (a point, a category, a binary answer, a cell on an M5). There is no universal \"success\"; a horizon change is a new identity (P0).",
+            "properties": {
+                "components": {
+                    "items": {
+                        "$ref": "#/$defs/KnowledgeComponent"
+                    },
+                    "type": "array"
+                },
+                "contribution": {
+                    "$ref": "#/$defs/ContributionKind"
+                },
+                "event": {
+                    "$ref": "#/$defs/EventKind"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "horizon_end": {
+                    "$ref": "#/$defs/HorizonEnd"
+                },
+                "horizon_start": {
+                    "$ref": "#/$defs/HorizonStart"
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "implementations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "projection": {
+                    "$ref": "#/$defs/ProjectionKind"
+                },
+                "reference_definition": {
+                    "type": "string"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "statuses": {
+                    "type": "string"
+                },
+                "tie_rule": {
+                    "$ref": "#/$defs/TieRule"
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "uses_case_future_as_label": {
+                    "type": "boolean"
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "projection",
+                "event",
+                "contribution",
+                "horizon_start",
+                "horizon_end",
+                "tie_rule",
+                "components",
+                "uses_case_future_as_label",
+                "reference_definition",
+                "implementations",
+                "statuses",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "OutcomeSpecification",
+            "type": "object"
+        },
+        "ParameterDeclaration": {
+            "additionalProperties": false,
+            "description": "A free parameter of an estimand family (a level, a band, a zone); an instance binds it to a value.",
+            "properties": {
+                "meaning_ru": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parameter_kind": {
+                    "$ref": "#/$defs/ParameterKind"
+                }
+            },
+            "required": [
+                "name",
+                "parameter_kind",
+                "meaning_ru"
+            ],
+            "title": "ParameterDeclaration",
+            "type": "object"
+        },
+        "ParameterKind": {
+            "description": "",
+            "enum": [
+                "EVENT",
+                "PRICE_BAND_CELLS",
+                "TIME_WINDOW_CELLS",
+                "LEVEL_RATIONAL",
+                "LEVEL_SIDE",
+                "M5_INDEX",
+                "PRICE_CELL",
+                "ZONE_ID",
+                "CATEGORY",
+                "CUT",
+                "MATCHER",
+                "THRESHOLD",
+                "ROLE_IN_BUNDLE"
+            ],
+            "title": "ParameterKind",
+            "type": "string"
+        },
+        "PolicySpecification": {
+            "additionalProperties": false,
+            "description": "A rule choosing an action or abstention for an explicit goal, with execution, costs, risk and abstention defined before evaluation. SC-1.1 defines no trading policy: the registry holds none (D0, \u00a711).",
+            "properties": {
+                "abstention_rule_ru": {
+                    "type": "string"
+                },
+                "actions_ru": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "domain_ru": {
+                    "type": "string"
+                },
+                "execution_model_ru": {
+                    "type": "string"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "objective_ru": {
+                    "type": "string"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "objective_ru",
+                "domain_ru",
+                "actions_ru",
+                "execution_model_ru",
+                "abstention_rule_ru",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "PolicySpecification",
+            "type": "object"
+        },
+        "PredictiveAdmission": {
+            "additionalProperties": false,
+            "description": "The separate product admission a PredictiveClaim needs: a validation for exactly this target plus a human admission. Without it no predictive class is admissible; a renamed C0/C1 never becomes C2 (\u00a710.1).",
+            "properties": {
+                "admission": {
+                    "$ref": "#/$defs/AcceptanceRecord"
+                },
+                "domain_ru": {
+                    "type": "string"
+                },
+                "estimand": {
+                    "type": "string"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "issue_rule_ru": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "validation": {
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "estimand",
+                "validation",
+                "admission",
+                "domain_ru",
+                "issue_rule_ru",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "PredictiveAdmission",
+            "type": "object"
+        },
+        "PredictiveClaim": {
+            "additionalProperties": false,
+            "description": "An estimate of a still unknown outcome of a target session or class of future cases. Needs a separate admission (validation for this target + human product admission); never obtained by rewording C0/C1 (C2).",
+            "properties": {
+                "admission": {
+                    "type": "string"
+                },
+                "applies_to_ru": {
+                    "type": "string"
+                },
+                "claim_class": {
+                    "enum": [
+                        "PredictiveClaim"
+                    ],
+                    "type": "string"
+                },
+                "claim_form": {
+                    "type": "string"
+                },
+                "estimand": {
+                    "type": "string"
+                },
+                "forbidden_readings_ru": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "issued_at_utc": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "statement_ru": {
+                    "type": "string"
+                },
+                "target_cut": {
+                    "type": "string"
+                },
+                "training_cutoff": {
+                    "type": "string"
+                },
+                "validation": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "target_cut",
+                "model",
+                "training_cutoff",
+                "issued_at_utc",
+                "validation",
+                "admission",
+                "claim_class",
+                "claim_form",
+                "statement_ru",
+                "estimand",
+                "applies_to_ru",
+                "forbidden_readings_ru"
+            ],
+            "title": "PredictiveClaim",
+            "type": "object"
+        },
+        "PrefixState": {
+            "additionalProperties": false,
+            "description": "What a case knows at the cut from its admissible prefix only (the activating M5 excluded). r_seen is never the final R before the horizon ends; with no M5 after the activation there is no extreme at all.",
+            "if": {
+                "properties": {
+                    "prefix_status": {
+                        "const": "OK"
+                    }
+                },
+                "required": [
+                    "prefix_status"
+                ]
+            },
+            "properties": {
+                "case": {
+                    "type": "string"
+                },
+                "event": {
+                    "$ref": "#/$defs/EventKind"
+                },
+                "from_close_minute": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "prefix_status": {
+                    "$ref": "#/$defs/PrefixStatus"
+                },
+                "seen_first_open_minute": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "seen_ticks": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "seen_u": {
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "to_close_minute": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "case",
+                "event",
+                "prefix_status"
+            ],
+            "then": {
+                "properties": {
+                    "seen_ticks": {},
+                    "seen_u": {}
+                },
+                "required": [
+                    "seen_ticks",
+                    "seen_u"
+                ]
+            },
+            "title": "PrefixState",
+            "type": "object"
+        },
+        "PrefixStatus": {
+            "description": "",
+            "enum": [
+                "OK",
+                "NO_PREFIX",
+                "UNKNOWN_PREFIX",
+                "HORIZON_OVER",
+                "FROZEN_AT_BREAK"
+            ],
+            "title": "PrefixStatus",
+            "type": "string"
+        },
+        "PriceTransfer": {
+            "description": "",
+            "enum": [
+                "NONE",
+                "M0_TODAY_EDGE",
+                "M0_TODAY_EXTREME"
+            ],
+            "title": "PriceTransfer",
+            "type": "string"
+        },
+        "Profile": {
+            "additionalProperties": false,
+            "description": "An accepted application profile of the contract (BASE-24, NOW-1.0) with its defining documents.",
+            "properties": {
+                "edition": {
+                    "type": "string"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "profile_status": {
+                    "$ref": "#/$defs/ProfileStatus"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "edition",
+                "profile_status",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "Profile",
+            "type": "object"
+        },
+        "ProfileStatus": {
+            "description": "",
+            "enum": [
+                "ACTIVE",
+                "FROZEN",
+                "LEGACY"
+            ],
+            "title": "ProfileStatus",
+            "type": "string"
+        },
+        "ProjectionKind": {
+            "description": "",
+            "enum": [
+                "FINAL_EXTREME",
+                "DR_OUTCOME",
+                "CLOSE_AT_M5",
+                "RANGE_AT_M5",
+                "AT_LEVEL_OR_BEYOND",
+                "LITERAL_LEVEL_CROSSING",
+                "BAND_VISIT",
+                "FIRST_QUALIFIED_VISIT",
+                "FIRST_ORDER",
+                "REACTION_SWING_TARGET",
+                "RESIDUAL_NEW_EXTREME",
+                "RESIDUAL_DELTA",
+                "RESIDUAL_TIME_TO_NEW",
+                "ALGORITHMIC_REGION_MEMBERSHIP",
+                "CLOCK_SPLIT",
+                "REGION_STABILITY"
+            ],
+            "title": "ProjectionKind",
+            "type": "string"
+        },
+        "QuantileValue": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "quantile": {
+                    "maximum": 1,
+                    "minimum": 0,
+                    "type": "number"
+                },
+                "value": {
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "quantile"
+            ],
+            "title": "QuantileValue",
+            "type": "object"
+        },
+        "QuestionRequest": {
+            "additionalProperties": false,
+            "description": "The fact that someone asked: request id, the questions, who (as far as a local server knows), when and with which authority. It never enters the identity of the question or of an estimand (patch 1.1).",
+            "properties": {
+                "authority": {
+                    "$ref": "#/$defs/AuthorityNeed"
+                },
+                "parameters": {
+                    "type": "string"
+                },
+                "questions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "request_id": {
+                    "type": "string"
+                },
+                "requested_at_utc": {
+                    "type": "string"
+                },
+                "requester": {
+                    "$ref": "#/$defs/RequesterKind"
+                }
+            },
+            "required": [
+                "request_id",
+                "requester",
+                "requested_at_utc",
+                "parameters",
+                "authority"
+            ],
+            "title": "QuestionRequest",
+            "type": "object"
+        },
+        "ReachabilityAssessment": {
+            "additionalProperties": false,
+            "description": "Whether today's final event can still lie in a region, from today's known extreme and the remaining M5. HOLDS is no guarantee; IMPOSSIBLE never means \"price will not visit\"; UNKNOWN when today's state is not established.",
+            "properties": {
+                "cut_close_minute": {
+                    "type": "integer"
+                },
+                "event": {
+                    "$ref": "#/$defs/EventKind"
+                },
+                "logic_version": {
+                    "type": "string"
+                },
+                "reachability": {
+                    "$ref": "#/$defs/ReachabilityStatus"
+                },
+                "region_id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "region_id",
+                "event",
+                "reachability",
+                "cut_close_minute",
+                "logic_version"
+            ],
+            "title": "ReachabilityAssessment",
+            "type": "object"
+        },
+        "ReachabilityStatus": {
+            "description": "",
+            "enum": [
+                "HOLDS",
+                "POSSIBLE",
+                "IMPOSSIBLE",
+                "UNKNOWN"
+            ],
+            "title": "ReachabilityStatus",
+            "type": "string"
+        },
+        "RegionKind": {
+            "description": "",
+            "enum": [
+                "WHOLE_DISTRIBUTION",
+                "PRICE_BAND",
+                "TIME_WINDOW",
+                "JOINT_PRICE_TIME",
+                "ZONE_MASK",
+                "RESIDUAL_OUTSIDE_ZONES",
+                "UNDETERMINED_MASS",
+                "LEVEL",
+                "M5_CELL",
+                "OUT_OF_FRAME",
+                "NONE"
+            ],
+            "title": "RegionKind",
+            "type": "string"
+        },
+        "RegionOrigin": {
+            "description": "",
+            "enum": [
+                "OPERATOR_SELECTION",
+                "ALGORITHM",
+                "SCREEN_FRAME",
+                "FIXED_GRID",
+                "TODAY_LEVEL",
+                "WHOLE"
+            ],
+            "title": "RegionOrigin",
+            "type": "string"
+        },
+        "RegionSpecification": {
+            "additionalProperties": false,
+            "description": "The exact set of price / time coordinates a question is asked about; overlapping regions are no partition.",
+            "if": {
+                "properties": {
+                    "origin": {
+                        "const": "ALGORITHM"
+                    }
+                },
+                "required": [
+                    "origin"
+                ]
+            },
+            "properties": {
+                "bounds_rule": {
+                    "type": "string"
+                },
+                "density_algorithm": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "grid": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "origin": {
+                    "$ref": "#/$defs/RegionOrigin"
+                },
+                "region_kind": {
+                    "$ref": "#/$defs/RegionKind"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "region_kind",
+                "bounds_rule",
+                "origin",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "then": {
+                "properties": {
+                    "density_algorithm": {}
+                },
+                "required": [
+                    "density_algorithm"
+                ]
+            },
+            "title": "RegionSpecification",
+            "type": "object"
+        },
+        "Registry": {
+            "additionalProperties": false,
+            "description": "One file (or the merged whole) of the contract registry. A container; it carries no meaning.",
+            "properties": {
+                "authorities": {
+                    "items": {
+                        "$ref": "#/$defs/ActionAuthorityReference"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "case_sets": {
+                    "items": {
+                        "$ref": "#/$defs/CaseSetSpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "claim_forms": {
+                    "items": {
+                        "$ref": "#/$defs/ClaimForm"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "comparisons": {
+                    "items": {
+                        "$ref": "#/$defs/StateComparisonSpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "coverage_notes": {
+                    "items": {
+                        "$ref": "#/$defs/CoverageNote"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "density_algorithms": {
+                    "items": {
+                        "$ref": "#/$defs/DensityAlgorithmSpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "editions": {
+                    "items": {
+                        "$ref": "#/$defs/ContractEdition"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "encodings": {
+                    "items": {
+                        "$ref": "#/$defs/FieldEncoding"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "estimands": {
+                    "items": {
+                        "$ref": "#/$defs/EstimandSpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "estimators": {
+                    "items": {
+                        "$ref": "#/$defs/EstimatorSpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "examples": {
+                    "items": {
+                        "$ref": "#/$defs/ConformanceExample"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "fact_forms": {
+                    "items": {
+                        "$ref": "#/$defs/FactForm"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "knowledge_cuts": {
+                    "items": {
+                        "$ref": "#/$defs/KnowledgeCutSpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "measurement_frames": {
+                    "items": {
+                        "$ref": "#/$defs/MeasurementFrameSpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "measurement_grids": {
+                    "items": {
+                        "$ref": "#/$defs/MeasurementGrid"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "obligations": {
+                    "items": {
+                        "$ref": "#/$defs/ContractObligation"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "observation_sources": {
+                    "items": {
+                        "$ref": "#/$defs/ObservationSource"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "outcomes": {
+                    "items": {
+                        "$ref": "#/$defs/OutcomeSpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "policies": {
+                    "items": {
+                        "$ref": "#/$defs/PolicySpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "predictive_admissions": {
+                    "items": {
+                        "$ref": "#/$defs/PredictiveAdmission"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "profiles": {
+                    "items": {
+                        "$ref": "#/$defs/Profile"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "questions": {
+                    "items": {
+                        "$ref": "#/$defs/TraderQuestionSpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "regions": {
+                    "items": {
+                        "$ref": "#/$defs/RegionSpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "registry_part": {
+                    "type": "string"
+                },
+                "source_references": {
+                    "items": {
+                        "$ref": "#/$defs/SourceReference"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "strategy_rules": {
+                    "items": {
+                        "$ref": "#/$defs/StrategyRuleSpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "surfaces": {
+                    "items": {
+                        "$ref": "#/$defs/ApiSurface"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "temporal_frames": {
+                    "items": {
+                        "$ref": "#/$defs/TemporalFrame"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "validations": {
+                    "items": {
+                        "$ref": "#/$defs/ValidationRecord"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "registry_part"
+            ],
+            "title": "Registry",
+            "type": "object"
+        },
+        "RequesterKind": {
+            "description": "",
+            "enum": [
+                "LOCAL_HTTP_CLIENT",
+                "TEST_HARNESS"
+            ],
+            "title": "RequesterKind",
+            "type": "string"
+        },
+        "SessionBlock": {
+            "additionalProperties": false,
+            "description": "One block of the profile (ADR / ODR / RDR) in day minutes ET; ADR runs before midnight.",
+            "properties": {
+                "block": {
+                    "$ref": "#/$defs/Block"
+                },
+                "block_end": {
+                    "type": "integer"
+                },
+                "formation_end": {
+                    "type": "integer"
+                },
+                "formation_m5_count": {
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "formation_start": {
+                    "type": "integer"
+                },
+                "history_minute_shift": {
+                    "type": "integer"
+                },
+                "trading_date_offset_days": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "block",
+                "formation_start",
+                "formation_end",
+                "block_end",
+                "history_minute_shift",
+                "trading_date_offset_days",
+                "formation_m5_count"
+            ],
+            "title": "SessionBlock",
+            "type": "object"
+        },
+        "Severity": {
+            "description": "",
+            "enum": [
+                "BLOCKING",
+                "WARNING"
+            ],
+            "title": "Severity",
+            "type": "string"
+        },
+        "SourceKind": {
+            "description": "",
+            "enum": [
+                "HISTORICAL_TAPE",
+                "LIVE_FEED"
+            ],
+            "title": "SourceKind",
+            "type": "string"
+        },
+        "SourceReference": {
+            "additionalProperties": false,
+            "description": "A pointer to a concrete piece of evidence, definition, proposal or human decision: source + revision + exact place + role in this statement. A hash proves unchanged bytes, not truth (\u00a71.2).",
+            "properties": {
+                "document": {
+                    "type": "string"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "locator": {
+                    "description": "section, row or line",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "revision": {
+                    "description": "commit, edition or SHA-256 of the normalised (LF) text",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "role": {
+                    "$ref": "#/$defs/SourceRole"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "id",
+                "sc_ref",
+                "grounds",
+                "document",
+                "role"
+            ],
+            "title": "SourceReference",
+            "type": "object"
+        },
+        "SourceRole": {
+            "description": "",
+            "enum": [
+                "NORMATIVE_CONTRACT",
+                "DEFINITION",
+                "AMENDMENT",
+                "DECISION",
+                "IMPLEMENTATION",
+                "RESEARCH",
+                "ANALYTICAL_INPUT"
+            ],
+            "title": "SourceRole",
+            "type": "string"
+        },
+        "Specification": {
+            "additionalProperties": false,
+            "description": "A rule kept in the registry (versioned, anchored in the contract). Its instances and the results of its computation are separate record classes (\u00a71.2).",
+            "properties": {
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "Specification",
+            "type": "object"
+        },
+        "StateComparisonSpecification": {
+            "additionalProperties": false,
+            "description": "The rule comparing a historical case's state with the target's at a cut (alignment, features, tolerance). Its features must be available at the cut; a weighted mass is never a number of sessions (H3).",
+            "properties": {
+                "alignment": {
+                    "$ref": "#/$defs/Alignment"
+                },
+                "feature_availability": {
+                    "$ref": "#/$defs/ConditionAvailability"
+                },
+                "features": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "frozen": {
+                    "type": "boolean"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "tolerance": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                },
+                "weights": {
+                    "$ref": "#/$defs/WeightPolicy"
+                }
+            },
+            "required": [
+                "alignment",
+                "features",
+                "feature_availability",
+                "frozen",
+                "weights",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "then": {
+                "properties": {
+                    "feature_availability": {
+                        "const": "PREFIX_AT_CUT"
+                    }
+                },
+                "required": [
+                    "feature_availability"
+                ]
+            },
+            "title": "StateComparisonSpecification",
+            "type": "object"
+        },
+        "StatisticalResultBundle": {
+            "additionalProperties": false,
+            "description": "One published statistic: its estimand, the shared derivation, the estimate(s) and the support record(s) produced in parallel by that derivation, the claim. Estimate and SupportRecord are siblings; neither is an input of the other (patch 1.1). A bundle creates no statistic of its own.",
+            "properties": {
+                "admissible_claims": {
+                    "items": {
+                        "$ref": "#/$defs/ClaimClassName"
+                    },
+                    "type": "array"
+                },
+                "claim": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/DescriptiveClaim"
+                        },
+                        {
+                            "$ref": "#/$defs/ConditionalDescriptiveClaim"
+                        },
+                        {
+                            "$ref": "#/$defs/PredictiveClaim"
+                        },
+                        {
+                            "$ref": "#/$defs/DecisionClaim"
+                        }
+                    ]
+                },
+                "claim_form": {
+                    "type": "string"
+                },
+                "derivation": {
+                    "$ref": "#/$defs/DerivationRecord"
+                },
+                "estimand": {
+                    "type": "string"
+                },
+                "estimates": {
+                    "items": {
+                        "$ref": "#/$defs/Estimate"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "parameters": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "supports": {
+                    "items": {
+                        "$ref": "#/$defs/SupportRecord"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "validations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id",
+                "estimand",
+                "claim_form",
+                "derivation",
+                "estimates",
+                "supports",
+                "admissible_claims",
+                "claim"
+            ],
+            "title": "StatisticalResultBundle",
+            "type": "object"
+        },
+        "StrategyRuleSpecification": {
+            "additionalProperties": false,
+            "description": "The version of the rules that turn observations into a session, a box, a confirmation and a break. A new definition of IDR or of the confirmation is a new version (S0).",
+            "properties": {
+                "blocks": {
+                    "items": {
+                        "$ref": "#/$defs/SessionBlock"
+                    },
+                    "type": "array"
+                },
+                "box_rule": {
+                    "type": "string"
+                },
+                "break_rule": {
+                    "type": "string"
+                },
+                "confirmation_rule": {
+                    "type": "string"
+                },
+                "early_close_calendar": {
+                    "$ref": "#/$defs/CalendarStatus"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                },
+                "weekend_rule": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "blocks",
+                "box_rule",
+                "confirmation_rule",
+                "break_rule",
+                "early_close_calendar",
+                "weekend_rule",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "StrategyRuleSpecification",
+            "type": "object"
+        },
+        "StrategySessionRecord": {
+            "additionalProperties": false,
+            "description": "Today's (or the viewed day's) session instance with its box and activation, by the rule version.",
+            "properties": {
+                "activation": {
+                    "$ref": "#/$defs/ActivationEvent"
+                },
+                "block": {
+                    "$ref": "#/$defs/Block"
+                },
+                "dr_break": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ActivationEvent"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "dr_high": {
+                    "type": "number"
+                },
+                "dr_low": {
+                    "type": "number"
+                },
+                "idr_high": {
+                    "type": "number"
+                },
+                "idr_low": {
+                    "type": "number"
+                },
+                "instrument": {
+                    "$ref": "#/$defs/Instrument"
+                },
+                "rule": {
+                    "type": "string"
+                },
+                "trading_date": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "instrument",
+                "trading_date",
+                "block",
+                "rule",
+                "dr_high",
+                "dr_low",
+                "idr_high",
+                "idr_low",
+                "activation"
+            ],
+            "title": "StrategySessionRecord",
+            "type": "object"
+        },
+        "SummaryMeasure": {
+            "description": "",
+            "enum": [
+                "SHARE",
+                "SHARE_DIFFERENCE",
+                "CATEGORY_SHARES",
+                "DISTRIBUTION",
+                "QUANTILES",
+                "THRESHOLD_SHARES",
+                "TIME_TO_EVENT_QUANTILES",
+                "LOGICAL_STATUS",
+                "STABILITY_INDEX"
+            ],
+            "title": "SummaryMeasure",
+            "type": "string"
+        },
+        "SupportRecord": {
+            "additionalProperties": false,
+            "description": "Which cases support exactly this component and what is missing. The support of the binary new, of the final delta and of the first tau can differ; uncertainty from holes is no confidence interval (V2).",
+            "properties": {
+                "case_set": {
+                    "type": "string"
+                },
+                "components": {
+                    "items": {
+                        "$ref": "#/$defs/ComponentSupport"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "n_base": {
+                    "minimum": 0,
+                    "type": "integer"
+                },
+                "n_eligible": {
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "n_match": {
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "support_id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "support_id",
+                "case_set",
+                "n_base",
+                "components"
+            ],
+            "title": "SupportRecord",
+            "type": "object"
+        },
+        "Surface": {
+            "description": "",
+            "enum": [
+                "PANEL",
+                "INSPECTOR",
+                "WINDOW",
+                "CANVAS",
+                "TOOLTIP",
+                "PASSPORT"
+            ],
+            "title": "Surface",
+            "type": "string"
+        },
+        "SurfaceProfile": {
+            "description": "",
+            "enum": [
+                "SC11_BASE_24",
+                "SC11_NOW_1_0",
+                "SC11_OBSERVATION",
+                "SC11_CONTRACT_SERVICE",
+                "LEGACY_SCREEN_22",
+                "LEGACY_SEM_V1",
+                "LEGACY_CLASSIC",
+                "LEGACY_RESEARCH_DASHBOARD",
+                "SERVICE"
+            ],
+            "title": "SurfaceProfile",
+            "type": "string"
+        },
+        "TargetKind": {
+            "description": "",
+            "enum": [
+                "FIXED_HISTORICAL_SET",
+                "FUTURE_OUTCOME"
+            ],
+            "title": "TargetKind",
+            "type": "string"
+        },
+        "TemporalFrame": {
+            "additionalProperties": false,
+            "description": "How UTC, market hours, the trading date and M5 intervals are tied together.",
+            "properties": {
+                "availability_rule": {
+                    "type": "string"
+                },
+                "dst_rule": {
+                    "type": "string"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "label_meaning": {
+                    "$ref": "#/$defs/LabelMeaning"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "record_form": {
+                    "$ref": "#/$defs/ObservationRecordForm"
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "timezone": {
+                    "pattern": "^America/New_York$",
+                    "type": "string"
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "trading_date_rule": {
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "timezone",
+                "trading_date_rule",
+                "label_meaning",
+                "availability_rule",
+                "dst_rule",
+                "record_form",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "TemporalFrame",
+            "type": "object"
+        },
+        "TieRule": {
+            "description": "",
+            "enum": [
+                "REPEATS_KEPT_NO_EXTRA_VOTE",
+                "TIE_IS_NOT_NEW",
+                "ONE_VOTE_PER_CASE"
+            ],
+            "title": "TieRule",
+            "type": "string"
+        },
+        "TokenMapping": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "code_token": {
+                    "type": "string"
+                },
+                "contract_value": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "code_token",
+                "contract_value"
+            ],
+            "title": "TokenMapping",
+            "type": "object"
+        },
+        "TraderQuestionSpecification": {
+            "additionalProperties": false,
+            "description": "The meaning of a trader's question in human language, independent of who asked it (patch 1.1): requester, time and authority belong to a QuestionRequest, never to the identity of the question.",
+            "properties": {
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "scene_ru": {
+                    "type": "string"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "text_ru": {
+                    "type": "string"
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "text_ru",
+                "scene_ru",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "TraderQuestionSpecification",
+            "type": "object"
+        },
+        "UnitOfAnalysis": {
+            "description": "",
+            "enum": [
+                "SESSION",
+                "SESSION_AT_CUT",
+                "EVENT",
+                "M5",
+                "TRADE",
+                "ZONE"
+            ],
+            "title": "UnitOfAnalysis",
+            "type": "string"
+        },
+        "UnknownPolicy": {
+            "description": "",
+            "enum": [
+                "UNKNOWN_KEPT_IN_N_NO_COORDINATE",
+                "BINARY_BOUNDS_OVER_D",
+                "POINT_AMONG_KNOWN_WITH_BOUNDS",
+                "AMONG_KNOWN_COMPONENT_WITH_COUNTS",
+                "LOGICAL_UNKNOWN_STATUS",
+                "NOT_APPLICABLE"
+            ],
+            "title": "UnknownPolicy",
+            "type": "string"
+        },
+        "ValidationKind": {
+            "description": "",
+            "enum": [
+                "STRUCTURE",
+                "COMPUTATIONAL_INVARIANT",
+                "STATISTICAL_TRANSFER",
+                "POLICY_FITNESS",
+                "ALGORITHM_STABILITY",
+                "RESEARCH_EXPLORATORY"
+            ],
+            "title": "ValidationKind",
+            "type": "string"
+        },
+        "ValidationRecord": {
+            "additionalProperties": false,
+            "description": "What was checked, on which history, with which control and result. Structure, computational invariants, statistical transfer and policy fitness are different evidence; a green test never proves the right question (V3).",
+            "properties": {
+                "corpus_ru": {
+                    "type": "string"
+                },
+                "corpus_seen_before": {
+                    "type": "boolean"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "lifecycle": {
+                    "$ref": "#/$defs/Lifecycle"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "protocol_ru": {
+                    "type": "string"
+                },
+                "result_ru": {
+                    "type": "string"
+                },
+                "runtime_artifact": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "validates": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "validation_kind": {
+                    "$ref": "#/$defs/ValidationKind"
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "validates",
+                "validation_kind",
+                "protocol_ru",
+                "corpus_ru",
+                "corpus_seen_before",
+                "result_ru",
+                "lifecycle",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "ValidationRecord",
+            "type": "object"
+        },
+        "ValueForm": {
+            "description": "",
+            "enum": [
+                "POINT",
+                "BOUNDS_IF_UNKNOWN",
+                "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN",
+                "CATEGORY_SHARES",
+                "QUANTILES",
+                "LOGICAL_STATUS",
+                "NONE"
+            ],
+            "title": "ValueForm",
+            "type": "string"
+        },
+        "ValueKind": {
+            "description": "",
+            "enum": [
+                "POINT",
+                "BOUNDS",
+                "DISTRIBUTION",
+                "CATEGORY_SHARES",
+                "QUANTILES",
+                "INDEX",
+                "STORED_TABLE",
+                "NO_ESTIMATE"
+            ],
+            "title": "ValueKind",
+            "type": "string"
+        },
+        "VerificationStatus": {
+            "description": "",
+            "enum": [
+                "VERIFIED_BY_REFERENCE",
+                "RECOUNTED",
+                "NOT_RECOMPUTED",
+                "MISMATCH"
+            ],
+            "title": "VerificationStatus",
+            "type": "string"
+        },
+        "ViewScope": {
+            "description": "",
+            "enum": [
+                "CONF",
+                "BRK",
+                "ANY"
+            ],
+            "title": "ViewScope",
+            "type": "string"
+        },
+        "Violation": {
+            "additionalProperties": false,
+            "description": "A detected semantic violation; what it withholds is named, nothing is silently corrected.",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sc_ref": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "severity": {
+                    "$ref": "#/$defs/Severity"
+                },
+                "withheld": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "code",
+                "sc_ref",
+                "message",
+                "severity"
+            ],
+            "title": "Violation",
+            "type": "object"
+        },
+        "WeekdayScope": {
+            "description": "",
+            "enum": [
+                "WEEKDAY",
+                "ALL_WEEKDAYS"
+            ],
+            "title": "WeekdayScope",
+            "type": "string"
+        },
+        "WeightPolicy": {
+            "description": "",
+            "enum": [
+                "NONE"
+            ],
+            "title": "WeightPolicy",
+            "type": "string"
+        }
+    },
+    "$id": "https://github.com/FARTOFALOS/dr-idr/contract/dr_lab_sc",
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "additionalProperties": true,
+    "description": "One file (or the merged whole) of the contract registry. A container; it carries no meaning.",
+    "metamodel_version": "1.11.0",
+    "properties": {
+        "authorities": {
+            "items": {
+                "$ref": "#/$defs/ActionAuthorityReference"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "case_sets": {
+            "items": {
+                "$ref": "#/$defs/CaseSetSpecification"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "claim_forms": {
+            "items": {
+                "$ref": "#/$defs/ClaimForm"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "comparisons": {
+            "items": {
+                "$ref": "#/$defs/StateComparisonSpecification"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "coverage_notes": {
+            "items": {
+                "$ref": "#/$defs/CoverageNote"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "density_algorithms": {
+            "items": {
+                "$ref": "#/$defs/DensityAlgorithmSpecification"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "editions": {
+            "items": {
+                "$ref": "#/$defs/ContractEdition"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "encodings": {
+            "items": {
+                "$ref": "#/$defs/FieldEncoding"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "estimands": {
+            "items": {
+                "$ref": "#/$defs/EstimandSpecification"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "estimators": {
+            "items": {
+                "$ref": "#/$defs/EstimatorSpecification"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "examples": {
+            "items": {
+                "$ref": "#/$defs/ConformanceExample"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "fact_forms": {
+            "items": {
+                "$ref": "#/$defs/FactForm"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "knowledge_cuts": {
+            "items": {
+                "$ref": "#/$defs/KnowledgeCutSpecification"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "measurement_frames": {
+            "items": {
+                "$ref": "#/$defs/MeasurementFrameSpecification"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "measurement_grids": {
+            "items": {
+                "$ref": "#/$defs/MeasurementGrid"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "obligations": {
+            "items": {
+                "$ref": "#/$defs/ContractObligation"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "observation_sources": {
+            "items": {
+                "$ref": "#/$defs/ObservationSource"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "outcomes": {
+            "items": {
+                "$ref": "#/$defs/OutcomeSpecification"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "policies": {
+            "items": {
+                "$ref": "#/$defs/PolicySpecification"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "predictive_admissions": {
+            "items": {
+                "$ref": "#/$defs/PredictiveAdmission"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "profiles": {
+            "items": {
+                "$ref": "#/$defs/Profile"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "questions": {
+            "items": {
+                "$ref": "#/$defs/TraderQuestionSpecification"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "regions": {
+            "items": {
+                "$ref": "#/$defs/RegionSpecification"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "registry_part": {
+            "type": "string"
+        },
+        "source_references": {
+            "items": {
+                "$ref": "#/$defs/SourceReference"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "strategy_rules": {
+            "items": {
+                "$ref": "#/$defs/StrategyRuleSpecification"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "surfaces": {
+            "items": {
+                "$ref": "#/$defs/ApiSurface"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "temporal_frames": {
+            "items": {
+                "$ref": "#/$defs/TemporalFrame"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "validations": {
+            "items": {
+                "$ref": "#/$defs/ValidationRecord"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        }
+    },
+    "required": [
+        "registry_part"
+    ],
+    "title": "dr_lab_sc",
+    "type": "object",
+    "version": "1.1.0"
+}

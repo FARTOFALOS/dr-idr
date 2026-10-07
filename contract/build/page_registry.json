@@ -1,0 +1,2081 @@
+{
+ "case_sets": {
+  "CS:F-BREAK-1": "BASE_FAMILY",
+  "CS:F-BREAK-ALL-1": "BASE_FAMILY",
+  "CS:F-CONF-1": "BASE_FAMILY",
+  "CS:F-CONF-ALL-1": "BASE_FAMILY",
+  "CS:NOW-DELTA-KNOWN-1": "OUTCOME_SUBGROUP",
+  "CS:NOW-ELIGIBLE-1": "ELIGIBLE_AT_CUT",
+  "CS:NOW-MATCH-M1-1": "MATCHED_AT_CUT",
+  "CS:NOW-MATCH-M2-1": "MATCHED_AT_CUT",
+  "CS:NOW-MATCH-M3-1": "MATCHED_AT_CUT",
+  "CS:NOW-NEW-YES-DELTA-1": "OUTCOME_SUBGROUP",
+  "CS:NOW-NEW-YES-TAU-1": "OUTCOME_SUBGROUP",
+  "CS:UNIVERSE-1": "HISTORICAL_UNIVERSE",
+  "CS:ZM3-STUDY-1": "RETROSPECTIVE_RESEARCH"
+ },
+ "edition": "DR-LAB-SC-1.1",
+ "estimands": {
+  "EST:B-CLOCK-PEAK-R": {
+   "measure": "SHARE",
+   "params": [
+    "k0",
+    "k1",
+    "zone_id",
+    "b",
+    "past",
+    "cut"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-CLOCK-PEAK-X": {
+   "measure": "SHARE",
+   "params": [
+    "k0",
+    "k1",
+    "zone_id",
+    "b",
+    "past",
+    "cut"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-CLOCK-R": {
+   "measure": "SHARE",
+   "params": [
+    "k0",
+    "k1",
+    "zone_id",
+    "part",
+    "cut"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-CLOCK-X": {
+   "measure": "SHARE",
+   "params": [
+    "k0",
+    "k1",
+    "zone_id",
+    "part",
+    "cut"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-CLOSE": {
+   "measure": "SHARE",
+   "params": [
+    "j",
+    "k0",
+    "k1"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-CLOSE-MISSING": {
+   "measure": "SHARE",
+   "params": [
+    "j"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-CLOSE-PREACT": {
+   "measure": "SHARE",
+   "params": [
+    "j"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-CROSS-FULL": {
+   "measure": "SHARE",
+   "params": [
+    "a",
+    "b",
+    "up"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "BINARY_BOUNDS_OVER_D"
+  },
+  "EST:B-DR": {
+   "measure": "CATEGORY_SHARES",
+   "params": [
+    "category"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-LEVEL-FULL": {
+   "measure": "SHARE",
+   "params": [
+    "a",
+    "b",
+    "up"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "BINARY_BOUNDS_OVER_D"
+  },
+  "EST:B-LEVEL-REST": {
+   "measure": "SHARE",
+   "params": [
+    "a",
+    "b",
+    "up",
+    "cut"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "BINARY_BOUNDS_OVER_D"
+  },
+  "EST:B-ORDER": {
+   "measure": "CATEGORY_SHARES",
+   "params": [
+    "category"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RANGE": {
+   "measure": "SHARE",
+   "params": [
+    "j",
+    "k"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-BAND-R": {
+   "measure": "SHARE",
+   "params": [
+    "k0",
+    "k1"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-BAND-X": {
+   "measure": "SHARE",
+   "params": [
+    "k0",
+    "k1"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-DIFF": {
+   "measure": "SHARE_DIFFERENCE",
+   "params": [
+    "k0",
+    "k1",
+    "b0",
+    "b1"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-JOINT-R": {
+   "measure": "DISTRIBUTION",
+   "params": [],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-JOINT-X": {
+   "measure": "DISTRIBUTION",
+   "params": [],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-KNOWN-R": {
+   "measure": "SHARE",
+   "params": [],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-KNOWN-X": {
+   "measure": "SHARE",
+   "params": [],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-OUTFRAME-R": {
+   "measure": "SHARE",
+   "params": [
+    "side",
+    "k0",
+    "k1"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-OUTFRAME-X": {
+   "measure": "SHARE",
+   "params": [
+    "side",
+    "k0",
+    "k1"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-REGION-R": {
+   "measure": "SHARE",
+   "params": [
+    "k0",
+    "k1",
+    "b0",
+    "b1"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-REGION-X": {
+   "measure": "SHARE",
+   "params": [
+    "k0",
+    "k1",
+    "b0",
+    "b1"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-UNDETERMINED-R": {
+   "measure": "SHARE",
+   "params": [
+    "part"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-UNDETERMINED-X": {
+   "measure": "SHARE",
+   "params": [
+    "part"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-WINDOW-R": {
+   "measure": "SHARE",
+   "params": [
+    "b0",
+    "b1"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-RX-WINDOW-X": {
+   "measure": "SHARE",
+   "params": [
+    "b0",
+    "b1"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-VISIT-FULL": {
+   "measure": "SHARE",
+   "params": [
+    "k0",
+    "k1"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "BINARY_BOUNDS_OVER_D"
+  },
+  "EST:B-VISIT-REST": {
+   "measure": "SHARE",
+   "params": [
+    "k0",
+    "k1",
+    "cut"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "BINARY_BOUNDS_OVER_D"
+  },
+  "EST:B-ZONE-R": {
+   "measure": "SHARE",
+   "params": [
+    "zone_id"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-ZONE-RESIDUAL-R": {
+   "measure": "SHARE",
+   "params": [],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-ZONE-RESIDUAL-X": {
+   "measure": "SHARE",
+   "params": [],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:B-ZONE-X": {
+   "measure": "SHARE",
+   "params": [
+    "zone_id"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:N-DELTA-GE-R": {
+   "measure": "THRESHOLD_SHARES",
+   "params": [
+    "threshold",
+    "set",
+    "role",
+    "cut"
+   ],
+   "profile": "PROFILE:NOW-1.0",
+   "q4": [
+    "CS:NOW-DELTA-KNOWN-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
+  "EST:N-DELTA-GE-X": {
+   "measure": "THRESHOLD_SHARES",
+   "params": [
+    "threshold",
+    "set",
+    "role",
+    "cut"
+   ],
+   "profile": "PROFILE:NOW-1.0",
+   "q4": [
+    "CS:NOW-DELTA-KNOWN-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
+  "EST:N-DELTA-Q-R": {
+   "measure": "QUANTILES",
+   "params": [
+    "set",
+    "role",
+    "cut"
+   ],
+   "profile": "PROFILE:NOW-1.0",
+   "q4": [
+    "CS:NOW-DELTA-KNOWN-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
+  "EST:N-DELTA-Q-X": {
+   "measure": "QUANTILES",
+   "params": [
+    "set",
+    "role",
+    "cut"
+   ],
+   "profile": "PROFILE:NOW-1.0",
+   "q4": [
+    "CS:NOW-DELTA-KNOWN-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
+  "EST:N-IF-NEW-R": {
+   "measure": "QUANTILES",
+   "params": [
+    "set",
+    "role",
+    "cut"
+   ],
+   "profile": "PROFILE:NOW-1.0",
+   "q4": [
+    "CS:NOW-NEW-YES-DELTA-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
+  "EST:N-IF-NEW-X": {
+   "measure": "QUANTILES",
+   "params": [
+    "set",
+    "role",
+    "cut"
+   ],
+   "profile": "PROFILE:NOW-1.0",
+   "q4": [
+    "CS:NOW-NEW-YES-DELTA-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
+  "EST:N-NEW-R": {
+   "measure": "SHARE",
+   "params": [
+    "set",
+    "role",
+    "cut"
+   ],
+   "profile": "PROFILE:NOW-1.0",
+   "q4": [
+    "CS:NOW-ELIGIBLE-1",
+    "CS:NOW-MATCH-M1-1",
+    "CS:NOW-MATCH-M2-1",
+    "CS:NOW-MATCH-M3-1"
+   ],
+   "unknown": "POINT_AMONG_KNOWN_WITH_BOUNDS"
+  },
+  "EST:N-NEW-X": {
+   "measure": "SHARE",
+   "params": [
+    "set",
+    "role",
+    "cut"
+   ],
+   "profile": "PROFILE:NOW-1.0",
+   "q4": [
+    "CS:NOW-ELIGIBLE-1",
+    "CS:NOW-MATCH-M1-1",
+    "CS:NOW-MATCH-M2-1",
+    "CS:NOW-MATCH-M3-1"
+   ],
+   "unknown": "POINT_AMONG_KNOWN_WITH_BOUNDS"
+  },
+  "EST:N-NO-NEW-R": {
+   "measure": "SHARE",
+   "params": [
+    "set",
+    "role",
+    "cut"
+   ],
+   "profile": "PROFILE:NOW-1.0",
+   "q4": [
+    "CS:NOW-ELIGIBLE-1",
+    "CS:NOW-MATCH-M1-1",
+    "CS:NOW-MATCH-M2-1",
+    "CS:NOW-MATCH-M3-1"
+   ],
+   "unknown": "POINT_AMONG_KNOWN_WITH_BOUNDS"
+  },
+  "EST:N-NO-NEW-X": {
+   "measure": "SHARE",
+   "params": [
+    "set",
+    "role",
+    "cut"
+   ],
+   "profile": "PROFILE:NOW-1.0",
+   "q4": [
+    "CS:NOW-ELIGIBLE-1",
+    "CS:NOW-MATCH-M1-1",
+    "CS:NOW-MATCH-M2-1",
+    "CS:NOW-MATCH-M3-1"
+   ],
+   "unknown": "POINT_AMONG_KNOWN_WITH_BOUNDS"
+  },
+  "EST:N-TIME-R": {
+   "measure": "TIME_TO_EVENT_QUANTILES",
+   "params": [
+    "set",
+    "role",
+    "cut"
+   ],
+   "profile": "PROFILE:NOW-1.0",
+   "q4": [
+    "CS:NOW-NEW-YES-TAU-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
+  "EST:N-TIME-X": {
+   "measure": "TIME_TO_EVENT_QUANTILES",
+   "params": [
+    "set",
+    "role",
+    "cut"
+   ],
+   "profile": "PROFILE:NOW-1.0",
+   "q4": [
+    "CS:NOW-NEW-YES-TAU-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
+  "EST:ZD-BOOT-R": {
+   "measure": "STABILITY_INDEX",
+   "params": [
+    "zone_id",
+    "statistic"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "NOT_APPLICABLE"
+  },
+  "EST:ZD-BOOT-X": {
+   "measure": "STABILITY_INDEX",
+   "params": [
+    "zone_id",
+    "statistic"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "NOT_APPLICABLE"
+  },
+  "EST:ZD-GRID-R": {
+   "measure": "STABILITY_INDEX",
+   "params": [
+    "zone_id",
+    "shift"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "NOT_APPLICABLE"
+  },
+  "EST:ZD-GRID-X": {
+   "measure": "STABILITY_INDEX",
+   "params": [
+    "zone_id",
+    "shift"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "NOT_APPLICABLE"
+  },
+  "EST:ZD-NULL-R": {
+   "measure": "STABILITY_INDEX",
+   "params": [
+    "zone_id",
+    "statistic"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "NOT_APPLICABLE"
+  },
+  "EST:ZD-NULL-X": {
+   "measure": "STABILITY_INDEX",
+   "params": [
+    "zone_id",
+    "statistic"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "NOT_APPLICABLE"
+  },
+  "EST:ZM3-STUDY": {
+   "measure": "SHARE",
+   "params": [
+    "block_event"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:ZM3-STUDY-1"
+   ],
+   "unknown": "NOT_APPLICABLE"
+  }
+ },
+ "facts": {
+  "FF:HISTORY-CLOCK": {
+   "labels": {
+    "empty": {
+     "ANY": "у этой базовой семьи все события зоны по часам уже были раньше; это не делает зону логически невозможной сегодня"
+    }
+   },
+   "record": "HistoryClockAssessment"
+  },
+  "FF:MEMBER": {
+   "labels": {
+    "dr_broken": {
+     "ANY": "DR сломан {t}"
+    },
+    "dr_broken_unknown_t": {
+     "ANY": "(время первого слома неизвестно)"
+    },
+    "dr_held": {
+     "ANY": "DR удержался до {end}"
+    },
+    "dr_unknown": {
+     "ANY": "исход DR неизвестен"
+    },
+    "foot": {
+     "ANY": "{act} {t} · события {from} до {end}"
+    },
+    "head": {
+     "ANY": "Сессия семьи · {date}"
+    },
+    "order_no_period": {
+     "ANY": "порядок не определён: нет периода"
+    },
+    "order_r": {
+     "ANY": "первая глубочайшая точка была раньше первого максимума; глубочайшая цена повторялась и позже"
+    },
+    "order_r_all": {
+     "ANY": "первая глубочайшая точка была раньше первого максимума расширения"
+    },
+    "order_same": {
+     "ANY": "R и X в одной M5: порядок внутри свечи неизвестен"
+    },
+    "order_unknown": {
+     "ANY": "порядок неизвестен: событие не определено"
+    },
+    "order_x": {
+     "ANY": "первый максимум расширения был раньше глубочайшей точки; он повторялся и позже"
+    },
+    "order_x_all": {
+     "ANY": "максимум расширения был раньше глубочайшей точки и после неё не повторялся"
+    },
+    "panel_act": {
+     "ANY": "{act} {t}"
+    },
+    "panel_dr_broken": {
+     "ANY": "DR сломан {t}"
+    },
+    "panel_head": {
+     "ANY": "Сессия семьи"
+    },
+    "same": {
+     "ANY": "и ещё {n} в этой точке"
+    },
+    "ties": {
+     "ANY": "(та же цена ещё {n} раз)"
+    },
+    "unknown": {
+     "ANY": "неизвестно"
+    },
+    "win_broken": {
+     "ANY": "сломан {t}"
+    },
+    "win_dr_unknown": {
+     "ANY": "неизвестно"
+    },
+    "win_held": {
+     "ANY": "удержался до {end}"
+    },
+    "win_missing": {
+     "ANY": "нет свечей"
+    },
+    "win_missing_v": {
+     "ANY": "{n} M5 на горизонте"
+    },
+    "win_order": {
+     "ANY": "порядок"
+    },
+    "win_same_price": {
+     "ANY": " · та же цена ещё {times}"
+    }
+   },
+   "record": "OutcomeRecord"
+  },
+  "FF:PASSPORT-VIEW": {
+   "labels": {
+    "act": {
+     "BRK": "слом",
+     "CONF": "подтверждение"
+    },
+    "act_gen": {
+     "BRK": "слома",
+     "CONF": "подтверждения"
+    },
+    "at_act": {
+     "BRK": "сломе",
+     "CONF": "подтверждении"
+    },
+    "at_act_dr": {
+     "BRK": "сломе DR",
+     "CONF": "подтверждении"
+    },
+    "dir_down": {
+     "BRK": "против слома",
+     "CONF": "против подтверждения"
+    },
+    "dir_up": {
+     "BRK": "по слому",
+     "CONF": "по подтверждению"
+    },
+    "from": {
+     "BRK": "от своего слома",
+     "CONF": "от своего подтверждения"
+    },
+    "horizon": {
+     "ANY": "{from} до {end}"
+    },
+    "horizon_after": {
+     "ANY": "после {t} до {end}"
+    },
+    "horizon_none": {
+     "ANY": "остатка блока нет"
+    },
+    "name_R": {
+     "BRK": "Откат против слома",
+     "CONF": "Откат"
+    },
+    "name_X": {
+     "BRK": "Продолжение слома",
+     "CONF": "Продолжение"
+    },
+    "sentence": {
+     "ANY": "семьи — {phrase} · {horizon}"
+    },
+    "title_unknown": {
+     "ANY": " · неизвестно у {pct} семьи"
+    },
+    "what_R": {
+     "BRK": "самая глубокая точка против слома",
+     "CONF": "самая глубокая точка против подтверждения"
+    },
+    "what_X": {
+     "BRK": "самая дальняя точка по слому",
+     "CONF": "самая дальняя точка по подтверждению"
+    },
+    "win_bound": {
+     "ANY": "граница: до {pct}"
+    },
+    "win_event": {
+     "ANY": "событие"
+    },
+    "win_horizon": {
+     "ANY": "горизонт"
+    },
+    "win_level": {
+     "ANY": "уровень"
+    },
+    "win_level_k": {
+     "ANY": "точно u = {u} ширины IDR от края"
+    },
+    "win_price": {
+     "ANY": "цена"
+    },
+    "win_share": {
+     "ANY": "доля"
+    },
+    "win_time": {
+     "ANY": "время"
+    },
+    "win_unknown": {
+     "ANY": "неизвестно"
+    }
+   },
+   "record": "StatisticalResultBundle"
+  },
+  "FF:SESSION": {
+   "labels": {},
+   "record": "StrategySessionRecord"
+  },
+  "FF:SHARE-STEP": {
+   "labels": {
+    "denominator": {
+     "ANY": "знаменатель"
+    },
+    "denominator_v": {
+     "ANY": "вся семья, шаг доли {step}"
+    },
+    "foot": {
+     "ANY": "доля всей семьи · {from} до {end} · шаг доли {step}"
+    },
+    "foot_fixed": {
+     "ANY": " · зафиксирован при {event} {t}"
+    },
+    "foot_time": {
+     "ANY": " · время — открытие первой M5, где достигнута цена"
+    },
+    "foot_zone": {
+     "ANY": " · не шанс на сегодня"
+    },
+    "head_title": {
+     "ANY": "Слепок зафиксирован при {event} {t} и за день не меняется. Все проценты — доли всей семьи, шаг доли {step}. История {history}, только дни раньше {cutoff}. Слепок {snapshot} · семья {family} · {semantics}."
+    },
+    "step": {
+     "ANY": "шаг доли"
+    }
+   },
+   "record": "CaseSetSnapshot"
+  },
+  "FF:TODAY-LEVEL": {
+   "labels": {
+    "area": {
+     "ANY": "сегодня: {at_act}{fact}"
+    },
+    "area_at_act": {
+     "ANY": "закрытие {act} было в полосе; "
+    },
+    "area_hit": {
+     "ANY": "закрытая M5 {window} заходила в полосу"
+    },
+    "area_miss": {
+     "ANY": "закрытые M5 после {t} в полосу не заходили"
+    },
+    "column": {
+     "ANY": "сегодня на этой M5: закрытие {sd} SD · {price}"
+    },
+    "level": {
+     "ANY": "сегодня: {at_act}{fact}"
+    },
+    "level_at_act": {
+     "ANY": "уже за уровнем в момент {act}; "
+    },
+    "level_hit": {
+     "ANY": "закрытая M5 {window} дошла до уровня"
+    },
+    "level_miss": {
+     "ANY": "закрытые M5 после {t} до уровня не доходили"
+    },
+    "taken": {
+     "ANY": " · взят в {t}"
+    }
+   },
+   "record": "PrefixState"
+  },
+  "FF:TODAY-PREFIX": {
+   "labels": {
+    "line": {
+     "BRK": "сегодня пока: против слома {r} SD в {rt} · по слому {x} SD в {xt}",
+     "CONF": "сегодня пока: глубже всего {r} SD в {rt} · дальше всего {x} SD в {xt}"
+    },
+    "title": {
+     "ANY": "Наблюдённые закрытые свечи сегодняшнего дня после {act} до среза; не окончательные значения"
+    }
+   },
+   "record": "PrefixState"
+  },
+  "FF:TODAY-Z": {
+   "labels": {
+    "HOLDS": {
+     "ANY": "держится"
+    },
+    "IMPOSSIBLE": {
+     "ANY": "невозможна"
+    },
+    "POSSIBLE": {
+     "ANY": "возможна"
+    },
+    "STATUS_UNKNOWN": {
+     "ANY": "неизвестно: нет свечи M5"
+    },
+    "band_dead": {
+     "ANY": "сегодня {ev} здесь уже невозможен: {why}"
+    },
+    "k": {
+     "ANY": "по сегодняшнему экстремуму после {act} и времени; не вероятность"
+    },
+    "passed": {
+     "ANY": " прошло"
+    },
+    "row": {
+     "ANY": "сегодня"
+    },
+    "why_R": {
+     "ANY": "сегодняшний откат уже глубже"
+    },
+    "why_X": {
+     "ANY": "сегодняшнее продолжение уже дальше"
+    },
+    "win": {
+     "ANY": "окно зоны {window}"
+    },
+    "win_ahead": {
+     "ANY": "окно зоны {window} · ещё не началось"
+    },
+    "win_dead": {
+     "ANY": "окно зоны {window} · сегодня зона уже невозможна"
+    },
+    "win_holds": {
+     "ANY": "окно зоны {window}{passed} · сегодняшний {ev} сейчас в этой зоне"
+    },
+    "win_open": {
+     "ANY": "окно зоны {window} · действует ещё {left} мин"
+    },
+    "win_over": {
+     "ANY": "окно зоны {window} закончилось"
+    }
+   },
+   "record": "ReachabilityAssessment"
+  }
+ },
+ "forms": {
+  "EST:B-CLOCK-PEAK-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-CLOCK-PEAK-R",
+   "labels": {
+    "band_ahead": {
+     "ANY": "у семьи впереди · пик {ev} в полосе: {window} · {pct} семьи"
+    },
+    "band_past": {
+     "ANY": "уже прошло · пик {ev} в полосе: {window} · {pct} семьи"
+    },
+    "zone_ahead": {
+     "ANY": "у семьи впереди · пиковые 15 минут {window} · {pct} семьи"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CLOCK-PEAK-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-CLOCK-PEAK-X",
+   "labels": {
+    "band_ahead": {
+     "ANY": "у семьи впереди · пик {ev} в полосе: {window} · {pct} семьи"
+    },
+    "band_past": {
+     "ANY": "уже прошло · пик {ev} в полосе: {window} · {pct} семьи"
+    },
+    "zone_ahead": {
+     "ANY": "у семьи впереди · пиковые 15 минут {window} · {pct} семьи"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CLOCK-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-CLOCK-R",
+   "labels": {
+    "earlier": {
+     "ANY": "у семьи раньше {t}"
+    },
+    "later": {
+     "ANY": "у семьи позже {t}"
+    },
+    "title": {
+     "ANY": "История похожих сессий по часам дня, не сегодняшний путь цены"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CLOCK-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-CLOCK-X",
+   "labels": {
+    "earlier": {
+     "ANY": "у семьи раньше {t}"
+    },
+    "later": {
+     "ANY": "у семьи позже {t}"
+    },
+    "title": {
+     "ANY": "История похожих сессий по часам дня, не сегодняшний путь цены"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CLOSE": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-CLOSE",
+   "labels": {
+    "col": {
+     "ANY": "колонка"
+    },
+    "col_v": {
+     "ANY": "закрытия семьи на этой M5; своя сотня процентов"
+    },
+    "horizon": {
+     "ANY": "на пятиминутке {m5}"
+    },
+    "legend_a": {
+     "ANY": "впереди: реже"
+    },
+    "legend_b": {
+     "ANY": "чаще   ·   {min}…{max} из {N} на M5"
+    },
+    "phrase": {
+     "ANY": "закрытие M5 в полосе {band} SD"
+    },
+    "profile_n": {
+     "ANY": "{n} из {N} · {pct}"
+    },
+    "profile_past": {
+     "ANY": "было "
+    },
+    "profile_t": {
+     "ANY": "{past}{window}"
+    },
+    "row": {
+     "ANY": "закрылись в {band} SD"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CLOSE-MISSING": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-CLOSE-MISSING",
+   "labels": {
+    "col": {
+     "ANY": "нет свечи у {pct} семьи"
+    },
+    "phrase": {
+     "ANY": "нет свечи на этой M5 (неизвестно / рынок закрыт)"
+    },
+    "row": {
+     "ANY": "нет свечи · неизвестно"
+    },
+    "unk": {
+     "ANY": "семьи — нет свечи на M5 {m5} (неизвестно / рынок закрыт)"
+    },
+    "win_row": {
+     "ANY": "нет свечи"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CLOSE-PREACT": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-CLOSE-PREACT",
+   "labels": {
+    "note": {
+     "ANY": "из них ещё до своего {act}: {pct}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CROSS-FULL": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-CROSS-FULL",
+   "labels": {
+    "phrase": {
+     "ANY": "пересекали {name} свечой M5 (минимум ≤ уровня ≤ максимум)"
+    },
+    "win_k": {
+     "ANY": "другое событие: минимум ≤ уровня ≤ максимум одной M5"
+    },
+    "win_row": {
+     "ANY": "пересекали свечой"
+    }
+   },
+   "value_form": "BOUNDS_IF_UNKNOWN"
+  },
+  "EST:B-DR": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-DR",
+   "labels": {
+    "broken": {
+     "ANY": "сломан"
+    },
+    "head": {
+     "ANY": "DR до {end}"
+    },
+    "head_r": {
+     "ANY": "доля всей семьи"
+    },
+    "held": {
+     "ANY": "удержался"
+    },
+    "none": {
+     "ANY": "нет периода"
+    },
+    "phrase": {
+     "ANY": "DR {cat} ({what})"
+    },
+    "unknown": {
+     "ANY": "неизвестно"
+    },
+    "what_broken": {
+     "ANY": "закрытие M5 за своим противоположным DR (тень не считается; возврат не отменяет)"
+    },
+    "what_held": {
+     "ANY": "ни одно закрытие M5 не ушло за свой противоположный DR до {end}"
+    },
+    "what_none": {
+     "ANY": "после подтверждения до конца блока не было ни одной M5"
+    },
+    "what_unknown": {
+     "ANY": "нет свечи M5 на горизонте и слома до неё не видно"
+    },
+    "win_cat": {
+     "ANY": "категория"
+    },
+    "win_head": {
+     "ANY": "Исход DR"
+    },
+    "win_horizon": {
+     "ANY": "горизонт"
+    },
+    "win_rule": {
+     "ANY": "правило"
+    },
+    "win_rule_v": {
+     "ANY": "закрытие M5 строго за своим противоположным DR; тень и равенство не ломают; слом не отменяется возвратом"
+    },
+    "win_share": {
+     "ANY": "доля"
+    }
+   },
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:B-LEVEL-FULL": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-LEVEL-FULL",
+   "labels": {
+    "ladder_head": {
+     "ANY": "вся сессия"
+    },
+    "phrase": {
+     "ANY": "были на {name} ({sd} SD) или дальше {dir} (свеча M5 дошла до уровня или дальше)"
+    },
+    "row": {
+     "ANY": "дальше {dir} · вся сессия"
+    }
+   },
+   "value_form": "BOUNDS_IF_UNKNOWN"
+  },
+  "EST:B-LEVEL-REST": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-LEVEL-REST",
+   "labels": {
+    "horizon_none": {
+     "ANY": "остатка блока нет"
+    },
+    "ladder_head": {
+     "ANY": "после {t}"
+    },
+    "phrase": {
+     "ANY": "были на {name} ({sd} SD) или дальше {dir} (свеча M5 дошла до уровня или дальше)"
+    },
+    "row": {
+     "ANY": "дальше {dir} · после {t}"
+    },
+    "row_none": {
+     "ANY": "дальше {dir} · остатка нет"
+    },
+    "win_row": {
+     "ANY": "после среза"
+    }
+   },
+   "value_form": "BOUNDS_IF_UNKNOWN"
+  },
+  "EST:B-ORDER": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-ORDER",
+   "labels": {
+    "R_before_X": {
+     "ANY": "сначала глубочайший R, потом максимум X"
+    },
+    "X_before_R": {
+     "ANY": "сначала максимум X, потом глубочайший R"
+    },
+    "no_period": {
+     "ANY": "нет периода: после активации не было ни одной M5"
+    },
+    "phrase": {
+     "ANY": "порядок первых R и X: {t}"
+    },
+    "same_M5": {
+     "ANY": "в одной M5: порядок внутри свечи неизвестен"
+    },
+    "unknown": {
+     "ANY": "неизвестно: событие не определено"
+    }
+   },
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:B-RANGE": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RANGE",
+   "labels": {
+    "insp": {
+     "ANY": "свеча M5 задевала эту полосу у {pct} семьи (диапазон, не закрытие)"
+    },
+    "win_k": {
+     "ANY": "поле диапазонов V: свеча M5 задевала полосу; не закрытие"
+    },
+    "win_row": {
+     "ANY": "задевали диапазоном"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-BAND-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-BAND-R",
+   "labels": {
+    "area_row": {
+     "ANY": "{ev} в полосе за всю сессию"
+    },
+    "area_tip": {
+     "ANY": "в полосе за всю сессию"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} ({what}) в полосе {band} SD"
+    },
+    "question": {
+     "ANY": "свой экстремум в этой полосе · {from} до {end}"
+    },
+    "two_row": {
+     "ANY": "{ev} · {name}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-BAND-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-BAND-X",
+   "labels": {
+    "area_row": {
+     "ANY": "{ev} в полосе за всю сессию"
+    },
+    "area_tip": {
+     "ANY": "в полосе за всю сессию"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} ({what}) в полосе {band} SD"
+    },
+    "question": {
+     "ANY": "свой экстремум в этой полосе · {from} до {end}"
+    },
+    "two_row": {
+     "ANY": "{ev} · {name}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-DIFF": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-DIFF",
+   "labels": {
+    "close": {
+     "ANY": "R- и X-время близки"
+    },
+    "k_parts": {
+     "ANY": "две отдельные доли N, не части одной сотни"
+    },
+    "k_sum": {
+     "ANY": "две отдельные доли N, не складываются в 100 %"
+    },
+    "more_R": {
+     "ANY": "R-время встречалось в этом окне чаще на {gap} п.п."
+    },
+    "more_X": {
+     "ANY": "X-время встречалось в этом окне чаще на {gap} п.п."
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-JOINT-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-JOINT-R",
+   "labels": {},
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:B-RX-JOINT-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-JOINT-X",
+   "labels": {},
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:B-RX-KNOWN-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-KNOWN-R",
+   "labels": {
+    "row": {
+     "ANY": "определено"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-KNOWN-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-KNOWN-X",
+   "labels": {
+    "row": {
+     "ANY": "определено"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-OUTFRAME-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-OUTFRAME-R",
+   "labels": {},
+   "value_form": "POINT"
+  },
+  "EST:B-RX-OUTFRAME-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-OUTFRAME-X",
+   "labels": {},
+   "value_form": "POINT"
+  },
+  "EST:B-RX-REGION-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-REGION-R",
+   "labels": {
+    "area_row": {
+     "ANY": "{ev} в выбранном окне"
+    },
+    "area_tip": {
+     "ANY": "в выбранном окне"
+    },
+    "mode_cell": {
+     "ANY": "{ev} чаще всего в {band} SD"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} ({what}) в полосе {band} SD в {window}"
+    },
+    "win_row": {
+     "ANY": "в окне"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-REGION-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-REGION-X",
+   "labels": {
+    "area_row": {
+     "ANY": "{ev} в выбранном окне"
+    },
+    "area_tip": {
+     "ANY": "в выбранном окне"
+    },
+    "mode_cell": {
+     "ANY": "{ev} чаще всего в {band} SD"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} ({what}) в полосе {band} SD в {window}"
+    },
+    "win_row": {
+     "ANY": "в окне"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-UNDETERMINED-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-UNDETERMINED-R",
+   "labels": {
+    "insp_none": {
+     "ANY": "нет периода измерения ({pct})"
+    },
+    "insp_unknown": {
+     "ANY": "нет свечи M5 на горизонте ({pct})"
+    },
+    "note": {
+     "ANY": "не рисуется ни по какой цене и времени"
+    },
+    "or_none": {
+     "ANY": " или нет периода"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} не определено (нет свечи M5 на горизонте{or_none}); на графике не рисуется"
+    },
+    "row": {
+     "ANY": "{ev} не определено · нет свечи M5"
+    },
+    "total": {
+     "ANY": "семьи — {name} {ev} не определено"
+    },
+    "win_none": {
+     "ANY": "нет периода"
+    },
+    "win_unknown": {
+     "ANY": "неизвестно"
+    },
+    "win_unknown_k": {
+     "ANY": "нет свечи M5 на горизонте"
+    },
+    "zone_none": {
+     "ANY": "нет периода у {pct}"
+    },
+    "zone_unknown": {
+     "ANY": "неизвестно у {pct}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-UNDETERMINED-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-UNDETERMINED-X",
+   "labels": {
+    "insp_none": {
+     "ANY": "нет периода измерения ({pct})"
+    },
+    "insp_unknown": {
+     "ANY": "нет свечи M5 на горизонте ({pct})"
+    },
+    "note": {
+     "ANY": "не рисуется ни по какой цене и времени"
+    },
+    "or_none": {
+     "ANY": " или нет периода"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} не определено (нет свечи M5 на горизонте{or_none}); на графике не рисуется"
+    },
+    "row": {
+     "ANY": "{ev} не определено · нет свечи M5"
+    },
+    "total": {
+     "ANY": "семьи — {name} {ev} не определено"
+    },
+    "win_none": {
+     "ANY": "нет периода"
+    },
+    "win_unknown": {
+     "ANY": "неизвестно"
+    },
+    "win_unknown_k": {
+     "ANY": "нет свечи M5 на горизонте"
+    },
+    "zone_none": {
+     "ANY": "нет периода у {pct}"
+    },
+    "zone_unknown": {
+     "ANY": "неизвестно у {pct}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-WINDOW-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-WINDOW-R",
+   "labels": {
+    "area_row": {
+     "ANY": "{ev} в выбранном окне"
+    },
+    "area_tip": {
+     "ANY": "в выбранном окне"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} ({what}) в {window}"
+    },
+    "question": {
+     "ANY": "в эти 15 минут свой экстремум поставили"
+    },
+    "two_row": {
+     "ANY": "{ev} · {name}"
+    },
+    "win_row": {
+     "ANY": "в окне"
+    },
+    "zone_question": {
+     "ANY": "в окне {window} свой экстремум поставили"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-WINDOW-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-RX-WINDOW-X",
+   "labels": {
+    "area_row": {
+     "ANY": "{ev} в выбранном окне"
+    },
+    "area_tip": {
+     "ANY": "в выбранном окне"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} ({what}) в {window}"
+    },
+    "question": {
+     "ANY": "в эти 15 минут свой экстремум поставили"
+    },
+    "two_row": {
+     "ANY": "{ev} · {name}"
+    },
+    "win_row": {
+     "ANY": "в окне"
+    },
+    "zone_question": {
+     "ANY": "в окне {window} свой экстремум поставили"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-VISIT-FULL": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-VISIT-FULL",
+   "labels": {
+    "insp": {
+     "ANY": "заходили в полосу · вся сессия"
+    },
+    "phrase": {
+     "ANY": "заходили в полосу {band} SD (свеча M5 задевала её)"
+    },
+    "row": {
+     "ANY": "заходили в полосу · вся сессия"
+    },
+    "win_full": {
+     "ANY": "вся сессия"
+    },
+    "win_row": {
+     "ANY": "заходили"
+    }
+   },
+   "value_form": "BOUNDS_IF_UNKNOWN"
+  },
+  "EST:B-VISIT-REST": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-VISIT-REST",
+   "labels": {
+    "insp": {
+     "ANY": "заходили · после {t}"
+    },
+    "phrase": {
+     "ANY": "заходили в полосу {band} SD (свеча M5 задевала её)"
+    },
+    "row": {
+     "ANY": "заходили в полосу · после {t}"
+    },
+    "row_none": {
+     "ANY": "заходили в полосу · остатка нет"
+    }
+   },
+   "value_form": "BOUNDS_IF_UNKNOWN"
+  },
+  "EST:B-ZONE-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-ZONE-R",
+   "labels": {
+    "apex": {
+     "ANY": "вершина"
+    },
+    "apex_v": {
+     "ANY": "клетка {band} SD × {window}"
+    },
+    "area": {
+     "ANY": "область"
+    },
+    "area_k": {
+     "ANY": "рамка {band} SD × {window}; членство — сами клетки"
+    },
+    "area_v": {
+     "ANY": "{n} клеток 0,1 SD × 15 мин"
+    },
+    "k": {
+     "ANY": "шаг доли {step}; неизвестно у {unknown}, нет периода у {none}; вне зон {residual}"
+    },
+    "none": {
+     "ANY": "зон нет: ни одна область не набрала минимальной поддержки"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} в зоне {label} (её точная область в {band} SD × {window}, не весь прямоугольник)"
+    },
+    "row": {
+     "ANY": "доля семьи"
+    },
+    "share": {
+     "ANY": "семьи в этой зоне"
+    },
+    "sub": {
+     "ANY": "{band} SD · {status}"
+    },
+    "zone": {
+     "ANY": "зона"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-ZONE-RESIDUAL-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-ZONE-RESIDUAL-R",
+   "labels": {
+    "phrase": {
+     "ANY": "{name} {ev} вне зон (остаток распределения)"
+    },
+    "row": {
+     "ANY": "{ev} вне зон"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-ZONE-RESIDUAL-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-ZONE-RESIDUAL-X",
+   "labels": {
+    "phrase": {
+     "ANY": "{name} {ev} вне зон (остаток распределения)"
+    },
+    "row": {
+     "ANY": "{ev} вне зон"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-ZONE-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:B-ZONE-X",
+   "labels": {
+    "apex": {
+     "ANY": "вершина"
+    },
+    "apex_v": {
+     "ANY": "клетка {band} SD × {window}"
+    },
+    "area": {
+     "ANY": "область"
+    },
+    "area_k": {
+     "ANY": "рамка {band} SD × {window}; членство — сами клетки"
+    },
+    "area_v": {
+     "ANY": "{n} клеток 0,1 SD × 15 мин"
+    },
+    "k": {
+     "ANY": "шаг доли {step}; неизвестно у {unknown}, нет периода у {none}; вне зон {residual}"
+    },
+    "none": {
+     "ANY": "зон нет: ни одна область не набрала минимальной поддержки"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} в зоне {label} (её точная область в {band} SD × {window}, не весь прямоугольник)"
+    },
+    "row": {
+     "ANY": "доля семьи"
+    },
+    "share": {
+     "ANY": "семьи в этой зоне"
+    },
+    "sub": {
+     "ANY": "{band} SD · {status}"
+    },
+    "zone": {
+     "ANY": "зона"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:N-DELTA-GE-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:N-DELTA-GE-R",
+   "labels": {},
+   "value_form": "POINT"
+  },
+  "EST:N-DELTA-GE-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:N-DELTA-GE-X",
+   "labels": {},
+   "value_form": "POINT"
+  },
+  "EST:N-DELTA-Q-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:N-DELTA-Q-R",
+   "labels": {},
+   "value_form": "QUANTILES"
+  },
+  "EST:N-DELTA-Q-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:N-DELTA-Q-X",
+   "labels": {},
+   "value_form": "QUANTILES"
+  },
+  "EST:N-IF-NEW-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:N-IF-NEW-R",
+   "labels": {
+    "sub": {
+     "ANY": "Если углублялся: до {p50} · {p25}…{p75}"
+    }
+   },
+   "value_form": "QUANTILES"
+  },
+  "EST:N-IF-NEW-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:N-IF-NEW-X",
+   "labels": {
+    "sub": {
+     "ANY": "Если шёл дальше: до {p50} · {p25}…{p75}"
+    }
+   },
+   "value_form": "QUANTILES"
+  },
+  "EST:N-NEW-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:N-NEW-R",
+   "labels": {
+    "row": {
+     "BRK": "В истории: {ev} против слома позже углублялся",
+     "CONF": "В истории: {ev} позже углублялся"
+    },
+    "support_b0": {
+     "ANY": "опора {n} из {N}"
+    },
+    "support_path": {
+     "ANY": "похожих {m} из {n} · {matcher}"
+    },
+    "title": {
+     "ANY": "Доля сопоставимых сессий этой семьи, у которых после {cut} был более глубокий R (повтор того же уровня не считается). Не вероятность сделки."
+    }
+   },
+   "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN"
+  },
+  "EST:N-NEW-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:N-NEW-X",
+   "labels": {
+    "row": {
+     "BRK": "В истории: {ev} по слому позже шёл дальше",
+     "CONF": "В истории: {ev} позже шёл дальше"
+    },
+    "support_b0": {
+     "ANY": "опора {n} из {N}"
+    },
+    "support_path": {
+     "ANY": "похожих {m} из {n} · {matcher}"
+    },
+    "title": {
+     "ANY": "Доля сопоставимых сессий этой семьи, у которых после {cut} был более дальний X (повтор того же уровня не считается). Не вероятность сделки."
+    }
+   },
+   "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN"
+  },
+  "EST:N-NO-NEW-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:N-NO-NEW-R",
+   "labels": {},
+   "value_form": "POINT"
+  },
+  "EST:N-NO-NEW-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:N-NO-NEW-X",
+   "labels": {},
+   "value_form": "POINT"
+  },
+  "EST:N-TIME-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:N-TIME-R",
+   "labels": {
+    "sub": {
+     "ANY": " · ~{min} мин"
+    }
+   },
+   "value_form": "QUANTILES"
+  },
+  "EST:N-TIME-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:N-TIME-X",
+   "labels": {
+    "sub": {
+     "ANY": " · ~{min} мин"
+    }
+   },
+   "value_form": "QUANTILES"
+  },
+  "EST:ZD-BOOT-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:ZD-BOOT-R",
+   "labels": {
+    "row": {
+     "ANY": "пересэмплирование"
+    },
+    "text": {
+     "ANY": "в среднем {mean}, не меньше 0,5 — в {share} из {of} повторов"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ZD-BOOT-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:ZD-BOOT-X",
+   "labels": {
+    "row": {
+     "ANY": "пересэмплирование"
+    },
+    "text": {
+     "ANY": "в среднем {mean}, не меньше 0,5 — в {share} из {of} повторов"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ZD-GRID-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:ZD-GRID-R",
+   "labels": {
+    "k": {
+     "ANY": "Жаккар множеств сессий; 1 — та же зона"
+    },
+    "row": {
+     "ANY": "сдвиг сетки"
+    },
+    "text": {
+     "ANY": "те же сессии на 0,05 SD — {g1}, на 5 мин — {g2}, на 10 мин — {g3}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ZD-GRID-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:ZD-GRID-X",
+   "labels": {
+    "k": {
+     "ANY": "Жаккар множеств сессий; 1 — та же зона"
+    },
+    "row": {
+     "ANY": "сдвиг сетки"
+    },
+    "text": {
+     "ANY": "те же сессии на 0,05 SD — {g1}, на 5 мин — {g2}, на 10 мин — {g3}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ZD-NULL-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:ZD-NULL-R",
+   "labels": {
+    "k": {
+     "ANY": "различим с {mde} п.п."
+    },
+    "na": {
+     "ANY": "не считается: {reason}"
+    },
+    "row": {
+     "ANY": "путь без направления"
+    },
+    "text": {
+     "ANY": "реальные {p_real}, без направления {p_null} · избыток {excess} п.п."
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ZD-NULL-X": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:ZD-NULL-X",
+   "labels": {
+    "k": {
+     "ANY": "различим с {mde} п.п."
+    },
+    "na": {
+     "ANY": "не считается: {reason}"
+    },
+    "row": {
+     "ANY": "путь без направления"
+    },
+    "text": {
+     "ANY": "реальные {p_real}, без направления {p_null} · избыток {excess} п.п."
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ZM3-STUDY": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:ZM3-STUDY",
+   "labels": {
+    "row": {
+     "ANY": "исследование"
+    }
+   },
+   "value_form": "POINT"
+  }
+ },
+ "registry_hash": "0c75a97d33492681"
+}

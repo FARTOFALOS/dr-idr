@@ -7,7 +7,10 @@
     return '<div class="p21-link' + (cls ? ' ' + cls : '') + '" data-l21="' + i + '"' + (p ? ' data-pp="' + p.id + '"' : '') + (title ? ' title="' + esc(title) + '"' : '') + '>' + html + '</div>';
   }
   const prow = (text, val) => '<span class="t">' + text + '</span><b>' + val + '</b>';
-  const plainTitle = p => (p.phrase + ' · ' + p.horizon + (p.unknown_count ? ' · неизвестно у ' + pct(100 * p.unknown_count / p.N) + ' семьи' : '')).replace(/<[^>]+>/g, '');
+  const plainTitle = p => (p.phrase + ' · ' + p.horizon + (p.unknown_count ? lbl('FF:PASSPORT-VIEW', 'title_unknown', { pct: pct(100 * p.unknown_count / p.N) }) : '')).replace(/<[^>]+>/g, '');
+  // DR-LAB-SC-1.1: a violation of the contract stands at the top of the panel (all of them in its title) until reload
+  const scNotice = () => !K.violations.length ? '' : '<div class="p24-sc" title="' + esc(K.violations.join('\n')) + '">Контракт SC-1.1: ' + esc(K.violations[K.violations.length - 1]) +
+    (K.violations.length > 1 ? ' · ещё ' + (K.violations.length - 1) : '') + '</div>';
   function statusMsg(ctx) {
     const s = ctx.s, x = A.day;
     if (!x || x.status !== 'ok') return (x && x.message) || (A.src === 'hist' ? 'Загружаю день истории…' : 'Загружаю свечи…');
@@ -17,7 +20,9 @@
     if (s.status === 'noconf') return 'Сессия закончилась без подтверждения';
     const r = A.fams.get(famKey(ctx.D, s, wantView(s)));
     if (!r) return 'Собираю семью…';
+    if (r.status === 'ok' && r._refused) return 'Числа не публикуются: ' + r._refused;
     if (r.status === 'ok' && !r.N) return 'В семье нет сессий: процентов нет';
+    if (/^contract_/.test(r.status || '')) return r.message || 'нарушение контракта SC-1.1: числа не публикуются';
     return 'Семья не собрана' + (r.message ? ': ' + r.message : '');
   }
   // after today's DR break: the break family, or the original confirmation snapshot kept as it was (spec §9.3)
@@ -29,14 +34,14 @@
       // no family at this moment: one click opens a history day on which this session had one (spec: the live moment
       // must never block the review)
       const noFam = !F && ['before', 'forming', 'waiting', 'noconf'].includes(s.status) && A.day && A.day.status === 'ok';
-      panel.innerHTML = '<div class="p21-empty">' + esc(F && !F.N ? 'В семье нет сессий: процентов нет' : statusMsg(ctx)) + '</div>' +
+      panel.innerHTML = scNotice() + '<div class="p21-empty">' + esc(F && !F.N ? 'В семье нет сессий: процентов нет' : statusMsg(ctx)) + '</div>' +
         (F && !F.N ? '<div class="p21-note">' + esc(F.cond) + '</div>' : '') + (s.failed && s.conf ? viewSwitch(s) : '') +
         (noFam ? '<button class="p24-btn" data-hist="1">' + (A.src === 'live' ? 'Открыть ' + st.session + ' на истории' : 'Ближайший день с подтверждением ' + st.session) + '</button>' : '');
       return;
     }
     const out = [], sl = sliceOf(ctx), step = 100 / F.N, src = F.r.source || {};
-    const ttl = 'Слепок зафиксирован при ' + (F.brk ? 'сломе DR ' : 'подтверждении ') + clk(F.act0) + ' и за день не меняется. Все проценты — доли всей семьи, шаг доли ' + pct(step) +
-      '. История ' + (src.history || '2006–2025') + ', только дни раньше ' + F.r.key.cutoff + '. Слепок ' + F.r.snapshot_id + ' · семья ' + F.r.family_id + ' · ' + F.r.semantics + '.';
+    const ttl = lbl('FF:SHARE-STEP', 'head_title', { event: lbl('FF:PASSPORT-VIEW', 'at_act_dr', null, VW(F)), t: clk(F.act0), step: pct(step), history: src.history || '2006–2025',
+      cutoff: F.r.key.cutoff, snapshot: F.r.snapshot_id, family: F.r.family_id, semantics: F.r.semantics });
     out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F.cond) + '</span><span>' + (sl >= F.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
     if (s.failed) out.push(viewSwitch(s));
     if (F.out) out.push(outcomeHtml(F));
@@ -44,14 +49,14 @@
     if (st.mode === 'bounds') {
       out.push(zonesHtml(F, ctx));
       const tf = todayFacts(F, ctx);
-      if (tf) out.push('<div class="p21-note" title="Наблюдённые закрытые свечи сегодняшнего дня после ' + (F.brk ? 'слома' : 'подтверждения') + ' до среза; не окончательные значения">' + tf + '</div>');
+      if (tf) out.push('<div class="p21-note" title="' + esc(lbl('FF:TODAY-PREFIX', 'title', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)) })) + '">' + tf + '</div>');
     }
     if (st.mode === 'path') out.push(columnHtml(F, ctx));
     if (st.area && st.mode === 'bounds') out.push(areaHtml(F, ctx));
     const h = st.pin;
     if (h && h.k === 'lvl' && h.l) out.push(levelHtml(F, ctx, h.l));
     if (h && h.k === 'pt' && F.M[h.i]) out.push(memberHtml(F, F.M[h.i]));
-    panel.innerHTML = out.join('');
+    panel.innerHTML = scNotice() + out.join('');
     // a new selection (area, level, history session) stands at the end of the panel, under the inspector's edge: scroll
     // the panel to it once, when it appears (the layout stays; the panel keeps its own scroll otherwise)
     const sk = (st.area ? [st.area.k0, st.area.k1, st.area.b0, st.area.b1, st.area.ev].join(',') : '') + '|' + pinKey(st.pin);
@@ -73,29 +78,22 @@
     if (!rows.length && !zonesOf(F, 'R') && !zonesOf(F, 'X')) return '';
     rows.sort((a, b) => a.z.time_start - b.z.time_start || b.z.p_snapshot - a.z.p_snapshot);
     const out = ['<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
-    if (!rows.length) out.push('<div class="p21-note">зон нет: ни одна область не набрала минимальной поддержки</div>');
+    if (!rows.length) out.push('<div class="p21-note">' + lbl('EST:B-ZONE-R', 'none') + '</div>');
     let sep = false;
     for (const r of rows) {
       if (!sep && r.z.time_end > sl) { sep = true; out.push('<div class="p24-now"><span></span>' + (sl >= F.end ? 'блок закончен' : 'сейчас ' + clk(sl)) + '<span></span></div>'); }
       // Historical mass controls its typography; today's status is encoded separately by zst-* opacity/style.
       const p = zonePass(F, r.ev, r.z), big = p.pct >= 15 ? ' big' : '';
       out.push(link({ k: 'zone', ev: r.ev, i: r.i }, '<span class="t"><span><span class="zt">' + clk(r.z.time_start) + '–' + clk(r.z.time_end) + '</span> <i class="zn" style="color:' + cfg[r.ev] + '">' + r.z.label + '</i></span>' +
-        '<span class="p21-sub">' + band(r.z.price_low, r.z.price_high) + ' SD · ' + ZST[r.s] + '</span></span><b class="zp' + big + '">' + ppTxt(p) + '</b>', 'mc zst-' + r.s, p, plainTitle(p)));
+        '<span class="p21-sub">' + lbl('EST:B-ZONE-' + r.ev, 'sub', { band: band(r.z.price_low, r.z.price_high), status: zst(r.s) }) + '</span></span><b class="zp' + big + '">' + ppTxt(p) + '</b>', 'mc zst-' + r.s, p, plainTitle(p)));
     }
     if (!sep) out.push('<div class="p24-now"><span></span>' + (sl >= F.end ? 'блок закончен' : 'сейчас ' + clk(sl)) + '<span></span></div>');
     // the rest of each event's 100 %: outside the zones, and not determined (never drawn at any price)
     for (const ev of ['X', 'R']) {
       const Zm = zonesOf(F, ev), D = F.ev[ev];
-      if (Zm) {
-        const r = pp(F, { event_id: ev, region_kind: 'residual', exact_price_bounds: null, time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end),
-          yes_count: Zm.n_residual_total, display_scope: 'zone', phrase: F.names[ev].toLowerCase() + ' ' + ev + ' вне зон (остаток распределения)', horizon: F.from + ' до ' + clk(F.end) });
-        out.push(link({ k: 'evrow', ev }, prow('<i style="color:' + cfg[ev] + '">' + ev + '</i> вне зон', pct(r.pct)), 'dim', r, plainTitle(r)));
-      }
-      if (D.unknown + D.none) {
-        const u = pp(F, { event_id: ev, region_kind: 'unknown', exact_price_bounds: null, time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end), yes_count: D.unknown + D.none, display_scope: 'panel',
-          phrase: F.names[ev].toLowerCase() + ' ' + ev + ' не определено (нет свечи M5 на горизонте' + (D.none ? ' или нет периода' : '') + '); на графике не рисуется', horizon: F.from + ' до ' + clk(F.end) });
-        out.push(link({ k: 'evrow', ev }, prow('<i style="color:' + cfg[ev] + '">' + ev + '</i> не определено · нет свечи M5', pct(u.pct)), 'dim', u, plainTitle(u)));
-      }
+      const tag = '<i style="color:' + cfg[ev] + '">' + ev + '</i>';
+      if (Zm) { const r = resPass(F, ev); out.push(link({ k: 'evrow', ev }, prow(lbl('EST:B-ZONE-RESIDUAL-' + ev, 'row', { ev: tag }), ppTxt(r)), 'dim', r, plainTitle(r))); }
+      if (D.unknown + D.none) { const u = undPass(F, ev, 'BOTH'); out.push(link({ k: 'evrow', ev }, prow(lbl('EST:B-RX-UNDETERMINED-' + ev, 'row', { ev: tag }), ppTxt(u)), 'dim', u, plainTitle(u))); }
     }
     return out.join('');
   }
@@ -105,7 +103,7 @@
     if (!rows.length) return '';
     let lo = rows[0], hi = rows[0];
     for (const q of rows) { if (q.lo < lo.lo) lo = q; if (q.hi > hi.hi) hi = q; }
-    return 'сегодня пока: ' + (F.brk ? 'против слома ' : 'глубже всего ') + sd(lo.lo / F.w0t) + ' SD в ' + clk(lo.T - 5) + ' · ' + (F.brk ? 'по слому ' : 'дальше всего ') + sd(hi.hi / F.w0t) + ' SD в ' + clk(hi.T - 5);
+    return lbl('FF:TODAY-PREFIX', 'line', { r: sd(lo.lo / F.w0t), rt: clk(lo.T - 5), x: sd(hi.hi / F.w0t), xt: clk(hi.T - 5) }, VW(F));
   }
   // DR-LAB-NOW-1.0 §21: the quiet block «Сейчас» — after the path lived today, how much movement usually remained ahead
   // for comparable states of this family (the time baseline unless a path matcher passed the walk-forward gates). Its
@@ -125,16 +123,18 @@
       const E = n[ev];
       if (E && !E.continuation && E.note) { out.push('<div class="p21-note"><i style="color:' + cfg[ev] + '">' + ev + '</i> ' + esc(E.note) + '</div>'); continue; }
       if (!E || !E.continuation) continue;
-      const C = E.continuation, p = C.p_new_extreme, b = C.p_new_bounds || [], sp = C.support;
-      const val = C.support.N_match_unknown ? pct(100 * b[0]) + '–' + pct(100 * b[1]) : p == null ? '—' : pct(100 * p);
-      const name = ev === 'R' ? (F.brk ? 'откат против слома углубится' : 'откат углубится') : (F.brk ? 'слом пойдёт дальше' : 'продолжение пойдёт дальше');
+      // DR-LAB-SC-1.1 K33: a C1 share of the history, in historical grammar (CF:N-NEW, CF:N-IF-NEW, CF:N-TIME), shown only
+      // with its bundle published by the server on this cut
+      const C = E.continuation, p = C.p_new_extreme, b = C.p_new_bounds || [], sp = C.support, NE = 'EST:N-NEW-' + ev, bN = nowBundle(n, NE, 'MAIN', C);
+      const val = !bN ? '—' : C.support.N_match_unknown ? pct(100 * b[0]) + '–' + pct(100 * b[1]) : p == null ? '—' : pct(100 * p);
+      const name = lbl(NE, 'row', { ev: '<i style="color:' + cfg[ev] + '">' + ev + '</i>' }, VW(F));
       const sgn = ev === 'R' ? -1 : 1, u0 = ev === 'R' ? E.state.r_seen : E.state.x_seen, q = C.delta_if_new || {}, tm = C.time_to_new || {};
       const lv = v => num(Math.round(F.u2p(u0 + sgn * v)), 0);   // whole points: a level to watch, not a quote
-      const sub = q.q50 != null && p ? 'если да: до ' + lv(q.q50) + ' · ' + lv(q.q25) + '…' + lv(q.q75) + (tm.q50_min != null ? ' · ~' + Math.round(tm.q50_min) + ' мин' : '') : '';
-      const support = E.mode === 'PATH_CONDITIONED' ? 'похожих ' + sp.N_match_total + ' из ' + sp.N_eligible + ' · ' + E.matcher : 'опора ' + sp.N_eligible + ' из ' + n.base.N_base;
-      out.push(link({ k: 'now', ev }, '<span class="t"><span><i style="color:' + cfg[ev] + '">' + ev + '</i> ' + name + '</span>' + (sub ? '<span class="p21-sub">' + sub + '</span>' : '') +
-        '<span class="p21-sub">' + support + (E.note ? ' · ' + esc(E.note) : '') + '</span></span><b>' + val + '</b>', 'mc', null,
-        'Доля сопоставимых сессий этой семьи, у которых после ' + n.cut.cut_clock_et + ' был ' + (ev === 'R' ? 'более глубокий R' : 'более дальний X') + ' (повтор того же уровня не считается). Не вероятность сделки.'));
+      const bI = bN && q.q50 != null && p ? nowBundle(n, 'EST:N-IF-NEW-' + ev, 'MAIN') : null, bT = bI && tm.q50_min != null ? nowBundle(n, 'EST:N-TIME-' + ev, 'MAIN') : null;
+      const sub = bI ? lbl('EST:N-IF-NEW-' + ev, 'sub', { p50: lv(q.q50), p25: lv(q.q25), p75: lv(q.q75) }) + (bT ? lbl('EST:N-TIME-' + ev, 'sub', { min: Math.round(tm.q50_min) }) : '') : '';
+      const support = E.mode === 'PATH_CONDITIONED' ? lbl(NE, 'support_path', { m: sp.N_match_total, n: sp.N_eligible, matcher: E.matcher }) : lbl(NE, 'support_b0', { n: sp.N_eligible, N: n.base.N_base });
+      out.push(link({ k: 'now', ev }, '<span class="t"><span>' + name + '</span>' + (sub ? '<span class="p21-sub">' + sub + '</span>' : '') +
+        '<span class="p21-sub">' + support + (E.note ? ' · ' + esc(E.note) : '') + '</span></span><b>' + val + '</b>', 'mc', null, lbl(NE, 'title', { cut: n.cut.cut_clock_et })));
     }
     const v = (n.R && n.R.validation) || {};
     out.push('<div class="if" title="правила ' + esc(n.rules_id || '') + (v.tested_through ? ' · проверено на истории до ' + v.tested_through : '') + '">' + esc(NOWST[v.status] || v.status || '') + ' · не сделка</div>');
@@ -143,23 +143,21 @@
   }
   // the DR outcome of the family (spec §5.2): four categories that add up to 100 % of N; one compact bar
   function outcomeHtml(F) {
-    const cats = [['held', 'удержался', '#6FB59A', 'ни одно закрытие M5 не ушло за свой противоположный DR до ' + clk(F.end)], ['broken', 'сломан', '#E5877F', 'закрытие M5 за своим противоположным DR (тень не считается; возврат не отменяет)'],
-      ['unknown', 'неизвестно', '#8C95A3', 'нет свечи M5 на горизонте и слома до неё не видно'], ['none', 'нет периода', '#5F6877', 'после подтверждения до конца блока не было ни одной M5']];
-    const P = {};
-    for (const [k, nm, , what] of cats) P[k] = pp(F, { event_id: 'dr_' + k, region_kind: 'outcome', exact_price_bounds: null, time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end),
-      yes_count: F.out[k], display_scope: 'panel', phrase: 'DR ' + nm + ' (' + what + ')', horizon: F.from + ' до ' + clk(F.end) });
-    const bar = '<div class="p24-bar">' + cats.filter(([k]) => F.out[k]).map(([k, , col]) => '<i style="width:' + (100 * F.out[k] / F.N).toFixed(2) + '%;background:' + col + '"></i>').join('') + '</div>';
-    const rows = cats.filter(([k]) => F.out[k] || k === 'held' || k === 'broken').map(([k, nm, col]) => link({ k: 'out', cat: k }, '<span class="t"><i style="color:' + col + '">■</i> ' + nm + '</span><b>' + pct(P[k].pct) + '</b>', 'in', P[k], plainTitle(P[k]))).join('');
-    return '<div class="p21-h second">DR до ' + clk(F.end) + '<span>доля всей семьи</span></div>' + bar + '<div class="p24-out big">' + rows + '</div>';
+    const D = 'EST:B-DR', cats = [['held', '#6FB59A'], ['broken', '#E5877F'], ['unknown', '#8C95A3'], ['none', '#5F6877']], P = {};
+    for (const [k] of cats) P[k] = drPass(F, k);
+    const bar = '<div class="p24-bar">' + cats.filter(([k]) => F.out[k]).map(([k, col]) => '<i style="width:' + (100 * F.out[k] / F.N).toFixed(2) + '%;background:' + col + '"></i>').join('') + '</div>';
+    const rows = cats.filter(([k]) => F.out[k] || k === 'held' || k === 'broken').map(([k, col]) => link({ k: 'out', cat: k }, '<span class="t"><i style="color:' + col + '">■</i> ' + lbl(D, k) + '</span><b>' + ppTxt(P[k]) + '</b>', 'in', P[k], plainTitle(P[k]))).join('');
+    return '<div class="p21-h second">' + lbl(D, 'head', { end: clk(F.end) }) + '<span>' + lbl(D, 'head_r') + '</span></div>' + bar + '<div class="p24-out big">' + rows + '</div>';
   }
   function areaHtml(F, ctx) {
     const I = areaInfo(F, ctx), out = ['<div class="p21-h second p24-sel">Выбранная область <span><button class="p24-x" data-clear="area" title="Снять выбор (Esc)">✕</button></span></div>'];
     out.push('<div class="p21-note"><b style="color:#D1D4DC;font-weight:600">' + esc(I.name) + '</b>' + (I.prices ? ' · ' + px(I.prices[0]) + ' – ' + px(I.prices[1]) + ' · ' + esc(where(ctx.s, (I.prices[0] + I.prices[1]) / 2)) : '') + '</div>');
-    if (I.band) out.push(link({ k: 'area', part: 'band' }, prow('<i style="color:' + cfg[I.ev] + '">' + I.ev + '</i> в полосе за всю сессию', ppTxt(I.band)), '', I.band, plainTitle(I.band)));
-    if (I.win) out.push(link({ k: 'area', part: 'window' }, prow('<i style="color:' + cfg[I.ev] + '">' + I.ev + '</i> в выбранном окне', ppTxt(I.win)), '', I.win, plainTitle(I.win)));
+    const tag = '<i style="color:' + cfg[I.ev] + '">' + I.ev + '</i>';
+    if (I.band) out.push(link({ k: 'area', part: 'band' }, prow(lbl(I.band.estimand, 'area_row', { ev: tag }), ppTxt(I.band)), '', I.band, plainTitle(I.band)));
+    if (I.win) out.push(link({ k: 'area', part: 'window' }, prow(lbl(I.win.estimand, 'area_row', { ev: tag }), ppTxt(I.win)), '', I.win, plainTitle(I.win)));
     if (I.vfull) {
-      out.push(link({ k: 'area', part: 'visit' }, prow('заходили в полосу · вся сессия', ppTxt(I.vfull, true)), 'dim', I.vfull, plainTitle(I.vfull)));
-      out.push(link({ k: 'area', part: 'visit' }, prow('заходили в полосу · ' + (ctx && sliceOf(ctx) >= F.end ? 'остатка нет' : 'после ' + clk(sliceOf(ctx))), ppTxt(I.vrest, true)), 'dim', I.vrest, plainTitle(I.vrest)));
+      out.push(link({ k: 'area', part: 'visit' }, prow(lbl('EST:B-VISIT-FULL', 'row'), ppTxt(I.vfull, true)), 'dim', I.vfull, plainTitle(I.vfull)));
+      out.push(link({ k: 'area', part: 'visit' }, prow(ctx && sliceOf(ctx) >= F.end ? lbl('EST:B-VISIT-REST', 'row_none') : lbl('EST:B-VISIT-REST', 'row', { t: clk(sliceOf(ctx)) }), ppTxt(I.vrest, true)), 'dim', I.vrest, plainTitle(I.vrest)));
     }
     if (I.today) out.push('<div class="p21-note">' + esc(I.today) + '</div>');
     return out.join('');
@@ -167,17 +165,17 @@
   function levelHtml(F, ctx, l) {
     const q = levelQuery(F, ctx, l.p, l.type === 'std' ? l.name : l.full), sl = sliceOf(ctx);
     return '<div class="p21-h second p24-sel">Уровень <span>' + esc(l.type === 'std' ? l.name : l.full) + ' · ' + px(l.p) + ' <button class="p24-x" data-clear="pin" title="Снять (Esc)">✕</button></span></div>' +
-      link({ k: 'lvl', id: l.id, l }, prow('дальше ' + dirName(F, q.up) + ' · вся сессия', ppTxt(q.full, true)), '', q.full, plainTitle(q.full)) +
-      link({ k: 'lvl', id: l.id, l }, prow('дальше ' + dirName(F, q.up) + ' · ' + (sl >= F.end ? 'остатка нет' : 'после ' + clk(sl)), ppTxt(q.rest, true)), '', q.rest, plainTitle(q.rest)) +
+      link({ k: 'lvl', id: l.id, l }, prow(lbl('EST:B-LEVEL-FULL', 'row', { dir: dirName(F, q.up) }), ppTxt(q.full, true)), '', q.full, plainTitle(q.full)) +
+      link({ k: 'lvl', id: l.id, l }, prow(sl >= F.end ? lbl('EST:B-LEVEL-REST', 'row_none', { dir: dirName(F, q.up) }) : lbl('EST:B-LEVEL-REST', 'row', { dir: dirName(F, q.up), t: clk(sl) }), ppTxt(q.rest, true)), '', q.rest, plainTitle(q.rest)) +
       '<div class="p21-note">' + esc(q.today) + '</div>';
   }
   function memberHtml(F, m) {
-    const ev = e => m[e].s === 'known' ? sd(m[e].v / m.w) + ' SD · ' + px(F.u2p(m[e].v / m.w)) + ' · ' + clk(m[e].t) : 'неизвестно';
-    return '<div class="p21-h second p24-sel">Сессия семьи <span>' + esc(memberLine(F, m)) + ' <button class="p24-x" data-clear="pin" title="Снять (Esc)">✕</button></span></div>' +
+    const M_ = 'FF:MEMBER', ev = e => m[e].s === 'known' ? sd(m[e].v / m.w) + ' SD · ' + px(F.u2p(m[e].v / m.w)) + ' · ' + clk(m[e].t) : lbl(M_, 'unknown');
+    return '<div class="p21-h second p24-sel">' + lbl(M_, 'panel_head') + ' <span>' + esc(memberLine(F, m)) + ' <button class="p24-x" data-clear="pin" title="Снять (Esc)">✕</button></span></div>' +
       '<div class="p24-mem"><div><i style="color:' + cfg.R + '">R</i> ' + F.names.R.toLowerCase() + ': ' + ev('R') + '</div><div><i style="color:' + cfg.X + '">X</i> ' + F.names.X.toLowerCase() + ': ' + ev('X') + '</div>' +
       '<div class="p21-sub">' + esc(orderText(F, m)) + '</div>' +
-      (F.brk ? '' : '<div class="p21-sub">' + (m.outcome === 'broken' ? 'DR сломан ' + (m.brkKnown ? clk(m.brk) : '') : m.outcome === 'held' ? 'DR удержался до ' + clk(F.end) : 'исход DR неизвестен') + '</div>') +
-      '<div class="p21-sub">' + (F.brk ? 'слом ' : 'подтверждение ') + clk(m.act) + '</div></div>';
+      (F.brk ? '' : '<div class="p21-sub">' + (m.outcome === 'broken' ? lbl(M_, 'panel_dr_broken', { t: m.brkKnown ? clk(m.brk) : '' }) : m.outcome === 'held' ? lbl(M_, 'dr_held', { end: clk(F.end) }) : lbl(M_, 'dr_unknown')) + '</div>') +
+      '<div class="p21-sub">' + lbl(M_, 'panel_act', { act: lbl('FF:PASSPORT-VIEW', 'act', null, VW(F)), t: clk(m.act) }) + '</div></div>';
   }
   // «Путь семьи» (spec §5.3, §10.2): the closes of the family on ONE M5, a column of its own 100 % (the missing M5 in it).
   // The distribution itself stands right of the price scale, aligned with the prices; the panel names the M5, the cell
@@ -187,18 +185,19 @@
     const pinned = st.col === cd.j, hovered = h && (h.k === 'col' || h.k === 'fcell');
     out.push('<div class="p21-h second">Путь семьи · M5 ' + clk(cd.T - 5) + '–' + clk(cd.T) + '<span>' + (hovered ? 'под курсором' : pinned ? 'выбрана' : cd.T === sliceOf(ctx) ? 'на срезе' : '') + '</span></div>');
     if (h && h.k === 'fcell' && h.j === cd.j) {
-      const list = cd.cells.get(h.kk) || [];
-      const p = pp(F, { event_id: 'close_M5', region_kind: 'M5_cell', exact_price_bounds: [h.kk, h.kk + 1], time_bounds: [cd.T - 5, cd.T], start_rule: 'M5 ' + clk(cd.T - 5), end_rule: clk(cd.T),
-        yes_count: list.length, unknown_count: cd.unknown, display_scope: 'panel', phrase: 'закрытие M5 в полосе ' + band(h.kk, h.kk + 1) + ' SD', horizon: 'на пятиминутке ' + clk(cd.T - 5) + '–' + clk(cd.T) });
-      out.push(link({ k: 'fcell', j: cd.j, kk: h.kk }, prow('закрылись в ' + band(h.kk, h.kk + 1) + ' SD <span class="p21-sub">' + px(Math.min(F.u2p(h.kk / 10), F.u2p((h.kk + 1) / 10))) + '</span>', pct(p.pct)), '', p, plainTitle(p)));
+      const list = cd.cells.get(h.kk) || [], p = closePass(F, cd.j, h.kk, h.kk + 1, list.length);
+      out.push(link({ k: 'fcell', j: cd.j, kk: h.kk }, prow(lbl('EST:B-CLOSE', 'row', { band: band(h.kk, h.kk + 1) }) + ' <span class="p21-sub">' + px(Math.min(F.u2p(h.kk / 10), F.u2p((h.kk + 1) / 10))) + '</span>', ppTxt(p)), '', p, plainTitle(p)));
     }
     if (cd.unknown) {
-      const p = pp(F, { event_id: 'close_M5', region_kind: 'M5_unknown', exact_price_bounds: null, time_bounds: [cd.T - 5, cd.T], start_rule: 'M5 ' + clk(cd.T - 5), end_rule: clk(cd.T), yes_count: cd.unknown, display_scope: 'panel', phrase: 'нет свечи на этой M5 (неизвестно / рынок закрыт)', horizon: 'на пятиминутке ' + clk(cd.T - 5) + '–' + clk(cd.T) });
-      out.push('<div class="p21-link fc dim" data-pp="' + p.id + '" title="' + esc(plainTitle(p)) + '"><span class="t">нет свечи · неизвестно</span><b>' + pct(p.pct) + '</b></div>');
+      const p = missPass(F, cd);
+      out.push('<div class="p21-link fc dim" data-pp="' + p.id + '" title="' + esc(plainTitle(p)) + '"><span class="t">' + lbl('EST:B-CLOSE-MISSING', 'row') + '</span><b>' + ppTxt(p) + '</b></div>');
     }
-    if (cd.pre) out.push('<div class="p21-note">из них ещё до своего ' + (F.brk ? 'слома' : 'подтверждения') + ': ' + pct(100 * cd.pre / F.N) + '</div>');
+    if (cd.pre) {
+      const p = pp(F, { estimand: 'EST:B-CLOSE-PREACT', params: { j: cd.j }, event_id: 'close_M5', region_kind: 'M5_phase', start_rule: 'M5 ' + clk(cd.T - 5), end_rule: clk(cd.T), yes_count: cd.pre, display_scope: 'panel' });
+      out.push('<div class="p21-note">' + lbl('EST:B-CLOSE-PREACT', 'note', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)), pct: ppTxt(p) }) + '</div>');
+    }
     const tb = ctx.D.bars.find(b => b.t + 5 === cd.T);
-    if (tb && cd.T <= sliceOf(ctx)) out.push('<div class="p21-note">сегодня на этой M5: закрытие ' + sd(F.d0 * (tk(tb.c) - F.e0t) / F.w0t) + ' SD · ' + px(tb.c) + '</div>');
+    if (tb && cd.T <= sliceOf(ctx)) out.push('<div class="p21-note">' + lbl('FF:TODAY-LEVEL', 'column', { sd: sd(F.d0 * (tk(tb.c) - F.e0t) / F.w0t), price: px(tb.c) }) + '</div>');
     return out.join('');
   }
   function panelMarks() {
@@ -226,35 +225,37 @@
   }
   const dRow = (k, v) => '<div class="p24-dr"><span>' + k + '</span><b>' + v + '</b></div>';
   function passportRows(p) {
-    const b = p.exact_price_bounds;
-    return dRow('событие', esc(p.phrase)) + dRow('горизонт', esc(p.horizon)) +
-      (b && b.length === 2 && typeof b[0] === 'number' ? dRow('цена', band(b[0], b[1]) + ' SD <span class="k">[' + b[0] + '/10; ' + b[1] + '/10)</span>') : b && b.length === 1 ? dRow('уровень', sd(p.level_sd) + ' SD <span class="k">точно u = ' + b[0] + ' ширины IDR от края</span>') : '') +
-      (p.time_bounds ? dRow('время', clk(p.time_bounds[0]) + '–' + clk(p.time_bounds[1])) : '') +
-      dRow('доля', ppTxt(p, p.binary) + (p.pct != null ? ' <span class="k">(' + pct2(p.pct) + ')</span>' : '')) +
-      (p.unknown_count ? dRow('неизвестно', pct(100 * p.unknown_count / p.N) + (p.binary ? '' : ' <span class="k">граница: до ' + pct(100 * (p.yes_count + p.unknown_count) / p.N) + '</span>')) : '') +
-      dRow('знаменатель', 'вся семья, шаг доли ' + pct(100 / p.N));
+    const b = p.exact_price_bounds, V_ = 'FF:PASSPORT-VIEW';
+    return dRow(lbl(V_, 'win_event'), esc(p.phrase)) + dRow(lbl(V_, 'win_horizon'), esc(p.horizon)) +
+      (b && b.length === 2 && typeof b[0] === 'number' ? dRow(lbl(V_, 'win_price'), band(b[0], b[1]) + ' SD <span class="k">[' + b[0] + '/10; ' + b[1] + '/10)</span>') : b && b.length === 1 ? dRow(lbl(V_, 'win_level'), sd(p.level_sd) + ' SD <span class="k">' + lbl(V_, 'win_level_k', { u: b[0] }) + '</span>') : '') +
+      (p.time_bounds ? dRow(lbl(V_, 'win_time'), clk(p.time_bounds[0]) + '–' + clk(p.time_bounds[1])) : '') +
+      dRow(lbl(V_, 'win_share'), ppTxt(p, p.binary) + (p.pct != null ? ' <span class="k">(' + pct2(p.pct) + ')</span>' : '')) +
+      (p.unknown_count ? dRow(lbl(V_, 'win_unknown'), pct(100 * p.unknown_count / p.N) + (p.binary ? '' : ' <span class="k">' + lbl(V_, 'win_bound', { pct: pct(100 * (p.yes_count + p.unknown_count) / p.N) }) + '</span>')) : '') +
+      dRow(lbl('FF:SHARE-STEP', 'denominator'), lbl('FF:SHARE-STEP', 'denominator_v', { step: pct(100 / p.N) }));
   }
   // the passport of a zone (zone-map-3 §40) and its diagnostics: properties of the zone, never a permission to exist;
   // the study figures are research, not a chance for today
   function zoneRows(F, ctx, ev, i) {
-    const Zm = zonesOf(F, ev), z = Zm.zones[i], s = zoneStatus(F, ctx, ev)[i], sh = n => pct(100 * n / F.N);
-    return dRow('зона', esc(z.label + ' · ' + z.zone_id + ' · ' + z.algorithm_version)) +
+    const Zm = zonesOf(F, ev), z = Zm.zones[i], s = zoneStatus(F, ctx, ev)[i], E = 'EST:B-ZONE-' + ev;
+    return dRow(lbl(E, 'zone'), esc(z.label + ' · ' + z.zone_id + ' · ' + z.algorithm_version)) +
       dRow('семья', esc((z.family_scope === 'all' ? 'все дни недели' : 'день недели') + ' · ' + F.cond)) +
-      dRow('область', z.cell_mask.length + ' клеток 0,1 SD × 15 мин <span class="k">рамка ' + band(z.price_low, z.price_high) + ' SD × ' + clk(z.time_start) + '–' + clk(z.time_end) + '; членство — сами клетки</span>') +
-      dRow('вершина', 'клетка ' + band(z.peak_anchor[0], z.peak_anchor[0] + 1) + ' SD × ' + clk(F.f + 15 * z.peak_anchor[1]) + '–' + clk(F.f + 15 * z.peak_anchor[1] + 15)) +
-      dRow('доля семьи', pct(100 * z.p_snapshot) + ' <span class="k">шаг доли ' + pct(100 / F.N) + '; неизвестно у ' + sh(Zm.unknown_count) + ', нет периода у ' + sh(Zm.no_event_count) + '; вне зон ' + sh(Zm.n_residual_total) + '</span>') +
-      dRow('сегодня', ZST[s] + ' <span class="k">по сегодняшнему экстремуму после ' + (F.brk ? 'слома' : 'подтверждения') + ' и времени; не вероятность</span>') +
+      dRow(lbl(E, 'area'), lbl(E, 'area_v', { n: z.cell_mask.length }) + ' <span class="k">' + lbl(E, 'area_k', { band: band(z.price_low, z.price_high), window: clk(z.time_start) + '–' + clk(z.time_end) }) + '</span>') +
+      dRow(lbl(E, 'apex'), lbl(E, 'apex_v', { band: band(z.peak_anchor[0], z.peak_anchor[0] + 1), window: clk(F.f + 15 * z.peak_anchor[1]) + '–' + clk(F.f + 15 * z.peak_anchor[1] + 15) })) +
+      dRow(lbl(E, 'row'), ppTxt(zonePass(F, ev, z)) + ' <span class="k">' + lbl(E, 'k', { step: pct(100 / F.N), unknown: ppTxt(undPass(F, ev, 'UNKNOWN')), none: ppTxt(undPass(F, ev, 'NO_PERIOD')), residual: ppTxt(resPass(F, ev)) }) + '</span>') +
+      dRow(lbl('FF:TODAY-Z', 'row'), zst(s) + ' <span class="k">' + lbl('FF:TODAY-Z', 'k', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)) }) + '</span>') +
       dRow('слепок', esc(z.snapshot_id + ' · семья ' + z.family_id));
   }
+  // the zone's diagnostics and study figures: properties of the zone, each shown only with its published bundle
   function zoneDiag(F, ev, z) {
-    const g = z.grid_member_jaccard, b = z.bootstrap_recovery, f2 = v => v == null ? '—' : num(v, 2);
-    let s = dRow('сдвиг сетки', 'те же сессии на 0,05 SD — ' + f2(g.price_half) + ', на 5 мин — ' + f2(g.time_5) + ', на 10 мин — ' + f2(g.time_10) + ' <span class="k">Жаккар множеств сессий; 1 — та же зона</span>') +
-      dRow('пересэмплирование', 'в среднем ' + f2(b.mean) + ', не меньше 0,5 — в ' + (b.share_ge_half == null ? '—' : pct(100 * b.share_ge_half)) + ' из ' + b.of + ' повторов');
+    const g = z.grid_member_jaccard, b = z.bootstrap_recovery, f2 = v => v == null ? '—' : num(v, 2), zid = x => x.zone_id === z.zone_id;
+    const G = 'EST:ZD-GRID-' + ev, Bt = 'EST:ZD-BOOT-' + ev, Nl = 'EST:ZD-NULL-' + ev;
+    let s = (hasBundle(F, G, zid) ? dRow(lbl(G, 'row'), lbl(G, 'text', { g1: f2(g.price_half), g2: f2(g.time_5), g3: f2(g.time_10) }) + ' <span class="k">' + lbl(G, 'k') + '</span>') : '') +
+      (b.mean == null || hasBundle(F, Bt, zid) ? dRow(lbl(Bt, 'row'), lbl(Bt, 'text', { mean: f2(b.mean), share: b.share_ge_half == null ? '—' : pct(100 * b.share_ge_half), of: b.of })) : '');
     if (z.null_status === 'measured') {
-      s += dRow('путь без направления', 'реальные ' + pct(100 * z.p_real_mask) + ', без направления ' + pct(100 * z.p_null_mask) +
-        ' · избыток ' + (z.null_excess >= 0 ? '+' : '−') + num(Math.abs(100 * z.null_excess), 1) + ' п.п. <span class="k">различим с ' + num(100 * z.minimum_detectable_excess, 1) + ' п.п.</span>');
-    } else s += dRow('путь без направления', '<span class="k">' + esc(z.null_status.replace('not_applicable: ', 'не считается: ')) + '</span>');
-    if (z.study_refs) s += dRow('исследование', '<span class="k">' + esc(z.study_refs.text) + '</span>');
+      if (hasBundle(F, Nl, zid)) s += dRow(lbl(Nl, 'row'), lbl(Nl, 'text', { p_real: pct(100 * z.p_real_mask), p_null: pct(100 * z.p_null_mask), excess: (z.null_excess >= 0 ? '+' : '−') + num(Math.abs(100 * z.null_excess), 1) }) +
+        ' <span class="k">' + lbl(Nl, 'k', { mde: num(100 * z.minimum_detectable_excess, 1) }) + '</span>');
+    } else { const m = /^not_applicable: (.*)$/.exec(z.null_status || ''); s += dRow(lbl(Nl, 'row'), '<span class="k">' + (m ? lbl(Nl, 'na', { reason: esc(m[1]) }) : esc(z.null_status)) + '</span>'); }
+    if (z.study_refs && hasBundle(F, 'EST:ZM3-STUDY', x => x.event === ev)) s += dRow(lbl('EST:ZM3-STUDY', 'row'), '<span class="k">' + esc(z.study_refs.text) + '</span>');
     return s;
   }
   // window 1: the passport of the object (as the details area of design 24 had it), or the family's snapshot
@@ -265,24 +266,24 @@
       return { head: 'Слепок семьи', body: dRow('семья', esc(F.cond)) + dRow('ключ', esc(r.key.instrument + ' × ' + r.key.session + ' × ' + WD[r.key.weekday] + ' × ' + (r.key.direction === 'long' ? 'лонг' : 'шорт') + ' × ' + (r.key.event === 'confirmation' ? 'окно подтверждения ' : 'окно слома ') + clk(r.key.window[0]) + '–' + clk(r.key.window[1]))) +
         dRow('история', esc((src.history || '') + ', только дни раньше ' + r.key.cutoff)) + dRow('шкала', esc('u = d·(цена − край)/ширина IDR; край: ' + r.scale.edge + '; ячейки 0,1 SD × 15 мин от ' + clk(r.scale.f))) +
         dRow('начало', esc(r.rules.start)) + dRow('конец', esc(r.rules.end)) + dRow('время события', esc(r.rules.time)) + dRow('атом', esc(r.rules.atom)) +
-        dRow('слепок', esc(r.snapshot_id + ' · семья ' + r.family_id + ' · ' + r.semantics)) + dRow('шаг доли', pct(100 / F.N)) };
+        dRow('слепок', esc(r.snapshot_id + ' · семья ' + r.family_id + ' · ' + r.semantics)) + dRow(lbl('FF:SHARE-STEP', 'step'), pct(100 / F.N)) };
     }
     if (o.k === 'pt') {
-      const m = F.M[o.i];
-      return { head: 'Сессия ' + memberLine(F, m), body: dRow(F.names.R.toLowerCase() + ' R', m.R.s === 'known' ? sd(m.R.v / m.w) + ' SD · ' + clk(m.R.t) + (m.R.ties.length > 1 ? ' · та же цена ещё ' + m.R.ties.slice(1).map(clk).join(', ') : '') : 'неизвестно') +
-        dRow(F.names.X.toLowerCase() + ' X', m.X.s === 'known' ? sd(m.X.v / m.w) + ' SD · ' + clk(m.X.t) + (m.X.ties.length > 1 ? ' · та же цена ещё ' + m.X.ties.slice(1).map(clk).join(', ') : '') : 'неизвестно') +
-        dRow('порядок', esc(orderText(F, m))) + (F.brk ? '' : dRow('DR', m.outcome === 'broken' ? 'сломан ' + (m.brkKnown ? clk(m.brk) : '') : m.outcome === 'held' ? 'удержался до ' + clk(F.end) : 'неизвестно')) +
-        dRow(F.brk ? 'слом' : 'подтверждение', clk(m.act)) + (m.missing ? dRow('нет свечей', m.missing + ' M5 на горизонте') : '') };
+      const m = F.M[o.i], M_ = 'FF:MEMBER';
+      const one = e => m[e].s === 'known' ? sd(m[e].v / m.w) + ' SD · ' + clk(m[e].t) + (m[e].ties.length > 1 ? lbl(M_, 'win_same_price', { times: m[e].ties.slice(1).map(clk).join(', ') }) : '') : lbl(M_, 'unknown');
+      return { head: 'Сессия ' + memberLine(F, m), body: dRow(F.names.R.toLowerCase() + ' R', one('R')) + dRow(F.names.X.toLowerCase() + ' X', one('X')) +
+        dRow(lbl(M_, 'win_order'), esc(orderText(F, m))) + (F.brk ? '' : dRow('DR', m.outcome === 'broken' ? lbl(M_, 'win_broken', { t: m.brkKnown ? clk(m.brk) : '' }) : m.outcome === 'held' ? lbl(M_, 'win_held', { end: clk(F.end) }) : lbl(M_, 'win_dr_unknown'))) +
+        dRow(lbl('FF:PASSPORT-VIEW', 'act', null, VW(F)), clk(m.act)) + (m.missing ? dRow(lbl(M_, 'win_missing'), lbl(M_, 'win_missing_v', { n: m.missing })) : '') };
     }
     if (o.k === 'lvl' && o.l) {
       const q = levelQuery(F, ctx, o.l.p, o.l.type === 'std' ? o.l.name : o.l.full);
-      return { head: 'Уровень ' + (o.l.type === 'std' ? o.l.name : o.l.full), body: passportRows(q.full) + dRow('после среза', ppTxt(q.rest, true) + ' <span class="k">' + esc(q.rest.horizon) + '</span>') +
-        dRow('пересекали свечой', ppTxt(q.cross, true) + ' <span class="k">другое событие: минимум ≤ уровня ≤ максимум одной M5</span>') + dRow('сегодня', esc(q.today.replace(/^сегодня: /, ''))) };
+      return { head: 'Уровень ' + (o.l.type === 'std' ? o.l.name : o.l.full), body: passportRows(q.full) + dRow(lbl('EST:B-LEVEL-REST', 'win_row'), ppTxt(q.rest, true) + ' <span class="k">' + esc(q.rest.horizon) + '</span>') +
+        dRow(lbl('EST:B-CROSS-FULL', 'win_row'), ppTxt(q.cross, true) + ' <span class="k">' + lbl('EST:B-CROSS-FULL', 'win_k') + '</span>') + dRow(lbl('FF:TODAY-Z', 'row'), esc(q.today.replace(/^сегодня: /, ''))) };
     }
     if (o.k === 'area' && st.area) {
       const I = areaInfo(F, ctx);
-      return { head: 'Область ' + I.name, body: (I.band ? passportRows(I.band) : '') + (I.win ? dRow('в окне', ppTxt(I.win) + ' <span class="k">' + esc(I.win.phrase) + '</span>') : '') +
-        (I.vfull ? dRow('заходили', ppTxt(I.vfull, true) + ' вся сессия · ' + ppTxt(I.vrest, true) + ' ' + esc(I.vrest.horizon)) : '') + (I.today ? dRow('сегодня', esc(I.today.replace(/^сегодня: /, ''))) : '') };
+      return { head: 'Область ' + I.name, body: (I.band ? passportRows(I.band) : '') + (I.win ? dRow(lbl(I.win.estimand, 'win_row'), ppTxt(I.win) + ' <span class="k">' + esc(I.win.phrase) + '</span>') : '') +
+        (I.vfull ? dRow(lbl('EST:B-VISIT-FULL', 'win_row'), ppTxt(I.vfull, true) + ' ' + lbl('EST:B-VISIT-FULL', 'win_full') + ' · ' + ppTxt(I.vrest, true) + ' ' + esc(I.vrest.horizon)) : '') + (I.today ? dRow(lbl('FF:TODAY-Z', 'row'), esc(I.today.replace(/^сегодня: /, ''))) : '') };
     }
     if (o.k === 'pcell') {
       const ev = o.ev || st.ev;
@@ -295,35 +296,37 @@
     if (o.k === 'fcell' || o.k === 'col') {
       const cd = filmOf(F)[o.j];
       if (o.k === 'fcell') {
-        const list = cd.cells.get(o.kk) || [], rf = rangeField(F, o.j, o.kk);
-        return { head: 'M5 ' + clk(cd.T - 5) + '–' + clk(cd.T), body: passportRows(pp(F, { event_id: 'close_M5', region_kind: 'M5_cell', exact_price_bounds: [o.kk, o.kk + 1], time_bounds: [cd.T - 5, cd.T], start_rule: 'M5 ' + clk(cd.T - 5), end_rule: clk(cd.T),
-          yes_count: list.length, unknown_count: cd.unknown, display_scope: 'details', phrase: 'закрытие M5 в полосе ' + band(o.kk, o.kk + 1) + ' SD', horizon: 'на пятиминутке ' + clk(cd.T - 5) + '–' + clk(cd.T) })) +
-          dRow('задевали диапазоном', pct(100 * rf.n / F.N) + ' <span class="k">поле диапазонов V: свеча M5 задевала полосу; не закрытие</span>') };
+        const list = cd.cells.get(o.kk) || [];
+        return { head: 'M5 ' + clk(cd.T - 5) + '–' + clk(cd.T), body: passportRows(closePass(F, o.j, o.kk, o.kk + 1, list.length)) +
+          dRow(lbl('EST:B-RANGE', 'win_row'), ppTxt(rangePass(F, o.j, o.kk)) + ' <span class="k">' + lbl('EST:B-RANGE', 'win_k') + '</span>') };
       }
-      return { head: 'M5 ' + clk(cd.T - 5) + '–' + clk(cd.T), body: dRow('колонка', 'закрытия семьи на этой M5; своя сотня процентов') + dRow('нет свечи', pct(100 * cd.unknown / F.N)) };
+      return { head: 'M5 ' + clk(cd.T - 5) + '–' + clk(cd.T), body: dRow(lbl('EST:B-CLOSE', 'col'), lbl('EST:B-CLOSE', 'col_v')) + dRow(lbl('EST:B-CLOSE-MISSING', 'win_row'), ppTxt(missPass(F, cd))) };
     }
     if (o.k === 'out') {
-      const nm = { held: 'удержался', broken: 'сломан', unknown: 'неизвестно', none: 'нет периода' }[o.cat];
-      return { head: 'Исход DR', body: dRow('категория', nm) + dRow('доля', pct(100 * F.out[o.cat] / F.N)) + dRow('правило', 'закрытие M5 строго за своим противоположным DR; тень и равенство не ломают; слом не отменяется возвратом') + dRow('горизонт', F.from + ' до ' + clk(F.end)) };
+      const D_ = 'EST:B-DR';
+      return { head: lbl(D_, 'win_head'), body: dRow(lbl(D_, 'win_cat'), lbl(D_, o.cat)) + dRow(lbl(D_, 'win_share'), ppTxt(drPass(F, o.cat))) + dRow(lbl(D_, 'win_rule'), lbl(D_, 'win_rule_v')) +
+        dRow(lbl(D_, 'win_horizon'), lbl('FF:PASSPORT-VIEW', 'horizon', { from: F.from, end: clk(F.end) })) };
     }
     if (o.k === 'zone' && zonesOf(F, o.ev) && zonesOf(F, o.ev).zones[o.i]) {
       const z = zonesOf(F, o.ev).zones[o.i];
       return { head: 'Зона ' + z.label + ' · ' + zoneName(z), body: zoneRows(F, ctx, o.ev, o.i) + '<div class="p24-sep"></div>' + zoneDiag(F, o.ev, z) };
     }
     if (o.k === 'evrow') {
-      const ev = o.ev || st.ev, D = F.ev[ev];
-      return { head: F.names[ev] + ' ' + ev, body: dRow('событие', esc(F.what[ev])) + dRow('определено', pct(100 * D.known / F.N)) + dRow('неизвестно', pct(100 * D.unknown / F.N) + ' <span class="k">нет свечи M5 на горизонте</span>') + (D.none ? dRow('нет периода', pct(100 * D.none / F.N)) : '') + dRow('горизонт', F.from + ' до ' + clk(F.end)) };
+      const ev = o.ev || st.ev, D = F.ev[ev], U = 'EST:B-RX-UNDETERMINED-' + ev, KN = 'EST:B-RX-KNOWN-' + ev, PV = 'FF:PASSPORT-VIEW';
+      const kn = pp(F, { estimand: KN, params: {}, event_id: ev, region_kind: 'known', start_rule: F.from, end_rule: 'до ' + clk(F.end), yes_count: D.known, unknown_count: D.unknown, no_event_count: D.none, display_scope: 'details' });
+      return { head: F.names[ev] + ' ' + ev, body: dRow(lbl(PV, 'win_event'), esc(F.what[ev])) + dRow(lbl(KN, 'row'), ppTxt(kn)) + dRow(lbl(U, 'win_unknown'), ppTxt(undPass(F, ev, 'UNKNOWN')) + ' <span class="k">' + lbl(U, 'win_unknown_k') + '</span>') +
+        (D.none ? dRow(lbl(U, 'win_none'), ppTxt(undPass(F, ev, 'NO_PERIOD'))) : '') + dRow(lbl(PV, 'win_horizon'), lbl(PV, 'horizon', { from: F.from, end: clk(F.end) })) };
     }
     return detBody(ctx, null);
   }
   // window 4: what came first in each session, its first R or its first X (spec §8); one 100 %
   function orderHtml(F) {
-    const n = { X_before_R: 0, R_before_X: 0, same_M5: 0, unknown: 0 };
-    for (const m of F.M) n[n[m.order] != null ? m.order : 'unknown']++;
-    const rows = [['X_before_R', 'сначала максимум X, потом глубочайший R', cfg.X], ['R_before_X', 'сначала глубочайший R, потом максимум X', cfg.R], ['same_M5', 'в одной M5: порядок внутри свечи неизвестен', '#8C929D'], ['unknown', 'неизвестно: событие не определено', '#4A505B']];
-    const P = rows.map(([k, t]) => pp(F, { event_id: 'order_' + k, region_kind: 'order', exact_price_bounds: null, time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end), yes_count: n[k], display_scope: 'details', phrase: 'порядок первых R и X: ' + t, horizon: F.from + ' до ' + clk(F.end) }));
-    return '<div class="p24-bar wide">' + rows.map(([k, , c]) => n[k] ? '<i style="width:' + (100 * n[k] / F.N).toFixed(2) + '%;background:' + c + '"></i>' : '').join('') + '</div>' +
-      rows.map(([k, t, c], j) => '<div class="dq" data-ord="' + k + '" title="' + esc(plainTitle(P[j])) + '"><i style="background:' + c + '"></i><span>' + t + '</span><b>' + pct(P[j].pct) + '</b></div>').join('');
+    const n = orderCounts(F), O = 'EST:B-ORDER';
+    const rows = [['X_before_R', cfg.X], ['R_before_X', cfg.R], ['same_M5', '#8C929D'], ['unknown', '#4A505B'], ['no_period', '#353A44']].filter(([k]) => k !== 'no_period' || n[k]);
+    const P = rows.map(([k]) => pp(F, { estimand: O, params: { category: k }, event_id: 'order_' + k, region_kind: 'order', exact_price_bounds: null, time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end),
+      yes_count: n[k], display_scope: 'details', phrase: lbl(O, 'phrase', { t: lbl(O, k) }), horizon: hzOf(F) }));
+    return '<div class="p24-bar wide">' + rows.map(([k, c]) => n[k] ? '<i style="width:' + (100 * n[k] / F.N).toFixed(2) + '%;background:' + c + '"></i>' : '').join('') + '</div>' +
+      rows.map(([k, c], j) => '<div class="dq" data-ord="' + k + '" title="' + esc(plainTitle(P[j])) + '"><i style="background:' + c + '"></i><span>' + lbl(O, k) + '</span><b>' + ppTxt(P[j]) + '</b></div>').join('');
   }
   // window 5: «на уровне или дальше» on today's levels (spec §5.4): nested shares, the whole horizon (pale) and after the
   // slice (bright); a level today already reached is marked with its time
@@ -338,7 +341,7 @@
       const tk = l.type === 'std' ? taken.find(z => z.t && z.name === l.name) : null;
       rows.push('<div class="dl" data-lvl="' + l.id + '" title="' + esc(plainTitle(q.full)) + '"><span class="n">' + esc(l.type === 'std' ? 'STD ' + l.name : nm) + (tk ? ' <em>✓ ' + clk(tk.t) + '</em>' : '') + '</span><span class="b"><i style="width:' + (q.full.pct || 0).toFixed(1) + '%;background:' + rgba(col, 0.35) + '"></i><i style="width:' + (q.rest.pct || 0).toFixed(1) + '%;background:' + rgba(col, 0.9) + '"></i></span><b>' + ppTxt(q.full, true) + '</b><span class="r" style="color:' + col + '">' + ppTxt(q.rest, true) + '</span></div>');
     }
-    return '<div class="dlh"><span></span><span>вся сессия</span><span>после ' + clk(sl) + '</span></div>' + rows.join('');
+    return '<div class="dlh"><span></span><span>' + lbl('EST:B-LEVEL-FULL', 'ladder_head') + '</span><span>' + lbl('EST:B-LEVEL-REST', 'ladder_head', { t: clk(sl) }) + '</span></div>' + rows.join('');
   }
   // windows 2, 3 and 6 are small canvases
   function cardCanvas(id) {

@@ -24,7 +24,7 @@ against what happened next.
 - He judges the product by the screen. His interface requirements are binding: `docs/UI_RULES.md`. They came from
   many iterations; re-read them before any visual change. The working screen is **design 24 «Окна времени»** (since
   2026-10-01 night, the operator's order «сделай его основным, 24-й … пока в мейн не сливай»: on branch `design-24`,
-  PR #1, NOT merged into `main` until he says so); `http://127.0.0.1:8767/` opens it at `/24/`. Every element of it,
+  PR #1, merged into `main` on 2026-10-07 by his decision); `http://127.0.0.1:8767/` opens it at `/24/`. Every element of it,
   its meaning, its count and its code: **`spec/ekran-24/`** (read it before changing 24). Design 22 «Созвездия · смысл
   числа» (the working screen 2026-09-29 → 10-01, `design/sozvezdiya-22/`) stays next to it, unchanged, at `/22/`;
   open questions: `meaning/05-otkrytye-voprosy.md`. The redesign B′ of 2026-09-25 (`docs/DESIGN.md`) was superseded by 20/21.
@@ -107,7 +107,8 @@ against what happened next.
 
 - **How work goes from 2026-10-01 (operator): design 24 is the semantic foundation, kept as a pull request.** Work on
   24 happens on branch `design-24` (its PR into `main` on GitHub); each decision of the operator is a new commit in that
-  PR with its node in `meaning/07-cepochka-reshenij.md`. `main` keeps the design-22 era until he merges. The operator's
+  PR with its node in `meaning/07-cepochka-reshenij.md`. Merged into `main` on 2026-10-07 (the operator); new work on 24
+  goes on as before, each decision a commit with its node. The operator's
   local checkout stays on `design-24` (both shortcuts need it). Before changing anything in 24, read
   **`meaning/10-dizajn-24.md`** — where every percentage comes from, where and why it is fixed, how it is counted — and
   do not change its section 2 without the operator.
@@ -115,7 +116,7 @@ against what happened next.
   (`design/sozvezdiya-23/`, `lab/dist/sem-v1/`, `/api/family-v1` = `lab/scene21.py::family_sem_v1`). Kept as is; design
   24 below is the product version.
 - **Design 24 «Границы хода» (2026-10-01, the operator's order): the working screen since 2026-10-01 night** (on
-  branch `design-24`, not merged into `main`; the full specification of the screen: `spec/ekran-24/`).
+  branch `design-24`, merged into `main` on 2026-10-07; the full specification of the screen: `spec/ekran-24/`).
   Design 22's interface with its statistical layer replaced end to end by the auditor's semantic specification
   DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`): for each family session one point of R (the deepest point against
   the confirmation) or X (the farthest along it) from its own confirmation to the block end, their price and time
@@ -125,7 +126,7 @@ against what happened next.
   (read its README first). The operator's atom (2026-10-01): an existing M5 candle is an observation, day and night; only
   a wholly missing M5 is a hole. Design 22 is unchanged. О19 (the specification on the working screen: rule 10 §15.1,
   rule 6's own horizon) is decided by the operator's order of 2026-10-01 night for this branch; the texts of rules 10
-  and 6 are rewritten with the merge into `main`, which waits for him. What to develop next: О20
+  and 6 are to be rewritten with the operator; the merge into `main` (2026-10-07) did not rewrite them. What to develop next: О20
   (`meaning/05-otkrytye-voprosy.md`).
   **Its clusters since 2026-10-01 evening: the zone map `zone-map-3`** (`lab/zonemap24.py`, read
   `meaning/12-karta-zon.md` first): several price × time zones of R / X, each the half-height region of its own apex
@@ -141,6 +142,15 @@ against what happened next.
   2026-10-06): the journal of why each visual rule exists (the right edge anchored for every gesture, «↺» fitting the
   candles and the live zones, one R/X price column with strength gradation, STD only on the side in play, ...). Add an
   entry for every visual change: what is seen, why (the operator's question), how, what must not be lost.
+- **The machine contract DR-LAB-SC-1.1 (2026-10-07, the operator's goal; read `contract/README.md` first).** The
+  normative text `spec/DR-LAB-Semantic-Contract-1.1-(patched).md` is represented in LinkML (`contract/schema/`,
+  `contract/registry/`, built by `contract/tools/build.py` into `contract/build/`) and enforced at run time by
+  `lab/contract.py`: the family, its zones, today's statuses and every NOW number are re-derived from the session base
+  before a response leaves; each statistic goes out as a bundle with its derivation, support and an explicit claim form
+  of an admissible class (no forecast, no decision anywhere); a stale contract publishes nothing. Screen 24 shows a
+  number only as a passport of a registered estimand, writes only the registered words, sends its passports to the
+  reference (`POST /api/d24/verify`) and shows a violation at the top of the panel. On screen only the NOW words changed
+  (K33: historical grammar) and the order window got its «нет периода» row; the node is in `meaning/07`.
 - **Design 22 «Созвездия · смысл числа», on market data, was the working screen** from 2026-09-29 to 2026-10-01
   night (design 21 from 2026-09-28 before it); it stays next to design 24 at `/22/` (`/index.html`;
   `lab/dist/index.html` + `sozvezdiya.js`, built from
@@ -163,6 +173,8 @@ lab/
   server.py               local HTTP server 127.0.0.1:8767 (stdlib): static page + JSON API
   scene21.py              the working screen's data: the trading day from TradingView, similar sessions at a minute
   scene24.py              design 24's data (/api/d24/*): DR-LAB-SEM-1.0 families, R / X, DR outcome, path; history days
+  contract.py             the DR-LAB-SC-1.1 gate (stdlib): reference definitions, re-derivation at publication,
+                          envelopes and bundles, admissible claims, undeclared numbers, CONTRACT_STALE, /api/d24/verify
   zonemap24.py            design 24's zone map zone-map-3 (meaning/12): zones, diagnostics, today's status
   cluster24.py            main-cluster-1 (meaning/11): kept for its archived studies, not on the screen
   build_boxes.py          builds every session box (confirmed or not) with its M5 bars (once; ~20 s per instrument)
@@ -184,7 +196,12 @@ README.md                 the front page on GitHub: what this is, who reads what
 tests/smoke.py            offline checks; run after every change
 tests/ui_check21.js       in-page check of the working screen; evaluate it in the browser (ui_check.js: classic.html)
 tests/sem24.py            design 24: the specification's 32 reference checks, integration on the base, the zone map
-tests/ui_check24.js       design 24: in-page check (passports, page = server, one table, film columns, slices, zones)
+tests/ui_check24.js       design 24: in-page check (passports, page = server, one table, film columns, slices, zones,
+                          the contract layer: every passport recomputed by the reference, K16, K30, K33)
+tests/contract_sc11.py    DR-LAB-SC-1.1: products = sources, the enforcement map, K01-K33 executed, routes, live
+                          envelopes (LinkML in a temporary folder), the stale state, the page's contract layer
+contract/                 the machine contract of DR-LAB-SC-1.1: LinkML schema, registry, build tool, products;
+                          start at contract/README.md (.venv-linkml/ = its LinkML environment, git-ignored)
 start-dr-lab-24.cmd       the shortcut «DR Lab 24»: the same start, then the page /24/ (the root / opens it too)
 spec/ekran-24/            the full specification of the working screen 24: every element on annotated screenshots,
                           its meaning, count, denominator, code (server and page), checks; tools/ re-shoots them
@@ -212,7 +229,9 @@ design/                   mockups on synthetic data, designs 1-24, start at desi
    price (`meaning/08-semantika-klasterov.md`).
 7. **Descriptive numbers.** Frequencies are the history of similar sessions, not a forecast, not a trade. The UI does
    not print disclaimers (operator's decision), so the discipline lives in the code and in `docs/RESEARCH.md`: never
-   add a number to the screen whose meaning is not defined in `docs/SEMANTICS.md`.
+   add a number to the screen whose meaning is not defined in `docs/SEMANTICS.md`. On screen 24 this is enforced by
+   the machine contract since 2026-10-07: a number exists only as a passport of an estimand registered in
+   `contract/registry/` with an admissible claim form, and its words are that form's registered labels.
 8. **The demo engine stays separate** (`--data demo`) and never mixes with market data.
 9. **API contract changes update both sides** (server and `dist/`), and `docs/ARCHITECTURE.md`.
 10. **Clusters answer the operator's question, not an agent's.** The operator trades DR/IDR: after the box / the
@@ -258,6 +277,13 @@ stop-dr-lab.cmd                          # or kill the process listening on 8767
 start-dr-lab.cmd -NoBrowser              # the same path the operator's shortcut takes
 ```
 
+If you touched the machine contract (`contract/`), `lab/contract.py`, a route or what screen 24 shows a number with:
+
+```bash
+.venv-linkml\Scripts\python.exe contract/tools/build.py   # after editing contract/ (PYTHONUTF8=1); then rebuild design 24
+python -B tests/contract_sc11.py                            # expect ALL GOOD
+```
+
 If you touched design 24 (the working screen): run `python design/sozvezdiya-24/src/build.py` and
 `python -B tests/sem24.py`, open http://127.0.0.1:8767/24/ (a history day, e.g. `#date=2025-12-17&session=RDR`), evaluate
 `tests/ui_check24.js` and expect `problems: []`; `lab/scene24.py` changes need a server restart. Check that
@@ -292,7 +318,18 @@ it would overwrite the working screen) (it writes `lab/dist/index.html` and
 - **Stale page after an update.** The server sends `Cache-Control: no-cache` for static files; keep it, or the
   operator's browser may run an old `live.js` after your change.
 - **Do not pipe the launcher in bash** (`start-dr-lab.cmd | tail`): the hidden server inherits the pipe and the
-  command never returns. Run it directly from PowerShell (`& start-dr-lab.cmd -NoBrowser`).
+  command never returns. Run it directly from PowerShell (`& start-dr-lab.cmd -NoBrowser`). Piping it in PowerShell
+  (`| Out-String`) hangs the same way (2026-10-07); the server itself starts.
+- **Two servers on port 8767.** On Windows a second `server.py` can bind the same port, and either may answer (with
+  whatever code it loaded); on 2026-10-07 two were listening at once and `stop-dr-lab.cmd` stopped only one. Before
+  restarting, stop every listener on 8767 until none is left (`Get-NetTCPConnection -LocalPort 8767 -State Listen`),
+  then start once.
+- **CONTRACT_STALE is the contract working.** After an edit of `contract/schema` or `contract/registry` the server
+  publishes no statistic until `contract/tools/build.py` runs; after a contract build, a page not rebuilt refuses every
+  family («страница собрана с другим реестром контракта»). Build the contract, then design 24; `lab/contract.py`
+  edits also need a server restart (the registry itself is reloaded).
+- **The state of a history day has no instrument in its address by default.** `#date=…` opens NQ unless `&inst=` is
+  given; a text or screenshot of a day must name the instrument (on 2026-10-07 two compared states were ES and YM).
 - **Disk C: can fill up.** On 2026-09-30 it reached 0 bytes free and a study failed while writing its per-state
   records. Keep such records compressed and small (`.json.gz`). The earlier big ones (audit, lens 4, the m7 cache) were
   moved, not deleted, to `D:\dr-idr-runtime-archive\2026-09-30`; `studies/m7_claims.py` rebuilds its cache if it is

@@ -118,6 +118,17 @@ else:
     if nw.get("status") == "OK":
         ok = ok and nw["base"]["N_base"] == fam["N"] and all(nw[ev]["continuation"]["support"]["N_eligible"] <= fam["N"] for ev in ("R", "X"))
     check(ok, f"design 24 «Сейчас» NQ RDR 2025-12-17 12:00: {nw.get('status')} {nw.get('R', {}).get('mode', '')}")
+    # DR-LAB-SC-1.1 (contract/README.md): the compiled contract represents its sources (otherwise the server publishes no
+    # statistic) and screen 24 is built with the same registry (otherwise it refuses every family); the conformance
+    # tests are tests/contract_sc11.py
+    import contract  # noqa: E402
+    page = json.loads((ROOT / "contract" / "build" / "page_registry.json").read_text(encoding="utf-8"))
+    check(not contract.stale(), "DR-LAB-SC-1.1 compiled from its sources" + ("" if not contract.stale() else ": " + "; ".join(contract.stale()[:3]) + " (run contract/tools/build.py)"))
+    built = (LAB / "dist" / "24" / "d24.js").read_text(encoding="utf-8")
+    check(page["registry_hash"] == contract.registry_hash() and f'"registry_hash": "{page["registry_hash"]}"' in built,
+          "screen 24 is built with the contract's registry (else run design/sozvezdiya-24/src/build.py)")
+    check(fam.get("contract", {}).get("status") == "CONFORMANT" and nw.get("contract", {}).get("status") == "CONFORMANT",
+          f"the family and «Сейчас» leave through the contract gate: {fam.get('contract', {}).get('status')}, {nw.get('contract', {}).get('status')}")
 
 node = shutil.which("node")
 if node:

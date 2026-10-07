@@ -96,7 +96,7 @@
   if (!/Путь семьи/.test(panel.innerText)) problems.push('the panel does not show the M5 column in «Путь семьи»');
   D.st.mode = 'bounds'; D.render(true);
   if (!vR) problems.push('the time histogram is off in «Границы хода»');
-  // 7) an area: the window's share never exceeds its band's (spec §14.1-4)
+  // 7) an area: the window's share never exceeds its band's (spec §14.1-4; DR-LAB-SC-1.1 [K17])
   const E = F.ev[D.st.ev], top = [...E.P].sort((a, b) => b[1] - a[1])[0];
   if (top) {
     const bb = [...E.T].sort((a, b) => b[1] - a[1])[0][0];
@@ -105,7 +105,7 @@
     if (I.win.yes_count > I.band.yes_count) problems.push('window share above its band share');
     if (!/Выбранная область/.test(panel.innerText)) problems.push('the selected area is not in the panel');
   }
-  // DR-LAB-NOW-1.0 T14 / T15 on the page: the band (and cell) of today's extreme is always reachable; a zone is drawn
+  // DR-LAB-NOW-1.0 T14 / T15 on the page (DR-LAB-SC-1.1 [K24] [K25]): the band (and cell) of today's extreme is always reachable; a zone is drawn
   // impossible only when its status is IMPOSSIBLE (the history clock never makes a zone impossible)
   const twoAxes = cc => {
     const Rch = D.reachOf(cc.F, cc);
@@ -162,6 +162,33 @@
     info.zones = ['R', 'X'].map(ev => (D.zonesOf(F, ev) || { zones: [] }).zones.map(z => z.label + ' ' + Math.round(1000 * z.p_snapshot) / 10 + '%')).flat();
     info.zoneStatus = { R: D.zoneStatus(F, D.cur(), 'R'), X: D.zoneStatus(F, D.cur(), 'X') };
     if (F.mismatch.length) problems.push('page and server disagree on ' + F.mismatch.join(', '));
+  }
+  // 11) DR-LAB-SC-1.1 [SC11]: the page's contract layer on the live family. The page carries the registry it was built
+  // from; every passport is bound to a registered estimand and claim form and is recomputed by the server's reference
+  // (POST /api/d24/verify); no violation, no contract notice in the panel
+  {
+    const k0 = D.contract();
+    if (!k0.registry_hash || k0.edition !== 'DR-LAB-SC-1.1') problems.push('SC-1.1: the page carries no contract registry');
+    for (let i = 0; i < 30 && D.contract().unchecked; i++) { await D.verify(); await wait(250); }
+    const k1 = D.contract();
+    if (k1.unchecked) problems.push('SC-1.1: ' + k1.unchecked + ' passports not recomputed by the reference');
+    if (k1.violations.length) problems.push('SC-1.1 violations: ' + k1.violations.slice(0, 3).join(' | '));
+    const bare = D.passports().filter(p => !p.estimand || !p.claim_form);
+    if (bare.length) problems.push('SC-1.1: ' + bare.length + ' passports without an estimand or a claim form');
+    if (panel.querySelector('.p24-sc')) problems.push('SC-1.1: the panel shows a contract notice');
+    info.passports = D.passports().length;
+    // [K16] the binary shares (on a level or beyond, visits, crossings) are shown as bounds when unknown mass exists
+    if (D.passports().some(p => /^EST:B-(LEVEL|VISIT|CROSS)/.test(p.estimand) && !p.binary)) problems.push('K16: a binary share would hide its unknown mass');
+    // [K30] a change of the drawing (sizes, brightness) changes no count: the same passports, no violation
+    const zk = () => D.passports().filter(p => /^EST:B-ZONE-/.test(p.estimand)).map(p => p.key + '=' + p.yes_count);
+    const z0 = zk(), keep = Object.assign({}, D.cfg);
+    Object.assign(D.cfg, { cloudA: 60, ptSize: 150, zoneLbl: 130, bandH: 20, capPct: 1 }); D.render(true);
+    const z1 = new Set(zk());
+    Object.assign(D.cfg, keep); D.render(true);
+    if (z0.some(k => !z1.has(k)) || D.contract().violations.length) problems.push('K30: a drawing change changed a count');
+    // [K33] the NOW block speaks of the history in historical grammar
+    const nb = panel.querySelector('.p24-nowblk');
+    if (nb && /углуб[ия]тся|пойд[её]т|если да/.test(nb.innerText)) problems.push('K33: the NOW block speaks of today in forecast grammar');
   }
   info.checkedSlices = steps;
   return { problems, info };

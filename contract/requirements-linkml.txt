@@ -1,0 +1,6 @@
+# The LinkML environment of the machine contract (.venv-linkml): contract/tools/build.py and the LinkML parts of
+# tests/contract_sc11.py. The running tool needs none of it (lab/contract.py reads contract/build/ with the stdlib).
+linkml==1.11.1
+linkml-runtime==1.11.1
+PyYAML==6.0.3
+jsonschema==4.26.0

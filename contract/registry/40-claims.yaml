@@ -1,0 +1,1027 @@
+# DR-LAB-SC-1.1 registry · layer 8: the explicit claim forms (what may be said about each estimand, in which class and
+# words) and the fact forms (observed facts, no claim class, no percentage). The runtime computes which claim classes
+# the evidence admits and refuses to publish a form outside that set (lab/contract.py::admissible_claims).
+#
+# Labels are the exact words the page shows next to a number, per surface; placeholders {name} are filled with values
+# (a value may carry its own markup, such as the coloured event letter). The page renders only these labels
+# (design/sozvezdiya-24/src: L(), FX()) and tests/ui_check24.js compares the visible words with them. Forms marked
+# INHERITED_FROM_ACCEPTED_SCREEN keep the words of the screen the operator accepted; PROPOSED_BY_EXECUTOR marks the
+# words this work had to change because the contract requires it (K33: the NOW block in historical grammar).
+# There is no PredictiveAdmission, no PolicySpecification and no ActionAuthorityReference in this edition: no C2 and no
+# C3 claim is admissible anywhere (K28, K32, K33).
+registry_part: layer-8
+
+claim_forms:
+  # =================================================================== BASE-24 (C0: statements about the fixed family F)
+  - id: CF:B-RX-JOINT-R
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-JOINT-R
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "Окончательный R у {known} из {N} сессий семьи лежит в клетках таблицы цена × время; у {unknown} неизвестен, у {no_period} нет периода."
+    value_form: CATEGORY_SHARES
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["частота посещений", "шанс разворота сегодня", "где цена окажется сегодня"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-JOINT-X
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-JOINT-X
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "Окончательный X у {known} из {N} сессий семьи лежит в клетках таблицы цена × время; у {unknown} неизвестен, у {no_period} нет периода."
+    value_form: CATEGORY_SHARES
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["частота посещений", "шанс продолжения сегодня", "где цена окажется сегодня"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-BAND-R
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-BAND-R
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный R лежит в полосе {band} SD за весь свой горизонт; неизвестно у {unknown}."
+    labels: &L_BAND
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "{name} {ev} ({what}) в полосе {band} SD"}
+      - {surface: PANEL, view: ANY, key: area_row, text_ru: "{ev} в полосе за всю сессию"}
+      - {surface: INSPECTOR, view: ANY, key: area_tip, text_ru: "в полосе за всю сессию"}
+      - {surface: INSPECTOR, view: ANY, key: question, text_ru: "свой экстремум в этой полосе · {from} до {end}"}
+      - {surface: INSPECTOR, view: ANY, key: two_row, text_ru: "{ev} · {name}"}
+    value_form: POINT
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["сила уровня", "сколько раз заходили в полосу", "доля зоны или окна"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-BAND-X
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-BAND-X
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный X лежит в полосе {band} SD за весь свой горизонт; неизвестно у {unknown}."
+    labels: *L_BAND
+    value_form: POINT
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["сила уровня", "сколько раз заходили в полосу", "доля зоны или окна"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-WINDOW-R
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-WINDOW-R
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный R впервые достигнут в окне {window}."
+    labels: &L_WINDOW
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "{name} {ev} ({what}) в {window}"}
+      - {surface: PANEL, view: ANY, key: area_row, text_ru: "{ev} в выбранном окне"}
+      - {surface: INSPECTOR, view: ANY, key: area_tip, text_ru: "в выбранном окне"}
+      - {surface: INSPECTOR, view: ANY, key: question, text_ru: "в эти 15 минут свой экстремум поставили"}
+      - {surface: INSPECTOR, view: ANY, key: zone_question, text_ru: "в окне {window} свой экстремум поставили"}
+      - {surface: INSPECTOR, view: ANY, key: two_row, text_ru: "{ev} · {name}"}
+      - {surface: WINDOW, view: ANY, key: win_row, text_ru: "в окне"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["когда будет разворот сегодня", "время входа"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-WINDOW-X
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-WINDOW-X
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный X впервые достигнут в окне {window}."
+    labels: *L_WINDOW
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["когда будет продолжение сегодня", "время входа"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-REGION-R
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX", "K17"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-REGION-R
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный R лежит в полосе {band} SD и в окне {window} одновременно."
+    labels: &L_REGION
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "{name} {ev} ({what}) в полосе {band} SD в {window}"}
+      - {surface: PANEL, view: ANY, key: area_row, text_ru: "{ev} в выбранном окне"}
+      - {surface: INSPECTOR, view: ANY, key: area_tip, text_ru: "в выбранном окне"}
+      - {surface: INSPECTOR, view: ANY, key: mode_cell, text_ru: "{ev} чаще всего в {band} SD"}
+      - {surface: WINDOW, view: ANY, key: win_row, text_ru: "в окне"}
+    value_form: POINT
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["доля всей полосы", "кластер, найденный системой"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-REGION-X
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX", "K17"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-REGION-X
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный X лежит в полосе {band} SD и в окне {window} одновременно."
+    labels: *L_REGION
+    value_form: POINT
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["доля всей полосы", "кластер, найденный системой"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-KNOWN-R
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX", "E2"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-KNOWN-R
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный R определён (весь собственный горизонт наблюдён)."
+    labels: &L_KNOWN
+      - {surface: WINDOW, view: ANY, key: row, text_ru: "определено"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["остальные сессии без R", "неизвестные выбыли из семьи"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-KNOWN-X
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX", "E2"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-KNOWN-X
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный X определён (весь собственный горизонт наблюдён)."
+    labels: *L_KNOWN
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["остальные сессии без X", "неизвестные выбыли из семьи"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-UNDETERMINED-R
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX", "E2", "V2.1"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-UNDETERMINED-R
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный R не определён (нет свечи M5 на горизонте или нет периода); по цене и времени не рисуется."
+    labels: &L_UNDET
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "{name} {ev} не определено (нет свечи M5 на горизонте{or_none}); на графике не рисуется"}
+      - {surface: PASSPORT, view: ANY, key: or_none, text_ru: " или нет периода"}
+      - {surface: PANEL, view: ANY, key: row, text_ru: "{ev} не определено · нет свечи M5"}
+      - {surface: INSPECTOR, view: ANY, key: total, text_ru: "семьи — {name} {ev} не определено"}
+      - {surface: INSPECTOR, view: ANY, key: insp_unknown, text_ru: "нет свечи M5 на горизонте ({pct})"}
+      - {surface: INSPECTOR, view: ANY, key: insp_none, text_ru: "нет периода измерения ({pct})"}
+      - {surface: INSPECTOR, view: ANY, key: note, text_ru: "не рисуется ни по какой цене и времени"}
+      - {surface: WINDOW, view: ANY, key: win_unknown, text_ru: "неизвестно"}
+      - {surface: WINDOW, view: ANY, key: win_unknown_k, text_ru: "нет свечи M5 на горизонте"}
+      - {surface: WINDOW, view: ANY, key: win_none, text_ru: "нет периода"}
+      - {surface: WINDOW, view: ANY, key: zone_unknown, text_ru: "неизвестно у {pct}"}
+      - {surface: WINDOW, view: ANY, key: zone_none, text_ru: "нет периода у {pct}"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["ноль", "R не было", "сессия выбыла из семьи"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-UNDETERMINED-X
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX", "E2", "V2.1"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-UNDETERMINED-X
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный X не определён (нет свечи M5 на горизонте или нет периода); по цене и времени не рисуется."
+    labels: *L_UNDET
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["ноль", "X не было", "сессия выбыла из семьи"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-OUTFRAME-R
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-OUTFRAME-R
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный R лежит за краем кадра ({side})."
+    value_form: POINT
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["выброс", "невозможное сегодня"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-OUTFRAME-X
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-OUTFRAME-X
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный X лежит за краем кадра ({side})."
+    value_form: POINT
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["выброс", "невозможное сегодня"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RX-DIFF
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-RX", "K19"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RX-DIFF
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "В {region} свой X поставили {x_pct} семьи, свой R — {r_pct}; разница {diff} п.п. Это две отдельные доли одного N."
+    labels:
+      - {surface: INSPECTOR, view: ANY, key: more_X, text_ru: "X-время встречалось в этом окне чаще на {gap} п.п."}
+      - {surface: INSPECTOR, view: ANY, key: more_R, text_ru: "R-время встречалось в этом окне чаще на {gap} п.п."}
+      - {surface: INSPECTOR, view: ANY, key: close, text_ru: "R- и X-время близки"}
+      - {surface: INSPECTOR, view: ANY, key: k_parts, text_ru: "две отдельные доли N, не части одной сотни"}
+      - {surface: INSPECTOR, view: ANY, key: k_sum, text_ru: "две отдельные доли N, не складываются в 100 %"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["вероятнее откат или продолжение", "части одной сотни", "сумма — доля сессий с любым событием"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-ZONE-R
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-ZONE"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-ZONE-R
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий этой семьи известный окончательный R находится в зоне {label} (zone-map-3, точная маска); исход неизвестен у {unknown}."
+    labels: &L_ZONE
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "{name} {ev} в зоне {label} (её точная область в {band} SD × {window}, не весь прямоугольник)"}
+      - {surface: PANEL, view: ANY, key: sub, text_ru: "{band} SD · {status}"}
+      - {surface: PANEL, view: ANY, key: none, text_ru: "зон нет: ни одна область не набрала минимальной поддержки"}
+      - {surface: INSPECTOR, view: ANY, key: share, text_ru: "семьи в этой зоне"}
+      - {surface: WINDOW, view: ANY, key: row, text_ru: "доля семьи"}
+      - {surface: WINDOW, view: ANY, key: k, text_ru: "шаг доли {step}; неизвестно у {unknown}, нет периода у {none}; вне зон {residual}"}
+      - {surface: WINDOW, view: ANY, key: zone, text_ru: "зона"}
+      - {surface: WINDOW, view: ANY, key: area, text_ru: "область"}
+      - {surface: WINDOW, view: ANY, key: area_v, text_ru: "{n} клеток 0,1 SD × 15 мин"}
+      - {surface: WINDOW, view: ANY, key: area_k, text_ru: "рамка {band} SD × {window}; членство — сами клетки"}
+      - {surface: WINDOW, view: ANY, key: apex, text_ru: "вершина"}
+      - {surface: WINDOW, view: ANY, key: apex_v, text_ru: "клетка {band} SD × {window}"}
+    value_form: POINT
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["шанс попадания или разворота сегодня", "качество входа", "здесь разворачивается рынок", "площадь свечения — членство"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-ZONE-X
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-ZONE"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-ZONE-X
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий этой семьи известный окончательный X находится в зоне {label} (zone-map-3, точная маска); исход неизвестен у {unknown}."
+    labels: *L_ZONE
+    value_form: POINT
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["шанс попадания или продолжения сегодня", "качество входа", "цель", "площадь свечения — членство"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-ZONE-RESIDUAL-R
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-ZONE"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-ZONE-RESIDUAL-R
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный R известен и лежит вне всех зон (остаток распределения)."
+    labels: &L_ZRES
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "{name} {ev} вне зон (остаток распределения)"}
+      - {surface: PANEL, view: ANY, key: row, text_ru: "{ev} вне зон"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["шум", "невозможное"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-ZONE-RESIDUAL-X
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-ZONE"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-ZONE-RESIDUAL-X
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи окончательный X известен и лежит вне всех зон (остаток распределения)."
+    labels: *L_ZRES
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["шум", "невозможное"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-DR
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-DR"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-DR
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии семьи подтверждения (F, один N)"
+    statement_ru: "Из {N} сессий семьи подтверждения DR до конца блока удержался у {held}, сломан у {broken}, неизвестен у {unknown}, без периода у {no_period}."
+    labels:
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "DR {cat} ({what})"}
+      - {surface: PANEL, view: ANY, key: head, text_ru: "DR до {end}"}
+      - {surface: PANEL, view: ANY, key: head_r, text_ru: "доля всей семьи"}
+      - {surface: PANEL, view: ANY, key: held, text_ru: "удержался"}
+      - {surface: PANEL, view: ANY, key: broken, text_ru: "сломан"}
+      - {surface: PANEL, view: ANY, key: unknown, text_ru: "неизвестно"}
+      - {surface: PANEL, view: ANY, key: none, text_ru: "нет периода"}
+      - {surface: PASSPORT, view: ANY, key: what_held, text_ru: "ни одно закрытие M5 не ушло за свой противоположный DR до {end}"}
+      - {surface: PASSPORT, view: ANY, key: what_broken, text_ru: "закрытие M5 за своим противоположным DR (тень не считается; возврат не отменяет)"}
+      - {surface: PASSPORT, view: ANY, key: what_unknown, text_ru: "нет свечи M5 на горизонте и слома до неё не видно"}
+      - {surface: PASSPORT, view: ANY, key: what_none, text_ru: "после подтверждения до конца блока не было ни одной M5"}
+      - {surface: WINDOW, view: ANY, key: win_head, text_ru: "Исход DR"}
+      - {surface: WINDOW, view: ANY, key: win_cat, text_ru: "категория"}
+      - {surface: WINDOW, view: ANY, key: win_share, text_ru: "доля"}
+      - {surface: WINDOW, view: ANY, key: win_rule, text_ru: "правило"}
+      - {surface: WINDOW, view: ANY, key: win_rule_v, text_ru: "закрытие M5 строго за своим противоположным DR; тень и равенство не ломают; слом не отменяется возвратом"}
+      - {surface: WINDOW, view: ANY, key: win_horizon, text_ru: "горизонт"}
+    value_form: CATEGORY_SHARES
+    price_transfer: NONE
+    forbidden_readings_ru: ["стоп удержится", "выигрыш сделки", "вероятность удержания от сегодняшней цены"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-ORDER
+    version: "1.1"
+    sc_ref: ["C0", "P0.2", "K20", "K21"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-ORDER
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "Из {N} сессий семьи первый окончательный X раньше первого R у {X_BEFORE_R}, R раньше X у {R_BEFORE_X}, в одной M5 у {SAME_M5}, неизвестно у {UNKNOWN}, без периода у {NO_PERIOD}."
+    labels:
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "порядок первых R и X: {t}"}
+      - {surface: WINDOW, view: ANY, key: X_before_R, text_ru: "сначала максимум X, потом глубочайший R"}
+      - {surface: WINDOW, view: ANY, key: R_before_X, text_ru: "сначала глубочайший R, потом максимум X"}
+      - {surface: WINDOW, view: ANY, key: same_M5, text_ru: "в одной M5: порядок внутри свечи неизвестен"}
+      - {surface: WINDOW, view: ANY, key: unknown, text_ru: "неизвестно: событие не определено"}
+      - {surface: WINDOW, view: ANY, key: no_period, text_ru: "нет периода: после активации не было ни одной M5"}
+    value_form: CATEGORY_SHARES
+    price_transfer: NONE
+    forbidden_readings_ru: ["маршрут сделки", "порядок повторных достижений", "порядок внутри свечи по её цвету"]
+    acceptance: PROPOSED_BY_EXECUTOR
+    note: "the category «нет периода» added because SC-1.1 P0.2 / E2 keep NO_PERIOD apart from UNKNOWN; the other words are the accepted screen's"
+  - id: CF:B-CLOSE
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-CLOSE"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-CLOSE
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "На M5 {m5} у {yes} из {N} сессий семьи закрытие было в полосе {band} SD."
+    labels:
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "закрытие M5 в полосе {band} SD"}
+      - {surface: PASSPORT, view: ANY, key: horizon, text_ru: "на пятиминутке {m5}"}
+      - {surface: PANEL, view: ANY, key: row, text_ru: "закрылись в {band} SD"}
+      - {surface: WINDOW, view: ANY, key: col, text_ru: "колонка"}
+      - {surface: WINDOW, view: ANY, key: col_v, text_ru: "закрытия семьи на этой M5; своя сотня процентов"}
+      - {surface: CANVAS, view: ANY, key: profile_n, text_ru: "{n} из {N} · {pct}"}
+      - {surface: CANVAS, view: ANY, key: profile_t, text_ru: "{past}{window}"}
+      - {surface: CANVAS, view: ANY, key: profile_past, text_ru: "было "}
+      - {surface: CANVAS, view: ANY, key: legend_a, text_ru: "впереди: реже"}
+      - {surface: CANVAS, view: ANY, key: legend_b, text_ru: "чаще   ·   {min}…{max} из {N} на M5"}
+    value_form: POINT
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["путь одной сессии", "вероятность перехода от сегодняшней цены", "длительность пребывания"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-CLOSE-MISSING
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-CLOSE"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-CLOSE-MISSING
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "На M5 {m5} у {yes} из {N} сессий семьи нет свечи (неизвестно; календарь ранних закрытий не удостоверен)."
+    labels:
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "нет свечи на этой M5 (неизвестно / рынок закрыт)"}
+      - {surface: PANEL, view: ANY, key: row, text_ru: "нет свечи · неизвестно"}
+      - {surface: INSPECTOR, view: ANY, key: unk, text_ru: "семьи — нет свечи на M5 {m5} (неизвестно / рынок закрыт)"}
+      - {surface: INSPECTOR, view: ANY, key: col, text_ru: "нет свечи у {pct} семьи"}
+      - {surface: WINDOW, view: ANY, key: win_row, text_ru: "нет свечи"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["рынок точно закрыт", "ноль"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-CLOSE-PREACT
+    version: "1"
+    sc_ref: ["C0", "§12.1"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-CLOSE-PREACT
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "На M5 {m5} у {yes} из {N} сессий семьи своя активация ещё впереди (фаза пути, сессии остаются в N)."
+    labels:
+      - {surface: PANEL, view: ANY, key: note, text_ru: "из них ещё до своего {act}: {pct}"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["исключены из семьи"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-RANGE
+    version: "1"
+    sc_ref: ["C0", "P0.2"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-RANGE
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "На M5 {m5} свеча {yes} из {N} сессий семьи задевала полосу {band} SD диапазоном high–low."
+    labels:
+      - {surface: INSPECTOR, view: ANY, key: insp, text_ru: "свеча M5 задевала эту полосу у {pct} семьи (диапазон, не закрытие)"}
+      - {surface: WINDOW, view: ANY, key: win_row, text_ru: "задевали диапазоном"}
+      - {surface: WINDOW, view: ANY, key: win_k, text_ru: "поле диапазонов V: свеча M5 задевала полосу; не закрытие"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["закрытие в полосе", "время пребывания", "доли полос делят сотню"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-LEVEL-FULL
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-LEVEL"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-LEVEL-FULL
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи хотя бы одна M5 от собственной активации до конца блока дошла до уровня {level} или дальше {side}; неизвестно у {unknown}."
+    labels:
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "были на {name} ({sd} SD) или дальше {dir} (свеча M5 дошла до уровня или дальше)"}
+      - {surface: PANEL, view: ANY, key: row, text_ru: "дальше {dir} · вся сессия"}
+      - {surface: WINDOW, view: ANY, key: ladder_head, text_ru: "вся сессия"}
+    value_form: BOUNDS_IF_UNKNOWN
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["цель", "будет", "буквальное пересечение", "цель раньше стопа"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-LEVEL-REST
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-LEVEL"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-LEVEL-REST
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "На общих часах после {cut} у {yes} из {N} сессий семьи M5 дошла до уровня {level} или дальше {side}; неизвестно у {unknown}."
+    labels:
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "были на {name} ({sd} SD) или дальше {dir} (свеча M5 дошла до уровня или дальше)"}
+      - {surface: PASSPORT, view: ANY, key: horizon_none, text_ru: "остатка блока нет"}
+      - {surface: PANEL, view: ANY, key: row, text_ru: "дальше {dir} · после {t}"}
+      - {surface: PANEL, view: ANY, key: row_none, text_ru: "дальше {dir} · остатка нет"}
+      - {surface: WINDOW, view: ANY, key: win_row, text_ru: "после среза"}
+      - {surface: WINDOW, view: ANY, key: ladder_head, text_ru: "после {t}"}
+    value_form: BOUNDS_IF_UNKNOWN
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["цель", "будет", "шанс дойти сегодня"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-CROSS-FULL
+    version: "1"
+    sc_ref: ["C0", "P0.2", "K22"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-CROSS-FULL
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи была M5, пересекавшая уровень {level} (минимум ≤ уровня ≤ максимум); неизвестно у {unknown}."
+    labels:
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "пересекали {name} свечой M5 (минимум ≤ уровня ≤ максимум)"}
+      - {surface: WINDOW, view: ANY, key: win_row, text_ru: "пересекали свечой"}
+      - {surface: WINDOW, view: ANY, key: win_k, text_ru: "другое событие: минимум ≤ уровня ≤ максимум одной M5"}
+    value_form: BOUNDS_IF_UNKNOWN
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["на уровне или дальше (гэп за уровень — «дальше» без пересечения)"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-VISIT-FULL
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-VISIT"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-VISIT-FULL
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи хотя бы одна M5 задела полосу {band} SD за весь свой горизонт; неизвестно у {unknown}."
+    labels:
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "заходили в полосу {band} SD (свеча M5 задевала её)"}
+      - {surface: PANEL, view: ANY, key: row, text_ru: "заходили в полосу · вся сессия"}
+      - {surface: INSPECTOR, view: ANY, key: insp, text_ru: "заходили в полосу · вся сессия"}
+      - {surface: WINDOW, view: ANY, key: win_row, text_ru: "заходили"}
+      - {surface: WINDOW, view: ANY, key: win_full, text_ru: "вся сессия"}
+    value_form: BOUNDS_IF_UNKNOWN
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["окончательный R / X в полосе", "подтверждённый новый вход"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-VISIT-REST
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-VISIT"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-VISIT-REST
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "На общих часах после {cut} у {yes} из {N} сессий семьи M5 задела полосу {band} SD; неизвестно у {unknown}."
+    labels:
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "заходили в полосу {band} SD (свеча M5 задевала её)"}
+      - {surface: PANEL, view: ANY, key: row, text_ru: "заходили в полосу · после {t}"}
+      - {surface: PANEL, view: ANY, key: row_none, text_ru: "заходили в полосу · остатка нет"}
+      - {surface: INSPECTOR, view: ANY, key: insp, text_ru: "заходили · после {t}"}
+    value_form: BOUNDS_IF_UNKNOWN
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["окончательный R / X в полосе", "шанс зайти сегодня"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-CLOCK-R
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-CLOCK"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-CLOCK-R
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "Из окончательных R семьи в {region} у {yes} из {N} сессий M5 события закрылась {part} {cut} по часам; обе части — доли того же N."
+    labels: &L_CLOCK
+      - {surface: INSPECTOR, view: ANY, key: later, text_ru: "у семьи позже {t}"}
+      - {surface: INSPECTOR, view: ANY, key: earlier, text_ru: "у семьи раньше {t}"}
+      - {surface: INSPECTOR, view: ANY, key: title, text_ru: "История похожих сессий по часам дня, не сегодняшний путь цены"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["шанс на сегодня", "удаление «отработанных» дней", "сегодняшний экстремум окончательный"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-CLOCK-X
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-CLOCK"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-CLOCK-X
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "Из окончательных X семьи в {region} у {yes} из {N} сессий M5 события закрылась {part} {cut} по часам; обе части — доли того же N."
+    labels: *L_CLOCK
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["шанс на сегодня", "удаление «отработанных» дней", "сегодняшний экстремум окончательный"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-CLOCK-PEAK-R
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-CLOCK"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-CLOCK-PEAK-R
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "Пиковые 15 минут {region}: {window}, у {yes} из {N} сессий семьи там окончательный R ({past})."
+    labels: &L_PEAK
+      - {surface: INSPECTOR, view: ANY, key: band_ahead, text_ru: "у семьи впереди · пик {ev} в полосе: {window} · {pct} семьи"}
+      - {surface: INSPECTOR, view: ANY, key: band_past, text_ru: "уже прошло · пик {ev} в полосе: {window} · {pct} семьи"}
+      - {surface: INSPECTOR, view: ANY, key: zone_ahead, text_ru: "у семьи впереди · пиковые 15 минут {window} · {pct} семьи"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["время разворота сегодня"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:B-CLOCK-PEAK-X
+    version: "1"
+    sc_ref: ["C0", "§12.4/B-CLOCK"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:B-CLOCK-PEAK-X
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "Пиковые 15 минут {region}: {window}, у {yes} из {N} сессий семьи там окончательный X ({past})."
+    labels: *L_PEAK
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["время продолжения сегодня"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:ZD-GRID-R
+    version: "1"
+    sc_ref: ["C0", "P3", "V3"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:ZD-GRID-R
+    claim_class: DescriptiveClaim
+    subject_ru: "зона этой семьи (zone-map-3)"
+    statement_ru: "Зона {label}: на сдвинутых сетках Жаккар множеств сессий {value} (1 — та же зона)."
+    labels: &L_ZDGRID
+      - {surface: WINDOW, view: ANY, key: row, text_ru: "сдвиг сетки"}
+      - {surface: WINDOW, view: ANY, key: text, text_ru: "те же сессии на 0,05 SD — {g1}, на 5 мин — {g2}, на 10 мин — {g3}"}
+      - {surface: WINDOW, view: ANY, key: k, text_ru: "Жаккар множеств сессий; 1 — та же зона"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["разрешение зоне существовать", "шанс на сегодня", "торговое преимущество"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:ZD-GRID-X
+    version: "1"
+    sc_ref: ["C0", "P3", "V3"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:ZD-GRID-X
+    claim_class: DescriptiveClaim
+    subject_ru: "зона этой семьи (zone-map-3)"
+    statement_ru: "Зона {label}: на сдвинутых сетках Жаккар множеств сессий {value} (1 — та же зона)."
+    labels: *L_ZDGRID
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["разрешение зоне существовать", "шанс на сегодня", "торговое преимущество"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:ZD-BOOT-R
+    version: "1"
+    sc_ref: ["C0", "P3", "V3"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:ZD-BOOT-R
+    claim_class: DescriptiveClaim
+    subject_ru: "зона этой семьи (zone-map-3)"
+    statement_ru: "Зона {label}: при пересэмплировании сессий средний Жаккар {value}, не меньше 0,5 — в {share} повторов."
+    labels: &L_ZDBOOT
+      - {surface: WINDOW, view: ANY, key: row, text_ru: "пересэмплирование"}
+      - {surface: WINDOW, view: ANY, key: text, text_ru: "в среднем {mean}, не меньше 0,5 — в {share} из {of} повторов"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["разрешение зоне существовать", "шанс на сегодня"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:ZD-BOOT-X
+    version: "1"
+    sc_ref: ["C0", "P3", "V3"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:ZD-BOOT-X
+    claim_class: DescriptiveClaim
+    subject_ru: "зона этой семьи (zone-map-3)"
+    statement_ru: "Зона {label}: при пересэмплировании сессий средний Жаккар {value}, не меньше 0,5 — в {share} повторов."
+    labels: *L_ZDBOOT
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["разрешение зоне существовать", "шанс на сегодня"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:ZD-NULL-R
+    version: "1"
+    sc_ref: ["C0", "P3", "V3"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:ZD-NULL-R
+    claim_class: DescriptiveClaim
+    subject_ru: "зона этой семьи (zone-map-3)"
+    statement_ru: "Зона {label}: в отложенной половине семьи реальные события в области {p_real}, у копий без направления {p_null}, избыток {excess}."
+    labels: &L_ZDNULL
+      - {surface: WINDOW, view: ANY, key: row, text_ru: "путь без направления"}
+      - {surface: WINDOW, view: ANY, key: text, text_ru: "реальные {p_real}, без направления {p_null} · избыток {excess} п.п."}
+      - {surface: WINDOW, view: ANY, key: k, text_ru: "различим с {mde} п.п."}
+      - {surface: WINDOW, view: ANY, key: na, text_ru: "не считается: {reason}"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["разрешение зоне существовать", "торговое преимущество"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:ZD-NULL-X
+    version: "1"
+    sc_ref: ["C0", "P3", "V3"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:ZD-NULL-X
+    claim_class: DescriptiveClaim
+    subject_ru: "зона этой семьи (zone-map-3)"
+    statement_ru: "Зона {label}: в отложенной половине семьи реальные события в области {p_real}, у копий без направления {p_null}, избыток {excess}."
+    labels: *L_ZDNULL
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["разрешение зоне существовать", "торговое преимущество"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: CF:ZM3-STUDY
+    version: "1"
+    sc_ref: ["C1", "V3"]
+    grounds: RESEARCH_RESULT
+    estimand: EST:ZM3-STUDY
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "зоны целей исследования 2018–2025"
+    condition_ru: "статус зоны через 30 / 60 / 120 минут после подтверждения (ретроспективное исследование на виденном корпусе)"
+    statement_ru: "Исследование 2018–2025 (разведка, не шанс на сегодня): «держится» сбывалась в {holds} %, «возможна» — в {possible} %, «невозможна» — ни разу."
+    labels:
+      - {surface: WINDOW, view: ANY, key: row, text_ru: "исследование"}
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["шанс на сегодня", "проспективная приёмка", "калибровка"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  # =================================================================== NOW-1.0 (C1: a subgroup selected at the common clock cut)
+  - id: CF:N-NEW-R
+    version: "1.1"
+    sc_ref: ["C1", "§12.4/N-NEW", "K33"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:N-NEW-R
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "исторические сессии семьи, допустимые (или сопоставленные) к этому же часовому срезу"
+    condition_ru: "к общему часовому срезу t: собственная активация, полный префикс, в исходной семье — DR ещё цел (B0); для M1–M3 — ещё и названное правило сравнения"
+    statement_ru: "После среза {cut} новый, более глубокий R наблюдался у {pct} допустимых исторических случаев этой семьи ({yes} из {D}; неизвестно у {unknown}). Это описание истории, не прогноз сегодняшнего дня."
+    labels:
+      - {surface: PANEL, view: CONF, key: row, text_ru: "В истории: {ev} позже углублялся"}
+      - {surface: PANEL, view: BRK, key: row, text_ru: "В истории: {ev} против слома позже углублялся"}
+      - {surface: PANEL, view: ANY, key: title, text_ru: "Доля сопоставимых сессий этой семьи, у которых после {cut} был более глубокий R (повтор того же уровня не считается). Не вероятность сделки."}
+      - {surface: PANEL, view: ANY, key: support_b0, text_ru: "опора {n} из {N}"}
+      - {surface: PANEL, view: ANY, key: support_path, text_ru: "похожих {m} из {n} · {matcher}"}
+    value_form: POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN
+    price_transfer: NONE
+    forbidden_readings_ru: ["вероятность того, что сегодня откат углубится", "разворот", "вход или сделка", "новая семья вместо N_base"]
+    acceptance: ACCEPTED_BY_OPERATOR
+    note: "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…»"
+  - id: CF:N-NEW-X
+    version: "1.1"
+    sc_ref: ["C1", "§12.4/N-NEW", "K33"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:N-NEW-X
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "исторические сессии семьи, допустимые (или сопоставленные) к этому же часовому срезу"
+    condition_ru: "к общему часовому срезу t: собственная активация, полный префикс, в исходной семье — DR ещё цел (B0); для M1–M3 — ещё и названное правило сравнения"
+    statement_ru: "После среза {cut} новый, более дальний X наблюдался у {pct} допустимых исторических случаев этой семьи ({yes} из {D}; неизвестно у {unknown}). Это описание истории, не прогноз сегодняшнего дня."
+    labels:
+      - {surface: PANEL, view: CONF, key: row, text_ru: "В истории: {ev} позже шёл дальше"}
+      - {surface: PANEL, view: BRK, key: row, text_ru: "В истории: {ev} по слому позже шёл дальше"}
+      - {surface: PANEL, view: ANY, key: title, text_ru: "Доля сопоставимых сессий этой семьи, у которых после {cut} был более дальний X (повтор того же уровня не считается). Не вероятность сделки."}
+      - {surface: PANEL, view: ANY, key: support_b0, text_ru: "опора {n} из {N}"}
+      - {surface: PANEL, view: ANY, key: support_path, text_ru: "похожих {m} из {n} · {matcher}"}
+    value_form: POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN
+    price_transfer: NONE
+    forbidden_readings_ru: ["вероятность того, что сегодня продолжение пойдёт дальше", "цель", "вход или сделка", "новая семья вместо N_base"]
+    acceptance: ACCEPTED_BY_OPERATOR
+    note: "K33: the screen said «продолжение пойдёт дальше»; the operator's words of 2026-10-07, symmetric to R"
+  - id: CF:N-NO-NEW-R
+    version: "1.1"
+    sc_ref: ["C1", "§12.4/N-NEW"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:N-NO-NEW-R
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "исторические сессии семьи, допустимые (или сопоставленные) к этому же часовому срезу"
+    condition_ru: "как у N-NEW; доля среди известных исходов"
+    statement_ru: "Среди известных исходов этого набора нового R после {cut} не было у {pct}."
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["откат закончился сегодня", "разворот распознан"]
+    acceptance: PROPOSED_BY_EXECUTOR
+  - id: CF:N-NO-NEW-X
+    version: "1.1"
+    sc_ref: ["C1", "§12.4/N-NEW"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:N-NO-NEW-X
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "исторические сессии семьи, допустимые (или сопоставленные) к этому же часовому срезу"
+    condition_ru: "как у N-NEW; доля среди известных исходов"
+    statement_ru: "Среди известных исходов этого набора нового X после {cut} не было у {pct}."
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["продолжение закончилось сегодня", "разворот распознан"]
+    acceptance: PROPOSED_BY_EXECUTOR
+  - id: CF:N-DELTA-Q-R
+    version: "1.1"
+    sc_ref: ["C1", "§12.4/N-DELTA"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:N-DELTA-Q-R
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "исторические сессии семьи с известной окончательной добавкой"
+    condition_ru: "известна окончательная добавка (весь горизонт после активации наблюдён); нули — без нового экстремума"
+    statement_ru: "У {n} известных случаев набора добавочный откат после {cut}: медиана {q50} SD, квартили {q25}…{q75} (нули включены); неизвестно у {unknown}."
+    value_form: QUANTILES
+    price_transfer: M0_TODAY_EXTREME
+    forbidden_readings_ru: ["абсолютные конечные точки базовой семьи", "расстояние от закрытия", "цель сегодня"]
+    acceptance: PROPOSED_BY_EXECUTOR
+  - id: CF:N-DELTA-Q-X
+    version: "1.1"
+    sc_ref: ["C1", "§12.4/N-DELTA"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:N-DELTA-Q-X
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "исторические сессии семьи с известной окончательной добавкой"
+    condition_ru: "известна окончательная добавка (весь горизонт после активации наблюдён); нули — без нового экстремума"
+    statement_ru: "У {n} известных случаев набора добавочное продолжение после {cut}: медиана {q50} SD, квартили {q25}…{q75} (нули включены); неизвестно у {unknown}."
+    value_form: QUANTILES
+    price_transfer: M0_TODAY_EXTREME
+    forbidden_readings_ru: ["абсолютные конечные точки базовой семьи", "расстояние от закрытия", "цель сегодня"]
+    acceptance: PROPOSED_BY_EXECUTOR
+  - id: CF:N-DELTA-GE-R
+    version: "1.1"
+    sc_ref: ["C1", "§12.4/N-DELTA"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:N-DELTA-GE-R
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "исторические сессии семьи с известной окончательной добавкой"
+    condition_ru: "известна окончательная добавка (весь горизонт после активации наблюдён)"
+    statement_ru: "Добавочный откат не меньше {threshold} SD был у {pct} известных случаев набора."
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["шанс, что сегодня откат углубится на столько"]
+    acceptance: PROPOSED_BY_EXECUTOR
+  - id: CF:N-DELTA-GE-X
+    version: "1.1"
+    sc_ref: ["C1", "§12.4/N-DELTA"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:N-DELTA-GE-X
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "исторические сессии семьи с известной окончательной добавкой"
+    condition_ru: "известна окончательная добавка (весь горизонт после активации наблюдён)"
+    statement_ru: "Добавочное продолжение не меньше {threshold} SD было у {pct} известных случаев набора."
+    value_form: POINT
+    price_transfer: NONE
+    forbidden_readings_ru: ["шанс, что сегодня продолжение пройдёт столько"]
+    acceptance: PROPOSED_BY_EXECUTOR
+  - id: CF:N-IF-NEW-R
+    version: "1.1"
+    sc_ref: ["C1", "§12.4/N-IF-NEW", "K33"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:N-IF-NEW-R
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "исторические сессии семьи, у которых после среза откат углублялся"
+    condition_ru: "среди допустимых к срезу — те, у кого после среза был новый R и его величина известна («если новый случился»)"
+    statement_ru: "У тех {n} исторических случаев, у которых после {cut} откат углублялся, он уходил ещё на {q50} SD (медиана; квартили {q25}…{q75}); от сегодняшнего экстремума это {p50} ({p25}…{p75}). Неизвестна величина у {unknown}."
+    labels:
+      - {surface: PANEL, view: ANY, key: sub, text_ru: "Если углублялся: до {p50} · {p25}…{p75}"}
+    value_form: QUANTILES
+    price_transfer: M0_TODAY_EXTREME
+    forbidden_readings_ru: ["сегодняшняя цель", "средний остаток всех сопоставимых", "откат дойдёт сюда"]
+    acceptance: ACCEPTED_BY_OPERATOR
+    note: "K33 / §12.4: the screen said «если да: до …» (a conditional about today); the condition is now the historical subgroup's, and the price is the transfer of its additional movement from today's own extreme (M0)"
+  - id: CF:N-IF-NEW-X
+    version: "1.1"
+    sc_ref: ["C1", "§12.4/N-IF-NEW", "K33"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:N-IF-NEW-X
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "исторические сессии семьи, у которых после среза продолжение шло дальше"
+    condition_ru: "среди допустимых к срезу — те, у кого после среза был новый X и его величина известна"
+    statement_ru: "У тех {n} исторических случаев, у которых после {cut} продолжение шло дальше, оно уходило ещё на {q50} SD (медиана; квартили {q25}…{q75}); от сегодняшнего экстремума это {p50} ({p25}…{p75}). Неизвестна величина у {unknown}."
+    labels:
+      - {surface: PANEL, view: ANY, key: sub, text_ru: "Если шёл дальше: до {p50} · {p25}…{p75}"}
+    value_form: QUANTILES
+    price_transfer: M0_TODAY_EXTREME
+    forbidden_readings_ru: ["сегодняшняя цель", "средний остаток всех сопоставимых", "продолжение дойдёт сюда"]
+    acceptance: ACCEPTED_BY_OPERATOR
+    note: "K33: as CF:N-IF-NEW-R"
+  - id: CF:N-TIME-R
+    version: "1.1"
+    sc_ref: ["C1", "§12.4/N-TIME"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:N-TIME-R
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "исторические сессии семьи, у которых после среза был новый R"
+    condition_ru: "среди допустимых к срезу — те, у кого после среза был новый R и его первая M5 известна"
+    statement_ru: "У {n} исторических случаев с новым R первая его M5 была через {q50_min} мин после {cut} (медиана; квартили {q25_min}…{q75_min}); у случаев с новым экстремумом первое время неизвестно у {unknown}; нового не было у {no_event}; исход неизвестен у {exist_unknown}."
+    labels: &L_NTIME
+      - {surface: PANEL, view: ANY, key: sub, text_ru: " · ~{min} мин"}
+    value_form: QUANTILES
+    price_transfer: NONE
+    forbidden_readings_ru: ["обещание нового экстремума", "время входа"]
+    acceptance: PROPOSED_BY_EXECUTOR
+  - id: CF:N-TIME-X
+    version: "1.1"
+    sc_ref: ["C1", "§12.4/N-TIME"]
+    grounds: CONTRACT_FORMALISATION
+    estimand: EST:N-TIME-X
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "исторические сессии семьи, у которых после среза был новый X"
+    condition_ru: "среди допустимых к срезу — те, у кого после среза был новый X и его первая M5 известна"
+    statement_ru: "У {n} исторических случаев с новым X первая его M5 была через {q50_min} мин после {cut} (медиана; квартили {q25_min}…{q75_min}); у случаев с новым экстремумом первое время неизвестно у {unknown}; нового не было у {no_event}; исход неизвестен у {exist_unknown}."
+    labels: *L_NTIME
+    value_form: QUANTILES
+    price_transfer: NONE
+    forbidden_readings_ru: ["обещание нового экстремума", "время входа"]
+    acceptance: PROPOSED_BY_EXECUTOR
+
+fact_forms:
+  - id: FF:TODAY-Z
+    version: "1"
+    sc_ref: ["§12.4/TODAY-Z", "E3"]
+    grounds: DR_LAB_DECISION
+    record_class: ReachabilityAssessment
+    statement_ru: "Сегодняшний окончательный {ev} в зоне {label}: {status} — по сегодняшнему экстремуму после активации и оставшимся M5; не процент и не вероятность."
+    labels:
+      - {surface: PANEL, view: ANY, key: HOLDS, text_ru: "держится"}
+      - {surface: PANEL, view: ANY, key: POSSIBLE, text_ru: "возможна"}
+      - {surface: PANEL, view: ANY, key: IMPOSSIBLE, text_ru: "невозможна"}
+      - {surface: PANEL, view: ANY, key: STATUS_UNKNOWN, text_ru: "неизвестно: нет свечи M5"}
+      - {surface: WINDOW, view: ANY, key: row, text_ru: "сегодня"}
+      - {surface: WINDOW, view: ANY, key: k, text_ru: "по сегодняшнему экстремуму после {act} и времени; не вероятность"}
+      - {surface: INSPECTOR, view: ANY, key: band_dead, text_ru: "сегодня {ev} здесь уже невозможен: {why}"}
+      - {surface: INSPECTOR, view: ANY, key: why_R, text_ru: "сегодняшний откат уже глубже"}
+      - {surface: INSPECTOR, view: ANY, key: why_X, text_ru: "сегодняшнее продолжение уже дальше"}
+      - {surface: INSPECTOR, view: ANY, key: win_open, text_ru: "окно зоны {window} · действует ещё {left} мин"}
+      - {surface: INSPECTOR, view: ANY, key: win_ahead, text_ru: "окно зоны {window} · ещё не началось"}
+      - {surface: INSPECTOR, view: ANY, key: win, text_ru: "окно зоны {window}"}
+      - {surface: INSPECTOR, view: ANY, key: win_holds, text_ru: "окно зоны {window}{passed} · сегодняшний {ev} сейчас в этой зоне"}
+      - {surface: INSPECTOR, view: ANY, key: passed, text_ru: " прошло"}
+      - {surface: INSPECTOR, view: ANY, key: win_over, text_ru: "окно зоны {window} закончилось"}
+      - {surface: INSPECTOR, view: ANY, key: win_dead, text_ru: "окно зоны {window} · сегодня зона уже невозможна"}
+    forbidden_readings_ru: ["HOLDS — гарантия финала", "IMPOSSIBLE — цена сюда не придёт", "отсутствие исторических точек — логическая невозможность"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: FF:HISTORY-CLOCK
+    version: "1"
+    sc_ref: ["E4", "K25"]
+    grounds: DR_LAB_DECISION
+    record_class: HistoryClockAssessment
+    statement_ru: "У этой базовой семьи события зоны {label} по часам: {status} относительно {cut}; это не делает зону логически невозможной сегодня."
+    labels:
+      - {surface: INSPECTOR, view: ANY, key: empty, text_ru: "у этой базовой семьи все события зоны по часам уже были раньше; это не делает зону логически невозможной сегодня"}
+    forbidden_readings_ru: ["FUTURE_EMPTY — невозможна сегодня", "нормировать «позже» как новый прогноз"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: FF:TODAY-PREFIX
+    version: "1"
+    sc_ref: ["E1", "§10"]
+    grounds: DR_LAB_DECISION
+    record_class: PrefixState
+    statement_ru: "Сегодня пока (закрытые M5 после активации до {cut}): самая глубокая точка {r_seen} SD в {r_time}, самая дальняя {x_seen} SD в {x_time}; не окончательные значения."
+    labels:
+      - {surface: PANEL, view: CONF, key: line, text_ru: "сегодня пока: глубже всего {r} SD в {rt} · дальше всего {x} SD в {xt}"}
+      - {surface: PANEL, view: BRK, key: line, text_ru: "сегодня пока: против слома {r} SD в {rt} · по слому {x} SD в {xt}"}
+      - {surface: PANEL, view: ANY, key: title, text_ru: "Наблюдённые закрытые свечи сегодняшнего дня после {act} до среза; не окончательные значения"}
+    forbidden_readings_ru: ["окончательный R до конца блока", "процент"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: FF:TODAY-LEVEL
+    version: "1"
+    sc_ref: ["E1", "§10"]
+    grounds: DR_LAB_DECISION
+    record_class: PrefixState
+    statement_ru: "Сегодня: закрытая M5 {time} дошла до уровня (или не доходила после активации); было ли за уровнем в момент активации — отдельно."
+    labels:
+      - {surface: PANEL, view: ANY, key: level, text_ru: "сегодня: {at_act}{fact}"}
+      - {surface: PANEL, view: ANY, key: level_at_act, text_ru: "уже за уровнем в момент {act}; "}
+      - {surface: PANEL, view: ANY, key: level_hit, text_ru: "закрытая M5 {window} дошла до уровня"}
+      - {surface: PANEL, view: ANY, key: level_miss, text_ru: "закрытые M5 после {t} до уровня не доходили"}
+      - {surface: PANEL, view: ANY, key: area, text_ru: "сегодня: {at_act}{fact}"}
+      - {surface: PANEL, view: ANY, key: area_at_act, text_ru: "закрытие {act} было в полосе; "}
+      - {surface: PANEL, view: ANY, key: area_hit, text_ru: "закрытая M5 {window} заходила в полосу"}
+      - {surface: PANEL, view: ANY, key: area_miss, text_ru: "закрытые M5 после {t} в полосу не заходили"}
+      - {surface: PANEL, view: ANY, key: column, text_ru: "сегодня на этой M5: закрытие {sd} SD · {price}"}
+      - {surface: INSPECTOR, view: ANY, key: taken, text_ru: " · взят в {t}"}
+    forbidden_readings_ru: ["процент", "уровень будет взят"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: FF:SHARE-STEP
+    version: "1"
+    sc_ref: ["H2", "V1", "§12.3"]
+    grounds: DR_LAB_DECISION
+    record_class: CaseSetSnapshot
+    statement_ru: "Все проценты — доли всей семьи одного N; шаг доли 100 / N = {step}."
+    labels:
+      - {surface: INSPECTOR, view: ANY, key: foot, text_ru: "доля всей семьи · {from} до {end} · шаг доли {step}"}
+      - {surface: INSPECTOR, view: ANY, key: foot_time, text_ru: " · время — открытие первой M5, где достигнута цена"}
+      - {surface: INSPECTOR, view: ANY, key: foot_zone, text_ru: " · не шанс на сегодня"}
+      - {surface: INSPECTOR, view: ANY, key: foot_fixed, text_ru: " · зафиксирован при {event} {t}"}
+      - {surface: PANEL, view: ANY, key: head_title, text_ru: "Слепок зафиксирован при {event} {t} и за день не меняется. Все проценты — доли всей семьи, шаг доли {step}. История {history}, только дни раньше {cutoff}. Слепок {snapshot} · семья {family} · {semantics}."}
+      - {surface: WINDOW, view: ANY, key: step, text_ru: "шаг доли"}
+      - {surface: WINDOW, view: ANY, key: denominator, text_ru: "знаменатель"}
+      - {surface: WINDOW, view: ANY, key: denominator_v, text_ru: "вся семья, шаг доли {step}"}
+    forbidden_readings_ru: ["шаг доли — вероятность одного дня"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: FF:PASSPORT-VIEW
+    version: "1"
+    sc_ref: ["§12.3"]
+    grounds: DR_LAB_DECISION
+    record_class: StatisticalResultBundle
+    statement_ru: "Паспорт числа: событие, горизонт, область, доля, неизвестное, знаменатель."
+    labels:
+      - {surface: WINDOW, view: ANY, key: win_event, text_ru: "событие"}
+      - {surface: WINDOW, view: ANY, key: win_horizon, text_ru: "горизонт"}
+      - {surface: WINDOW, view: ANY, key: win_price, text_ru: "цена"}
+      - {surface: WINDOW, view: ANY, key: win_level, text_ru: "уровень"}
+      - {surface: WINDOW, view: ANY, key: win_level_k, text_ru: "точно u = {u} ширины IDR от края"}
+      - {surface: WINDOW, view: ANY, key: win_time, text_ru: "время"}
+      - {surface: WINDOW, view: ANY, key: win_share, text_ru: "доля"}
+      - {surface: WINDOW, view: ANY, key: win_unknown, text_ru: "неизвестно"}
+      - {surface: WINDOW, view: ANY, key: win_bound, text_ru: "граница: до {pct}"}
+      - {surface: INSPECTOR, view: ANY, key: sentence, text_ru: "семьи — {phrase} · {horizon}"}
+      - {surface: PASSPORT, view: ANY, key: horizon, text_ru: "{from} до {end}"}
+      - {surface: PASSPORT, view: ANY, key: horizon_after, text_ru: "после {t} до {end}"}
+      - {surface: PASSPORT, view: ANY, key: horizon_none, text_ru: "остатка блока нет"}
+      - {surface: PASSPORT, view: CONF, key: from, text_ru: "от своего подтверждения"}
+      - {surface: PASSPORT, view: BRK, key: from, text_ru: "от своего слома"}
+      - {surface: PASSPORT, view: CONF, key: name_R, text_ru: "Откат"}
+      - {surface: PASSPORT, view: BRK, key: name_R, text_ru: "Откат против слома"}
+      - {surface: PASSPORT, view: CONF, key: name_X, text_ru: "Продолжение"}
+      - {surface: PASSPORT, view: BRK, key: name_X, text_ru: "Продолжение слома"}
+      - {surface: PASSPORT, view: CONF, key: what_R, text_ru: "самая глубокая точка против подтверждения"}
+      - {surface: PASSPORT, view: BRK, key: what_R, text_ru: "самая глубокая точка против слома"}
+      - {surface: PASSPORT, view: CONF, key: what_X, text_ru: "самая дальняя точка по подтверждению"}
+      - {surface: PASSPORT, view: BRK, key: what_X, text_ru: "самая дальняя точка по слому"}
+      - {surface: PASSPORT, view: CONF, key: act, text_ru: "подтверждение"}
+      - {surface: PASSPORT, view: BRK, key: act, text_ru: "слом"}
+      - {surface: PASSPORT, view: CONF, key: act_gen, text_ru: "подтверждения"}
+      - {surface: PASSPORT, view: BRK, key: act_gen, text_ru: "слома"}
+      - {surface: PASSPORT, view: CONF, key: dir_up, text_ru: "по подтверждению"}
+      - {surface: PASSPORT, view: BRK, key: dir_up, text_ru: "по слому"}
+      - {surface: PASSPORT, view: CONF, key: dir_down, text_ru: "против подтверждения"}
+      - {surface: PASSPORT, view: BRK, key: dir_down, text_ru: "против слома"}
+      - {surface: PASSPORT, view: CONF, key: at_act, text_ru: "подтверждении"}
+      - {surface: PASSPORT, view: BRK, key: at_act, text_ru: "сломе"}
+      - {surface: PASSPORT, view: CONF, key: at_act_dr, text_ru: "подтверждении"}
+      - {surface: PASSPORT, view: BRK, key: at_act_dr, text_ru: "сломе DR"}
+      - {surface: PANEL, view: ANY, key: title_unknown, text_ru: " · неизвестно у {pct} семьи"}
+    forbidden_readings_ru: ["число без паспорта"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: FF:MEMBER
+    version: "1"
+    sc_ref: ["P1", "H0"]
+    grounds: DR_LAB_DECISION
+    record_class: OutcomeRecord
+    statement_ru: "Сессия семьи {date}: свой R {r}, свой X {x}, порядок первых {order}, исход DR {dr}, активация {act}."
+    labels:
+      - {surface: INSPECTOR, view: ANY, key: head, text_ru: "Сессия семьи · {date}"}
+      - {surface: INSPECTOR, view: ANY, key: same, text_ru: "и ещё {n} в этой точке"}
+      - {surface: INSPECTOR, view: ANY, key: ties, text_ru: "(та же цена ещё {n} раз)"}
+      - {surface: INSPECTOR, view: ANY, key: unknown, text_ru: "неизвестно"}
+      - {surface: INSPECTOR, view: ANY, key: dr_broken, text_ru: "DR сломан {t}"}
+      - {surface: INSPECTOR, view: ANY, key: dr_broken_unknown_t, text_ru: "(время первого слома неизвестно)"}
+      - {surface: INSPECTOR, view: ANY, key: dr_held, text_ru: "DR удержался до {end}"}
+      - {surface: INSPECTOR, view: ANY, key: dr_unknown, text_ru: "исход DR неизвестен"}
+      - {surface: INSPECTOR, view: ANY, key: foot, text_ru: "{act} {t} · события {from} до {end}"}
+      - {surface: INSPECTOR, view: ANY, key: order_unknown, text_ru: "порядок неизвестен: событие не определено"}
+      - {surface: INSPECTOR, view: ANY, key: order_no_period, text_ru: "порядок не определён: нет периода"}
+      - {surface: INSPECTOR, view: ANY, key: order_same, text_ru: "R и X в одной M5: порядок внутри свечи неизвестен"}
+      - {surface: INSPECTOR, view: ANY, key: order_r_all, text_ru: "первая глубочайшая точка была раньше первого максимума расширения"}
+      - {surface: INSPECTOR, view: ANY, key: order_r, text_ru: "первая глубочайшая точка была раньше первого максимума; глубочайшая цена повторялась и позже"}
+      - {surface: INSPECTOR, view: ANY, key: order_x_all, text_ru: "максимум расширения был раньше глубочайшей точки и после неё не повторялся"}
+      - {surface: INSPECTOR, view: ANY, key: order_x, text_ru: "первый максимум расширения был раньше глубочайшей точки; он повторялся и позже"}
+      - {surface: PANEL, view: ANY, key: panel_head, text_ru: "Сессия семьи"}
+      - {surface: PANEL, view: ANY, key: panel_dr_broken, text_ru: "DR сломан {t}"}
+      - {surface: PANEL, view: ANY, key: panel_act, text_ru: "{act} {t}"}
+      - {surface: WINDOW, view: ANY, key: win_broken, text_ru: "сломан {t}"}
+      - {surface: WINDOW, view: ANY, key: win_held, text_ru: "удержался до {end}"}
+      - {surface: WINDOW, view: ANY, key: win_dr_unknown, text_ru: "неизвестно"}
+      - {surface: WINDOW, view: ANY, key: win_order, text_ru: "порядок"}
+      - {surface: WINDOW, view: ANY, key: win_missing, text_ru: "нет свечей"}
+      - {surface: WINDOW, view: ANY, key: win_missing_v, text_ru: "{n} M5 на горизонте"}
+      - {surface: WINDOW, view: ANY, key: win_same_price, text_ru: " · та же цена ещё {times}"}
+    forbidden_readings_ru: ["маршрут сделки между R и X", "порядок внутри одной M5 по цвету свечи"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: FF:SESSION
+    version: "1"
+    sc_ref: ["S1", "S2"]
+    grounds: DR_LAB_DECISION
+    record_class: StrategySessionRecord
+    statement_ru: "{block} {date}: DR {dr_low}–{dr_high}, IDR {idr_low}–{idr_high}; {activation} на закрытии {time}."
+    forbidden_readings_ru: ["сигнал входа"]
+    acceptance: INHERITED_FROM_ACCEPTED_SCREEN

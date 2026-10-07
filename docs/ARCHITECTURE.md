@@ -71,6 +71,24 @@ Tick sizes: NQ, ES 0.25; YM 1. History bars carry the **close** minute of each M
 | `GET /api/d24/day?instrument=NQ[&date=YYYY-MM-DD][&refresh=1]` | design 24: the live day (as `/api/day`, `source: live`; `refresh=1` fetches from TradingView first) or a trading date of 2006–2025 from the session base (`source: history`: its three blocks' M5, the previous RDR box, `now` = 17:00) |
 | `GET /api/d24/family?instrument=NQ&session=RDR[&date=…][&at=<day minute>][&view=auto\|conf][:all]` | design 24: today's state at the slice `at` and the snapshot of its family per DR-LAB-SEM-1.0 (`lab/scene24.py`) with its zone maps (`lab/zonemap24.py`); `:all` = the all-weekdays family, an explicit choice |
 | `GET /api/d24/dates?instrument=NQ` | design 24: every trading date of the base with the sessions whose first confirmation is established that day (`[[date, "AOR"], …]`) |
+| `GET /api/d24/now?instrument=NQ&session=RDR[&date=…][&at=…][&view=…]` | design 24: the layer «Сейчас» of the family at the slice (DR-LAB-NOW-1.0, `lab/now24.py`) |
+| `GET /api/contract` | the compiled machine contract DR-LAB-SC-1.1 (`contract/build/registry.json` with its stamps) and its runtime status (`CONFORMANT` / `CONTRACT_STALE` with reasons) |
+| `POST /api/d24/verify` | body `{instrument, session, at, date, view, passports: [{id, estimand, params, yes_count, unknown_count, no_event_count, N}]}`: the page's passports recomputed by the reference definitions (`lab/contract.py::verify_passports`) → `{status, snapshot_id, checked, mismatches}`; the server's only POST, it changes nothing |
+
+### The contract gate (`lab/contract.py`, DR-LAB-SC-1.1; `contract/README.md`)
+
+The routes `/api/d24/family`, `/api/d24/now` and `/api/d24/day` leave through the gate. Their bodies keep the fields
+below and gain `contract`: a `ContractEnvelope` of `contract/schema/dr_lab_sc.yaml` (edition, registry hash, status
+`CONFORMANT` | `VIOLATION` | `CONTRACT_STALE`, the request, the records it is about — observation, session, frame,
+cut, case sets, regions, reachability, history clock, prefix states —, the checks run, the violations, and one
+`bundle` per published statistic: estimand, claim form, derivation with its input versions, estimates, supports, the
+admissible claim classes and the claim). Before it leaves, the family snapshot, its zones, today's statuses and the NOW
+numbers are re-derived by the reference definitions; a failing object is withheld (`status: contract_violation` for a
+whole family, `mode: WITHHELD` for a NOW event, a missing zone map for a failed zone check). A number that no field
+encoding of `contract/registry/60-surfaces.yaml` declares makes the response a violation. When the compiled contract
+differs from its sources, `/api/d24/family` and `/api/d24/now` answer `status: contract_stale` with no statistic and
+`/api/d24/day` still serves the candles. Every JSON response carries the header `X-DR-Lab-Contract`
+(`DR-LAB-SC-1.1; profile=…; status=…; registry=…`; legacy and service routes: `status=OUTSIDE_SC11`).
 
 ### `/api/day` response (`lab/scene21.day_view`)
 
@@ -189,7 +207,10 @@ complete_n, median_retr, median_ext, median_rtime`.
   = `start-dr-lab.ps1 -Page 24/`), built from `design/sozvezdiya-24/src` by its `build.py`: design 22's screen with the
   statistical layer of DR-LAB-SEM-1.0; data from `/api/d24/*`; a history date opens as if it were today. Check with
   `tests/ui_check24.js` (in the page) and `tests/sem24.py` (definitions). Design 22 is not changed by it. Every element,
-  its count and code: `spec/ekran-24/`.
+  its count and code: `spec/ekran-24/`. Its `build.py` embeds `contract/build/page_registry.json` (estimands, claim
+  forms with the words of every number, fact forms): the page shows a number only as a passport of a registered
+  estimand, renders only those words, refuses envelopes of another registry and sends its passports to
+  `POST /api/d24/verify` (`contract/README.md`).
 - `classic.html` — **the previous screen**, kept at `/classic.html` (it was `index.html` until 2026-09-28): one page.
   `body.focus` (default) hides the research sidebar and headings; ☰ toggles it (`localStorage dr-lab-focus`).
 - `app.js` — the history dashboard (sidebar filters, KPIs, bottom charts `drawPath/drawHeat/drawHist`, scenes view,

@@ -1,0 +1,1365 @@
+id: https://github.com/FARTOFALOS/dr-idr/contract/dr_lab_sc
+name: dr_lab_sc
+title: DR/IDR Lab semantic contract — machine form of DR-LAB-SC-1.1
+description: >-
+  Executable representation of the normative document DR-LAB-SC-1.1
+  (spec/DR-LAB-Semantic-Contract-1.1-(patched).md). The document is the source of truth: on any disagreement this
+  schema is the defect. Every class, slot, enum and rule carries the annotation sc_ref = the clause of the document it
+  represents; containers that carry no meaning of their own are marked sc_ref IMPLEMENTATION. The six passport fields of
+  a contract card are realised by schema features, not copied as strings: definition = description, identity =
+  identifier and required identity slots, dependencies = required references, invariants = rules plus executable
+  obligations (class ContractObligation), forbidden transformations = obligations with an enforcement mechanism.
+  Specifications (rules, kept in the registry) and records (instances and results, emitted at runtime) are distinct
+  classes: a rule, its instance and the result of its computation are never one object (§1.2).
+version: 1.1.0
+license: Proprietary (repository FARTOFALOS/dr-idr)
+prefixes:
+  linkml: https://w3id.org/linkml/
+  drlab: https://github.com/FARTOFALOS/dr-idr/contract/
+default_prefix: drlab
+default_range: string
+imports:
+  - linkml:types
+annotations:
+  contract_edition: DR-LAB-SC-1.1
+  contract_document: spec/DR-LAB-Semantic-Contract-1.1-(patched).md
+  precedence: the document wins; a disagreement is a defect of this schema
+
+# =====================================================================================================================
+# slots shared by many classes
+# =====================================================================================================================
+slots:
+  id:
+    identifier: true
+    range: string
+    required: true
+    pattern: "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$"
+    annotations: {sc_ref: "§1.2"}
+  version:
+    description: Version of the specification; any change of meaning needs a new version (§14.1).
+    range: string
+    required: true
+    annotations: {sc_ref: "§14.1"}
+  sc_ref:
+    description: >-
+      Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (§12.4), §12.4 rows
+      (§12.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.
+    range: string
+    multivalued: true
+    required: true
+    pattern: "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$"
+    annotations: {sc_ref: "§14.4"}
+  grounds:
+    description: The category of the basis of this element (§1.3); categories are not a scale of quality.
+    range: GroundsCategory
+    required: true
+    annotations: {sc_ref: "§1.3"}
+  source_refs:
+    description: Where the definition comes from (exact documents and places).
+    range: SourceReference
+    multivalued: true
+    annotations: {sc_ref: "§1.3"}
+  title_ru:
+    range: string
+    annotations: {sc_ref: IMPLEMENTATION}
+  note:
+    range: string
+    annotations: {sc_ref: IMPLEMENTATION}
+
+# =====================================================================================================================
+# classes
+# =====================================================================================================================
+classes:
+
+  # ------------------------------------------------------------------ containers (implementation only)
+  Registry:
+    tree_root: true
+    description: One file (or the merged whole) of the contract registry. A container; it carries no meaning.
+    annotations: {sc_ref: IMPLEMENTATION}
+    attributes:
+      registry_part: {range: string, required: true}
+      editions: {range: ContractEdition, multivalued: true, inlined_as_list: true}
+      profiles: {range: Profile, multivalued: true, inlined_as_list: true}
+      source_references: {range: SourceReference, multivalued: true, inlined_as_list: true}
+      observation_sources: {range: ObservationSource, multivalued: true, inlined_as_list: true}
+      temporal_frames: {range: TemporalFrame, multivalued: true, inlined_as_list: true}
+      strategy_rules: {range: StrategyRuleSpecification, multivalued: true, inlined_as_list: true}
+      measurement_frames: {range: MeasurementFrameSpecification, multivalued: true, inlined_as_list: true}
+      measurement_grids: {range: MeasurementGrid, multivalued: true, inlined_as_list: true}
+      knowledge_cuts: {range: KnowledgeCutSpecification, multivalued: true, inlined_as_list: true}
+      case_sets: {range: CaseSetSpecification, multivalued: true, inlined_as_list: true}
+      comparisons: {range: StateComparisonSpecification, multivalued: true, inlined_as_list: true}
+      outcomes: {range: OutcomeSpecification, multivalued: true, inlined_as_list: true}
+      regions: {range: RegionSpecification, multivalued: true, inlined_as_list: true}
+      density_algorithms: {range: DensityAlgorithmSpecification, multivalued: true, inlined_as_list: true}
+      questions: {range: TraderQuestionSpecification, multivalued: true, inlined_as_list: true}
+      estimands: {range: EstimandSpecification, multivalued: true, inlined_as_list: true}
+      estimators: {range: EstimatorSpecification, multivalued: true, inlined_as_list: true}
+      claim_forms: {range: ClaimForm, multivalued: true, inlined_as_list: true}
+      fact_forms: {range: FactForm, multivalued: true, inlined_as_list: true}
+      validations: {range: ValidationRecord, multivalued: true, inlined_as_list: true}
+      predictive_admissions: {range: PredictiveAdmission, multivalued: true, inlined_as_list: true}
+      policies: {range: PolicySpecification, multivalued: true, inlined_as_list: true}
+      authorities: {range: ActionAuthorityReference, multivalued: true, inlined_as_list: true}
+      obligations: {range: ContractObligation, multivalued: true, inlined_as_list: true}
+      examples: {range: ConformanceExample, multivalued: true, inlined_as_list: true}
+      surfaces: {range: ApiSurface, multivalued: true, inlined_as_list: true}
+      encodings: {range: FieldEncoding, multivalued: true, inlined_as_list: true}
+      coverage_notes: {range: CoverageNote, multivalued: true, inlined_as_list: true}
+
+  Specification:
+    abstract: true
+    description: >-
+      A rule kept in the registry (versioned, anchored in the contract). Its instances and the results of its
+      computation are separate record classes (§1.2).
+    slots: [id, version, sc_ref, grounds, source_refs, title_ru, note]
+    annotations: {sc_ref: "§1.2"}
+
+  # ------------------------------------------------------------------ governance and provenance (§1.3, §14)
+  SourceReference:
+    description: >-
+      A pointer to a concrete piece of evidence, definition, proposal or human decision: source + revision + exact
+      place + role in this statement. A hash proves unchanged bytes, not truth (§1.2).
+    slots: [id, sc_ref, grounds, note]
+    attributes:
+      document: {range: string, required: true}
+      revision: {range: string, description: "commit, edition or SHA-256 of the normalised (LF) text"}
+      locator: {range: string, description: "section, row or line"}
+      role: {range: SourceRole, required: true}
+    annotations: {sc_ref: "§1.3", sc_layer: cross}
+
+  ContractEdition:
+    is_a: Specification
+    description: One edition of the normative document, pinned by the SHA-256 of its LF-normalised text.
+    attributes:
+      document_path: {range: string, required: true}
+      document_sha256_lf: {range: string, required: true, pattern: "^[0-9a-f]{64}$"}
+      edition_status: {range: EditionStatus, required: true}
+      supersedes: {range: ContractEdition}
+      acceptances: {range: AcceptanceRecord, multivalued: true, inlined_as_list: true}
+    annotations: {sc_ref: "§0.2; §14.3", sc_layer: cross}
+
+  AcceptanceRecord:
+    description: >-
+      Evidence of a human decision: who, through which channel, when, the exact words, the scope and the exclusions.
+      The record preserves evidence; it does not create the decision (§14.1, Section A of AGENTS instructions).
+    attributes:
+      actor_role: {range: ActorRole, required: true}
+      channel: {range: string, required: true}
+      date: {range: date, required: true}
+      quote: {range: string, multivalued: true, required: true}
+      scope: {range: string, required: true}
+      exclusions: {range: string, multivalued: true}
+      not_established: {range: string, multivalued: true}
+    annotations: {sc_ref: "§14.1; §14.3; D1", sc_layer: cross}
+
+  Profile:
+    is_a: Specification
+    description: An accepted application profile of the contract (BASE-24, NOW-1.0) with its defining documents.
+    attributes:
+      edition: {range: ContractEdition, required: true}
+      profile_status: {range: ProfileStatus, required: true}
+    annotations: {sc_ref: "§12.1; §12.2", sc_layer: cross}
+
+  # ------------------------------------------------------------------ layer 0: observation
+  ObservationSource:
+    is_a: Specification
+    description: >-
+      A concrete provider/channel and its recording convention. The same ticker of two sources does not make them
+      equivalent; a source of data never becomes an authority on the strategy. Unknown properties stay unknown.
+    attributes:
+      source_kind: {range: SourceKind, required: true}
+      provider: {range: string, required: true}
+      instruments: {range: InstrumentSeries, multivalued: true, inlined_as_list: true, required: true}
+      bar_interval_minutes: {range: integer, required: true, minimum_value: 1}
+      label_meaning: {range: LabelMeaning, required: true}
+      availability_rule: {range: string, required: true}
+      aggregation_rule: {range: string, required: true}
+      admissible_from: {range: date}
+      admissible_to: {range: date}
+      excluded_years: {range: integer, multivalued: true}
+      volume_used: {range: boolean, required: true}
+      unknown_properties: {range: string, multivalued: true}
+    annotations: {sc_ref: "O0; O3", sc_layer: "0"}
+
+  InstrumentSeries:
+    description: One instrument of a source with its series and price step.
+    attributes:
+      instrument: {range: Instrument, required: true}
+      series: {range: string, required: true}
+      tick_size: {range: float, required: true, minimum_value: 0}
+      roll_adjustment: {range: string, required: true}
+    annotations: {sc_ref: "O0", sc_layer: "0"}
+
+  ObservationRecordForm:
+    description: >-
+      The form of one observation record as the API encodes it (an M5 with OHLC). low <= open, close <= high; a
+      forming candle differs from a closed one; OHLC holds no order of trades inside the M5.
+    attributes:
+      encoding: {range: string, required: true}
+      label_meaning: {range: LabelMeaning, required: true}
+      closed_rule: {range: string, required: true}
+      ohlc_invariant: {range: string, required: true}
+    annotations: {sc_ref: "O1", sc_layer: "0"}
+
+  TemporalFrame:
+    is_a: Specification
+    description: How UTC, market hours, the trading date and M5 intervals are tied together.
+    attributes:
+      timezone: {range: string, required: true, pattern: "^America/New_York$"}
+      trading_date_rule: {range: string, required: true}
+      label_meaning: {range: LabelMeaning, required: true}
+      availability_rule: {range: string, required: true}
+      dst_rule: {range: string, required: true}
+      record_form: {range: ObservationRecordForm, inlined: true, required: true}
+    annotations: {sc_ref: "O2; O1", sc_layer: "0"}
+
+  # ------------------------------------------------------------------ layer 1: strategy
+  StrategyRuleSpecification:
+    is_a: Specification
+    description: >-
+      The version of the rules that turn observations into a session, a box, a confirmation and a break. A new
+      definition of IDR or of the confirmation is a new version (S0).
+    attributes:
+      blocks: {range: SessionBlock, multivalued: true, inlined_as_list: true, required: true}
+      box_rule: {range: string, required: true}
+      confirmation_rule: {range: string, required: true}
+      break_rule: {range: string, required: true}
+      early_close_calendar: {range: CalendarStatus, required: true}
+      weekend_rule: {range: string, required: true}
+    annotations: {sc_ref: "S0; S1; S2", sc_layer: "1"}
+
+  SessionBlock:
+    description: One block of the profile (ADR / ODR / RDR) in day minutes ET; ADR runs before midnight.
+    attributes:
+      block: {range: Block, required: true}
+      formation_start: {range: integer, required: true}
+      formation_end: {range: integer, required: true}
+      block_end: {range: integer, required: true}
+      history_minute_shift: {range: integer, required: true}
+      trading_date_offset_days: {range: integer, required: true}
+      formation_m5_count: {range: integer, required: true, minimum_value: 1}
+    annotations: {sc_ref: "S1", sc_layer: "1"}
+
+  # ------------------------------------------------------------------ layer 2: measurement
+  MeasurementFrameSpecification:
+    is_a: Specification
+    description: >-
+      The rule choosing origin e, direction d and unit w (the IDR width) of a case. u = d (p - e) / w, p = e + d w u;
+      the transform is invertible only with e, d, w kept (M0).
+    attributes:
+      activation_kind: {range: ActivationKind, required: true}
+      origin_rule: {range: string, required: true}
+      direction_rule: {range: string, required: true}
+      unit: {range: string, required: true}
+      forward_formula: {range: string, required: true}
+      inverse_formula: {range: string, required: true}
+      transfer_rule: {range: string, required: true}
+    annotations: {sc_ref: "M0", sc_layer: "2"}
+
+  MeasurementGrid:
+    is_a: Specification
+    description: An explicit partition of the coordinates into cells for aggregation, separate from the observations.
+    attributes:
+      price_cell_numerator: {range: integer, required: true, minimum_value: 1}
+      price_cell_denominator: {range: integer, required: true, minimum_value: 1}
+      time_cell_minutes: {range: integer, required: true, minimum_value: 1}
+      time_origin: {range: string, required: true}
+      price_index_rule: {range: string, required: true}
+      boundary_rule: {range: string, required: true}
+    annotations: {sc_ref: "M1", sc_layer: "2"}
+
+  # ------------------------------------------------------------------ layer 3: epistemic state
+  KnowledgeCutSpecification:
+    is_a: Specification
+    description: >-
+      The boundary of information allowed for an observer and a question; the age after the activation is kept
+      separately; the many roles of time are never one field (E0).
+    attributes:
+      cut_rule: {range: string, required: true}
+      forming_m5_in_statistics: {range: boolean, required: true}
+      historical_alignment: {range: Alignment, required: true}
+      modes: {range: ObservationMode, multivalued: true, required: true}
+      honesty_level: {range: string, required: true}
+    annotations: {sc_ref: "E0", sc_layer: "3"}
+
+  # ------------------------------------------------------------------ layer 4: historical cases and sets
+  CaseSetSpecification:
+    is_a: Specification
+    description: >-
+      The exact membership condition of a set of historical cases and its role. Roles never stand in for each other.
+      The availability of the condition decides whether the set may be used live or for prediction; it does not decide
+      whether a description of the set is conditional (a retrospective condition still yields C1).
+    attributes:
+      role: {range: CaseSetRole, required: true}
+      parent: {range: CaseSetSpecification, multivalued: true, description: "the sets this one may be selected from; a snapshot names the concrete one"}
+      key_fields: {range: KeyField, multivalued: true}
+      activation_kind: {range: ActivationKind}
+      weekday_scope: {range: WeekdayScope}
+      history_rule: {range: string, required: true}
+      condition_ru: {range: string, required: true}
+      condition_availability: {range: ConditionAvailability, required: true}
+      live_use: {range: LiveUse, required: true}
+      comparison: {range: StateComparisonSpecification}
+      undetermined_rule: {range: string}
+      profile: {range: Profile, required: true}
+    rules:
+      - description: a base family is fixed by a key known at its activation and may be used live
+        preconditions: {slot_conditions: {role: {equals_string: BASE_FAMILY}}}
+        postconditions: {slot_conditions: {condition_availability: {equals_string: AT_ACTIVATION}, live_use: {equals_string: PERMITTED}}}
+      - description: the eligible set at a cut has a parent and a prefix-available condition
+        preconditions: {slot_conditions: {role: {equals_string: ELIGIBLE_AT_CUT}}}
+        postconditions: {slot_conditions: {parent: {required: true}, condition_availability: {equals_string: PREFIX_AT_CUT}}}
+      - description: the matched set at a cut has a parent, a named comparison and a prefix-available condition
+        preconditions: {slot_conditions: {role: {equals_string: MATCHED_AT_CUT}}}
+        postconditions: {slot_conditions: {parent: {required: true}, comparison: {required: true}, condition_availability: {equals_string: PREFIX_AT_CUT}}}
+      - description: a subgroup selected by an outcome component uses the future of the cut; never used live
+        preconditions: {slot_conditions: {role: {equals_string: OUTCOME_SUBGROUP}}}
+        postconditions: {slot_conditions: {parent: {required: true}, live_use: {equals_string: FORBIDDEN}}}
+      - description: a retrospective research set is named as such and never used live
+        preconditions: {slot_conditions: {role: {equals_string: RETROSPECTIVE_RESEARCH}}}
+        postconditions: {slot_conditions: {condition_availability: {equals_string: RETROSPECTIVE}, live_use: {equals_string: FORBIDDEN}}}
+      - description: a retrospective condition is never used live
+        preconditions: {slot_conditions: {condition_availability: {equals_string: RETROSPECTIVE}}}
+        postconditions: {slot_conditions: {live_use: {equals_string: FORBIDDEN}}}
+    annotations: {sc_ref: "H1; H0", sc_layer: "4"}
+
+  StateComparisonSpecification:
+    is_a: Specification
+    description: >-
+      The rule comparing a historical case's state with the target's at a cut (alignment, features, tolerance). Its
+      features must be available at the cut; a weighted mass is never a number of sessions (H3).
+    attributes:
+      alignment: {range: Alignment, required: true}
+      features: {range: string, multivalued: true, required: true}
+      feature_availability: {range: ConditionAvailability, required: true}
+      tolerance: {range: string}
+      frozen: {range: boolean, required: true}
+      weights: {range: WeightPolicy, required: true}
+    rules:
+      - description: a comparison may only use features available at the cut
+        postconditions: {slot_conditions: {feature_availability: {equals_string: PREFIX_AT_CUT}}}
+    annotations: {sc_ref: "H3", sc_layer: "4"}
+
+  # ------------------------------------------------------------------ layer 5: projection and outcome
+  OutcomeSpecification:
+    is_a: Specification
+    description: >-
+      Which property of the path is measured and what one case contributes (a point, a category, a binary answer, a
+      cell on an M5). There is no universal "success"; a horizon change is a new identity (P0).
+    attributes:
+      projection: {range: ProjectionKind, required: true}
+      event: {range: EventKind, required: true}
+      contribution: {range: ContributionKind, required: true}
+      horizon_start: {range: HorizonStart, required: true}
+      horizon_end: {range: HorizonEnd, required: true}
+      tie_rule: {range: TieRule, required: true}
+      components: {range: KnowledgeComponent, multivalued: true, required: true}
+      uses_case_future_as_label: {range: boolean, required: true}
+      reference_definition: {range: string, required: true}
+      implementations: {range: string, multivalued: true, required: true}
+      statuses: {range: string, required: true}
+    annotations: {sc_ref: "P0; P0.1; P0.2; P0.3; P1", sc_layer: "5"}
+
+  RegionSpecification:
+    is_a: Specification
+    description: The exact set of price / time coordinates a question is asked about; overlapping regions are no partition.
+    attributes:
+      region_kind: {range: RegionKind, required: true}
+      grid: {range: MeasurementGrid}
+      bounds_rule: {range: string, required: true}
+      origin: {range: RegionOrigin, required: true}
+      density_algorithm: {range: DensityAlgorithmSpecification}
+    rules:
+      - description: an algorithmic region names its algorithm
+        preconditions: {slot_conditions: {origin: {equals_string: ALGORITHM}}}
+        postconditions: {slot_conditions: {density_algorithm: {required: true}}}
+    annotations: {sc_ref: "P2", sc_layer: "5"}
+
+  DensityAlgorithmSpecification:
+    is_a: Specification
+    description: >-
+      A named algorithm that finds concentrations of one event kind of one composition at a given scale. A density is
+      no probability of a reversal; a new algorithm or parameter is a new version of the result (P3).
+    attributes:
+      grid: {range: MeasurementGrid, required: true}
+      density_rule: {range: string, required: true}
+      region_rule: {range: string, required: true}
+      min_support_rule: {range: string, required: true}
+      order_rule: {range: string, required: true}
+      diagnostics: {range: string, multivalued: true, required: true}
+      seed_rule: {range: string, required: true}
+      frozen: {range: boolean, required: true}
+    annotations: {sc_ref: "P3", sc_layer: "5"}
+
+  # ------------------------------------------------------------------ layer 6: statistical target
+  TraderQuestionSpecification:
+    is_a: Specification
+    description: >-
+      The meaning of a trader's question in human language, independent of who asked it (patch 1.1): requester, time
+      and authority belong to a QuestionRequest, never to the identity of the question.
+    attributes:
+      text_ru: {range: string, required: true}
+      scene_ru: {range: string, required: true}
+    annotations: {sc_ref: "T0", sc_layer: "6"}
+
+  EstimandSpecification:
+    is_a: Specification
+    description: >-
+      The exact quantity to describe or estimate, before a method and before a number. Its eight slots q1..q8 are the
+      eight answers every T1 must give. A change of denominator, event or horizon is another estimand (T1).
+    attributes:
+      question: {range: TraderQuestionSpecification, required: true}
+      q1_formalised_part_ru: {range: string, required: true}
+      q2_target: {range: TargetKind, required: true}
+      q3_unit: {range: UnitOfAnalysis, required: true}
+      q4_case_set: {range: CaseSetSpecification, multivalued: true, required: true, description: "the case-set rules this estimand may be evaluated on; an estimate names the concrete snapshot"}
+      q4_denominator: {range: DenominatorRule, required: true}
+      q5_outcome: {range: OutcomeSpecification, required: true}
+      q5_region: {range: RegionSpecification}
+      q6_time_ru: {range: string, required: true}
+      q6_cut: {range: KnowledgeCutSpecification}
+      q7_measure: {range: SummaryMeasure, required: true}
+      q8_unknown: {range: UnknownPolicy, required: true}
+      q8_weights: {range: WeightPolicy, required: true}
+      q8_order_ru: {range: string, required: true}
+      parameters: {range: ParameterDeclaration, multivalued: true, inlined_as_list: true}
+      profile: {range: Profile, required: true}
+    annotations: {sc_ref: "T1", sc_layer: "6"}
+
+  ParameterDeclaration:
+    description: A free parameter of an estimand family (a level, a band, a zone); an instance binds it to a value.
+    attributes:
+      name: {range: string, required: true}
+      parameter_kind: {range: ParameterKind, required: true}
+      meaning_ru: {range: string, required: true}
+    annotations: {sc_ref: "T1", sc_layer: "6"}
+
+  # ------------------------------------------------------------------ layer 7: estimate and evidence
+  EstimatorSpecification:
+    is_a: Specification
+    description: >-
+      The procedure, fixed beforehand, that obtains an estimate of a T1 from admissible data. Handling of the unknown
+      never silently changes the target set (V0).
+    attributes:
+      estimands: {range: EstimandSpecification, multivalued: true, required: true}
+      rule: {range: EstimatorRule, required: true}
+      unknown_handling_ru: {range: string, required: true}
+      rounding_ru: {range: string, required: true}
+      implementations: {range: string, multivalued: true, required: true}
+      reference_definition: {range: string, required: true}
+    annotations: {sc_ref: "V0", sc_layer: "7"}
+
+  ValidationRecord:
+    is_a: Specification
+    description: >-
+      What was checked, on which history, with which control and result. Structure, computational invariants,
+      statistical transfer and policy fitness are different evidence; a green test never proves the right question (V3).
+    attributes:
+      validates: {range: string, multivalued: true, required: true}
+      validation_kind: {range: ValidationKind, required: true}
+      protocol_ru: {range: string, required: true}
+      corpus_ru: {range: string, required: true}
+      corpus_seen_before: {range: boolean, required: true}
+      result_ru: {range: string, required: true}
+      lifecycle: {range: Lifecycle, required: true}
+      runtime_artifact: {range: string}
+    annotations: {sc_ref: "V3", sc_layer: "7"}
+
+  # ------------------------------------------------------------------ layer 8: claims — the explicit normative forms
+  ClaimForm:
+    is_a: Specification
+    description: >-
+      An explicit normative statement form: what may be said about an estimand, in which class, in which words, with
+      which visible parts, and which neighbouring reading is not permitted. The machine never invents a claim: it
+      computes which claim classes the evidence admits and checks the declared form against them. A form outside the
+      admissible set is not published.
+    attributes:
+      estimand: {range: EstimandSpecification, required: true}
+      claim_class: {range: ClaimClassName, required: true}
+      subject_ru: {range: string, required: true}
+      condition_ru: {range: string}
+      statement_ru: {range: string, required: true}
+      labels: {range: LabelTemplate, multivalued: true, inlined_as_list: true}
+      value_form: {range: ValueForm, required: true}
+      price_transfer: {range: PriceTransfer, required: true}
+      forbidden_readings_ru: {range: string, multivalued: true, required: true}
+      acceptance: {range: FormAcceptance, required: true}
+    rules:
+      - description: a conditional description names its condition
+        preconditions: {slot_conditions: {claim_class: {equals_string: ConditionalDescriptiveClaim}}}
+        postconditions: {slot_conditions: {condition_ru: {required: true}}}
+    annotations: {sc_ref: "§10; C0; C1; C2; C3; §12.3; K33", sc_layer: "8"}
+
+  FactForm:
+    is_a: Specification
+    description: >-
+      The form of a statement of an observed fact (today's prefix, a reachability or history-clock status, a session's
+      own record). Facts are not statistics: they carry no claim class and no percentage (§10: a fact of observation
+      refers directly to E1/P1/E3; §12.4 TODAY-Z).
+    attributes:
+      record_class: {range: string, required: true}
+      statement_ru: {range: string, required: true}
+      labels: {range: LabelTemplate, multivalued: true, inlined_as_list: true}
+      forbidden_readings_ru: {range: string, multivalued: true, required: true}
+      acceptance: {range: FormAcceptance, required: true}
+    annotations: {sc_ref: "§10; E1; E3; E4; P1; §12.4/TODAY-Z", sc_layer: "8"}
+
+  LabelTemplate:
+    description: >-
+      The words shown next to a number on one surface; placeholders {name} are filled with values of the bundle.
+      Text around a number is not composed freely: the page renders exactly a registered template.
+    attributes:
+      surface: {range: Surface, required: true}
+      view: {range: ViewScope, required: true}
+      key: {range: string, required: true}
+      text_ru: {range: string, required: true}
+    annotations: {sc_ref: "§12.3; K33", sc_layer: "8"}
+
+  PredictiveAdmission:
+    is_a: Specification
+    description: >-
+      The separate product admission a PredictiveClaim needs: a validation for exactly this target plus a human
+      admission. Without it no predictive class is admissible; a renamed C0/C1 never becomes C2 (§10.1).
+    attributes:
+      estimand: {range: EstimandSpecification, required: true}
+      validation: {range: ValidationRecord, required: true}
+      admission: {range: AcceptanceRecord, inlined: true, required: true}
+      domain_ru: {range: string, required: true}
+      issue_rule_ru: {range: string, required: true}
+    annotations: {sc_ref: "C2; §10.1", sc_layer: "8"}
+
+  # ------------------------------------------------------------------ layer 9: policy
+  PolicySpecification:
+    is_a: Specification
+    description: >-
+      A rule choosing an action or abstention for an explicit goal, with execution, costs, risk and abstention defined
+      before evaluation. SC-1.1 defines no trading policy: the registry holds none (D0, §11).
+    attributes:
+      objective_ru: {range: string, required: true}
+      domain_ru: {range: string, required: true}
+      actions_ru: {range: string, multivalued: true, required: true}
+      execution_model_ru: {range: string, required: true}
+      abstention_rule_ru: {range: string, required: true}
+    annotations: {sc_ref: "D0; D2", sc_layer: "9"}
+
+  ActionAuthorityReference:
+    is_a: Specification
+    description: >-
+      Stored evidence of a valid human permission for a class of consequences. The record creates no authority; none
+      may be derived from an API key, a test, a policy or this contract (D1).
+    attributes:
+      human_act: {range: AcceptanceRecord, inlined: true, required: true}
+      consequence_class: {range: string, required: true}
+      revoked: {range: boolean, required: true}
+    annotations: {sc_ref: "D1", sc_layer: "9"}
+
+  # ------------------------------------------------------------------ enforcement map (§14.4)
+  ContractObligation:
+    description: >-
+      One MUST / MUST-NOT of the contract with the mechanisms that enforce it. An obligation enforced only by a
+      human is listed as such and never presented as machine-checked.
+    slots: [id, sc_ref]
+    attributes:
+      statement_ru: {range: string, required: true}
+      obligation_kind: {range: ObligationKind, required: true}
+      enforcement: {range: EnforcementCheck, multivalued: true, inlined_as_list: true, required: true, minimum_cardinality: 1}
+      residual_ru: {range: string}
+    annotations: {sc_ref: "§14.4", sc_layer: cross}
+
+  EnforcementCheck:
+    description: Where an obligation is checked; check = test:..., runtime:..., page:..., schema:... or human:...
+    attributes:
+      mechanism: {range: EnforcementMechanism, required: true}
+      check: {range: string, required: true, pattern: "^(test|runtime|page|schema|build|human):[^\\s]+$"}
+    annotations: {sc_ref: "§14.4", sc_layer: cross}
+
+  ConformanceExample:
+    description: One discriminating example of §13 with the checks that execute it.
+    slots: [id, sc_ref]
+    attributes:
+      situation_ru: {range: string, required: true}
+      expected_ru: {range: string, required: true}
+      checks: {range: string, multivalued: true, required: true, pattern: "^(test|runtime|page|schema|build|human):[^\\s]+$"}
+    annotations: {sc_ref: "§13", sc_layer: cross}
+
+  ApiSurface:
+    description: >-
+      One route of the local server and the profile its content belongs to. Every route is declared; a legacy route is
+      a quarantined profile (its own definitions, its known disagreements with SC-1.1), never an exemption.
+    slots: [id, sc_ref]
+    attributes:
+      route: {range: string, required: true}
+      surface_profile: {range: SurfaceProfile, required: true}
+      definitions: {range: SourceReference, required: true}
+      estimands: {range: EstimandSpecification, multivalued: true}
+      legacy_discrepancies_ru: {range: string, multivalued: true}
+      marking: {range: string, required: true}
+    annotations: {sc_ref: "§0.2; §12.3", sc_layer: cross}
+
+  FieldEncoding:
+    description: >-
+      The meaning of one field (JSON path) of a route's existing body: which contract object or estimand it carries and
+      how its tokens map to the contract's values. A number of a contract route not declared here is a violation.
+    slots: [id, sc_ref]
+    attributes:
+      surface: {range: ApiSurface, required: true}
+      path: {range: string, required: true}
+      field_kind: {range: FieldKind, required: true}
+      target: {range: string, required: true}
+      token_map: {range: TokenMapping, multivalued: true, inlined_as_list: true}
+    annotations: {sc_ref: "§12.3", sc_layer: cross}
+
+  TokenMapping:
+    attributes:
+      code_token: {range: string, required: true}
+      contract_value: {range: string, required: true}
+    annotations: {sc_ref: "§12.3", sc_layer: cross}
+
+  CoverageNote:
+    description: A clause of the contract deliberately not represented by a schema element, and why.
+    slots: [sc_ref]
+    attributes:
+      clause: {range: string, required: true, identifier: true}
+      coverage: {range: CoverageStatus, required: true}
+      reason_ru: {range: string, required: true}
+    annotations: {sc_ref: "§14.4", sc_layer: cross}
+
+  # =================================================================================================================
+  # runtime records: what the server emits next to each response (class ContractEnvelope)
+  # =================================================================================================================
+  ContractEnvelope:
+    description: >-
+      The contract section of a response: the edition and registry it was checked against, its status, the records it
+      is about and one result bundle per published statistic. Status CONTRACT_STALE or a blocking violation means the
+      affected statistics are not published.
+    attributes:
+      edition: {range: string, required: true}
+      registry_hash: {range: string, required: true}
+      status: {range: ContractStatus, required: true}
+      route: {range: string, required: true}
+      profile: {range: string, required: true}
+      request: {range: QuestionRequest, inlined: true, required: true}
+      observation: {range: ObservationSnapshot, inlined: true}
+      session: {range: StrategySessionRecord, inlined: true}
+      frame: {range: MeasurementFrameRecord, inlined: true}
+      cut: {range: KnowledgeCut, inlined: true}
+      prefix: {range: PrefixState, multivalued: true, inlined_as_list: true}
+      case_sets: {range: CaseSetSnapshot, multivalued: true, inlined_as_list: true}
+      regions: {range: DensityRegion, multivalued: true, inlined_as_list: true}
+      reachability: {range: ReachabilityAssessment, multivalued: true, inlined_as_list: true}
+      history_clock: {range: HistoryClockAssessment, multivalued: true, inlined_as_list: true}
+      bundles: {range: StatisticalResultBundle, multivalued: true, inlined_as_list: true}
+      checks: {range: CheckResult, multivalued: true, inlined_as_list: true}
+      violations: {range: Violation, multivalued: true, inlined_as_list: true}
+    rules:
+      - description: a stale contract publishes no statistic
+        preconditions: {slot_conditions: {status: {equals_string: CONTRACT_STALE}}}
+        postconditions: {slot_conditions: {bundles: {value_presence: ABSENT}}}
+    annotations: {sc_ref: "§12.3; §14.4", sc_layer: cross}
+
+  QuestionRequest:
+    description: >-
+      The fact that someone asked: request id, the questions, who (as far as a local server knows), when and with which
+      authority. It never enters the identity of the question or of an estimand (patch 1.1).
+    attributes:
+      request_id: {range: string, required: true}
+      questions: {range: string, multivalued: true}
+      requester: {range: RequesterKind, required: true}
+      requested_at_utc: {range: string, required: true}
+      parameters: {range: string, required: true}
+      authority: {range: AuthorityNeed, required: true}
+    annotations: {sc_ref: "T0.1", sc_layer: "6"}
+
+  ObservationSnapshot:
+    description: The fixed version of the records a response used and what is known about missing intervals.
+    attributes:
+      source: {range: string, required: true}
+      content_version: {range: string, required: true}
+      history_range: {range: string}
+      mode: {range: ObservationMode, required: true}
+      forming_m5_present: {range: boolean}
+      closed_through_minute: {range: integer}
+    annotations: {sc_ref: "O3", sc_layer: "0"}
+
+  StrategySessionRecord:
+    description: Today's (or the viewed day's) session instance with its box and activation, by the rule version.
+    attributes:
+      instrument: {range: Instrument, required: true}
+      trading_date: {range: string, required: true}
+      block: {range: Block, required: true}
+      rule: {range: string, required: true}
+      dr_high: {range: float, required: true}
+      dr_low: {range: float, required: true}
+      idr_high: {range: float, required: true}
+      idr_low: {range: float, required: true}
+      activation: {range: ActivationEvent, inlined: true, required: true}
+      dr_break: {range: ActivationEvent, inlined: true}
+    annotations: {sc_ref: "S1; S2", sc_layer: "1"}
+
+  ActivationEvent:
+    description: A strategy event detected on a closed M5; its occurrence and the knowledge of its first time are separate.
+    attributes:
+      kind: {range: ActivationKind, required: true}
+      direction: {range: Direction, required: true}
+      evidence_close_minute: {range: integer, required: true}
+      window_index: {range: integer, required: true}
+      first_time_known: {range: boolean, required: true}
+    annotations: {sc_ref: "S2", sc_layer: "1"}
+
+  MeasurementFrameRecord:
+    description: The frame of the family on screen and of today's case (e, d, w); a transfer keeps u and uses today's frame.
+    attributes:
+      spec: {range: string, required: true}
+      origin_price: {range: float, required: true}
+      direction: {range: integer, required: true, minimum_value: -1, maximum_value: 1}
+      width_ticks: {range: integer, required: true, minimum_value: 1}
+      tick_size: {range: float, required: true}
+    annotations: {sc_ref: "M0", sc_layer: "2"}
+
+  KnowledgeCut:
+    description: The cut of a response — the close of the last closed M5 — with its mode; age after activation is separate.
+    attributes:
+      spec: {range: string, required: true}
+      target_session: {range: string, required: true}
+      cut_close_minute: {range: integer, required: true}
+      cut_clock_et: {range: string, required: true, pattern: "^[0-2][0-9]:[0-5][0-9]$"}
+      mode: {range: ObservationMode, required: true}
+      state_age_m5: {range: integer}
+      frozen_reason: {range: string}
+    annotations: {sc_ref: "E0", sc_layer: "3"}
+
+  PrefixState:
+    description: >-
+      What a case knows at the cut from its admissible prefix only (the activating M5 excluded). r_seen is never the
+      final R before the horizon ends; with no M5 after the activation there is no extreme at all.
+    attributes:
+      case: {range: string, required: true}
+      event: {range: EventKind, required: true}
+      prefix_status: {range: PrefixStatus, required: true}
+      from_close_minute: {range: integer}
+      to_close_minute: {range: integer}
+      seen_ticks: {range: integer}
+      seen_u: {range: float}
+      seen_first_open_minute: {range: integer}
+    rules:
+      - description: a complete prefix carries its extreme
+        preconditions: {slot_conditions: {prefix_status: {equals_string: OK}}}
+        postconditions: {slot_conditions: {seen_ticks: {required: true}, seen_u: {required: true}}}
+    annotations: {sc_ref: "E1", sc_layer: "3"}
+
+  CaseSetSnapshot:
+    description: >-
+      The immutable result of a case-set rule on a snapshot of history: rule, cutoff, the unique participants, the
+      exclusions with reasons. N is the number of unique participants and nothing else (H2).
+    attributes:
+      spec: {range: string, required: true}
+      family_id: {range: string, required: true}
+      snapshot_id: {range: string, required: true}
+      n_members: {range: integer, required: true, minimum_value: 0}
+      parent_snapshot: {range: string}
+      cut_close_minute: {range: integer}
+      cutoff_date: {range: string}
+      exclusions: {range: Exclusion, multivalued: true, inlined_as_list: true}
+      data_revision: {range: string, required: true}
+    annotations: {sc_ref: "H2", sc_layer: "4"}
+
+  Exclusion:
+    attributes:
+      reason: {range: string, required: true}
+      count: {range: integer, required: true, minimum_value: 0}
+    annotations: {sc_ref: "H2; H1", sc_layer: "4"}
+
+  DensityRegion:
+    description: One zone found by a named algorithm on one snapshot and event; its identity includes its exact mask.
+    attributes:
+      zone_id: {range: string, required: true}
+      algorithm: {range: string, required: true}
+      event: {range: EventKind, required: true}
+      snapshot_id: {range: string, required: true}
+      n_cells: {range: integer, required: true, minimum_value: 1}
+      n_zone: {range: integer, required: true, minimum_value: 0}
+      min_support: {range: integer, required: true}
+      mask_verified: {range: boolean, required: true}
+    annotations: {sc_ref: "P3", sc_layer: "5"}
+
+  ReachabilityAssessment:
+    description: >-
+      Whether today's final event can still lie in a region, from today's known extreme and the remaining M5. HOLDS is
+      no guarantee; IMPOSSIBLE never means "price will not visit"; UNKNOWN when today's state is not established.
+    attributes:
+      region_id: {range: string, required: true}
+      event: {range: EventKind, required: true}
+      reachability: {range: ReachabilityStatus, required: true}
+      cut_close_minute: {range: integer, required: true}
+      logic_version: {range: string, required: true}
+    annotations: {sc_ref: "E3", sc_layer: "3"}
+
+  HistoryClockAssessment:
+    description: The split of a region's known family events into before / after the common clock cut; another axis than E3.
+    attributes:
+      region_id: {range: string, required: true}
+      event: {range: EventKind, required: true}
+      history_clock: {range: HistoryClockStatus, required: true}
+      cut_close_minute: {range: integer, required: true}
+    annotations: {sc_ref: "E4", sc_layer: "3"}
+
+  StatisticalResultBundle:
+    description: >-
+      One published statistic: its estimand, the shared derivation, the estimate(s) and the support record(s) produced
+      in parallel by that derivation, the claim. Estimate and SupportRecord are siblings; neither is an input of the
+      other (patch 1.1). A bundle creates no statistic of its own.
+    attributes:
+      id: {range: string, required: true, identifier: true}
+      estimand: {range: string, required: true}
+      claim_form: {range: string, required: true}
+      parameters: {range: string}
+      derivation: {range: DerivationRecord, inlined: true, required: true}
+      estimates: {range: Estimate, multivalued: true, inlined_as_list: true, required: true, minimum_cardinality: 1}
+      supports: {range: SupportRecord, multivalued: true, inlined_as_list: true, required: true, minimum_cardinality: 1}
+      validations: {range: string, multivalued: true}
+      admissible_claims: {range: ClaimClassName, multivalued: true, required: true}
+      claim: {range: Claim, inlined: true, required: true}
+    annotations: {sc_ref: "V1; V2; §12.3", sc_layer: "7"}
+
+  DerivationRecord:
+    description: >-
+      Which operation produced the outputs from which inputs (versions), with which parameters, and how the result was
+      verified. Names the meaning kept and the information lost; never hides a future input behind a cache (§1.3).
+    attributes:
+      derivation_id: {range: string, required: true}
+      operation: {range: string, required: true}
+      reference_definition: {range: string, required: true}
+      inputs: {range: InputVersion, multivalued: true, inlined_as_list: true, required: true, minimum_cardinality: 1}
+      executed_at_utc: {range: string, required: true}
+      verification: {range: VerificationStatus, required: true}
+      information_lost_ru: {range: string}
+    annotations: {sc_ref: "§1.3", sc_layer: cross}
+
+  InputVersion:
+    attributes:
+      input_kind: {range: InputKind, required: true}
+      ref: {range: string, required: true}
+      version: {range: string, required: true}
+    annotations: {sc_ref: "§1.3", sc_layer: cross}
+
+  Estimate:
+    description: >-
+      A concrete result of an estimator: a number, bounds, a distribution, quantiles, or no estimate with a reason. N = 0
+      gives no estimate; a dash is never 0 %; exact counts come before any rounding (V1).
+    attributes:
+      estimate_id: {range: string, required: true}
+      estimator: {range: string, required: true}
+      value_kind: {range: ValueKind, required: true}
+      value: {range: float}
+      lower: {range: float}
+      upper: {range: float}
+      numerator: {range: integer, minimum_value: 0}
+      denominator: {range: integer, minimum_value: 0}
+      quantiles: {range: QuantileValue, multivalued: true, inlined_as_list: true}
+      categories: {range: CategoryCount, multivalued: true, inlined_as_list: true}
+      cells: {range: CellCount, multivalued: true, inlined_as_list: true}
+      unit: {range: string, required: true}
+      no_estimate_reason: {range: string}
+      table_ru: {range: string}
+    rules:
+      - description: no estimate carries its reason and no value
+        preconditions: {slot_conditions: {value_kind: {equals_string: NO_ESTIMATE}}}
+        postconditions: {slot_conditions: {no_estimate_reason: {required: true}, value: {value_presence: ABSENT}}}
+      - description: a point estimate has a value and a positive denominator
+        preconditions: {slot_conditions: {value_kind: {equals_string: POINT}}}
+        postconditions: {slot_conditions: {value: {required: true}, denominator: {required: true, minimum_value: 1}}}
+      - description: bounds have both ends and a positive denominator
+        preconditions: {slot_conditions: {value_kind: {equals_string: BOUNDS}}}
+        postconditions: {slot_conditions: {lower: {required: true}, upper: {required: true}, denominator: {required: true, minimum_value: 1}}}
+      - description: an index carries a value and no case denominator
+        preconditions: {slot_conditions: {value_kind: {equals_string: INDEX}}}
+        postconditions: {slot_conditions: {value: {required: true}, denominator: {value_presence: ABSENT}}}
+      - description: a stored research table is quoted, with no value of its own
+        preconditions: {slot_conditions: {value_kind: {equals_string: STORED_TABLE}}}
+        postconditions: {slot_conditions: {table_ru: {required: true}, value: {value_presence: ABSENT}}}
+    annotations: {sc_ref: "V1", sc_layer: "7"}
+
+  QuantileValue:
+    attributes:
+      quantile: {range: float, required: true, minimum_value: 0, maximum_value: 1}
+      value: {range: float}
+    annotations: {sc_ref: "V2.2", sc_layer: "7"}
+
+  CategoryCount:
+    attributes:
+      category: {range: string, required: true}
+      count: {range: integer, required: true, minimum_value: 0}
+    annotations: {sc_ref: "V2.1", sc_layer: "7"}
+
+  CellCount:
+    attributes:
+      price_cell: {range: integer, required: true}
+      time_cell: {range: integer}
+      count: {range: integer, required: true, minimum_value: 1}
+    annotations: {sc_ref: "V2.1; M1", sc_layer: "7"}
+
+  SupportRecord:
+    description: >-
+      Which cases support exactly this component and what is missing. The support of the binary new, of the final
+      delta and of the first tau can differ; uncertainty from holes is no confidence interval (V2).
+    attributes:
+      support_id: {range: string, required: true}
+      case_set: {range: string, required: true}
+      n_base: {range: integer, required: true, minimum_value: 0}
+      n_eligible: {range: integer, minimum_value: 0}
+      n_match: {range: integer, minimum_value: 0}
+      components: {range: ComponentSupport, multivalued: true, inlined_as_list: true, required: true, minimum_cardinality: 1}
+    annotations: {sc_ref: "V2; V2.1; V2.2", sc_layer: "7"}
+
+  ComponentSupport:
+    description: >-
+      The counts of one knowledge component over the set it is counted on. There is no single "known": existence,
+      magnitude and first time are separate components (E2).
+    attributes:
+      component: {range: KnowledgeComponent, required: true}
+      of: {range: integer, required: true, minimum_value: 0}
+      'yes': {range: integer, minimum_value: 0}
+      'no': {range: integer, minimum_value: 0}
+      unknown: {range: integer, minimum_value: 0}
+      no_period: {range: integer, minimum_value: 0}
+      known: {range: integer, minimum_value: 0}
+      no_event: {range: integer, minimum_value: 0}
+      condition_ru: {range: string}
+    annotations: {sc_ref: "E2; V2", sc_layer: "7"}
+
+  Claim:
+    abstract: true
+    description: >-
+      A permitted statement about an estimate. Four classes with different admission conditions, not one flag: the
+      class is designated by claim_class and each class requires its own grounds. A claim is not a free caption.
+    attributes:
+      claim_class: {range: string, designates_type: true, required: true}
+      claim_form: {range: string, required: true}
+      statement_ru: {range: string, required: true}
+      estimand: {range: string, required: true}
+      applies_to_ru: {range: string, required: true}
+      forbidden_readings_ru: {range: string, multivalued: true, required: true}
+    annotations: {sc_ref: "§10", sc_layer: "8"}
+
+  DescriptiveClaim:
+    is_a: Claim
+    description: A statement about the measured record of a fixed historical composition, without transfer (C0).
+    attributes:
+      case_set_snapshot: {range: string, required: true}
+    annotations: {sc_ref: "C0", sc_layer: "8"}
+
+  ConditionalDescriptiveClaim:
+    is_a: Claim
+    description: >-
+      A description of the historical outcomes of an explicitly selected subgroup. Its condition and new denominator
+      are never hidden; the condition may be prefix-available or retrospective, and it says which (C1).
+    attributes:
+      parent_case_set: {range: string, required: true}
+      selected_case_set: {range: string, required: true}
+      condition_ru: {range: string, required: true}
+      condition_availability: {range: ConditionAvailability, required: true}
+      cut_close_minute: {range: integer}
+    annotations: {sc_ref: "C1", sc_layer: "8"}
+
+  PredictiveClaim:
+    is_a: Claim
+    description: >-
+      An estimate of a still unknown outcome of a target session or class of future cases. Needs a separate admission
+      (validation for this target + human product admission); never obtained by rewording C0/C1 (C2).
+    attributes:
+      target_cut: {range: string, required: true}
+      model: {range: string, required: true}
+      training_cutoff: {range: string, required: true}
+      issued_at_utc: {range: string, required: true}
+      validation: {range: string, required: true}
+      admission: {range: string, required: true}
+    annotations: {sc_ref: "C2", sc_layer: "8"}
+
+  DecisionClaim:
+    is_a: Claim
+    description: >-
+      A statement that an action or abstention fits a goal and a policy in this scene. Needs a PolicySpecification; an
+      actual action needs a separate human authority (C3).
+    attributes:
+      policy: {range: string, required: true}
+      criterion_ru: {range: string, required: true}
+      action_ru: {range: string, required: true}
+      authority: {range: string}
+    annotations: {sc_ref: "C3", sc_layer: "8"}
+
+  CheckResult:
+    attributes:
+      check: {range: string, required: true}
+      outcome: {range: CheckOutcome, required: true}
+      checked: {range: integer, minimum_value: 0}
+      note: {range: string}
+    annotations: {sc_ref: "§14.4", sc_layer: cross}
+
+  Violation:
+    description: A detected semantic violation; what it withholds is named, nothing is silently corrected.
+    attributes:
+      code: {range: string, required: true}
+      sc_ref: {range: string, multivalued: true, required: true}
+      message: {range: string, required: true}
+      path: {range: string}
+      severity: {range: Severity, required: true}
+      withheld: {range: string, multivalued: true}
+    annotations: {sc_ref: "§14.2; §14.4", sc_layer: cross}
+
+# =====================================================================================================================
+# enums
+# =====================================================================================================================
+enums:
+  GroundsCategory:
+    annotations: {sc_ref: "§1.3"}
+    permissible_values:
+      OPERATOR_REQUIREMENT: {description: "требование оператора"}
+      AUTHOR_RULE: {description: "правило автора метода"}
+      DR_LAB_DECISION: {description: "решение DR Lab"}
+      IMPLEMENTATION_FACT: {description: "факт реализации"}
+      RESEARCH_RESULT: {description: "результат исследования"}
+      HYPOTHESIS: {description: "гипотеза"}
+      PROPOSAL: {description: "предложение"}
+      SUPERSEDED_DEFINITION: {description: "исторически заменённое определение"}
+      UNRESOLVED_DISCREPANCY: {description: "неразрешённое расхождение"}
+      CONTRACT_FORMALISATION: {description: "нормативная формализация SC-1.1 (§0.1, третье основание)"}
+  EditionStatus:
+    annotations: {sc_ref: "§0.2; §14.3"}
+    permissible_values:
+      ACCEPTED_FOR_THIS_WORK: {description: "принята оператором как обязательная цель этой работы (без общего принятия сверх неё)"}
+      ACCEPTED_FOR_PROFILES: {description: "принята оператором как нормативный контракт названных профилей и их дальнейших изменений; вне их не действует"}
+      PREVIOUS_EDITION: {description: "предшествующая редакция, сохраняется для прослеживаемости"}
+      PROPOSED: {description: "подготовлена для принятия"}
+  ActorRole:
+    annotations: {sc_ref: "§1.3; T0.1"}
+    permissible_values: {OPERATOR: {}, EXECUTOR_AGENT: {}, SEMANTIC_LENS: {}, METHOD_AUTHOR: {}}
+  ProfileStatus:
+    annotations: {sc_ref: "§12"}
+    permissible_values: {ACTIVE: {}, FROZEN: {}, LEGACY: {}}
+  SourceRole:
+    annotations: {sc_ref: "§1.3"}
+    permissible_values: {NORMATIVE_CONTRACT: {}, DEFINITION: {}, AMENDMENT: {}, DECISION: {}, IMPLEMENTATION: {}, RESEARCH: {}, ANALYTICAL_INPUT: {}}
+  SourceKind:
+    annotations: {sc_ref: "O0"}
+    permissible_values: {HISTORICAL_TAPE: {}, LIVE_FEED: {}}
+  Instrument:
+    annotations: {sc_ref: "O0"}
+    permissible_values: {NQ: {}, ES: {}, YM: {}}
+  LabelMeaning:
+    annotations: {sc_ref: "O2"}
+    permissible_values:
+      OPEN_OF_INTERVAL: {description: "метка M5 — её открытие (TradingView)"}
+      CLOSE_OF_INTERVAL: {description: "метка — закрытие интервала"}
+  CalendarStatus:
+    annotations: {sc_ref: "S1"}
+    permissible_values:
+      CERTIFIED: {}
+      NOT_CERTIFIED: {description: "календарь ранних закрытий не удостоверен; отсутствующая M5 до H — пропуск"}
+  Block:
+    annotations: {sc_ref: "S1"}
+    permissible_values: {ADR: {}, ODR: {}, RDR: {}}
+  ActivationKind:
+    annotations: {sc_ref: "S2; M0"}
+    permissible_values: {CONFIRMATION: {}, DR_BREAK: {}}
+  Direction:
+    annotations: {sc_ref: "S2"}
+    permissible_values: {LONG: {}, SHORT: {}}
+  Alignment:
+    annotations: {sc_ref: "E0; H3"}
+    permissible_values:
+      COMMON_SESSION_CLOCK: {description: "общие часы ET собственной сессии"}
+      OWN_HORIZON: {description: "собственная активация → конец блока"}
+      BOX_END_CLOCK: {description: "общие часы M5 после коробки (путь семьи)"}
+  ObservationMode:
+    annotations: {sc_ref: "E0; O3"}
+    permissible_values:
+      LIVE: {description: "живой день из TradingView; срез — последняя закрытая M5"}
+      HISTORY_DAY_REPLAY_BY_CLOSE: {description: "день истории открыт как сегодня; повтор по времени закрытия свечей"}
+      RESEARCH_WALK_FORWARD: {description: "исследовательский прогон; аналоги только до цели"}
+  CaseSetRole:
+    annotations: {sc_ref: "H1"}
+    permissible_values:
+      HISTORICAL_UNIVERSE: {}
+      BASE_FAMILY: {}
+      ELIGIBLE_AT_CUT: {}
+      MATCHED_AT_CUT: {}
+      OUTCOME_SUBGROUP: {description: "члены уже выбранного множества, где компонент результата известен или событие состоялось"}
+      RETROSPECTIVE_RESEARCH: {}
+  KeyField:
+    annotations: {sc_ref: "H1"}
+    permissible_values: {INSTRUMENT: {}, BLOCK: {}, WEEKDAY: {}, DIRECTION: {}, CONFIRMATION_WINDOW: {}, BREAK_WINDOW: {}, DATE_BEFORE_TARGET: {}}
+  WeekdayScope:
+    annotations: {sc_ref: "H1"}
+    permissible_values: {WEEKDAY: {}, ALL_WEEKDAYS: {}}
+  ConditionAvailability:
+    annotations: {sc_ref: "H1; C1"}
+    permissible_values:
+      AT_ACTIVATION: {}
+      PREFIX_AT_CUT: {}
+      RETROSPECTIVE: {}
+      PREFIX_AND_RETROSPECTIVE: {description: "префиксное условие отбора плюс условие на исход (например, «если новый случился»)"}
+  LiveUse:
+    annotations: {sc_ref: "H1; C1"}
+    permissible_values: {PERMITTED: {}, FORBIDDEN: {}}
+  ProjectionKind:
+    annotations: {sc_ref: "P0.2; P0.3; P3"}
+    permissible_values:
+      FINAL_EXTREME: {}
+      DR_OUTCOME: {}
+      CLOSE_AT_M5: {}
+      RANGE_AT_M5: {}
+      AT_LEVEL_OR_BEYOND: {}
+      LITERAL_LEVEL_CROSSING: {}
+      BAND_VISIT: {}
+      FIRST_QUALIFIED_VISIT: {}
+      FIRST_ORDER: {}
+      REACTION_SWING_TARGET: {}
+      RESIDUAL_NEW_EXTREME: {}
+      RESIDUAL_DELTA: {}
+      RESIDUAL_TIME_TO_NEW: {}
+      ALGORITHMIC_REGION_MEMBERSHIP: {}
+      CLOCK_SPLIT: {}
+      REGION_STABILITY: {}
+  EventKind:
+    annotations: {sc_ref: "P0.1; P0.2; P0.3"}
+    permissible_values:
+      R: {}
+      X: {}
+      DR: {}
+      ORDER: {}
+      CLOSE: {}
+      RANGE: {}
+      LEVEL: {}
+      CROSS: {}
+      VISIT: {}
+      NEW_R: {}
+      NEW_X: {}
+      DELTA_R: {}
+      DELTA_X: {}
+      TAU_R: {}
+      TAU_X: {}
+  ContributionKind:
+    annotations: {sc_ref: "P0"}
+    permissible_values: {ONE_POINT: {}, ONE_CATEGORY: {}, ONE_BINARY_VOTE: {}, ONE_CELL_AT_M5: {}, BAND_INDICATORS_AT_M5: {}, ONE_MAGNITUDE: {}, ONE_DURATION: {}, ONE_MEMBERSHIP: {}}
+  HorizonStart:
+    annotations: {sc_ref: "P0.1; P0.3"}
+    permissible_values:
+      OWN_ACTIVATION_CLOSE_EXCLUSIVE: {description: "от закрытия собственной активирующей M5; сама она не входит"}
+      COMMON_CUT_EXCLUSIVE: {description: "M5, открывшиеся не раньше общего среза t"}
+      BOX_END: {description: "общие часы M5 после коробки"}
+      SINGLE_M5: {}
+      NOT_APPLICABLE: {}
+  HorizonEnd:
+    annotations: {sc_ref: "P0.1"}
+    permissible_values:
+      BLOCK_END_CLOSE_INCLUSIVE: {description: "M5, закрывшаяся ровно в H, входит; открывшаяся в H — нет"}
+      SINGLE_M5: {}
+      NOT_APPLICABLE: {}
+  TieRule:
+    annotations: {sc_ref: "P0.1; P0.3"}
+    permissible_values:
+      REPEATS_KEPT_NO_EXTRA_VOTE: {}
+      TIE_IS_NOT_NEW: {}
+      ONE_VOTE_PER_CASE: {}
+  KnowledgeComponent:
+    annotations: {sc_ref: "E2; V2"}
+    permissible_values:
+      ENDPOINT: {description: "окончательная точка KNOWN / UNKNOWN / NO_PERIOD"}
+      EXISTENCE: {description: "факт события YES / NO / UNKNOWN"}
+      MAGNITUDE: {description: "окончательная величина"}
+      FIRST_TIME: {description: "первое время события"}
+      CATEGORY: {description: "категория исхода"}
+      MEMBERSHIP: {description: "принадлежность области"}
+  EndpointKnowledge:
+    annotations: {sc_ref: "E2"}
+    permissible_values: {KNOWN: {}, UNKNOWN: {}, NO_PERIOD: {}}
+  BinaryKnowledge:
+    annotations: {sc_ref: "E2"}
+    permissible_values: {'YES': {}, 'NO': {}, UNKNOWN: {}}
+  FirstTimeKnowledge:
+    annotations: {sc_ref: "E2; P0.3"}
+    permissible_values: {KNOWN: {}, UNKNOWN: {}, NO_EVENT: {}, NO_PERIOD: {}}
+  DrOutcome:
+    annotations: {sc_ref: "P0.2"}
+    permissible_values: {BROKEN: {}, HELD: {}, UNKNOWN: {}, NO_PERIOD: {}}
+  FirstOrder:
+    annotations: {sc_ref: "P0.2"}
+    permissible_values: {R_BEFORE_X: {}, X_BEFORE_R: {}, SAME_M5: {}, UNKNOWN: {}, NO_PERIOD: {}}
+  ReachabilityStatus:
+    annotations: {sc_ref: "E3"}
+    permissible_values: {HOLDS: {}, POSSIBLE: {}, IMPOSSIBLE: {}, UNKNOWN: {}}
+  HistoryClockStatus:
+    annotations: {sc_ref: "E4"}
+    permissible_values: {FUTURE_PRESENT: {}, FUTURE_EMPTY: {}, PAST_ONLY: {}}
+  RegionKind:
+    annotations: {sc_ref: "P2"}
+    permissible_values: {WHOLE_DISTRIBUTION: {}, PRICE_BAND: {}, TIME_WINDOW: {}, JOINT_PRICE_TIME: {}, ZONE_MASK: {}, RESIDUAL_OUTSIDE_ZONES: {}, UNDETERMINED_MASS: {}, LEVEL: {}, M5_CELL: {}, OUT_OF_FRAME: {}, NONE: {}}
+  RegionOrigin:
+    annotations: {sc_ref: "P2"}
+    permissible_values: {OPERATOR_SELECTION: {}, ALGORITHM: {}, SCREEN_FRAME: {}, FIXED_GRID: {}, TODAY_LEVEL: {}, WHOLE: {}}
+  TargetKind:
+    annotations: {sc_ref: "T1"}
+    permissible_values:
+      FIXED_HISTORICAL_SET: {description: "свойство фиксированной исторической семьи"}
+      FUTURE_OUTCOME: {description: "неизвестный будущий исход или более широкая популяция"}
+  UnitOfAnalysis:
+    annotations: {sc_ref: "T1"}
+    permissible_values: {SESSION: {}, SESSION_AT_CUT: {}, EVENT: {}, M5: {}, TRADE: {}, ZONE: {}}
+  DenominatorRule:
+    annotations: {sc_ref: "T1; V2.1"}
+    permissible_values:
+      N_BASE_UNIQUE_MEMBERS: {}
+      N_ELIGIBLE_AT_CUT: {}
+      N_MATCH_AT_CUT: {}
+      KNOWN_COMPONENT_SUPPORT: {}
+      NONE_LOGICAL: {description: "логическая оценка одного случая, знаменателя нет"}
+  SummaryMeasure:
+    annotations: {sc_ref: "T1"}
+    permissible_values: {SHARE: {}, SHARE_DIFFERENCE: {}, CATEGORY_SHARES: {}, DISTRIBUTION: {}, QUANTILES: {}, THRESHOLD_SHARES: {}, TIME_TO_EVENT_QUANTILES: {}, LOGICAL_STATUS: {}, STABILITY_INDEX: {}}
+  UnknownPolicy:
+    annotations: {sc_ref: "T1; V2.1; V2.2"}
+    permissible_values:
+      UNKNOWN_KEPT_IN_N_NO_COORDINATE: {}
+      BINARY_BOUNDS_OVER_D: {}
+      POINT_AMONG_KNOWN_WITH_BOUNDS: {}
+      AMONG_KNOWN_COMPONENT_WITH_COUNTS: {}
+      LOGICAL_UNKNOWN_STATUS: {}
+      NOT_APPLICABLE: {}
+  WeightPolicy:
+    annotations: {sc_ref: "T1; H3"}
+    permissible_values:
+      NONE: {description: "без весов; один случай — один голос"}
+  ParameterKind:
+    annotations: {sc_ref: "T1"}
+    permissible_values: {EVENT: {}, PRICE_BAND_CELLS: {}, TIME_WINDOW_CELLS: {}, LEVEL_RATIONAL: {}, LEVEL_SIDE: {}, M5_INDEX: {}, PRICE_CELL: {}, ZONE_ID: {}, CATEGORY: {}, CUT: {}, MATCHER: {}, THRESHOLD: {}, ROLE_IN_BUNDLE: {}}
+  EstimatorRule:
+    annotations: {sc_ref: "V0"}
+    permissible_values:
+      COUNT_OVER_N: {}
+      CATEGORY_COUNTS_OVER_N: {}
+      JOINT_CELL_COUNTS_OVER_N: {}
+      BINARY_BOUNDS_OVER_N: {}
+      POINT_AMONG_KNOWN_AND_BOUNDS: {}
+      LINEAR_QUANTILES_AMONG_KNOWN: {}
+      THRESHOLD_SHARE_AMONG_KNOWN: {}
+      ALGORITHMIC_REGION_SHARE: {}
+      JACCARD_RECOVERY: {}
+      HELD_OUT_NULL_EXCESS: {}
+      LOGICAL_ASSESSMENT: {}
+      STORED_RESEARCH_TABLE: {}
+  ClaimClassName:
+    annotations: {sc_ref: "§10"}
+    permissible_values:
+      DescriptiveClaim: {description: "C0"}
+      ConditionalDescriptiveClaim: {description: "C1"}
+      PredictiveClaim: {description: "C2"}
+      DecisionClaim: {description: "C3"}
+  Surface:
+    annotations: {sc_ref: "§12.3"}
+    permissible_values: {PANEL: {}, INSPECTOR: {}, WINDOW: {}, CANVAS: {}, TOOLTIP: {}, PASSPORT: {}}
+  ViewScope:
+    annotations: {sc_ref: "H1"}
+    permissible_values: {CONF: {}, BRK: {}, ANY: {}}
+  ValueForm:
+    annotations: {sc_ref: "V2.1; §12.4"}
+    permissible_values:
+      POINT: {}
+      BOUNDS_IF_UNKNOWN: {description: "при неизвестных — диапазон [да/D; (да+неизвестно)/D]"}
+      POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN: {description: "точка среди известных; при неизвестных на экране диапазон"}
+      CATEGORY_SHARES: {}
+      QUANTILES: {}
+      LOGICAL_STATUS: {}
+      NONE: {}
+  PriceTransfer:
+    annotations: {sc_ref: "M0; §12.4"}
+    permissible_values:
+      NONE: {}
+      M0_TODAY_EDGE: {description: "u истории на сегодняшней шкале от сегодняшнего края IDR"}
+      M0_TODAY_EXTREME: {description: "добавочное движение от сегодняшнего наблюдённого экстремума"}
+  FormAcceptance:
+    annotations: {sc_ref: "§14.1; §14.3"}
+    permissible_values:
+      ACCEPTED_BY_OPERATOR: {}
+      INHERITED_FROM_ACCEPTED_SCREEN: {description: "подпись действующего экрана 24, принятая оператором в итерациях"}
+      PROPOSED_BY_EXECUTOR: {description: "предложена исполнителем по требованию контракта; оператор может поправить"}
+  ValidationKind:
+    annotations: {sc_ref: "V3"}
+    permissible_values: {STRUCTURE: {}, COMPUTATIONAL_INVARIANT: {}, STATISTICAL_TRANSFER: {}, POLICY_FITNESS: {}, ALGORITHM_STABILITY: {}, RESEARCH_EXPLORATORY: {}}
+  Lifecycle:
+    annotations: {sc_ref: "V3; §14.1"}
+    permissible_values: {HYPOTHESIS: {}, RESEARCH_EXPLORATORY: {}, VALIDATED_FOR_PROFILE: {}, NOT_PROMOTED: {}, NOT_TESTABLE: {}, FROZEN: {}}
+  ObligationKind:
+    annotations: {sc_ref: "§0; §14.4"}
+    permissible_values: {INVARIANT: {}, FORBIDDEN_TRANSFORMATION: {}, REQUIREMENT: {}}
+  EnforcementMechanism:
+    annotations: {sc_ref: "§14.4"}
+    permissible_values:
+      STRUCTURAL_SCHEMA: {description: "структурная схема"}
+      PATH_COMPUTATION: {description: "вычисление по пути"}
+      PROVENANCE_RECONCILIATION: {description: "сверка происхождения"}
+      STATISTICAL_CHECK: {description: "статистическая проверка"}
+      HUMAN_ACCEPTANCE: {description: "человеческое принятие"}
+  SurfaceProfile:
+    annotations: {sc_ref: "§0.2"}
+    permissible_values:
+      SC11_BASE_24: {}
+      SC11_NOW_1_0: {}
+      SC11_OBSERVATION: {}
+      SC11_CONTRACT_SERVICE: {}
+      LEGACY_SCREEN_22: {}
+      LEGACY_SEM_V1: {}
+      LEGACY_CLASSIC: {}
+      LEGACY_RESEARCH_DASHBOARD: {}
+      SERVICE: {}
+  FieldKind:
+    annotations: {sc_ref: "§12.3"}
+    permissible_values: {STATISTIC: {}, SUPPORT_COUNT: {}, DENOMINATOR: {}, CASE_RECORD: {}, OBSERVATION: {}, STRATEGY_OBJECT: {}, PARAMETER: {}, IDENTIFIER: {}, PROVENANCE: {}, TIME: {}, VALIDATION_EVIDENCE: {}, DIAGNOSTIC: {}, ASSESSMENT: {}, PREFIX_STATE: {}, MEASUREMENT: {}}
+  CoverageStatus:
+    annotations: {sc_ref: "§14.4"}
+    permissible_values: {REPRESENTED: {}, NOT_INSTANTIATED: {}, OUT_OF_SCOPE: {}, EDITORIAL: {}}
+  ContractStatus:
+    annotations: {sc_ref: "§14.4"}
+    permissible_values:
+      CONFORMANT: {}
+      VIOLATION: {description: "найдено нарушение; затронутые числа не опубликованы"}
+      CONTRACT_STALE: {description: "исполняемый контракт не совпадает со своим источником; статистика не публикуется"}
+  RequesterKind:
+    annotations: {sc_ref: "T0.1"}
+    permissible_values:
+      LOCAL_HTTP_CLIENT: {description: "страница или агент на этом компьютере; личность не удостоверена"}
+      TEST_HARNESS: {}
+  AuthorityNeed:
+    annotations: {sc_ref: "T0.1; D1"}
+    permissible_values:
+      NONE_DESCRIPTIVE: {description: "описательный ответ; полномочие на действие не требуется и не создаётся"}
+  PrefixStatus:
+    annotations: {sc_ref: "E1; E2"}
+    permissible_values: {OK: {}, NO_PREFIX: {}, UNKNOWN_PREFIX: {}, HORIZON_OVER: {}, FROZEN_AT_BREAK: {}}
+  ValueKind:
+    annotations: {sc_ref: "V1"}
+    permissible_values:
+      POINT: {description: "a share with its exact numerator and denominator"}
+      BOUNDS: {description: "identified bounds from holes, never a confidence interval"}
+      DISTRIBUTION: {}
+      CATEGORY_SHARES: {}
+      QUANTILES: {}
+      INDEX: {description: "a dimensionless diagnostic (a Jaccard, an excess) without a denominator of cases"}
+      STORED_TABLE: {description: "a stored research table, quoted, not recomputed"}
+      NO_ESTIMATE: {}
+  VerificationStatus:
+    annotations: {sc_ref: "§1.3"}
+    permissible_values:
+      VERIFIED_BY_REFERENCE: {description: "выведено заново эталонным определением из первичных записей и совпало"}
+      RECOUNTED: {description: "пересчитано из записей случаев тем же определением"}
+      NOT_RECOMPUTED: {description: "не пересчитывалось на выпуске; основание — тесты и происхождение"}
+      MISMATCH: {}
+  InputKind:
+    annotations: {sc_ref: "§1.3"}
+    permissible_values: {OBSERVATION_SNAPSHOT: {}, CASE_SET_SNAPSHOT: {}, REGISTRY: {}, CODE: {}, VALIDATION: {}, TODAY_PREFIX: {}, PARAMETERS: {}}
+  Severity:
+    annotations: {sc_ref: "§14.4"}
+    permissible_values: {BLOCKING: {}, WARNING: {}}
+  CheckOutcome:
+    annotations: {sc_ref: "§14.4"}
+    permissible_values: {PASS: {}, FAIL: {}}

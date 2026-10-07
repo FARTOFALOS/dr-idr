@@ -147,7 +147,9 @@ def forecast(S, w, mask_col, cut, ev):
     dn_new = dn[dn > 0]
     tk = m & (new == 1) & (tau > 0)
     tt = tau[tk].astype(float)
-    out = dict(support=dict(N_match_total=total, N_match_known=known, N_match_unknown=unk, N_delta_known=int(dk.sum())),
+    # SC-1.1 V2 / V2.2: the existence of a new extreme, its final magnitude and its first time have their own supports
+    out = dict(support=dict(N_match_total=total, N_match_known=known, N_match_unknown=unk, N_delta_known=int(dk.sum()),
+                            N_new_yes=yes, N_new_no=known - yes, N_delta_unknown=total - int(dk.sum())),
                p_new_extreme=round(yes / known, 4) if known else None,
                p_new_bounds=[round(yes / total, 4), round((yes + unk) / total, 4)] if total else [None, None])
     out["p_no_new_extreme"] = None if out["p_new_extreme"] is None else round(1 - out["p_new_extreme"], 4)
@@ -156,11 +158,12 @@ def forecast(S, w, mask_col, cut, ev):
     out["delta"] = dict(q25=q[0], q50=q[1], q75=q[2],
                         **{f"p_ge_0_{n * 100 // dd:02d}": (round(float(np.mean(10 * d[dk] * dd >= n * 10 * w[dk])), 4) if dk.any() else None)
                            for n, dd in RULES["deltas"]})
-    out["delta_if_new"] = dict(q25=qn[0], q50=qn[1], q75=qn[2], n=int(len(dn_new)))
+    out["delta_if_new"] = dict(q25=qn[0], q50=qn[1], q75=qn[2], n=int(len(dn_new)), n_unknown=int((m & (new == 1) & (d < 0)).sum()))
     qt = _q(tt)
     out["time_to_new"] = dict(q25_m5=qt[0], q50_m5=qt[1], q75_m5=qt[2],
                               q25_min=None if qt[0] is None else round(5 * qt[0], 1), q50_min=None if qt[1] is None else round(5 * qt[1], 1),
-                              q75_min=None if qt[2] is None else round(5 * qt[2], 1), n=int(len(tt)))
+                              q75_min=None if qt[2] is None else round(5 * qt[2], 1), n=int(len(tt)),
+                              n_unknown=int((m & (new == 1) & ~(tau > 0)).sum()), n_no_event=int((m & (new == 0)).sum()))
     return out
 
 
@@ -298,10 +301,16 @@ def _clk(t):
 
 
 def live(inst, session, at=None, date=None, view="auto", debug=False):
-    """The request of the page: the family of lab/scene24.py and its NOW at the slice."""
+    """The request of the page: the family of lab/scene24.py and its NOW at the slice. The payload leaves through the
+    contract gate (lab/contract.py::attach_now): its numbers are re-derived at the cut by the reference definitions,
+    an event block that fails is withheld, and every published number carries its C1 claim."""
+    import contract
     import scene24
+    params = dict(instrument=inst, session=session, at=at, date=date, view=view)
     fam = scene24.family(inst, session, at, date, view)
     if fam.get("status") != "ok" or "today" not in fam or not fam.get("N"):
-        return dict(now_version=VERSION, status="NO_FAMILY", message=fam.get("message") or ("в семье нет сессий" if fam.get("status") == "ok" else None))
+        out = dict(now_version=VERSION, status="NO_FAMILY", message=fam.get("message") or ("в семье нет сессий" if fam.get("status") == "ok" else None))
+        return contract.attach_now(out, fam, [], 0.25, params)
     day = scene24.day_view(inst, date)
-    return payload(fam, day["bars"], float(day.get("tick") or 0.25), debug)
+    tick = float(day.get("tick") or 0.25)
+    return contract.attach_now(payload(fam, day["bars"], tick, debug), fam, day["bars"], tick, params)

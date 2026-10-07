@@ -1,0 +1,319 @@
+# DR-LAB-SC-1.1 registry · editions, the acceptance on record, profiles, source references.
+# Instance data of contract/schema/dr_lab_sc.yaml (class Registry). The contract text is the source of truth; this
+# file records which edition is in force for this work, on what human act, and where every definition comes from.
+registry_part: editions-and-sources
+
+editions:
+  - id: DR-LAB-SC-1.0
+    version: "1.0"
+    sc_ref: ["§0.2"]
+    grounds: CONTRACT_FORMALISATION
+    title_ru: DR-LAB Semantic Contract 1.0
+    document_path: spec/DR-LAB-Semantic-Contract-1.0.md
+    document_sha256_lf: 2a7bcee886642117e3fc36ad25b9fb4b0ed4bd2f812128f73bdd16365a5f0ae6
+    edition_status: PREVIOUS_EDITION
+    source_refs: [SRC:SC-1.0]
+    note: >-
+      The previous edition kept for traceability (§0.2). It was absent from the working tree when this work began
+      (the uncommitted node of meaning/07 linked to it); the operator restored the file into spec/ on 2026-10-07.
+      K01-K32; 1.1 adds K33 and the three patches of §0.4.
+  - id: DR-LAB-SC-1.1
+    version: "1.1"
+    sc_ref: ["§0.2", "§0.4", "§14.3"]
+    grounds: CONTRACT_FORMALISATION
+    title_ru: DR-LAB Semantic Contract 1.1 (patched)
+    document_path: spec/DR-LAB-Semantic-Contract-1.1-(patched).md
+    document_sha256_lf: bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b
+    edition_status: ACCEPTED_FOR_PROFILES
+    supersedes: DR-LAB-SC-1.0
+    source_refs: [SRC:SC-1.1, SRC:GOAL-2026-10-07]
+    acceptances:
+      - actor_role: OPERATOR
+        channel: Claude Code chat with the operator, 2026-10-07 (his direct message; Section A of his instructions)
+        date: "2026-10-07"
+        quote:
+          - "Transform DR/IDR Lab into a system where the accepted `DR-LAB-SC-1.1` semantic contract is represented and enforced in machine-readable form"
+          - "The attached `DR-LAB-Semantic-Contract-1.1-(patched).md` is the authoritative semantic target for this work."
+          - "existing protected meanings remain unchanged unless the contract itself requires a correction"
+          - "LinkML is an implementation instrument for that target, not a source of new domain meaning"
+        scope: >-
+          DR-LAB-SC-1.1 is the binding semantic target of the machine formalisation and its enforcement in DR/IDR Lab:
+          the profiles BASE-24 and NOW-1.0 of branch design-24, their API and the working screen 24, including the
+          corrections the contract itself requires (for example K33).
+        exclusions:
+          - merging design-24 into main, publication or a push (AGENTS.md; SC-1.1 §14.3)
+          - any trading policy, order or execution (SC-1.1 §11, D1)
+          - opening the 2026 tape or a prospective log (AGENTS.md rule 2; SC-1.1 §0.2)
+          - a new NOW matcher, new thresholds or gates (NOW-1.0 frozen; SC-1.1 §12.2)
+          - redrawing the screen beyond what the contract requires (meaning/13; operator 2026-09-30)
+        not_established:
+          - >-
+            Acceptance of SC-1.1 as the general normative base of the whole project beyond this work: §14.3 asks for a
+            human decision naming the edition and its scope; the scope named in the message is "this work".
+          - Ratification of each normative position of SC-1.1 as a separate project standard.
+      - actor_role: OPERATOR
+        channel: Claude Code chat with the operator, 2026-10-07 (his direct message after the work was reported)
+        date: "2026-10-07"
+        quote:
+          - "Принимаю SC-1.1 как нормативный семантический контракт для рабочего профиля DR Lab 24 (BASE-24 и NOW-1.0) и дальнейших изменений этих профилей; legacy-поверхности пока остаются вне него."
+          - "Для NOW используй формулировки «В истории: R позже углублялся… / Если углублялся…» и симметрично для X."
+        scope: >-
+          DR-LAB-SC-1.1 is the normative semantic contract of the working profile DR Lab 24 — BASE-24 and NOW-1.0 — and of
+          every further change of these profiles. The NOW words are the operator's.
+        exclusions:
+          - the legacy surfaces (design 22 at /22/, the classic screen, the research dashboard, /sem-v1/) stay outside it for now
+          - any trading policy, order or execution (SC-1.1 §11, D1)
+        not_established:
+          - SC-1.1 for the legacy surfaces and for the project beyond the profiles named
+      - actor_role: OPERATOR
+        channel: Claude Code chat with the operator, 2026-10-07 (his next message)
+        date: "2026-10-07"
+        quote:
+          - "Давай лучше сделай это как основная линия DR-Lab, то есть закоммуть, за, за, слей в main. Я принимаю решение слить все-таки PR"
+        scope: >-
+          The branch design-24 (PR #1) with this work is merged into main: screen 24 under SC-1.1 becomes the main line
+          of DR Lab.
+        exclusions:
+          - any trading policy, order or execution (SC-1.1 §11, D1)
+        not_established:
+          - "the rewritten texts of hard rules 6 and 10 of AGENTS.md for main (AGENTS.md: «rewritten with the merge into main, with the operator»)"
+        # these records preserve evidence of the acts; they do not create the decisions (SC-1.1 §14.1)
+
+profiles:
+  - id: PROFILE:BASE-24
+    version: "24.1"
+    sc_ref: ["§12.1"]
+    grounds: DR_LAB_DECISION
+    title_ru: базовая карта экрана 24
+    edition: DR-LAB-SC-1.1
+    profile_status: ACTIVE
+    source_refs: [SRC:SEM-1.0, SRC:M10-P, SRC:M12, SRC:NOW-1.0, SRC:SEMANTICS-24, SRC:EKRAN-24, SRC:OPERATOR-ATOM-2026-10-01]
+    note: >-
+      Before a confirmation there is no directed family. After it F, N, own R / X of every member and their
+      distributions are fixed; the slice changes today's facts, reachability, the history clock and the named residual
+      questions only. After a break the break family F_break is a separate profile with a way back.
+  - id: PROFILE:NOW-1.0
+    version: "1.0"
+    sc_ref: ["§12.2"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: условный слой «Сейчас»
+    edition: DR-LAB-SC-1.1
+    profile_status: FROZEN
+    source_refs: [SRC:NOW-1.0, SRC:M15, SRC:NOW-PROVERKA]
+    note: Matchers, thresholds and gates frozen; a new matcher needs a new specification version.
+
+source_references:
+  - id: SRC:SC-1.1
+    sc_ref: ["§0.2"]
+    grounds: CONTRACT_FORMALISATION
+    role: NORMATIVE_CONTRACT
+    document: "spec/DR-LAB-Semantic-Contract-1.1-(patched).md"
+    revision: "sha256-lf:bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"
+  - id: SRC:SC-1.0
+    sc_ref: ["§0.2"]
+    grounds: CONTRACT_FORMALISATION
+    role: NORMATIVE_CONTRACT
+    document: "spec/DR-LAB-Semantic-Contract-1.0.md"
+    revision: "sha256-lf:2a7bcee886642117e3fc36ad25b9fb4b0ed4bd2f812128f73bdd16365a5f0ae6"
+  - id: SRC:GOAL-2026-10-07
+    sc_ref: ["§14.3"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "chat of 2026-10-07, the operator's goal message"
+    locator: "the whole message"
+    note: "recorded in meaning/07-cepochka-reshenij.md, node of 07.10"
+  - id: SRC:AGENTS
+    sc_ref: ["§0.1"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "AGENTS.md"
+    revision: "7e8325c289bc8a01c35764f67931236c2ad3d49a"
+    locator: "Hard rules 1-10"
+  - id: SRC:SEM-1.0
+    sc_ref: ["§12.1", "§15.2"]
+    grounds: DR_LAB_DECISION
+    role: DEFINITION
+    document: "meaning/lens/2026-10-01-spec-v1/DR_Lab_semantic_specification_v1.md"
+    locator: "§§3-9, 13-14"
+  - id: SRC:M10-P
+    sc_ref: ["§12.1"]
+    grounds: DR_LAB_DECISION
+    role: DEFINITION
+    document: "meaning/10-dizajn-24.md"
+    locator: "§2, rules П1-П10"
+  - id: SRC:M12
+    sc_ref: ["P3", "§12.1"]
+    grounds: DR_LAB_DECISION
+    role: DEFINITION
+    document: "meaning/12-karta-zon.md"
+    locator: "§§1, 6-7 (zone-map-3, adopted by the operator on 2026-10-01)"
+  - id: SRC:M14
+    sc_ref: ["E3", "E4"]
+    grounds: DR_LAB_DECISION
+    role: DEFINITION
+    document: "meaning/14-vperedi-i-proshlo.md"
+  - id: SRC:NOW-1.0
+    sc_ref: ["§12.2"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DEFINITION
+    document: "meaning/lens/2026-10-06-now-1.0/DR-LAB-NOW-1.0.md"
+    note: "closed by the operator on 2026-10-06"
+  - id: SRC:M15
+    sc_ref: ["§12.2"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "meaning/15-sloj-seichas.md"
+    locator: "implementation decisions 1-12"
+  - id: SRC:NOW-PROVERKA
+    sc_ref: ["V3", "§12.2"]
+    grounds: RESEARCH_RESULT
+    role: RESEARCH
+    document: "meaning/lens/2026-10-06-now-1.0/proverka.md"
+  - id: SRC:SEMANTICS-24
+    sc_ref: ["§15.2"]
+    grounds: DR_LAB_DECISION
+    role: DEFINITION
+    document: "docs/SEMANTICS.md"
+    locator: "section «Дизайн 24 «Границы хода»»"
+  - id: SRC:SEMANTICS-22
+    sc_ref: ["§0.2"]
+    grounds: DR_LAB_DECISION
+    role: DEFINITION
+    document: "docs/SEMANTICS.md"
+    locator: "sections «Экран «Созвездия»», «Рабочий экран: дизайн 22», «Семья на рабочем экране»"
+    note: "applies locally to /22/ (SC-1.1 §0.2)"
+  - id: SRC:SEMANTICS-CLASSIC
+    sc_ref: ["§0.2"]
+    grounds: SUPERSEDED_DEFINITION
+    role: DEFINITION
+    document: "docs/SEMANTICS.md"
+    locator: "sections «Сессия сейчас (живое окно)», «Кластеры — как читается карта»"
+  - id: SRC:SEMANTICS-DASHBOARD
+    sc_ref: ["§0.2"]
+    grounds: SUPERSEDED_DEFINITION
+    role: DEFINITION
+    document: "docs/SEMANTICS.md"
+    locator: "sections «Объект: одна сессия», «Исходы сессии», «Чего эти числа не устанавливают»"
+  - id: SRC:DESIGN-23
+    sc_ref: ["§0.2"]
+    grounds: IMPLEMENTATION_FACT
+    role: DEFINITION
+    document: "design/sozvezdiya-23/README.md"
+    note: "/sem-v1/ and /api/family-v1, kept as is (AGENTS.md)"
+  - id: SRC:STRATEGY
+    sc_ref: ["S0", "§15.2"]
+    grounds: AUTHOR_RULE
+    role: DEFINITION
+    document: "docs/STRATEGY.md"
+    locator: "§§1, 6.3, 13.1, 15"
+  - id: SRC:PINE-TM
+    sc_ref: ["S0", "§15.2"]
+    grounds: AUTHOR_RULE
+    role: DEFINITION
+    document: "https://www.tradingview.com/script/upzvFFch-DR-IDR-V1/"
+    note: "confirms M5, the RDR and ODR hours and a confirmation by a close beyond DR; not the whole reconstruction"
+  - id: SRC:UI-RULES
+    sc_ref: ["§14.1"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "docs/UI_RULES.md"
+  - id: SRC:EKRAN-24
+    sc_ref: ["§12.3"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "spec/ekran-24/README.md"
+  - id: SRC:M13
+    sc_ref: ["§14.1"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "meaning/13-zhurnal-vizualizacii.md"
+  - id: SRC:M07
+    sc_ref: ["§1.3"]
+    grounds: DR_LAB_DECISION
+    role: DECISION
+    document: "meaning/07-cepochka-reshenij.md"
+  - id: SRC:DECISIONS
+    sc_ref: ["§1.3"]
+    grounds: DR_LAB_DECISION
+    role: DECISION
+    document: "docs/DECISIONS.md"
+  - id: SRC:OPERATOR-ATOM-2026-10-01
+    sc_ref: ["O1"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "meaning/10-dizajn-24.md"
+    locator: "П10; AGENTS.md, design 24"
+    note: "an existing M5 candle is an observation, day and night; a hole is a wholly missing M5"
+  - id: SRC:OPERATOR-NAMES-2026-10-06
+    sc_ref: ["§12.1"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "docs/SEMANTICS.md"
+    locator: "названия на экране (Откат, Продолжение)"
+  - id: SRC:ZM3-STUDY
+    sc_ref: ["V3"]
+    grounds: RESEARCH_RESULT
+    role: RESEARCH
+    document: "studies/zone_map_3_2026_10_01"
+    locator: "lab/zonemap24.py STUDY; meaning/12 §4"
+    note: "exploratory; the corpus was seen"
+  - id: SRC:REPORT-15
+    sc_ref: ["§15.1"]
+    grounds: PROPOSAL
+    role: ANALYTICAL_INPUT
+    document: "spec/deep-research-report (15).md"
+    revision: "sha256-lf:5a1d99dca14b2084a831e6efd3176e04d671a6c211c6e18fe77b5f967dc67e1e"
+    note: "an analytical input, not a normative source; its LinkML prototype was not adopted"
+  - id: SRC:LINKML
+    sc_ref: ["§14.4"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "https://linkml.io/linkml/"
+    note: "linkml 1.11.1, contract/requirements-linkml.txt"
+  - id: SRC:CODE-BUILD-MARKET
+    sc_ref: ["O1", "O3"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "lab/build_market.py"
+  - id: SRC:CODE-BUILD-BOXES
+    sc_ref: ["S1", "S2", "O3"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "lab/build_boxes.py"
+  - id: SRC:CODE-SCENE21
+    sc_ref: ["S1", "S2", "E0"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "lab/scene21.py"
+    locator: "_state, day_view, _boxes"
+  - id: SRC:CODE-LIVE
+    sc_ref: ["O0"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "lab/live.py; lab/tv_fetch.mjs"
+  - id: SRC:CODE-SCENE24
+    sc_ref: ["H1", "H2", "P0.1", "P0.2"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "lab/scene24.py"
+  - id: SRC:CODE-ZONEMAP24
+    sc_ref: ["P3", "E3", "E4"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "lab/zonemap24.py"
+  - id: SRC:CODE-NOW24
+    sc_ref: ["P0.3", "H3", "§12.2"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "lab/now24.py; lab/now24_validate.py"
+  - id: SRC:CODE-PAGE24
+    sc_ref: ["§12.3"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "design/sozvezdiya-24/src/app.js; design/sozvezdiya-24/src/panel.js"
+  - id: SRC:CODE-CONTRACT
+    sc_ref: ["§14.4"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "lab/contract.py"
+    note: "the runtime gate and the reference definitions"

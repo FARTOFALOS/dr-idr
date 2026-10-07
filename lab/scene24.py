@@ -42,6 +42,7 @@ from pathlib import Path
 import numpy as np
 
 import cluster24  # noqa: F401  (main-cluster-1, kept for its archived studies; the screen shows the zone map)
+import contract
 import scene21
 import zonemap24
 
@@ -113,7 +114,8 @@ def measure(rows, start, end, d, e, opp=None):
         out["order_detail"] = dict(all_x_before_all_r=max(xt) < min(rt), all_r_before_all_x=max(rt) < min(xt),
                                    x_again_after_r=any(t > rt[0] for t in xt), r_again_after_x=any(t > xt[0] for t in rt))
     else:
-        out["order"] = "unknown"
+        # SC-1.1 P0.2 / E2: no period (no M5 on the horizon) is its own category of the order, never «unknown»
+        out["order"] = "no_period" if status == "none" else "unknown"
     return out
 
 
@@ -367,15 +369,25 @@ def family(inst, session, at=None, date=None, view="auto"):
     """The request of design 24: today's state at the slice (closed M5 only, the rules of live.py) and the snapshot of
     its family. view: 'auto' = the break family after today's DR break, else the confirmation family; 'conf' = the
     original confirmation snapshot (kept after a break, spec §9.3); a suffix ':all' asks for the all-weekdays family
-    (zone-map-3 §2.2, an explicit choice of the operator, never a fallback)."""
+    (zone-map-3 §2.2, an explicit choice of the operator, never a fallback).
+
+    DR-LAB-SC-1.1: the response leaves through the contract gate (lab/contract.py::attach_family): the snapshot is
+    re-derived from the session base by the reference definitions, a failing object is withheld, and the response
+    carries its ContractEnvelope (one bundle per statistic, its claim admitted from the evidence)."""
+    out, B, day = _family(inst, session, at, date, view)
+    params = dict(instrument=inst, session=session, at=at, date=date, view=view)
+    return contract.attach_family(out, inst, B, day, params)
+
+
+def _family(inst, session, at=None, date=None, view="auto"):
     view, _, sc = (view or "auto").partition(":")
     scope = "all" if sc == "all" else "weekday"
     if inst not in scene21.live.SYMBOLS: raise ValueError("Unknown instrument")
     if session not in SESS: raise ValueError("Unknown session")
     B = _base(inst)
-    if B is None: return dict(status="no_base", message="Нет базы сессий: python -B lab/build_boxes.py")
+    if B is None: return dict(status="no_base", message="Нет базы сессий: python -B lab/build_boxes.py"), None, None
     day = day_view(inst, date)
-    if day.get("status") != "ok": return dict(status=day.get("status", "no_data"), message=day.get("message"))
+    if day.get("status") != "ok": return dict(status=day.get("status", "no_data"), message=day.get("message")), B, day
     bars, now = day["bars"], day["now"]
     is_live = not date and at is None
     obs = int(np.floor(now)) if at is None else int(at)
@@ -383,7 +395,7 @@ def family(inst, session, at=None, date=None, view="auto"):
     start, formed, end = SESS[session]
     today = dict(date=day["date"], source=day["source"], status=s["status"], obs=obs, slice=obs // 5 * 5)
     if not s.get("conf"):
-        return dict(status=s["status"], session=session, today=today)
+        return dict(status=s["status"], session=session, today=today), B, day
     side, c0, brk = s["side"], s["conf"], s.get("failed")
     today.update(c0=c0, side=side, window=window_of(c0, formed), brk=brk, brkWindow=None if brk is None else window_of(brk, formed),
                  idrH=s["idrH"], idrL=s["idrL"], drH=s["drH"], drL=s["drL"])
@@ -399,4 +411,4 @@ def family(inst, session, at=None, date=None, view="auto"):
     act = c0 if v == "conf" else brk
     today["zones"] = _today_zones(snap, bars, float(day.get("tick") or 0.25), d, e_px, s["idrH"] - s["idrL"], act, today["slice"], formed, end)
     out.update(today=today, available=dict(conf=True, brk=bool(brk), scopes=list(SCOPES)), weekday=day["weekday"])
-    return out
+    return out, B, day

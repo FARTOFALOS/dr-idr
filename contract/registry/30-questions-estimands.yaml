@@ -1,0 +1,589 @@
+# DR-LAB-SC-1.1 registry · layers 6-7: trader questions (T0), estimands (T1, the eight answers q1..q8) and the
+# estimators (V0). One question may have several estimands; R and X are always different estimands (P0 differs);
+# a full horizon and the remainder after t are different estimands (a horizon change is a new identity, P0).
+# YAML merge keys (<<) only shorten the R / X pairs; every estimand is complete after loading.
+registry_part: layers-6-7
+
+questions:
+  - {id: Q:B-RX, version: "1", sc_ref: ["T0", "§12.4/B-RX"], grounds: CONTRACT_FORMALISATION, text_ru: "Где закончился R / X?", scene_ru: "после сегодняшней активации — где и когда у сессий этой семьи лежала окончательная точка отката (R) и продолжения (X)"}
+  - {id: Q:B-ZONE, version: "1", sc_ref: ["T0", "§12.4/B-ZONE"], grounds: CONTRACT_FORMALISATION, text_ru: "Какая доля в зоне?", scene_ru: "сколько сессий семьи поставили свой окончательный R / X в точной области зоны zone-map-3"}
+  - {id: Q:B-DR, version: "1", sc_ref: ["T0", "§12.4/B-DR"], grounds: CONTRACT_FORMALISATION, text_ru: "Удержалось ли правило?", scene_ru: "чем у сессий семьи подтверждения кончился DR до конца блока"}
+  - {id: Q:B-CLOSE, version: "1", sc_ref: ["T0", "§12.4/B-CLOSE"], grounds: CONTRACT_FORMALISATION, text_ru: "Где закрывалась семья на M5 j?", scene_ru: "в какой полосе закрылась каждая сессия семьи на одной и той же по часам M5"}
+  - {id: Q:B-RANGE, version: "1", sc_ref: ["T0", "P0.2"], grounds: CONTRACT_FORMALISATION, text_ru: "Куда простирался диапазон M5 на j?", scene_ru: "задевала ли свеча M5 сессии семьи эту полосу на этой M5"}
+  - {id: Q:B-LEVEL, version: "1", sc_ref: ["T0", "§12.4/B-LEVEL"], grounds: CONTRACT_FORMALISATION, text_ru: "На L или дальше?", scene_ru: "доходила ли цена сессий семьи до сегодняшнего уровня или дальше — за весь свой горизонт и на общих часах после среза"}
+  - {id: Q:B-CROSS, version: "1", sc_ref: ["T0", "P0.2"], grounds: CONTRACT_FORMALISATION, text_ru: "Пересекала ли свеча уровень?", scene_ru: "была ли M5 с минимумом не выше и максимумом не ниже уровня"}
+  - {id: Q:B-VISIT, version: "1", sc_ref: ["T0", "§12.4/B-VISIT"], grounds: CONTRACT_FORMALISATION, text_ru: "Заходили ли в полосу?", scene_ru: "задевала ли цена сессий семьи выбранную полосу"}
+  - {id: Q:B-ORDER, version: "1", sc_ref: ["T0", "P0.2"], grounds: CONTRACT_FORMALISATION, text_ru: "Что было раньше: R или X?", scene_ru: "порядок первых достижений окончательных R и X у каждой сессии"}
+  - {id: Q:B-CLOCK, version: "1", sc_ref: ["T0", "§12.4/B-CLOCK", "E4"], grounds: CONTRACT_FORMALISATION, text_ru: "Когда были события зоны?", scene_ru: "сколько событий полосы или зоны у семьи было по часам раньше сегодняшнего среза и сколько позже"}
+  - {id: Q:TODAY-Z, version: "1", sc_ref: ["T0", "§12.4/TODAY-Z", "E3"], grounds: CONTRACT_FORMALISATION, text_ru: "Может ли итог быть здесь?", scene_ru: "может ли сегодняшний окончательный R / X ещё лежать в этой области"}
+  - {id: Q:N-NEW, version: "1", sc_ref: ["T0", "§12.4/N-NEW"], grounds: CONTRACT_FORMALISATION, text_ru: "Будет ли ещё более дальний экстремум?", scene_ru: "после уже прожитого сегодня пути — у скольких сопоставимых к этому часу сессий семьи потом был строго новый R / X"}
+  - {id: Q:N-DELTA, version: "1", sc_ref: ["T0", "§12.4/N-DELTA"], grounds: CONTRACT_FORMALISATION, text_ru: "Сколько движения оставалось?", scene_ru: "сколько добавочного движения от собственного экстремума к этому часу оставалось у сопоставимых сессий"}
+  - {id: Q:N-IF-NEW, version: "1", sc_ref: ["T0", "§12.4/N-IF-NEW"], grounds: CONTRACT_FORMALISATION, text_ru: "Насколько дальше, если дальше?", scene_ru: "у тех сопоставимых сессий, которые потом сделали новый экстремум, — насколько дальше"}
+  - {id: Q:N-TIME, version: "1", sc_ref: ["T0", "§12.4/N-TIME"], grounds: CONTRACT_FORMALISATION, text_ru: "Через сколько впервые новый?", scene_ru: "через сколько M5 после среза у них впервые был новый экстремум"}
+  - {id: Q:ZONE-DIAG, version: "1", sc_ref: ["T0", "P3", "V3"], grounds: DR_LAB_DECISION, text_ru: "Насколько устойчива зона как рисунок истории?", scene_ru: "держится ли та же зона при сдвиге сетки и пересэмплировании и отличается ли от пути без направления (свойства зоны, не разрешение ей существовать)"}
+  - {id: Q:ZM3-STUDY, version: "1", sc_ref: ["T0", "V3"], grounds: RESEARCH_RESULT, text_ru: "Как часто зоны такого статуса сбывались в исследовании?", scene_ru: "разведка 2018–2025: доля зон со статусом «держится» / «возможна» / «невозможна», в которых потом лёг окончательный экстремум"}
+
+estimands:
+  # ------------------------------------------------------------------ BASE-24: final R and X of the family
+  - &B_RX_JOINT
+    id: EST:B-RX-JOINT-R
+    version: "1"
+    sc_ref: ["T1", "§12.4/B-RX", "V2.1"]
+    grounds: CONTRACT_FORMALISATION
+    question: Q:B-RX
+    q1_formalised_part_ru: "где и когда (клетка 0,1 SD × 15 минут) лежит окончательная точка R каждой сессии семьи"
+    q2_target: FIXED_HISTORICAL_SET
+    q3_unit: SESSION
+    q4_case_set: [CS:F-CONF-1, CS:F-CONF-ALL-1, CS:F-BREAK-1, CS:F-BREAK-ALL-1]
+    q4_denominator: N_BASE_UNIQUE_MEMBERS
+    q5_outcome: OUT:FINAL-R-1
+    q5_region: REG:WHOLE-1
+    q6_time_ru: "от закрытия собственной активации (её M5 не входит) до конца блока H (M5, закрывшаяся в H, входит); время события — открытие первой M5 с этой ценой; срез ничего не меняет"
+    q6_cut: CUT:LAST-CLOSED-M5-1
+    q7_measure: DISTRIBUTION
+    q8_unknown: UNKNOWN_KEPT_IN_N_NO_COORDINATE
+    q8_weights: NONE
+    q8_order_ru: "порядок не участвует; повторы цены хранятся, голосов не добавляют"
+    profile: PROFILE:BASE-24
+  - <<: *B_RX_JOINT
+    id: EST:B-RX-JOINT-X
+    q1_formalised_part_ru: "где и когда (клетка 0,1 SD × 15 минут) лежит окончательная точка X каждой сессии семьи"
+    q5_outcome: OUT:FINAL-X-1
+  - &B_RX_BAND
+    <<: *B_RX_JOINT
+    id: EST:B-RX-BAND-R
+    q1_formalised_part_ru: "доля семьи, у которой окончательный R лежит в полосе цены [k0/10; k1/10) за весь горизонт"
+    q5_region: REG:PRICE-BAND-1
+    q7_measure: SHARE
+    parameters:
+      - {name: k0, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "нижняя клетка полосы (включительно)"}
+      - {name: k1, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "верхняя клетка полосы (исключительно)"}
+  - <<: *B_RX_BAND
+    id: EST:B-RX-BAND-X
+    q1_formalised_part_ru: "доля семьи, у которой окончательный X лежит в полосе цены [k0/10; k1/10) за весь горизонт"
+    q5_outcome: OUT:FINAL-X-1
+  - &B_RX_WINDOW
+    <<: *B_RX_JOINT
+    id: EST:B-RX-WINDOW-R
+    q1_formalised_part_ru: "доля семьи, у которой первая M5 окончательного R открылась в окне [f + 15 b0; f + 15 b1)"
+    q5_region: REG:TIME-WINDOW-1
+    q7_measure: SHARE
+    parameters:
+      - {name: b0, parameter_kind: TIME_WINDOW_CELLS, meaning_ru: "первая 15-минутная клетка окна (включительно)"}
+      - {name: b1, parameter_kind: TIME_WINDOW_CELLS, meaning_ru: "клетка после окна (исключительно)"}
+  - <<: *B_RX_WINDOW
+    id: EST:B-RX-WINDOW-X
+    q1_formalised_part_ru: "доля семьи, у которой первая M5 окончательного X открылась в окне [f + 15 b0; f + 15 b1)"
+    q5_outcome: OUT:FINAL-X-1
+  - &B_RX_REGION
+    <<: *B_RX_JOINT
+    id: EST:B-RX-REGION-R
+    q1_formalised_part_ru: "доля семьи, у которой окончательный R лежит в полосе [k0/10; k1/10) и в окне [b0; b1) одновременно"
+    q5_region: REG:JOINT-1
+    q7_measure: SHARE
+    parameters:
+      - {name: k0, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "нижняя клетка полосы"}
+      - {name: k1, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "верхняя клетка полосы (исключительно)"}
+      - {name: b0, parameter_kind: TIME_WINDOW_CELLS, meaning_ru: "первая клетка окна"}
+      - {name: b1, parameter_kind: TIME_WINDOW_CELLS, meaning_ru: "клетка после окна"}
+  - <<: *B_RX_REGION
+    id: EST:B-RX-REGION-X
+    q1_formalised_part_ru: "доля семьи, у которой окончательный X лежит в полосе [k0/10; k1/10) и в окне [b0; b1) одновременно"
+    q5_outcome: OUT:FINAL-X-1
+  - &B_RX_UNDET
+    <<: *B_RX_JOINT
+    id: EST:B-RX-UNDETERMINED-R
+    q1_formalised_part_ru: "доля семьи, у которой окончательный R не определён: нет целой M5 на горизонте (UNKNOWN) или нет периода (NO_PERIOD)"
+    q5_region: REG:UNDETERMINED-1
+    q7_measure: SHARE
+    parameters:
+      - {name: part, parameter_kind: CATEGORY, meaning_ru: "UNKNOWN, NO_PERIOD или оба"}
+  - <<: *B_RX_UNDET
+    id: EST:B-RX-UNDETERMINED-X
+    q1_formalised_part_ru: "доля семьи, у которой окончательный X не определён: нет целой M5 на горизонте (UNKNOWN) или нет периода (NO_PERIOD)"
+    q5_outcome: OUT:FINAL-X-1
+  - &B_RX_KNOWN
+    <<: *B_RX_JOINT
+    id: EST:B-RX-KNOWN-R
+    sc_ref: ["T1", "§12.4/B-RX", "E2"]
+    q1_formalised_part_ru: "доля семьи, у которой окончательный R определён (весь собственный горизонт наблюдён)"
+    q5_region: REG:WHOLE-1
+    q7_measure: SHARE
+    parameters: []
+  - <<: *B_RX_KNOWN
+    id: EST:B-RX-KNOWN-X
+    q1_formalised_part_ru: "доля семьи, у которой окончательный X определён (весь собственный горизонт наблюдён)"
+    q5_outcome: OUT:FINAL-X-1
+  - &B_RX_OUTFRAME
+    <<: *B_RX_JOINT
+    id: EST:B-RX-OUTFRAME-R
+    q1_formalised_part_ru: "доля семьи, у которой окончательный R лежит за видимым краем графика (выше или ниже кадра)"
+    q5_region: REG:OUT-OF-FRAME-1
+    q7_measure: SHARE
+    parameters:
+      - {name: side, parameter_kind: CATEGORY, meaning_ru: "ABOVE или BELOW видимого ценового диапазона"}
+      - {name: k0, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "нижняя клетка цены за кадром"}
+      - {name: k1, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "верхняя клетка цены за кадром (исключительно)"}
+  - <<: *B_RX_OUTFRAME
+    id: EST:B-RX-OUTFRAME-X
+    q1_formalised_part_ru: "доля семьи, у которой окончательный X лежит за видимым краем графика (выше или ниже кадра)"
+    q5_outcome: OUT:FINAL-X-1
+  - <<: *B_RX_JOINT
+    id: EST:B-RX-DIFF
+    sc_ref: ["T1", "§12.4/B-RX", "K19"]
+    q1_formalised_part_ru: "на сколько процентных пунктов доля семьи, поставившей в этой области (полоса цены или окно времени) свой X, больше (меньше) доли, поставившей там свой R"
+    q5_outcome: OUT:FINAL-X-1
+    q5_region: REG:TIME-WINDOW-1
+    q7_measure: SHARE_DIFFERENCE
+    q8_order_ru: "две отдельные доли одного N; одна сессия может дать и R, и X; сумма — не доля уникальных сессий с «любым событием» (K19)"
+    parameters:
+      - {name: k0, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "полоса [k0; k1) (пусто для окна)"}
+      - {name: k1, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "верхняя клетка полосы (исключительно)"}
+      - {name: b0, parameter_kind: TIME_WINDOW_CELLS, meaning_ru: "окно [b0; b1) (пусто для полосы)"}
+      - {name: b1, parameter_kind: TIME_WINDOW_CELLS, meaning_ru: "клетка после окна"}
+  # ------------------------------------------------------------------ BASE-24: zones
+  - &B_ZONE
+    <<: *B_RX_JOINT
+    id: EST:B-ZONE-R
+    sc_ref: ["T1", "§12.4/B-ZONE", "P3", "K17"]
+    question: Q:B-ZONE
+    q1_formalised_part_ru: "доля семьи, у которой окончательный R лежит в точной маске зоны zone-map-3 (n_zone / N_base)"
+    q5_outcome: OUT:ZONE-MEMBERSHIP-1
+    q5_region: REG:ZONE-MASK-1
+    q7_measure: SHARE
+    q8_order_ru: "остаток и неизвестные не удаляются; зоны и остаток делят известную массу, потому что зоны не пересекаются"
+    parameters:
+      - {name: zone_id, parameter_kind: ZONE_ID, meaning_ru: "идентификатор зоны (слепок + событие + вершина + версия алгоритма)"}
+  - <<: *B_ZONE
+    id: EST:B-ZONE-X
+    q1_formalised_part_ru: "доля семьи, у которой окончательный X лежит в точной маске зоны zone-map-3 (n_zone / N_base)"
+  - &B_ZONE_RES
+    <<: *B_ZONE
+    id: EST:B-ZONE-RESIDUAL-R
+    q1_formalised_part_ru: "доля семьи, у которой окончательный R известен, но лежит вне всех зон (остаток)"
+    q5_region: REG:RESIDUAL-1
+    parameters: []
+  - <<: *B_ZONE_RES
+    id: EST:B-ZONE-RESIDUAL-X
+    q1_formalised_part_ru: "доля семьи, у которой окончательный X известен, но лежит вне всех зон (остаток)"
+  # ------------------------------------------------------------------ BASE-24: DR outcome, order
+  - <<: *B_RX_JOINT
+    id: EST:B-DR
+    sc_ref: ["T1", "§12.4/B-DR"]
+    question: Q:B-DR
+    q1_formalised_part_ru: "доля семьи подтверждения в каждой из четырёх категорий исхода DR до конца блока"
+    q4_case_set: [CS:F-CONF-1, CS:F-CONF-ALL-1]
+    q5_outcome: OUT:DR-OUTCOME-1
+    q5_region: REG:NONE-1
+    q7_measure: CATEGORY_SHARES
+    q8_order_ru: "BROKEN может быть известен при пропуске; HELD — только при полном непустом горизонте; NO_PERIOD отдельно от UNKNOWN"
+    parameters:
+      - {name: category, parameter_kind: CATEGORY, meaning_ru: "HELD, BROKEN, UNKNOWN или NO_PERIOD (для одной строки)"}
+  - <<: *B_RX_JOINT
+    id: EST:B-ORDER
+    sc_ref: ["T1", "P0.2", "K20", "K21"]
+    question: Q:B-ORDER
+    q1_formalised_part_ru: "доля семьи в каждой категории порядка первых достижений окончательных R и X"
+    q5_outcome: OUT:FIRST-ORDER-1
+    q5_region: REG:NONE-1
+    q7_measure: CATEGORY_SHARES
+    q8_order_ru: "SAME_M5 — порядок внутри свечи неизвестен; UNKNOWN и NO_PERIOD раздельно; не маршрут сделки"
+    parameters:
+      - {name: category, parameter_kind: CATEGORY, meaning_ru: "R_BEFORE_X, X_BEFORE_R, SAME_M5, UNKNOWN или NO_PERIOD"}
+  # ------------------------------------------------------------------ BASE-24: the family's path per common M5
+  - &B_CLOSE
+    <<: *B_RX_JOINT
+    id: EST:B-CLOSE
+    sc_ref: ["T1", "§12.4/B-CLOSE"]
+    question: Q:B-CLOSE
+    q1_formalised_part_ru: "доля семьи, чьё закрытие на общей M5 j попало в полосу клеток [k0/10; k1/10) (одна клетка — k1 = k0 + 1)"
+    q5_outcome: OUT:CLOSE-AT-M5-1
+    q5_region: REG:M5-CELL-1
+    q6_time_ru: "одна общая по часам M5 j после коробки; у части членов своя активация на j ещё впереди — это отмечаемая фаза, а не причина удалить их из N"
+    q7_measure: SHARE
+    q8_order_ru: "одна колонка — своя сотня N; отсутствующая M5 — своя категория"
+    parameters:
+      - {name: j, parameter_kind: M5_INDEX, meaning_ru: "индекс общей M5 после коробки"}
+      - {name: k0, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "нижняя клетка цены закрытия"}
+      - {name: k1, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "верхняя клетка (исключительно)"}
+  - <<: *B_CLOSE
+    id: EST:B-CLOSE-MISSING
+    q1_formalised_part_ru: "доля семьи, у которой на общей M5 j нет свечи"
+    q5_region: REG:UNDETERMINED-1
+    parameters:
+      - {name: j, parameter_kind: M5_INDEX, meaning_ru: "индекс общей M5 после коробки"}
+  - <<: *B_CLOSE
+    id: EST:B-CLOSE-PREACT
+    q1_formalised_part_ru: "доля семьи, у которой на общей M5 j своя активация ещё не наступила (фаза пути, не исключение из N)"
+    q5_region: REG:NONE-1
+    parameters:
+      - {name: j, parameter_kind: M5_INDEX, meaning_ru: "индекс общей M5 после коробки"}
+  - <<: *B_CLOSE
+    id: EST:B-RANGE
+    sc_ref: ["T1", "P0.2"]
+    question: Q:B-RANGE
+    q1_formalised_part_ru: "доля семьи, чья свеча M5 на общей M5 j задевала полосу [k/10; (k+1)/10) диапазоном high–low (не закрытие)"
+    q5_outcome: OUT:RANGE-AT-M5-1
+    q8_order_ru: "одна M5 может задеть несколько полос; доли полос не делят сотню; отсутствующая M5 — неизвестно"
+    parameters:
+      - {name: j, parameter_kind: M5_INDEX, meaning_ru: "индекс общей M5 после коробки"}
+      - {name: k, parameter_kind: PRICE_CELL, meaning_ru: "клетка цены [k/10; (k+1)/10)"}
+  # ------------------------------------------------------------------ BASE-24: binary questions on the path
+  - &B_LEVEL
+    <<: *B_RX_JOINT
+    id: EST:B-LEVEL-FULL
+    sc_ref: ["T1", "§12.4/B-LEVEL", "K13", "K22"]
+    question: Q:B-LEVEL
+    q1_formalised_part_ru: "доля семьи, у которой хотя бы одна M5 от собственной активации до конца блока дошла до уровня L или дальше по его стороне"
+    q5_outcome: OUT:REACH-FULL-1
+    q5_region: REG:LEVEL-1
+    q7_measure: SHARE
+    q8_unknown: BINARY_BOUNDS_OVER_D
+    q8_order_ru: "границы из-за пропусков [да/N; (да + неизвестно)/N]; да/(да + нет) — другая доля, не доля N"
+    parameters:
+      - {name: a, parameter_kind: LEVEL_RATIONAL, meaning_ru: "числитель уровня u = a / b в ширинах IDR от края игры"}
+      - {name: b, parameter_kind: LEVEL_RATIONAL, meaning_ru: "знаменатель уровня (b > 0)"}
+      - {name: up, parameter_kind: LEVEL_SIDE, meaning_ru: "по направлению (u > 0: high) или против (u <= 0: low)"}
+  - <<: *B_LEVEL
+    id: EST:B-LEVEL-REST
+    q1_formalised_part_ru: "доля семьи, у которой на общих часах после среза t хотя бы одна M5 дошла до уровня L или дальше"
+    q5_outcome: OUT:REACH-REST-1
+    q6_time_ru: "M5, закрывшиеся после max(t, собственная активация) до конца блока; меняется вместе с t, потому что сокращается горизонт, а не семья"
+    parameters:
+      - {name: a, parameter_kind: LEVEL_RATIONAL, meaning_ru: "числитель уровня"}
+      - {name: b, parameter_kind: LEVEL_RATIONAL, meaning_ru: "знаменатель уровня"}
+      - {name: up, parameter_kind: LEVEL_SIDE, meaning_ru: "сторона вопроса"}
+      - {name: cut, parameter_kind: CUT, meaning_ru: "общий срез t"}
+  - <<: *B_LEVEL
+    id: EST:B-CROSS-FULL
+    sc_ref: ["T1", "P0.2", "K22"]
+    question: Q:B-CROSS
+    q1_formalised_part_ru: "доля семьи, у которой была M5 с low ≤ L ≤ high (буквальное пересечение; гэп за уровень пересечением не считается)"
+    q5_outcome: OUT:CROSS-FULL-1
+  - &B_VISIT
+    <<: *B_RX_JOINT
+    id: EST:B-VISIT-FULL
+    sc_ref: ["T1", "§12.4/B-VISIT", "K18"]
+    question: Q:B-VISIT
+    q1_formalised_part_ru: "доля семьи, у которой хотя бы одна M5 задела полосу [k0/10; k1/10) (low < верх и high ≥ низ) за весь собственный горизонт"
+    q5_outcome: OUT:VISIT-FULL-1
+    q5_region: REG:PRICE-BAND-1
+    q7_measure: SHARE
+    q8_unknown: BINARY_BOUNDS_OVER_D
+    q8_order_ru: "неполное отсутствие свидетельства — UNKNOWN; не окончательный R и не подтверждённый новый вход"
+    parameters:
+      - {name: k0, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "нижняя клетка полосы"}
+      - {name: k1, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "верхняя клетка полосы (исключительно)"}
+  - <<: *B_VISIT
+    id: EST:B-VISIT-REST
+    q1_formalised_part_ru: "доля семьи, у которой на общих часах после среза t хотя бы одна M5 задела полосу"
+    q5_outcome: OUT:VISIT-REST-1
+    q6_time_ru: "M5, закрывшиеся после max(t, собственная активация) до конца блока"
+    parameters:
+      - {name: k0, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "нижняя клетка полосы"}
+      - {name: k1, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "верхняя клетка полосы (исключительно)"}
+      - {name: cut, parameter_kind: CUT, meaning_ru: "общий срез t"}
+  # ------------------------------------------------------------------ BASE-24: the history clock of a band or zone
+  - &B_CLOCK
+    <<: *B_RX_JOINT
+    id: EST:B-CLOCK-R
+    sc_ref: ["T1", "§12.4/B-CLOCK", "E4"]
+    question: Q:B-CLOCK
+    q1_formalised_part_ru: "доля семьи, чей окончательный R в этой полосе или зоне по часам случился раньше среза t (закрытие его M5 ≤ t) или позже"
+    q5_outcome: OUT:CLOCK-SPLIT-1
+    q5_region: REG:PRICE-BAND-1
+    q7_measure: SHARE
+    q8_order_ru: "обе части — доли прежнего N, в сумме доля полосы; «раньше» не удаляется из N; неизвестная масса не распределяется"
+    parameters:
+      - {name: k0, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "полоса [k0; k1) (пусто для зоны)"}
+      - {name: k1, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "верхняя клетка полосы (исключительно)"}
+      - {name: zone_id, parameter_kind: ZONE_ID, meaning_ru: "зона (пусто для полосы)"}
+      - {name: part, parameter_kind: CATEGORY, meaning_ru: "EARLIER или LATER"}
+      - {name: cut, parameter_kind: CUT, meaning_ru: "общий срез t"}
+  - <<: *B_CLOCK
+    id: EST:B-CLOCK-X
+    q1_formalised_part_ru: "доля семьи, чей окончательный X в этой полосе или зоне по часам случился раньше среза t или позже"
+    q5_outcome: OUT:CLOCK-SPLIT-1
+  - &B_PEAK
+    <<: *B_CLOCK
+    id: EST:B-CLOCK-PEAK-R
+    q1_formalised_part_ru: "доля семьи в пиковых 15 минутах зоны или полосы: клетка времени с наибольшим числом её событий R позже среза в клетках, ещё достижимых сегодня (при равенстве — раньше); если таких нет — та же клетка за весь горизонт, «уже прошло»"
+    parameters:
+      - {name: k0, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "полоса [k0; k1) (пусто для зоны)"}
+      - {name: k1, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "верхняя клетка полосы (исключительно)"}
+      - {name: zone_id, parameter_kind: ZONE_ID, meaning_ru: "зона (пусто для полосы)"}
+      - {name: b, parameter_kind: TIME_WINDOW_CELLS, meaning_ru: "пиковая 15-минутная клетка"}
+      - {name: past, parameter_kind: CATEGORY, meaning_ru: "AHEAD или PAST (если впереди событий нет)"}
+      - {name: cut, parameter_kind: CUT, meaning_ru: "общий срез t"}
+  - <<: *B_PEAK
+    id: EST:B-CLOCK-PEAK-X
+    q1_formalised_part_ru: "доля семьи в пиковых 15 минутах зоны или полосы для X (то же правило)"
+  # ------------------------------------------------------------------ BASE-24: zone diagnostics (properties of a zone)
+  - &ZD_GRID
+    <<: *B_RX_JOINT
+    id: EST:ZD-GRID-R
+    sc_ref: ["T1", "P3", "V3"]
+    question: Q:ZONE-DIAG
+    q1_formalised_part_ru: "Жаккар множеств сессий зоны R с лучшей зоной на сетках, сдвинутых на 0,05 SD, 5 и 10 минут"
+    q3_unit: ZONE
+    q5_outcome: OUT:ZONE-STABILITY-1
+    q5_region: REG:ZONE-MASK-1
+    q7_measure: STABILITY_INDEX
+    q8_unknown: NOT_APPLICABLE
+    q8_order_ru: "свойство зоны; не разрешение ей существовать и не шанс на сегодня"
+    parameters:
+      - {name: zone_id, parameter_kind: ZONE_ID, meaning_ru: "зона"}
+      - {name: shift, parameter_kind: CATEGORY, meaning_ru: "PRICE_HALF, TIME_5, TIME_10, MIN"}
+  - <<: *ZD_GRID
+    id: EST:ZD-GRID-X
+    q1_formalised_part_ru: "Жаккар множеств сессий зоны X с лучшей зоной на сдвинутых сетках"
+  - &ZD_BOOT
+    <<: *ZD_GRID
+    id: EST:ZD-BOOT-R
+    q1_formalised_part_ru: "средний Жаккар зоны R с лучшей зоной пересэмплированных семей (50 повторов) и доля повторов с Жаккаром не меньше 0,5"
+    parameters:
+      - {name: zone_id, parameter_kind: ZONE_ID, meaning_ru: "зона"}
+      - {name: statistic, parameter_kind: CATEGORY, meaning_ru: "MEAN или SHARE_GE_HALF"}
+  - <<: *ZD_BOOT
+    id: EST:ZD-BOOT-X
+    q1_formalised_part_ru: "то же для зоны X"
+  - &ZD_NULL
+    <<: *ZD_GRID
+    id: EST:ZD-NULL-R
+    q1_formalised_part_ru: "в отложенной младшей половине семьи: доля её известных R в замороженной области старшей половины против той же доли у копий их путей без направления (sign-flip-1, 200 копий); избыток и его годовой интервал"
+    parameters:
+      - {name: zone_id, parameter_kind: ZONE_ID, meaning_ru: "зона"}
+      - {name: statistic, parameter_kind: CATEGORY, meaning_ru: "P_REAL, P_NULL, EXCESS, INTERVAL, MDE"}
+  - <<: *ZD_NULL
+    id: EST:ZD-NULL-X
+    q1_formalised_part_ru: "то же для зоны X"
+  - <<: *B_RX_JOINT
+    id: EST:ZM3-STUDY
+    sc_ref: ["T1", "V3"]
+    question: Q:ZM3-STUDY
+    q1_formalised_part_ru: "в исследовании 2018–2025: доля зон каждого статуса (через 30 / 60 / 120 минут после подтверждения), в которых потом лёг окончательный экстремум цели"
+    q3_unit: ZONE
+    q4_case_set: [CS:ZM3-STUDY-1]
+    q5_outcome: OUT:ZONE-MEMBERSHIP-1
+    q5_region: REG:ZONE-MASK-1
+    q7_measure: SHARE
+    q8_unknown: NOT_APPLICABLE
+    q8_order_ru: "разведка на виденном корпусе; не проспективная приёмка и не шанс на сегодня"
+    parameters:
+      - {name: block_event, parameter_kind: EVENT, meaning_ru: "блок и событие (RDR R, ODR X …)"}
+  # ------------------------------------------------------------------ NOW-1.0: the residual questions at the common clock cut
+  - &N_NEW
+    id: EST:N-NEW-R
+    version: "1.0"
+    sc_ref: ["T1", "§12.4/N-NEW", "K16", "K33"]
+    grounds: OPERATOR_REQUIREMENT
+    question: Q:N-NEW
+    q1_formalised_part_ru: "доля допустимых (B0) или сопоставленных (M1–M3) к общему часовому срезу t случаев семьи, у которых после t был строго новый R относительно их собственного r_seen"
+    q2_target: FIXED_HISTORICAL_SET
+    q3_unit: SESSION_AT_CUT
+    q4_case_set: [CS:NOW-ELIGIBLE-1, CS:NOW-MATCH-M1-1, CS:NOW-MATCH-M2-1, CS:NOW-MATCH-M3-1]
+    q4_denominator: N_MATCH_AT_CUT
+    q5_outcome: OUT:NEW-R-1
+    q5_region: REG:NONE-1
+    q6_time_ru: "после общего часового среза t (те же часы ET у каждого случая) до конца блока H, включая возможный последующий слом"
+    q6_cut: CUT:NOW-COMMON-CLOCK-1
+    q7_measure: SHARE
+    q8_unknown: POINT_AMONG_KNOWN_WITH_BOUNDS
+    q8_weights: NONE
+    q8_order_ru: "D = N_match_total (для B0 = N_eligible); точка — YES среди известных (соглашение NOW), при неизвестных на экране диапазон [yes/D; (yes + unknown)/D]"
+    parameters:
+      - {name: set, parameter_kind: MATCHER, meaning_ru: "B0, M1, M2 или M3"}
+      - {name: role, parameter_kind: ROLE_IN_BUNDLE, meaning_ru: "MAIN (показано), BASELINE (B0) или RESEARCH"}
+      - {name: cut, parameter_kind: CUT, meaning_ru: "общий часовой срез t"}
+    profile: PROFILE:NOW-1.0
+  - <<: *N_NEW
+    id: EST:N-NEW-X
+    q1_formalised_part_ru: "доля допустимых или сопоставленных к t случаев, у которых после t был строго новый X относительно их собственного x_seen"
+    q5_outcome: OUT:NEW-X-1
+  - &N_NONEW
+    <<: *N_NEW
+    id: EST:N-NO-NEW-R
+    q1_formalised_part_ru: "доля известных исходов того же набора, у которых после t нового R не было (дополнение к N-NEW среди известных)"
+    q8_order_ru: "среди известных исходов; не доля всего набора при неизвестных"
+  - <<: *N_NONEW
+    id: EST:N-NO-NEW-X
+    q1_formalised_part_ru: "доля известных исходов того же набора, у которых после t нового X не было"
+    q5_outcome: OUT:NEW-X-1
+  - &N_DELTA
+    <<: *N_NEW
+    id: EST:N-DELTA-Q-R
+    sc_ref: ["T1", "§12.4/N-DELTA", "V2.2", "K29"]
+    question: Q:N-DELTA
+    q1_formalised_part_ru: "квартили добавочного отката dR = r_seen − R_final по всем известным результатам набора, нули включены (в ширинах IDR)"
+    q4_case_set: [CS:NOW-DELTA-KNOWN-1]
+    q4_denominator: KNOWN_COMPONENT_SUPPORT
+    q5_outcome: OUT:DELTA-R-1
+    q7_measure: QUANTILES
+    q8_unknown: AMONG_KNOWN_COMPONENT_WITH_COUNTS
+    q8_order_ru: "квантили известной опоры; при неизвестных delta не идентифицируют квантили всего набора; опора и неизвестные передаются"
+  - <<: *N_DELTA
+    id: EST:N-DELTA-Q-X
+    q1_formalised_part_ru: "квартили добавочного продолжения dX = X_final − x_seen по всем известным результатам, нули включены"
+    q5_outcome: OUT:DELTA-X-1
+  - &N_DELTA_GE
+    <<: *N_DELTA
+    id: EST:N-DELTA-GE-R
+    q1_formalised_part_ru: "доля известных результатов набора, у которых добавочный откат dR не меньше порога (0,1 / 0,2 / 0,4 SD)"
+    q7_measure: THRESHOLD_SHARES
+    parameters:
+      - {name: threshold, parameter_kind: THRESHOLD, meaning_ru: "порог в ширинах IDR (1/10, 1/5, 2/5)"}
+      - {name: set, parameter_kind: MATCHER, meaning_ru: "B0, M1, M2 или M3"}
+      - {name: role, parameter_kind: ROLE_IN_BUNDLE, meaning_ru: "MAIN, BASELINE или RESEARCH"}
+      - {name: cut, parameter_kind: CUT, meaning_ru: "общий часовой срез t"}
+  - <<: *N_DELTA_GE
+    id: EST:N-DELTA-GE-X
+    q1_formalised_part_ru: "доля известных результатов набора, у которых добавочное продолжение dX не меньше порога"
+    q5_outcome: OUT:DELTA-X-1
+  - &N_IFNEW
+    <<: *N_DELTA
+    id: EST:N-IF-NEW-R
+    sc_ref: ["T1", "§12.4/N-IF-NEW", "V2.2", "K29"]
+    question: Q:N-IF-NEW
+    q1_formalised_part_ru: "квартили добавочного отката у тех случаев набора, у которых после t был новый R и его окончательная величина известна («если новый случился»)"
+    q4_case_set: [CS:NOW-NEW-YES-DELTA-1]
+    q8_order_ru: "условная величина: не средний остаток всех сопоставимых; YES с неизвестной величиной — отдельным счётом"
+  - <<: *N_IFNEW
+    id: EST:N-IF-NEW-X
+    q1_formalised_part_ru: "квартили добавочного продолжения у тех случаев набора, у которых после t был новый X и его величина известна"
+    q5_outcome: OUT:DELTA-X-1
+  - &N_TIME
+    <<: *N_DELTA
+    id: EST:N-TIME-R
+    sc_ref: ["T1", "§12.4/N-TIME", "V2.2"]
+    question: Q:N-TIME
+    q1_formalised_part_ru: "квартили числа часовых M5 от t до первой M5 строго нового R у случаев, где новый R был и его первая M5 известна (минуты = 5 tau)"
+    q4_case_set: [CS:NOW-NEW-YES-TAU-1]
+    q5_outcome: OUT:TAU-R-1
+    q7_measure: TIME_TO_EVENT_QUANTILES
+    q8_order_ru: "«нового не было» (NO_EVENT), «был, время неизвестно» и «нет данных после t» — раздельно; не обещание нового экстремума всем; оценки Каплана—Майера контракт не предписывает"
+  - <<: *N_TIME
+    id: EST:N-TIME-X
+    q1_formalised_part_ru: "квартили числа M5 от t до первой M5 строго нового X у случаев, где новый X был и его первая M5 известна"
+    q5_outcome: OUT:TAU-X-1
+
+estimators:
+  - id: ESTR:JOINT-CELLS-1
+    version: "1"
+    sc_ref: ["V0", "V2.1"]
+    grounds: DR_LAB_DECISION
+    estimands: [EST:B-RX-JOINT-R, EST:B-RX-JOINT-X]
+    rule: JOINT_CELL_COUNTS_OVER_N
+    unknown_handling_ru: "n_E(k, b) / N_base; Σ n_E + n_unknown + n_no_period = N_base; неизвестная масса без координаты"
+    rounding_ru: "точные счётчики; проценты после деления, один знак (два в деталях), без нуля после запятой"
+    implementations: ["lab/scene24.py::_snapshot.dist", "design/sozvezdiya-24/src/app.js::evDist"]
+    reference_definition: "lab/contract.py::est_joint_cells"
+  - id: ESTR:COUNT-OVER-N-1
+    version: "1"
+    sc_ref: ["V0", "V2.1"]
+    grounds: DR_LAB_DECISION
+    estimands: [EST:B-RX-BAND-R, EST:B-RX-BAND-X, EST:B-RX-WINDOW-R, EST:B-RX-WINDOW-X, EST:B-RX-REGION-R, EST:B-RX-REGION-X, EST:B-RX-KNOWN-R, EST:B-RX-KNOWN-X, EST:B-RX-UNDETERMINED-R, EST:B-RX-UNDETERMINED-X, EST:B-RX-OUTFRAME-R, EST:B-RX-OUTFRAME-X, EST:B-CLOSE, EST:B-CLOSE-MISSING, EST:B-CLOSE-PREACT, EST:B-RANGE, EST:B-CLOCK-R, EST:B-CLOCK-X, EST:B-CLOCK-PEAK-R, EST:B-CLOCK-PEAK-X]
+    rule: COUNT_OVER_N
+    unknown_handling_ru: "счёт / N_base; неизвестные и «нет периода» остаются в N; N = 0 — оценки нет (прочерк, не 0 %)"
+    rounding_ru: "как ESTR:JOINT-CELLS-1"
+    implementations: ["design/sozvezdiya-24/src/app.js::pp", "design/sozvezdiya-24/src/app.js::areaCount", "design/sozvezdiya-24/src/app.js::filmOf", "design/sozvezdiya-24/src/app.js::rangeField"]
+    reference_definition: "lab/contract.py::est_count_over_n"
+  - id: ESTR:SHARE-DIFF-1
+    version: "1"
+    sc_ref: ["V0", "K19"]
+    grounds: DR_LAB_DECISION
+    estimands: [EST:B-RX-DIFF]
+    rule: COUNT_OVER_N
+    unknown_handling_ru: "(n_X − n_R) / N_base в процентных пунктах; доли не складываются"
+    rounding_ru: "один знак"
+    implementations: ["design/sozvezdiya-24/src/app.js::twoBars"]
+    reference_definition: "lab/contract.py::est_count_over_n"
+  - id: ESTR:CATEGORY-COUNTS-1
+    version: "1"
+    sc_ref: ["V0", "V2.1"]
+    grounds: DR_LAB_DECISION
+    estimands: [EST:B-DR, EST:B-ORDER]
+    rule: CATEGORY_COUNTS_OVER_N
+    unknown_handling_ru: "категории вместе = N_base; UNKNOWN и NO_PERIOD — свои категории"
+    rounding_ru: "как ESTR:JOINT-CELLS-1"
+    implementations: ["lab/scene24.py::_snapshot", "design/sozvezdiya-24/src/panel.js::outcomeHtml", "design/sozvezdiya-24/src/panel.js::orderHtml"]
+    reference_definition: "lab/contract.py::est_categories"
+  - id: ESTR:BINARY-BOUNDS-1
+    version: "1"
+    sc_ref: ["V0", "V2.1", "K16"]
+    grounds: DR_LAB_DECISION
+    estimands: [EST:B-LEVEL-FULL, EST:B-LEVEL-REST, EST:B-CROSS-FULL, EST:B-VISIT-FULL, EST:B-VISIT-REST]
+    rule: BINARY_BOUNDS_OVER_N
+    unknown_handling_ru: "yes + no + unknown = N; при unknown = 0 — точная доля yes/N; иначе границы [yes/N; (yes + unknown)/N]; yes/(yes + no) — отдельная доля среди известных, не показывается как доля N"
+    rounding_ru: "как ESTR:JOINT-CELLS-1"
+    implementations: ["design/sozvezdiya-24/src/app.js::tally", "design/sozvezdiya-24/src/app.js::ppTxt"]
+    reference_definition: "lab/contract.py::est_binary_bounds"
+  - id: ESTR:ZONE-SHARE-1
+    version: "zone-map-3"
+    sc_ref: ["V0", "P3"]
+    grounds: DR_LAB_DECISION
+    estimands: [EST:B-ZONE-R, EST:B-ZONE-X, EST:B-ZONE-RESIDUAL-R, EST:B-ZONE-RESIDUAL-X]
+    rule: ALGORITHMIC_REGION_SHARE
+    unknown_handling_ru: "n_zone / N_base по исходным участникам маски; зоны + остаток + неизвестные + нет периода = N"
+    rounding_ru: "как ESTR:JOINT-CELLS-1"
+    implementations: ["lab/zonemap24.py::evaluate", "design/sozvezdiya-24/src/app.js::zonePass"]
+    reference_definition: "lab/contract.py::ref_zone_map"
+  - id: ESTR:ZONE-JACCARD-1
+    version: "zone-map-3"
+    sc_ref: ["V0", "P3", "V3"]
+    grounds: DR_LAB_DECISION
+    estimands: [EST:ZD-GRID-R, EST:ZD-GRID-X, EST:ZD-BOOT-R, EST:ZD-BOOT-X]
+    rule: JACCARD_RECOVERY
+    unknown_handling_ru: "только известные события; доли не являются вероятностями"
+    rounding_ru: "три знака"
+    implementations: ["lab/zonemap24.py::evaluate"]
+    reference_definition: "lab/contract.py::check_zone_diagnostics"
+  - id: ESTR:ZONE-NULL-1
+    version: "sign-flip-1"
+    sc_ref: ["V0", "P3", "V3"]
+    grounds: DR_LAB_DECISION
+    estimands: [EST:ZD-NULL-R, EST:ZD-NULL-X]
+    rule: HELD_OUT_NULL_EXCESS
+    unknown_handling_ru: "младшая половина — только известные события; меньше 10 — «не считается» с причиной"
+    rounding_ru: "четыре знака"
+    implementations: ["lab/zonemap24.py::_null"]
+    reference_definition: "lab/contract.py::check_zone_diagnostics"
+  - id: ESTR:STUDY-TABLE-1
+    version: "zone_map_3_2026_10_01"
+    sc_ref: ["V0", "V3"]
+    grounds: RESEARCH_RESULT
+    estimands: [EST:ZM3-STUDY]
+    rule: STORED_RESEARCH_TABLE
+    unknown_handling_ru: "сохранённая таблица исследования; не пересчитывается на экране"
+    rounding_ru: "один знак, как в исследовании"
+    implementations: ["lab/zonemap24.py::STUDY"]
+    reference_definition: "lab/contract.py::check_study_refs"
+  - id: ESTR:NOW-POINT-BOUNDS-1
+    version: "1.0"
+    sc_ref: ["V0", "V2.1", "§12.2"]
+    grounds: OPERATOR_REQUIREMENT
+    estimands: [EST:N-NEW-R, EST:N-NEW-X, EST:N-NO-NEW-R, EST:N-NO-NEW-X]
+    rule: POINT_AMONG_KNOWN_AND_BOUNDS
+    unknown_handling_ru: "точка yes / (yes + no) — соглашение NOW; границы [yes/D; (yes + unknown)/D] передаются всегда; D = 0 — оценки нет"
+    rounding_ru: "четыре знака в ответе, один на экране"
+    implementations: ["lab/now24.py::forecast"]
+    reference_definition: "lab/contract.py::ref_residual"
+  - id: ESTR:NOW-QUANTILES-1
+    version: "1.0"
+    sc_ref: ["V0", "V2.2", "K29"]
+    grounds: OPERATOR_REQUIREMENT
+    estimands: [EST:N-DELTA-Q-R, EST:N-DELTA-Q-X, EST:N-IF-NEW-R, EST:N-IF-NEW-X, EST:N-TIME-R, EST:N-TIME-X]
+    rule: LINEAR_QUANTILES_AMONG_KNOWN
+    unknown_handling_ru: "квантили q25 / q50 / q75 среди известной опоры компонента (линейная интерполяция numpy); опора и неизвестные — отдельными счётами; интерполированный квантиль не называется наблюдённым уровнем"
+    rounding_ru: "четыре знака; минуты = 5 tau с одним знаком"
+    implementations: ["lab/now24.py::forecast", "lab/now24.py::_q"]
+    reference_definition: "lab/contract.py::ref_quantile"
+  - id: ESTR:NOW-THRESHOLD-1
+    version: "1.0"
+    sc_ref: ["V0", "V2.2"]
+    grounds: OPERATOR_REQUIREMENT
+    estimands: [EST:N-DELTA-GE-R, EST:N-DELTA-GE-X]
+    rule: THRESHOLD_SHARE_AMONG_KNOWN
+    unknown_handling_ru: "доля известных delta не ниже порога; неизвестные delta не входят ни в числитель, ни в знаменатель и передаются отдельно"
+    rounding_ru: "четыре знака"
+    implementations: ["lab/now24.py::forecast"]
+    reference_definition: "lab/contract.py::ref_residual"

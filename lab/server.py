@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 import importlib
+import contract   # DR-LAB-SC-1.1: the semantic gate (stdlib; reads contract/build, see lab/contract.py)
 engine = None
 
 ROOT = Path(__file__).resolve().parent
@@ -33,6 +34,8 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header('Content-Type', 'application/json; charset=utf-8')
         self.send_header('Content-Length', str(len(data)))
         self.send_header('Cache-Control', 'no-store')
+        # every route says which profile of DR-LAB-SC-1.1 its content belongs to (legacy routes: OUTSIDE_SC11)
+        self.send_header('X-DR-Lab-Contract', contract.header_for(urlparse(self.path).path))
         self.end_headers()
         self.wfile.write(data)
 
@@ -81,6 +84,12 @@ class Handler(SimpleHTTPRequestHandler):
                         fn = scene21.family
                     return self.json(fn(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None))
                 return self.json(scene21.day_view(inst))
+            if url.path == '/api/contract':
+                # DR-LAB-SC-1.1: the compiled machine contract (registry, stamps) and its runtime status
+                return self.json(contract.public_registry())
+            if url.path in ('/api/d24/family', '/api/d24/now') and contract.stale():
+                # a stale executable contract publishes no statistic (fail closed); the reasons are in the envelope
+                return self.json(contract.stale_response(url.path, params))
             if url.path == '/api/d24/now':
                 # DR-LAB-NOW-1.0 (lab/now24.py): the layer «Сейчас» of the family at the slice; never the base map
                 import now24
@@ -89,8 +98,8 @@ class Handler(SimpleHTTPRequestHandler):
                 if date is not None and not re.fullmatch(r'20[0-2]\d-[01]\d-[0-3]\d', date):
                     raise ValueError('date: YYYY-MM-DD')
                 at = params.get('at')
-                return self.json(now24.live(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None,
-                                            date, params.get('view', 'auto'), bool(params.get('debug'))))
+                return self.json(contract.finalize(url.path, now24.live(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None,
+                                                                        date, params.get('view', 'auto'), bool(params.get('debug')))))
             if url.path in ('/api/d24/day', '/api/d24/family', '/api/d24/dates'):
                 # design 24 (lab/scene24.py): the statistical layer of DR-LAB-SEM-1.0; `date` = a trading date of
                 # 2006-2025 shown as if it were today (its families use only earlier sessions), empty = the live day
@@ -100,7 +109,7 @@ class Handler(SimpleHTTPRequestHandler):
                 if date is not None and not re.fullmatch(r'20[0-2]\d-[01]\d-[0-3]\d', date):
                     raise ValueError('date: YYYY-MM-DD')
                 if url.path == '/api/d24/dates':
-                    return self.json(scene24.dates(inst))
+                    return self.json(contract.finalize(url.path, scene24.dates(inst)))
                 if url.path == '/api/d24/day':
                     if not date and params.get('refresh'):
                         import live
@@ -108,10 +117,10 @@ class Handler(SimpleHTTPRequestHandler):
                             live.fetch(inst)
                         except Exception as exc:
                             return self.json({'status': 'error', 'message': str(exc)}, 200)
-                    return self.json(scene24.day_view(inst, date))
+                    return self.json(contract.finalize(url.path, contract.attach_day(scene24.day_view(inst, date), dict(instrument=inst, date=date))))
                 at = params.get('at')
-                return self.json(scene24.family(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None,
-                                                date, params.get('view', 'auto')))
+                return self.json(contract.finalize(url.path, scene24.family(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None,
+                                                                            date, params.get('view', 'auto'))))
             if url.path == '/api/spec':
                 path = ROOT.parent/'docs'/'SEMANTICS.md'
                 return self.json({'text':path.read_text(encoding='utf-8') if path.exists() else 'Смысловая спецификация готовится вместе с интерфейсом.'})
@@ -128,6 +137,33 @@ class Handler(SimpleHTTPRequestHandler):
             self.json({'error': str(exc)},400)
         except Exception:
             self.json({'error':'Не удалось выполнить локальный расчёт.'},500)
+            raise
+
+    def do_POST(self):
+        # DR-LAB-SC-1.1: the page's own passports recomputed by the reference definitions (tests/ui_check24.js); the
+        # only POST of this read-only server, it changes nothing
+        url = urlparse(self.path)
+        try:
+            if url.path != '/api/d24/verify':
+                return self.json({'error': 'Неизвестный запрос'}, 404)
+            n = int(self.headers.get('Content-Length') or 0)
+            if n > 4_000_000: raise ValueError('body too large')
+            req = json.loads(self.rfile.read(n).decode('utf-8') or '{}')
+            import scene24
+            date = req.get('date') or None
+            if date is not None and not re.fullmatch(r'20[0-2]\d-[01]\d-[0-3]\d', date):
+                raise ValueError('date: YYYY-MM-DD')
+            inst, session = req.get('instrument', 'NQ'), req.get('session', 'RDR')
+            fam = scene24.family(inst, session, req.get('at'), date, req.get('view', 'auto'))
+            if fam.get('status') != 'ok':
+                return self.json({'status': fam.get('status'), 'mismatches': [], 'checked': 0})
+            day = scene24.day_view(inst, date)
+            bad = contract.verify_passports(fam, day.get('bars') or [], float(day.get('tick') or 0.25), req.get('passports') or [])
+            return self.json({'status': 'ok', 'snapshot_id': fam['snapshot_id'], 'checked': len(req.get('passports') or []), 'mismatches': bad})
+        except (ValueError, TypeError) as exc:
+            self.json({'error': str(exc)}, 400)
+        except Exception:
+            self.json({'error': 'Не удалось выполнить локальный расчёт.'}, 500)
             raise
 
 
