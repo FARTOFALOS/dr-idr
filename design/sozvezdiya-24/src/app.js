@@ -29,7 +29,7 @@
   };
   const ORDER = ['ADR', 'ODR', 'RDR'];
   let PREV = null;
-  const A = { inst: 'NQ', src: 'live', date: null, day: null, D: null, fams: new Map(), pending: new Set(), now: new Map(), nowPending: new Set(), auto: true, timer: 0, busy: false, error: null, dates: null, jump: false };
+  const A = { inst: 'NQ', src: 'live', date: null, day: null, D: null, fams: new Map(), pending: new Set(), now: new Map(), nowPending: new Set(), pre: new Map(), prePending: new Set(), auto: true, timer: 0, busy: false, error: null, dates: null, jump: false };
   const C = {
     bg: '#08090C', grid: '#1C2027', text: '#D1D4DC', text2: '#A3A8B3', text3: '#6F7582', axis: '#0B0C10',
     up: '#089981', dn: '#F23645', dr: '#EEF1F5', idr: '#AEBACB', mid: '#8B95A5', open: '#6B7380', std: '#5F6877', stdOn: '#A7B2C3',
@@ -320,6 +320,22 @@
     }
     return null;
   }
+  // PROFILE:PRE-24 (operator 2026-10-08, SC-1.1 §12.5): before today's confirmation, the similar sessions of history at
+  // the cut (lab/pre24.py), one request per closed M5 and scope; there is no family yet, nothing on the chart changes
+  const preKey = ctx => [A.inst, A.src === 'hist' ? A.date : 'live', ctx.s.k, sliceOf(ctx), st.scope].join('|');
+  function preOf(ctx) {
+    if (!ctx.s || ctx.s.status !== 'waiting') return null;
+    const key = preKey(ctx), r = A.pre.get(key);
+    if (r) return r;
+    if (!A.prePending.has(key)) {
+      A.prePending.add(key);
+      fetch('/api/d24/pre?instrument=' + A.inst + '&session=' + ctx.s.k + '&at=' + sliceOf(ctx) + (A.src === 'hist' ? '&date=' + A.date : '') + '&scope=' + st.scope)
+        .then(x => x.json()).then(x => { x._ctx = 'pre|' + (A.respSeq = (A.respSeq || 0) + 1); A.pre.set(key, x); if (A.pre.size > 80) A.pre.delete(A.pre.keys().next().value); })
+        .catch(() => A.pre.set(key, { status: 'error', message: 'Локальный сервер не ответил', _ctx: 'pre|' + (A.respSeq = (A.respSeq || 0) + 1) }))
+        .finally(() => { A.prePending.delete(key); redraw(true); });
+    }
+    return null;
+  }
   function snapOf(D, s) {
     if (!s.conf || !['confirmed', 'broken', 'done'].includes(s.status) || D.d === 'none') return null;
     const view = wantView(s), fk = famKey(D, s, view), r = A.fams.get(fk);
@@ -571,6 +587,7 @@
       const n = ctx.F ? A.now.get(nowKey(ctx)) : null;
       if (n && n._ctx) out.add(n._ctx);
     }
+    if (s.status === 'waiting') { const p = A.pre.get(preKey(ctx)); if (p && p._ctx) out.add(p._ctx); }
     return out;
   }
   const kNow = ctx => { const keys = ctxKeys(ctx); return K.list.filter(v => keys.has(v.ctx)).map(v => v.msg); };
@@ -586,6 +603,7 @@
     const n = ctx.F ? A.now.get(nowKey(ctx)) : null;
     if (n && /^CONTRACT_/.test(n.status || '')) out.push(n.note || n.message || n.status);
     if (n) for (const ev of ['R', 'X']) if (n[ev] && n[ev].mode === 'WITHHELD') out.push('«Сейчас» ' + ev + ': ' + (n[ev].note || n[ev].mode));
+    if (s.status === 'waiting') { const p = A.pre.get(preKey(ctx)); if (p && /^contract_/.test(p.status || '')) out.push(p.message || p.status); }
     return out;
   }
   const VW = F => F && F.brk ? 'BRK' : 'CONF';
@@ -654,6 +672,17 @@
         kViolate('«Сейчас» ' + est + ': the shown numbers are not those of its bundle', null, n._ctx); return null;
       }
     }
+    return b;
+  }
+  // a PRE number (lab/contract.py::attach_pre, all C1) is shown only with its bundle on this cut, under the registered
+  // claim form admissible there; the panel reads the shown values from the bundle itself
+  function preBundle(r, est, side) {
+    const c = r.contract, f = SC11 && SC11.forms[est], fault = regFault(c);
+    if (fault) { kViolate('«До подтверждения»: ' + fault, null, r._ctx); return null; }
+    const b = (c.bundles || []).find(x => x.estimand === est && (side == null || parOf(x).side === side));
+    if (!b) { kViolate('«До подтверждения»: no published bundle ' + est + (side ? ' (' + side + ')' : '') + ' on this cut', null, r._ctx); return null; }
+    if (!f || b.claim_form !== f.id || b.claim.claim_class !== f.claim_class || !(b.admissible_claims || []).includes(f.claim_class)) { kViolate('«До подтверждения»: ' + est + ' published under another claim', null, r._ctx); return null; }
+    if (est === 'EST:P-DIR' && b.estimates[0].denominator !== r.N) { kViolate('«До подтверждения»: N of the block is not that of its bundle', null, r._ctx); return null; }
     return b;
   }
 
@@ -3218,7 +3247,7 @@
   }
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
-  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, preOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)
     // violations: those of the scene on screen (SWPC-1.1 M16); all: every one found since the page opened
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),

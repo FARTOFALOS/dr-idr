@@ -2274,7 +2274,8 @@
                 "DELTA_R",
                 "DELTA_X",
                 "TAU_R",
-                "TAU_X"
+                "TAU_X",
+                "CONFIRMATION"
             ],
             "title": "EventKind",
             "type": "string"
@@ -3801,6 +3802,7 @@
                 "RESIDUAL_NEW_EXTREME",
                 "RESIDUAL_DELTA",
                 "RESIDUAL_TIME_TO_NEW",
+                "FIRST_CONFIRMATION_AFTER_CUT",
                 "ALGORITHMIC_REGION_MEMBERSHIP",
                 "CLOCK_SPLIT",
                 "REGION_STABILITY"
@@ -4892,6 +4894,7 @@
             "enum": [
                 "SC11_BASE_24",
                 "SC11_NOW_1_0",
+                "SC11_PRE_24",
                 "SC11_OBSERVATION",
                 "SC11_CONTRACT_SERVICE",
                 "LEGACY_SCREEN_22",

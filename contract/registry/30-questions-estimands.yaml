@@ -22,6 +22,9 @@ questions:
   - {id: Q:N-TIME, version: "1", sc_ref: ["T0", "§12.4/N-TIME"], grounds: CONTRACT_FORMALISATION, text_ru: "Через сколько впервые новый?", scene_ru: "через сколько M5 после среза у них впервые был новый экстремум"}
   - {id: Q:ZONE-DIAG, version: "1", sc_ref: ["T0", "P3", "V3"], grounds: DR_LAB_DECISION, text_ru: "Насколько устойчива зона как рисунок истории?", scene_ru: "держится ли та же зона при сдвиге сетки и пересэмплировании и отличается ли от пути без направления (свойства зоны, не разрешение ей существовать)"}
   - {id: Q:ZM3-STUDY, version: "1", sc_ref: ["T0", "V3"], grounds: RESEARCH_RESULT, text_ru: "Как часто зоны такого статуса сбывались в исследовании?", scene_ru: "разведка 2018–2025: доля зон со статусом «держится» / «возможна» / «невозможна», в которых потом лёг окончательный экстремум"}
+  - {id: Q:P-DIR, version: "1", sc_ref: ["T0", "§12.5"], grounds: OPERATOR_REQUIREMENT, text_ru: "В какую сторону подтверждали похожие?", scene_ru: "до сегодняшнего подтверждения — как часто похожие к этому часу сессии (тот же цвет коробки, те же модели дня, цена там же в коробке) потом подтверждали лонг, шорт или не подтверждали"}
+  - {id: Q:P-WHEN, version: "1", sc_ref: ["T0", "§12.5"], grounds: OPERATOR_REQUIREMENT, text_ru: "Когда подтверждали?", scene_ru: "в какие 15 минут было подтверждение у тех похожих, кто подтвердил в эту сторону"}
+  - {id: Q:P-AFTER, version: "1", sc_ref: ["T0", "§12.5"], grounds: OPERATOR_REQUIREMENT, text_ru: "Что было после подтверждения?", scene_ru: "заранее: куда шли похожие сессии после своего подтверждения в каждую сторону — исход DR, окончательный откат и продолжение"}
 
 estimands:
   # ------------------------------------------------------------------ BASE-24: final R and X of the family
@@ -465,6 +468,72 @@ estimands:
     id: EST:N-TIME-X
     q1_formalised_part_ru: "квартили числа M5 от t до первой M5 строго нового X у случаев, где новый X был и его первая M5 известна"
     q5_outcome: OUT:TAU-X-1
+  # ------------------------------------------------------------------ PRE-24: before the confirmation (operator 2026-10-08)
+  - &P_DIR
+    id: EST:P-DIR
+    version: "1.0"
+    sc_ref: ["T1", "§12.5", "V2.1"]
+    grounds: OPERATOR_REQUIREMENT
+    question: Q:P-DIR
+    q1_formalised_part_ru: "доля похожих к общему часовому срезу t сессий в каждой категории первого подтверждения после t: лонг, шорт, не было до конца блока, неизвестно"
+    q2_target: FIXED_HISTORICAL_SET
+    q3_unit: SESSION_AT_CUT
+    q4_case_set: [CS:P-SIMILAR-1, CS:P-SIMILAR-ALL-1]
+    q4_denominator: N_MATCH_AT_CUT
+    q5_outcome: OUT:P-FIRST-CONF-1
+    q5_region: REG:NONE-1
+    q6_time_ru: "после общего часового среза t (те же часы ET каждой сессии) до конца блока H; M5, закрывшаяся в H, входит"
+    q6_cut: CUT:PRE-COMMON-CLOCK-1
+    q7_measure: CATEGORY_SHARES
+    q8_unknown: UNKNOWN_KEPT_IN_N_NO_COORDINATE
+    q8_weights: NONE
+    q8_order_ru: "категории вместе = N похожих; UNKNOWN — своя категория; при N < 20 — «мало сессий», набор не расширяется"
+    parameters: []
+    profile: PROFILE:PRE-24
+  - <<: *P_DIR
+    id: EST:P-WHEN
+    question: Q:P-WHEN
+    q1_formalised_part_ru: "у похожих к t сессий, которые потом первыми подтвердили в эту сторону, — в каком 15-минутном окне от конца коробки (по метке открытия подтверждающей M5) было подтверждение"
+    q4_case_set: [CS:P-SIDE-1]
+    q4_denominator: KNOWN_COMPONENT_SUPPORT
+    q5_region: REG:TIME-WINDOW-1
+    q8_unknown: AMONG_KNOWN_COMPONENT_WITH_COUNTS
+    q8_order_ru: "доли среди подтвердивших в эту сторону (свой n), не доли всех похожих; окно — по метке открытия M5"
+    parameters:
+      - {name: side, parameter_kind: CATEGORY, meaning_ru: "LONG или SHORT"}
+      - {name: cut, parameter_kind: CUT, meaning_ru: "общий часовой срез t"}
+  - <<: *P_DIR
+    id: EST:P-DR
+    question: Q:P-AFTER
+    q1_formalised_part_ru: "доля подтвердивших в эту сторону похожих сессий в каждой из четырёх категорий исхода DR от своего подтверждения до конца блока"
+    q4_case_set: [CS:P-SIDE-1]
+    q4_denominator: KNOWN_COMPONENT_SUPPORT
+    q5_outcome: OUT:DR-OUTCOME-1
+    q6_time_ru: "от закрытия собственного подтверждения (его M5 не входит) до конца блока H"
+    q8_order_ru: "BROKEN может быть известен при пропуске; HELD — только при полном горизонте; NO_PERIOD отдельно от UNKNOWN"
+    parameters:
+      - {name: side, parameter_kind: CATEGORY, meaning_ru: "LONG или SHORT"}
+      - {name: cut, parameter_kind: CUT, meaning_ru: "общий часовой срез t"}
+  - &P_R
+    <<: *P_DIR
+    id: EST:P-R
+    question: Q:P-AFTER
+    q1_formalised_part_ru: "квартили окончательного отката R после собственного подтверждения у подтвердивших в эту сторону похожих сессий, где он известен (в ширинах IDR от своего края IDR на стороне подтверждения)"
+    q4_case_set: [CS:P-SIDE-KNOWN-1]
+    q4_denominator: KNOWN_COMPONENT_SUPPORT
+    q5_outcome: OUT:FINAL-R-1
+    q5_region: REG:WHOLE-1
+    q6_time_ru: "от закрытия собственного подтверждения (его M5 не входит) до конца блока H"
+    q7_measure: QUANTILES
+    q8_unknown: AMONG_KNOWN_COMPONENT_WITH_COUNTS
+    q8_order_ru: "квантили известной опоры; неизвестные и «нет периода» — отдельными счётами; не цель на сегодня"
+    parameters:
+      - {name: side, parameter_kind: CATEGORY, meaning_ru: "LONG или SHORT"}
+      - {name: cut, parameter_kind: CUT, meaning_ru: "общий часовой срез t"}
+  - <<: *P_R
+    id: EST:P-X
+    q1_formalised_part_ru: "квартили окончательного продолжения X после собственного подтверждения у подтвердивших в эту сторону похожих сессий, где оно известно (в ширинах IDR от своего края IDR)"
+    q5_outcome: OUT:FINAL-X-1
 
 estimators:
   - id: ESTR:JOINT-CELLS-1
@@ -587,3 +656,23 @@ estimators:
     rounding_ru: "четыре знака"
     implementations: ["lab/now24.py::forecast"]
     reference_definition: "lab/contract.py::ref_residual"
+  - id: ESTR:P-CATEGORIES-1
+    version: "1.0"
+    sc_ref: ["V0", "V2.1", "§12.5"]
+    grounds: OPERATOR_REQUIREMENT
+    estimands: [EST:P-DIR, EST:P-WHEN, EST:P-DR]
+    rule: CATEGORY_COUNTS_OVER_N
+    unknown_handling_ru: "категории вместе = N похожих (для стороны — её n); UNKNOWN и NO_PERIOD — свои категории; N = 0 — оценки нет"
+    rounding_ru: "точные счёты; проценты после деления, один знак"
+    implementations: ["lab/pre24.py::_snapshot"]
+    reference_definition: "lab/contract.py::est_categories"
+  - id: ESTR:P-QUANTILES-1
+    version: "1.0"
+    sc_ref: ["V0", "V2.2", "§12.5"]
+    grounds: OPERATOR_REQUIREMENT
+    estimands: [EST:P-R, EST:P-X]
+    rule: LINEAR_QUANTILES_AMONG_KNOWN
+    unknown_handling_ru: "q25 / q50 / q75 среди известных (линейная интерполяция numpy); неизвестные и «нет периода» — отдельными счётами; интерполированный квантиль не называется наблюдённым уровнем"
+    rounding_ru: "четыре знака в ответе, два на экране"
+    implementations: ["lab/pre24.py::_q"]
+    reference_definition: "lab/contract.py::ref_quantile"

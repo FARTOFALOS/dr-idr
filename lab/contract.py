@@ -942,7 +942,7 @@ _CODE = {}
 def _code_hash():
     if "h" not in _CODE:
         h = hashlib.sha1()
-        for f in ("contract.py", "scene24.py", "zonemap24.py", "now24.py", "scene21.py"):
+        for f in ("contract.py", "scene24.py", "zonemap24.py", "now24.py", "scene21.py", "pre24.py"):
             p = Path(__file__).resolve().parent / f
             if p.exists(): h.update(p.read_bytes().replace(b"\r\n", b"\n"))
         _CODE["h"] = h.hexdigest()[:12]
@@ -1344,6 +1344,270 @@ def attach_day(out, params):
 
 
 # =====================================================================================================================
+# the PRE response (/api/d24/pre): before the confirmation (PROFILE:PRE-24, operator 2026-10-08; SC-1.1 §12.5)
+# =====================================================================================================================
+PRE_SIDES = ("LONG", "SHORT")
+PRE_FIRSTS = ("LONG", "SHORT", "NONE", "UNKNOWN")
+PRE_DR = (("held", "HELD"), ("broken", "BROKEN"), ("unknown", "UNKNOWN"), ("none", "NO_PERIOD"))
+PRE_BAND = (1, 4)        # CMP:PRE-1: the price at t within 1/4 IDR of today's
+PRE_FEW = 20             # FF:FEW-SESSIONS: fewer sessions are shown as they are, with «мало сессий»
+PRE_VERSION = "DR-LAB-PRE-24"
+
+
+def ref_box_colour(rows, fs, fe):
+    """S1: the box colour — the close of the formation hour's last M5 against the open of its first: up / down / flat.
+    rows: {close minute: (o, h, l, c)} ticks."""
+    o, c = rows[fs + 5][0], rows[fe][3]
+    return "up" if c > o else "down" if c < o else "flat"
+
+
+def ref_model_link(prev, rows, upto=None):
+    """docs/STRATEGY.md §2.1-2.2 (the rule of design 22): does a session break the upside / downside model against the
+    previous box (dr_low, dr_high)? rows [(close minute, o, h, l, c)] ticks in time order from the session's first M5;
+    closes only; an open beyond the level at the first M5 excludes at once. (upside broken, downside broken)."""
+    rs = [r for r in rows if upto is None or r[0] <= upto]
+    if not rs: return (False, False)
+    lo, hi = prev
+    return (rs[0][1] < lo or any(r[4] < lo for r in rs), rs[0][1] > hi or any(r[4] > hi for r in rs))
+
+
+def ref_models(prev, rows, upto, prev2=None, rows2=None):
+    """CMP:PRE-1 (upside alive, downside alive) at the cut: this session against the previous box up to the cut and,
+    for ODR and RDR (rows2 given), the previous session as a whole against the box before it. None when a box it needs
+    is not established: an undetermined model is never read as alive."""
+    if prev is None or (rows2 is not None and prev2 is None): return None
+    a = ref_model_link(prev, rows, upto)
+    b = ref_model_link(prev2, rows2) if rows2 is not None else (False, False)
+    return (not (a[0] or b[0]), not (a[1] or b[1]))
+
+
+def ref_first_confirmation(rows, dr_low, dr_high, cut, end):
+    """OUT:P-FIRST-CONF-1: the first M5 closing in (t, H] strictly beyond its own DR — LONG / SHORT with its close
+    minute; NONE when (t, H] is fully observed without one; UNKNOWN when a wholly missing M5 comes before the first
+    observed one (or before H when none is observed). rows: {close minute: (o, h, l, c)} ticks."""
+    hole = False
+    for T in range(cut + 5, end + 1, 5):
+        r = rows.get(T)
+        if r is None: hole = True; continue
+        if r[3] > dr_high: return ("UNKNOWN", None) if hole else ("LONG", T)
+        if r[3] < dr_low: return ("UNKNOWN", None) if hole else ("SHORT", T)
+    return ("UNKNOWN" if hole else "NONE"), None
+
+
+def _pre_today(pre, bars, tick, day, params):
+    """Today at the cut, re-derived from the day's closed M5: the box, no confirmation, the prefix after the box, the
+    colour, the position and the models (the previous boxes from the day's own M5, the previous RDR from its record)."""
+    blks = _blocks()
+    key, today = pre["key"], pre["today"]
+    session, cut = key["session"], key["cut"]
+    b = blks[session]
+    fe, end = b["formation_end"], b["block_end"]
+    live = today.get("source") == "live" and params.get("at") is None     # a replay of the live day reads closed M5 only
+    st = today_state(bars, session, today["obs"], float((day or {}).get("now") or today["obs"]) if live else today["obs"], live, tick)
+    if st is None: return None, "today's box is not complete at the cut"
+    if st["conf"] is not None or today["obs"] >= end or cut != today["obs"] // 5 * 5 or cut < fe:
+        return None, "today is not before its confirmation at the cut"
+    tk = lambda p: int(round(p / tick))
+    rows = {T: (tk(x[1]), tk(x[2]), tk(x[3]), tk(x[4])) for T, x in st["closed"].items()}
+    if any(T not in rows for T in range(fe + 5, cut + 1, 5)): return None, "today's prefix after the box is not complete"
+
+    def t_rows(k):
+        bb = blks[k]
+        return [(T,) + rows[T] for T in sorted(rows) if bb["formation_start"] < T <= bb["block_end"]]
+
+    def t_box(k):
+        bb = blks[k]
+        win = [rows.get(T) for T in range(bb["formation_start"] + 5, bb["formation_end"] + 1, 5)]
+        return None if any(x is None for x in win) else (min(x[2] for x in win), max(x[1] for x in win))
+    pv = (day or {}).get("prev")
+    prev_rdr = (tk(pv["drL"]), tk(pv["drH"])) if pv else None
+    if session == "ADR": mt = ref_models(prev_rdr, t_rows("ADR"), cut)
+    elif session == "ODR": mt = ref_models(t_box("ADR"), t_rows("ODR"), cut, prev_rdr, t_rows("ADR"))
+    else: mt = ref_models(t_box("ODR"), t_rows("RDR"), cut, t_box("ADR"), t_rows("ODR"))
+    return dict(colour=ref_box_colour(rows, b["formation_start"], fe), a=rows[cut][3] - st["idr_low"], w=st["idr_high"] - st["idr_low"],
+                models=mt, dr=(st["dr_low"], st["dr_high"]), idr=(st["idr_low"], st["idr_high"])), None
+
+
+def verify_pre(inst, B, pre, bars, tick, day, params):
+    """Re-derives a PRE response from the day's M5 and the session base by the reference definitions; returns
+    (violations, reference) — the reference holds the recounted categories, windows, outcomes and known values."""
+    v = []
+    key, sch, today = pre["key"], pre["schedule"], pre["today"]
+    session, cut = key["session"], key["cut"]
+    blk = _blocks().get(session)
+    if blk is None or (blk["formation_start"], blk["formation_end"], blk["block_end"]) != (sch["start"], sch["formed"], sch["end"]):
+        return [("SCHEDULE", ["S1"], f"schedule {sch} differs from the registry's block {blk}")], None
+    fs, fe, end = blk["formation_start"], blk["formation_end"], blk["block_end"]
+    t, why = _pre_today(pre, bars, tick, day, params)
+    if t is None: return [("TODAY_STATE", ["S1", "S2", "E0", "E1"], why)], None
+    if t["models"] is None: return [("TODAY_STATE", ["E1", "§12.5"], "today's models cannot be established, but numbers were published")], None
+    want = dict(box=t["colour"], pos=[t["a"], t["w"]], models=[bool(t["models"][0]), bool(t["models"][1])], band=list(PRE_BAND))
+    if {k: key.get(k) for k in want} != want or today.get("box") != t["colour"] or today.get("pos") != dict(a=t["a"], w=t["w"]) \
+            or today.get("models") != dict(up=want["models"][0], down=want["models"][1]):
+        return [("TODAY_STATE", ["E1", "H3", "§12.5"], f"today's colour / position / models {key.get('box')}, {key.get('pos')}, {key.get('models')} differ from the re-derivation {want}")], None
+    a_t, w_t = t["a"], t["w"]
+    ders = {k: derive_base(inst, B, k) for k in _blocks()}
+    der, idx, rdr = ders[session], B["idx"], B["rdr"]
+
+    def hbox(date, k):
+        j = idx.get((date, k)) if date else None
+        d = ders[k].get(j) if j is not None else None
+        return None if d is None or "dr_high" not in d else (d["dr_low"], d["dr_high"])
+
+    def hrows(date, k):
+        j = idx.get((date, k))
+        return None if j is None else [(T,) + r for T, r in sorted(ders[k][j]["rows"].items())]
+
+    def hprev_rdr(date):
+        lo, hi = 0, len(rdr)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if rdr[mid] < date: lo = mid + 1
+            else: hi = mid
+        return rdr[lo - 1] if lo > 0 else None
+
+    def hmodels(date):
+        if session == "ADR": return ref_models(hbox(hprev_rdr(date), "RDR"), hrows(date, "ADR"), cut)
+        if session == "ODR": return ref_models(hbox(date, "ADR"), hrows(date, "ODR"), cut, hbox(hprev_rdr(date), "RDR"), hrows(date, "ADR") or [])
+        return ref_models(hbox(date, "ODR"), hrows(date, "RDR"), cut, hbox(date, "ADR"), hrows(date, "ODR") or [])
+    mem, journal = {}, Counter()
+    for i, m in enumerate(B["boxes"]):
+        if m["session"] != session or (key["scope"] == "weekday" and m["weekday"] != key["weekday"]) or m["date"] >= key["cutoff"]: continue
+        d = der[i]
+        if "box_error" in d: v.append(("BASE_DERIVATION", ["O1", "S1"], f"{m['date']}: {d['box_error']}")); continue
+        if any(d[k] != m[k] for k in ("dr_high", "dr_low", "idr_high", "idr_low")) or ref_box_colour(d["rows"], fs, fe) != m["box"]:
+            v.append(("BASE_DERIVATION", ["O1", "S1"], f"{m['date']} {session}: stored box levels or colour differ from the re-derivation")); continue
+        conf, gaps = d["conf"], d["missing"]
+        if conf is not None and conf <= cut: continue
+        if any(T <= cut for T in gaps): journal["alive_undetermined"] += 1; continue
+        if ref_box_colour(d["rows"], fs, fe) != key["box"]: continue
+        w = d["idr_high"] - d["idr_low"]
+        a = d["rows"][cut][3] - d["idr_low"]
+        if PRE_BAND[1] * abs(a * w_t - a_t * w) > PRE_BAND[0] * w * w_t: continue
+        mod = hmodels(m["date"])
+        if mod is None: journal["model_undetermined"] += 1; continue
+        if [bool(mod[0]), bool(mod[1])] != want["models"]: continue
+        first, c = ref_first_confirmation(d["rows"], d["dr_low"], d["dr_high"], cut, end)
+        mem[_sid(inst, m)] = (i, first, c, a, w)
+    if sorted(pre["ids"]) != sorted(mem) or len(set(pre["ids"])) != len(pre["ids"]):
+        v.append(("MEMBERSHIP", ["H1", "H3", "§12.5"], f"members differ from the re-derived similar set ({len(pre['ids'])} vs {len(mem)})"))
+    if pre["N"] != len(mem) or pre["N"] != len(pre["members"]):
+        v.append(("DENOMINATOR", ["H2", "V1"], f"N {pre['N']} is not the number of unique similar sessions {len(mem)}"))
+    if dict(pre.get("journal") or {}) != dict(journal): v.append(("JOURNAL", ["H1", "K11"], f"journal {pre.get('journal')} != re-derived {dict(journal)}"))
+    if pre.get("few") is not (len(mem) < PRE_FEW): v.append(("FEW", ["§12.5"], "the «мало сессий» flag does not follow N < 20"))
+    grid = list(range(fe + 5, end + 1, 5))
+    ref = dict(first=Counter(), side={sd: dict(n=0, win=Counter(), dr=Counter(), R=[], X=[], Ru=0, Rn=0, Xu=0, Xn=0) for sd in PRE_SIDES})
+    for mm in pre["members"]:
+        if mm["id"] not in mem: continue
+        i, first, c, a, w = mem[mm["id"]]
+        d = der[i]
+        win = ref_window(c, fe) if first in PRE_SIDES else None
+        if (mm["first"], mm["conf"], mm["win"], mm["w"], mm["a"]) != (first, c, win, w, a):
+            v.append(("OUTCOME", ["P0", "P1", "K31"], f"{mm['id']}: first confirmation {mm['first']} {mm['conf']} != reference {first} {c}")); continue
+        ref["first"][first] += 1
+        if first not in PRE_SIDES: continue
+        dd = 1 if first == "LONG" else -1
+        e = d["idr_high"] if dd == 1 else d["idr_low"]
+        path = [list(ref_directed(d["rows"][T], dd, e)) if T in d["rows"] else None for T in grid]
+        S = ref["side"][first]
+        S["n"] += 1
+        S["win"][win] += 1
+        for ev in ("R", "X"):
+            x = ref_final_extreme(path, grid, c, end, ev)
+            if {k: mm[ev][k] for k in mm[ev] if k in ("s", "v", "t", "ties", "bound")} != x: v.append(("OUTCOME", ["P0.1", "P1", "K31"], f"{mm['id']}: {ev} {mm[ev]} != reference {x}"))
+            if x["s"] == "known": S[ev].append(Fraction(x["v"], w))
+            else: S[ev + ("u" if x["s"] == "unknown" else "n")] += 1
+        cat, _, _ = ref_dr_outcome(path, grid, c, end, dd * ((d["dr_low"] if dd == 1 else d["dr_high"]) - e))
+        if mm.get("outcome") != cat: v.append(("DR_OUTCOME", ["P0.2", "K14"], f"{mm['id']}: DR outcome {mm.get('outcome')} != reference {cat}"))
+        S["dr"][cat] += 1
+    cnt = pre["counts"]
+    if cnt["first"] != {k: ref["first"].get(k, 0) for k in PRE_FIRSTS}: v.append(("COUNTS", ["V2.1", "K31"], "the first-confirmation categories differ from the recount"))
+    if sum(cnt["first"].values()) != pre["N"]: v.append(("DENOMINATOR", ["V2.1"], "the categories do not add up to N"))
+    for sd in PRE_SIDES:
+        P, S = cnt["side"][sd], ref["side"][sd]
+        if P["n"] != S["n"] or P["win"] != [[b, n] for b, n in sorted(S["win"].items())] or P["dr"] != {k: S["dr"].get(k, 0) for k, _ in PRE_DR}:
+            v.append(("COUNTS", ["V2.1", "K31"], f"{sd}: windows or DR outcomes differ from the recount"))
+        for ev in ("R", "X"):
+            Q, vals = P[ev], S[ev]
+            q = [ref_quantile(vals, x) for x in (0.25, 0.5, 0.75)] if vals else None
+            if (Q["known"], Q["unknown"], Q["none"]) != (len(vals), S[ev + "u"], S[ev + "n"]) or (Q["q"] is None) != (q is None) or (q and not all(_close(a, b) for a, b in zip(Q["q"], q))):
+                v.append(("COUNTS", ["V2.2", "K31"], f"{sd} {ev}: the quantiles or their support differ from the recount"))
+    fid = hashlib.sha1(json.dumps([PRE_VERSION, key, pre["ids"]], sort_keys=True).encode()).hexdigest()[:16]
+    measured = [[m["id"], m["first"], m["conf"], m.get("R"), m.get("X"), m.get("outcome")] for m in pre["members"]]
+    ssid = hashlib.sha1(json.dumps([fid, pre["source"], measured], sort_keys=True).encode()).hexdigest()[:16]
+    if (pre["family_id"], pre["snapshot_id"]) != (fid, ssid): v.append(("IDENTITY", ["H2", "K09", "§1.2"], "family_id / snapshot_id do not bind the rule, participants and outcomes"))
+    return v, ref
+
+
+def attach_pre(out, inst, B, day, params):
+    """Verifies a PRE response at its creation boundary, withholds it when it fails, and attaches the envelope with one
+    bundle per published number (all C1: a conditional description of history, never a forecast of today)."""
+    env = Envelope("/api/d24/pre", "PROFILE:PRE-24", params)
+    bars, tick = (day or {}).get("bars") or [], float((day or {}).get("tick") or 0.25)
+    if out.get("status") != "ok" or "members" not in out:
+        out["contract"] = env.finish(); return out
+    viol, ref = verify_pre(inst, B, out, bars, tick, day, params)
+    env.check("verify_pre: today's state, the similar set, every first confirmation and outcome, counts and identity re-derived", not viol, out["N"])
+    if viol:
+        for code, refs, msg in viol[:8]: env.violate(code, refs, msg, withheld=["pre"])
+        keep = {k: out[k] for k in ("session", "today", "key") if k in out}
+        keep.update(status="contract_violation", message="нарушение контракта SC-1.1: " + "; ".join(v["message"] for v in env.d["violations"])[:300], contract=env.finish())
+        return keep
+    key, N, sid, today = out["key"], out["N"], out["snapshot_id"], out["today"]
+    cut, cut_s = key["cut"], _clk(key["cut"])
+    cs_id = "CS:P-SIMILAR-1" if key["scope"] == "weekday" else "CS:P-SIMILAR-ALL-1"
+    src = out["source"]
+    mode = "LIVE" if today.get("source") == "live" else "HISTORY_DAY_REPLAY_BY_CLOSE"
+    env.d["observation"] = dict(source="OBS:G3-TAPE", content_version=f"{src.get('base')}@{src.get('built')}", history_range=src.get("history"), mode=mode)
+    env.d["case_sets"] = [dict(spec=cs_id, family_id=out["family_id"], snapshot_id=sid, n_members=N, cut_close_minute=int(cut), cutoff_date=key["cutoff"],
+                               exclusions=[dict(reason=k, count=int(n)) for k, n in sorted((out.get("journal") or {}).items())], data_revision=f"{src.get('base')}@{src.get('built')}")]
+    env.d["cut"] = dict(spec="CUT:PRE-COMMON-CLOCK-1", target_session=f"{inst}-{today['date'].replace('-', '')}-{key['session']}", cut_close_minute=int(cut), cut_clock_et=cut_s, mode=mode)
+    inputs = _inputs(out, [dict(input_kind="TODAY_PREFIX", ref="today", version=str(cut))])
+    extra = dict(parent_case_set=sid, cut=cut)
+    fr = ref["first"]
+    unk = fr.get("UNKNOWN", 0)
+    est = dict(estimator="ESTR:P-CATEGORIES-1", value_kind="CATEGORY_SHARES" if N else "NO_ESTIMATE", unit="categories of N similar", denominator=N)
+    if N: est["categories"] = [dict(category=k, count=int(fr.get(k, 0))) for k in PRE_FIRSTS]
+    else: est["no_estimate_reason"] = "N = 0: no similar session"
+    env.bundle("EST:P-DIR", cs_id, sid, "lab/pre24.py::_snapshot", inputs, [est],
+               [dict(case_set=sid, n_base=N, n_match=N, components=[dict(component="CATEGORY", of=N, known=N - unk, unknown=unk)])],
+               dict(N=N, cut=cut_s, long=fr.get("LONG", 0), short=fr.get("SHORT", 0), none=fr.get("NONE", 0), unknown=unk), claim_extra=extra)
+    fe = out["schedule"]["formed"]
+    wlabel = lambda b: _clk(fe + 15 * b) + "–" + _clk(fe + 15 * b + 15)
+    for sd in PRE_SIDES:
+        S = ref["side"][sd]
+        n = S["n"]
+        if not n: continue
+        word = "лонг" if sd == "LONG" else "шорт"
+        par = dict(side=sd, cut=cut_s)
+        top = max(sorted(S["win"].items()), key=lambda x: x[1])
+        env.bundle("EST:P-WHEN", "CS:P-SIDE-1", sid, "lab/pre24.py::_snapshot", inputs,
+                   [dict(estimator="ESTR:P-CATEGORIES-1", value_kind="CATEGORY_SHARES", unit="15-minute windows of the side's confirmations", denominator=n,
+                         categories=[dict(category=wlabel(b), count=int(k)) for b, k in sorted(S["win"].items())])],
+                   [dict(case_set="CS:P-SIDE-1", n_base=N, n_match=n, components=[dict(component="FIRST_TIME", of=n, known=n)])],
+                   dict(n=n, side=word, window=wlabel(top[0]), k=top[1], cut=cut_s), parameters=par, claim_extra=extra)
+        env.bundle("EST:P-DR", "CS:P-SIDE-1", sid, "lab/pre24.py::_snapshot", inputs,
+                   [dict(estimator="ESTR:P-CATEGORIES-1", value_kind="CATEGORY_SHARES", unit="categories of the side's n", denominator=n,
+                         categories=[dict(category=t, count=int(S["dr"].get(k, 0))) for k, t in PRE_DR])],
+                   [dict(case_set="CS:P-SIDE-1", n_base=N, n_match=n, components=[dict(component="CATEGORY", of=n, known=S["dr"].get("held", 0) + S["dr"].get("broken", 0), unknown=S["dr"].get("unknown", 0), no_period=S["dr"].get("none", 0))])],
+                   dict(n=n, side=word, held=S["dr"].get("held", 0), broken=S["dr"].get("broken", 0), unknown=S["dr"].get("unknown", 0), no_period=S["dr"].get("none", 0), cut=cut_s),
+                   parameters=par, claim_extra=extra)
+        for ev in ("R", "X"):
+            vals = S[ev]
+            q = [ref_quantile(vals, x) for x in (0.25, 0.5, 0.75)] if vals else None
+            e2 = dict(estimator="ESTR:P-QUANTILES-1", value_kind="QUANTILES" if vals else "NO_ESTIMATE", unit="IDR widths from the side's own IDR edge", denominator=len(vals))
+            if vals: e2["quantiles"] = [dict(quantile=x, value=float(y)) for x, y in zip((0.25, 0.5, 0.75), q)]
+            else: e2["no_estimate_reason"] = "no known final " + ev
+            env.bundle("EST:P-" + ev, "CS:P-SIDE-KNOWN-1", sid, "lab/pre24.py::_snapshot", inputs, [e2],
+                       [dict(case_set="CS:P-SIDE-KNOWN-1", n_base=N, n_match=n, components=[dict(component="ENDPOINT", of=n, known=len(vals), unknown=S[ev + "u"], no_period=S[ev + "n"])])],
+                       dict(n=len(vals), side=word, q25=_fmt(q[0]) if q else "—", q50=_fmt(q[1]) if q else "—", q75=_fmt(q[2]) if q else "—", unknown=S[ev + "u"] + S[ev + "n"], cut=cut_s),
+                       parameters=par, claim_extra=extra)
+    env.check("admissible claims: every published form is of an admissible class", True, len(env.bundles))
+    out["contract"] = env.finish()
+    return out
+
+
+# =====================================================================================================================
 # the response gate: every number of an SC-1.1 route has a declared meaning; staleness; the marking header
 # =====================================================================================================================
 _PAT = {}
@@ -1422,7 +1686,7 @@ def header_for(route):
 def stale_response(route, params):
     """CONTRACT_STALE: the executable contract does not represent its source, so no statistic of an SC-1.1 route is
     published; observations of the day are still served (they carry no claim)."""
-    env = Envelope(route, "PROFILE:NOW-1.0" if route.endswith("/now") else "PROFILE:BASE-24", params)
+    env = Envelope(route, "PROFILE:NOW-1.0" if route.endswith("/now") else "PROFILE:PRE-24" if route.endswith("/pre") else "PROFILE:BASE-24", params)
     env.d["status"] = "CONTRACT_STALE"
     env.d["violations"].append(dict(code="CONTRACT_STALE", sc_ref=["§14.4"], message="; ".join(stale() or ["compiled contract unavailable"])[:400], severity="BLOCKING"))
     msg = "контракт SC-1.1 не пересобран после правки: числа не публикуются (python contract/tools/build.py)"
@@ -1435,7 +1699,7 @@ def finalize(route, body):
     """The last gate before a response leaves: undeclared numbers make the response a violation (fail closed for
     statistical routes); the envelope must be structurally valid."""
     s = surface_of(route)
-    if s is None or s["surface_profile"] not in ("SC11_BASE_24", "SC11_NOW_1_0", "SC11_OBSERVATION"): return body
+    if s is None or s["surface_profile"] not in ("SC11_BASE_24", "SC11_NOW_1_0", "SC11_PRE_24", "SC11_OBSERVATION"): return body
     bad = undeclared_numbers(route, body)
     if bad:
         if STRICT["on"]: raise ContractViolation(f"undeclared numbers in {route}: {bad}")
@@ -1444,7 +1708,7 @@ def finalize(route, body):
         env["status"] = "VIOLATION"
         env.pop("bundles", None)
         if s["surface_profile"] != "SC11_OBSERVATION":
-            body = dict(status="contract_violation" if route.endswith("family") else "CONTRACT_VIOLATION",
+            body = dict(status="contract_violation" if route.endswith(("family", "pre")) else "CONTRACT_VIOLATION",
                         message="нарушение контракта SC-1.1: число без объявленного смысла", note="нарушение контракта SC-1.1: число без объявленного смысла", contract=env)
         else:
             body["contract"] = env

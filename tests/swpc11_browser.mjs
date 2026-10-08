@@ -223,7 +223,7 @@ const HELPERS = function () {
       const t0 = Date.now();
       for (;;) {
         D.render(true);
-        const c = D.cur(), idle = D.A.pending.size === 0 && D.A.nowPending.size === 0 && !D.A.busy;
+        const c = D.cur(), idle = D.A.pending.size === 0 && D.A.nowPending.size === 0 && !(D.A.prePending && D.A.prePending.size) && !D.A.busy;
         if (idle && (c.F || !fam(c)) && Date.now() - t0 > 250) break;
         if (idle && !c.F && fam(c) && Date.now() - t0 > 1500) break;
         if (Date.now() - t0 > maxMs) break;
@@ -290,6 +290,7 @@ const LIVE = async (date, now) => {
     } });
   T.rules.push({ live: true, name: 'live family', match: '/api/d24/family', when: u => !u.includes('date='), url: u => u + '&date=' + date });
   T.rules.push({ live: true, name: 'live now', match: '/api/d24/now', when: u => !u.includes('date='), url: u => u + '&date=' + date });
+  T.rules.push({ live: true, name: 'live pre', match: '/api/d24/pre', when: u => !u.includes('date='), url: u => u + '&date=' + date });
   D.A.auto = false; clearTimeout(D.A.timer);
   D.openLive();
   return H.settle();
@@ -308,8 +309,8 @@ const S = {
   // its family context, and a binding of §9 found by its exact id (no similar name gets a presentation)
   async m01(B) {
     const routes = swpcRoutes();
-    check('M01', Object.keys(routes).filter(k => k.startsWith('EST:')).length === 53 && Object.keys(routes).filter(k => k.startsWith('FF:')).length === 9,
-      '§9 of the document routes 53 estimands and 9 fact forms (FF:PHASE-RULE since 2026-10-08) (read from the document)', Object.keys(routes).length);
+    check('M01', Object.keys(routes).filter(k => k.startsWith('EST:')).length === 58 && Object.keys(routes).filter(k => k.startsWith('FF:')).length === 11,
+      '§9 of the document routes 58 estimands and 11 fact forms (PRE-24 and FF:PHASE-RULE since 2026-10-08) (read from the document)', Object.keys(routes).length);
     await open(B, DAY + '&at=11:40');
     const r = await evaluate(B.cdp, async () => {
       const H = window.__h, { D } = H, F0 = D.cur().F, z = (D.zonesOf(F0, 'R') || { zones: [] }).zones;
@@ -588,6 +589,48 @@ const S = {
     });
     check('M09', r.rows.length >= 4 && r.rows.every(x => x.cut && x.mode && x.support && x.k33 && x.hist && x.base), `at ${r.rows.length} cuts «Сейчас» carries its own cut, mode, support and historical words; BASE unchanged`, r.rows);
     check('M09', /считаю/.test(r.waiting) && !/\d%/.test(r.waiting) && r.after.includes(r.t1) && /\d%/.test(r.after), 'while the new cut\'s «Сейчас» is on its way the block says «считаю…» without a number, then shows the new cut', { waiting: r.waiting, after: r.after.slice(0, 80) });
+  },
+
+  // M19 (PRE-24, operator 2026-10-08): before the confirmation the block «До подтверждения» shows only the numbers of the
+  // server's verified bundles of its own cut; a small set is marked «мало сессий» and neither hidden nor widened, a small
+  // break family the same way; after today's confirmation the block gives way to the family
+  async m19(B) {
+    const readPre = async (q) => {
+      const H = window.__h, { D } = H;
+      await H.settle();
+      const box = H.panel.querySelector('.p24-pre'), text = box ? box.innerText : '';
+      const api = await (await fetch('/api/d24/pre?' + q + '&scope=' + D.st.scope)).json();
+      const bs = (api.contract || {}).bundles || [], one = (e, s) => bs.find(b => b.estimand === e && (!s || JSON.parse(b.parameters || '{}').side === s));
+      const N = api.N, cat = {};
+      if (one('EST:P-DIR')) for (const x of one('EST:P-DIR').estimates[0].categories || []) cat[x.category] = x.count;
+      const pct = v => { const r = Math.round(v * 10) / 10; return r.toLocaleString('ru-RU', { minimumFractionDigits: Number.isInteger(r) ? 0 : 1, maximumFractionDigits: Number.isInteger(r) ? 0 : 1 }) + '%'; };
+      const shares = N > 0 && ['LONG', 'SHORT', 'NONE'].every(k => text.includes(pct(100 * (cat[k] || 0) / N)));
+      const sides = ['LONG', 'SHORT'].filter(s => cat[s]).every(s => {
+        const W = one('EST:P-WHEN', s).estimates[0], top = W.categories.reduce((a, x) => x.count > a.count ? x : a, W.categories[0]);
+        const dr = {}; for (const x of one('EST:P-DR', s).estimates[0].categories) dr[x.category] = x.count;
+        return text.includes(top.category + ' · ' + top.count + ' из ' + W.denominator) && text.includes('DR удержался у ' + (dr.HELD || 0) + ' из ' + W.denominator);
+      });
+      return { status: D.cur().s.status, head: text.includes(D.lbl('EST:P-DIR', 'head')), shares, sides, N, few: api.few, fewShown: text.includes('мало сессий: n=' + N), conformant: (api.contract || {}).status, zones: H.zoneRows().length };
+    };
+    await open(B, '#date=2025-02-27&inst=NQ&session=RDR&at=10:55');
+    const r = await evaluate(B.cdp, readPre, 'instrument=NQ&session=RDR&at=655&date=2025-02-27');
+    check('M19', r.status === 'waiting' && r.head && r.shares && r.sides && r.conformant === 'CONFORMANT' && !r.zones, `before the confirmation the block shows the shares, windows and DR counts of the server's verified bundles of its cut (N = ${r.N}); no family, no zone`, r);
+    check('M19', !r.few && !r.fewShown, 'a set of 20 or more is not marked «мало сессий»', r);
+    await open(B, '#date=2025-06-25&inst=NQ&session=ODR&at=04:10');
+    const s = await evaluate(B.cdp, readPre, 'instrument=NQ&session=ODR&at=250&date=2025-06-25');
+    check('M19', s.status === 'waiting' && s.few && s.N < 20 && s.fewShown && s.shares, `a set of ${s.N} sessions (< 20) is shown as it is, marked «мало сессий: n=${s.N}»`, s);
+    await open(B, '#date=2025-02-27&inst=NQ&session=RDR&at=10:55');
+    const c = await evaluate(B.cdp, async () => {
+      const H = window.__h, { D } = H;
+      let t = D.cur().obs;
+      while (D.cur().s.status === 'waiting' && t < 955) { t += 5; D.st.rp = t; D.render(true); await H.wait(10); }
+      await H.settle();
+      return { status: D.cur().s.status, pre: !!H.panel.querySelector('.p24-pre'), fam: /Семья ·/.test(H.panel.innerText), t };
+    });
+    check('M19', c.status !== 'waiting' && !c.pre && c.fam, 'after today\'s confirmation the block gives way to the family', c);
+    await open(B, '#date=2025-03-07&inst=NQ&session=RDR&at=14:35');
+    const k = await evaluate(B.cdp, async () => { await window.__h.settle(); const F = window.__d24.cur().F; return { brk: !!(F && F.brk), N: F && F.N, few: window.__h.panel.innerText.includes('мало сессий: n=' + (F && F.N)) }; });
+    check('M19', k.brk && k.N > 0 && k.N < 20 && k.few, `a break family of ${k.N} sessions is marked «мало сессий: n=${k.N}», not hidden`, k);
   },
 
   // M10: switching layers off or framing the price leaves every count; the residual and the events out of the frame are
@@ -966,6 +1009,27 @@ const S = {
     await shoot('4-sejchas-nedostupno');
   },
 
+  // the variant of the operator's decisions of 2026-10-08 (branch resheniya-08-10) for his acceptance: each scene as the
+  // live screen at its cut (LIVE: no candle after it), 1600×900; VARIANT_SHOTS = the folder (opt-in: `node … variant`)
+  async variant(B) {
+    const dir = process.env.VARIANT_SHOTS || path.join(ROOT, 'spec', 'ekran-24', 'img', 'resheniya-08-10');
+    fs.mkdirSync(dir, { recursive: true });
+    const scenes = [
+      ['1-do-podtverzhdeniya', 'NQ', 'RDR', '2025-02-27', 657], ['2-malo-sessij', 'NQ', 'ODR', '2025-06-25', 252],
+      ['3-faza-otkat-ne-sdelan', 'ES', 'RDR', '2024-03-04', 697], ['4-faza-otkat-sdelan', 'NQ', 'ODR', '2025-06-25', 422],
+      ['5-semya-sloma-malo', 'NQ', 'RDR', '2025-03-07', 877]];
+    for (const [name, inst, session, date, now] of scenes) {
+      await open(B, `#date=${date}&inst=${inst}&session=${session}`, [1600, 900]);
+      const st = await evaluate(B.cdp, LIVE, date, now);
+      const p = await evaluate(B.cdp, () => ({ panel: window.__h.panel.innerText.slice(0, 400), v: window.__d24.contract ? window.__d24.contract().violations : null }));
+      await sleep(400);
+      const r = await B.cdp.send('Page.captureScreenshot', { format: 'png' });
+      fs.writeFileSync(path.join(dir, name + '.png'), Buffer.from(r.data, 'base64'));
+      check('VARIANT', !!p.panel, `${name}: ${inst} ${session} ${date} live at ${String(Math.floor(now / 60)).padStart(2, '0')}:${String(now % 60).padStart(2, '0')}`, p);
+      console.log('  ..   ' + path.relative(ROOT, path.join(dir, name + '.png')) + ' · ' + p.panel.split(String.fromCharCode(10)).join(' | ').slice(0, 160));
+    }
+  },
+
   // the screen's own check (tests/ui_check24.js) in this isolated instance, at both sizes of AGENTS.md, on several states
   async ui24(B) {
     const code = fs.readFileSync(path.join(ROOT, 'tests', 'ui_check24.js'), 'utf8');
@@ -1269,7 +1333,7 @@ const want = process.argv.slice(2);
 const B = await launch();
 try {
   for (const [name, fn] of Object.entries(S)) {
-    if (want.length ? !want.includes(name) : ['shots', 'same'].includes(name)) continue;
+    if (want.length ? !want.includes(name) : ['shots', 'same', 'variant'].includes(name)) continue;
     console.log('— ' + name);
     try { await fn(B); } catch (e) { check(name.toUpperCase(), false, 'the scenario failed to run', String(e.stack || e).slice(0, 900)); }
   }

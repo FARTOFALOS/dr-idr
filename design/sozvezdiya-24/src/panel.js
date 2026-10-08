@@ -34,7 +34,9 @@
       // no family at this moment: one click opens a history day on which this session had one (spec: the live moment
       // must never block the review)
       const noFam = !F && ['before', 'forming', 'waiting', 'noconf'].includes(s.status) && A.day && A.day.status === 'ok';
-      panel.innerHTML = scNotice(ctx) + '<div class="p21-empty">' + esc(F && !F.N ? 'В семье нет сессий: процентов нет' : statusMsg(ctx)) + '</div>' +
+      // before the confirmation: the block of the profile PRE-24 under the status line (operator 2026-10-08)
+      const pre = !F && s.status === 'waiting' && A.day && A.day.status === 'ok' ? preHtml(ctx) : '';
+      panel.innerHTML = scNotice(ctx) + '<div class="p21-empty">' + esc(F && !F.N ? 'В семье нет сессий: процентов нет' : statusMsg(ctx)) + '</div>' + pre +
         (F && !F.N ? '<div class="p21-note">' + esc(F.cond) + '</div>' : '') + (s.failed && s.conf ? viewSwitch(s) : '') +
         (noFam ? '<button class="p24-btn" data-hist="1">' + (A.src === 'live' ? 'Открыть ' + st.session + ' на истории' : 'Ближайший день с подтверждением ' + st.session) + '</button>' : '');
       return;
@@ -44,6 +46,8 @@
       cutoff: F.r.key.cutoff, snapshot: F.r.snapshot_id, family: F.r.family_id, semantics: F.r.semantics });
     out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F.cond) + '</span><span>' + (sl >= F.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
     if (s.failed) out.push(viewSwitch(s));
+    // a small break family is shown as it is, marked (operator 2026-10-08: «честно писать «мало»», FF:FEW-SESSIONS)
+    if (F.brk && F.N < FEW) out.push('<div class="p21-note" title="' + esc(lbl('FF:FEW-SESSIONS', 'title', { step: pct(step) })) + '"><b>' + lbl('FF:FEW-SESSIONS', 'few', { n: F.N }) + '</b></div>');
     if (F.out) out.push(outcomeHtml(F));
     out.push(phaseHtml(F, ctx));
     out.push(nowHtml(F, ctx));
@@ -160,6 +164,45 @@
     return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
       '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
       link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
+  }
+  // PROFILE:PRE-24 (operator 2026-10-08, SC-1.1 §12.5): before the confirmation, the similar sessions of history at the
+  // cut — box colour, models of the day, price position — and, from their verified bundles only: in which direction they
+  // then confirmed (a 100 % of N), in which 15 minutes, and what came after on each side. Words: CF:P-*, FF:PRE-STATE,
+  // FF:FEW-SESSIONS. Nothing is drawn on the chart
+  const FEW = 20;
+  function preHtml(ctx) {
+    const r = preOf(ctx), D = 'EST:P-DIR', S = 'FF:PRE-STATE';
+    if (!r) return '<div class="p21-note">Подбираю похожие сессии…</div>';
+    if (r.status !== 'ok') return '<div class="p21-note">' + esc(r.message || r.note || 'Похожие сессии не подобраны') + '</div>';
+    const b = preBundle(r, D);
+    if (!b) return '<div class="p21-note">Числа не публикуются: нарушение контракта SC-1.1</div>';
+    const t = r.today, N = r.N, cut = clk(r.key.cut), out = [];
+    out.push('<div class="p24-pre"><div class="p21-h second"><span title="' + esc(lbl(D, 'title', { cut, n: N })) + '">' + lbl(D, 'head') + '</span>' + scopeSwitch() + '</div>');
+    out.push('<div class="p21-note" title="' + esc(lbl(S, 'title', { cut })) + '">' + lbl(S, 'line', { colour: lbl(S, t.box), up: lbl(S, t.models.up ? 'alive' : 'broken'), down: lbl(S, t.models.down ? 'alive' : 'broken'), u: (t.pos.a < 0 ? '−' : '') + num(Math.abs(t.pos.a / t.pos.w), 2) }) + '</div>');
+    out.push('<div class="p21-note">' + lbl(D, 'at', { cut }) + ' · ' + (r.few ? '<b title="' + esc(lbl('FF:FEW-SESSIONS', 'title', { step: N ? pct(100 / N) : '—' })) + '">' + lbl('FF:FEW-SESSIONS', 'few', { n: N }) + '</b>' : lbl(D, 'n', { n: N })) + '</div>');
+    if (!N) return out.join('') + '<div class="p21-note">' + lbl(D, 'zero') + '</div></div>';
+    const cnt = {}, cols = { LONG: C.up, SHORT: C.dn, NONE: '#8C95A3', UNKNOWN: '#5F6877' };
+    for (const x of b.estimates[0].categories) cnt[x.category] = x.count;
+    out.push('<div class="p24-bar">' + ['LONG', 'SHORT', 'NONE', 'UNKNOWN'].filter(k => cnt[k]).map(k => '<i style="width:' + (100 * cnt[k] / N).toFixed(2) + '%;background:' + cols[k] + '"></i>').join('') + '</div>');
+    for (const side of ['LONG', 'SHORT', 'NONE', 'UNKNOWN']) {
+      if (side === 'UNKNOWN' && !cnt[side]) continue;
+      const head = '<span class="t"><span><i style="color:' + cols[side] + '">■</i> ' + lbl(D, side);
+      if (!(side === 'LONG' || side === 'SHORT') || !cnt[side]) { out.push('<div class="p21-link mc">' + head + '</span></span><b>' + pct(100 * (cnt[side] || 0) / N) + '</b></div>'); continue; }
+      const W = preBundle(r, 'EST:P-WHEN', side), Rb = preBundle(r, 'EST:P-DR', side), BR = preBundle(r, 'EST:P-R', side), BX = preBundle(r, 'EST:P-X', side);
+      if (!W || !Rb || !BR || !BX) { out.push('<div class="p21-link mc">' + head + '</span></span><b>—</b></div>'); continue; }
+      const n = W.estimates[0].denominator, wins = W.estimates[0].categories;
+      const top = wins.reduce((a, x) => x.count > a.count ? x : a, wins[0]);
+      const dr = {}; for (const x of Rb.estimates[0].categories) dr[x.category] = x.count;
+      const q = B => { const e = B.estimates[0]; return e.value_kind === 'QUANTILES' ? e.quantiles.map(x => sd(x.value)) : null; };
+      const qr = q(BR), qx = q(BX);
+      // two short lines: when and the DR outcome; the pullback and the extension (their quartiles in the title)
+      const sub = [lbl('EST:P-WHEN', 'when', { window: top.category, k: top.count, n }) + ' · ' + lbl('EST:P-DR', 'dr', { held: dr.HELD || 0, n }),
+        [qr ? lbl('EST:P-R', 'r', { q50: qr[1] }) : '', qx ? lbl('EST:P-X', 'x', { q50: qx[1] }) : ''].filter(Boolean).join(' · ')].filter(Boolean);
+      const title = [lbl('EST:P-WHEN', 'title', { window: top.category, k: top.count, n }), lbl('EST:P-DR', 'title', { held: dr.HELD || 0, broken: dr.BROKEN || 0, n })]
+        .concat(qr ? [lbl('EST:P-R', 'title', { q50: qr[1], q25: qr[0], q75: qr[2] })] : []).concat(qx ? [lbl('EST:P-X', 'title', { q50: qx[1], q25: qx[0], q75: qx[2] })] : []).join('; ');
+      out.push('<div class="p21-link mc" title="' + esc(title) + '">' + head + '</span>' + sub.map(x => '<span class="p21-sub">' + x + '</span>').join('') + '</span><b>' + pct(100 * cnt[side] / N) + '</b></div>');
+    }
+    return out.join('') + '</div>';
   }
   // the DR outcome of the family (spec §5.2): four categories that add up to 100 % of N; one compact bar
   function outcomeHtml(F) {

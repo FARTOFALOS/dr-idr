@@ -34,6 +34,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "lab"))
 import contract as C  # noqa: E402
 import now24 as N  # noqa: E402
+import pre24 as P  # noqa: E402
 import scene24 as S  # noqa: E402
 import zonemap24 as Z  # noqa: E402
 
@@ -569,9 +570,10 @@ def test_routes_and_encodings():
     check(all(("status=OUTSIDE_SC11" in h) == (declared[r]["surface_profile"].startswith("LEGACY") or declared[r]["surface_profile"] == "SERVICE") for r, h in marks.items()),
           "every legacy and service route is marked OUTSIDE_SC11, every SC-1.1 route with its profile and registry")
     bodies = {"/api/d24/family": S.family("NQ", "RDR", 690, "2025-12-17"), "/api/d24/now": N.live("NQ", "RDR", 690, "2025-12-17"),
+              "/api/d24/pre": P.pre("NQ", "RDR", 655, "2025-02-27"),
               "/api/d24/day": C.attach_day(S.day_view("NQ", "2025-12-17"), {}), "/api/d24/dates": S.dates("NQ")}
     bad = {r: C.undeclared_numbers(r, b) for r, b in bodies.items() if C.undeclared_numbers(r, b)}
-    check(not bad, f"no number without a declared meaning in real responses of the four SC-1.1 routes{': ' + str(bad) if bad else ''}")
+    check(not bad, f"no number without a declared meaning in real responses of the five SC-1.1 routes{': ' + str(bad) if bad else ''}")
     legacy = [e for e in REG["estimands"] for s in REG["surfaces"] if s["surface_profile"].startswith("LEGACY") and e["id"] in (s.get("estimands") or [])]
     check(not legacy, "no SC-1.1 estimand is declared on a legacy route")
 
@@ -579,6 +581,7 @@ def test_routes_and_encodings():
 def test_live_envelopes():
     envs = {"family conf": S.family("NQ", "RDR", 690, "2025-12-17")["contract"], "family brk": S.family("NQ", "RDR", 900, "2025-12-10")["contract"],
             "family ODR": S.family("NQ", "ODR", 330, "2025-12-19")["contract"], "now": N.live("NQ", "RDR", 690, "2025-12-17")["contract"],
+            "pre": P.pre("NQ", "RDR", 655, "2025-02-27")["contract"],
             "day": C.attach_day(S.day_view("NQ", "2025-12-17"), {})["contract"]}
     for name, e in envs.items():
         errs = C.validate(e, "ContractEnvelope")
@@ -609,14 +612,17 @@ def test_stale_fails_closed():
             reasons = C.stale()
             body = C.stale_response("/api/d24/family", {})
             now = C.stale_response("/api/d24/now", {})
-            check(reasons and body["status"] == "contract_stale" and body["contract"]["status"] == "CONTRACT_STALE" and "bundles" not in body["contract"] and "members" not in body and now["status"] == "CONTRACT_STALE",
+            pre = C.stale_response("/api/d24/pre", {})
+            check(reasons and body["status"] == "contract_stale" and body["contract"]["status"] == "CONTRACT_STALE" and "bundles" not in body["contract"] and "members" not in body and now["status"] == "CONTRACT_STALE"
+                  and pre["status"] == "contract_stale" and pre["contract"]["profile"] == "PROFILE:PRE-24" and "bundles" not in pre["contract"],
                   "a source changed since the build makes the contract stale: no statistic is published")
             check("status=CONTRACT_STALE" in C.header_for("/api/d24/family"), "the stale state is marked on every SC-1.1 response")
         finally:
             C.REGISTRY_FILE = old; C._S["loaded"] = None; C._TTL["at"] = 0.0
     check(not C.stale(), "the compiled contract represents its sources again")
     src = (ROOT / "lab" / "server.py").read_text(encoding="utf-8")
-    check("if url.path in ('/api/d24/family', '/api/d24/now') and contract.stale():" in src and src.index("contract.stale()") < src.index("if url.path in ('/api/d24/day'"),
+    check("if url.path in ('/api/d24/family', '/api/d24/now', '/api/d24/pre') and contract.stale():" in src and src.index("contract.stale()") < src.index("if url.path == '/api/d24/pre'")
+          and src.index("contract.stale()") < src.index("if url.path in ('/api/d24/day'"),
           "the server answers the statistical routes from the stale gate before computing them; the day's observations are still served")
 
 
@@ -636,7 +642,7 @@ def test_page_contract():
     texts = {t for f in list(PAGE["forms"].values()) + list(PAGE["facts"].values()) for v in f["labels"].values() for t in v.values() if "{" not in t and len(t) >= 14}
     written = sorted(t for t in texts if ("'" + t + "'") in both or (">" + t + "<") in both)
     check(not written, f"the page writes none of the registered words itself ({len(texts)} words checked){': ' + str(written[:5]) if written else ''}")
-    for f in ("kViolate", "bindPassport", "envCounts", "regFault", "nowBundle", "verifyNow"):
+    for f in ("kViolate", "bindPassport", "envCounts", "regFault", "nowBundle", "verifyNow", "preBundle"):
         check(re.search(r"function " + f + r"\(", app) is not None, f"the page's contract layer has {f}")
     # every estimand id the page writes: literal ('EST:B-CLOSE') or an event's pair ('EST:B-ZONE-' + ev -> -R and -X)
     used = set()
@@ -649,13 +655,48 @@ def test_page_contract():
     check(used and not unreg, f"every estimand the page makes a passport of is registered ({len(used)}){': ' + str(unreg) if unreg else ''}")
 
 
+def test_pre_profile():
+    """PROFILE:PRE-24 (operator 2026-10-08, SC-1.1 §12.5): before the confirmation, the similar sessions at the cut."""
+    body = P.pre("NQ", "RDR", 655, "2025-02-27")
+    c = body["contract"]
+    ests = {b["estimand"] for b in c.get("bundles", [])}
+    check(body["status"] == "ok" and c["status"] == "CONFORMANT" and not C.validate(c, "ContractEnvelope") and ests == {"EST:P-DIR", "EST:P-WHEN", "EST:P-DR", "EST:P-R", "EST:P-X"},
+          f"PRE-24: a real answer before the confirmation is CONFORMANT with its five estimands ({len(c.get('bundles', []))} bundles)")
+    check(all(b["claim"]["claim_class"] == C.C1 and b["admissible_claims"] == [C.C1] for b in c["bundles"]), "PRE-24: every number is C1 (a conditional description of history); C0, C2 and C3 are not admissible")
+    d = next(b for b in c["bundles"] if b["estimand"] == "EST:P-DIR")
+    check(sum(x["count"] for x in d["estimates"][0]["categories"]) == body["N"] == len(body["ids"]), "PRE-24: the four categories of the first confirmation add up to N")
+    a_t, w_t = body["key"]["pos"]
+    check(all(4 * abs(m["a"] * w_t - a_t * m["w"]) <= m["w"] * w_t for m in body["members"]) and body["key"]["band"] == [1, 4],
+          "PRE-24: every member's price at the cut lies within 1/4 IDR of today's (nothing widened)")
+    allb = P.pre("NQ", "RDR", 655, "2025-02-27", "all")
+    check(allb["contract"]["case_sets"][0]["spec"] == "CS:P-SIMILAR-ALL-1" and set(body["ids"]) < set(allb["ids"]), "PRE-24: all weekdays is another set (an explicit switch), a superset of the weekday set")
+    few = P.pre("NQ", "ODR", 250, "2025-06-25")
+    check(few["status"] == "ok" and few["few"] and few["N"] < 20 and any(b["estimand"] == "EST:P-DIR" for b in few["contract"]["bundles"]),
+          f"PRE-24: a set of {few.get('N')} sessions (< 20) is marked «мало сессий», neither hidden nor widened")
+    conf = P.pre("NQ", "RDR", 640, "2025-12-17")
+    check(conf["status"] == "confirmed" and not conf["contract"].get("bundles"), "PRE-24: after today's confirmation there is no PRE number")
+    m0, why = P.models_today([], "ADR", -200, None)
+    check(m0 is None and "RDR" in why and C.ref_models(None, [], -200) is None, "PRE-24: a model whose box is missing is undetermined (no answer), never «alive»")
+    raw, B, day = P._pre("NQ", "RDR", 655, "2025-02-27")
+    forged = copy.deepcopy(raw)
+    i = next(j for j, m in enumerate(forged["members"]) if m["first"] == "LONG")
+    forged["members"][i]["first"] = "SHORT"
+    out = C.attach_pre(forged, "NQ", B, day, dict(at=655))
+    check(out["status"] == "contract_violation" and "members" not in out and {v["code"] for v in out["contract"]["violations"]} & {"OUTCOME", "IDENTITY"},
+          "PRE-24: a forged first confirmation is withheld by the reference re-derivation")
+    wide = copy.deepcopy(raw)
+    wide["key"] = dict(wide["key"], band=[1, 2])
+    out = C.attach_pre(wide, "NQ", B, day, dict(at=655))
+    check(out["status"] == "contract_violation" and "members" not in out, "PRE-24: a widened band is refused (the comparison rule is frozen)")
+
+
 # =====================================================================================================================
 print("Part 1: the contract's own artifacts")
 for t in (test_pins_and_products, test_registry_structure, test_enforcement_map, test_examples_verbatim, test_coverage, test_enums_match_document): t()
 print("Part 2: the discriminating examples K01-K33")
 for i in range(1, 34): globals()[f"k{i:02d}"]()
 print("Part 3: integration with the server and the page")
-for t in (test_routes_and_encodings, test_live_envelopes, test_stale_fails_closed, test_page_contract): t()
+for t in (test_routes_and_encodings, test_live_envelopes, test_stale_fails_closed, test_page_contract, test_pre_profile): t()
 print()
 print("ALL GOOD" if not failures else f"{len(failures)} FAILED")
 sys.exit(1 if failures else 0)

@@ -4715,6 +4715,7 @@
   ],
   "EventKind": [
    "CLOSE",
+   "CONFIRMATION",
    "CROSS",
    "DELTA_R",
    "DELTA_X",
@@ -4891,6 +4892,7 @@
    "CLOSE_AT_M5",
    "DR_OUTCOME",
    "FINAL_EXTREME",
+   "FIRST_CONFIRMATION_AFTER_CUT",
    "FIRST_ORDER",
    "FIRST_QUALIFIED_VISIT",
    "LITERAL_LEVEL_CROSSING",
@@ -4977,6 +4979,7 @@
    "SC11_CONTRACT_SERVICE",
    "SC11_NOW_1_0",
    "SC11_OBSERVATION",
+   "SC11_PRE_24",
    "SERVICE"
   ],
   "TargetKind": [

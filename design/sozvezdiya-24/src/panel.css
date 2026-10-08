@@ -38,6 +38,7 @@
 .p24-bar i{display:block;height:100%}
 .p24-out{display:grid;grid-template-columns:1fr 1fr;column-gap:10px}
 .p24-out .p21-link{padding:2px 6px}
+.p24-pre .p21-link{cursor:default}
 .p24-x{margin-left:6px;padding:0 5px;border-radius:4px;color:#A3A8B3;font-size:11px;background:#161A21}
 .p24-x:hover{background:#25303B;color:#fff}
 .p24-mem{font-size:12.5px;line-height:1.5}

@@ -30,7 +30,7 @@
   };
   const ORDER = ['ADR', 'ODR', 'RDR'];
   let PREV = null;
-  const A = { inst: 'NQ', src: 'live', date: null, day: null, D: null, fams: new Map(), pending: new Set(), now: new Map(), nowPending: new Set(), auto: true, timer: 0, busy: false, error: null, dates: null, jump: false };
+  const A = { inst: 'NQ', src: 'live', date: null, day: null, D: null, fams: new Map(), pending: new Set(), now: new Map(), nowPending: new Set(), pre: new Map(), prePending: new Set(), auto: true, timer: 0, busy: false, error: null, dates: null, jump: false };
   const C = {
     bg: '#08090C', grid: '#1C2027', text: '#D1D4DC', text2: '#A3A8B3', text3: '#6F7582', axis: '#0B0C10',
     up: '#089981', dn: '#F23645', dr: '#EEF1F5', idr: '#AEBACB', mid: '#8B95A5', open: '#6B7380', std: '#5F6877', stdOn: '#A7B2C3',
@@ -321,6 +321,22 @@
     }
     return null;
   }
+  // PROFILE:PRE-24 (operator 2026-10-08, SC-1.1 §12.5): before today's confirmation, the similar sessions of history at
+  // the cut (lab/pre24.py), one request per closed M5 and scope; there is no family yet, nothing on the chart changes
+  const preKey = ctx => [A.inst, A.src === 'hist' ? A.date : 'live', ctx.s.k, sliceOf(ctx), st.scope].join('|');
+  function preOf(ctx) {
+    if (!ctx.s || ctx.s.status !== 'waiting') return null;
+    const key = preKey(ctx), r = A.pre.get(key);
+    if (r) return r;
+    if (!A.prePending.has(key)) {
+      A.prePending.add(key);
+      fetch('/api/d24/pre?instrument=' + A.inst + '&session=' + ctx.s.k + '&at=' + sliceOf(ctx) + (A.src === 'hist' ? '&date=' + A.date : '') + '&scope=' + st.scope)
+        .then(x => x.json()).then(x => { x._ctx = 'pre|' + (A.respSeq = (A.respSeq || 0) + 1); A.pre.set(key, x); if (A.pre.size > 80) A.pre.delete(A.pre.keys().next().value); })
+        .catch(() => A.pre.set(key, { status: 'error', message: 'Локальный сервер не ответил', _ctx: 'pre|' + (A.respSeq = (A.respSeq || 0) + 1) }))
+        .finally(() => { A.prePending.delete(key); redraw(true); });
+    }
+    return null;
+  }
   function snapOf(D, s) {
     if (!s.conf || !['confirmed', 'broken', 'done'].includes(s.status) || D.d === 'none') return null;
     const view = wantView(s), fk = famKey(D, s, view), r = A.fams.get(fk);
@@ -558,6 +574,10 @@
   "CS:NOW-MATCH-M3-1": "MATCHED_AT_CUT",
   "CS:NOW-NEW-YES-DELTA-1": "OUTCOME_SUBGROUP",
   "CS:NOW-NEW-YES-TAU-1": "OUTCOME_SUBGROUP",
+  "CS:P-SIDE-1": "OUTCOME_SUBGROUP",
+  "CS:P-SIDE-KNOWN-1": "OUTCOME_SUBGROUP",
+  "CS:P-SIMILAR-1": "MATCHED_AT_CUT",
+  "CS:P-SIMILAR-ALL-1": "MATCHED_AT_CUT",
   "CS:UNIVERSE-1": "HISTORICAL_UNIVERSE",
   "CS:ZM3-STUDY-1": "RETROSPECTIVE_RESEARCH"
  },
@@ -1243,6 +1263,64 @@
    ],
    "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
   },
+  "EST:P-DIR": {
+   "measure": "CATEGORY_SHARES",
+   "params": [],
+   "profile": "PROFILE:PRE-24",
+   "q4": [
+    "CS:P-SIMILAR-1",
+    "CS:P-SIMILAR-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:P-DR": {
+   "measure": "CATEGORY_SHARES",
+   "params": [
+    "side",
+    "cut"
+   ],
+   "profile": "PROFILE:PRE-24",
+   "q4": [
+    "CS:P-SIDE-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:P-R": {
+   "measure": "QUANTILES",
+   "params": [
+    "side",
+    "cut"
+   ],
+   "profile": "PROFILE:PRE-24",
+   "q4": [
+    "CS:P-SIDE-KNOWN-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
+  "EST:P-WHEN": {
+   "measure": "CATEGORY_SHARES",
+   "params": [
+    "side",
+    "cut"
+   ],
+   "profile": "PROFILE:PRE-24",
+   "q4": [
+    "CS:P-SIDE-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
+  "EST:P-X": {
+   "measure": "QUANTILES",
+   "params": [
+    "side",
+    "cut"
+   ],
+   "profile": "PROFILE:PRE-24",
+   "q4": [
+    "CS:P-SIDE-KNOWN-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
   "EST:ZD-BOOT-R": {
    "measure": "STABILITY_INDEX",
    "params": [
@@ -1346,6 +1424,17 @@
   }
  },
  "facts": {
+  "FF:FEW-SESSIONS": {
+   "labels": {
+    "few": {
+     "ANY": "мало сессий: n={n}"
+    },
+    "title": {
+     "ANY": "Меньше 20 сессий: по вашему решению от 08.10 набор не расширяется, доли показаны как есть (шаг доли {step})."
+    }
+   },
+   "record": "CaseSetSnapshot"
+  },
   "FF:HISTORY-CLOCK": {
    "labels": {
     "empty": {
@@ -1550,6 +1639,32 @@
     }
    },
    "record": "OperatorNamedRule"
+  },
+  "FF:PRE-STATE": {
+   "labels": {
+    "alive": {
+     "ANY": "жива"
+    },
+    "broken": {
+     "ANY": "сломана"
+    },
+    "down": {
+     "ANY": "красная"
+    },
+    "flat": {
+     "ANY": "серая"
+    },
+    "line": {
+     "ANY": "{colour} коробка · модель роста {up}, снижения {down} · цена {u} от низа IDR"
+    },
+    "title": {
+     "ANY": "Сегодня к {cut} по закрытым M5: цвет коробки, модели дня (ADR → ODR → RDR) и где цена в коробке — по ним подобраны похожие сессии"
+    },
+    "up": {
+     "ANY": "зелёная"
+    }
+   },
+   "record": "PrefixState"
   },
   "FF:SESSION": {
    "labels": {},
@@ -2555,6 +2670,92 @@
    },
    "value_form": "QUANTILES"
   },
+  "EST:P-DIR": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:P-DIR",
+   "labels": {
+    "LONG": {
+     "ANY": "Подтвердили лонг"
+    },
+    "NONE": {
+     "ANY": "Не подтвердили"
+    },
+    "SHORT": {
+     "ANY": "Подтвердили шорт"
+    },
+    "UNKNOWN": {
+     "ANY": "Неизвестно: нет свечи M5"
+    },
+    "at": {
+     "ANY": "к {cut}"
+    },
+    "head": {
+     "ANY": "До подтверждения · похожие сессии"
+    },
+    "n": {
+     "ANY": "сессий: {n}"
+    },
+    "title": {
+     "ANY": "Похожие сессии истории к {cut}: подтверждения ещё не было, тот же цвет коробки, те же модели дня, цена там же в коробке (±0,25 IDR). Доли — от всех {n}. Это история, не прогноз и не сделка."
+    },
+    "zero": {
+     "ANY": "похожих сессий в истории нет"
+    }
+   },
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:P-DR": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:P-DR",
+   "labels": {
+    "dr": {
+     "ANY": "DR удержался у {held} из {n}"
+    },
+    "title": {
+     "ANY": "после него DR удержался у {held} из {n}, сломан у {broken}"
+    }
+   },
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:P-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:P-R",
+   "labels": {
+    "r": {
+     "ANY": "откат до {q50}"
+    },
+    "title": {
+     "ANY": "окончательный откат после подтверждения — обычно до {q50} SD, у половины {q25}…{q75}"
+    }
+   },
+   "value_form": "QUANTILES"
+  },
+  "EST:P-WHEN": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:P-WHEN",
+   "labels": {
+    "title": {
+     "ANY": "Подтверждение чаще всего было в {window} — у {k} из {n}"
+    },
+    "when": {
+     "ANY": "чаще {window} · {k} из {n}"
+    }
+   },
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:P-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:P-X",
+   "labels": {
+    "title": {
+     "ANY": "окончательное продолжение — обычно до {q50} SD, у половины {q25}…{q75}. Это история, не прогноз и не сделка."
+    },
+    "x": {
+     "ANY": "дальше до {q50}"
+    }
+   },
+   "value_form": "QUANTILES"
+  },
   "EST:ZD-BOOT-R": {
    "claim_class": "DescriptiveClaim",
    "id": "CF:ZD-BOOT-R",
@@ -2662,7 +2863,7 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "fe8fe8f58556e135"
+ "registry_hash": "554a6625b4759880"
 };
   // A violation belongs to the scene it was found in (DR-LAB-SWPC-1.1 M16): a passport's snapshot, one family response or
   // one NOW response (each its own number: a new answer to the same request starts clean), or the page itself ('*': a page without its registry,
@@ -2690,6 +2891,7 @@
       const n = ctx.F ? A.now.get(nowKey(ctx)) : null;
       if (n && n._ctx) out.add(n._ctx);
     }
+    if (s.status === 'waiting') { const p = A.pre.get(preKey(ctx)); if (p && p._ctx) out.add(p._ctx); }
     return out;
   }
   const kNow = ctx => { const keys = ctxKeys(ctx); return K.list.filter(v => keys.has(v.ctx)).map(v => v.msg); };
@@ -2705,6 +2907,7 @@
     const n = ctx.F ? A.now.get(nowKey(ctx)) : null;
     if (n && /^CONTRACT_/.test(n.status || '')) out.push(n.note || n.message || n.status);
     if (n) for (const ev of ['R', 'X']) if (n[ev] && n[ev].mode === 'WITHHELD') out.push('«Сейчас» ' + ev + ': ' + (n[ev].note || n[ev].mode));
+    if (s.status === 'waiting') { const p = A.pre.get(preKey(ctx)); if (p && /^contract_/.test(p.status || '')) out.push(p.message || p.status); }
     return out;
   }
   const VW = F => F && F.brk ? 'BRK' : 'CONF';
@@ -2773,6 +2976,17 @@
         kViolate('«Сейчас» ' + est + ': the shown numbers are not those of its bundle', null, n._ctx); return null;
       }
     }
+    return b;
+  }
+  // a PRE number (lab/contract.py::attach_pre, all C1) is shown only with its bundle on this cut, under the registered
+  // claim form admissible there; the panel reads the shown values from the bundle itself
+  function preBundle(r, est, side) {
+    const c = r.contract, f = SC11 && SC11.forms[est], fault = regFault(c);
+    if (fault) { kViolate('«До подтверждения»: ' + fault, null, r._ctx); return null; }
+    const b = (c.bundles || []).find(x => x.estimand === est && (side == null || parOf(x).side === side));
+    if (!b) { kViolate('«До подтверждения»: no published bundle ' + est + (side ? ' (' + side + ')' : '') + ' on this cut', null, r._ctx); return null; }
+    if (!f || b.claim_form !== f.id || b.claim.claim_class !== f.claim_class || !(b.admissible_claims || []).includes(f.claim_class)) { kViolate('«До подтверждения»: ' + est + ' published under another claim', null, r._ctx); return null; }
+    if (est === 'EST:P-DIR' && b.estimates[0].denominator !== r.N) { kViolate('«До подтверждения»: N of the block is not that of its bundle', null, r._ctx); return null; }
     return b;
   }
 
@@ -4927,7 +5141,9 @@
       // no family at this moment: one click opens a history day on which this session had one (spec: the live moment
       // must never block the review)
       const noFam = !F && ['before', 'forming', 'waiting', 'noconf'].includes(s.status) && A.day && A.day.status === 'ok';
-      panel.innerHTML = scNotice(ctx) + '<div class="p21-empty">' + esc(F && !F.N ? 'В семье нет сессий: процентов нет' : statusMsg(ctx)) + '</div>' +
+      // before the confirmation: the block of the profile PRE-24 under the status line (operator 2026-10-08)
+      const pre = !F && s.status === 'waiting' && A.day && A.day.status === 'ok' ? preHtml(ctx) : '';
+      panel.innerHTML = scNotice(ctx) + '<div class="p21-empty">' + esc(F && !F.N ? 'В семье нет сессий: процентов нет' : statusMsg(ctx)) + '</div>' + pre +
         (F && !F.N ? '<div class="p21-note">' + esc(F.cond) + '</div>' : '') + (s.failed && s.conf ? viewSwitch(s) : '') +
         (noFam ? '<button class="p24-btn" data-hist="1">' + (A.src === 'live' ? 'Открыть ' + st.session + ' на истории' : 'Ближайший день с подтверждением ' + st.session) + '</button>' : '');
       return;
@@ -4937,6 +5153,8 @@
       cutoff: F.r.key.cutoff, snapshot: F.r.snapshot_id, family: F.r.family_id, semantics: F.r.semantics });
     out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F.cond) + '</span><span>' + (sl >= F.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
     if (s.failed) out.push(viewSwitch(s));
+    // a small break family is shown as it is, marked (operator 2026-10-08: «честно писать «мало»», FF:FEW-SESSIONS)
+    if (F.brk && F.N < FEW) out.push('<div class="p21-note" title="' + esc(lbl('FF:FEW-SESSIONS', 'title', { step: pct(step) })) + '"><b>' + lbl('FF:FEW-SESSIONS', 'few', { n: F.N }) + '</b></div>');
     if (F.out) out.push(outcomeHtml(F));
     out.push(phaseHtml(F, ctx));
     out.push(nowHtml(F, ctx));
@@ -5053,6 +5271,45 @@
     return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
       '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
       link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
+  }
+  // PROFILE:PRE-24 (operator 2026-10-08, SC-1.1 §12.5): before the confirmation, the similar sessions of history at the
+  // cut — box colour, models of the day, price position — and, from their verified bundles only: in which direction they
+  // then confirmed (a 100 % of N), in which 15 minutes, and what came after on each side. Words: CF:P-*, FF:PRE-STATE,
+  // FF:FEW-SESSIONS. Nothing is drawn on the chart
+  const FEW = 20;
+  function preHtml(ctx) {
+    const r = preOf(ctx), D = 'EST:P-DIR', S = 'FF:PRE-STATE';
+    if (!r) return '<div class="p21-note">Подбираю похожие сессии…</div>';
+    if (r.status !== 'ok') return '<div class="p21-note">' + esc(r.message || r.note || 'Похожие сессии не подобраны') + '</div>';
+    const b = preBundle(r, D);
+    if (!b) return '<div class="p21-note">Числа не публикуются: нарушение контракта SC-1.1</div>';
+    const t = r.today, N = r.N, cut = clk(r.key.cut), out = [];
+    out.push('<div class="p24-pre"><div class="p21-h second"><span title="' + esc(lbl(D, 'title', { cut, n: N })) + '">' + lbl(D, 'head') + '</span>' + scopeSwitch() + '</div>');
+    out.push('<div class="p21-note" title="' + esc(lbl(S, 'title', { cut })) + '">' + lbl(S, 'line', { colour: lbl(S, t.box), up: lbl(S, t.models.up ? 'alive' : 'broken'), down: lbl(S, t.models.down ? 'alive' : 'broken'), u: (t.pos.a < 0 ? '−' : '') + num(Math.abs(t.pos.a / t.pos.w), 2) }) + '</div>');
+    out.push('<div class="p21-note">' + lbl(D, 'at', { cut }) + ' · ' + (r.few ? '<b title="' + esc(lbl('FF:FEW-SESSIONS', 'title', { step: N ? pct(100 / N) : '—' })) + '">' + lbl('FF:FEW-SESSIONS', 'few', { n: N }) + '</b>' : lbl(D, 'n', { n: N })) + '</div>');
+    if (!N) return out.join('') + '<div class="p21-note">' + lbl(D, 'zero') + '</div></div>';
+    const cnt = {}, cols = { LONG: C.up, SHORT: C.dn, NONE: '#8C95A3', UNKNOWN: '#5F6877' };
+    for (const x of b.estimates[0].categories) cnt[x.category] = x.count;
+    out.push('<div class="p24-bar">' + ['LONG', 'SHORT', 'NONE', 'UNKNOWN'].filter(k => cnt[k]).map(k => '<i style="width:' + (100 * cnt[k] / N).toFixed(2) + '%;background:' + cols[k] + '"></i>').join('') + '</div>');
+    for (const side of ['LONG', 'SHORT', 'NONE', 'UNKNOWN']) {
+      if (side === 'UNKNOWN' && !cnt[side]) continue;
+      const head = '<span class="t"><span><i style="color:' + cols[side] + '">■</i> ' + lbl(D, side);
+      if (!(side === 'LONG' || side === 'SHORT') || !cnt[side]) { out.push('<div class="p21-link mc">' + head + '</span></span><b>' + pct(100 * (cnt[side] || 0) / N) + '</b></div>'); continue; }
+      const W = preBundle(r, 'EST:P-WHEN', side), Rb = preBundle(r, 'EST:P-DR', side), BR = preBundle(r, 'EST:P-R', side), BX = preBundle(r, 'EST:P-X', side);
+      if (!W || !Rb || !BR || !BX) { out.push('<div class="p21-link mc">' + head + '</span></span><b>—</b></div>'); continue; }
+      const n = W.estimates[0].denominator, wins = W.estimates[0].categories;
+      const top = wins.reduce((a, x) => x.count > a.count ? x : a, wins[0]);
+      const dr = {}; for (const x of Rb.estimates[0].categories) dr[x.category] = x.count;
+      const q = B => { const e = B.estimates[0]; return e.value_kind === 'QUANTILES' ? e.quantiles.map(x => sd(x.value)) : null; };
+      const qr = q(BR), qx = q(BX);
+      // two short lines: when and the DR outcome; the pullback and the extension (their quartiles in the title)
+      const sub = [lbl('EST:P-WHEN', 'when', { window: top.category, k: top.count, n }) + ' · ' + lbl('EST:P-DR', 'dr', { held: dr.HELD || 0, n }),
+        [qr ? lbl('EST:P-R', 'r', { q50: qr[1] }) : '', qx ? lbl('EST:P-X', 'x', { q50: qx[1] }) : ''].filter(Boolean).join(' · ')].filter(Boolean);
+      const title = [lbl('EST:P-WHEN', 'title', { window: top.category, k: top.count, n }), lbl('EST:P-DR', 'title', { held: dr.HELD || 0, broken: dr.BROKEN || 0, n })]
+        .concat(qr ? [lbl('EST:P-R', 'title', { q50: qr[1], q25: qr[0], q75: qr[2] })] : []).concat(qx ? [lbl('EST:P-X', 'title', { q50: qx[1], q25: qx[0], q75: qx[2] })] : []).join('; ');
+      out.push('<div class="p21-link mc" title="' + esc(title) + '">' + head + '</span>' + sub.map(x => '<span class="p21-sub">' + x + '</span>').join('') + '</span><b>' + pct(100 * cnt[side] / N) + '</b></div>');
+    }
+    return out.join('') + '</div>';
   }
   // the DR outcome of the family (spec §5.2): four categories that add up to 100 % of N; one compact bar
   function outcomeHtml(F) {
@@ -5846,7 +6103,7 @@
   }
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
-  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, preOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)
     // violations: those of the scene on screen (SWPC-1.1 M16); all: every one found since the page opened
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),

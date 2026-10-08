@@ -1,4 +1,4 @@
-"""DR-LAB-SWPC-1.1 on screen 24: the static checks and the passports of its bindings B01-B16.
+"""DR-LAB-SWPC-1.1 on screen 24: the static checks and the passports of its bindings B01-B17.
 
     python -B tests/swpc11.py            check (exit code 0 = all good)
     python -B tests/swpc11.py --write    regenerate spec/ekran-24/12-swpc.md from its sources, then check
@@ -10,7 +10,7 @@ clock and context drive it, which channels carry what, how it recovers, what the
 check proves it. From both it generates the binding passports (spec/ekran-24/12-swpc.md, never edited by hand).
 
 Checks: the document is closed (every reference of a B row exists; every W is served by a binding; every M by a B row);
-§9 routes exactly the 53 estimands and 9 fact forms of the compiled SC-1.1 registry, by exact ids; every estimand the
+§9 routes exactly the 58 estimands and 11 fact forms of the compiled SC-1.1 registry, by exact ids; every estimand the
 page can make a passport of is routed; every code anchor of the record exists; every M has an executed check in
 tests/swpc11_browser.mjs; SC-1.1 stays pinned and compiled; the generated passports equal what the sources give.
 The run of the browser checks themselves is `node tests/swpc11_browser.mjs` (the server must run).
@@ -84,7 +84,7 @@ REC = {
                 ctx=BASE_CTX, channels="текст: инструмент, блок, дата, ключ семьи, вид (подписи FF:PASSPORT-VIEW); место: верхняя строка и заголовок сводки; взаимодействие: «Семья слома / Исходная», «день недели / все дни»",
                 recover="верхняя строка и заголовок сводки всегда называют сцену; переключатель вида показывает активную семью", tune="нет (только раскладка окна)",
                 rules=["meaning/13 № 20, 47", "spec/ekran-24/10-semya-sloma.md"],
-                origin="INHERITED; NEW_SWPC: поздний ответ дня отбрасывается (M02), при нехватке места названия событий сворачиваются, чтобы срез не уходил за край (§8.4)", checks=["m01", "m02", "a1"]),
+                origin="INHERITED; NEW_SWPC: поздний ответ дня отбрасывается (M02), при нехватке места названия событий сворачиваются, чтобы срез не уходил за край (§8.4); 08.10: малая семья слома помечена «мало сессий» (FF:FEW-SESSIONS)", checks=["m01", "m02", "a1", "m19"]),
     "B02": dict(code=["drawCandles", "drawNow", "drawPriceAxis", "drawTimeAxis", "sliceOf", "todayRows", "sess"], clock="закрытая M5 (статистика и факты); живая котировка (линия цены); секунды таймера (отсчёт до закрытия M5)",
                 ctx="инструмент, дата, блок, срез", channels="положение: время и цена; прозрачность: свечи после среза в повторе 22 %; стиль: точечная линия цены, штрих среза; текст: метки среза и цены на осях",
                 recover="метка среза на оси и плашка «История / Повтор / LIVE» в верхней строке", tune="⚙ «Свечи и фон», «Прошлые сессии и вчера»",
@@ -139,6 +139,10 @@ REC = {
     "B16": dict(code=["alAdd", "alCheck", "alFire", "chime", "drawAlerts", "cfgPanel"], clock="живая котировка (уведомление); действие пользователя (линия, настройки)", ctx="инструмент; линии хранятся в этом браузере по инструменту",
                 channels="жёлтый пунктир и плашка цены своей линии; после срабатывания — серая; плашка-уведомление до клика или 120 с; звук по настройке",
                 recover="линия и её состояние сохраняются в браузере", tune="⚙ «Уведомления о цене», все цвета и размеры (счёт не меняется)", rules=["meaning/13 № 19, 45"], origin="INHERITED", checks=["m17", "m18"]),
+    "B17": dict(code=["preOf", "preBundle", "preHtml", "statusMsg"], clock="закрытая M5 (срез PRE-24), пока подтверждения нет", ctx="реестр SC-1.1, инструмент, торговая дата, блок, срез, scope, family_id и snapshot_id набора PRE-24",
+                channels="текст: подписи CF:P-*, FF:PRE-STATE, FF:FEW-SESSIONS; полоса на 100 % N: лонг (цвет растущей свечи), шорт (цвет падающей), не подтвердили, неизвестно; у сторон — счёты «k из n» и медианы, квартили в подсказке; на графике ничего",
+                recover="блок стоит в сводке под строкой статуса до подтверждения; загрузка — «Подбираю похожие сессии…», недоступность — «Локальный сервер не ответил»", tune="охват «день недели / все дни» (прежний переключатель)",
+                rules=["meaning/17 §7", "meaning/13 № 55", "SC-1.1 §12.5"], origin="NEW_SWPC 08.10: решение оператора «второй экран до подтверждения нужен» (Н6)", checks=["m19"]),
 }
 HARNESS_OF = {m: "m" + m[1:] for m in M}          # M01 is executed by the scenario m01, …
 
@@ -151,12 +155,12 @@ def claim_basis(refs, page):
 
 
 def passports(page):
-    lines = ["# 12 · SWPC-1.1: паспорта привязок B01–B16", "", "[← к оглавлению](README.md)", "",
+    lines = ["# 12 · SWPC-1.1: паспорта привязок B01–B17", "", "[← к оглавлению](README.md)", "",
              "Сгенерировано `python -B tests/swpc11.py --write` из нормативного текста [DR-LAB-SWPC-1.1](../DR-LAB-SWPC-1.1.md) "
              "(§2, §2.1, §3.4, §5, §9) и инженерной записи в `tests/swpc11.py` (код, часы, каналы, настройки, проверки). Руками не править: "
              "`python -B tests/swpc11.py` сверяет файл с источниками.", "",
-             "**Статус.** Машинные обязанности M01–M18 исполняет `tests/swpc11_browser.mjs` (изолированный Chrome; результат прогона — в узле "
-             "[`meaning/07`](../../meaning/07-cepochka-reshenij.md)). Человеческие задачи H01–H12 оператором не проводились: "
+             "**Статус.** Машинные обязанности M01–M19 исполняет `tests/swpc11_browser.mjs` (изолированный Chrome; результат прогона — в узле "
+             "[`meaning/07`](../../meaning/07-cepochka-reshenij.md)). Человеческие задачи H01–H13 оператором не проводились: "
              "`PERCEPTUALLY_UNVERIFIED`. Протокол — [`meaning/16-priyomka-swpc.md`](../../meaning/16-priyomka-swpc.md).", ""]
     for bid, b in B.items():
         r = REC[bid]
@@ -199,8 +203,8 @@ def main(write):
     check(set(DEADLINE) == set(W), f"§2.1: every W has its term ({len(DEADLINE)})")
     check(ROLES == ["SCAFFOLD", "AMBIENT_STATE", "TRANSITION", "ON_DEMAND", "WITHHELD", "USER_ALERT"], f"§3.2: six roles {ROLES}")
     check(list(ANCHORS) == [f"A{i}" for i in range(1, 10)], f"§3.3: anchors A1–A9 ({len(ANCHORS)})")
-    check(list(B) == [f"B{i:02d}" for i in range(1, 17)], f"§5: bindings B01–B16 ({len(B)})")
-    check(list(M) == [f"M{i:02d}" for i in range(1, 19)] and list(H) == [f"H{i:02d}" for i in range(1, 13)], f"§8: M01–M18 ({len(M)}) and H01–H12 ({len(H)})")
+    check(list(B) == [f"B{i:02d}" for i in range(1, 18)], f"§5: bindings B01–B17 ({len(B)})")
+    check(list(M) == [f"M{i:02d}" for i in range(1, 20)] and list(H) == [f"H{i:02d}" for i in range(1, 14)], f"§8: M01–M19 ({len(M)}) and H01–H13 ({len(H)})")
     bad = [(b, x) for b, v in B.items() for x in v["w"] if x not in W] + [(b, x) for b, v in B.items() for x in v["roles"] if x not in ROLES] + \
           [(b, x) for b, v in B.items() for x in v["anchors"] if x not in ANCHORS] + [(b, x) for b, v in B.items() for x in v["m"] + v["h"] if x not in M and x not in H]
     check(not bad and all(v["w"] and v["roles"] and v["anchors"] and v["m"] for v in B.values()), f"every B row names existing W, roles, anchors, M and H{': ' + str(bad) if bad else ''}")
@@ -208,8 +212,8 @@ def main(write):
     check(set(M) <= {m for v in B.values() for m in v["m"]} | {"M01", "M18"}, "every M is the check of some binding (M01 and M18 are general)")
     print("§9 against the compiled SC-1.1 registry and the page")
     est, ff = {k for k in ROUTES if k.startswith("EST:")}, {k for k in ROUTES if k.startswith("FF:")}
-    check(est == set(page["estimands"]) and len(est) == 53, f"§9 routes exactly the {len(page['estimands'])} estimands of the registry by exact ids{': ' + str(sorted(est ^ set(page['estimands']))) if est != set(page['estimands']) else ''}")
-    check(ff == set(page["facts"]) and len(ff) == 9, f"§9 routes exactly the {len(page['facts'])} fact forms{': ' + str(sorted(ff ^ set(page['facts']))) if ff != set(page['facts']) else ''}")
+    check(est == set(page["estimands"]) and len(est) == 58, f"§9 routes exactly the {len(page['estimands'])} estimands of the registry by exact ids{': ' + str(sorted(est ^ set(page['estimands']))) if est != set(page['estimands']) else ''}")
+    check(ff == set(page["facts"]) and len(ff) == 11, f"§9 routes exactly the {len(page['facts'])} fact forms{': ' + str(sorted(ff ^ set(page['facts']))) if ff != set(page['facts']) else ''}")
     check(all(set(v) <= set(B) for v in ROUTES.values()), "every route names existing bindings")
     both = (SRC / "app.js").read_text(encoding="utf-8") + (SRC / "panel.js").read_text(encoding="utf-8")
     EV = r"(?:ev|h\.ev|r\.ev|e|I\.ev|g\.ev)"
@@ -225,10 +229,10 @@ def main(write):
     check(set(REC) == set(B) and not missing, f"every binding has its record and every code anchor exists{': ' + str(missing) if missing else ''}")
     harness = HARNESS.read_text(encoding="utf-8")
     lost = [m for m in M if f"check('{m}'" not in harness or not re.search(rf"\n  async {HARNESS_OF[m]}\(B\)", harness)]
-    check(not lost, f"every M01–M18 is executed by its scenario of tests/swpc11_browser.mjs{': ' + str(lost) if lost else ''}")
+    check(not lost, f"every M01–M19 is executed by its scenario of tests/swpc11_browser.mjs{': ' + str(lost) if lost else ''}")
     gen = passports(page)
     filled = all("|  |" not in gen.split(f"## {b} ")[1].split("\n## ")[0] for b in B)
-    check(filled, "every passport of B01–B16 has every field of §3.1")
+    check(filled, "every passport of B01–B17 has every field of §3.1")
     print("SC-1.1 and the generated passports")
     reg = C.registry()
     ed = next(e for e in reg["editions"] if e["id"] == "DR-LAB-SC-1.1")

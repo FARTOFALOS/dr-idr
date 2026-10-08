@@ -87,7 +87,7 @@ class Handler(SimpleHTTPRequestHandler):
             if url.path == '/api/contract':
                 # DR-LAB-SC-1.1: the compiled machine contract (registry, stamps) and its runtime status
                 return self.json(contract.public_registry())
-            if url.path in ('/api/d24/family', '/api/d24/now') and contract.stale():
+            if url.path in ('/api/d24/family', '/api/d24/now', '/api/d24/pre') and contract.stale():
                 # a stale executable contract publishes no statistic (fail closed); the reasons are in the envelope
                 return self.json(contract.stale_response(url.path, params))
             if url.path == '/api/d24/now':
@@ -100,6 +100,17 @@ class Handler(SimpleHTTPRequestHandler):
                 at = params.get('at')
                 return self.json(contract.finalize(url.path, now24.live(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None,
                                                                         date, params.get('view', 'auto'), bool(params.get('debug')))))
+            if url.path == '/api/d24/pre':
+                # PROFILE:PRE-24 (lab/pre24.py, operator 2026-10-08): before today's confirmation, similar sessions of
+                # history by box colour, models of the day and price position; `scope=all` = all weekdays (explicit)
+                import pre24
+                inst = params.get('instrument', 'NQ')
+                date = params.get('date') or None
+                if date is not None and not re.fullmatch(r'20[0-2]\d-[01]\d-[0-3]\d', date):
+                    raise ValueError('date: YYYY-MM-DD')
+                at = params.get('at')
+                return self.json(contract.finalize(url.path, pre24.pre(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None,
+                                                                       date, params.get('scope', 'weekday'))))
             if url.path in ('/api/d24/day', '/api/d24/family', '/api/d24/dates'):
                 # design 24 (lab/scene24.py): the statistical layer of DR-LAB-SEM-1.0; `date` = a trading date of
                 # 2006-2025 shown as if it were today (its families use only earlier sessions), empty = the live day

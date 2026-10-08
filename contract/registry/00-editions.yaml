@@ -23,7 +23,7 @@ editions:
     grounds: CONTRACT_FORMALISATION
     title_ru: DR-LAB Semantic Contract 1.1 (patched)
     document_path: spec/DR-LAB-Semantic-Contract-1.1-(patched).md
-    document_sha256_lf: bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b
+    document_sha256_lf: 3572408e0cd91147ebe76056612ecae1bf8f8abc20203cedb5f033e94e09b775
     edition_status: ACCEPTED_FOR_PROFILES
     supersedes: DR-LAB-SC-1.0
     source_refs: [SRC:SC-1.1, SRC:GOAL-2026-10-07]
@@ -77,6 +77,25 @@ editions:
           - any trading policy, order or execution (SC-1.1 §11, D1)
         not_established:
           - "the rewritten texts of hard rules 6 and 10 of AGENTS.md for main (AGENTS.md: «rewritten with the merge into main, with the operator»)"
+      - actor_role: OPERATOR
+        channel: >-
+          Claude Code chat with the operator, 2026-10-08 11:55 UTC: his choice among the options of the executor's
+          question «Проверка полноты закрыта … Как дальше?» (the option «Реализовать в отдельной ветке»; the option text
+          below was written by the executor and chosen by him)
+        date: "2026-10-08"
+        quote:
+          - "Разрешаю менять SC-1.1 и SWPC и собрать вариант для моей приёмки; рабочий экран до приёмки не трогать"
+        scope: >-
+          Changes of SC-1.1 and SWPC-1.1 that implement his decisions of 2026-10-08 (meaning/17 §7), on the branch
+          resheniya-08-10, built as a variant for his acceptance: the profile PRE-24, the phase rule, the words of the NOW
+          pullback line, «мало сессий» for small sets.
+        exclusions:
+          - the working screen (the swpc-1.1 candidate on port 8767 and main) until his acceptance
+          - merging into main, publication or a push
+          - any trading policy, order or execution (SC-1.1 §11, D1)
+        not_established:
+          - the acceptance of the variant itself — his separate act after he has seen it
+          - the panel words proposed by the executor for these decisions (forms marked PROPOSED_BY_EXECUTOR)
         # these records preserve evidence of the acts; they do not create the decisions (SC-1.1 §14.1)
 
 profiles:
@@ -101,6 +120,19 @@ profiles:
     profile_status: FROZEN
     source_refs: [SRC:NOW-1.0, SRC:M15, SRC:NOW-PROVERKA]
     note: Matchers, thresholds and gates frozen; a new matcher needs a new specification version.
+  - id: PROFILE:PRE-24
+    version: "1.0"
+    sc_ref: ["§12.5"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: второй экран до подтверждения
+    edition: DR-LAB-SC-1.1
+    profile_status: ACTIVE
+    source_refs: [SRC:DECISIONS-2026-10-08, SRC:SEMANTICS-22, SRC:CODE-PRE24]
+    note: >-
+      Before today's confirmation there is still no directed base family (§12.1). PRE-24 is a separate set at the
+      common clock cut: similar sessions by box colour, models of the day and price position (the operator's selection
+      of 2026-10-08 with the definitions of design 22), never widened; fewer than 20 are shown with «мало сессий».
+      Every number is C1. Built on the branch resheniya-08-10 for the operator's acceptance; not yet accepted by him.
 
 source_references:
   - id: SRC:SC-1.1
@@ -108,7 +140,7 @@ source_references:
     grounds: CONTRACT_FORMALISATION
     role: NORMATIVE_CONTRACT
     document: "spec/DR-LAB-Semantic-Contract-1.1-(patched).md"
-    revision: "sha256-lf:bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"
+    revision: "sha256-lf:3572408e0cd91147ebe76056612ecae1bf8f8abc20203cedb5f033e94e09b775"
   - id: SRC:SC-1.0
     sc_ref: ["§0.2"]
     grounds: CONTRACT_FORMALISATION
@@ -317,3 +349,14 @@ source_references:
     role: IMPLEMENTATION
     document: "lab/contract.py"
     note: "the runtime gate and the reference definitions"
+  - id: SRC:DECISIONS-2026-10-08
+    sc_ref: ["§12.5", "§14.3"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "meaning/17-rabota-treidera.md"
+    locator: "§7: the operator's answers and decisions of 2026-10-08"
+  - id: SRC:CODE-PRE24
+    sc_ref: ["§12.5"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "lab/pre24.py"
