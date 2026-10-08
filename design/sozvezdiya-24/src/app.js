@@ -502,6 +502,24 @@
     return out;
   }
   function actClose(F, ctx) { const b = ctx.D.bars.find(q => q.t + 5 === F.act0); return b ? F.d0 * (tk(b.c) - F.e0t) : null; }
+  // the operator's named phase rule (2026-10-08, FF:PHASE-RULE, meaning/17 §7): «откат сделан» when today's deepest point
+  // after the activation reached the retirement zone (−0.7) AND at least half of the family's sessions had their final R
+  // earlier than the cut by the common clock (known, of N: EST:B-CLOCK-R over the whole price range, part EARLIER). A
+  // rule of the operator, not a statement about the market; only for the confirmation family (a break is another frame)
+  function phaseOf(F, ctx) {
+    if (!F || F.brk || !F.N) return null;
+    const rows = todayRows(F, ctx);
+    if (!rows.length) return null;
+    let lo = rows[0];
+    for (const q of rows) if (q.lo < lo.lo) lo = q;
+    const cut = sliceOf(ctx), n = F.ev.R.pts.filter(q => q.t + 5 <= cut).length;
+    const pass = clockPass(F, 'R', { k0: -100000, k1: 100000 }, 'EARLIER', cut, n);
+    const deep = 10 * lo.lo <= -7 * F.w0t, half = 2 * n >= F.N;
+    return { r: lo.lo / F.w0t, deep, half, done: deep && half, pass, cut };
+  }
+  // the zones of the side the rule points at stay as they are; the other side's haze and stars a little quieter
+  // (operator 2026-10-06 «пока откат не сделан, зоны R чуть ярче, после — зоны X»; 2026-10-08 the rule); never a size
+  const phaseK = (ph, ev) => !ph ? 1 : ev === (ph.done ? 'X' : 'R') ? 1 : 0.72;
   function todayReach(F, ctx, L, up) {
     const w = F.w0t, r = todayRows(F, ctx).find(q => up ? q.hi * L.b >= L.a * w : q.lo * L.b <= L.a * w), c = actClose(F, ctx);
     return { t: r ? r.T - 5 : null, atAct: c == null ? null : up ? c * L.b >= L.a * w : c * L.b <= L.a * w };
@@ -932,6 +950,7 @@
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     if (F) drawNowRange(c, ctx);
+    if (F) drawNowMarks(c, ctx);
     drawPills(c, ctx);
     drawNow(c, ctx);
     if (F) drawLink(c, ctx);
@@ -1100,6 +1119,25 @@
       c.fillStyle = rgba(cfg[ev], 0.18); c.fillRect(x, Math.min(ya, yb), 4, Math.max(2, Math.abs(yb - ya)));
       c.fillStyle = rgba(cfg[ev], 0.45); c.fillRect(x + 1.5, Math.min(y0, ya), 1, Math.abs(ya - y0));
     }
+  }
+  // «Сейчас», the pullback line (operator 2026-10-08, meaning/17 §7: «только число и отметка на шкале»): its levels at
+  // the price scale, always, no text — today's deepest point after the activation (dashed), and for the sessions whose
+  // pullback went deeper the middle half of where it ended (a narrow bar) with its median (a tick); a thin line joins
+  // them. The same published bundles as the number; the hover picture stays as it was
+  function drawNowMarks(c, ctx) {
+    const F = ctx.F, n = nowOf(ctx), E = n && n.R;
+    if (!E || (n.status !== 'OK' && n.status !== 'FROZEN_AT_BREAK') || !E.state || !E.continuation || !nowBundle(n, 'EST:N-NEW-R', 'MAIN', E.continuation)) return;
+    const q = E.continuation.p_new_extreme && nowBundle(n, 'EST:N-IF-NEW-R', 'MAIN') ? E.continuation.delta_if_new || {} : {};
+    const u0 = E.state.r_seen, col = cfg.R, xr = V.plot.w, y0 = Math.round(V.Y(F.u2p(u0))) + 0.5;
+    c.save(); c.lineWidth = 1;
+    c.strokeStyle = rgba(col, 0.9); c.setLineDash([3, 2]); c.beginPath(); c.moveTo(xr - 24, y0); c.lineTo(xr, y0); c.stroke(); c.setLineDash([]);
+    if (q.q25 != null && q.q75 != null && q.q50 != null) {
+      const ya = V.Y(F.u2p(u0 - q.q25)), yb = V.Y(F.u2p(u0 - q.q75)), ym = Math.round(V.Y(F.u2p(u0 - q.q50))) + 0.5;
+      c.strokeStyle = rgba(col, 0.4); c.beginPath(); c.moveTo(xr - 7.5, y0); c.lineTo(xr - 7.5, ya); c.stroke();
+      c.fillStyle = rgba(col, 0.5); c.fillRect(xr - 10, Math.min(ya, yb), 5, Math.max(2, Math.abs(yb - ya)));
+      c.strokeStyle = rgba(col, 1); c.lineWidth = 2; c.beginPath(); c.moveTo(xr - 16, ym); c.lineTo(xr, ym); c.stroke();
+    }
+    c.restore();
   }
   // a hovered price cell or band of the histogram runs across the chart; a hovered time cell runs down to the time axis
   function drawHighlight(c, ctx) {
@@ -1294,9 +1332,9 @@
   // brightness, the tooltip lists every session). A ring = that session broke its DR (the family is never thinned by it).
   // R and X together; the stars of a zone are brighter and a little larger than the residual ones
   function drawPoints(c, ctx) {
-    const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100;
+    const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100, ph = phaseOf(F, ctx);
     for (const ev of ['R', 'X']) {
-      const col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent'), held = look.map((_, i) => zoneHeld(F, ev, i));
+      const pk = phaseK(ph, ev), col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent'), held = look.map((_, i) => zoneHeld(F, ev, i));
       for (const q of F.ev[ev].pts) {
         // the stars of a withheld zone are drawn as stars outside zones (their own session's point stays; the zone's
         // emphasis would assert the withheld share)
@@ -1306,7 +1344,7 @@
         const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx), inZone = zi != null;
         let a = (past ? cfg.pastA : cfg.ptA) / 100 * (inZone ? 1.1 : 0.62), r = R0 * (inZone ? 1 : 0.8);
         if (e === true) { a = Math.min(1, Math.max(a, 0.55) + 0.3); r = R0 * 1.3; } else if (e === false) a *= 0.28;
-        a = Math.min(1, a);
+        a = Math.min(1, e === true ? a : a * pk);
         if (!F.brk && q.m.outcome === 'broken') { c.strokeStyle = rgba(col, a); c.lineWidth = 1; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.stroke(); }
         else { c.fillStyle = rgba(col, a); c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill(); }
       }
@@ -1419,9 +1457,9 @@
     return 0.8;
   }
   function drawClouds(c, ctx) {
-    const F = ctx.F, CL = cloudsOf(F), h = hv(), fa = cfg.cloudA / 100, ta = cfg.threadA / 100;
+    const F = ctx.F, CL = cloudsOf(F), h = hv(), ph = phaseOf(F, ctx);
     for (const ev of ['R', 'X']) {
-      const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
+      const S = zoneLook(F, ctx, ev), col0 = cfg[ev], fa = cfg.cloudA / 100 * phaseK(ph, ev), ta = cfg.threadA / 100 * phaseK(ph, ev);
       CL[ev].forEach((g, i) => {
         if (!g || zoneHeld(F, ev, i)) return;        // a withheld zone's share is «—»: its haze and threads do not assert it
         const col = stateCol(col0, S[i]);
@@ -3180,7 +3218,7 @@
   }
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
-  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)
     // violations: those of the scene on screen (SWPC-1.1 M16); all: every one found since the page opened
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),

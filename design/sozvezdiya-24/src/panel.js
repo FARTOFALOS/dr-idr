@@ -45,6 +45,7 @@
     out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F.cond) + '</span><span>' + (sl >= F.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
     if (s.failed) out.push(viewSwitch(s));
     if (F.out) out.push(outcomeHtml(F));
+    out.push(phaseHtml(F, ctx));
     out.push(nowHtml(F, ctx));
     if (st.mode === 'bounds') {
       out.push(zonesHtml(F, ctx));
@@ -133,6 +134,15 @@
       const bI = bN && q.q50 != null && p ? nowBundle(n, 'EST:N-IF-NEW-' + ev, 'MAIN') : null, bT = bI && tm.q50_min != null ? nowBundle(n, 'EST:N-TIME-' + ev, 'MAIN') : null;
       const sub = bI ? lbl('EST:N-IF-NEW-' + ev, 'sub', { p50: lv(q.q50), p25: lv(q.q25), p75: lv(q.q75) }) + (bT ? lbl('EST:N-TIME-' + ev, 'sub', { min: Math.round(tm.q50_min) }) : '') : '';
       const support = E.mode === 'PATH_CONDITIONED' ? lbl(NE, 'support_path', { m: sp.N_match_total, n: sp.N_eligible, matcher: E.matcher }) : lbl(NE, 'support_b0', { n: sp.N_eligible, N: n.base.N_base });
+      // the pullback line (operator 2026-10-08, meaning/17 §7): only the number; its levels are the marks at the price
+      // scale (drawNowMarks); the historical words, the conditional levels, the time and the support are in its title
+      if (ev === 'R') {
+        const P = v => Math.round(F.u2p(u0 + sgn * v)), cnt = sp.N_match_unknown ? sp.N_new_yes + '–' + (sp.N_new_yes + sp.N_match_unknown) : String(sp.N_new_yes);
+        const t1 = bN ? lbl(NE, 'title_mark', { ev: 'R', cut: n.cut.cut_clock_et, today: num(P(0), 0), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base }) : '';
+        const t2 = bI ? lbl('EST:N-IF-NEW-R', 'title_mark', { p50: lv(q.q50), lo: num(Math.min(P(q.q25), P(q.q75)), 0), hi: num(Math.max(P(q.q25), P(q.q75)), 0), time: bT ? lbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' }) : '';
+        out.push(link({ k: 'now', ev }, '<span class="t"><span>' + lbl(NE, 'row_mark', { ev: '<i style="color:' + cfg[ev] + '">' + ev + '</i>' }) + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' ')));
+        continue;
+      }
       out.push(link({ k: 'now', ev }, '<span class="t"><span>' + name + '</span>' + (sub ? '<span class="p21-sub">' + sub + '</span>' : '') +
         '<span class="p21-sub">' + support + (E.note ? ' · ' + esc(E.note) : '') + '</span></span><b>' + val + '</b>', 'mc', null, lbl(NE, 'title', { cut: n.cut.cut_clock_et })));
     }
@@ -140,6 +150,16 @@
     out.push('<div class="if" title="правила ' + esc(n.rules_id || '') + (v.tested_through ? ' · проверено на истории до ' + v.tested_through : '') + '">' + esc(NOWST[v.status] || v.status || '') + ' · не сделка</div>');
     // the spec (§9.3, §21.2) requires the support next to every NOW number: the only place of the panel with session counts
     return '<div class="p24-nowblk">' + out.join('') + '</div>';
+  }
+  // the operator's named phase rule in one place (2026-10-08, FF:PHASE-RULE): its state and both criteria with today's
+  // values; the share is the passport of EST:B-CLOCK-R over the whole price range (part EARLIER, of N)
+  function phaseHtml(F, ctx) {
+    const ph = phaseOf(F, ctx), P = 'FF:PHASE-RULE';
+    if (!ph) return '';
+    const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true);
+    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
+      '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
+      link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
   }
   // the DR outcome of the family (spec §5.2): four categories that add up to 100 % of N; one compact bar
   function outcomeHtml(F) {

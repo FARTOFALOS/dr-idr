@@ -503,6 +503,24 @@
     return out;
   }
   function actClose(F, ctx) { const b = ctx.D.bars.find(q => q.t + 5 === F.act0); return b ? F.d0 * (tk(b.c) - F.e0t) : null; }
+  // the operator's named phase rule (2026-10-08, FF:PHASE-RULE, meaning/17 §7): «откат сделан» when today's deepest point
+  // after the activation reached the retirement zone (−0.7) AND at least half of the family's sessions had their final R
+  // earlier than the cut by the common clock (known, of N: EST:B-CLOCK-R over the whole price range, part EARLIER). A
+  // rule of the operator, not a statement about the market; only for the confirmation family (a break is another frame)
+  function phaseOf(F, ctx) {
+    if (!F || F.brk || !F.N) return null;
+    const rows = todayRows(F, ctx);
+    if (!rows.length) return null;
+    let lo = rows[0];
+    for (const q of rows) if (q.lo < lo.lo) lo = q;
+    const cut = sliceOf(ctx), n = F.ev.R.pts.filter(q => q.t + 5 <= cut).length;
+    const pass = clockPass(F, 'R', { k0: -100000, k1: 100000 }, 'EARLIER', cut, n);
+    const deep = 10 * lo.lo <= -7 * F.w0t, half = 2 * n >= F.N;
+    return { r: lo.lo / F.w0t, deep, half, done: deep && half, pass, cut };
+  }
+  // the zones of the side the rule points at stay as they are; the other side's haze and stars a little quieter
+  // (operator 2026-10-06 «пока откат не сделан, зоны R чуть ярче, после — зоны X»; 2026-10-08 the rule); never a size
+  const phaseK = (ph, ev) => !ph ? 1 : ev === (ph.done ? 'X' : 'R') ? 1 : 0.72;
   function todayReach(F, ctx, L, up) {
     const w = F.w0t, r = todayRows(F, ctx).find(q => up ? q.hi * L.b >= L.a * w : q.lo * L.b <= L.a * w), c = actClose(F, ctx);
     return { t: r ? r.T - 5 : null, atAct: c == null ? null : up ? c * L.b >= L.a * w : c * L.b <= L.a * w };
@@ -1510,6 +1528,29 @@
    },
    "record": "StatisticalResultBundle"
   },
+  "FF:PHASE-RULE": {
+   "labels": {
+    "clock": {
+     "ANY": "окончательный R семьи к {cut} был у {share} · нужно половина"
+    },
+    "depth": {
+     "ANY": "откат {r} SD · нужно −0,7"
+    },
+    "done": {
+     "ANY": "откат сделан — смотрим X"
+    },
+    "head": {
+     "ANY": "Фаза по вашему правилу"
+    },
+    "open": {
+     "ANY": "откат не сделан"
+    },
+    "title": {
+     "ANY": "Ваше правило от 08.10: «откат сделан», когда откат достиг −0,7 и у половины сессий семьи окончательный R по часам уже был. Это правило, а не факт рынка и не сигнал; окончательный R до конца блока неизвестен."
+    }
+   },
+   "record": "OperatorNamedRule"
+  },
   "FF:SESSION": {
    "labels": {},
    "record": "StrategySessionRecord"
@@ -2413,6 +2454,9 @@
    "labels": {
     "sub": {
      "ANY": "Если углублялся: до {p50} · {p25}…{p75}"
+    },
+    "title_mark": {
+     "ANY": "У тех, у кого откат углублялся, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшнее дно, полоса — у половины, черта — обычно."
     }
    },
    "value_form": "QUANTILES"
@@ -2435,6 +2479,9 @@
      "BRK": "В истории: {ev} против слома позже углублялся",
      "CONF": "В истории: {ev} позже углублялся"
     },
+    "row_mark": {
+     "ANY": "{ev}"
+    },
     "support_b0": {
      "ANY": "опора {n} из {N}"
     },
@@ -2443,6 +2490,9 @@
     },
     "title": {
      "ANY": "Доля сопоставимых сессий этой семьи, у которых после {cut} был более глубокий R (повтор того же уровня не считается). Не вероятность сделки."
+    },
+    "title_mark": {
+     "ANY": "{ev}: после {cut} новый, более глубокий откат — ниже сегодняшнего дна {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка."
     }
    },
    "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN"
@@ -2485,6 +2535,9 @@
    "labels": {
     "sub": {
      "ANY": " · ~{min} мин"
+    },
+    "title_mark": {
+     "ANY": ", впервые через ~{min} мин"
     }
    },
    "value_form": "QUANTILES"
@@ -2495,6 +2548,9 @@
    "labels": {
     "sub": {
      "ANY": " · ~{min} мин"
+    },
+    "title_mark": {
+     "ANY": ", впервые через ~{min} мин"
     }
    },
    "value_form": "QUANTILES"
@@ -2606,7 +2662,7 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "0c75a97d33492681"
+ "registry_hash": "fe8fe8f58556e135"
 };
   // A violation belongs to the scene it was found in (DR-LAB-SWPC-1.1 M16): a passport's snapshot, one family response or
   // one NOW response (each its own number: a new answer to the same request starts clean), or the page itself ('*': a page without its registry,
@@ -3013,6 +3069,7 @@
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     if (F) drawNowRange(c, ctx);
+    if (F) drawNowMarks(c, ctx);
     drawPills(c, ctx);
     drawNow(c, ctx);
     if (F) drawLink(c, ctx);
@@ -3181,6 +3238,25 @@
       c.fillStyle = rgba(cfg[ev], 0.18); c.fillRect(x, Math.min(ya, yb), 4, Math.max(2, Math.abs(yb - ya)));
       c.fillStyle = rgba(cfg[ev], 0.45); c.fillRect(x + 1.5, Math.min(y0, ya), 1, Math.abs(ya - y0));
     }
+  }
+  // «Сейчас», the pullback line (operator 2026-10-08, meaning/17 §7: «только число и отметка на шкале»): its levels at
+  // the price scale, always, no text — today's deepest point after the activation (dashed), and for the sessions whose
+  // pullback went deeper the middle half of where it ended (a narrow bar) with its median (a tick); a thin line joins
+  // them. The same published bundles as the number; the hover picture stays as it was
+  function drawNowMarks(c, ctx) {
+    const F = ctx.F, n = nowOf(ctx), E = n && n.R;
+    if (!E || (n.status !== 'OK' && n.status !== 'FROZEN_AT_BREAK') || !E.state || !E.continuation || !nowBundle(n, 'EST:N-NEW-R', 'MAIN', E.continuation)) return;
+    const q = E.continuation.p_new_extreme && nowBundle(n, 'EST:N-IF-NEW-R', 'MAIN') ? E.continuation.delta_if_new || {} : {};
+    const u0 = E.state.r_seen, col = cfg.R, xr = V.plot.w, y0 = Math.round(V.Y(F.u2p(u0))) + 0.5;
+    c.save(); c.lineWidth = 1;
+    c.strokeStyle = rgba(col, 0.9); c.setLineDash([3, 2]); c.beginPath(); c.moveTo(xr - 24, y0); c.lineTo(xr, y0); c.stroke(); c.setLineDash([]);
+    if (q.q25 != null && q.q75 != null && q.q50 != null) {
+      const ya = V.Y(F.u2p(u0 - q.q25)), yb = V.Y(F.u2p(u0 - q.q75)), ym = Math.round(V.Y(F.u2p(u0 - q.q50))) + 0.5;
+      c.strokeStyle = rgba(col, 0.4); c.beginPath(); c.moveTo(xr - 7.5, y0); c.lineTo(xr - 7.5, ya); c.stroke();
+      c.fillStyle = rgba(col, 0.5); c.fillRect(xr - 10, Math.min(ya, yb), 5, Math.max(2, Math.abs(yb - ya)));
+      c.strokeStyle = rgba(col, 1); c.lineWidth = 2; c.beginPath(); c.moveTo(xr - 16, ym); c.lineTo(xr, ym); c.stroke();
+    }
+    c.restore();
   }
   // a hovered price cell or band of the histogram runs across the chart; a hovered time cell runs down to the time axis
   function drawHighlight(c, ctx) {
@@ -3375,9 +3451,9 @@
   // brightness, the tooltip lists every session). A ring = that session broke its DR (the family is never thinned by it).
   // R and X together; the stars of a zone are brighter and a little larger than the residual ones
   function drawPoints(c, ctx) {
-    const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100;
+    const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100, ph = phaseOf(F, ctx);
     for (const ev of ['R', 'X']) {
-      const col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent'), held = look.map((_, i) => zoneHeld(F, ev, i));
+      const pk = phaseK(ph, ev), col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent'), held = look.map((_, i) => zoneHeld(F, ev, i));
       for (const q of F.ev[ev].pts) {
         // the stars of a withheld zone are drawn as stars outside zones (their own session's point stays; the zone's
         // emphasis would assert the withheld share)
@@ -3387,7 +3463,7 @@
         const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx), inZone = zi != null;
         let a = (past ? cfg.pastA : cfg.ptA) / 100 * (inZone ? 1.1 : 0.62), r = R0 * (inZone ? 1 : 0.8);
         if (e === true) { a = Math.min(1, Math.max(a, 0.55) + 0.3); r = R0 * 1.3; } else if (e === false) a *= 0.28;
-        a = Math.min(1, a);
+        a = Math.min(1, e === true ? a : a * pk);
         if (!F.brk && q.m.outcome === 'broken') { c.strokeStyle = rgba(col, a); c.lineWidth = 1; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.stroke(); }
         else { c.fillStyle = rgba(col, a); c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill(); }
       }
@@ -3500,9 +3576,9 @@
     return 0.8;
   }
   function drawClouds(c, ctx) {
-    const F = ctx.F, CL = cloudsOf(F), h = hv(), fa = cfg.cloudA / 100, ta = cfg.threadA / 100;
+    const F = ctx.F, CL = cloudsOf(F), h = hv(), ph = phaseOf(F, ctx);
     for (const ev of ['R', 'X']) {
-      const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
+      const S = zoneLook(F, ctx, ev), col0 = cfg[ev], fa = cfg.cloudA / 100 * phaseK(ph, ev), ta = cfg.threadA / 100 * phaseK(ph, ev);
       CL[ev].forEach((g, i) => {
         if (!g || zoneHeld(F, ev, i)) return;        // a withheld zone's share is «—»: its haze and threads do not assert it
         const col = stateCol(col0, S[i]);
@@ -4862,6 +4938,7 @@
     out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F.cond) + '</span><span>' + (sl >= F.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
     if (s.failed) out.push(viewSwitch(s));
     if (F.out) out.push(outcomeHtml(F));
+    out.push(phaseHtml(F, ctx));
     out.push(nowHtml(F, ctx));
     if (st.mode === 'bounds') {
       out.push(zonesHtml(F, ctx));
@@ -4950,6 +5027,15 @@
       const bI = bN && q.q50 != null && p ? nowBundle(n, 'EST:N-IF-NEW-' + ev, 'MAIN') : null, bT = bI && tm.q50_min != null ? nowBundle(n, 'EST:N-TIME-' + ev, 'MAIN') : null;
       const sub = bI ? lbl('EST:N-IF-NEW-' + ev, 'sub', { p50: lv(q.q50), p25: lv(q.q25), p75: lv(q.q75) }) + (bT ? lbl('EST:N-TIME-' + ev, 'sub', { min: Math.round(tm.q50_min) }) : '') : '';
       const support = E.mode === 'PATH_CONDITIONED' ? lbl(NE, 'support_path', { m: sp.N_match_total, n: sp.N_eligible, matcher: E.matcher }) : lbl(NE, 'support_b0', { n: sp.N_eligible, N: n.base.N_base });
+      // the pullback line (operator 2026-10-08, meaning/17 §7): only the number; its levels are the marks at the price
+      // scale (drawNowMarks); the historical words, the conditional levels, the time and the support are in its title
+      if (ev === 'R') {
+        const P = v => Math.round(F.u2p(u0 + sgn * v)), cnt = sp.N_match_unknown ? sp.N_new_yes + '–' + (sp.N_new_yes + sp.N_match_unknown) : String(sp.N_new_yes);
+        const t1 = bN ? lbl(NE, 'title_mark', { ev: 'R', cut: n.cut.cut_clock_et, today: num(P(0), 0), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base }) : '';
+        const t2 = bI ? lbl('EST:N-IF-NEW-R', 'title_mark', { p50: lv(q.q50), lo: num(Math.min(P(q.q25), P(q.q75)), 0), hi: num(Math.max(P(q.q25), P(q.q75)), 0), time: bT ? lbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' }) : '';
+        out.push(link({ k: 'now', ev }, '<span class="t"><span>' + lbl(NE, 'row_mark', { ev: '<i style="color:' + cfg[ev] + '">' + ev + '</i>' }) + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' ')));
+        continue;
+      }
       out.push(link({ k: 'now', ev }, '<span class="t"><span>' + name + '</span>' + (sub ? '<span class="p21-sub">' + sub + '</span>' : '') +
         '<span class="p21-sub">' + support + (E.note ? ' · ' + esc(E.note) : '') + '</span></span><b>' + val + '</b>', 'mc', null, lbl(NE, 'title', { cut: n.cut.cut_clock_et })));
     }
@@ -4957,6 +5043,16 @@
     out.push('<div class="if" title="правила ' + esc(n.rules_id || '') + (v.tested_through ? ' · проверено на истории до ' + v.tested_through : '') + '">' + esc(NOWST[v.status] || v.status || '') + ' · не сделка</div>');
     // the spec (§9.3, §21.2) requires the support next to every NOW number: the only place of the panel with session counts
     return '<div class="p24-nowblk">' + out.join('') + '</div>';
+  }
+  // the operator's named phase rule in one place (2026-10-08, FF:PHASE-RULE): its state and both criteria with today's
+  // values; the share is the passport of EST:B-CLOCK-R over the whole price range (part EARLIER, of N)
+  function phaseHtml(F, ctx) {
+    const ph = phaseOf(F, ctx), P = 'FF:PHASE-RULE';
+    if (!ph) return '';
+    const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true);
+    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
+      '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
+      link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
   }
   // the DR outcome of the family (spec §5.2): four categories that add up to 100 % of N; one compact bar
   function outcomeHtml(F) {
@@ -5750,7 +5846,7 @@
   }
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
-  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)
     // violations: those of the scene on screen (SWPC-1.1 M16); all: every one found since the page opened
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),

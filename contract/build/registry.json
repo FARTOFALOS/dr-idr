@@ -2455,9 +2455,21 @@
       "surface": "PANEL",
       "text_ru": "похожих {m} из {n} · {matcher}",
       "view": "ANY"
+     },
+     {
+      "key": "row_mark",
+      "surface": "PANEL",
+      "text_ru": "{ev}",
+      "view": "ANY"
+     },
+     {
+      "key": "title_mark",
+      "surface": "PANEL",
+      "text_ru": "{ev}: после {cut} новый, более глубокий откат — ниже сегодняшнего дна {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка.",
+      "view": "ANY"
      }
     ],
-    "note": "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…»",
+    "note": "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark)",
     "price_transfer": "NONE",
     "sc_ref": [
      "C1",
@@ -2467,7 +2479,7 @@
     "statement_ru": "После среза {cut} новый, более глубокий R наблюдался у {pct} допустимых исторических случаев этой семьи ({yes} из {D}; неизвестно у {unknown}). Это описание истории, не прогноз сегодняшнего дня.",
     "subject_ru": "исторические сессии семьи, допустимые (или сопоставленные) к этому же часовому срезу",
     "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN",
-    "version": "1.1"
+    "version": "1.2"
    },
    {
     "acceptance": "ACCEPTED_BY_OPERATOR",
@@ -2670,6 +2682,12 @@
       "surface": "PANEL",
       "text_ru": "Если углублялся: до {p50} · {p25}…{p75}",
       "view": "ANY"
+     },
+     {
+      "key": "title_mark",
+      "surface": "PANEL",
+      "text_ru": "У тех, у кого откат углублялся, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшнее дно, полоса — у половины, черта — обычно.",
+      "view": "ANY"
      }
     ],
     "note": "K33 / §12.4: the screen said «если да: до …» (a conditional about today); the condition is now the historical subgroup's, and the price is the transfer of its additional movement from today's own extreme (M0)",
@@ -2682,7 +2700,7 @@
     "statement_ru": "У тех {n} исторических случаев, у которых после {cut} откат углублялся, он уходил ещё на {q50} SD (медиана; квартили {q25}…{q75}); от сегодняшнего экстремума это {p50} ({p25}…{p75}). Неизвестна величина у {unknown}.",
     "subject_ru": "исторические сессии семьи, у которых после среза откат углублялся",
     "value_form": "QUANTILES",
-    "version": "1.1"
+    "version": "1.2"
    },
    {
     "acceptance": "ACCEPTED_BY_OPERATOR",
@@ -2733,6 +2751,12 @@
       "surface": "PANEL",
       "text_ru": " · ~{min} мин",
       "view": "ANY"
+     },
+     {
+      "key": "title_mark",
+      "surface": "PANEL",
+      "text_ru": ", впервые через ~{min} мин",
+      "view": "ANY"
      }
     ],
     "price_transfer": "NONE",
@@ -2761,6 +2785,12 @@
       "key": "sub",
       "surface": "PANEL",
       "text_ru": " · ~{min} мин",
+      "view": "ANY"
+     },
+     {
+      "key": "title_mark",
+      "surface": "PANEL",
+      "text_ru": ", впервые через ~{min} мин",
       "view": "ANY"
      }
     ],
@@ -7860,6 +7890,63 @@
     "version": "1"
    },
    {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "forbidden_readings_ru": [
+     "рынок закончил откат",
+     "окончательный R известен",
+     "сигнал входа"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "FF:PHASE-RULE",
+    "labels": [
+     {
+      "key": "head",
+      "surface": "PANEL",
+      "text_ru": "Фаза по вашему правилу",
+      "view": "ANY"
+     },
+     {
+      "key": "open",
+      "surface": "PANEL",
+      "text_ru": "откат не сделан",
+      "view": "ANY"
+     },
+     {
+      "key": "done",
+      "surface": "PANEL",
+      "text_ru": "откат сделан — смотрим X",
+      "view": "ANY"
+     },
+     {
+      "key": "depth",
+      "surface": "PANEL",
+      "text_ru": "откат {r} SD · нужно −0,7",
+      "view": "ANY"
+     },
+     {
+      "key": "clock",
+      "surface": "PANEL",
+      "text_ru": "окончательный R семьи к {cut} был у {share} · нужно половина",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "PANEL",
+      "text_ru": "Ваше правило от 08.10: «откат сделан», когда откат достиг −0,7 и у половины сессий семьи окончательный R по часам уже был. Это правило, а не факт рынка и не сигнал; окончательный R до конца блока неизвестен.",
+      "view": "ANY"
+     }
+    ],
+    "note": "Operator 2026-10-08 (meaning/17 §7, Н2): the phase cue is his named rule with visible criteria; its inputs are an observed fact (today's deepest point after the activation, FF:TODAY-PREFIX) and a registered estimand (EST:B-CLOCK-R over the whole price range, part EARLIER)",
+    "record_class": "OperatorNamedRule",
+    "sc_ref": [
+     "E1",
+     "E4",
+     "§10"
+    ],
+    "statement_ru": "Правило оператора (08.10.2026): «откат сделан», когда сегодняшний откат после подтверждения достиг зоны retirement (−0,7 SD) и у не меньше чем половины сессий семьи окончательный R по часам уже был к срезу (по известным, доля от N). Это названное правило оператора, а не утверждение о рынке, не окончательный R и не сигнал.",
+    "version": "1"
+   },
+   {
     "acceptance": "INHERITED_FROM_ACCEPTED_SCREEN",
     "forbidden_readings_ru": [
      "сигнал входа"
@@ -10331,7 +10418,7 @@
   "document_sha256_lf": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b",
   "edition": "DR-LAB-SC-1.1",
   "linkml": "1.11.1",
-  "registry_sha256": "0c75a97d33492681ca84fd010b725255b851dc449604b953f6086538c0977740",
+  "registry_sha256": "fe8fe8f58556e135e890dd7cf615e9d3ce2ff3189dcd5592cb5ecbbcd2d21879",
   "runtime_spec_sha256": "9795540070e3c2d2e04f06013481334397c5afe792f18fcb11f9417237d533b7",
   "schema_sha256_lf": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
   "sources": {
@@ -10339,7 +10426,7 @@
    "contract/registry/10-observation-strategy-measurement.yaml": "2155cdd6dd659aad58c6c4bb5a218e037a5bac51bb0420cca9c19bce2b72fd29",
    "contract/registry/20-cases-outcomes.yaml": "1a8744c10aa763f21b0e7c419bf7b889388a801b6a4a9fcdd6024d6a674a7d69",
    "contract/registry/30-questions-estimands.yaml": "93b3821760f1f6964a6d8bc9c0699f8b390fc68c00842f27dfecc64a1750da5c",
-   "contract/registry/40-claims.yaml": "199d0c0ac73819fd6f4659297f91f8fb8a7ff80bfb296ebe342fbdda12027b23",
+   "contract/registry/40-claims.yaml": "bd7d1ca54c8d11fc36f1ef33a755fac9763a2e6855ab1263ba94219f51541d4c",
    "contract/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
    "contract/registry/60-surfaces.yaml": "ba0f088988b262f0f664b260672ea9c94562970f5aca13db924667a6e0ca4fe9",
    "contract/registry/70-obligations.yaml": "c5baded1777e25e259c687bdb72c0fb707ec966bfd53d1439691e8db3dbc5174",

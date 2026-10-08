@@ -10,7 +10,7 @@ clock and context drive it, which channels carry what, how it recovers, what the
 check proves it. From both it generates the binding passports (spec/ekran-24/12-swpc.md, never edited by hand).
 
 Checks: the document is closed (every reference of a B row exists; every W is served by a binding; every M by a B row);
-§9 routes exactly the 53 estimands and 8 fact forms of the compiled SC-1.1 registry, by exact ids; every estimand the
+§9 routes exactly the 53 estimands and 9 fact forms of the compiled SC-1.1 registry, by exact ids; every estimand the
 page can make a passport of is routed; every code anchor of the record exists; every M has an executed check in
 tests/swpc11_browser.mjs; SC-1.1 stays pinned and compiled; the generated passports equal what the sources give.
 The run of the browser checks themselves is `node tests/swpc11_browser.mjs` (the server must run).
@@ -108,14 +108,14 @@ REC = {
                 channels="высота: доля окна по одной линейной шкале; яркость и тонкий контур большей стороны — рисунок тех же двух долей; капсула — окно зоны; холм — форма времени зоны, без числа",
                 recover="лента внизу под той же осью времени", tune="⚙ «Лента времени»", rules=["meaning/13 № 4, 14, 28, 29, 40"],
                 origin="INHERITED; NEW_SWPC: снятая доля окна — без столбика (M14)", checks=["m06", "m14"]),
-    "B08": dict(code=["zoneStatus", "zoneClock", "zoneLook", "reachOf", "winLine", "stateCol"], clock="закрытая M5 (достижимость); срез (часы истории)", ctx=BASE_CTX + ", срез",
-                channels="оттенок по каталогу № 26: активное, HOLDS светлее, QUIET зеленоватый, IMPOSSIBLE сланцевый с пунктиром; текст статуса — подписи FF:TODAY-Z и FF:HISTORY-CLOCK; снятый статус — «—» без вида состояния",
+    "B08": dict(code=["zoneStatus", "zoneClock", "zoneLook", "reachOf", "winLine", "stateCol", "phaseOf", "phaseHtml", "phaseK"], clock="закрытая M5 (достижимость); срез (часы истории)", ctx=BASE_CTX + ", срез",
+                channels="оттенок по каталогу № 26: активное, HOLDS светлее, QUIET зеленоватый, IMPOSSIBLE сланцевый с пунктиром; текст статуса — подписи FF:TODAY-Z и FF:HISTORY-CLOCK; снятый статус — «—» без вида состояния; фаза по правилу оператора — строка FF:PHASE-RULE с двумя признаками, другая сторона зон тише",
                 recover="статус в строке зоны сводки и в инспекторе", tune="⚙ «Созвездия · цвет и дымка» (яркость отработанных)", rules=["meaning/14", "meaning/15 F1–F3"],
                 origin="INHERITED; NEW_SWPC: снятый статус не утверждается (M14)", checks=["m07", "m14"]),
     "B09": dict(code=["outcomeHtml", "drPass", "detBody"], clock="BASE-снимок", ctx=BASE_CTX, channels="одна полоса на 100 % N из четырёх категорий; строки с долями; неизвестно и «нет периода» только при наличии; снятая категория — пустой отрезок",
                 recover="блок «Исход DR» в постоянном месте сводки", tune="нет", rules=["spec/ekran-24/03-obzor-panel.md № 13–14"], origin="INHERITED", checks=["m08", "m14"]),
-    "B10": dict(code=["nowOf", "nowHtml", "nowBundle", "drawNowLevels", "drawNowRange"], clock="закрытая M5 (срез NOW)", ctx=BASE_CTX + ", срез",
-                channels="текст: исторические слова K33 (подписи CF:N-*), режим «по времени», опора всегда; наведение: пунктир сегодняшнего экстремума и полоса остатка q25–q75",
+    "B10": dict(code=["nowOf", "nowHtml", "nowBundle", "drawNowLevels", "drawNowRange", "drawNowMarks"], clock="закрытая M5 (срез NOW)", ctx=BASE_CTX + ", срез",
+                channels="текст: исторические слова K33 (подписи CF:N-*), режим «по времени», опора; строка отката — только число, её слова и опора в подсказке; отметки отката у шкалы цены постоянно; наведение: пунктир сегодняшнего экстремума и полоса остатка q25–q75",
                 recover="блок «Сейчас» в постоянном месте; загрузка — «считаю…», недоступность — «Локальный сервер не ответил»", tune="нет", rules=["meaning/15", "meaning/13 № 46–48"],
                 origin="INHERITED; NEW_SWPC: недоступный ответ называется недоступным, а не «нет данных» (W13)", checks=["m09", "m08", "m14"]),
     "B11": dict(code=["undPass", "resPass", "outPass", "zonesHtml", "drawBand", "drawProjRX"], clock="BASE-снимок", ctx=BASE_CTX,
@@ -209,7 +209,7 @@ def main(write):
     print("§9 against the compiled SC-1.1 registry and the page")
     est, ff = {k for k in ROUTES if k.startswith("EST:")}, {k for k in ROUTES if k.startswith("FF:")}
     check(est == set(page["estimands"]) and len(est) == 53, f"§9 routes exactly the {len(page['estimands'])} estimands of the registry by exact ids{': ' + str(sorted(est ^ set(page['estimands']))) if est != set(page['estimands']) else ''}")
-    check(ff == set(page["facts"]) and len(ff) == 8, f"§9 routes exactly the {len(page['facts'])} fact forms{': ' + str(sorted(ff ^ set(page['facts']))) if ff != set(page['facts']) else ''}")
+    check(ff == set(page["facts"]) and len(ff) == 9, f"§9 routes exactly the {len(page['facts'])} fact forms{': ' + str(sorted(ff ^ set(page['facts']))) if ff != set(page['facts']) else ''}")
     check(all(set(v) <= set(B) for v in ROUTES.values()), "every route names existing bindings")
     both = (SRC / "app.js").read_text(encoding="utf-8") + (SRC / "panel.js").read_text(encoding="utf-8")
     EV = r"(?:ev|h\.ev|r\.ev|e|I\.ev|g\.ev)"

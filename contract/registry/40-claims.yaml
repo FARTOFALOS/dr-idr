@@ -674,7 +674,7 @@ claim_forms:
     acceptance: INHERITED_FROM_ACCEPTED_SCREEN
   # =================================================================== NOW-1.0 (C1: a subgroup selected at the common clock cut)
   - id: CF:N-NEW-R
-    version: "1.1"
+    version: "1.2"
     sc_ref: ["C1", "§12.4/N-NEW", "K33"]
     grounds: CONTRACT_FORMALISATION
     estimand: EST:N-NEW-R
@@ -688,11 +688,13 @@ claim_forms:
       - {surface: PANEL, view: ANY, key: title, text_ru: "Доля сопоставимых сессий этой семьи, у которых после {cut} был более глубокий R (повтор того же уровня не считается). Не вероятность сделки."}
       - {surface: PANEL, view: ANY, key: support_b0, text_ru: "опора {n} из {N}"}
       - {surface: PANEL, view: ANY, key: support_path, text_ru: "похожих {m} из {n} · {matcher}"}
+      - {surface: PANEL, view: ANY, key: row_mark, text_ru: "{ev}"}
+      - {surface: PANEL, view: ANY, key: title_mark, text_ru: "{ev}: после {cut} новый, более глубокий откат — ниже сегодняшнего дна {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка."}
     value_form: POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN
     price_transfer: NONE
     forbidden_readings_ru: ["вероятность того, что сегодня откат углубится", "разворот", "вход или сделка", "новая семья вместо N_base"]
     acceptance: ACCEPTED_BY_OPERATOR
-    note: "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…»"
+    note: "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark)"
   - id: CF:N-NEW-X
     version: "1.1"
     sc_ref: ["C1", "§12.4/N-NEW", "K33"]
@@ -792,7 +794,7 @@ claim_forms:
     forbidden_readings_ru: ["шанс, что сегодня продолжение пройдёт столько"]
     acceptance: PROPOSED_BY_EXECUTOR
   - id: CF:N-IF-NEW-R
-    version: "1.1"
+    version: "1.2"
     sc_ref: ["C1", "§12.4/N-IF-NEW", "K33"]
     grounds: CONTRACT_FORMALISATION
     estimand: EST:N-IF-NEW-R
@@ -802,6 +804,7 @@ claim_forms:
     statement_ru: "У тех {n} исторических случаев, у которых после {cut} откат углублялся, он уходил ещё на {q50} SD (медиана; квартили {q25}…{q75}); от сегодняшнего экстремума это {p50} ({p25}…{p75}). Неизвестна величина у {unknown}."
     labels:
       - {surface: PANEL, view: ANY, key: sub, text_ru: "Если углублялся: до {p50} · {p25}…{p75}"}
+      - {surface: PANEL, view: ANY, key: title_mark, text_ru: "У тех, у кого откат углублялся, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшнее дно, полоса — у половины, черта — обычно."}
     value_form: QUANTILES
     price_transfer: M0_TODAY_EXTREME
     forbidden_readings_ru: ["сегодняшняя цель", "средний остаток всех сопоставимых", "откат дойдёт сюда"]
@@ -834,6 +837,7 @@ claim_forms:
     statement_ru: "У {n} исторических случаев с новым R первая его M5 была через {q50_min} мин после {cut} (медиана; квартили {q25_min}…{q75_min}); у случаев с новым экстремумом первое время неизвестно у {unknown}; нового не было у {no_event}; исход неизвестен у {exist_unknown}."
     labels: &L_NTIME
       - {surface: PANEL, view: ANY, key: sub, text_ru: " · ~{min} мин"}
+      - {surface: PANEL, view: ANY, key: title_mark, text_ru: ", впервые через ~{min} мин"}
     value_form: QUANTILES
     price_transfer: NONE
     forbidden_readings_ru: ["обещание нового экстремума", "время входа"]
@@ -1017,6 +1021,22 @@ fact_forms:
       - {surface: WINDOW, view: ANY, key: win_same_price, text_ru: " · та же цена ещё {times}"}
     forbidden_readings_ru: ["маршрут сделки между R и X", "порядок внутри одной M5 по цвету свечи"]
     acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+  - id: FF:PHASE-RULE
+    version: "1"
+    sc_ref: ["E1", "E4", "§10"]
+    grounds: OPERATOR_REQUIREMENT
+    record_class: OperatorNamedRule
+    statement_ru: "Правило оператора (08.10.2026): «откат сделан», когда сегодняшний откат после подтверждения достиг зоны retirement (−0,7 SD) и у не меньше чем половины сессий семьи окончательный R по часам уже был к срезу (по известным, доля от N). Это названное правило оператора, а не утверждение о рынке, не окончательный R и не сигнал."
+    labels:
+      - {surface: PANEL, view: ANY, key: head, text_ru: "Фаза по вашему правилу"}
+      - {surface: PANEL, view: ANY, key: open, text_ru: "откат не сделан"}
+      - {surface: PANEL, view: ANY, key: done, text_ru: "откат сделан — смотрим X"}
+      - {surface: PANEL, view: ANY, key: depth, text_ru: "откат {r} SD · нужно −0,7"}
+      - {surface: PANEL, view: ANY, key: clock, text_ru: "окончательный R семьи к {cut} был у {share} · нужно половина"}
+      - {surface: PANEL, view: ANY, key: title, text_ru: "Ваше правило от 08.10: «откат сделан», когда откат достиг −0,7 и у половины сессий семьи окончательный R по часам уже был. Это правило, а не факт рынка и не сигнал; окончательный R до конца блока неизвестен."}
+    forbidden_readings_ru: ["рынок закончил откат", "окончательный R известен", "сигнал входа"]
+    acceptance: ACCEPTED_BY_OPERATOR
+    note: "Operator 2026-10-08 (meaning/17 §7, Н2): the phase cue is his named rule with visible criteria; its inputs are an observed fact (today's deepest point after the activation, FF:TODAY-PREFIX) and a registered estimand (EST:B-CLOCK-R over the whole price range, part EARLIER)"
   - id: FF:SESSION
     version: "1"
     sc_ref: ["S1", "S2"]
