@@ -1,0 +1,3 @@
+# research outputs carry market-derived numbers: local only
+*.json
+now-1/dist/
