@@ -46,6 +46,7 @@ obligations:
       - {mechanism: PROVENANCE_RECONCILIATION, check: "build:contract/tools/build.py::semantic_checks"}
       - {mechanism: PROVENANCE_RECONCILIATION, check: "page:design/sozvezdiya-24/src/app.js::bindPassport"}
       - {mechanism: PROVENANCE_RECONCILIATION, check: "page:design/sozvezdiya-24/src/app.js::nowBundle"}
+      - {mechanism: PROVENANCE_RECONCILIATION, check: "page:design/sozvezdiya-24/src/app.js::preBundle"}
       - {mechanism: PROVENANCE_RECONCILIATION, check: "test:tests/contract_sc11.py::k28"}
       - {mechanism: PROVENANCE_RECONCILIATION, check: "test:tests/contract_sc11.py::k32"}
       - {mechanism: PROVENANCE_RECONCILIATION, check: "test:tests/contract_sc11.py::k33"}
@@ -91,6 +92,8 @@ obligations:
       - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::verify_zones"}
       - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::verify_today_zones"}
       - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::verify_forecast"}
+      - {mechanism: PATH_COMPUTATION, check: "runtime:lab/contract.py::verify_pre"}
+      - {mechanism: PATH_COMPUTATION, check: "test:tests/contract_sc11.py::test_pre_profile"}
       - {mechanism: PATH_COMPUTATION, check: "test:tests/contract_sc11.py::k31"}
   - id: OB:PAGE-PASSPORTS
     sc_ref: ["§12.3", "§13", "§14.4"]

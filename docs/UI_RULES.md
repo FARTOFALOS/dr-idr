@@ -4,10 +4,11 @@ These rules came from the operator over many iterations on 2026-09-24. They are 
 rule and a new idea conflict, keep the rule and ask the operator. Each rule says why, so you can apply it to cases it
 does not name.
 
-For screen 24, **DR-LAB-SWPC-1.1** (`spec/DR-LAB-SWPC-1.1.md`) is now the operator-authorized implementation target
-for how the accepted semantics are presented. It does not cancel these rules or `meaning/13-zhurnal-vizualizacii.md`;
-it traces them into PresentationBindings and adds only its declared `NEW_SWPC` obligations. Human perceptual claims
-remain unverified until H01–H12 are run after implementation.
+For screen 24, **DR-LAB-SWPC-1.1** (`spec/DR-LAB-SWPC-1.1.md`) is the operator-authorized contract of how the
+accepted semantics are presented, implemented on 2026-10-07 (`meaning/13` № 49–51, passports `spec/ekran-24/12-swpc.md`).
+It does not cancel these rules or `meaning/13-zhurnal-vizualizacii.md`; it traces them into PresentationBindings and
+adds only its declared `NEW_SWPC` obligations. Human perceptual claims remain unverified until the operator runs
+H01–H12 (`meaning/16-priyomka-swpc.md`).
 
 On 2026-09-28 the working screen became «Созвездия» (design 21; since 2026-09-29 design 22, `design/README.md` has the remarks round by round);
 the previous screen stays at `/classic.html` and these rules still describe it. For the new screen the operator's

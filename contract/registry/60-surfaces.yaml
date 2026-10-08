@@ -23,6 +23,13 @@ surfaces:
     definitions: SRC:NOW-1.0
     estimands: [EST:N-NEW-R, EST:N-NEW-X, EST:N-NO-NEW-R, EST:N-NO-NEW-X, EST:N-DELTA-Q-R, EST:N-DELTA-Q-X, EST:N-DELTA-GE-R, EST:N-DELTA-GE-X, EST:N-IF-NEW-R, EST:N-IF-NEW-X, EST:N-TIME-R, EST:N-TIME-X]
     marking: "body.contract (ContractEnvelope) + header X-DR-Lab-Contract"
+  - id: API:/api/d24/pre
+    sc_ref: ["§12.5", "§12.3"]
+    route: /api/d24/pre
+    surface_profile: SC11_PRE_24
+    definitions: SRC:DECISIONS-2026-10-08
+    estimands: [EST:P-DIR, EST:P-WHEN, EST:P-DR, EST:P-R, EST:P-X]
+    marking: "body.contract (ContractEnvelope) + header X-DR-Lab-Contract"
   - id: API:/api/d24/day
     sc_ref: ["O1", "O3", "S1"]
     route: /api/d24/day
@@ -237,6 +244,30 @@ encodings:
   - {id: FE:N.tn, sc_ref: ["V2.2"], surface: API:/api/d24/now, path: "{*}.{continuation,baseline}.time_to_new.{n,n_unknown,n_no_event}", field_kind: SUPPORT_COUNT, target: "SupportRecord FIRST_TIME among new = YES"}
   - {id: FE:N.rtn, sc_ref: ["V2.2"], surface: API:/api/d24/now, path: "{*}.research.{*}.time_to_new.{n,n_unknown,n_no_event}", field_kind: SUPPORT_COUNT, target: "SupportRecord FIRST_TIME among new = YES (research)"}
   - {id: FE:N.val, sc_ref: ["V3"], surface: API:/api/d24/now, path: "{*}.validation.{brier_skill,magnitude_skill,time_skill}", field_kind: VALIDATION_EVIDENCE, target: "VAL:NOW-1.0-WALKFORWARD decision record"}
+  # ------------------------------------------------------------------ /api/d24/pre
+  - {id: FE:P.N, sc_ref: ["H2"], surface: API:/api/d24/pre, path: "N", field_kind: DENOMINATOR, target: "CaseSetSnapshot.n_members of the similar set"}
+  - {id: FE:P.weekday, sc_ref: ["H1"], surface: API:/api/d24/pre, path: "weekday", field_kind: IDENTIFIER, target: "trading date weekday of the viewed day"}
+  - {id: FE:P.source, sc_ref: ["O3"], surface: API:/api/d24/pre, path: "source.{boxes,built}", field_kind: PROVENANCE, target: "ObservationSnapshot.content_version"}
+  - {id: FE:P.key.weekday, sc_ref: ["H1"], surface: API:/api/d24/pre, path: "key.weekday", field_kind: IDENTIFIER, target: "CaseSetSpecification key weekday"}
+  - {id: FE:P.key.cut, sc_ref: ["E0"], surface: API:/api/d24/pre, path: "key.cut", field_kind: TIME, target: "KnowledgeCut close minute (CUT:PRE-COMMON-CLOCK-1)"}
+  - {id: FE:P.key.pos, sc_ref: ["E1", "H3"], surface: API:/api/d24/pre, path: "key.pos[*]", field_kind: PREFIX_STATE, target: "today's position at t: a = close - IDR low and the IDR width w (ticks)"}
+  - {id: FE:P.key.band, sc_ref: ["H3"], surface: API:/api/d24/pre, path: "key.band[*]", field_kind: PARAMETER, target: "CMP:PRE-1 tolerance 1/4 of the IDR width"}
+  - {id: FE:P.schedule, sc_ref: ["S1"], surface: API:/api/d24/pre, path: "schedule.{*}", field_kind: STRATEGY_OBJECT, target: "SessionBlock"}
+  - {id: FE:P.today.cut, sc_ref: ["E0"], surface: API:/api/d24/pre, path: "today.{obs,slice}", field_kind: TIME, target: "KnowledgeCut (observed minute; slice = the close of the last closed M5)"}
+  - {id: FE:P.today.box, sc_ref: ["S1"], surface: API:/api/d24/pre, path: "today.{idrH,idrL,drH,drL}", field_kind: STRATEGY_OBJECT, target: "today's box levels"}
+  - {id: FE:P.today.pos, sc_ref: ["E1"], surface: API:/api/d24/pre, path: "today.pos.{a,w}", field_kind: PREFIX_STATE, target: "today's position at t (ticks)"}
+  - {id: FE:P.m.aw, sc_ref: ["H0", "M0"], surface: API:/api/d24/pre, path: "members[*].{w,a}", field_kind: CASE_RECORD, target: "HistoricalCase IDR width and close - IDR low at t (ticks)"}
+  - {id: FE:P.m.conf, sc_ref: ["S2", "H1"], surface: API:/api/d24/pre, path: "members[*].{conf,win}", field_kind: CASE_RECORD, target: "OutcomeRecord P-FIRST-CONF close minute and 15-minute window"}
+  - {id: FE:P.m.RX, sc_ref: ["P1"], surface: API:/api/d24/pre, path: "members[*].{R,X}.{v,t,bound}", field_kind: CASE_RECORD, target: "OutcomeRecord FINAL-R / FINAL-X after the member's own confirmation (directed ticks; first open minute; one-sided bound)"}
+  - {id: FE:P.m.ties, sc_ref: ["P1", "P0.1"], surface: API:/api/d24/pre, path: "members[*].{R,X}.ties[*]", field_kind: CASE_RECORD, target: "OutcomeRecord repeated open minutes (kept, no extra vote)"}
+  - {id: FE:P.first, sc_ref: ["§12.5"], surface: API:/api/d24/pre, path: "counts.first.{*}", field_kind: STATISTIC, target: "EST:P-DIR category count"}
+  - {id: FE:P.side.n, sc_ref: ["V2.2"], surface: API:/api/d24/pre, path: "counts.side.{*}.n", field_kind: SUPPORT_COUNT, target: "n of the side subgroup (CS:P-SIDE-1)"}
+  - {id: FE:P.side.win.b, sc_ref: ["H1", "M1"], surface: API:/api/d24/pre, path: "counts.side.{*}.win[*][0]", field_kind: MEASUREMENT, target: "15-minute window index from the box end"}
+  - {id: FE:P.side.win.n, sc_ref: ["§12.5"], surface: API:/api/d24/pre, path: "counts.side.{*}.win[*][1]", field_kind: STATISTIC, target: "EST:P-WHEN window count"}
+  - {id: FE:P.side.dr, sc_ref: ["§12.5"], surface: API:/api/d24/pre, path: "counts.side.{*}.dr.{*}", field_kind: STATISTIC, target: "EST:P-DR category count"}
+  - {id: FE:P.side.rxn, sc_ref: ["V2.2"], surface: API:/api/d24/pre, path: "counts.side.{*}.{R,X}.{known,unknown,none}", field_kind: SUPPORT_COUNT, target: "ENDPOINT support of EST:P-R | EST:P-X"}
+  - {id: FE:P.side.rxq, sc_ref: ["§12.5"], surface: API:/api/d24/pre, path: "counts.side.{*}.{R,X}.q[*]", field_kind: STATISTIC, target: "EST:P-R | EST:P-X quartiles (IDR widths)"}
+  - {id: FE:P.journal, sc_ref: ["H1", "H2"], surface: API:/api/d24/pre, path: "journal.{*}", field_kind: SUPPORT_COUNT, target: "CaseSetSnapshot.exclusions (undetermined states)"}
   # ------------------------------------------------------------------ /api/d24/day
   - {id: FE:D.tick, sc_ref: ["O0"], surface: API:/api/d24/day, path: "tick", field_kind: MEASUREMENT, target: "InstrumentSeries.tick_size"}
   - {id: FE:D.weekday, sc_ref: ["O2"], surface: API:/api/d24/day, path: "weekday", field_kind: IDENTIFIER, target: "weekday of the trading date"}

@@ -11,6 +11,10 @@
   "CS:NOW-MATCH-M3-1": "MATCHED_AT_CUT",
   "CS:NOW-NEW-YES-DELTA-1": "OUTCOME_SUBGROUP",
   "CS:NOW-NEW-YES-TAU-1": "OUTCOME_SUBGROUP",
+  "CS:P-SIDE-1": "OUTCOME_SUBGROUP",
+  "CS:P-SIDE-KNOWN-1": "OUTCOME_SUBGROUP",
+  "CS:P-SIMILAR-1": "MATCHED_AT_CUT",
+  "CS:P-SIMILAR-ALL-1": "MATCHED_AT_CUT",
   "CS:UNIVERSE-1": "HISTORICAL_UNIVERSE",
   "CS:ZM3-STUDY-1": "RETROSPECTIVE_RESEARCH"
  },
@@ -696,6 +700,64 @@
    ],
    "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
   },
+  "EST:P-DIR": {
+   "measure": "CATEGORY_SHARES",
+   "params": [],
+   "profile": "PROFILE:PRE-24",
+   "q4": [
+    "CS:P-SIMILAR-1",
+    "CS:P-SIMILAR-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:P-DR": {
+   "measure": "CATEGORY_SHARES",
+   "params": [
+    "side",
+    "cut"
+   ],
+   "profile": "PROFILE:PRE-24",
+   "q4": [
+    "CS:P-SIDE-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:P-R": {
+   "measure": "QUANTILES",
+   "params": [
+    "side",
+    "cut"
+   ],
+   "profile": "PROFILE:PRE-24",
+   "q4": [
+    "CS:P-SIDE-KNOWN-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
+  "EST:P-WHEN": {
+   "measure": "CATEGORY_SHARES",
+   "params": [
+    "side",
+    "cut"
+   ],
+   "profile": "PROFILE:PRE-24",
+   "q4": [
+    "CS:P-SIDE-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
+  "EST:P-X": {
+   "measure": "QUANTILES",
+   "params": [
+    "side",
+    "cut"
+   ],
+   "profile": "PROFILE:PRE-24",
+   "q4": [
+    "CS:P-SIDE-KNOWN-1"
+   ],
+   "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
+  },
   "EST:ZD-BOOT-R": {
    "measure": "STABILITY_INDEX",
    "params": [
@@ -799,6 +861,17 @@
   }
  },
  "facts": {
+  "FF:FEW-SESSIONS": {
+   "labels": {
+    "few": {
+     "ANY": "мало сессий: n={n}"
+    },
+    "title": {
+     "ANY": "Меньше 20 сессий: по вашему решению от 08.10 набор не расширяется, доли показаны как есть (шаг доли {step})."
+    }
+   },
+   "record": "CaseSetSnapshot"
+  },
   "FF:HISTORY-CLOCK": {
    "labels": {
     "empty": {
@@ -980,6 +1053,55 @@
     }
    },
    "record": "StatisticalResultBundle"
+  },
+  "FF:PHASE-RULE": {
+   "labels": {
+    "clock": {
+     "ANY": "окончательный R семьи к {cut} был у {share} · нужно половина"
+    },
+    "depth": {
+     "ANY": "откат {r} SD · нужно −0,7"
+    },
+    "done": {
+     "ANY": "откат сделан — смотрим X"
+    },
+    "head": {
+     "ANY": "Фаза по вашему правилу"
+    },
+    "open": {
+     "ANY": "откат не сделан"
+    },
+    "title": {
+     "ANY": "Ваше правило от 08.10: «откат сделан», когда откат достиг −0,7 и у половины сессий семьи окончательный R по часам уже был. Это правило, а не факт рынка и не сигнал; окончательный R до конца блока неизвестен."
+    }
+   },
+   "record": "OperatorNamedRule"
+  },
+  "FF:PRE-STATE": {
+   "labels": {
+    "alive": {
+     "ANY": "жива"
+    },
+    "broken": {
+     "ANY": "сломана"
+    },
+    "down": {
+     "ANY": "красная"
+    },
+    "flat": {
+     "ANY": "серая"
+    },
+    "line": {
+     "ANY": "{colour} коробка · модель роста {up}, снижения {down} · цена {u} от низа IDR"
+    },
+    "title": {
+     "ANY": "Сегодня к {cut} по закрытым M5: цвет коробки, модели дня (ADR → ODR → RDR) и где цена в коробке — по ним подобраны похожие сессии"
+    },
+    "up": {
+     "ANY": "зелёная"
+    }
+   },
+   "record": "PrefixState"
   },
   "FF:SESSION": {
    "labels": {},
@@ -1884,6 +2006,9 @@
    "labels": {
     "sub": {
      "ANY": "Если углублялся: до {p50} · {p25}…{p75}"
+    },
+    "title_mark": {
+     "ANY": "У тех, у кого откат углублялся, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшнее дно, полоса — у половины, черта — обычно."
     }
    },
    "value_form": "QUANTILES"
@@ -1906,6 +2031,9 @@
      "BRK": "В истории: {ev} против слома позже углублялся",
      "CONF": "В истории: {ev} позже углублялся"
     },
+    "row_mark": {
+     "ANY": "{ev}"
+    },
     "support_b0": {
      "ANY": "опора {n} из {N}"
     },
@@ -1914,6 +2042,9 @@
     },
     "title": {
      "ANY": "Доля сопоставимых сессий этой семьи, у которых после {cut} был более глубокий R (повтор того же уровня не считается). Не вероятность сделки."
+    },
+    "title_mark": {
+     "ANY": "{ev}: после {cut} новый, более глубокий откат — ниже сегодняшнего дна {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка."
     }
    },
    "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN"
@@ -1956,6 +2087,9 @@
    "labels": {
     "sub": {
      "ANY": " · ~{min} мин"
+    },
+    "title_mark": {
+     "ANY": ", впервые через ~{min} мин"
     }
    },
    "value_form": "QUANTILES"
@@ -1966,6 +2100,95 @@
    "labels": {
     "sub": {
      "ANY": " · ~{min} мин"
+    },
+    "title_mark": {
+     "ANY": ", впервые через ~{min} мин"
+    }
+   },
+   "value_form": "QUANTILES"
+  },
+  "EST:P-DIR": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:P-DIR",
+   "labels": {
+    "LONG": {
+     "ANY": "Подтвердили лонг"
+    },
+    "NONE": {
+     "ANY": "Не подтвердили"
+    },
+    "SHORT": {
+     "ANY": "Подтвердили шорт"
+    },
+    "UNKNOWN": {
+     "ANY": "Неизвестно: нет свечи M5"
+    },
+    "at": {
+     "ANY": "к {cut}"
+    },
+    "head": {
+     "ANY": "До подтверждения · похожие сессии"
+    },
+    "n": {
+     "ANY": "сессий: {n}"
+    },
+    "title": {
+     "ANY": "Похожие сессии истории к {cut}: подтверждения ещё не было, тот же цвет коробки, те же модели дня, цена там же в коробке (±0,25 IDR). Доли — от всех {n}. Это история, не прогноз и не сделка."
+    },
+    "zero": {
+     "ANY": "похожих сессий в истории нет"
+    }
+   },
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:P-DR": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:P-DR",
+   "labels": {
+    "dr": {
+     "ANY": "DR удержался у {held} из {n}"
+    },
+    "title": {
+     "ANY": "после него DR удержался у {held} из {n}, сломан у {broken}"
+    }
+   },
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:P-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:P-R",
+   "labels": {
+    "r": {
+     "ANY": "откат до {q50}"
+    },
+    "title": {
+     "ANY": "окончательный откат после подтверждения — обычно до {q50} SD, у половины {q25}…{q75}"
+    }
+   },
+   "value_form": "QUANTILES"
+  },
+  "EST:P-WHEN": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:P-WHEN",
+   "labels": {
+    "title": {
+     "ANY": "Подтверждение чаще всего было в {window} — у {k} из {n}"
+    },
+    "when": {
+     "ANY": "чаще {window} · {k} из {n}"
+    }
+   },
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:P-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:P-X",
+   "labels": {
+    "title": {
+     "ANY": "окончательное продолжение — обычно до {q50} SD, у половины {q25}…{q75}. Это история, не прогноз и не сделка."
+    },
+    "x": {
+     "ANY": "дальше до {q50}"
     }
    },
    "value_form": "QUANTILES"
@@ -2077,5 +2300,5 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "0c75a97d33492681"
+ "registry_hash": "554a6625b4759880"
 }

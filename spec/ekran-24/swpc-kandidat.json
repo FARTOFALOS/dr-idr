@@ -1,0 +1,45 @@
+{
+ "edition": "DR-LAB-SWPC-1.1",
+ "status": "PERCEPTUALLY_UNVERIFIED",
+ "candidate_commit": "c9e61ec5d84cdcf1d0af8115f4dec98a7f5c7496",
+ "branch": "swpc-1.1",
+ "base_commit": "4526d30dddcb026e104977f93cd5291351d95e90",
+ "served_sha256": {
+  "index.html": "d6fc4bb7cac9aafa50e7adc04f5a09c9fd834a1c253e039147d166904b253554",
+  "d24.js": "6d3a2a23f6e221e06f4cd449f95b8f4cd93e36964db51799c3b02f3403a8173a"
+ },
+ "base_served_sha256": {
+  "index.html": "2c37df1b66a7ad15900946a6335bcd62bf715cdf1b2161b2ac5a577dfbedc3aa",
+  "d24.js": "963b9a7f5c4e8cba6f27e1f039f83eb1350e1d6df9084426b8a8a86cb07c6d70"
+ },
+ "lab_tree": "fe9e748abe0e49613cfd4401dbcfcd7e4e956b9d",
+ "server_precondition": "the server must run lab/ of the candidate commit: restart it (the shortcut «DR Lab») before the session; the process running on 2026-10-07 was started at 15:37, before 4526d30 (its contract.py lacks the fail-closed C2/C3 guard; no number differs)",
+ "sc11": {
+  "registry_hash": "0c75a97d33492681",
+  "document_sha256_lf": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"
+ },
+ "checks_on_candidate": {
+  "tests/swpc11.py": "ALL GOOD",
+  "tests/swpc11_browser.mjs (M01-M18, A1, ui_check24 at 1600x900 and 1920x1000)": "ALL GOOD (74 checks)",
+  "tests/swpc11_browser.mjs same (seed 20261007, base 4526d30)": "ALL GOOD: 104 states pixel- and text-identical, 8 differ only by the toolbar fold where the base hides the cut; no contract violation in the sample; render cost equal within noise",
+  "tests/smoke.py": "ALL GOOD",
+  "tests/contract_sc11.py": "ALL GOOD",
+  "tests/sem24.py, tests/now24.py": "ALL GOOD on the same backend code (2026-10-07; the candidate changes no lab/*.py)"
+ },
+ "base_under_the_same_m_checks": "18 FAILED: M02, M08, M14 x5, M15 x4, M16 x4, A1, UI24 (the break day at 1600 px)",
+ "screenshots_sha256": {
+  "1-svodka-skryta-baza.png": "793919d13e590a136f77c5dd0cff58f8513cd8296acb00d8de21a1f8c160129b",
+  "1-svodka-skryta-kandidat.png": "872762e12a36f6bcde6f3ee8756e101e1097a5dcce279112034bcd1cb828dd0d",
+  "2-zona-snyata-baza.png": "a223e831527609fff511ef092eae8f59e58f08b09cfd87810991d5d03b382c0e",
+  "2-zona-snyata-kandidat.png": "54a225e4db773c4fce967c7a4cc5f423aa684a5772230d12635d0ba27840c7e2",
+  "3-slom-1600-baza.png": "6527fb854602898eea7175c794f96422c0e057d0b078e569ae452908eeff074c",
+  "3-slom-1600-kandidat.png": "d3bb263429ad4cbc65fe195f68f5fb1814a26bf905a81801af7e0c85d9825939",
+  "4-sejchas-nedostupno-baza.png": "7c248a84a9d33b7ec98b9ecac2048afa6b53ef7a73e17412557c7b4fde11a1f6",
+  "4-sejchas-nedostupno-kandidat.png": "a39bc41cdde8323250a6238c257d79b3da4e44934077c649f637f1470860f112"
+ },
+ "acceptance": {
+  "evaluator": "meaning/16-priyomka-swpc.md",
+  "operator_sheet": "meaning/16a-list-zadanij.md",
+  "verify_before_session": "python -B tests/swpc11.py (prints whether the build on disk is this candidate)"
+ }
+}

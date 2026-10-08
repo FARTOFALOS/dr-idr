@@ -8,9 +8,9 @@
   }
   const prow = (text, val) => '<span class="t">' + text + '</span><b>' + val + '</b>';
   const plainTitle = p => (p.phrase + ' · ' + p.horizon + (p.unknown_count ? lbl('FF:PASSPORT-VIEW', 'title_unknown', { pct: pct(100 * p.unknown_count / p.N) }) : '')).replace(/<[^>]+>/g, '');
-  // DR-LAB-SC-1.1: a violation of the contract stands at the top of the panel (all of them in its title) until reload
-  const scNotice = () => !K.violations.length ? '' : '<div class="p24-sc" title="' + esc(K.violations.join('\n')) + '">Контракт SC-1.1: ' + esc(K.violations[K.violations.length - 1]) +
-    (K.violations.length > 1 ? ' · ещё ' + (K.violations.length - 1) : '') + '</div>';
+  // DR-LAB-SC-1.1: a violation of the contract of this scene stands at the top of the panel (all of them in its title);
+  // one found on another day, family or cut does not (DR-LAB-SWPC-1.1 M16)
+  const scNotice = ctx => { const v = kNow(ctx); return !v.length ? '' : '<div class="p24-sc" title="' + esc(v.join('\n')) + '">Контракт SC-1.1: ' + esc(v[v.length - 1]) + (v.length > 1 ? ' · ещё ' + (v.length - 1) : '') + '</div>'; };
   function statusMsg(ctx) {
     const s = ctx.s, x = A.day;
     if (!x || x.status !== 'ok') return (x && x.message) || (A.src === 'hist' ? 'Загружаю день истории…' : 'Загружаю свечи…');
@@ -34,7 +34,9 @@
       // no family at this moment: one click opens a history day on which this session had one (spec: the live moment
       // must never block the review)
       const noFam = !F && ['before', 'forming', 'waiting', 'noconf'].includes(s.status) && A.day && A.day.status === 'ok';
-      panel.innerHTML = scNotice() + '<div class="p21-empty">' + esc(F && !F.N ? 'В семье нет сессий: процентов нет' : statusMsg(ctx)) + '</div>' +
+      // before the confirmation: the block of the profile PRE-24 under the status line (operator 2026-10-08)
+      const pre = !F && s.status === 'waiting' && A.day && A.day.status === 'ok' ? preHtml(ctx) : '';
+      panel.innerHTML = scNotice(ctx) + '<div class="p21-empty">' + esc(F && !F.N ? 'В семье нет сессий: процентов нет' : statusMsg(ctx)) + '</div>' + pre +
         (F && !F.N ? '<div class="p21-note">' + esc(F.cond) + '</div>' : '') + (s.failed && s.conf ? viewSwitch(s) : '') +
         (noFam ? '<button class="p24-btn" data-hist="1">' + (A.src === 'live' ? 'Открыть ' + st.session + ' на истории' : 'Ближайший день с подтверждением ' + st.session) + '</button>' : '');
       return;
@@ -44,7 +46,10 @@
       cutoff: F.r.key.cutoff, snapshot: F.r.snapshot_id, family: F.r.family_id, semantics: F.r.semantics });
     out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F.cond) + '</span><span>' + (sl >= F.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
     if (s.failed) out.push(viewSwitch(s));
+    // a small break family is shown as it is, marked (operator 2026-10-08: «честно писать «мало»», FF:FEW-SESSIONS)
+    if (F.brk && F.N < FEW) out.push('<div class="p21-note" title="' + esc(lbl('FF:FEW-SESSIONS', 'title', { step: pct(step) })) + '"><b>' + lbl('FF:FEW-SESSIONS', 'few', { n: F.N }) + '</b></div>');
     if (F.out) out.push(outcomeHtml(F));
+    out.push(phaseHtml(F, ctx));
     out.push(nowHtml(F, ctx));
     if (st.mode === 'bounds') {
       out.push(zonesHtml(F, ctx));
@@ -56,7 +61,7 @@
     const h = st.pin;
     if (h && h.k === 'lvl' && h.l) out.push(levelHtml(F, ctx, h.l));
     if (h && h.k === 'pt' && F.M[h.i]) out.push(memberHtml(F, F.M[h.i]));
-    panel.innerHTML = scNotice() + out.join('');
+    panel.innerHTML = scNotice(ctx) + out.join('');
     // a new selection (area, level, history session) stands at the end of the panel, under the inspector's edge: scroll
     // the panel to it once, when it appears (the layout stays; the panel keeps its own scroll otherwise)
     const sk = (st.area ? [st.area.k0, st.area.k1, st.area.b0, st.area.b1, st.area.ev].join(',') : '') + '|' + pinKey(st.pin);
@@ -133,6 +138,15 @@
       const bI = bN && q.q50 != null && p ? nowBundle(n, 'EST:N-IF-NEW-' + ev, 'MAIN') : null, bT = bI && tm.q50_min != null ? nowBundle(n, 'EST:N-TIME-' + ev, 'MAIN') : null;
       const sub = bI ? lbl('EST:N-IF-NEW-' + ev, 'sub', { p50: lv(q.q50), p25: lv(q.q25), p75: lv(q.q75) }) + (bT ? lbl('EST:N-TIME-' + ev, 'sub', { min: Math.round(tm.q50_min) }) : '') : '';
       const support = E.mode === 'PATH_CONDITIONED' ? lbl(NE, 'support_path', { m: sp.N_match_total, n: sp.N_eligible, matcher: E.matcher }) : lbl(NE, 'support_b0', { n: sp.N_eligible, N: n.base.N_base });
+      // the pullback line (operator 2026-10-08, meaning/17 §7): only the number; its levels are the marks at the price
+      // scale (drawNowMarks); the historical words, the conditional levels, the time and the support are in its title
+      if (ev === 'R') {
+        const P = v => Math.round(F.u2p(u0 + sgn * v)), cnt = sp.N_match_unknown ? sp.N_new_yes + '–' + (sp.N_new_yes + sp.N_match_unknown) : String(sp.N_new_yes);
+        const t1 = bN ? lbl(NE, 'title_mark', { ev: 'R', cut: n.cut.cut_clock_et, today: num(P(0), 0), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base }) : '';
+        const t2 = bI ? lbl('EST:N-IF-NEW-R', 'title_mark', { p50: lv(q.q50), lo: num(Math.min(P(q.q25), P(q.q75)), 0), hi: num(Math.max(P(q.q25), P(q.q75)), 0), time: bT ? lbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' }) : '';
+        out.push(link({ k: 'now', ev }, '<span class="t"><span>' + lbl(NE, 'row_mark', { ev: '<i style="color:' + cfg[ev] + '">' + ev + '</i>' }) + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' ')));
+        continue;
+      }
       out.push(link({ k: 'now', ev }, '<span class="t"><span>' + name + '</span>' + (sub ? '<span class="p21-sub">' + sub + '</span>' : '') +
         '<span class="p21-sub">' + support + (E.note ? ' · ' + esc(E.note) : '') + '</span></span><b>' + val + '</b>', 'mc', null, lbl(NE, 'title', { cut: n.cut.cut_clock_et })));
     }
@@ -141,11 +155,61 @@
     // the spec (§9.3, §21.2) requires the support next to every NOW number: the only place of the panel with session counts
     return '<div class="p24-nowblk">' + out.join('') + '</div>';
   }
+  // the operator's named phase rule in one place (2026-10-08, FF:PHASE-RULE): its state and both criteria with today's
+  // values; the share is the passport of EST:B-CLOCK-R over the whole price range (part EARLIER, of N)
+  function phaseHtml(F, ctx) {
+    const ph = phaseOf(F, ctx), P = 'FF:PHASE-RULE';
+    if (!ph) return '';
+    const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true);
+    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
+      '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
+      link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
+  }
+  // PROFILE:PRE-24 (operator 2026-10-08, SC-1.1 §12.5): before the confirmation, the similar sessions of history at the
+  // cut — box colour, models of the day, price position — and, from their verified bundles only: in which direction they
+  // then confirmed (a 100 % of N), in which 15 minutes, and what came after on each side. Words: CF:P-*, FF:PRE-STATE,
+  // FF:FEW-SESSIONS. Nothing is drawn on the chart
+  const FEW = 20;
+  function preHtml(ctx) {
+    const r = preOf(ctx), D = 'EST:P-DIR', S = 'FF:PRE-STATE';
+    if (!r) return '<div class="p21-note">Подбираю похожие сессии…</div>';
+    if (r.status !== 'ok') return '<div class="p21-note">' + esc(r.message || r.note || 'Похожие сессии не подобраны') + '</div>';
+    const b = preBundle(r, D);
+    if (!b) return '<div class="p21-note">Числа не публикуются: нарушение контракта SC-1.1</div>';
+    const t = r.today, N = r.N, cut = clk(r.key.cut), out = [];
+    out.push('<div class="p24-pre"><div class="p21-h second"><span title="' + esc(lbl(D, 'title', { cut, n: N })) + '">' + lbl(D, 'head') + '</span>' + scopeSwitch() + '</div>');
+    out.push('<div class="p21-note" title="' + esc(lbl(S, 'title', { cut })) + '">' + lbl(S, 'line', { colour: lbl(S, t.box), up: lbl(S, t.models.up ? 'alive' : 'broken'), down: lbl(S, t.models.down ? 'alive' : 'broken'), u: (t.pos.a < 0 ? '−' : '') + num(Math.abs(t.pos.a / t.pos.w), 2) }) + '</div>');
+    out.push('<div class="p21-note">' + lbl(D, 'at', { cut }) + ' · ' + (r.few ? '<b title="' + esc(lbl('FF:FEW-SESSIONS', 'title', { step: N ? pct(100 / N) : '—' })) + '">' + lbl('FF:FEW-SESSIONS', 'few', { n: N }) + '</b>' : lbl(D, 'n', { n: N })) + '</div>');
+    if (!N) return out.join('') + '<div class="p21-note">' + lbl(D, 'zero') + '</div></div>';
+    const cnt = {}, cols = { LONG: C.up, SHORT: C.dn, NONE: '#8C95A3', UNKNOWN: '#5F6877' };
+    for (const x of b.estimates[0].categories) cnt[x.category] = x.count;
+    out.push('<div class="p24-bar">' + ['LONG', 'SHORT', 'NONE', 'UNKNOWN'].filter(k => cnt[k]).map(k => '<i style="width:' + (100 * cnt[k] / N).toFixed(2) + '%;background:' + cols[k] + '"></i>').join('') + '</div>');
+    for (const side of ['LONG', 'SHORT', 'NONE', 'UNKNOWN']) {
+      if (side === 'UNKNOWN' && !cnt[side]) continue;
+      const head = '<span class="t"><span><i style="color:' + cols[side] + '">■</i> ' + lbl(D, side);
+      if (!(side === 'LONG' || side === 'SHORT') || !cnt[side]) { out.push('<div class="p21-link mc">' + head + '</span></span><b>' + pct(100 * (cnt[side] || 0) / N) + '</b></div>'); continue; }
+      const W = preBundle(r, 'EST:P-WHEN', side), Rb = preBundle(r, 'EST:P-DR', side), BR = preBundle(r, 'EST:P-R', side), BX = preBundle(r, 'EST:P-X', side);
+      if (!W || !Rb || !BR || !BX) { out.push('<div class="p21-link mc">' + head + '</span></span><b>—</b></div>'); continue; }
+      const n = W.estimates[0].denominator, wins = W.estimates[0].categories;
+      const top = wins.reduce((a, x) => x.count > a.count ? x : a, wins[0]);
+      const dr = {}; for (const x of Rb.estimates[0].categories) dr[x.category] = x.count;
+      const q = B => { const e = B.estimates[0]; return e.value_kind === 'QUANTILES' ? e.quantiles.map(x => sd(x.value)) : null; };
+      const qr = q(BR), qx = q(BX);
+      // two short lines: when and the DR outcome; the pullback and the extension (their quartiles in the title)
+      const sub = [lbl('EST:P-WHEN', 'when', { window: top.category, k: top.count, n }) + ' · ' + lbl('EST:P-DR', 'dr', { held: dr.HELD || 0, n }),
+        [qr ? lbl('EST:P-R', 'r', { q50: qr[1] }) : '', qx ? lbl('EST:P-X', 'x', { q50: qx[1] }) : ''].filter(Boolean).join(' · ')].filter(Boolean);
+      const title = [lbl('EST:P-WHEN', 'title', { window: top.category, k: top.count, n }), lbl('EST:P-DR', 'title', { held: dr.HELD || 0, broken: dr.BROKEN || 0, n })]
+        .concat(qr ? [lbl('EST:P-R', 'title', { q50: qr[1], q25: qr[0], q75: qr[2] })] : []).concat(qx ? [lbl('EST:P-X', 'title', { q50: qx[1], q25: qx[0], q75: qx[2] })] : []).join('; ');
+      out.push('<div class="p21-link mc" title="' + esc(title) + '">' + head + '</span>' + sub.map(x => '<span class="p21-sub">' + x + '</span>').join('') + '</span><b>' + pct(100 * cnt[side] / N) + '</b></div>');
+    }
+    return out.join('') + '</div>';
+  }
   // the DR outcome of the family (spec §5.2): four categories that add up to 100 % of N; one compact bar
   function outcomeHtml(F) {
     const D = 'EST:B-DR', cats = [['held', '#6FB59A'], ['broken', '#E5877F'], ['unknown', '#8C95A3'], ['none', '#5F6877']], P = {};
     for (const [k] of cats) P[k] = drPass(F, k);
-    const bar = '<div class="p24-bar">' + cats.filter(([k]) => F.out[k]).map(([k, col]) => '<i style="width:' + (100 * F.out[k] / F.N).toFixed(2) + '%;background:' + col + '"></i>').join('') + '</div>';
+    // a withheld category (its passport «—», DR-LAB-SWPC-1.1 M14) leaves its part of the bar empty
+    const bar = '<div class="p24-bar">' + cats.filter(([k]) => F.out[k]).map(([k, col]) => '<i style="width:' + (100 * F.out[k] / F.N).toFixed(2) + '%;background:' + (P[k].pct == null ? 'transparent' : col) + '"></i>').join('') + '</div>';
     const rows = cats.filter(([k]) => F.out[k] || k === 'held' || k === 'broken').map(([k, col]) => link({ k: 'out', cat: k }, '<span class="t"><i style="color:' + col + '">■</i> ' + lbl(D, k) + '</span><b>' + ppTxt(P[k]) + '</b>', 'in', P[k], plainTitle(P[k]))).join('');
     return '<div class="p21-h second">' + lbl(D, 'head', { end: clk(F.end) }) + '<span>' + lbl(D, 'head_r') + '</span></div>' + bar + '<div class="p24-out big">' + rows + '</div>';
   }
@@ -325,7 +389,7 @@
     const rows = [['X_before_R', cfg.X], ['R_before_X', cfg.R], ['same_M5', '#8C929D'], ['unknown', '#4A505B'], ['no_period', '#353A44']].filter(([k]) => k !== 'no_period' || n[k]);
     const P = rows.map(([k]) => pp(F, { estimand: O, params: { category: k }, event_id: 'order_' + k, region_kind: 'order', exact_price_bounds: null, time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end),
       yes_count: n[k], display_scope: 'details', phrase: lbl(O, 'phrase', { t: lbl(O, k) }), horizon: hzOf(F) }));
-    return '<div class="p24-bar wide">' + rows.map(([k, c]) => n[k] ? '<i style="width:' + (100 * n[k] / F.N).toFixed(2) + '%;background:' + c + '"></i>' : '').join('') + '</div>' +
+    return '<div class="p24-bar wide">' + rows.map(([k, c], j) => n[k] ? '<i style="width:' + (100 * n[k] / F.N).toFixed(2) + '%;background:' + (P[j].pct == null ? 'transparent' : c) + '"></i>' : '').join('') + '</div>' +
       rows.map(([k, c], j) => '<div class="dq" data-ord="' + k + '" title="' + esc(plainTitle(P[j])) + '"><i style="background:' + c + '"></i><span>' + lbl(O, k) + '</span><b>' + ppTxt(P[j]) + '</b></div>').join('');
   }
   // window 5: «на уровне или дальше» on today's levels (spec §5.4): nested shares, the whole horizon (pale) and after the
@@ -365,7 +429,8 @@
     dom(id)._g = { L, T, cw, rh, k0, k1, n: F.nb, ev };
     for (const q of cells) { if (q.k < k0 || q.k >= k1) continue; c.fillStyle = rgba(cfg[ev], 0.18 + 0.82 * Math.pow(q.list.length / mx, 0.7)); c.fillRect(X(q.b) + 0.5, Y(q.k) + 0.25, Math.max(1, cw - 1), Math.max(1, rh - 0.5)); }
     const Zm = F.zones[ev];
-    if (Zm) Zm.zones.forEach(z => {
+    if (Zm) Zm.zones.forEach((z, i) => {
+      if (zoneHeld(F, ev, i)) return;                    // a withheld zone: no outline (DR-LAB-SWPC-1.1 M14)
       const set = new Set(z.cell_mask.map(([k, b]) => k + '|' + b));
       c.strokeStyle = rgba(cfg[ev], 0.95); c.lineWidth = 1; c.beginPath();
       for (const [k, b] of z.cell_mask) {

@@ -335,6 +335,119 @@
     "version": "1.0"
    },
    {
+    "comparison": "CMP:PRE-1",
+    "condition_availability": "PREFIX_AT_CUT",
+    "condition_ru": "к срезу t подтверждения ещё не было и все M5 после коробки до t есть; тот же цвет коробки, то же состояние моделей дня (роста, снижения), цена на t в пределах 0,25 ширины IDR от сегодняшней (u = (закрытие − низ IDR) / ширина IDR); ничего не расширяется",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "history_rule": "sessions of the instrument and block on the weekday of the trading date, trading dates strictly before the target date and not after 2025-12-31 ET, alive at the common clock cut t and similar by CMP:PRE-1",
+    "id": "CS:P-SIMILAR-1",
+    "key_fields": [
+     "INSTRUMENT",
+     "BLOCK",
+     "WEEKDAY",
+     "DATE_BEFORE_TARGET"
+    ],
+    "live_use": "PERMITTED",
+    "parent": [
+     "CS:UNIVERSE-1"
+    ],
+    "profile": "PROFILE:PRE-24",
+    "role": "MATCHED_AT_CUT",
+    "sc_ref": [
+     "H1",
+     "H3",
+     "§12.5"
+    ],
+    "source_refs": [
+     "SRC:DECISIONS-2026-10-08",
+     "SRC:SEMANTICS-22"
+    ],
+    "title_ru": "похожие до подтверждения (день недели)",
+    "undetermined_rule": "a session with a wholly missing M5 after its box up to t (alive or not cannot be established) or whose model needs a box missing in the base joins no set and is counted in the journal",
+    "version": "1.0",
+    "weekday_scope": "WEEKDAY"
+   },
+   {
+    "comparison": "CMP:PRE-1",
+    "condition_availability": "PREFIX_AT_CUT",
+    "condition_ru": "к срезу t подтверждения ещё не было и все M5 после коробки до t есть; тот же цвет коробки, то же состояние моделей дня (роста, снижения), цена на t в пределах 0,25 ширины IDR от сегодняшней (u = (закрытие − низ IDR) / ширина IDR); ничего не расширяется",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "history_rule": "as CS:P-SIMILAR-1 without the weekday; another set, another N and snapshot; only on the operator's explicit switch, never a fallback",
+    "id": "CS:P-SIMILAR-ALL-1",
+    "key_fields": [
+     "INSTRUMENT",
+     "BLOCK",
+     "DATE_BEFORE_TARGET"
+    ],
+    "live_use": "PERMITTED",
+    "parent": [
+     "CS:UNIVERSE-1"
+    ],
+    "profile": "PROFILE:PRE-24",
+    "role": "MATCHED_AT_CUT",
+    "sc_ref": [
+     "H1",
+     "H3",
+     "§12.5"
+    ],
+    "source_refs": [
+     "SRC:DECISIONS-2026-10-08",
+     "SRC:SEMANTICS-22"
+    ],
+    "title_ru": "похожие до подтверждения (все дни недели — явный выбор)",
+    "undetermined_rule": "a session with a wholly missing M5 after its box up to t (alive or not cannot be established) or whose model needs a box missing in the base joins no set and is counted in the journal",
+    "version": "1.0",
+    "weekday_scope": "ALL_WEEKDAYS"
+   },
+   {
+    "condition_availability": "PREFIX_AND_RETROSPECTIVE",
+    "condition_ru": "среди похожих к срезу — те, кто потом первым подтвердил в эту сторону (подтверждение известно: без пропуска M5 до него)",
+    "grounds": "CONTRACT_FORMALISATION",
+    "history_rule": "members of the similar set whose first confirmation after t is known and on the given side",
+    "id": "CS:P-SIDE-1",
+    "live_use": "FORBIDDEN",
+    "parent": [
+     "CS:P-SIMILAR-1",
+     "CS:P-SIMILAR-ALL-1"
+    ],
+    "profile": "PROFILE:PRE-24",
+    "role": "OUTCOME_SUBGROUP",
+    "sc_ref": [
+     "H1",
+     "V2.2",
+     "§12.5"
+    ],
+    "source_refs": [
+     "SRC:SC-1.1",
+     "SRC:DECISIONS-2026-10-08"
+    ],
+    "title_ru": "подтвердившие в эту сторону",
+    "version": "1.0"
+   },
+   {
+    "condition_availability": "PREFIX_AND_RETROSPECTIVE",
+    "condition_ru": "среди подтвердивших в эту сторону — те, у кого окончательный откат (или продолжение) после своего подтверждения известен",
+    "grounds": "CONTRACT_FORMALISATION",
+    "history_rule": "members of the side subgroup whose final R (or X) after their own confirmation is known",
+    "id": "CS:P-SIDE-KNOWN-1",
+    "live_use": "FORBIDDEN",
+    "parent": [
+     "CS:P-SIDE-1"
+    ],
+    "profile": "PROFILE:PRE-24",
+    "role": "OUTCOME_SUBGROUP",
+    "sc_ref": [
+     "H1",
+     "V2.2",
+     "§12.5"
+    ],
+    "source_refs": [
+     "SRC:SC-1.1"
+    ],
+    "title_ru": "подтвердившие в эту сторону, с известным R (X)",
+    "version": "1.0"
+   },
+   {
     "condition_availability": "RETROSPECTIVE",
     "condition_ru": "исследование zone_map_3_2026_10_01: цели 2018–2025, зоны со статусом через 30 / 60 / 120 минут после подтверждения; корпус видели при выборе идеи",
     "grounds": "RESEARCH_RESULT",
@@ -2455,9 +2568,21 @@
       "surface": "PANEL",
       "text_ru": "похожих {m} из {n} · {matcher}",
       "view": "ANY"
+     },
+     {
+      "key": "row_mark",
+      "surface": "PANEL",
+      "text_ru": "{ev}",
+      "view": "ANY"
+     },
+     {
+      "key": "title_mark",
+      "surface": "PANEL",
+      "text_ru": "{ev}: после {cut} новый, более глубокий откат — ниже сегодняшнего дна {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка.",
+      "view": "ANY"
      }
     ],
-    "note": "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…»",
+    "note": "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark); the title_mark words are the executor's, for his acceptance",
     "price_transfer": "NONE",
     "sc_ref": [
      "C1",
@@ -2467,7 +2592,7 @@
     "statement_ru": "После среза {cut} новый, более глубокий R наблюдался у {pct} допустимых исторических случаев этой семьи ({yes} из {D}; неизвестно у {unknown}). Это описание истории, не прогноз сегодняшнего дня.",
     "subject_ru": "исторические сессии семьи, допустимые (или сопоставленные) к этому же часовому срезу",
     "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN",
-    "version": "1.1"
+    "version": "1.2"
    },
    {
     "acceptance": "ACCEPTED_BY_OPERATOR",
@@ -2670,6 +2795,12 @@
       "surface": "PANEL",
       "text_ru": "Если углублялся: до {p50} · {p25}…{p75}",
       "view": "ANY"
+     },
+     {
+      "key": "title_mark",
+      "surface": "PANEL",
+      "text_ru": "У тех, у кого откат углублялся, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшнее дно, полоса — у половины, черта — обычно.",
+      "view": "ANY"
      }
     ],
     "note": "K33 / §12.4: the screen said «если да: до …» (a conditional about today); the condition is now the historical subgroup's, and the price is the transfer of its additional movement from today's own extreme (M0)",
@@ -2682,7 +2813,7 @@
     "statement_ru": "У тех {n} исторических случаев, у которых после {cut} откат углублялся, он уходил ещё на {q50} SD (медиана; квартили {q25}…{q75}); от сегодняшнего экстремума это {p50} ({p25}…{p75}). Неизвестна величина у {unknown}.",
     "subject_ru": "исторические сессии семьи, у которых после среза откат углублялся",
     "value_form": "QUANTILES",
-    "version": "1.1"
+    "version": "1.2"
    },
    {
     "acceptance": "ACCEPTED_BY_OPERATOR",
@@ -2733,6 +2864,12 @@
       "surface": "PANEL",
       "text_ru": " · ~{min} мин",
       "view": "ANY"
+     },
+     {
+      "key": "title_mark",
+      "surface": "PANEL",
+      "text_ru": ", впервые через ~{min} мин",
+      "view": "ANY"
      }
     ],
     "price_transfer": "NONE",
@@ -2762,6 +2899,12 @@
       "surface": "PANEL",
       "text_ru": " · ~{min} мин",
       "view": "ANY"
+     },
+     {
+      "key": "title_mark",
+      "surface": "PANEL",
+      "text_ru": ", впервые через ~{min} мин",
+      "view": "ANY"
      }
     ],
     "price_transfer": "NONE",
@@ -2773,6 +2916,226 @@
     "subject_ru": "исторические сессии семьи, у которых после среза был новый X",
     "value_form": "QUANTILES",
     "version": "1.1"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "к срезу подтверждения ещё не было; тот же цвет коробки, те же модели дня, цена в пределах 0,25 ширины IDR от сегодняшней",
+    "estimand": "EST:P-DIR",
+    "forbidden_readings_ru": [
+     "вероятность, что сегодня подтвердит лонг (шорт)",
+     "сигнал входа",
+     "прогноз направления"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:P-DIR",
+    "labels": [
+     {
+      "key": "head",
+      "surface": "PANEL",
+      "text_ru": "До подтверждения · похожие сессии",
+      "view": "ANY"
+     },
+     {
+      "key": "at",
+      "surface": "PANEL",
+      "text_ru": "к {cut}",
+      "view": "ANY"
+     },
+     {
+      "key": "n",
+      "surface": "PANEL",
+      "text_ru": "сессий: {n}",
+      "view": "ANY"
+     },
+     {
+      "key": "LONG",
+      "surface": "PANEL",
+      "text_ru": "Подтвердили лонг",
+      "view": "ANY"
+     },
+     {
+      "key": "SHORT",
+      "surface": "PANEL",
+      "text_ru": "Подтвердили шорт",
+      "view": "ANY"
+     },
+     {
+      "key": "NONE",
+      "surface": "PANEL",
+      "text_ru": "Не подтвердили",
+      "view": "ANY"
+     },
+     {
+      "key": "UNKNOWN",
+      "surface": "PANEL",
+      "text_ru": "Неизвестно: нет свечи M5",
+      "view": "ANY"
+     },
+     {
+      "key": "zero",
+      "surface": "PANEL",
+      "text_ru": "похожих сессий в истории нет",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "PANEL",
+      "text_ru": "Похожие сессии истории к {cut}: подтверждения ещё не было, тот же цвет коробки, те же модели дня, цена там же в коробке (±0,25 IDR). Доли — от всех {n}. Это история, не прогноз и не сделка.",
+      "view": "ANY"
+     }
+    ],
+    "note": "Operator 2026-10-08 (meaning/17 §7, Н6): select by box colour, model of the day and price position; nothing widened; n < 20 «мало сессий». The words are the executor's, for his acceptance",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "§12.5"
+    ],
+    "statement_ru": "Из {N} похожих к {cut} сессий потом первыми подтвердили лонг {long}, шорт {short}, не подтвердили до конца блока {none}, неизвестно у {unknown}. Это история, не прогноз сегодняшнего подтверждения.",
+    "subject_ru": "похожие к срезу исторические сессии (тот же цвет коробки, те же модели дня, цена там же в коробке)",
+    "value_form": "CATEGORY_SHARES",
+    "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "среди похожих к срезу — те, кто потом первым подтвердил в эту сторону",
+    "estimand": "EST:P-WHEN",
+    "forbidden_readings_ru": [
+     "время сегодняшнего подтверждения",
+     "время входа"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:P-WHEN",
+    "labels": [
+     {
+      "key": "when",
+      "surface": "PANEL",
+      "text_ru": "чаще {window} · {k} из {n}",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "PANEL",
+      "text_ru": "Подтверждение чаще всего было в {window} — у {k} из {n}",
+      "view": "ANY"
+     }
+    ],
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "§12.5"
+    ],
+    "statement_ru": "У {n} похожих сессий, которые потом подтвердили {side}, подтверждение чаще всего было в {window} — у {k} из {n}.",
+    "subject_ru": "похожие сессии, которые потом подтвердили в эту сторону",
+    "value_form": "CATEGORY_SHARES",
+    "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "среди похожих к срезу — те, кто потом первым подтвердил в эту сторону",
+    "estimand": "EST:P-DR",
+    "forbidden_readings_ru": [
+     "DR сегодня удержится",
+     "стоп",
+     "выигрыш"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:P-DR",
+    "labels": [
+     {
+      "key": "dr",
+      "surface": "PANEL",
+      "text_ru": "DR удержался у {held} из {n}",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "PANEL",
+      "text_ru": "после него DR удержался у {held} из {n}, сломан у {broken}",
+      "view": "ANY"
+     }
+    ],
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "§12.5"
+    ],
+    "statement_ru": "После своего подтверждения ({side}) DR удержался у {held} из {n}, сломан у {broken}, неизвестен у {unknown}, без периода у {no_period}.",
+    "subject_ru": "похожие сессии, которые потом подтвердили в эту сторону",
+    "value_form": "CATEGORY_SHARES",
+    "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "среди подтвердивших в эту сторону — те, у кого окончательный откат после своего подтверждения известен",
+    "estimand": "EST:P-R",
+    "forbidden_readings_ru": [
+     "сегодняшняя цель отката",
+     "место входа"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:P-R",
+    "labels": [
+     {
+      "key": "r",
+      "surface": "PANEL",
+      "text_ru": "откат до {q50}",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "PANEL",
+      "text_ru": "окончательный откат после подтверждения — обычно до {q50} SD, у половины {q25}…{q75}",
+      "view": "ANY"
+     }
+    ],
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "§12.5"
+    ],
+    "statement_ru": "У {n} подтвердивших ({side}) с известным откатом окончательный откат после своего подтверждения: медиана {q50} SD, квартили {q25}…{q75}; неизвестен у {unknown}.",
+    "subject_ru": "подтвердившие в эту сторону похожие сессии с известным откатом",
+    "value_form": "QUANTILES",
+    "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "среди подтвердивших в эту сторону — те, у кого окончательное продолжение после своего подтверждения известно",
+    "estimand": "EST:P-X",
+    "forbidden_readings_ru": [
+     "сегодняшняя цель",
+     "место выхода"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:P-X",
+    "labels": [
+     {
+      "key": "x",
+      "surface": "PANEL",
+      "text_ru": "дальше до {q50}",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "PANEL",
+      "text_ru": "окончательное продолжение — обычно до {q50} SD, у половины {q25}…{q75}. Это история, не прогноз и не сделка.",
+      "view": "ANY"
+     }
+    ],
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "§12.5"
+    ],
+    "statement_ru": "У {n} подтвердивших ({side}) с известным продолжением окончательное продолжение после своего подтверждения: медиана {q50} SD, квартили {q25}…{q75}; неизвестно у {unknown}.",
+    "subject_ru": "подтвердившие в эту сторону похожие сессии с известным продолжением",
+    "value_form": "QUANTILES",
+    "version": "1.0"
    }
   ],
   "comparisons": [
@@ -2859,6 +3222,32 @@
     ],
     "title_ru": "M3 — тот же недавний путь",
     "tolerance": "mean |close difference| <= 0.20 and max <= 0.35 IDR width, exact in integers",
+    "version": "1.0",
+    "weights": "NONE"
+   },
+   {
+    "alignment": "COMMON_SESSION_CLOCK",
+    "feature_availability": "PREFIX_AT_CUT",
+    "features": [
+     "alive at t: no confirmation closed by t, every M5 after the box up to t present",
+     "box colour: the close of the formation hour against its open (up / down / flat)",
+     "models of the day at t (docs/STRATEGY.md §2.1-2.2, the rule of design 22): upside alive, downside alive — this session against the previous box up to t, and for ODR and RDR the previous session as a whole against the box before it; M5 closes only, an open beyond the level at the first M5 excludes at once; a missing box leaves the model undetermined, never alive",
+     "u = (close of the M5 at t - IDR low) / IDR width"
+    ],
+    "frozen": true,
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CMP:PRE-1",
+    "sc_ref": [
+     "H3",
+     "§12.5"
+    ],
+    "source_refs": [
+     "SRC:DECISIONS-2026-10-08",
+     "SRC:SEMANTICS-22",
+     "SRC:CODE-SCENE21"
+    ],
+    "title_ru": "до подтверждения — цвет коробки, модели дня, положение цены",
+    "tolerance": "colour and both models equal; |u_hist - u_today| <= 1/4 inclusive, exact in integers: 4 |a w_t - a_t w| <= w w_t; never widened",
     "version": "1.0",
     "weights": "NONE"
    }
@@ -3021,10 +3410,28 @@
        "Давай лучше сделай это как основная линия DR-Lab, то есть закоммуть, за, за, слей в main. Я принимаю решение слить все-таки PR"
       ],
       "scope": "The branch design-24 (PR #1) with this work is merged into main: screen 24 under SC-1.1 becomes the main line of DR Lab."
+     },
+     {
+      "actor_role": "OPERATOR",
+      "channel": "Claude Code chat with the operator, 2026-10-08 11:55 UTC: his choice among the options of the executor's question «Проверка полноты закрыта … Как дальше?» (the option «Реализовать в отдельной ветке»; the option text below was written by the executor and chosen by him)",
+      "date": "2026-10-08",
+      "exclusions": [
+       "the working screen (the swpc-1.1 candidate on port 8767 and main) until his acceptance",
+       "merging into main, publication or a push",
+       "any trading policy, order or execution (SC-1.1 §11, D1)"
+      ],
+      "not_established": [
+       "the acceptance of the variant itself — his separate act after he has seen it",
+       "the panel words proposed by the executor for these decisions (forms marked PROPOSED_BY_EXECUTOR)"
+      ],
+      "quote": [
+       "Разрешаю менять SC-1.1 и SWPC и собрать вариант для моей приёмки; рабочий экран до приёмки не трогать"
+      ],
+      "scope": "Changes of SC-1.1 and SWPC-1.1 that implement his decisions of 2026-10-08 (meaning/17 §7), on the branch resheniya-08-10, built as a variant for his acceptance: the profile PRE-24, the phase rule, the words of the NOW pullback line, «мало сессий» for small sets."
      }
     ],
     "document_path": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
-    "document_sha256_lf": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b",
+    "document_sha256_lf": "3572408e0cd91147ebe76056612ecae1bf8f8abc20203cedb5f033e94e09b775",
     "edition_status": "ACCEPTED_FOR_PROFILES",
     "grounds": "CONTRACT_FORMALISATION",
     "id": "DR-LAB-SC-1.1",
@@ -3974,6 +4381,242 @@
     ],
     "surface": "API:/api/d24/now",
     "target": "VAL:NOW-1.0-WALKFORWARD decision record"
+   },
+   {
+    "field_kind": "DENOMINATOR",
+    "id": "FE:P.N",
+    "path": "N",
+    "sc_ref": [
+     "H2"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "CaseSetSnapshot.n_members of the similar set"
+   },
+   {
+    "field_kind": "IDENTIFIER",
+    "id": "FE:P.weekday",
+    "path": "weekday",
+    "sc_ref": [
+     "H1"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "trading date weekday of the viewed day"
+   },
+   {
+    "field_kind": "PROVENANCE",
+    "id": "FE:P.source",
+    "path": "source.{boxes,built}",
+    "sc_ref": [
+     "O3"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "ObservationSnapshot.content_version"
+   },
+   {
+    "field_kind": "IDENTIFIER",
+    "id": "FE:P.key.weekday",
+    "path": "key.weekday",
+    "sc_ref": [
+     "H1"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "CaseSetSpecification key weekday"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:P.key.cut",
+    "path": "key.cut",
+    "sc_ref": [
+     "E0"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "KnowledgeCut close minute (CUT:PRE-COMMON-CLOCK-1)"
+   },
+   {
+    "field_kind": "PREFIX_STATE",
+    "id": "FE:P.key.pos",
+    "path": "key.pos[*]",
+    "sc_ref": [
+     "E1",
+     "H3"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "today's position at t: a = close - IDR low and the IDR width w (ticks)"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:P.key.band",
+    "path": "key.band[*]",
+    "sc_ref": [
+     "H3"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "CMP:PRE-1 tolerance 1/4 of the IDR width"
+   },
+   {
+    "field_kind": "STRATEGY_OBJECT",
+    "id": "FE:P.schedule",
+    "path": "schedule.{*}",
+    "sc_ref": [
+     "S1"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "SessionBlock"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:P.today.cut",
+    "path": "today.{obs,slice}",
+    "sc_ref": [
+     "E0"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "KnowledgeCut (observed minute; slice = the close of the last closed M5)"
+   },
+   {
+    "field_kind": "STRATEGY_OBJECT",
+    "id": "FE:P.today.box",
+    "path": "today.{idrH,idrL,drH,drL}",
+    "sc_ref": [
+     "S1"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "today's box levels"
+   },
+   {
+    "field_kind": "PREFIX_STATE",
+    "id": "FE:P.today.pos",
+    "path": "today.pos.{a,w}",
+    "sc_ref": [
+     "E1"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "today's position at t (ticks)"
+   },
+   {
+    "field_kind": "CASE_RECORD",
+    "id": "FE:P.m.aw",
+    "path": "members[*].{w,a}",
+    "sc_ref": [
+     "H0",
+     "M0"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "HistoricalCase IDR width and close - IDR low at t (ticks)"
+   },
+   {
+    "field_kind": "CASE_RECORD",
+    "id": "FE:P.m.conf",
+    "path": "members[*].{conf,win}",
+    "sc_ref": [
+     "S2",
+     "H1"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "OutcomeRecord P-FIRST-CONF close minute and 15-minute window"
+   },
+   {
+    "field_kind": "CASE_RECORD",
+    "id": "FE:P.m.RX",
+    "path": "members[*].{R,X}.{v,t,bound}",
+    "sc_ref": [
+     "P1"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "OutcomeRecord FINAL-R / FINAL-X after the member's own confirmation (directed ticks; first open minute; one-sided bound)"
+   },
+   {
+    "field_kind": "CASE_RECORD",
+    "id": "FE:P.m.ties",
+    "path": "members[*].{R,X}.ties[*]",
+    "sc_ref": [
+     "P1",
+     "P0.1"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "OutcomeRecord repeated open minutes (kept, no extra vote)"
+   },
+   {
+    "field_kind": "STATISTIC",
+    "id": "FE:P.first",
+    "path": "counts.first.{*}",
+    "sc_ref": [
+     "§12.5"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "EST:P-DIR category count"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:P.side.n",
+    "path": "counts.side.{*}.n",
+    "sc_ref": [
+     "V2.2"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "n of the side subgroup (CS:P-SIDE-1)"
+   },
+   {
+    "field_kind": "MEASUREMENT",
+    "id": "FE:P.side.win.b",
+    "path": "counts.side.{*}.win[*][0]",
+    "sc_ref": [
+     "H1",
+     "M1"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "15-minute window index from the box end"
+   },
+   {
+    "field_kind": "STATISTIC",
+    "id": "FE:P.side.win.n",
+    "path": "counts.side.{*}.win[*][1]",
+    "sc_ref": [
+     "§12.5"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "EST:P-WHEN window count"
+   },
+   {
+    "field_kind": "STATISTIC",
+    "id": "FE:P.side.dr",
+    "path": "counts.side.{*}.dr.{*}",
+    "sc_ref": [
+     "§12.5"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "EST:P-DR category count"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:P.side.rxn",
+    "path": "counts.side.{*}.{R,X}.{known,unknown,none}",
+    "sc_ref": [
+     "V2.2"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "ENDPOINT support of EST:P-R | EST:P-X"
+   },
+   {
+    "field_kind": "STATISTIC",
+    "id": "FE:P.side.rxq",
+    "path": "counts.side.{*}.{R,X}.q[*]",
+    "sc_ref": [
+     "§12.5"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "EST:P-R | EST:P-X quartiles (IDR widths)"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:P.journal",
+    "path": "journal.{*}",
+    "sc_ref": [
+     "H1",
+     "H2"
+    ],
+    "surface": "API:/api/d24/pre",
+    "target": "CaseSetSnapshot.exclusions (undetermined states)"
    },
    {
     "field_kind": "MEASUREMENT",
@@ -6382,6 +7025,191 @@
      "V2.2"
     ],
     "version": "1.0"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "EST:P-DIR",
+    "parameters": [],
+    "profile": "PROFILE:PRE-24",
+    "q1_formalised_part_ru": "доля похожих к общему часовому срезу t сессий в каждой категории первого подтверждения после t: лонг, шорт, не было до конца блока, неизвестно",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION_AT_CUT",
+    "q4_case_set": [
+     "CS:P-SIMILAR-1",
+     "CS:P-SIMILAR-ALL-1"
+    ],
+    "q4_denominator": "N_MATCH_AT_CUT",
+    "q5_outcome": "OUT:P-FIRST-CONF-1",
+    "q5_region": "REG:NONE-1",
+    "q6_cut": "CUT:PRE-COMMON-CLOCK-1",
+    "q6_time_ru": "после общего часового среза t (те же часы ET каждой сессии) до конца блока H; M5, закрывшаяся в H, входит",
+    "q7_measure": "CATEGORY_SHARES",
+    "q8_order_ru": "категории вместе = N похожих; UNKNOWN — своя категория; при N < 20 — «мало сессий», набор не расширяется",
+    "q8_unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE",
+    "q8_weights": "NONE",
+    "question": "Q:P-DIR",
+    "sc_ref": [
+     "T1",
+     "§12.5",
+     "V2.1"
+    ],
+    "version": "1.0"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "EST:P-WHEN",
+    "parameters": [
+     {
+      "meaning_ru": "LONG или SHORT",
+      "name": "side",
+      "parameter_kind": "CATEGORY"
+     },
+     {
+      "meaning_ru": "общий часовой срез t",
+      "name": "cut",
+      "parameter_kind": "CUT"
+     }
+    ],
+    "profile": "PROFILE:PRE-24",
+    "q1_formalised_part_ru": "у похожих к t сессий, которые потом первыми подтвердили в эту сторону, — в каком 15-минутном окне от конца коробки (по метке открытия подтверждающей M5) было подтверждение",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION_AT_CUT",
+    "q4_case_set": [
+     "CS:P-SIDE-1"
+    ],
+    "q4_denominator": "KNOWN_COMPONENT_SUPPORT",
+    "q5_outcome": "OUT:P-FIRST-CONF-1",
+    "q5_region": "REG:TIME-WINDOW-1",
+    "q6_cut": "CUT:PRE-COMMON-CLOCK-1",
+    "q6_time_ru": "после общего часового среза t (те же часы ET каждой сессии) до конца блока H; M5, закрывшаяся в H, входит",
+    "q7_measure": "CATEGORY_SHARES",
+    "q8_order_ru": "доли среди подтвердивших в эту сторону (свой n), не доли всех похожих; окно — по метке открытия M5",
+    "q8_unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS",
+    "q8_weights": "NONE",
+    "question": "Q:P-WHEN",
+    "sc_ref": [
+     "T1",
+     "§12.5",
+     "V2.1"
+    ],
+    "version": "1.0"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "EST:P-DR",
+    "parameters": [
+     {
+      "meaning_ru": "LONG или SHORT",
+      "name": "side",
+      "parameter_kind": "CATEGORY"
+     },
+     {
+      "meaning_ru": "общий часовой срез t",
+      "name": "cut",
+      "parameter_kind": "CUT"
+     }
+    ],
+    "profile": "PROFILE:PRE-24",
+    "q1_formalised_part_ru": "доля подтвердивших в эту сторону похожих сессий в каждой из четырёх категорий исхода DR от своего подтверждения до конца блока",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION_AT_CUT",
+    "q4_case_set": [
+     "CS:P-SIDE-1"
+    ],
+    "q4_denominator": "KNOWN_COMPONENT_SUPPORT",
+    "q5_outcome": "OUT:DR-OUTCOME-1",
+    "q5_region": "REG:NONE-1",
+    "q6_cut": "CUT:PRE-COMMON-CLOCK-1",
+    "q6_time_ru": "от закрытия собственного подтверждения (его M5 не входит) до конца блока H",
+    "q7_measure": "CATEGORY_SHARES",
+    "q8_order_ru": "BROKEN может быть известен при пропуске; HELD — только при полном горизонте; NO_PERIOD отдельно от UNKNOWN",
+    "q8_unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE",
+    "q8_weights": "NONE",
+    "question": "Q:P-AFTER",
+    "sc_ref": [
+     "T1",
+     "§12.5",
+     "V2.1"
+    ],
+    "version": "1.0"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "EST:P-R",
+    "parameters": [
+     {
+      "meaning_ru": "LONG или SHORT",
+      "name": "side",
+      "parameter_kind": "CATEGORY"
+     },
+     {
+      "meaning_ru": "общий часовой срез t",
+      "name": "cut",
+      "parameter_kind": "CUT"
+     }
+    ],
+    "profile": "PROFILE:PRE-24",
+    "q1_formalised_part_ru": "квартили окончательного отката R после собственного подтверждения у подтвердивших в эту сторону похожих сессий, где он известен (в ширинах IDR от своего края IDR на стороне подтверждения)",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION_AT_CUT",
+    "q4_case_set": [
+     "CS:P-SIDE-KNOWN-1"
+    ],
+    "q4_denominator": "KNOWN_COMPONENT_SUPPORT",
+    "q5_outcome": "OUT:FINAL-R-1",
+    "q5_region": "REG:WHOLE-1",
+    "q6_cut": "CUT:PRE-COMMON-CLOCK-1",
+    "q6_time_ru": "от закрытия собственного подтверждения (его M5 не входит) до конца блока H",
+    "q7_measure": "QUANTILES",
+    "q8_order_ru": "квантили известной опоры; неизвестные и «нет периода» — отдельными счётами; не цель на сегодня",
+    "q8_unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS",
+    "q8_weights": "NONE",
+    "question": "Q:P-AFTER",
+    "sc_ref": [
+     "T1",
+     "§12.5",
+     "V2.1"
+    ],
+    "version": "1.0"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "EST:P-X",
+    "parameters": [
+     {
+      "meaning_ru": "LONG или SHORT",
+      "name": "side",
+      "parameter_kind": "CATEGORY"
+     },
+     {
+      "meaning_ru": "общий часовой срез t",
+      "name": "cut",
+      "parameter_kind": "CUT"
+     }
+    ],
+    "profile": "PROFILE:PRE-24",
+    "q1_formalised_part_ru": "квартили окончательного продолжения X после собственного подтверждения у подтвердивших в эту сторону похожих сессий, где оно известно (в ширинах IDR от своего края IDR)",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION_AT_CUT",
+    "q4_case_set": [
+     "CS:P-SIDE-KNOWN-1"
+    ],
+    "q4_denominator": "KNOWN_COMPONENT_SUPPORT",
+    "q5_outcome": "OUT:FINAL-X-1",
+    "q5_region": "REG:WHOLE-1",
+    "q6_cut": "CUT:PRE-COMMON-CLOCK-1",
+    "q6_time_ru": "от закрытия собственного подтверждения (его M5 не входит) до конца блока H",
+    "q7_measure": "QUANTILES",
+    "q8_order_ru": "квантили известной опоры; неизвестные и «нет периода» — отдельными счётами; не цель на сегодня",
+    "q8_unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS",
+    "q8_weights": "NONE",
+    "question": "Q:P-AFTER",
+    "sc_ref": [
+     "T1",
+     "§12.5",
+     "V2.1"
+    ],
+    "version": "1.0"
    }
   ],
   "estimators": [
@@ -6666,6 +7494,49 @@
      "V2.2"
     ],
     "unknown_handling_ru": "доля известных delta не ниже порога; неизвестные delta не входят ни в числитель, ни в знаменатель и передаются отдельно",
+    "version": "1.0"
+   },
+   {
+    "estimands": [
+     "EST:P-DIR",
+     "EST:P-WHEN",
+     "EST:P-DR"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "ESTR:P-CATEGORIES-1",
+    "implementations": [
+     "lab/pre24.py::_snapshot"
+    ],
+    "reference_definition": "lab/contract.py::est_categories",
+    "rounding_ru": "точные счёты; проценты после деления, один знак",
+    "rule": "CATEGORY_COUNTS_OVER_N",
+    "sc_ref": [
+     "V0",
+     "V2.1",
+     "§12.5"
+    ],
+    "unknown_handling_ru": "категории вместе = N похожих (для стороны — её n); UNKNOWN и NO_PERIOD — свои категории; N = 0 — оценки нет",
+    "version": "1.0"
+   },
+   {
+    "estimands": [
+     "EST:P-R",
+     "EST:P-X"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "ESTR:P-QUANTILES-1",
+    "implementations": [
+     "lab/pre24.py::_q"
+    ],
+    "reference_definition": "lab/contract.py::ref_quantile",
+    "rounding_ru": "четыре знака в ответе, два на экране",
+    "rule": "LINEAR_QUANTILES_AMONG_KNOWN",
+    "sc_ref": [
+     "V0",
+     "V2.2",
+     "§12.5"
+    ],
+    "unknown_handling_ru": "q25 / q50 / q75 среди известных (линейная интерполяция numpy); неизвестные и «нет периода» — отдельными счётами; интерполированный квантиль не называется наблюдённым уровнем",
     "version": "1.0"
    }
   ],
@@ -7860,6 +8731,155 @@
     "version": "1"
    },
    {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "forbidden_readings_ru": [
+     "рынок закончил откат",
+     "окончательный R известен",
+     "сигнал входа"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "FF:PHASE-RULE",
+    "labels": [
+     {
+      "key": "head",
+      "surface": "PANEL",
+      "text_ru": "Фаза по вашему правилу",
+      "view": "ANY"
+     },
+     {
+      "key": "open",
+      "surface": "PANEL",
+      "text_ru": "откат не сделан",
+      "view": "ANY"
+     },
+     {
+      "key": "done",
+      "surface": "PANEL",
+      "text_ru": "откат сделан — смотрим X",
+      "view": "ANY"
+     },
+     {
+      "key": "depth",
+      "surface": "PANEL",
+      "text_ru": "откат {r} SD · нужно −0,7",
+      "view": "ANY"
+     },
+     {
+      "key": "clock",
+      "surface": "PANEL",
+      "text_ru": "окончательный R семьи к {cut} был у {share} · нужно половина",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "PANEL",
+      "text_ru": "Ваше правило от 08.10: «откат сделан», когда откат достиг −0,7 и у половины сессий семьи окончательный R по часам уже был. Это правило, а не факт рынка и не сигнал; окончательный R до конца блока неизвестен.",
+      "view": "ANY"
+     }
+    ],
+    "note": "Operator 2026-10-08 (meaning/17 §7, Н2): the phase cue is his named rule with visible criteria (the rule is his: «все три»); the panel words are the executor's, for his acceptance. Its inputs are an observed fact (today's deepest point after the activation, FF:TODAY-PREFIX) and a registered estimand (EST:B-CLOCK-R over the whole price range, part EARLIER)",
+    "record_class": "OperatorNamedRule",
+    "sc_ref": [
+     "E1",
+     "E4",
+     "§10"
+    ],
+    "statement_ru": "Правило оператора (08.10.2026): «откат сделан», когда сегодняшний откат после подтверждения достиг зоны retirement (−0,7 SD) и у не меньше чем половины сессий семьи окончательный R по часам уже был к срезу (по известным, доля от N). Это названное правило оператора, а не утверждение о рынке, не окончательный R и не сигнал.",
+    "version": "1"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "forbidden_readings_ru": [
+     "сигнал",
+     "процент"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "FF:PRE-STATE",
+    "labels": [
+     {
+      "key": "line",
+      "surface": "PANEL",
+      "text_ru": "{colour} коробка · модель роста {up}, снижения {down} · цена {u} от низа IDR",
+      "view": "ANY"
+     },
+     {
+      "key": "up",
+      "surface": "PANEL",
+      "text_ru": "зелёная",
+      "view": "ANY"
+     },
+     {
+      "key": "down",
+      "surface": "PANEL",
+      "text_ru": "красная",
+      "view": "ANY"
+     },
+     {
+      "key": "flat",
+      "surface": "PANEL",
+      "text_ru": "серая",
+      "view": "ANY"
+     },
+     {
+      "key": "alive",
+      "surface": "PANEL",
+      "text_ru": "жива",
+      "view": "ANY"
+     },
+     {
+      "key": "broken",
+      "surface": "PANEL",
+      "text_ru": "сломана",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "PANEL",
+      "text_ru": "Сегодня к {cut} по закрытым M5: цвет коробки, модели дня (ADR → ODR → RDR) и где цена в коробке — по ним подобраны похожие сессии",
+      "view": "ANY"
+     }
+    ],
+    "record_class": "PrefixState",
+    "sc_ref": [
+     "E1",
+     "§12.5"
+    ],
+    "statement_ru": "Сегодня к {cut}: {colour} коробка, модель роста {up}, модель снижения {down}, цена на {u} ширины IDR от низа IDR; подтверждения ещё не было.",
+    "version": "1"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "forbidden_readings_ru": [
+     "доли надёжны",
+     "набор расширен"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "FF:FEW-SESSIONS",
+    "labels": [
+     {
+      "key": "few",
+      "surface": "PANEL",
+      "text_ru": "мало сессий: n={n}",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "PANEL",
+      "text_ru": "Меньше 20 сессий: по вашему решению от 08.10 набор не расширяется, доли показаны как есть (шаг доли {step}).",
+      "view": "ANY"
+     }
+    ],
+    "note": "Operator 2026-10-08 (meaning/17 §7): before the confirmation «честно писать «мало»» for n < 20 (his option «показать «мало сессий: n=…»»); after a DR break the same answer, where the threshold 20 is applied by the executor (to be confirmed at acceptance); the title is the executor's",
+    "record_class": "CaseSetSnapshot",
+    "sc_ref": [
+     "H2",
+     "V1",
+     "§12.5"
+    ],
+    "statement_ru": "В наборе меньше 20 сессий (n = {n}): набор не расширяется, доли показаны как есть, шаг доли 100 / n.",
+    "version": "1"
+   },
+   {
     "acceptance": "INHERITED_FROM_ACCEPTED_SCREEN",
     "forbidden_readings_ru": [
      "сигнал входа"
@@ -7920,6 +8940,30 @@
      "SRC:M15"
     ],
     "title_ru": "срез NOW — те же часы ET собственной сессии",
+    "version": "1"
+   },
+   {
+    "cut_rule": "t = the close of today's last closed M5 after the box, before today's confirmation; the historical cut is the same clock time ET of each session; a session needs every M5 after its box up to t present and no confirmation closed by t",
+    "forming_m5_in_statistics": false,
+    "grounds": "OPERATOR_REQUIREMENT",
+    "historical_alignment": "COMMON_SESSION_CLOCK",
+    "honesty_level": "today's bars after the cut never enter (a replayed history day has them in its data and they are cut off)",
+    "id": "CUT:PRE-COMMON-CLOCK-1",
+    "modes": [
+     "LIVE",
+     "HISTORY_DAY_REPLAY_BY_CLOSE"
+    ],
+    "sc_ref": [
+     "E0",
+     "E1",
+     "H3",
+     "§12.5"
+    ],
+    "source_refs": [
+     "SRC:DECISIONS-2026-10-08",
+     "SRC:SEMANTICS-22"
+    ],
+    "title_ru": "срез «до подтверждения» — те же часы ET каждой сессии",
     "version": "1"
    }
   ],
@@ -8098,6 +9142,10 @@
       "mechanism": "PROVENANCE_RECONCILIATION"
      },
      {
+      "check": "page:design/sozvezdiya-24/src/app.js::preBundle",
+      "mechanism": "PROVENANCE_RECONCILIATION"
+     },
+     {
       "check": "test:tests/contract_sc11.py::k28",
       "mechanism": "PROVENANCE_RECONCILIATION"
      },
@@ -8243,6 +9291,14 @@
      },
      {
       "check": "runtime:lab/contract.py::verify_forecast",
+      "mechanism": "PATH_COMPUTATION"
+     },
+     {
+      "check": "runtime:lab/contract.py::verify_pre",
+      "mechanism": "PATH_COMPUTATION"
+     },
+     {
+      "check": "test:tests/contract_sc11.py::test_pre_profile",
       "mechanism": "PATH_COMPUTATION"
      },
      {
@@ -9088,6 +10144,37 @@
     "title_ru": "время до первого нового X",
     "uses_case_future_as_label": true,
     "version": "1.0"
+   },
+   {
+    "components": [
+     "CATEGORY",
+     "FIRST_TIME"
+    ],
+    "contribution": "ONE_CATEGORY",
+    "event": "CONFIRMATION",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "horizon_end": "BLOCK_END_CLOSE_INCLUSIVE",
+    "horizon_start": "COMMON_CUT_EXCLUSIVE",
+    "id": "OUT:P-FIRST-CONF-1",
+    "implementations": [
+     "lab/pre24.py::_snapshot"
+    ],
+    "projection": "FIRST_CONFIRMATION_AFTER_CUT",
+    "reference_definition": "lab/contract.py::ref_first_confirmation",
+    "sc_ref": [
+     "P0",
+     "S2",
+     "§12.5"
+    ],
+    "source_refs": [
+     "SRC:DECISIONS-2026-10-08",
+     "SRC:SEM-1.0"
+    ],
+    "statuses": "LONG / SHORT: the first M5 closing in (t, H] strictly beyond its own DR (equality is not a confirmation) with no wholly missing M5 before it; its close minute and 15-minute window (by the open label, from the box end) are known; NONE: (t, H] fully observed without one; UNKNOWN: a wholly missing M5 comes first",
+    "tie_rule": "ONE_VOTE_PER_CASE",
+    "title_ru": "первое подтверждение после среза",
+    "uses_case_future_as_label": true,
+    "version": "1.0"
    }
   ],
   "profiles": [
@@ -9127,6 +10214,23 @@
      "SRC:NOW-PROVERKA"
     ],
     "title_ru": "условный слой «Сейчас»",
+    "version": "1.0"
+   },
+   {
+    "edition": "DR-LAB-SC-1.1",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "PROFILE:PRE-24",
+    "note": "Before today's confirmation there is still no directed base family (§12.1). PRE-24 is a separate set at the common clock cut: similar sessions by box colour, models of the day and price position (the operator's selection of 2026-10-08 with the definitions of design 22), never widened; fewer than 20 are shown with «мало сессий». Every number is C1. Built on the branch resheniya-08-10 for the operator's acceptance; not yet accepted by him.",
+    "profile_status": "ACTIVE",
+    "sc_ref": [
+     "§12.5"
+    ],
+    "source_refs": [
+     "SRC:DECISIONS-2026-10-08",
+     "SRC:SEMANTICS-22",
+     "SRC:CODE-PRE24"
+    ],
+    "title_ru": "второй экран до подтверждения",
     "version": "1.0"
    }
   ],
@@ -9320,6 +10424,39 @@
     "scene_ru": "разведка 2018–2025: доля зон со статусом «держится» / «возможна» / «невозможна», в которых потом лёг окончательный экстремум",
     "text_ru": "Как часто зоны такого статуса сбывались в исследовании?",
     "version": "1"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "Q:P-DIR",
+    "sc_ref": [
+     "T0",
+     "§12.5"
+    ],
+    "scene_ru": "до сегодняшнего подтверждения — как часто похожие к этому часу сессии (тот же цвет коробки, те же модели дня, цена там же в коробке) потом подтверждали лонг, шорт или не подтверждали",
+    "text_ru": "В какую сторону подтверждали похожие?",
+    "version": "1"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "Q:P-WHEN",
+    "sc_ref": [
+     "T0",
+     "§12.5"
+    ],
+    "scene_ru": "в какие 15 минут было подтверждение у тех похожих, кто подтвердил в эту сторону",
+    "text_ru": "Когда подтверждали?",
+    "version": "1"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "Q:P-AFTER",
+    "sc_ref": [
+     "T0",
+     "§12.5"
+    ],
+    "scene_ru": "заранее: куда шли похожие сессии после своего подтверждения в каждую сторону — исход DR, окончательный откат и продолжение",
+    "text_ru": "Что было после подтверждения?",
+    "version": "1"
    }
   ],
   "regions": [
@@ -9468,7 +10605,7 @@
     "document": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
     "grounds": "CONTRACT_FORMALISATION",
     "id": "SRC:SC-1.1",
-    "revision": "sha256-lf:bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b",
+    "revision": "sha256-lf:3572408e0cd91147ebe76056612ecae1bf8f8abc20203cedb5f033e94e09b775",
     "role": "NORMATIVE_CONTRACT",
     "sc_ref": [
      "§0.2"
@@ -9843,6 +10980,26 @@
     "sc_ref": [
      "§14.4"
     ]
+   },
+   {
+    "document": "meaning/17-rabota-treidera.md",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "SRC:DECISIONS-2026-10-08",
+    "locator": "§7: the operator's answers and decisions of 2026-10-08",
+    "role": "DECISION",
+    "sc_ref": [
+     "§12.5",
+     "§14.3"
+    ]
+   },
+   {
+    "document": "lab/pre24.py",
+    "grounds": "IMPLEMENTATION_FACT",
+    "id": "SRC:CODE-PRE24",
+    "role": "IMPLEMENTATION",
+    "sc_ref": [
+     "§12.5"
+    ]
    }
   ],
   "strategy_rules": [
@@ -9952,6 +11109,24 @@
      "§12.3"
     ],
     "surface_profile": "SC11_NOW_1_0"
+   },
+   {
+    "definitions": "SRC:DECISIONS-2026-10-08",
+    "estimands": [
+     "EST:P-DIR",
+     "EST:P-WHEN",
+     "EST:P-DR",
+     "EST:P-R",
+     "EST:P-X"
+    ],
+    "id": "API:/api/d24/pre",
+    "marking": "body.contract (ContractEnvelope) + header X-DR-Lab-Contract",
+    "route": "/api/d24/pre",
+    "sc_ref": [
+     "§12.5",
+     "§12.3"
+    ],
+    "surface_profile": "SC11_PRE_24"
    },
    {
     "definitions": "SRC:SEMANTICS-24",
@@ -10328,23 +11503,23 @@
  },
  "stamps": {
   "document": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
-  "document_sha256_lf": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b",
+  "document_sha256_lf": "3572408e0cd91147ebe76056612ecae1bf8f8abc20203cedb5f033e94e09b775",
   "edition": "DR-LAB-SC-1.1",
   "linkml": "1.11.1",
-  "registry_sha256": "0c75a97d33492681ca84fd010b725255b851dc449604b953f6086538c0977740",
-  "runtime_spec_sha256": "9795540070e3c2d2e04f06013481334397c5afe792f18fcb11f9417237d533b7",
-  "schema_sha256_lf": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
+  "registry_sha256": "554a6625b47598800f1be4431895fbdec637fcf19a29e9cdc43d76508cf623f3",
+  "runtime_spec_sha256": "41511ba9e6715e6b4df6af772aa1fc90ee01b0b1c2d9f6e3c43a3fb9911d7f92",
+  "schema_sha256_lf": "f4db474cde31b194bfec3b397480aa8284a071b44129d003c90dfa4e362398f0",
   "sources": {
-   "contract/registry/00-editions.yaml": "037d3768da710e3004d8bbc0b21856ad337121b64dcdbdf7b8f2acec07616ee3",
-   "contract/registry/10-observation-strategy-measurement.yaml": "2155cdd6dd659aad58c6c4bb5a218e037a5bac51bb0420cca9c19bce2b72fd29",
-   "contract/registry/20-cases-outcomes.yaml": "1a8744c10aa763f21b0e7c419bf7b889388a801b6a4a9fcdd6024d6a674a7d69",
-   "contract/registry/30-questions-estimands.yaml": "93b3821760f1f6964a6d8bc9c0699f8b390fc68c00842f27dfecc64a1750da5c",
-   "contract/registry/40-claims.yaml": "199d0c0ac73819fd6f4659297f91f8fb8a7ff80bfb296ebe342fbdda12027b23",
+   "contract/registry/00-editions.yaml": "53f549a7ac2c8b8503fd445ee7eba7ae81af571ae8d6168f2d74f641074d20a3",
+   "contract/registry/10-observation-strategy-measurement.yaml": "017dff6cc6ea9ef2340a78aa633fa44306a27d27875f856165a6e6d586a0cb27",
+   "contract/registry/20-cases-outcomes.yaml": "11225b13656c601721991fb8b0e3dcb49188e3d4de0d654eb84ba3631e560210",
+   "contract/registry/30-questions-estimands.yaml": "18e333e2e1da81ddfd5aa1211e69bc5bf36ee60c6422d5331e6827d7e75d58ce",
+   "contract/registry/40-claims.yaml": "35fd86f3d9246b2a66c242463c08f373552cf14aa1d0578581f0999e5cfbd2d3",
    "contract/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
-   "contract/registry/60-surfaces.yaml": "ba0f088988b262f0f664b260672ea9c94562970f5aca13db924667a6e0ca4fe9",
-   "contract/registry/70-obligations.yaml": "c5baded1777e25e259c687bdb72c0fb707ec966bfd53d1439691e8db3dbc5174",
-   "contract/schema/dr_lab_sc.yaml": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
-   "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"
+   "contract/registry/60-surfaces.yaml": "52540a34e0da6eca04f06d54586cc3969c546ef0b55615f8bc6182b65fb0f8d3",
+   "contract/registry/70-obligations.yaml": "a5dd18598f0ac311d2b4179f7afbc24a6fe9dd03faedda5c2786b3fdf29cf1ed",
+   "contract/schema/dr_lab_sc.yaml": "f4db474cde31b194bfec3b397480aa8284a071b44129d003c90dfa4e362398f0",
+   "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "3572408e0cd91147ebe76056612ecae1bf8f8abc20203cedb5f033e94e09b775"
   }
  }
 }

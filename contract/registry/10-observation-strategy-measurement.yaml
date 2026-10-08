@@ -149,3 +149,14 @@ knowledge_cuts:
     modes: [LIVE, HISTORY_DAY_REPLAY_BY_CLOSE, RESEARCH_WALK_FORWARD]
     honesty_level: "today's bars after the cut never enter (a replayed history day has them in its data and they are cut off)"
     source_refs: [SRC:NOW-1.0, SRC:M15]
+  - id: CUT:PRE-COMMON-CLOCK-1
+    version: "1"
+    sc_ref: ["E0", "E1", "H3", "§12.5"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: срез «до подтверждения» — те же часы ET каждой сессии
+    cut_rule: "t = the close of today's last closed M5 after the box, before today's confirmation; the historical cut is the same clock time ET of each session; a session needs every M5 after its box up to t present and no confirmation closed by t"
+    forming_m5_in_statistics: false
+    historical_alignment: COMMON_SESSION_CLOCK
+    modes: [LIVE, HISTORY_DAY_REPLAY_BY_CLOSE]
+    honesty_level: "today's bars after the cut never enter (a replayed history day has them in its data and they are cut off)"
+    source_refs: [SRC:DECISIONS-2026-10-08, SRC:SEMANTICS-22]

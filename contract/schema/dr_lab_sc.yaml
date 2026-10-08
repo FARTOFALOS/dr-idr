@@ -1118,6 +1118,7 @@ enums:
       RESIDUAL_NEW_EXTREME: {}
       RESIDUAL_DELTA: {}
       RESIDUAL_TIME_TO_NEW: {}
+      FIRST_CONFIRMATION_AFTER_CUT: {description: "первое подтверждение после общего среза (PRE-24)"}
       ALGORITHMIC_REGION_MEMBERSHIP: {}
       CLOCK_SPLIT: {}
       REGION_STABILITY: {}
@@ -1139,6 +1140,7 @@ enums:
       DELTA_X: {}
       TAU_R: {}
       TAU_X: {}
+      CONFIRMATION: {description: "подтверждение — первое закрытие M5 за своим DR"}
   ContributionKind:
     annotations: {sc_ref: "P0"}
     permissible_values: {ONE_POINT: {}, ONE_CATEGORY: {}, ONE_BINARY_VOTE: {}, ONE_CELL_AT_M5: {}, BAND_INDICATORS_AT_M5: {}, ONE_MAGNITUDE: {}, ONE_DURATION: {}, ONE_MEMBERSHIP: {}}
@@ -1305,6 +1307,7 @@ enums:
     permissible_values:
       SC11_BASE_24: {}
       SC11_NOW_1_0: {}
+      SC11_PRE_24: {description: "профиль PRE-24: до подтверждения (решение оператора 08.10.2026)"}
       SC11_OBSERVATION: {}
       SC11_CONTRACT_SERVICE: {}
       LEGACY_SCREEN_22: {}

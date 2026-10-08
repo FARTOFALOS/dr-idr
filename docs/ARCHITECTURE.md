@@ -6,10 +6,12 @@ plain arithmetic over the history base, so the same candles always give the same
 (`lab/contract.py`, `contract/README.md`); the other routes serve legacy surfaces (design 22, the classic screen, the
 research dashboard, design 23) and are marked `OUTSIDE_SC11`.
 
-**Presentation layer status (07.10.2026):** `spec/DR-LAB-SWPC-1.1.md` is the current implementation target between
-SC-1.1 semantic truth and the screen-24 frontend. It is not a runtime service yet: the engineer must bind existing
-components to its PresentationBindings and M01–M18, then the operator performs H01–H12. Until that work is accepted,
-the current frontend remains the product baseline.
+**Presentation layer status (07.10.2026):** `spec/DR-LAB-SWPC-1.1.md` binds SC-1.1 semantic truth to the screen-24
+frontend and is implemented without a runtime service of its own: the page withholds in the units of the server's gate
+(`family`, `zones.<ev>`, `today.zones`, a NOW event, a passport), tags every violation with its scene, and shows the
+contract's state on the hidden «Сводка». `tests/swpc11.py` reads the document's tables and checks them against the
+registry and the code; `tests/swpc11_browser.mjs` executes M01–M18 in a throw-away headless Chrome. The view awaits the
+operator's H01–H12 (`meaning/16-priyomka-swpc.md`).
 
 ## Processes and ports
 
@@ -80,21 +82,22 @@ Tick sizes: NQ, ES 0.25; YM 1. History bars carry the **close** minute of each M
 | `GET /api/d24/family?instrument=NQ&session=RDR[&date=…][&at=<day minute>][&view=auto\|conf][:all]` | design 24: today's state at the slice `at` and the snapshot of its family per DR-LAB-SEM-1.0 (`lab/scene24.py`) with its zone maps (`lab/zonemap24.py`); `:all` = the all-weekdays family, an explicit choice |
 | `GET /api/d24/dates?instrument=NQ` | design 24: every trading date of the base with the sessions whose first confirmation is established that day (`[[date, "AOR"], …]`) |
 | `GET /api/d24/now?instrument=NQ&session=RDR[&date=…][&at=…][&view=…]` | design 24: the layer «Сейчас» of the family at the slice (DR-LAB-NOW-1.0, `lab/now24.py`) |
+| `GET /api/d24/pre?instrument=NQ&session=RDR[&date=…][&at=…][&scope=weekday\|all]` | design 24, before today's confirmation (profile PRE-24, SC-1.1 §12.5, operator 2026-10-08; branch `resheniya-08-10`): the similar sessions at the cut by box colour, models of the day and price position (`lab/pre24.py`) — `key`, `N`, `few` (N < 20), `members` (each with its first confirmation after the cut, its window, and after a known confirmation its own R, X, DR outcome), `counts.first` and `counts.side.{LONG,SHORT}` (windows, DR outcome, R/X quartiles), `journal`; another status (`confirmed`, `forming`, `model_unknown`, `prefix_unknown`, …) carries no number |
 | `GET /api/contract` | the compiled machine contract DR-LAB-SC-1.1 (`contract/build/registry.json` with its stamps) and its runtime status (`CONFORMANT` / `CONTRACT_STALE` with reasons) |
 | `POST /api/d24/verify` | body `{instrument, session, at, date, view, passports: [{id, estimand, params, yes_count, unknown_count, no_event_count, N}]}`: the page's passports recomputed by the reference definitions (`lab/contract.py::verify_passports`) → `{status, snapshot_id, checked, mismatches}`; the server's only POST, it changes nothing |
 
 ### The contract gate (`lab/contract.py`, DR-LAB-SC-1.1; `contract/README.md`)
 
-The routes `/api/d24/family`, `/api/d24/now` and `/api/d24/day` leave through the gate. Their bodies keep the fields
+The routes `/api/d24/family`, `/api/d24/now`, `/api/d24/pre` and `/api/d24/day` leave through the gate. Their bodies keep the fields
 below and gain `contract`: a `ContractEnvelope` of `contract/schema/dr_lab_sc.yaml` (edition, registry hash, status
 `CONFORMANT` | `VIOLATION` | `CONTRACT_STALE`, the request, the records it is about — observation, session, frame,
 cut, case sets, regions, reachability, history clock, prefix states —, the checks run, the violations, and one
 `bundle` per published statistic: estimand, claim form, derivation with its input versions, estimates, supports, the
 admissible claim classes and the claim). Before it leaves, the family snapshot, its zones, today's statuses and the NOW
-numbers are re-derived by the reference definitions; a failing object is withheld (`status: contract_violation` for a
+numbers and the PRE set with its outcomes are re-derived by the reference definitions; a failing object is withheld (`status: contract_violation` for a
 whole family, `mode: WITHHELD` for a NOW event, a missing zone map for a failed zone check). A number that no field
 encoding of `contract/registry/60-surfaces.yaml` declares makes the response a violation. When the compiled contract
-differs from its sources, `/api/d24/family` and `/api/d24/now` answer `status: contract_stale` with no statistic and
+differs from its sources, `/api/d24/family`, `/api/d24/now` and `/api/d24/pre` answer `status: contract_stale` with no statistic and
 `/api/d24/day` still serves the candles. Every JSON response carries the header `X-DR-Lab-Contract`
 (`DR-LAB-SC-1.1; profile=…; status=…; registry=…`; legacy and service routes: `status=OUTSIDE_SC11`).
 
