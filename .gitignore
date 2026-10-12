@@ -6,3 +6,5 @@ __pycache__/
 Thumbs.db
 # the LinkML environment of the machine contract (contract/setup-linkml.ps1 recreates it)
 .venv-linkml/
+# the Q1 pilot runtime: issues, outcomes, reconciliation output (case-level, local only)
+lab/.q1-pilot/
