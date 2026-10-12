@@ -27,8 +27,8 @@ if (Test-Url ($url + 'api/q1/meta')) {
     # A git worktree has no built base of its own: read the main checkout's lab/.runtime (read only)
     if (-not (Test-Path (Join-Path $root 'lab\.runtime\boxes_nq_meta.json'))) {
         $gitFile = Join-Path $root '.git'
-        if ((Test-Path $gitFile) -and -not (Get-Item $gitFile).PSIsContainer) {
-            $gitdir = ((Get-Content $gitFile -Raw) -replace '^gitdir:\s*', '').Trim()
+        if ((Test-Path $gitFile) -and -not (Get-Item -Force $gitFile).PSIsContainer) {     # .git is a hidden file in a worktree
+            $gitdir = ([System.IO.File]::ReadAllText($gitFile) -replace '^gitdir:\s*', '').Trim()
             $main = Split-Path (Split-Path (Split-Path $gitdir))
             $env:DR_IDR_RUNTIME = Join-Path $main 'lab\.runtime'
         }
