@@ -1308,6 +1308,7 @@ enums:
       SC11_BASE_24: {}
       SC11_NOW_1_0: {}
       SC11_PRE_24: {description: "профиль PRE-24: до подтверждения (решение оператора 08.10.2026)"}
+      SC11_ARRIVE_24: {description: "профиль ARRIVE-24: ответ «отсюда до места» (Q1, поручение оператора 12.10.2026)"}
       SC11_OBSERVATION: {}
       SC11_CONTRACT_SERVICE: {}
       LEGACY_SCREEN_22: {}

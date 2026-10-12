@@ -1,4 +1,4 @@
-# 12 · SWPC-1.1: паспорта привязок B01–B17
+# 12 · SWPC-1.1: паспорта привязок B01–B18
 
 [← к оглавлению](README.md)
 
@@ -299,7 +299,7 @@
 | Поле | Содержание |
 |---|---|
 | binding_id, version | B13 · SWPC-1.1 |
-| semantic_ref | `EST:B-CLOCK-PEAK-R`, `EST:B-CLOCK-PEAK-X`, `EST:B-CLOCK-R`, `EST:B-CLOCK-X`, `EST:B-CROSS-FULL`, `EST:B-LEVEL-FULL`, `EST:B-LEVEL-REST`, `EST:B-RX-BAND-R`, `EST:B-RX-BAND-X`, `EST:B-RX-DIFF`, `EST:B-RX-REGION-R`, `EST:B-RX-REGION-X`, `EST:B-RX-WINDOW-R`, `EST:B-RX-WINDOW-X`, `EST:B-VISIT-FULL`, `EST:B-VISIT-REST`, `EST:B-ZONE-R`, `EST:B-ZONE-X`, `EST:N-IF-NEW-R`, `EST:N-IF-NEW-X`, `FF:MEMBER`, `FF:PASSPORT-VIEW`, `FF:TODAY-LEVEL`; meaning/13 № 9, 13, 23, 33, 42, 43 |
+| semantic_ref | `EST:B-CLOCK-PEAK-R`, `EST:B-CLOCK-PEAK-X`, `EST:B-CLOCK-R`, `EST:B-CLOCK-X`, `EST:B-CROSS-FULL`, `EST:B-LEVEL-FULL`, `EST:B-LEVEL-REST`, `EST:B-RX-BAND-R`, `EST:B-RX-BAND-X`, `EST:B-RX-DIFF`, `EST:B-RX-REGION-R`, `EST:B-RX-REGION-X`, `EST:B-RX-WINDOW-R`, `EST:B-RX-WINDOW-X`, `EST:B-VISIT-FULL`, `EST:B-VISIT-REST`, `EST:B-ZONE-R`, `EST:B-ZONE-X`, `EST:K-ARRIVE`, `EST:N-IF-NEW-R`, `EST:N-IF-NEW-X`, `FF:MEMBER`, `FF:PASSPORT-VIEW`, `FF:TODAY-LEVEL`; meaning/13 № 9, 13, 23, 33, 42, 43 |
 | claim_basis | C0, C1, наблюдаемый факт |
 | context_key | реестр SC-1.1, инструмент, торговая дата, блок, view conf/brk, scope, family_id, snapshot_id |
 | clock_basis | действие пользователя |
@@ -414,6 +414,30 @@
 | origin_class | NEW_SWPC 08.10: решение оператора «второй экран до подтверждения нужен» (Н6) |
 | provenance | spec/DR-LAB-SWPC-1.1.md §5, §9; база main@4526d30 |
 
+## B18 · «Отсюда до места»
+
+| Поле | Содержание |
+|---|---|
+| binding_id, version | B18 · SWPC-1.1 |
+| semantic_ref | `EST:K-ARRIVE`, `FF:FEW-SESSIONS`, `FF:K-TARGET`; meaning/13 № 57; SC-1.1 §12.6; meaning/18-otsyuda-na-ekrane-24.md |
+| claim_basis | C1, наблюдаемый факт |
+| context_key | реестр SC-1.1, инструмент, торговая дата, блок, подтверждение, срез, scope, family_id и snapshot_id семьи-родителя |
+| clock_basis | закрытая M5 (срез ARRIVE-24) после подтверждения |
+| work_ref | W01, W08, W09, W13 — Инструмент, блок, дата, live/история, срез; BASE / NOW; B0 по времени / допущенное сравнение пути; Ноль / неизвестно / нет периода / нет семьи / нет опоры / число отозвано; Проверенное отображение / загрузка / непригодные данные / нарушение контракта |
+| comparison_set | W01: Верхнее управление, часы, свечи, оси; W08: Исходная карта, постоянное место NOW, его срез и опора; W09: Причина отсутствия и соответствующая опора; W13: Состояние публикации, затронутый объект, причина |
+| hazard | W01: Число другого инструмента или дня принято за текущую сцену; W08: NOW заменил исходную семью; B0 назван похожим путём; W09: Прочерк или пустая картинка прочитаны как нулевая частота; W13: Старое или неподтверждённое число продолжает работать как текущее |
+| deadline | До чтения зависимого числа |
+| recoverability | блок стоит в сводке под «Сейчас» после подтверждения; загрузка — «считаю…», недоступность — «Локальный сервер не ответил»; закреплённая строка держит подсветку |
+| presentation_role | AMBIENT_STATE+ON_DEMAND |
+| anchor | постоянное место A5 после подтверждения, паспорт в A6/A7 → код: `arriveOf`, `arriveBundle`, `arriveHtml`, `arriveTip`, `arriveBody`, `drawHighlight`, `emphOf` |
+| channels | текст: подписи CF:K-ARRIVE, FF:K-TARGET, FF:FEW-SESSIONS; доля или диапазон и «дошли k из n» у каждого места; при наведении — яркая линия места (как у уровня) и яркие окончательные откаты сессий ответа, остальные точки тише; паспорт в инспекторе и окне 1 |
+| forbidden_encodings | Доля не читается как шанс сегодня, как разворот или вход на месте, как доля всей семьи; лесенка не подменяется; набор не расширяется ради n; над свечами нет нового текста; M20, H14 |
+| persistence | После подтверждения — в сводке под «Сейчас»: три места с ценой; у каждого доля стоявших там же и ещё не бывших у места, которые потом дошли, со счётом «дошли k из n» (при неизвестных — диапазон), место, где сегодня уже были, — «уже дошли в ЧЧ:ММ», при n < 20 — «мало сессий: n=…» без числа. Обновляется на закрытой M5; родитель — семья на экране и её переключатель «день недели / все дни». Наведение: линия места как у уровня и окончательные откаты этих сессий, остальное тише; паспорт с цепочкой отбора — в инспекторе. Числа — только из проверенных пакетов ARRIVE-24 своего среза |
+| personalization | охват «день недели / все дни» (прежний переключатель семьи) |
+| tests | машинные: M20 (`m20`); человеческие: H14 — ждут оператора |
+| origin_class | NEW_SWPC 12.10: поручение оператора интегрировать проверенный механизм Q1, не подменяя BASE/NOW |
+| provenance | spec/DR-LAB-SWPC-1.1.md §5, §9; база main@4526d30 |
+
 ## Маршруты §9: величина или форма факта → привязки
 
 | ID | Привязки | Утверждение |
@@ -452,6 +476,7 @@
 | `EST:B-ZONE-RESIDUAL-R` | B05, B11 | C0 |
 | `EST:B-ZONE-RESIDUAL-X` | B05, B11 | C0 |
 | `EST:B-ZONE-X` | B05, B13, B14 | C0 |
+| `EST:K-ARRIVE` | B13, B18 | C1 |
 | `EST:N-DELTA-GE-R` | B10 | C1 |
 | `EST:N-DELTA-GE-X` | B10 | C1 |
 | `EST:N-DELTA-Q-R` | B10 | C1 |
@@ -476,8 +501,9 @@
 | `EST:ZD-NULL-R` | B14 | C0 |
 | `EST:ZD-NULL-X` | B14 | C0 |
 | `EST:ZM3-STUDY` | B14 | C1 |
-| `FF:FEW-SESSIONS` | B01, B17 | наблюдаемый факт |
+| `FF:FEW-SESSIONS` | B01, B17, B18 | наблюдаемый факт |
 | `FF:HISTORY-CLOCK` | B08 | наблюдаемый факт |
+| `FF:K-TARGET` | B18 | наблюдаемый факт |
 | `FF:MEMBER` | B04, B13, B14 | наблюдаемый факт |
 | `FF:PASSPORT-VIEW` | B01, B13, B14 | наблюдаемый факт |
 | `FF:PHASE-RULE` | B08 | наблюдаемый факт |

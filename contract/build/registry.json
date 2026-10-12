@@ -448,6 +448,79 @@
     "version": "1.0"
    },
    {
+    "activation_kind": "CONFIRMATION",
+    "comparison": "CMP:K-POS-1",
+    "condition_availability": "PREFIX_AT_CUT",
+    "condition_ru": "в этот же час по часам Нью-Йорка подтверждение уже было и после него закрылась хотя бы одна M5, все M5 после подтверждения есть, DR цел; после своего подтверждения до места ещё не доходили; закрытие на срезе — в пределах ¼ ширины IDR от сегодняшнего, каждая в своей шкале",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "history_rule": "the members of today's confirmation family F that at the common clock cut t are eligible (their own confirmation before t, at least one later M5, the prefix complete, no close beyond their own opposite DR — the B0 rule of NOW-1.0), have not yet been at the place L after their own confirmation (min low_u > L) and stand where today stands by CMP:K-POS-1",
+    "id": "CS:K-ARRIVE-1",
+    "key_fields": [
+     "INSTRUMENT",
+     "BLOCK",
+     "WEEKDAY",
+     "DIRECTION",
+     "CONFIRMATION_WINDOW",
+     "DATE_BEFORE_TARGET"
+    ],
+    "live_use": "PERMITTED",
+    "parent": [
+     "CS:F-CONF-1"
+    ],
+    "profile": "PROFILE:ARRIVE-24",
+    "role": "MATCHED_AT_CUT",
+    "sc_ref": [
+     "H1",
+     "H3",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:Q1-PILOT",
+     "SRC:KADR-1.1",
+     "SRC:INSTRUCTION-2026-10-12"
+    ],
+    "title_ru": "стояли там же и ещё не были у места (семья дня недели)",
+    "undetermined_rule": "a member with a wholly missing M5 between its own confirmation and t is not eligible (PREFIX_HOLE); fewer than 20 matched: no number, the set is never widened",
+    "version": "1.0",
+    "weekday_scope": "WEEKDAY"
+   },
+   {
+    "activation_kind": "CONFIRMATION",
+    "comparison": "CMP:K-POS-1",
+    "condition_availability": "PREFIX_AT_CUT",
+    "condition_ru": "в этот же час по часам Нью-Йорка подтверждение уже было и после него закрылась хотя бы одна M5, все M5 после подтверждения есть, DR цел; после своего подтверждения до места ещё не доходили; закрытие на срезе — в пределах ¼ ширины IDR от сегодняшнего, каждая в своей шкале",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "history_rule": "as CS:K-ARRIVE-1 within the all-weekdays confirmation family (the operator's explicit switch, never a fallback)",
+    "id": "CS:K-ARRIVE-ALL-1",
+    "key_fields": [
+     "INSTRUMENT",
+     "BLOCK",
+     "DIRECTION",
+     "CONFIRMATION_WINDOW",
+     "DATE_BEFORE_TARGET"
+    ],
+    "live_use": "PERMITTED",
+    "parent": [
+     "CS:F-CONF-ALL-1"
+    ],
+    "profile": "PROFILE:ARRIVE-24",
+    "role": "MATCHED_AT_CUT",
+    "sc_ref": [
+     "H1",
+     "H3",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:Q1-PILOT",
+     "SRC:KADR-1.1",
+     "SRC:INSTRUCTION-2026-10-12"
+    ],
+    "title_ru": "стояли там же и ещё не были у места (семья всех дней — явный выбор)",
+    "undetermined_rule": "a member with a wholly missing M5 between its own confirmation and t is not eligible (PREFIX_HOLE); fewer than 20 matched: no number, the set is never widened",
+    "version": "1.0",
+    "weekday_scope": "ALL_WEEKDAYS"
+   },
+   {
     "condition_availability": "RETROSPECTIVE",
     "condition_ru": "исследование zone_map_3_2026_10_01: цели 2018–2025, зоны со статусом через 30 / 60 / 120 минут после подтверждения; корпус видели при выборе идеи",
     "grounds": "RESEARCH_RESULT",
@@ -3136,6 +3209,202 @@
     "subject_ru": "подтвердившие в эту сторону похожие сессии с известным продолжением",
     "value_form": "QUANTILES",
     "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "в этот же час по часам Нью-Йорка подтверждение уже было и после него закрылась хотя бы одна M5, все M5 после подтверждения есть, DR цел; после своего подтверждения до места ещё не доходили; закрытие на срезе — в пределах ¼ ширины IDR от сегодняшнего",
+    "estimand": "EST:K-ARRIVE",
+    "forbidden_readings_ru": [
+     "шанс, что сегодня дойдёт",
+     "место разворота или конец отката",
+     "вход или исполнение ордера на месте",
+     "доля всей семьи",
+     "время, когда дойдёт"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:K-ARRIVE",
+    "labels": [
+     {
+      "key": "head",
+      "surface": "PANEL",
+      "text_ru": "Отсюда до места",
+      "view": "ANY"
+     },
+     {
+      "key": "head_title",
+      "surface": "PANEL",
+      "text_ru": "Сессии семьи, которые в этот же час стояли там же (закрытие в пределах ¼ ширины IDR от сегодняшнего) и ещё не были у места: сколько из них потом до конца сессии до него дошли. Считается заново на каждой закрытой M5. У каждого места свой набор — те, кто ещё не был именно у него, — поэтому строки не вкладываются друг в друга. Доли всей семьи (лесенка, «Сейчас») не меняются.",
+      "view": "ANY"
+     },
+     {
+      "key": "weekday",
+      "surface": "PANEL",
+      "text_ru": "день недели",
+      "view": "ANY"
+     },
+     {
+      "key": "all",
+      "surface": "PANEL",
+      "text_ru": "все дни",
+      "view": "ANY"
+     },
+     {
+      "key": "p0",
+      "surface": "PANEL",
+      "text_ru": "края IDR",
+      "view": "ANY"
+     },
+     {
+      "key": "p12",
+      "surface": "PANEL",
+      "text_ru": "середины IDR",
+      "view": "ANY"
+     },
+     {
+      "key": "p710",
+      "surface": "PANEL",
+      "text_ru": "−0,7",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "до {place} · {price}",
+      "view": "ANY"
+     },
+     {
+      "key": "sub",
+      "surface": "PANEL",
+      "text_ru": "дошли {yes} из {n}",
+      "view": "ANY"
+     },
+     {
+      "key": "sub_unknown",
+      "surface": "PANEL",
+      "text_ru": "дошли {yes} из {n} · неизвестно {unknown}",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "PANEL",
+      "text_ru": "После {cut} до {end}: из {n} сессий семьи ({scope}), которые в {cut} стояли там же и ещё не были у места, до него дошли {yes}, не дошли {no}, неизвестно {unknown} (нет свечи M5). Среди известных — {pct}. Это история этих сессий, не прогноз и не сделка; доля всей семьи «после {cut}» — в лесенке, это другой набор.",
+      "view": "ANY"
+     },
+     {
+      "key": "win_head",
+      "surface": "INSPECTOR",
+      "text_ru": "Отсюда до {place} · {price}",
+      "view": "ANY"
+     },
+     {
+      "key": "win_q",
+      "surface": "INSPECTOR",
+      "text_ru": "вопрос",
+      "view": "ANY"
+     },
+     {
+      "key": "win_q_v",
+      "surface": "INSPECTOR",
+      "text_ru": "дошли ли после {cut} до места, до {end}",
+      "view": "ANY"
+     },
+     {
+      "key": "win_set",
+      "surface": "INSPECTOR",
+      "text_ru": "семья",
+      "view": "ANY"
+     },
+     {
+      "key": "win_set_v",
+      "surface": "INSPECTOR",
+      "text_ru": "{cond} · {N}",
+      "view": "ANY"
+     },
+     {
+      "key": "win_chain",
+      "surface": "INSPECTOR",
+      "text_ru": "к {cut}",
+      "view": "ANY"
+     },
+     {
+      "key": "win_chain_v",
+      "surface": "INSPECTOR",
+      "text_ru": "пригодны {eligible} → ещё не были у места {notyet} → стояли там же {n}",
+      "view": "ANY"
+     },
+     {
+      "key": "win_out",
+      "surface": "INSPECTOR",
+      "text_ru": "потом",
+      "view": "ANY"
+     },
+     {
+      "key": "win_out_v",
+      "surface": "INSPECTOR",
+      "text_ru": "дошли {yes} · не дошли {no} · неизвестно {unknown}",
+      "view": "ANY"
+     },
+     {
+      "key": "win_share",
+      "surface": "INSPECTOR",
+      "text_ru": "доля",
+      "view": "ANY"
+     },
+     {
+      "key": "win_share_v",
+      "surface": "INSPECTOR",
+      "text_ru": "{shown} · среди известных {pct}",
+      "view": "ANY"
+     },
+     {
+      "key": "win_stars",
+      "surface": "INSPECTOR",
+      "text_ru": "на графике",
+      "view": "ANY"
+     },
+     {
+      "key": "win_stars_v",
+      "surface": "INSPECTOR",
+      "text_ru": "на графике — окончательные откаты этих сессий: на линии места и за ней — дошли",
+      "view": "ANY"
+     },
+     {
+      "key": "insp_known",
+      "surface": "INSPECTOR",
+      "text_ru": "среди известных",
+      "view": "ANY"
+     },
+     {
+      "key": "win_ad",
+      "surface": "INSPECTOR",
+      "text_ru": "проверка",
+      "view": "ANY"
+     },
+     {
+      "key": "win_ad_in",
+      "surface": "INSPECTOR",
+      "text_ru": "15-минутный срез семьи дня недели ≥ 40 — в области сверки с замером A/D",
+      "view": "ANY"
+     },
+     {
+      "key": "win_ad_out",
+      "surface": "INSPECTOR",
+      "text_ru": "вне области сверки A/D (5-минутный срез или семья дня недели меньше 40): счёт тот же, калибровка не проверена",
+      "view": "ANY"
+     }
+    ],
+    "note": "Operator 2026-10-12: integrate the verified Q1 mechanism into screen 24, «не подменяя существующие показатели BASE/NOW». The words follow the curator's trader wording (KADR-1.1 §10: «отсюда до −0,5 доходили 41 из 100», «уже дошли в 11:20», «мало сессий: n=…») and the pilot's passport; they are the executor's, for his acceptance",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "§12.6",
+     "K33"
+    ],
+    "statement_ru": "После {cut} до конца блока ({end}) из {n} сессий семьи, которые в {cut} стояли там же и ещё не были у места {level}, до него дошли {yes}, не дошли {no}, неизвестно у {unknown}. Это история этих сессий, не шанс сегодняшнего дня.",
+    "subject_ru": "сессии семьи, которые в этот же час стояли там же и ещё не были у места",
+    "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN",
+    "version": "1.0"
    }
   ],
   "comparisons": [
@@ -3248,6 +3517,31 @@
     ],
     "title_ru": "до подтверждения — цвет коробки, модели дня, положение цены",
     "tolerance": "colour and both models equal; |u_hist - u_today| <= 1/4 inclusive, exact in integers: 4 |a w_t - a_t w| <= w w_t; never widened",
+    "version": "1.0",
+    "weights": "NONE"
+   },
+   {
+    "alignment": "COMMON_SESSION_CLOCK",
+    "feature_availability": "PREFIX_AT_CUT",
+    "features": [
+     "eligible at t by the B0 rule of NOW-1.0 (lab/now24.py::series)",
+     "not yet at the place after the own confirmation: min low_u over (own confirmation, t] > L",
+     "u = the close of the M5 closing at t, in the case's own scale u = d (p - e) / w"
+    ],
+    "frozen": true,
+    "grounds": "PROPOSAL",
+    "id": "CMP:K-POS-1",
+    "sc_ref": [
+     "H3",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:Q1-PILOT",
+     "SRC:KADR-1.1",
+     "SRC:CODE-NOW24"
+    ],
+    "title_ru": "«отсюда» — ещё не были у места и стоят там же",
+    "tolerance": "|u_hist - u_today| <= 1/4 inclusive, exact in integers: 4 |v_m w_t - v_t w_m| <= w_m w_t (lab/now24.py::_near); written down before the measurements (screens 21-22, PRE-24), never widened",
     "version": "1.0",
     "weights": "NONE"
    }
@@ -3428,10 +3722,32 @@
        "Разрешаю менять SC-1.1 и SWPC и собрать вариант для моей приёмки; рабочий экран до приёмки не трогать"
       ],
       "scope": "Changes of SC-1.1 and SWPC-1.1 that implement his decisions of 2026-10-08 (meaning/17 §7), on the branch resheniya-08-10, built as a variant for his acceptance: the profile PRE-24, the phase rule, the words of the NOW pullback line, «мало сессий» for small sets."
+     },
+     {
+      "actor_role": "OPERATOR",
+      "channel": "Claude Code chat with the operator, 2026-10-12 (his message: a task text he pasted and sent without other words, after the Q1 pilot was published as PR #6)",
+      "date": "2026-10-12",
+      "exclusions": [
+       "the working screen (port 8767, its launcher and shortcuts) until his acceptance",
+       "merging into main, publication or a push",
+       "the pilot's open decisions: D1 (the parent: the screen's own weekday / all-weekdays switch is used, «все подтверждённые сессии» stays on the stand), D2 beyond «не подменяя», N5, PR #2",
+       "any trading policy, order or execution (SC-1.1 §11, D1)"
+      ],
+      "not_established": [
+       "the acceptance of this variant and of the text of §0.6 and §12.6 — his separate act after he has seen it",
+       "an explicit permission to change the SC-1.1 text: the amendment is drafted for his acceptance because SC-1.1 and AGENTS.md rule 7 require a registered estimand for every number on screen 24",
+       "the panel words (forms marked PROPOSED_BY_EXECUTOR)"
+      ],
+      "quote": [
+       "Интегрировать уже проверенный вычислительный механизм Q1 в существующую визуальную архитектуру DR Lab 24.",
+       "Новый механизм должен обогатить эту визуализацию историческими ответами «отсюда», не подменяя существующие показатели BASE/NOW и не создавая второго пользовательского интерфейса.",
+       "Изолированный пилот на 8771 сохранить как диагностический стенд для проверки вычислений и исходов."
+      ],
+      "scope": "The verified Q1 computation (Q1-PILOT-0.2, branch q1-pilot-c1) brought into screen 24 as a variant for his acceptance, on the branch ekran-24-otsyuda over the 08.10 variant: the profile ARRIVE-24 (§12.6), its estimand, case sets, route and words. BASE-24, NOW-1.0 and PRE-24 numbers are not changed; the pilot on 8771 stays the diagnostic stand."
      }
     ],
     "document_path": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
-    "document_sha256_lf": "3572408e0cd91147ebe76056612ecae1bf8f8abc20203cedb5f033e94e09b775",
+    "document_sha256_lf": "895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb",
     "edition_status": "ACCEPTED_FOR_PROFILES",
     "grounds": "CONTRACT_FORMALISATION",
     "id": "DR-LAB-SC-1.1",
@@ -4381,6 +4697,121 @@
     ],
     "surface": "API:/api/d24/now",
     "target": "VAL:NOW-1.0-WALKFORWARD decision record"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:K.levels",
+    "path": "levels[*].{a,b}",
+    "sc_ref": [
+     "§12.6"
+    ],
+    "surface": "API:/api/d24/arrive",
+    "target": "the place u = a / b of EST:K-ARRIVE (0, -1/2, -7/10)"
+   },
+   {
+    "field_kind": "DENOMINATOR",
+    "id": "FE:K.N",
+    "path": "N_parent",
+    "sc_ref": [
+     "H2",
+     "K27"
+    ],
+    "surface": "API:/api/d24/arrive",
+    "target": "N of the family on screen (the parent; never replaced)"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:K.cut",
+    "path": "cut.{cut,c}",
+    "sc_ref": [
+     "E0"
+    ],
+    "surface": "API:/api/d24/arrive",
+    "target": "KnowledgeCut close minute and its grid index (CUT:NOW-COMMON-CLOCK-1)"
+   },
+   {
+    "field_kind": "PREFIX_STATE",
+    "id": "FE:K.today",
+    "path": "today.{a_t,w}",
+    "sc_ref": [
+     "E1"
+    ],
+    "surface": "API:/api/d24/arrive",
+    "target": "today's activation grid index and IDR width (ticks)"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:K.p.level",
+    "path": "places[*].{a,b}",
+    "sc_ref": [
+     "§12.6"
+    ],
+    "surface": "API:/api/d24/arrive",
+    "target": "the place u = a / b"
+   },
+   {
+    "field_kind": "PREFIX_STATE",
+    "id": "FE:K.p.state",
+    "path": "places[*].state.{close_v,r_v,w}",
+    "sc_ref": [
+     "E1"
+    ],
+    "surface": "API:/api/d24/arrive",
+    "target": "today's PrefixState at t: the close, the deepest low after the activation and the IDR width (directed ticks)"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:K.p.support",
+    "path": "places[*].counts.{N_parent,N_eligible,N_not_yet,n_match,n_known}",
+    "sc_ref": [
+     "V2",
+     "V2.1"
+    ],
+    "surface": "API:/api/d24/arrive",
+    "target": "the selection chain of CS:K-ARRIVE-1 | CS:K-ARRIVE-ALL-1 and the known outcomes"
+   },
+   {
+    "field_kind": "STATISTIC",
+    "id": "FE:K.p.counts",
+    "path": "places[*].counts.{yes,no,unknown}",
+    "sc_ref": [
+     "§12.6",
+     "V2.1"
+    ],
+    "surface": "API:/api/d24/arrive",
+    "target": "EST:K-ARRIVE outcome counts (YES / NO / UNKNOWN)"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:K.p.excluded",
+    "path": "places[*].counts.excluded.{*}",
+    "sc_ref": [
+     "H1",
+     "H2"
+    ],
+    "surface": "API:/api/d24/arrive",
+    "target": "parent members excluded by each stage of the selection"
+   },
+   {
+    "field_kind": "STATISTIC",
+    "id": "FE:K.p.point",
+    "path": "places[*].point.{num,den}",
+    "sc_ref": [
+     "§12.6"
+    ],
+    "surface": "API:/api/d24/arrive",
+    "target": "EST:K-ARRIVE point among known (YES / known)"
+   },
+   {
+    "field_kind": "STATISTIC",
+    "id": "FE:K.p.bounds",
+    "path": "places[*].bounds[*].{num,den}",
+    "sc_ref": [
+     "§12.6",
+     "V2.1"
+    ],
+    "surface": "API:/api/d24/arrive",
+    "target": "EST:K-ARRIVE bounds over n from holes"
    },
    {
     "field_kind": "DENOMINATOR",
@@ -7210,6 +7641,51 @@
      "V2.1"
     ],
     "version": "1.0"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "EST:K-ARRIVE",
+    "parameters": [
+     {
+      "meaning_ru": "числитель места u = a / b (0, −1, −7)",
+      "name": "a",
+      "parameter_kind": "LEVEL_RATIONAL"
+     },
+     {
+      "meaning_ru": "знаменатель места (1, 2, 10)",
+      "name": "b",
+      "parameter_kind": "LEVEL_RATIONAL"
+     },
+     {
+      "meaning_ru": "общий часовой срез t",
+      "name": "cut",
+      "parameter_kind": "CUT"
+     }
+    ],
+    "profile": "PROFILE:ARRIVE-24",
+    "q1_formalised_part_ru": "доля сессий набора «стояли там же и ещё не были у места» на общем часовом срезе t, у которых хотя бы одна M5, закрывшаяся после t до конца блока, дошла до места L (low_u ≤ L против подтверждения); L ∈ {0, −1/2, −7/10}",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION_AT_CUT",
+    "q4_case_set": [
+     "CS:K-ARRIVE-1",
+     "CS:K-ARRIVE-ALL-1"
+    ],
+    "q4_denominator": "N_MATCH_AT_CUT",
+    "q5_outcome": "OUT:REACH-REST-1",
+    "q5_region": "REG:LEVEL-1",
+    "q6_cut": "CUT:NOW-COMMON-CLOCK-1",
+    "q6_time_ru": "M5, закрывшиеся после общего среза t до конца блока H; все члены набора к t уже подтвердились, поэтому max(t, собственная активация) = t",
+    "q7_measure": "SHARE",
+    "q8_order_ru": "точка — «дошли» среди известных; границы [дошли/n; (дошли + неизвестно)/n] передаются всегда; n — число стоявших там же; при n < 20 числа нет («мало сессий»), набор не расширяется; доля набора не выдаётся за долю семьи",
+    "q8_unknown": "POINT_AMONG_KNOWN_WITH_BOUNDS",
+    "q8_weights": "NONE",
+    "question": "Q:K-ARRIVE",
+    "sc_ref": [
+     "T1",
+     "§12.6",
+     "V2.1"
+    ],
+    "version": "1.0"
    }
   ],
   "estimators": [
@@ -7537,6 +8013,27 @@
      "§12.5"
     ],
     "unknown_handling_ru": "q25 / q50 / q75 среди известных (линейная интерполяция numpy); неизвестные и «нет периода» — отдельными счётами; интерполированный квантиль не называется наблюдённым уровнем",
+    "version": "1.0"
+   },
+   {
+    "estimands": [
+     "EST:K-ARRIVE"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "ESTR:K-POINT-BOUNDS-1",
+    "implementations": [
+     "lab/arrive24.py::_arrive",
+     "lab/q1/engine.py::Table.attempt"
+    ],
+    "reference_definition": "lab/contract.py::est_binary_bounds",
+    "rounding_ru": "точные счёты; проценты после деления, один знак",
+    "rule": "POINT_AMONG_KNOWN_AND_BOUNDS",
+    "sc_ref": [
+     "V0",
+     "V2.1",
+     "§12.6"
+    ],
+    "unknown_handling_ru": "точка — дошли / (дошли + не дошли); границы [дошли / n; (дошли + неизвестно) / n]; неизвестное остаётся в n и не превращается в «не дошли»; без известных исходов точки нет",
     "version": "1.0"
    }
   ],
@@ -8867,6 +9364,12 @@
       "surface": "PANEL",
       "text_ru": "Меньше 20 сессий: по вашему решению от 08.10 набор не расширяется, доли показаны как есть (шаг доли {step}).",
       "view": "ANY"
+     },
+     {
+      "key": "title_none",
+      "surface": "PANEL",
+      "text_ru": "Там же стояли меньше 20 сессий: числа нет, набор не расширяется и не меняется на другой.",
+      "view": "ANY"
      }
     ],
     "note": "Operator 2026-10-08 (meaning/17 §7): before the confirmation «честно писать «мало»» for n < 20 (his option «показать «мало сессий: n=…»»); after a DR break the same answer, where the threshold 20 is applied by the executor (to be confirmed at acceptance); the title is the executor's",
@@ -8877,6 +9380,86 @@
      "§12.5"
     ],
     "statement_ru": "В наборе меньше 20 сессий (n = {n}): набор не расширяется, доли показаны как есть, шаг доли 100 / n.",
+    "version": "1"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "forbidden_readings_ru": [
+     "процент",
+     "сигнал",
+     "прогноз"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "FF:K-TARGET",
+    "labels": [
+     {
+      "key": "RESOLVED",
+      "surface": "PANEL",
+      "text_ru": "уже дошли в {time}",
+      "view": "ANY"
+     },
+     {
+      "key": "RESOLVED_title",
+      "surface": "PANEL",
+      "text_ru": "Сегодня закрытая M5 {time} уже дошла до места: вопрос решён фактом, доли нет",
+      "view": "ANY"
+     },
+     {
+      "key": "DR_BROKEN",
+      "surface": "PANEL",
+      "text_ru": "DR сломан закрытием {time}: вопроса «отсюда» нет",
+      "view": "ANY"
+     },
+     {
+      "key": "PREFIX_UNKNOWN",
+      "surface": "PANEL",
+      "text_ru": "в сегодняшних свечах после подтверждения нет целой M5: ответа нет",
+      "view": "ANY"
+     },
+     {
+      "key": "NO_PREFIX",
+      "surface": "PANEL",
+      "text_ru": "после подтверждения ещё не закрылась ни одна M5",
+      "view": "ANY"
+     },
+     {
+      "key": "BLOCK_OVER",
+      "surface": "PANEL",
+      "text_ru": "сессия закончилась: после среза свечей нет",
+      "view": "ANY"
+     },
+     {
+      "key": "OUT_OF_SCOPE",
+      "surface": "PANEL",
+      "text_ru": "ответ «отсюда» проверен на истории только для ODR и RDR",
+      "view": "ANY"
+     },
+     {
+      "key": "NO_FAMILY",
+      "surface": "PANEL",
+      "text_ru": "семьи нет: ответа «отсюда» нет",
+      "view": "ANY"
+     },
+     {
+      "key": "withheld",
+      "surface": "PANEL",
+      "text_ru": "нарушение контракта SC-1.1: число не опубликовано",
+      "view": "ANY"
+     },
+     {
+      "key": "none_known",
+      "surface": "PANEL",
+      "text_ru": "исход неизвестен у всех",
+      "view": "ANY"
+     }
+    ],
+    "note": "the status of the same place today, from today's prefix only (KADR-1.1 §5.3): a place reached today is a fact with its time, never «100 %»; the words are the executor's, for the operator's acceptance",
+    "record_class": "PrefixState",
+    "sc_ref": [
+     "E1",
+     "§12.6"
+    ],
+    "statement_ru": "Сегодня место {place} после подтверждения: {state} — по закрытым M5 до среза.",
     "version": "1"
    },
    {
@@ -9146,6 +9729,10 @@
       "mechanism": "PROVENANCE_RECONCILIATION"
      },
      {
+      "check": "page:design/sozvezdiya-24/src/app.js::arriveBundle",
+      "mechanism": "PROVENANCE_RECONCILIATION"
+     },
+     {
       "check": "test:tests/contract_sc11.py::k28",
       "mechanism": "PROVENANCE_RECONCILIATION"
      },
@@ -9299,6 +9886,14 @@
      },
      {
       "check": "test:tests/contract_sc11.py::test_pre_profile",
+      "mechanism": "PATH_COMPUTATION"
+     },
+     {
+      "check": "runtime:lab/contract.py::verify_arrive",
+      "mechanism": "PATH_COMPUTATION"
+     },
+     {
+      "check": "test:tests/contract_sc11.py::test_arrive_profile",
       "mechanism": "PATH_COMPUTATION"
      },
      {
@@ -9774,7 +10369,8 @@
     "horizon_start": "COMMON_CUT_EXCLUSIVE",
     "id": "OUT:REACH-REST-1",
     "implementations": [
-     "design/sozvezdiya-24/src/app.js::reachOne"
+     "design/sozvezdiya-24/src/app.js::reachOne",
+     "lab/q1/engine.py::Table.select"
     ],
     "projection": "AT_LEVEL_OR_BEYOND",
     "reference_definition": "lab/contract.py::ref_reach",
@@ -10232,6 +10828,26 @@
     ],
     "title_ru": "второй экран до подтверждения",
     "version": "1.0"
+   },
+   {
+    "edition": "DR-LAB-SC-1.1",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "PROFILE:ARRIVE-24",
+    "note": "After today's confirmation, at the common clock cut, for the three places 0, -1/2, -7/10 below today's deepest point: of the family's sessions eligible at the cut (the B0 rule of NOW), not yet at the place and standing where today stands (close within 1/4 IDR), how many reached the place by the block end (OUT:REACH-REST-1). The parent is the family on screen (weekday by default, all weekdays on the explicit switch); n < 20 shows no number. Every number is C1. Built on the branch ekran-24-otsyuda for the operator's acceptance; not yet accepted by him.",
+    "profile_status": "ACTIVE",
+    "sc_ref": [
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:INSTRUCTION-2026-10-12",
+     "SRC:Q1-PILOT",
+     "SRC:KADR-1.1",
+     "SRC:Q1-EVIDENCE",
+     "SRC:CODE-ARRIVE24",
+     "SRC:CODE-Q1-ENGINE"
+    ],
+    "title_ru": "«Отсюда до места» — исторический ответ Q1 на экране 24",
+    "version": "1.0"
    }
   ],
   "questions": [
@@ -10449,6 +11065,17 @@
    },
    {
     "grounds": "OPERATOR_REQUIREMENT",
+    "id": "Q:K-ARRIVE",
+    "sc_ref": [
+     "T0",
+     "§12.6"
+    ],
+    "scene_ru": "после сегодняшнего подтверждения, на этой закрытой M5: из сессий семьи, которые в этот же час стояли там же и ещё не были у места (край IDR, середина IDR, −0,7), — сколько потом до конца сессии до него дошли",
+    "text_ru": "Дойдёт ли отсюда до места?",
+    "version": "1"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
     "id": "Q:P-AFTER",
     "sc_ref": [
      "T0",
@@ -10605,7 +11232,7 @@
     "document": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
     "grounds": "CONTRACT_FORMALISATION",
     "id": "SRC:SC-1.1",
-    "revision": "sha256-lf:3572408e0cd91147ebe76056612ecae1bf8f8abc20203cedb5f033e94e09b775",
+    "revision": "sha256-lf:895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb",
     "role": "NORMATIVE_CONTRACT",
     "sc_ref": [
      "§0.2"
@@ -11000,6 +11627,67 @@
     "sc_ref": [
      "§12.5"
     ]
+   },
+   {
+    "document": "meaning/07-cepochka-reshenij.md",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "SRC:INSTRUCTION-2026-10-12",
+    "locator": "node «12.10 · «Отсюда» на экране 24»: the operator's instruction of 2026-10-12 to integrate the verified Q1 mechanism into screen 24",
+    "role": "DECISION",
+    "sc_ref": [
+     "§12.6",
+     "§14.3"
+    ]
+   },
+   {
+    "document": "meaning/lens/2026-10-12-independent-srs/03-q1-historical-pilot.md",
+    "grounds": "PROPOSAL",
+    "id": "SRC:Q1-PILOT",
+    "note": "Q1-PILOT-0.2, the engineering contract of the historical Q1 pilot (frozen handoff, commit 3dac913, PR #5)",
+    "role": "DEFINITION",
+    "sc_ref": [
+     "§12.6"
+    ]
+   },
+   {
+    "document": "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+    "grounds": "PROPOSAL",
+    "id": "SRC:KADR-1.1",
+    "locator": "§§3-5 (moment, sets, the question Q:K-ARRIVE), §8 (the answer and the ladder), §10 (presentation)",
+    "role": "ANALYTICAL_INPUT",
+    "sc_ref": [
+     "§12.6"
+    ]
+   },
+   {
+    "document": "studies/q1_pilot_2026_10_12/README.md",
+    "grounds": "RESEARCH_RESULT",
+    "id": "SRC:Q1-EVIDENCE",
+    "note": "the pilot's reconciliation with the original A/D procedure (0 mismatches on 296 738 rows x 3 parents) and its storage and boundary checks",
+    "role": "RESEARCH",
+    "sc_ref": [
+     "§12.6",
+     "V3"
+    ]
+   },
+   {
+    "document": "lab/arrive24.py",
+    "grounds": "IMPLEMENTATION_FACT",
+    "id": "SRC:CODE-ARRIVE24",
+    "role": "IMPLEMENTATION",
+    "sc_ref": [
+     "§12.6"
+    ]
+   },
+   {
+    "document": "lab/q1/engine.py",
+    "grounds": "IMPLEMENTATION_FACT",
+    "id": "SRC:CODE-Q1-ENGINE",
+    "note": "the verified engine of the pilot: Table.target_state, select, reasons — reused unchanged",
+    "role": "IMPLEMENTATION",
+    "sc_ref": [
+     "§12.6"
+    ]
    }
   ],
   "strategy_rules": [
@@ -11127,6 +11815,20 @@
      "§12.3"
     ],
     "surface_profile": "SC11_PRE_24"
+   },
+   {
+    "definitions": "SRC:Q1-PILOT",
+    "estimands": [
+     "EST:K-ARRIVE"
+    ],
+    "id": "API:/api/d24/arrive",
+    "marking": "body.contract (ContractEnvelope) + header X-DR-Lab-Contract",
+    "route": "/api/d24/arrive",
+    "sc_ref": [
+     "§12.6",
+     "§12.3"
+    ],
+    "surface_profile": "SC11_ARRIVE_24"
    },
    {
     "definitions": "SRC:SEMANTICS-24",
@@ -11503,23 +12205,23 @@
  },
  "stamps": {
   "document": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
-  "document_sha256_lf": "3572408e0cd91147ebe76056612ecae1bf8f8abc20203cedb5f033e94e09b775",
+  "document_sha256_lf": "895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb",
   "edition": "DR-LAB-SC-1.1",
   "linkml": "1.11.1",
-  "registry_sha256": "554a6625b47598800f1be4431895fbdec637fcf19a29e9cdc43d76508cf623f3",
-  "runtime_spec_sha256": "41511ba9e6715e6b4df6af772aa1fc90ee01b0b1c2d9f6e3c43a3fb9911d7f92",
-  "schema_sha256_lf": "f4db474cde31b194bfec3b397480aa8284a071b44129d003c90dfa4e362398f0",
+  "registry_sha256": "91f2b874fb5efe9d8d3a0d91fa41f367631726513fa643364a21a567a5a9616c",
+  "runtime_spec_sha256": "cf30eb49f7ec6ce9292a6b56ee10ce98135ba27621148280a301118b29aa64db",
+  "schema_sha256_lf": "f5918411914130b4bc9d6a5757a9cd781cdd28f527c38b41f56a47a02f09f90b",
   "sources": {
-   "contract/registry/00-editions.yaml": "53f549a7ac2c8b8503fd445ee7eba7ae81af571ae8d6168f2d74f641074d20a3",
+   "contract/registry/00-editions.yaml": "a96bca15db851f0806b3fc1b1d20e14a3bc942a43b5a2e28c07bc09c143f99e5",
    "contract/registry/10-observation-strategy-measurement.yaml": "017dff6cc6ea9ef2340a78aa633fa44306a27d27875f856165a6e6d586a0cb27",
-   "contract/registry/20-cases-outcomes.yaml": "11225b13656c601721991fb8b0e3dcb49188e3d4de0d654eb84ba3631e560210",
-   "contract/registry/30-questions-estimands.yaml": "18e333e2e1da81ddfd5aa1211e69bc5bf36ee60c6422d5331e6827d7e75d58ce",
-   "contract/registry/40-claims.yaml": "35fd86f3d9246b2a66c242463c08f373552cf14aa1d0578581f0999e5cfbd2d3",
+   "contract/registry/20-cases-outcomes.yaml": "5f6535e69d557fee9d05c6de7ffbb0b206aeec11362259454d5b4c6bc456afcd",
+   "contract/registry/30-questions-estimands.yaml": "a2325bf90b17d7d742853609a92dc1f29de0099ec5a3e3c3d479a6425929b699",
+   "contract/registry/40-claims.yaml": "eef6b05b6f48c6c393616efd2ba8c5c3e1d075a7e37dfa14e688c4a2c6086141",
    "contract/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
-   "contract/registry/60-surfaces.yaml": "52540a34e0da6eca04f06d54586cc3969c546ef0b55615f8bc6182b65fb0f8d3",
-   "contract/registry/70-obligations.yaml": "a5dd18598f0ac311d2b4179f7afbc24a6fe9dd03faedda5c2786b3fdf29cf1ed",
-   "contract/schema/dr_lab_sc.yaml": "f4db474cde31b194bfec3b397480aa8284a071b44129d003c90dfa4e362398f0",
-   "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "3572408e0cd91147ebe76056612ecae1bf8f8abc20203cedb5f033e94e09b775"
+   "contract/registry/60-surfaces.yaml": "974b6786f3f0eaead74bb0133667e6ecff7f72127da8bcff9e8e629fc6e5a605",
+   "contract/registry/70-obligations.yaml": "222c8ef1523ddad91d930b98c44ca360679257460f305b56d5bcad86eef2ae90",
+   "contract/schema/dr_lab_sc.yaml": "f5918411914130b4bc9d6a5757a9cd781cdd28f527c38b41f56a47a02f09f90b",
+   "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb"
   }
  }
 }

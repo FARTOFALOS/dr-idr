@@ -16,6 +16,12 @@ of a named set); not a change of the working DR Lab — its server (8767), route
 numbers, settings and shortcuts are untouched. GEO is a named research candidate, not a default; D1, D2, N5 and PR #2
 stay the operator's.
 
+**On screen 24 (branch `ekran-24-otsyuda`, operator 2026-10-12).** The same engine answers the block «Отсюда до места»
+of screen 24 (`lab/arrive24.py`, profile ARRIVE-24 of SC-1.1 §12.6) on the family on screen — «день недели» = the
+weekday family (`NODEPOS_WD`), «все дни» = the key without the weekday (`NODEPOS_ALL`); `tests/arrive24.py` checks the
+identity with `Table.attempt`. This page stays the diagnostic stand: issues, outcomes, reproduction, the sessions behind an
+answer, the comparison of sets and GEO live here, not on the screen.
+
 ## Open it
 
 Double-click the desktop shortcut **«DR Lab Q1 (пилот)»** (→ `start-q1-pilot.cmd`): it starts the pilot's own server on

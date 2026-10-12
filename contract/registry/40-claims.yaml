@@ -944,6 +944,49 @@ claim_forms:
     price_transfer: NONE
     forbidden_readings_ru: ["сегодняшняя цель", "место выхода"]
     acceptance: PROPOSED_BY_EXECUTOR
+  - id: CF:K-ARRIVE
+    version: "1.0"
+    sc_ref: ["C1", "§12.6", "K33"]
+    grounds: OPERATOR_REQUIREMENT
+    estimand: EST:K-ARRIVE
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "сессии семьи, которые в этот же час стояли там же и ещё не были у места"
+    condition_ru: "в этот же час по часам Нью-Йорка подтверждение уже было и после него закрылась хотя бы одна M5, все M5 после подтверждения есть, DR цел; после своего подтверждения до места ещё не доходили; закрытие на срезе — в пределах ¼ ширины IDR от сегодняшнего"
+    statement_ru: "После {cut} до конца блока ({end}) из {n} сессий семьи, которые в {cut} стояли там же и ещё не были у места {level}, до него дошли {yes}, не дошли {no}, неизвестно у {unknown}. Это история этих сессий, не шанс сегодняшнего дня."
+    labels:
+      - {surface: PANEL, view: ANY, key: head, text_ru: "Отсюда до места"}
+      - {surface: PANEL, view: ANY, key: head_title, text_ru: "Сессии семьи, которые в этот же час стояли там же (закрытие в пределах ¼ ширины IDR от сегодняшнего) и ещё не были у места: сколько из них потом до конца сессии до него дошли. Считается заново на каждой закрытой M5. У каждого места свой набор — те, кто ещё не был именно у него, — поэтому строки не вкладываются друг в друга. Доли всей семьи (лесенка, «Сейчас») не меняются."}
+      - {surface: PANEL, view: ANY, key: weekday, text_ru: "день недели"}
+      - {surface: PANEL, view: ANY, key: all, text_ru: "все дни"}
+      - {surface: PANEL, view: ANY, key: p0, text_ru: "края IDR"}
+      - {surface: PANEL, view: ANY, key: p12, text_ru: "середины IDR"}
+      - {surface: PANEL, view: ANY, key: p710, text_ru: "−0,7"}
+      - {surface: PANEL, view: ANY, key: row, text_ru: "до {place} · {price}"}
+      - {surface: PANEL, view: ANY, key: sub, text_ru: "дошли {yes} из {n}"}
+      - {surface: PANEL, view: ANY, key: sub_unknown, text_ru: "дошли {yes} из {n} · неизвестно {unknown}"}
+      - {surface: PANEL, view: ANY, key: title, text_ru: "После {cut} до {end}: из {n} сессий семьи ({scope}), которые в {cut} стояли там же и ещё не были у места, до него дошли {yes}, не дошли {no}, неизвестно {unknown} (нет свечи M5). Среди известных — {pct}. Это история этих сессий, не прогноз и не сделка; доля всей семьи «после {cut}» — в лесенке, это другой набор."}
+      - {surface: INSPECTOR, view: ANY, key: win_head, text_ru: "Отсюда до {place} · {price}"}
+      - {surface: INSPECTOR, view: ANY, key: win_q, text_ru: "вопрос"}
+      - {surface: INSPECTOR, view: ANY, key: win_q_v, text_ru: "дошли ли после {cut} до места, до {end}"}
+      - {surface: INSPECTOR, view: ANY, key: win_set, text_ru: "семья"}
+      - {surface: INSPECTOR, view: ANY, key: win_set_v, text_ru: "{cond} · {N}"}
+      - {surface: INSPECTOR, view: ANY, key: win_chain, text_ru: "к {cut}"}
+      - {surface: INSPECTOR, view: ANY, key: win_chain_v, text_ru: "пригодны {eligible} → ещё не были у места {notyet} → стояли там же {n}"}
+      - {surface: INSPECTOR, view: ANY, key: win_out, text_ru: "потом"}
+      - {surface: INSPECTOR, view: ANY, key: win_out_v, text_ru: "дошли {yes} · не дошли {no} · неизвестно {unknown}"}
+      - {surface: INSPECTOR, view: ANY, key: win_share, text_ru: "доля"}
+      - {surface: INSPECTOR, view: ANY, key: win_share_v, text_ru: "{shown} · среди известных {pct}"}
+      - {surface: INSPECTOR, view: ANY, key: win_stars, text_ru: "на графике"}
+      - {surface: INSPECTOR, view: ANY, key: win_stars_v, text_ru: "на графике — окончательные откаты этих сессий: на линии места и за ней — дошли"}
+      - {surface: INSPECTOR, view: ANY, key: insp_known, text_ru: "среди известных"}
+      - {surface: INSPECTOR, view: ANY, key: win_ad, text_ru: "проверка"}
+      - {surface: INSPECTOR, view: ANY, key: win_ad_in, text_ru: "15-минутный срез семьи дня недели ≥ 40 — в области сверки с замером A/D"}
+      - {surface: INSPECTOR, view: ANY, key: win_ad_out, text_ru: "вне области сверки A/D (5-минутный срез или семья дня недели меньше 40): счёт тот же, калибровка не проверена"}
+    value_form: POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["шанс, что сегодня дойдёт", "место разворота или конец отката", "вход или исполнение ордера на месте", "доля всей семьи", "время, когда дойдёт"]
+    acceptance: PROPOSED_BY_EXECUTOR
+    note: "Operator 2026-10-12: integrate the verified Q1 mechanism into screen 24, «не подменяя существующие показатели BASE/NOW». The words follow the curator's trader wording (KADR-1.1 §10: «отсюда до −0,5 доходили 41 из 100», «уже дошли в 11:20», «мало сессий: n=…») and the pilot's passport; they are the executor's, for his acceptance"
 
 fact_forms:
   - id: FF:TODAY-Z
@@ -1150,9 +1193,30 @@ fact_forms:
     labels:
       - {surface: PANEL, view: ANY, key: few, text_ru: "мало сессий: n={n}"}
       - {surface: PANEL, view: ANY, key: title, text_ru: "Меньше 20 сессий: по вашему решению от 08.10 набор не расширяется, доли показаны как есть (шаг доли {step})."}
+      - {surface: PANEL, view: ANY, key: title_none, text_ru: "Там же стояли меньше 20 сессий: числа нет, набор не расширяется и не меняется на другой."}
     forbidden_readings_ru: ["доли надёжны", "набор расширен"]
     acceptance: PROPOSED_BY_EXECUTOR
     note: "Operator 2026-10-08 (meaning/17 §7): before the confirmation «честно писать «мало»» for n < 20 (his option «показать «мало сессий: n=…»»); after a DR break the same answer, where the threshold 20 is applied by the executor (to be confirmed at acceptance); the title is the executor's"
+  - id: FF:K-TARGET
+    version: "1"
+    sc_ref: ["E1", "§12.6"]
+    grounds: OPERATOR_REQUIREMENT
+    record_class: PrefixState
+    statement_ru: "Сегодня место {place} после подтверждения: {state} — по закрытым M5 до среза."
+    labels:
+      - {surface: PANEL, view: ANY, key: RESOLVED, text_ru: "уже дошли в {time}"}
+      - {surface: PANEL, view: ANY, key: RESOLVED_title, text_ru: "Сегодня закрытая M5 {time} уже дошла до места: вопрос решён фактом, доли нет"}
+      - {surface: PANEL, view: ANY, key: DR_BROKEN, text_ru: "DR сломан закрытием {time}: вопроса «отсюда» нет"}
+      - {surface: PANEL, view: ANY, key: PREFIX_UNKNOWN, text_ru: "в сегодняшних свечах после подтверждения нет целой M5: ответа нет"}
+      - {surface: PANEL, view: ANY, key: NO_PREFIX, text_ru: "после подтверждения ещё не закрылась ни одна M5"}
+      - {surface: PANEL, view: ANY, key: BLOCK_OVER, text_ru: "сессия закончилась: после среза свечей нет"}
+      - {surface: PANEL, view: ANY, key: OUT_OF_SCOPE, text_ru: "ответ «отсюда» проверен на истории только для ODR и RDR"}
+      - {surface: PANEL, view: ANY, key: NO_FAMILY, text_ru: "семьи нет: ответа «отсюда» нет"}
+      - {surface: PANEL, view: ANY, key: withheld, text_ru: "нарушение контракта SC-1.1: число не опубликовано"}
+      - {surface: PANEL, view: ANY, key: none_known, text_ru: "исход неизвестен у всех"}
+    forbidden_readings_ru: ["процент", "сигнал", "прогноз"]
+    acceptance: PROPOSED_BY_EXECUTOR
+    note: "the status of the same place today, from today's prefix only (KADR-1.1 §5.3): a place reached today is a fact with its time, never «100 %»; the words are the executor's, for the operator's acceptance"
   - id: FF:SESSION
     version: "1"
     sc_ref: ["S1", "S2"]

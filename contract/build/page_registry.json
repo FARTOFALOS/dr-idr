@@ -4,6 +4,8 @@
   "CS:F-BREAK-ALL-1": "BASE_FAMILY",
   "CS:F-CONF-1": "BASE_FAMILY",
   "CS:F-CONF-ALL-1": "BASE_FAMILY",
+  "CS:K-ARRIVE-1": "MATCHED_AT_CUT",
+  "CS:K-ARRIVE-ALL-1": "MATCHED_AT_CUT",
   "CS:NOW-DELTA-KNOWN-1": "OUTCOME_SUBGROUP",
   "CS:NOW-ELIGIBLE-1": "ELIGIBLE_AT_CUT",
   "CS:NOW-MATCH-M1-1": "MATCHED_AT_CUT",
@@ -530,6 +532,20 @@
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
+  "EST:K-ARRIVE": {
+   "measure": "SHARE",
+   "params": [
+    "a",
+    "b",
+    "cut"
+   ],
+   "profile": "PROFILE:ARRIVE-24",
+   "q4": [
+    "CS:K-ARRIVE-1",
+    "CS:K-ARRIVE-ALL-1"
+   ],
+   "unknown": "POINT_AMONG_KNOWN_WITH_BOUNDS"
+  },
   "EST:N-DELTA-GE-R": {
    "measure": "THRESHOLD_SHARES",
    "params": [
@@ -868,6 +884,9 @@
     },
     "title": {
      "ANY": "Меньше 20 сессий: по вашему решению от 08.10 набор не расширяется, доли показаны как есть (шаг доли {step})."
+    },
+    "title_none": {
+     "ANY": "Там же стояли меньше 20 сессий: числа нет, набор не расширяется и не меняется на другой."
     }
    },
    "record": "CaseSetSnapshot"
@@ -879,6 +898,41 @@
     }
    },
    "record": "HistoryClockAssessment"
+  },
+  "FF:K-TARGET": {
+   "labels": {
+    "BLOCK_OVER": {
+     "ANY": "сессия закончилась: после среза свечей нет"
+    },
+    "DR_BROKEN": {
+     "ANY": "DR сломан закрытием {time}: вопроса «отсюда» нет"
+    },
+    "NO_FAMILY": {
+     "ANY": "семьи нет: ответа «отсюда» нет"
+    },
+    "NO_PREFIX": {
+     "ANY": "после подтверждения ещё не закрылась ни одна M5"
+    },
+    "OUT_OF_SCOPE": {
+     "ANY": "ответ «отсюда» проверен на истории только для ODR и RDR"
+    },
+    "PREFIX_UNKNOWN": {
+     "ANY": "в сегодняшних свечах после подтверждения нет целой M5: ответа нет"
+    },
+    "RESOLVED": {
+     "ANY": "уже дошли в {time}"
+    },
+    "RESOLVED_title": {
+     "ANY": "Сегодня закрытая M5 {time} уже дошла до места: вопрос решён фактом, доли нет"
+    },
+    "none_known": {
+     "ANY": "исход неизвестен у всех"
+    },
+    "withheld": {
+     "ANY": "нарушение контракта SC-1.1: число не опубликовано"
+    }
+   },
+   "record": "PrefixState"
   },
   "FF:MEMBER": {
    "labels": {
@@ -1976,6 +2030,97 @@
    },
    "value_form": "POINT"
   },
+  "EST:K-ARRIVE": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:K-ARRIVE",
+   "labels": {
+    "all": {
+     "ANY": "все дни"
+    },
+    "head": {
+     "ANY": "Отсюда до места"
+    },
+    "head_title": {
+     "ANY": "Сессии семьи, которые в этот же час стояли там же (закрытие в пределах ¼ ширины IDR от сегодняшнего) и ещё не были у места: сколько из них потом до конца сессии до него дошли. Считается заново на каждой закрытой M5. У каждого места свой набор — те, кто ещё не был именно у него, — поэтому строки не вкладываются друг в друга. Доли всей семьи (лесенка, «Сейчас») не меняются."
+    },
+    "insp_known": {
+     "ANY": "среди известных"
+    },
+    "p0": {
+     "ANY": "края IDR"
+    },
+    "p12": {
+     "ANY": "середины IDR"
+    },
+    "p710": {
+     "ANY": "−0,7"
+    },
+    "row": {
+     "ANY": "до {place} · {price}"
+    },
+    "sub": {
+     "ANY": "дошли {yes} из {n}"
+    },
+    "sub_unknown": {
+     "ANY": "дошли {yes} из {n} · неизвестно {unknown}"
+    },
+    "title": {
+     "ANY": "После {cut} до {end}: из {n} сессий семьи ({scope}), которые в {cut} стояли там же и ещё не были у места, до него дошли {yes}, не дошли {no}, неизвестно {unknown} (нет свечи M5). Среди известных — {pct}. Это история этих сессий, не прогноз и не сделка; доля всей семьи «после {cut}» — в лесенке, это другой набор."
+    },
+    "weekday": {
+     "ANY": "день недели"
+    },
+    "win_ad": {
+     "ANY": "проверка"
+    },
+    "win_ad_in": {
+     "ANY": "15-минутный срез семьи дня недели ≥ 40 — в области сверки с замером A/D"
+    },
+    "win_ad_out": {
+     "ANY": "вне области сверки A/D (5-минутный срез или семья дня недели меньше 40): счёт тот же, калибровка не проверена"
+    },
+    "win_chain": {
+     "ANY": "к {cut}"
+    },
+    "win_chain_v": {
+     "ANY": "пригодны {eligible} → ещё не были у места {notyet} → стояли там же {n}"
+    },
+    "win_head": {
+     "ANY": "Отсюда до {place} · {price}"
+    },
+    "win_out": {
+     "ANY": "потом"
+    },
+    "win_out_v": {
+     "ANY": "дошли {yes} · не дошли {no} · неизвестно {unknown}"
+    },
+    "win_q": {
+     "ANY": "вопрос"
+    },
+    "win_q_v": {
+     "ANY": "дошли ли после {cut} до места, до {end}"
+    },
+    "win_set": {
+     "ANY": "семья"
+    },
+    "win_set_v": {
+     "ANY": "{cond} · {N}"
+    },
+    "win_share": {
+     "ANY": "доля"
+    },
+    "win_share_v": {
+     "ANY": "{shown} · среди известных {pct}"
+    },
+    "win_stars": {
+     "ANY": "на графике"
+    },
+    "win_stars_v": {
+     "ANY": "на графике — окончательные откаты этих сессий: на линии места и за ней — дошли"
+    }
+   },
+   "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN"
+  },
   "EST:N-DELTA-GE-R": {
    "claim_class": "ConditionalDescriptiveClaim",
    "id": "CF:N-DELTA-GE-R",
@@ -2300,5 +2445,5 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "554a6625b4759880"
+ "registry_hash": "91f2b874fb5efe9d"
 }

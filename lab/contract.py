@@ -942,7 +942,7 @@ _CODE = {}
 def _code_hash():
     if "h" not in _CODE:
         h = hashlib.sha1()
-        for f in ("contract.py", "scene24.py", "zonemap24.py", "now24.py", "scene21.py", "pre24.py"):
+        for f in ("contract.py", "scene24.py", "zonemap24.py", "now24.py", "scene21.py", "pre24.py", "arrive24.py", "q1/engine.py"):
             p = Path(__file__).resolve().parent / f
             if p.exists(): h.update(p.read_bytes().replace(b"\r\n", b"\n"))
         _CODE["h"] = h.hexdigest()[:12]
@@ -1608,6 +1608,142 @@ def attach_pre(out, inst, B, day, params):
 
 
 # =====================================================================================================================
+# the «Отсюда» response (/api/d24/arrive): PROFILE:ARRIVE-24, the Q1 answer of the pilot on screen 24 (SC-1.1 §12.6)
+# =====================================================================================================================
+ARRIVE_LEVELS = {"0": (0, 1), "-1/2": (-1, 2), "-7/10": (-7, 10)}   # the three places of the A/D measurements
+ARRIVE_TOL = (1, 4)          # CMP:K-POS-1: the close at t within 1/4 of the IDR width of today's, each in its own scale
+ARRIVE_SUPPORT = 20          # fewer matched sessions: no number, «мало сессий: n=…»; the set is never widened
+ARRIVE_BLOCK = ("NO_PREFIX", "PREFIX_UNKNOWN", "DR_BROKEN", "BLOCK_OVER")
+ARRIVE_NAMES = {"0": "край IDR (0)", "-1/2": "середина IDR (−0,5)", "-7/10": "−0,7 (начало retirement)"}
+
+
+def ref_arrive(fam, bars, tick, cut, a, b):
+    """Q:K-ARRIVE re-derived at a common clock cut for the place L = a / b of the confirmation family: today's state of
+    the place from today's own prefix (the candles after the cut never enter), then every member — eligible (E1, the
+    rule of NOW B0), not yet at L after its own activation, its close at t within 1/4 IDR of today's (CMP:K-POS-1) — and
+    its label after t (OUT:REACH-REST-1 against the confirmation: low_u <= L)."""
+    today, sch, grid = fam["today"], fam["schedule"], fam["grid"]
+    formed, end = sch["formed"], sch["end"]
+    d = today["side"]
+    tk = lambda p: int(round(p / tick))
+    e = tk(today["idrH"] if d == 1 else today["idrL"])
+    w_t = tk(today["idrH"]) - tk(today["idrL"])
+    oppv_t = d * (tk(today["drL"] if d == 1 else today["drH"]) - e)
+    have = {int(q[0]) + 5: q for q in bars}
+    path_t = []
+    for T in grid:
+        q = have.get(T) if T <= cut else None
+        if q is None: path_t.append(None); continue
+        h, l, c_ = tk(q[2]), tk(q[3]), tk(q[4])
+        path_t.append([l - e, h - e, c_ - e] if d == 1 else [e - h, e - l, e - c_])
+    c = (cut - formed - 5) // 5
+    a_t = (today["c0"] - formed - 5) // 5
+    out = dict(c=c, w_t=w_t, N=len(fam["members"]))
+    if c >= len(grid) - 1: return dict(out, status="BLOCK_OVER")
+    if c <= a_t: return dict(out, status="NO_PREFIX")
+    seg = path_t[a_t + 1:c + 1]
+    if any(q is None for q in seg): return dict(out, status="PREFIX_UNKNOWN")
+    k_brk = next((a_t + 1 + k for k, q in enumerate(seg) if q[2] < oppv_t), None)
+    if k_brk is not None: return dict(out, status="DR_BROKEN", time=_clk(grid[k_brk]))
+    r_t, cl_t = min(q[0] for q in seg), path_t[c][2]
+    if r_t * b <= a * w_t:
+        j = next(a_t + 1 + k for k, q in enumerate(seg) if q[0] * b <= a * w_t)
+        return dict(out, status="RESOLVED", time=_clk(grid[j]))
+    eligible, notyet, matched = 0, 0, []
+    for m in fam["members"]:
+        a_m = (m["act"] - formed - 5) // 5
+        st = ref_prefix(m["path"], a_m, c, m.get("oppv"))
+        if st is None: continue
+        eligible += 1
+        if st[0] * b <= a * m["w"]: continue
+        notyet += 1
+        if not _near(m["path"][c][2], m["w"], cl_t, w_t, *ARRIVE_TOL): continue
+        matched.append([m["id"], ref_reach(m["path"], grid, cut, end, a, b, m["w"], False).upper()])
+    return dict(out, status="OPEN", r_t=r_t, cl_t=cl_t, eligible=eligible, notyet=notyet, matched=matched)
+
+
+def verify_arrive(out, fam, bars, tick):
+    """The production answer of every place against the reference: today's state, the parent's N, every stage of the
+    selection, the matched sessions with their labels, the counts and the publication rule. Returns {level: [errors]}."""
+    cut = out["cut"]["cut"]
+    bad = {}
+    for p in out.get("places") or []:
+        name = p["level"]
+        a, b = ARRIVE_LEVELS[name]
+        ref = ref_arrive(fam, bars, tick, cut, a, b)
+        errs = []
+        st = p["state"]
+        if st["status"] != ref["status"]: errs.append(f"today: {st['status']} vs reference {ref['status']}")
+        elif st["status"] == "RESOLVED" and st.get("time") != ref.get("time"): errs.append(f"reached at {st.get('time')} vs {ref.get('time')}")
+        elif st["status"] == "OPEN":
+            k = p["counts"]
+            yes = sum(1 for _, x in ref["matched"] if x == "YES"); unk = sum(1 for _, x in ref["matched"] if x == "UNKNOWN")
+            n = len(ref["matched"])
+            want = dict(N_parent=ref["N"], N_eligible=ref["eligible"], N_not_yet=ref["notyet"], n_match=n, yes=yes, no=n - yes - unk, unknown=unk, n_known=n - unk)
+            errs += [f"{f} {k.get(f)} vs {v}" for f, v in want.items() if k.get(f) != v]
+            if sorted(map(tuple, p.get("members") or [])) != sorted(map(tuple, ref["matched"])): errs.append("matched sessions or labels differ")
+            pub = "WITHHELD_FEW_SESSIONS" if n < ARRIVE_SUPPORT else "NO_KNOWN_OUTCOME" if n == unk else "PUBLISHED"
+            if p.get("publication") != pub: errs.append(f"publication {p.get('publication')} vs {pub}")
+            if (st.get("close_v"), st.get("r_v"), st.get("w")) != (ref["cl_t"], ref["r_t"], ref["w_t"]): errs.append("today's prefix state differs")
+        if errs: bad[name] = errs
+    return bad
+
+
+def attach_arrive(out, fam, bars, tick, params):
+    """Verifies an «Отсюда» response at its creation boundary against the reference, withholds a place that fails and
+    attaches the envelope with one bundle per published share (all C1: the history of the matched sessions, never a
+    chance for today)."""
+    env = Envelope("/api/d24/arrive", "PROFILE:ARRIVE-24", params)
+    st = out.get("status")
+    if st in ARRIVE_BLOCK and fam and fam.get("status") == "ok":
+        ref = ref_arrive(fam, bars, tick, out["cut"]["cut"], 0, 1)
+        same = ref["status"] == st and (st != "DR_BROKEN" or ref.get("time") == out.get("time"))
+        env.check("verify «Отсюда»: today's prefix state re-derived", same, 1)
+        if not same: env.violate("PREFIX", ["E1", "§12.6"], f"today's state {st} vs reference {ref['status']}", withheld=["arrive"])
+    if st != "OK":
+        out["contract"] = env.finish(); return out
+    if out["N_parent"] != fam["N"] or out["N_parent"] != len(fam["members"]):
+        env.violate("DENOMINATOR", ["K27", "H2", "§12.6"], "the parent of «Отсюда» is not the family on screen", withheld=["arrive"])
+    bad = verify_arrive(out, fam, bars, tick) if not env.withheld else {}
+    env.check("verify «Отсюда»: today's state, eligibility, position, labels and counts re-derived for every place", not bad, len(out["places"]))
+    for name, errs in bad.items():
+        env.violate("ARRIVE_RECOMPUTATION", ["E1", "H3", "P0.2", "V2", "§12.6"], f"{name}: " + "; ".join(errs[:4]), withheld=[name])
+    cut, cut_s, sid, N = out["cut"]["cut"], out["cut"]["cut_clock_et"], fam["snapshot_id"], fam["N"]
+    today, src = fam["today"], fam.get("source") or {}
+    mode = "LIVE" if today.get("source") == "live" else "HISTORY_DAY_REPLAY_BY_CLOSE"
+    cs_id = "CS:K-ARRIVE-1" if out["scope"] == "weekday" else "CS:K-ARRIVE-ALL-1"
+    env.d["case_sets"] = [dict(spec=case_set_spec_of(fam), family_id=fam["family_id"], snapshot_id=sid, n_members=N, data_revision=str(src.get("built")))]
+    env.d["cut"] = dict(spec="CUT:NOW-COMMON-CLOCK-1", target_session=f"{fam['key']['instrument']}-{today['date'].replace('-', '')}-{fam['key']['session']}",
+                        cut_close_minute=int(cut), cut_clock_et=cut_s, mode=mode, state_age_m5=int(out["cut"]["c"] - out["today"]["a_t"]))
+    inputs = _inputs(fam, [dict(input_kind="TODAY_PREFIX", ref="today", version=str(cut)), dict(input_kind="CODE", ref=out["engine"], version=out["model"])])
+    extra = dict(parent_case_set=sid, cut=cut)
+    for p in out["places"]:
+        name = p["level"]
+        if "arrive" in env.withheld or name in env.withheld:
+            p.update(withheld=True, note="нарушение контракта SC-1.1: число не опубликовано")
+            for f in ("counts", "point", "bounds", "members"): p.pop(f, None)
+            continue
+        if p["state"]["status"] != "OPEN" or p["publication"] == "WITHHELD_FEW_SESSIONS": continue
+        k = p["counts"]
+        n, yes, no, unk, known = k["n_match"], k["yes"], k["no"], k["unknown"], k["n_known"]
+        ests = [dict(estimator="ESTR:K-POINT-BOUNDS-1", value_kind="POINT", value=float(Fraction(yes, known)), numerator=yes, denominator=known, unit="share among known outcomes")] if known else \
+               [dict(estimator="ESTR:K-POINT-BOUNDS-1", value_kind="NO_ESTIMATE", unit="share", no_estimate_reason="no known outcome")]
+        lo, hi = est_binary_bounds(yes, no, unk)
+        ests.append(dict(estimator="ESTR:K-POINT-BOUNDS-1", value_kind="BOUNDS", lower=float(lo), upper=float(hi), denominator=n, unit="bounds over n from holes"))
+        sup = dict(case_set=cs_id, n_base=N, n_eligible=k["N_eligible"], n_match=n,
+                   components=[dict(component="EXISTENCE", of=n, yes=yes, no=no, unknown=unk,
+                                    condition_ru=f"к {cut_s} пригодны {k['N_eligible']}, из них ещё не были у места {k['N_not_yet']}, стояли там же {n}")])
+        env.bundle("EST:K-ARRIVE", cs_id, sid, "lab/arrive24.py::_arrive (lab/q1/engine.py::Table.select)", inputs, ests, [sup],
+                   dict(cut=cut_s, end=out["cut"]["horizon_end"], level=f"«{ARRIVE_NAMES[name]}»", n=n, yes=yes, no=no, unknown=unk, eligible=k["N_eligible"], notyet=k["N_not_yet"],
+                        pct=_fmt_pct(Fraction(yes, known) if known else None), lo=_fmt_pct(lo), hi=_fmt_pct(hi)),
+                   parameters=dict(level=name, a=p["a"], b=p["b"], cut=cut_s, scope=out["scope"]), claim_extra=extra)
+    env.check("admissible claims: every published form is of an admissible class", True, len(env.bundles))
+    out["contract"] = env.finish()
+    if "arrive" in env.withheld: out["status"] = "CONTRACT_VIOLATION"
+    return out
+
+
+# =====================================================================================================================
 # the response gate: every number of an SC-1.1 route has a declared meaning; staleness; the marking header
 # =====================================================================================================================
 _PAT = {}
@@ -1686,11 +1822,11 @@ def header_for(route):
 def stale_response(route, params):
     """CONTRACT_STALE: the executable contract does not represent its source, so no statistic of an SC-1.1 route is
     published; observations of the day are still served (they carry no claim)."""
-    env = Envelope(route, "PROFILE:NOW-1.0" if route.endswith("/now") else "PROFILE:PRE-24" if route.endswith("/pre") else "PROFILE:BASE-24", params)
+    env = Envelope(route, "PROFILE:NOW-1.0" if route.endswith("/now") else "PROFILE:PRE-24" if route.endswith("/pre") else "PROFILE:ARRIVE-24" if route.endswith("/arrive") else "PROFILE:BASE-24", params)
     env.d["status"] = "CONTRACT_STALE"
     env.d["violations"].append(dict(code="CONTRACT_STALE", sc_ref=["§14.4"], message="; ".join(stale() or ["compiled contract unavailable"])[:400], severity="BLOCKING"))
     msg = "контракт SC-1.1 не пересобран после правки: числа не публикуются (python contract/tools/build.py)"
-    body = dict(status="contract_stale", message=msg) if not route.endswith("/now") else dict(now_version="DR-LAB-NOW-1.0", status="CONTRACT_STALE", note=msg)
+    body = dict(status="contract_stale", message=msg) if not route.endswith(("/now", "/arrive")) else dict(status="CONTRACT_STALE", note=msg, message=msg) if route.endswith("/arrive") else dict(now_version="DR-LAB-NOW-1.0", status="CONTRACT_STALE", note=msg)
     body["contract"] = env.finish()
     return body
 
@@ -1699,7 +1835,7 @@ def finalize(route, body):
     """The last gate before a response leaves: undeclared numbers make the response a violation (fail closed for
     statistical routes); the envelope must be structurally valid."""
     s = surface_of(route)
-    if s is None or s["surface_profile"] not in ("SC11_BASE_24", "SC11_NOW_1_0", "SC11_PRE_24", "SC11_OBSERVATION"): return body
+    if s is None or s["surface_profile"] not in ("SC11_BASE_24", "SC11_NOW_1_0", "SC11_PRE_24", "SC11_ARRIVE_24", "SC11_OBSERVATION"): return body
     bad = undeclared_numbers(route, body)
     if bad:
         if STRICT["on"]: raise ContractViolation(f"undeclared numbers in {route}: {bad}")

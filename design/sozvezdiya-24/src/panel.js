@@ -51,6 +51,7 @@
     if (F.out) out.push(outcomeHtml(F));
     out.push(phaseHtml(F, ctx));
     out.push(nowHtml(F, ctx));
+    out.push(arriveHtml(F, ctx));
     if (st.mode === 'bounds') {
       out.push(zonesHtml(F, ctx));
       const tf = todayFacts(F, ctx);
@@ -154,6 +155,39 @@
     out.push('<div class="if" title="правила ' + esc(n.rules_id || '') + (v.tested_through ? ' · проверено на истории до ' + v.tested_through : '') + '">' + esc(NOWST[v.status] || v.status || '') + ' · не сделка</div>');
     // the spec (§9.3, §21.2) requires the support next to every NOW number: the only place of the panel with session counts
     return '<div class="p24-nowblk">' + out.join('') + '</div>';
+  }
+  // PROFILE:ARRIVE-24 (operator 2026-10-12, SC-1.1 §12.6): «Отсюда до места» — the verified Q1 answer for the IDR edge,
+  // the IDR middle and −0,7 below today's deepest point: of the family's sessions that at this clock time stood where
+  // today stands and had not yet been at the place, how many then reached it by the block end. A place reached today is
+  // a fact with its time; fewer than 20 there: no number. Each row lights its place and the pullbacks of these sessions;
+  // its passport is in the inspector. Counts are shown next to the share, as in «Сейчас» (the support of a C1 number)
+  const ARR_KEY = { '0': 'p0', '-1/2': 'p12', '-7/10': 'p710' };
+  function arriveHtml(F, ctx) {
+    const r = arriveOf(ctx), K_ = 'EST:K-ARRIVE', T_ = 'FF:K-TARGET';
+    const head = right => '<div class="p21-h second"><span title="' + esc(lbl(K_, 'head_title')) + '">' + lbl(K_, 'head') + '</span><span>' + right + '</span></div>';
+    if (!r) return '<div class="p24-arrblk">' + head('считаю…') + '</div>';
+    if (r.status !== 'OK') {
+      const known = ['DR_BROKEN', 'PREFIX_UNKNOWN', 'NO_PREFIX', 'BLOCK_OVER', 'OUT_OF_SCOPE', 'NO_FAMILY'].includes(r.status);
+      const msg = known ? lbl(T_, r.status, r.status === 'DR_BROKEN' ? { time: r.time } : null) : (r.note || r.message || r.status);
+      return '<div class="p24-arrblk">' + head('') + '<div class="p21-note">' + esc(msg) + '</div></div>';
+    }
+    const out = [head(lbl(K_, r.scope) + ' · ' + r.cut.cut_clock_et)];
+    for (const P of r.places) {
+      const row = lbl(K_, 'row', { place: lbl(K_, ARR_KEY[P.level]), price: px(arrPrice(ctx, P)) });
+      let val = '', sub = '', cls = 'mc', title = '';
+      if (P.withheld) { val = '—'; sub = lbl(T_, 'withheld'); }
+      else if (P.state.status === 'RESOLVED') { sub = lbl(T_, 'RESOLVED', { time: P.state.time }); cls += ' dim'; title = lbl(T_, 'RESOLVED_title', { time: P.state.time }); }
+      else if (P.publication === 'WITHHELD_FEW_SESSIONS') { sub = lbl('FF:FEW-SESSIONS', 'few', { n: P.counts.n_match }); title = lbl('FF:FEW-SESSIONS', 'title_none'); }
+      else {
+        const k = P.counts, b = arriveBundle(r, P.level, P);
+        const lo = 100 * k.yes / k.n_match, hi = 100 * (k.yes + k.unknown) / k.n_match;
+        val = !b ? '—' : k.unknown ? pct(lo) + '–' + pct(hi) : pct(lo);
+        sub = k.n_known ? lbl(K_, k.unknown ? 'sub_unknown' : 'sub', { yes: k.yes, n: k.n_match, unknown: k.unknown }) : lbl(T_, 'none_known');
+        title = lbl(K_, 'title', { cut: r.cut.cut_clock_et, end: r.cut.horizon_end, n: k.n_match, scope: lbl(K_, r.scope), yes: k.yes, no: k.no, unknown: k.unknown, pct: k.n_known ? pct(100 * k.yes / k.n_known) : '—' });
+      }
+      out.push(link({ k: 'arrive', id: P.level }, '<span class="t"><span>' + row + '</span>' + (sub ? '<span class="p21-sub">' + sub + '</span>' : '') + '</span><b>' + val + '</b>', cls, null, title));
+    }
+    return '<div class="p24-arrblk">' + out.join('') + '</div>';
   }
   // the operator's named phase rule in one place (2026-10-08, FF:PHASE-RULE): its state and both criteria with today's
   // values; the share is the passport of EST:B-CLOCK-R over the whole price range (part EARLIER, of N)
@@ -283,7 +317,7 @@
   // closes per common clock M5 (each column its own 100 %), with today's closes on it.
   function detailObj(ctx) {
     const h = hv();
-    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow', 'zone'].includes(h.k)) return h;
+    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow', 'zone', 'arrive'].includes(h.k)) return h;
     if (st.area) return { k: 'area', part: 'band' };
     return null;
   }
@@ -375,6 +409,7 @@
       const z = zonesOf(F, o.ev).zones[o.i];
       return { head: 'Зона ' + z.label + ' · ' + zoneName(z), body: zoneRows(F, ctx, o.ev, o.i) + '<div class="p24-sep"></div>' + zoneDiag(F, o.ev, z) };
     }
+    if (o.k === 'arrive') { const b = arriveBody(ctx, o.id); if (b) return b; }
     if (o.k === 'evrow') {
       const ev = o.ev || st.ev, D = F.ev[ev], U = 'EST:B-RX-UNDETERMINED-' + ev, KN = 'EST:B-RX-KNOWN-' + ev, PV = 'FF:PASSPORT-VIEW';
       const kn = pp(F, { estimand: KN, params: {}, event_id: ev, region_kind: 'known', start_rule: F.from, end_rule: 'до ' + clk(F.end), yes_count: D.known, unknown_count: D.unknown, no_event_count: D.none, display_scope: 'details' });

@@ -22,8 +22,9 @@
   if (/NaN|undefined|Infinity/.test(txt())) problems.push('panel shows NaN / undefined');
   const areaButton = document.getElementById('areab');
   if (areaButton && !areaButton.innerText.includes('· ' + D.st.ev)) problems.push('area button does not name its current R/X event');
-  // session counts stay out of the panel, except the support of «Сейчас», which DR-LAB-NOW-1.0 §9.3 / §21.2 requires
-  const noNow = () => { const q = panel.cloneNode(true); q.querySelectorAll('.p24-nowblk').forEach(e => e.remove()); return q.innerText; };
+  // session counts stay out of the panel, except the support of «Сейчас», which DR-LAB-NOW-1.0 §9.3 / §21.2 requires,
+  // and the counts of «Отсюда» (Q1-PILOT-0.2: n and the outcomes stand next to every share; SC-1.1 §12.6)
+  const noNow = () => { const q = panel.cloneNode(true); q.querySelectorAll('.p24-nowblk, .p24-arrblk').forEach(e => e.remove()); return q.innerText; };
   if (/\d+\s*(из\s+\d|сесси[йи])/i.test(noNow())) problems.push('panel shows session counts');
   if (!c.F) return { problems, info, note: 'no family on screen (status ' + c.s.status + ')' };
   const F = c.F, N = F.N;
@@ -189,6 +190,42 @@
     // [K33] the NOW block speaks of the history in historical grammar
     const nb = panel.querySelector('.p24-nowblk');
     if (nb && /углуб[ия]тся|пойд[её]т|если да/.test(nb.innerText)) problems.push('K33: the NOW block speaks of today in forecast grammar');
+  }
+  // 11) «Отсюда до места» (PROFILE:ARRIVE-24, SC-1.1 §12.6): the block shows what the server published — the selection
+  // chain adds up, the share is the one of the shown counts, history grammar only — and a hovered place lights exactly the
+  // final pullbacks of the sessions behind its answer: at or below the place's line those that reached it after the cut,
+  // above it those that did not (for a session not yet there at the cut the two are the same event)
+  {
+    let cc = D.cur(), r = D.arriveOf(cc);
+    for (let i = 0; i < 40 && !r; i++) { await wait(200); cc = D.cur(); r = D.arriveOf(cc); }
+    D.render(true);
+    const blk = panel.querySelector('.p24-arrblk');
+    if (!blk) problems.push('«Отсюда»: no block in the summary');
+    else if (/дойд[её]т|вероятн|шанс/i.test(blk.innerText)) problems.push('K33: «Отсюда» speaks of today in forecast grammar');
+    const fmt = v => { const x = Math.round(v * 10) / 10; return (Number.isInteger(x) ? String(x) : x.toFixed(1).replace('.', ',')) + '%'; };
+    info.arrive = r ? r.status : 'no answer';
+    if (r && r.status === 'OK' && cc.F && !cc.F.brk) {
+      if (r.N_parent !== cc.F.N) problems.push('«Отсюда»: its parent is not the family on screen (' + r.N_parent + ' vs ' + cc.F.N + ')');
+      info.arrivePlaces = r.places.map(P => P.level + ':' + P.state.status + (P.counts ? ':' + P.counts.yes + '/' + P.counts.n_match : ''));
+      for (const P of r.places) {
+        if (P.state.status !== 'OPEN' || P.withheld) continue;
+        const k = P.counts;
+        if (k.yes + k.no + k.unknown !== k.n_match || k.n_match > k.N_not_yet || k.N_not_yet > k.N_eligible || k.N_eligible > k.N_parent) problems.push('«Отсюда» ' + P.level + ': the selection chain does not add up');
+        if (P.publication === 'PUBLISHED') {
+          const want = k.unknown ? fmt(100 * k.yes / k.n_match) + '–' + fmt(100 * (k.yes + k.unknown) / k.n_match) : fmt(100 * k.yes / k.n_match);
+          if (!blk.innerText.includes(want)) problems.push('«Отсюда» ' + P.level + ': the share ' + want + ' of its counts is not shown');
+          if (!blk.innerText.includes(k.yes + ' из ' + k.n_match)) problems.push('«Отсюда» ' + P.level + ': its counts are not shown');
+        }
+        const h = { k: 'arrive', id: P.level }, lab = new Map(P.members), save = D.st.hover;
+        D.st.hover = h;
+        const lit = cc.F.ev.R.pts.filter(q => D.emphOf(q, h, cc.F, cc) === true);
+        D.st.hover = save;
+        const known = P.members.filter(([id]) => cc.F.M.some(m => m.id === id && m.R.s === 'known')).length;
+        if (lit.some(q => !lab.has(q.m.id))) problems.push('«Отсюда» ' + P.level + ': a lit pullback outside its sessions');
+        if (lit.length !== known) problems.push('«Отсюда» ' + P.level + ': lit ' + lit.length + ' pullbacks, known ' + known);
+        if (lit.some(q => (q.m.R.v * P.b <= P.a * q.m.w) !== (lab.get(q.m.id) === 'YES'))) problems.push('«Отсюда» ' + P.level + ': a lit pullback on the wrong side of the place');
+      }
+    }
   }
   info.checkedSlices = steps;
   return { problems, info };

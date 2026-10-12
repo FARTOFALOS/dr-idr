@@ -30,6 +30,13 @@ surfaces:
     definitions: SRC:DECISIONS-2026-10-08
     estimands: [EST:P-DIR, EST:P-WHEN, EST:P-DR, EST:P-R, EST:P-X]
     marking: "body.contract (ContractEnvelope) + header X-DR-Lab-Contract"
+  - id: API:/api/d24/arrive
+    sc_ref: ["§12.6", "§12.3"]
+    route: /api/d24/arrive
+    surface_profile: SC11_ARRIVE_24
+    definitions: SRC:Q1-PILOT
+    estimands: [EST:K-ARRIVE]
+    marking: "body.contract (ContractEnvelope) + header X-DR-Lab-Contract"
   - id: API:/api/d24/day
     sc_ref: ["O1", "O3", "S1"]
     route: /api/d24/day
@@ -244,6 +251,18 @@ encodings:
   - {id: FE:N.tn, sc_ref: ["V2.2"], surface: API:/api/d24/now, path: "{*}.{continuation,baseline}.time_to_new.{n,n_unknown,n_no_event}", field_kind: SUPPORT_COUNT, target: "SupportRecord FIRST_TIME among new = YES"}
   - {id: FE:N.rtn, sc_ref: ["V2.2"], surface: API:/api/d24/now, path: "{*}.research.{*}.time_to_new.{n,n_unknown,n_no_event}", field_kind: SUPPORT_COUNT, target: "SupportRecord FIRST_TIME among new = YES (research)"}
   - {id: FE:N.val, sc_ref: ["V3"], surface: API:/api/d24/now, path: "{*}.validation.{brier_skill,magnitude_skill,time_skill}", field_kind: VALIDATION_EVIDENCE, target: "VAL:NOW-1.0-WALKFORWARD decision record"}
+  # ------------------------------------------------------------------ /api/d24/arrive
+  - {id: FE:K.levels, sc_ref: ["§12.6"], surface: API:/api/d24/arrive, path: "levels[*].{a,b}", field_kind: PARAMETER, target: "the place u = a / b of EST:K-ARRIVE (0, -1/2, -7/10)"}
+  - {id: FE:K.N, sc_ref: ["H2", "K27"], surface: API:/api/d24/arrive, path: "N_parent", field_kind: DENOMINATOR, target: "N of the family on screen (the parent; never replaced)"}
+  - {id: FE:K.cut, sc_ref: ["E0"], surface: API:/api/d24/arrive, path: "cut.{cut,c}", field_kind: TIME, target: "KnowledgeCut close minute and its grid index (CUT:NOW-COMMON-CLOCK-1)"}
+  - {id: FE:K.today, sc_ref: ["E1"], surface: API:/api/d24/arrive, path: "today.{a_t,w}", field_kind: PREFIX_STATE, target: "today's activation grid index and IDR width (ticks)"}
+  - {id: FE:K.p.level, sc_ref: ["§12.6"], surface: API:/api/d24/arrive, path: "places[*].{a,b}", field_kind: PARAMETER, target: "the place u = a / b"}
+  - {id: FE:K.p.state, sc_ref: ["E1"], surface: API:/api/d24/arrive, path: "places[*].state.{close_v,r_v,w}", field_kind: PREFIX_STATE, target: "today's PrefixState at t: the close, the deepest low after the activation and the IDR width (directed ticks)"}
+  - {id: FE:K.p.support, sc_ref: ["V2", "V2.1"], surface: API:/api/d24/arrive, path: "places[*].counts.{N_parent,N_eligible,N_not_yet,n_match,n_known}", field_kind: SUPPORT_COUNT, target: "the selection chain of CS:K-ARRIVE-1 | CS:K-ARRIVE-ALL-1 and the known outcomes"}
+  - {id: FE:K.p.counts, sc_ref: ["§12.6", "V2.1"], surface: API:/api/d24/arrive, path: "places[*].counts.{yes,no,unknown}", field_kind: STATISTIC, target: "EST:K-ARRIVE outcome counts (YES / NO / UNKNOWN)"}
+  - {id: FE:K.p.excluded, sc_ref: ["H1", "H2"], surface: API:/api/d24/arrive, path: "places[*].counts.excluded.{*}", field_kind: SUPPORT_COUNT, target: "parent members excluded by each stage of the selection"}
+  - {id: FE:K.p.point, sc_ref: ["§12.6"], surface: API:/api/d24/arrive, path: "places[*].point.{num,den}", field_kind: STATISTIC, target: "EST:K-ARRIVE point among known (YES / known)"}
+  - {id: FE:K.p.bounds, sc_ref: ["§12.6", "V2.1"], surface: API:/api/d24/arrive, path: "places[*].bounds[*].{num,den}", field_kind: STATISTIC, target: "EST:K-ARRIVE bounds over n from holes"}
   # ------------------------------------------------------------------ /api/d24/pre
   - {id: FE:P.N, sc_ref: ["H2"], surface: API:/api/d24/pre, path: "N", field_kind: DENOMINATOR, target: "CaseSetSnapshot.n_members of the similar set"}
   - {id: FE:P.weekday, sc_ref: ["H1"], surface: API:/api/d24/pre, path: "weekday", field_kind: IDENTIFIER, target: "trading date weekday of the viewed day"}

@@ -35,6 +35,7 @@ sys.path.insert(0, str(ROOT / "lab"))
 import contract as C  # noqa: E402
 import now24 as N  # noqa: E402
 import pre24 as P  # noqa: E402
+import arrive24 as AR  # noqa: E402
 import scene24 as S  # noqa: E402
 import zonemap24 as Z  # noqa: E402
 
@@ -570,10 +571,10 @@ def test_routes_and_encodings():
     check(all(("status=OUTSIDE_SC11" in h) == (declared[r]["surface_profile"].startswith("LEGACY") or declared[r]["surface_profile"] == "SERVICE") for r, h in marks.items()),
           "every legacy and service route is marked OUTSIDE_SC11, every SC-1.1 route with its profile and registry")
     bodies = {"/api/d24/family": S.family("NQ", "RDR", 690, "2025-12-17"), "/api/d24/now": N.live("NQ", "RDR", 690, "2025-12-17"),
-              "/api/d24/pre": P.pre("NQ", "RDR", 655, "2025-02-27"),
+              "/api/d24/pre": P.pre("NQ", "RDR", 655, "2025-02-27"), "/api/d24/arrive": AR.arrive("NQ", "RDR", 670, "2025-12-17", "all"),
               "/api/d24/day": C.attach_day(S.day_view("NQ", "2025-12-17"), {}), "/api/d24/dates": S.dates("NQ")}
     bad = {r: C.undeclared_numbers(r, b) for r, b in bodies.items() if C.undeclared_numbers(r, b)}
-    check(not bad, f"no number without a declared meaning in real responses of the five SC-1.1 routes{': ' + str(bad) if bad else ''}")
+    check(not bad, f"no number without a declared meaning in real responses of the six SC-1.1 routes{': ' + str(bad) if bad else ''}")
     legacy = [e for e in REG["estimands"] for s in REG["surfaces"] if s["surface_profile"].startswith("LEGACY") and e["id"] in (s.get("estimands") or [])]
     check(not legacy, "no SC-1.1 estimand is declared on a legacy route")
 
@@ -581,7 +582,7 @@ def test_routes_and_encodings():
 def test_live_envelopes():
     envs = {"family conf": S.family("NQ", "RDR", 690, "2025-12-17")["contract"], "family brk": S.family("NQ", "RDR", 900, "2025-12-10")["contract"],
             "family ODR": S.family("NQ", "ODR", 330, "2025-12-19")["contract"], "now": N.live("NQ", "RDR", 690, "2025-12-17")["contract"],
-            "pre": P.pre("NQ", "RDR", 655, "2025-02-27")["contract"],
+            "pre": P.pre("NQ", "RDR", 655, "2025-02-27")["contract"], "arrive": AR.arrive("NQ", "RDR", 670, "2025-12-17", "all")["contract"],
             "day": C.attach_day(S.day_view("NQ", "2025-12-17"), {})["contract"]}
     for name, e in envs.items():
         errs = C.validate(e, "ContractEnvelope")
@@ -613,16 +614,18 @@ def test_stale_fails_closed():
             body = C.stale_response("/api/d24/family", {})
             now = C.stale_response("/api/d24/now", {})
             pre = C.stale_response("/api/d24/pre", {})
+            arr = C.stale_response("/api/d24/arrive", {})
             check(reasons and body["status"] == "contract_stale" and body["contract"]["status"] == "CONTRACT_STALE" and "bundles" not in body["contract"] and "members" not in body and now["status"] == "CONTRACT_STALE"
-                  and pre["status"] == "contract_stale" and pre["contract"]["profile"] == "PROFILE:PRE-24" and "bundles" not in pre["contract"],
+                  and pre["status"] == "contract_stale" and pre["contract"]["profile"] == "PROFILE:PRE-24" and "bundles" not in pre["contract"]
+                  and arr["status"] == "CONTRACT_STALE" and arr["contract"]["profile"] == "PROFILE:ARRIVE-24" and "bundles" not in arr["contract"] and "places" not in arr,
                   "a source changed since the build makes the contract stale: no statistic is published")
             check("status=CONTRACT_STALE" in C.header_for("/api/d24/family"), "the stale state is marked on every SC-1.1 response")
         finally:
             C.REGISTRY_FILE = old; C._S["loaded"] = None; C._TTL["at"] = 0.0
     check(not C.stale(), "the compiled contract represents its sources again")
     src = (ROOT / "lab" / "server.py").read_text(encoding="utf-8")
-    check("if url.path in ('/api/d24/family', '/api/d24/now', '/api/d24/pre') and contract.stale():" in src and src.index("contract.stale()") < src.index("if url.path == '/api/d24/pre'")
-          and src.index("contract.stale()") < src.index("if url.path in ('/api/d24/day'"),
+    check("if url.path in ('/api/d24/family', '/api/d24/now', '/api/d24/pre', '/api/d24/arrive') and contract.stale():" in src and src.index("contract.stale()") < src.index("if url.path == '/api/d24/pre'")
+          and src.index("contract.stale()") < src.index("if url.path == '/api/d24/arrive'") and src.index("contract.stale()") < src.index("if url.path in ('/api/d24/day'"),
           "the server answers the statistical routes from the stale gate before computing them; the day's observations are still served")
 
 
@@ -653,6 +656,31 @@ def test_page_contract():
     used.update(f"EST:B-RX-{k}-{e}" for k in ("BAND", "WINDOW", "REGION") for e in "RX")
     unreg = sorted(u for u in used if u not in PAGE["estimands"])
     check(used and not unreg, f"every estimand the page makes a passport of is registered ({len(used)}){': ' + str(unreg) if unreg else ''}")
+
+
+def test_arrive_profile():
+    """PROFILE:ARRIVE-24 (operator 2026-10-12, SC-1.1 §12.6): «Отсюда до места», the verified Q1 answer on screen 24
+    (the identity with the pilot's engine over hundreds of attempts is tests/arrive24.py)."""
+    body = AR.arrive("NQ", "RDR", 670, "2025-12-17", "all")
+    c = body["contract"]
+    check(body["status"] == "OK" and c["status"] == "CONFORMANT" and not C.validate(c, "ContractEnvelope") and {b["estimand"] for b in c["bundles"]} == {"EST:K-ARRIVE"} and len(c["bundles"]) == 3,
+          f"ARRIVE-24: a real answer after the confirmation is CONFORMANT, one EST:K-ARRIVE bundle per published place ({len(c.get('bundles', []))})")
+    check(all(b["claim"]["claim_class"] == C.C1 and b["admissible_claims"] == [C.C1] and b["claim"]["selected_case_set"] == "CS:K-ARRIVE-ALL-1" for b in c["bundles"]),
+          "ARRIVE-24: every number is C1 on the matched set of the family on screen; C0, C2 and C3 are not admissible")
+    fam = S.family("NQ", "RDR", 670, "2025-12-17", "conf:all")
+    check(body["N_parent"] == fam["N"] and all(p["counts"]["N_parent"] == fam["N"] for p in body["places"]), "ARRIVE-24: the parent is the family on screen (its N)")
+    day = S.day_view("NQ", "2025-12-17")
+    ref = {p["level"]: C.ref_arrive(fam, day["bars"], float(day["tick"]), 670, p["a"], p["b"]) for p in body["places"]}
+    check(all(sorted(map(tuple, p["members"])) == sorted(map(tuple, ref[p["level"]]["matched"])) for p in body["places"]),
+          "ARRIVE-24: the matched sessions and their labels are the reference's (eligible, not yet at the place, within 1/4 IDR, reached after the cut)")
+    wd = AR.arrive("NQ", "RDR", 670, "2025-12-17", "weekday")
+    check(wd["status"] == "OK" and all(p["publication"] == "WITHHELD_FEW_SESSIONS" and p["counts"]["n_match"] < 20 for p in wd["places"]) and not wd["contract"]["bundles"],
+          "ARRIVE-24: fewer than 20 matched publish no number, the counts stay (nothing widened)")
+    out, fam2, bars, tick = AR._arrive("NQ", "RDR", 670, "2025-12-17", "all")
+    out["places"][1]["members"][0][1] = "NO" if out["places"][1]["members"][0][1] == "YES" else "YES"
+    t = C.attach_arrive(out, fam2, bars, tick, {})
+    check(t["contract"]["status"] == "VIOLATION" and t["places"][1].get("withheld") and not t["places"][0].get("withheld") and len(t["contract"]["bundles"]) == 2,
+          "ARRIVE-24: a forged label is withheld by the reference re-derivation, in its own place only")
 
 
 def test_pre_profile():
@@ -696,7 +724,7 @@ for t in (test_pins_and_products, test_registry_structure, test_enforcement_map,
 print("Part 2: the discriminating examples K01-K33")
 for i in range(1, 34): globals()[f"k{i:02d}"]()
 print("Part 3: integration with the server and the page")
-for t in (test_routes_and_encodings, test_live_envelopes, test_stale_fails_closed, test_page_contract, test_pre_profile): t()
+for t in (test_routes_and_encodings, test_live_envelopes, test_stale_fails_closed, test_page_contract, test_pre_profile, test_arrive_profile): t()
 print()
 print("ALL GOOD" if not failures else f"{len(failures)} FAILED")
 sys.exit(1 if failures else 0)

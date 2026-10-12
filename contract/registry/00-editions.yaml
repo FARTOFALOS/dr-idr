@@ -23,7 +23,7 @@ editions:
     grounds: CONTRACT_FORMALISATION
     title_ru: DR-LAB Semantic Contract 1.1 (patched)
     document_path: spec/DR-LAB-Semantic-Contract-1.1-(patched).md
-    document_sha256_lf: 3572408e0cd91147ebe76056612ecae1bf8f8abc20203cedb5f033e94e09b775
+    document_sha256_lf: 895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb
     edition_status: ACCEPTED_FOR_PROFILES
     supersedes: DR-LAB-SC-1.0
     source_refs: [SRC:SC-1.1, SRC:GOAL-2026-10-07]
@@ -96,6 +96,29 @@ editions:
         not_established:
           - the acceptance of the variant itself — his separate act after he has seen it
           - the panel words proposed by the executor for these decisions (forms marked PROPOSED_BY_EXECUTOR)
+      - actor_role: OPERATOR
+        channel: >-
+          Claude Code chat with the operator, 2026-10-12 (his message: a task text he pasted and sent without other
+          words, after the Q1 pilot was published as PR #6)
+        date: "2026-10-12"
+        quote:
+          - "Интегрировать уже проверенный вычислительный механизм Q1 в существующую визуальную архитектуру DR Lab 24."
+          - "Новый механизм должен обогатить эту визуализацию историческими ответами «отсюда», не подменяя существующие показатели BASE/NOW и не создавая второго пользовательского интерфейса."
+          - "Изолированный пилот на 8771 сохранить как диагностический стенд для проверки вычислений и исходов."
+        scope: >-
+          The verified Q1 computation (Q1-PILOT-0.2, branch q1-pilot-c1) brought into screen 24 as a variant for his
+          acceptance, on the branch ekran-24-otsyuda over the 08.10 variant: the profile ARRIVE-24 (§12.6), its estimand,
+          case sets, route and words. BASE-24, NOW-1.0 and PRE-24 numbers are not changed; the pilot on 8771 stays the
+          diagnostic stand.
+        exclusions:
+          - the working screen (port 8767, its launcher and shortcuts) until his acceptance
+          - merging into main, publication or a push
+          - "the pilot's open decisions: D1 (the parent: the screen's own weekday / all-weekdays switch is used, «все подтверждённые сессии» stays on the stand), D2 beyond «не подменяя», N5, PR #2"
+          - any trading policy, order or execution (SC-1.1 §11, D1)
+        not_established:
+          - the acceptance of this variant and of the text of §0.6 and §12.6 — his separate act after he has seen it
+          - "an explicit permission to change the SC-1.1 text: the amendment is drafted for his acceptance because SC-1.1 and AGENTS.md rule 7 require a registered estimand for every number on screen 24"
+          - the panel words (forms marked PROPOSED_BY_EXECUTOR)
         # these records preserve evidence of the acts; they do not create the decisions (SC-1.1 §14.1)
 
 profiles:
@@ -133,6 +156,20 @@ profiles:
       common clock cut: similar sessions by box colour, models of the day and price position (the operator's selection
       of 2026-10-08 with the definitions of design 22), never widened; fewer than 20 are shown with «мало сессий».
       Every number is C1. Built on the branch resheniya-08-10 for the operator's acceptance; not yet accepted by him.
+  - id: PROFILE:ARRIVE-24
+    version: "1.0"
+    sc_ref: ["§12.6"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: «Отсюда до места» — исторический ответ Q1 на экране 24
+    edition: DR-LAB-SC-1.1
+    profile_status: ACTIVE
+    source_refs: [SRC:INSTRUCTION-2026-10-12, SRC:Q1-PILOT, SRC:KADR-1.1, SRC:Q1-EVIDENCE, SRC:CODE-ARRIVE24, SRC:CODE-Q1-ENGINE]
+    note: >-
+      After today's confirmation, at the common clock cut, for the three places 0, -1/2, -7/10 below today's deepest
+      point: of the family's sessions eligible at the cut (the B0 rule of NOW), not yet at the place and standing where
+      today stands (close within 1/4 IDR), how many reached the place by the block end (OUT:REACH-REST-1). The parent is
+      the family on screen (weekday by default, all weekdays on the explicit switch); n < 20 shows no number. Every
+      number is C1. Built on the branch ekran-24-otsyuda for the operator's acceptance; not yet accepted by him.
 
 source_references:
   - id: SRC:SC-1.1
@@ -140,7 +177,7 @@ source_references:
     grounds: CONTRACT_FORMALISATION
     role: NORMATIVE_CONTRACT
     document: "spec/DR-LAB-Semantic-Contract-1.1-(patched).md"
-    revision: "sha256-lf:3572408e0cd91147ebe76056612ecae1bf8f8abc20203cedb5f033e94e09b775"
+    revision: "sha256-lf:895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb"
   - id: SRC:SC-1.0
     sc_ref: ["§0.2"]
     grounds: CONTRACT_FORMALISATION
@@ -360,3 +397,38 @@ source_references:
     grounds: IMPLEMENTATION_FACT
     role: IMPLEMENTATION
     document: "lab/pre24.py"
+  - id: SRC:INSTRUCTION-2026-10-12
+    sc_ref: ["§12.6", "§14.3"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "meaning/07-cepochka-reshenij.md"
+    locator: "node «12.10 · «Отсюда» на экране 24»: the operator's instruction of 2026-10-12 to integrate the verified Q1 mechanism into screen 24"
+  - id: SRC:Q1-PILOT
+    sc_ref: ["§12.6"]
+    grounds: PROPOSAL
+    role: DEFINITION
+    document: "meaning/lens/2026-10-12-independent-srs/03-q1-historical-pilot.md"
+    note: "Q1-PILOT-0.2, the engineering contract of the historical Q1 pilot (frozen handoff, commit 3dac913, PR #5)"
+  - id: SRC:KADR-1.1
+    sc_ref: ["§12.6"]
+    grounds: PROPOSAL
+    role: ANALYTICAL_INPUT
+    document: "meaning/lens/2026-10-12-kurator/02-specifikaciya.md"
+    locator: "§§3-5 (moment, sets, the question Q:K-ARRIVE), §8 (the answer and the ladder), §10 (presentation)"
+  - id: SRC:Q1-EVIDENCE
+    sc_ref: ["§12.6", "V3"]
+    grounds: RESEARCH_RESULT
+    role: RESEARCH
+    document: "studies/q1_pilot_2026_10_12/README.md"
+    note: "the pilot's reconciliation with the original A/D procedure (0 mismatches on 296 738 rows x 3 parents) and its storage and boundary checks"
+  - id: SRC:CODE-ARRIVE24
+    sc_ref: ["§12.6"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "lab/arrive24.py"
+  - id: SRC:CODE-Q1-ENGINE
+    sc_ref: ["§12.6"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "lab/q1/engine.py"
+    note: "the verified engine of the pilot: Table.target_state, select, reasons — reused unchanged"

@@ -1,4 +1,4 @@
-"""DR-LAB-SWPC-1.1 on screen 24: the static checks and the passports of its bindings B01-B17.
+"""DR-LAB-SWPC-1.1 on screen 24: the static checks and the passports of its bindings B01-B18.
 
     python -B tests/swpc11.py            check (exit code 0 = all good)
     python -B tests/swpc11.py --write    regenerate spec/ekran-24/12-swpc.md from its sources, then check
@@ -143,6 +143,10 @@ REC = {
                 channels="текст: подписи CF:P-*, FF:PRE-STATE, FF:FEW-SESSIONS; полоса на 100 % N: лонг (цвет растущей свечи), шорт (цвет падающей), не подтвердили, неизвестно; у сторон — счёты «k из n» и медианы, квартили в подсказке; на графике ничего",
                 recover="блок стоит в сводке под строкой статуса до подтверждения; загрузка — «Подбираю похожие сессии…», недоступность — «Локальный сервер не ответил»", tune="охват «день недели / все дни» (прежний переключатель)",
                 rules=["meaning/17 §7", "meaning/13 № 55", "SC-1.1 §12.5"], origin="NEW_SWPC 08.10: решение оператора «второй экран до подтверждения нужен» (Н6)", checks=["m19"]),
+    "B18": dict(code=["arriveOf", "arriveBundle", "arriveHtml", "arriveTip", "arriveBody", "drawHighlight", "emphOf"], clock="закрытая M5 (срез ARRIVE-24) после подтверждения", ctx="реестр SC-1.1, инструмент, торговая дата, блок, подтверждение, срез, scope, family_id и snapshot_id семьи-родителя",
+                channels="текст: подписи CF:K-ARRIVE, FF:K-TARGET, FF:FEW-SESSIONS; доля или диапазон и «дошли k из n» у каждого места; при наведении — яркая линия места (как у уровня) и яркие окончательные откаты сессий ответа, остальные точки тише; паспорт в инспекторе и окне 1",
+                recover="блок стоит в сводке под «Сейчас» после подтверждения; загрузка — «считаю…», недоступность — «Локальный сервер не ответил»; закреплённая строка держит подсветку", tune="охват «день недели / все дни» (прежний переключатель семьи)",
+                rules=["meaning/13 № 57", "SC-1.1 §12.6", "meaning/18-otsyuda-na-ekrane-24.md"], origin="NEW_SWPC 12.10: поручение оператора интегрировать проверенный механизм Q1, не подменяя BASE/NOW", checks=["m20"]),
 }
 HARNESS_OF = {m: "m" + m[1:] for m in M}          # M01 is executed by the scenario m01, …
 
@@ -155,7 +159,7 @@ def claim_basis(refs, page):
 
 
 def passports(page):
-    lines = ["# 12 · SWPC-1.1: паспорта привязок B01–B17", "", "[← к оглавлению](README.md)", "",
+    lines = ["# 12 · SWPC-1.1: паспорта привязок B01–B18", "", "[← к оглавлению](README.md)", "",
              "Сгенерировано `python -B tests/swpc11.py --write` из нормативного текста [DR-LAB-SWPC-1.1](../DR-LAB-SWPC-1.1.md) "
              "(§2, §2.1, §3.4, §5, §9) и инженерной записи в `tests/swpc11.py` (код, часы, каналы, настройки, проверки). Руками не править: "
              "`python -B tests/swpc11.py` сверяет файл с источниками.", "",
@@ -203,8 +207,8 @@ def main(write):
     check(set(DEADLINE) == set(W), f"§2.1: every W has its term ({len(DEADLINE)})")
     check(ROLES == ["SCAFFOLD", "AMBIENT_STATE", "TRANSITION", "ON_DEMAND", "WITHHELD", "USER_ALERT"], f"§3.2: six roles {ROLES}")
     check(list(ANCHORS) == [f"A{i}" for i in range(1, 10)], f"§3.3: anchors A1–A9 ({len(ANCHORS)})")
-    check(list(B) == [f"B{i:02d}" for i in range(1, 18)], f"§5: bindings B01–B17 ({len(B)})")
-    check(list(M) == [f"M{i:02d}" for i in range(1, 20)] and list(H) == [f"H{i:02d}" for i in range(1, 14)], f"§8: M01–M19 ({len(M)}) and H01–H13 ({len(H)})")
+    check(list(B) == [f"B{i:02d}" for i in range(1, 19)], f"§5: bindings B01–B18 ({len(B)})")
+    check(list(M) == [f"M{i:02d}" for i in range(1, 21)] and list(H) == [f"H{i:02d}" for i in range(1, 15)], f"§8: M01–M20 ({len(M)}) and H01–H14 ({len(H)})")
     bad = [(b, x) for b, v in B.items() for x in v["w"] if x not in W] + [(b, x) for b, v in B.items() for x in v["roles"] if x not in ROLES] + \
           [(b, x) for b, v in B.items() for x in v["anchors"] if x not in ANCHORS] + [(b, x) for b, v in B.items() for x in v["m"] + v["h"] if x not in M and x not in H]
     check(not bad and all(v["w"] and v["roles"] and v["anchors"] and v["m"] for v in B.values()), f"every B row names existing W, roles, anchors, M and H{': ' + str(bad) if bad else ''}")
@@ -212,8 +216,8 @@ def main(write):
     check(set(M) <= {m for v in B.values() for m in v["m"]} | {"M01", "M18"}, "every M is the check of some binding (M01 and M18 are general)")
     print("§9 against the compiled SC-1.1 registry and the page")
     est, ff = {k for k in ROUTES if k.startswith("EST:")}, {k for k in ROUTES if k.startswith("FF:")}
-    check(est == set(page["estimands"]) and len(est) == 58, f"§9 routes exactly the {len(page['estimands'])} estimands of the registry by exact ids{': ' + str(sorted(est ^ set(page['estimands']))) if est != set(page['estimands']) else ''}")
-    check(ff == set(page["facts"]) and len(ff) == 11, f"§9 routes exactly the {len(page['facts'])} fact forms{': ' + str(sorted(ff ^ set(page['facts']))) if ff != set(page['facts']) else ''}")
+    check(est == set(page["estimands"]) and len(est) == 59, f"§9 routes exactly the {len(page['estimands'])} estimands of the registry by exact ids{': ' + str(sorted(est ^ set(page['estimands']))) if est != set(page['estimands']) else ''}")
+    check(ff == set(page["facts"]) and len(ff) == 12, f"§9 routes exactly the {len(page['facts'])} fact forms{': ' + str(sorted(ff ^ set(page['facts']))) if ff != set(page['facts']) else ''}")
     check(all(set(v) <= set(B) for v in ROUTES.values()), "every route names existing bindings")
     both = (SRC / "app.js").read_text(encoding="utf-8") + (SRC / "panel.js").read_text(encoding="utf-8")
     EV = r"(?:ev|h\.ev|r\.ev|e|I\.ev|g\.ev)"
@@ -229,10 +233,10 @@ def main(write):
     check(set(REC) == set(B) and not missing, f"every binding has its record and every code anchor exists{': ' + str(missing) if missing else ''}")
     harness = HARNESS.read_text(encoding="utf-8")
     lost = [m for m in M if f"check('{m}'" not in harness or not re.search(rf"\n  async {HARNESS_OF[m]}\(B\)", harness)]
-    check(not lost, f"every M01–M19 is executed by its scenario of tests/swpc11_browser.mjs{': ' + str(lost) if lost else ''}")
+    check(not lost, f"every M01–M20 is executed by its scenario of tests/swpc11_browser.mjs{': ' + str(lost) if lost else ''}")
     gen = passports(page)
     filled = all("|  |" not in gen.split(f"## {b} ")[1].split("\n## ")[0] for b in B)
-    check(filled, "every passport of B01–B17 has every field of §3.1")
+    check(filled, "every passport of B01–B18 has every field of §3.1")
     print("SC-1.1 and the generated passports")
     reg = C.registry()
     ed = next(e for e in reg["editions"] if e["id"] == "DR-LAB-SC-1.1")

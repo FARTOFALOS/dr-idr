@@ -223,6 +223,32 @@ case_sets:
     live_use: FORBIDDEN
     profile: PROFILE:PRE-24
     source_refs: [SRC:SC-1.1]
+  - &CS_K_ARRIVE
+    id: CS:K-ARRIVE-1
+    version: "1.0"
+    sc_ref: ["H1", "H3", "§12.6"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: стояли там же и ещё не были у места (семья дня недели)
+    role: MATCHED_AT_CUT
+    parent: [CS:F-CONF-1]
+    key_fields: [INSTRUMENT, BLOCK, WEEKDAY, DIRECTION, CONFIRMATION_WINDOW, DATE_BEFORE_TARGET]
+    activation_kind: CONFIRMATION
+    weekday_scope: WEEKDAY
+    history_rule: "the members of today's confirmation family F that at the common clock cut t are eligible (their own confirmation before t, at least one later M5, the prefix complete, no close beyond their own opposite DR — the B0 rule of NOW-1.0), have not yet been at the place L after their own confirmation (min low_u > L) and stand where today stands by CMP:K-POS-1"
+    condition_ru: "в этот же час по часам Нью-Йорка подтверждение уже было и после него закрылась хотя бы одна M5, все M5 после подтверждения есть, DR цел; после своего подтверждения до места ещё не доходили; закрытие на срезе — в пределах ¼ ширины IDR от сегодняшнего, каждая в своей шкале"
+    condition_availability: PREFIX_AT_CUT
+    live_use: PERMITTED
+    comparison: CMP:K-POS-1
+    undetermined_rule: "a member with a wholly missing M5 between its own confirmation and t is not eligible (PREFIX_HOLE); fewer than 20 matched: no number, the set is never widened"
+    profile: PROFILE:ARRIVE-24
+    source_refs: [SRC:Q1-PILOT, SRC:KADR-1.1, SRC:INSTRUCTION-2026-10-12]
+  - <<: *CS_K_ARRIVE
+    id: CS:K-ARRIVE-ALL-1
+    title_ru: стояли там же и ещё не были у места (семья всех дней — явный выбор)
+    parent: [CS:F-CONF-ALL-1]
+    key_fields: [INSTRUMENT, BLOCK, DIRECTION, CONFIRMATION_WINDOW, DATE_BEFORE_TARGET]
+    weekday_scope: ALL_WEEKDAYS
+    history_rule: "as CS:K-ARRIVE-1 within the all-weekdays confirmation family (the operator's explicit switch, never a fallback)"
   - id: CS:ZM3-STUDY-1
     version: "1"
     sc_ref: ["H1", "V3"]
@@ -300,6 +326,21 @@ comparisons:
     frozen: true
     weights: NONE
     source_refs: [SRC:DECISIONS-2026-10-08, SRC:SEMANTICS-22, SRC:CODE-SCENE21]
+  - id: CMP:K-POS-1
+    version: "1.0"
+    sc_ref: ["H3", "§12.6"]
+    grounds: PROPOSAL
+    title_ru: «отсюда» — ещё не были у места и стоят там же
+    alignment: COMMON_SESSION_CLOCK
+    features:
+      - "eligible at t by the B0 rule of NOW-1.0 (lab/now24.py::series)"
+      - "not yet at the place after the own confirmation: min low_u over (own confirmation, t] > L"
+      - "u = the close of the M5 closing at t, in the case's own scale u = d (p - e) / w"
+    feature_availability: PREFIX_AT_CUT
+    tolerance: "|u_hist - u_today| <= 1/4 inclusive, exact in integers: 4 |v_m w_t - v_t w_m| <= w_m w_t (lab/now24.py::_near); written down before the measurements (screens 21-22, PRE-24), never widened"
+    frozen: true
+    weights: NONE
+    source_refs: [SRC:Q1-PILOT, SRC:KADR-1.1, SRC:CODE-NOW24]
 
 outcomes:
   - id: OUT:FINAL-R-1
@@ -435,7 +476,7 @@ outcomes:
     components: [EXISTENCE]
     uses_case_future_as_label: true
     reference_definition: "lab/contract.py::ref_reach"
-    implementations: ["design/sozvezdiya-24/src/app.js::reachOne"]
+    implementations: ["design/sozvezdiya-24/src/app.js::reachOne", "lab/q1/engine.py::Table.select"]
     statuses: "as OUT:REACH-FULL-1 over the M5 closing in (t, H] on the common clock, for every member of F alike (the accepted screen: «на общих часах после среза — M5, закрывшиеся после t до конца блока», spec/ekran-24/04-polosa.md; the explicitly named alternative horizon of P0.1 / §12.4 B-LEVEL)"
     source_refs: [SRC:SEM-1.0, SRC:M10-P]
   - id: OUT:CROSS-FULL-1

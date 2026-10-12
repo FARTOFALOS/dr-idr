@@ -223,7 +223,7 @@ const HELPERS = function () {
       const t0 = Date.now();
       for (;;) {
         D.render(true);
-        const c = D.cur(), idle = D.A.pending.size === 0 && D.A.nowPending.size === 0 && !(D.A.prePending && D.A.prePending.size) && !D.A.busy;
+        const c = D.cur(), idle = D.A.pending.size === 0 && D.A.nowPending.size === 0 && !(D.A.prePending && D.A.prePending.size) && !(D.A.arrPending && D.A.arrPending.size) && !D.A.busy;
         if (idle && (c.F || !fam(c)) && Date.now() - t0 > 250) break;
         if (idle && !c.F && fam(c) && Date.now() - t0 > 1500) break;
         if (Date.now() - t0 > maxMs) break;
@@ -291,6 +291,7 @@ const LIVE = async (date, now) => {
   T.rules.push({ live: true, name: 'live family', match: '/api/d24/family', when: u => !u.includes('date='), url: u => u + '&date=' + date });
   T.rules.push({ live: true, name: 'live now', match: '/api/d24/now', when: u => !u.includes('date='), url: u => u + '&date=' + date });
   T.rules.push({ live: true, name: 'live pre', match: '/api/d24/pre', when: u => !u.includes('date='), url: u => u + '&date=' + date });
+  T.rules.push({ live: true, name: 'live arrive', match: '/api/d24/arrive', when: u => !u.includes('date='), url: u => u + '&date=' + date });
   D.A.auto = false; clearTimeout(D.A.timer);
   D.openLive();
   return H.settle();
@@ -309,8 +310,8 @@ const S = {
   // its family context, and a binding of §9 found by its exact id (no similar name gets a presentation)
   async m01(B) {
     const routes = swpcRoutes();
-    check('M01', Object.keys(routes).filter(k => k.startsWith('EST:')).length === 58 && Object.keys(routes).filter(k => k.startsWith('FF:')).length === 11,
-      '§9 of the document routes 58 estimands and 11 fact forms (PRE-24 and FF:PHASE-RULE since 2026-10-08) (read from the document)', Object.keys(routes).length);
+    check('M01', Object.keys(routes).filter(k => k.startsWith('EST:')).length === 59 && Object.keys(routes).filter(k => k.startsWith('FF:')).length === 12,
+      '§9 of the document routes 59 estimands and 12 fact forms (PRE-24 and FF:PHASE-RULE since 2026-10-08, ARRIVE-24 since 2026-10-12) (read from the document)', Object.keys(routes).length);
     await open(B, DAY + '&at=11:40');
     const r = await evaluate(B.cdp, async () => {
       const H = window.__h, { D } = H, F0 = D.cur().F, z = (D.zonesOf(F0, 'R') || { zones: [] }).zones;
@@ -631,6 +632,48 @@ const S = {
     await open(B, '#date=2025-03-07&inst=NQ&session=RDR&at=14:35');
     const k = await evaluate(B.cdp, async () => { await window.__h.settle(); const F = window.__d24.cur().F; return { brk: !!(F && F.brk), N: F && F.N, few: window.__h.panel.innerText.includes('мало сессий: n=' + (F && F.N)) }; });
     check('M19', k.brk && k.N > 0 && k.N < 20 && k.few, `a break family of ${k.N} sessions is marked «мало сессий: n=${k.N}», not hidden`, k);
+  },
+
+  // M20 (ARRIVE-24, operator 2026-10-12): after the confirmation the block «Отсюда до места» shows only the numbers of the
+  // server's verified bundles of its own cut and scope (its parent is the family on screen); fewer than 20 there show no
+  // number; a place reached today is a time, not a share; a hovered row lights exactly the pullbacks of its sessions; the
+  // ladder and «Сейчас» are not touched by it
+  async m20(B) {
+    const read = async (q) => {
+      const H = window.__h, { D } = H;
+      await H.settle();
+      for (let i = 0; i < 50 && !D.arriveOf(D.cur()); i++) { await H.wait(100); D.render(true); }
+      await H.settle();
+      const c = D.cur(), box = H.panel.querySelector('.p24-arrblk'), text = box ? box.innerText : '';
+      const api = await (await fetch('/api/d24/arrive?' + q + '&scope=' + D.st.scope)).json();
+      const bs = (api.contract || {}).bundles || [];
+      const pct = v => { const r = Math.round(v * 10) / 10; return r.toLocaleString('ru-RU', { minimumFractionDigits: Number.isInteger(r) ? 0 : 1, maximumFractionDigits: Number.isInteger(r) ? 0 : 1 }) + '%'; };
+      const rows = (api.places || []).map(P => {
+        const k = P.counts, b = bs.find(x => JSON.parse(x.parameters || '{}').level === P.level);
+        if (P.state.status === 'RESOLVED') return { lvl: P.level, kind: 'resolved', ok: text.includes('уже дошли в ' + P.state.time) && !b };
+        if (P.publication === 'WITHHELD_FEW_SESSIONS') return { lvl: P.level, kind: 'few', ok: text.includes('мало сессий: n=' + k.n_match) && !b };
+        const bd = b && b.estimates.find(e => e.value_kind === 'BOUNDS');
+        const want = k.unknown ? pct(100 * bd.lower) + '–' + pct(100 * bd.upper) : pct(100 * bd.lower);
+        const h = { k: 'arrive', id: P.level }, ids = new Map(P.members);
+        const lit = c.F.ev.R.pts.filter(q => D.emphOf(q, h, c.F, c) === true);
+        const known = P.members.filter(([id]) => c.F.M.some(m => m.id === id && m.R.s === 'known')).length;
+        return { lvl: P.level, kind: 'share', ok: !!b && text.includes(want) && text.includes('дошли ' + k.yes + ' из ' + k.n_match) && lit.length === known && lit.every(q => ids.has(q.m.id) && ((q.m.R.v * P.b <= P.a * q.m.w) === (ids.get(q.m.id) === 'YES'))) };
+      });
+      return { status: c.s.status, N: c.F && c.F.N, parent: api.N_parent, conformant: (api.contract || {}).status, api: api.status, rows, head: text.includes(D.lbl('EST:K-ARRIVE', 'head')), base: H.base(c.F), now: H.nowBlock() };
+    };
+    await open(B, '#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all');
+    const r = await evaluate(B.cdp, read, 'instrument=NQ&session=RDR&at=670&date=2025-12-17');
+    check('M20', r.api === 'OK' && r.conformant === 'CONFORMANT' && r.head && r.parent === r.N && r.rows.length === 3 && r.rows.every(x => x.ok) && r.rows.some(x => x.kind === 'share'),
+      `the three places show the shares and counts of the server's verified bundles of their cut, the parent is the family on screen (N = ${r.N}), a hover lights exactly the pullbacks of the answer`, r.rows);
+    await open(B, '#date=2025-12-17&inst=NQ&session=RDR&at=11:10');
+    const w = await evaluate(B.cdp, read, 'instrument=NQ&session=RDR&at=670&date=2025-12-17');
+    check('M20', w.api === 'OK' && w.rows.length === 3 && w.rows.every(x => x.kind === 'few' && x.ok), 'the weekday family: fewer than 20 stood there — «мало сессий: n=…», no number, the set not widened', w.rows);
+    // a place reached today (NQ RDR 12.12.2025: the pullback reached the IDR edge at 13:15): a time, not a share, next to
+    // the open places of the same cut
+    await open(B, '#date=2025-12-12&inst=NQ&session=RDR&at=14:00&scope=all');
+    const t = await evaluate(B.cdp, read, 'instrument=NQ&session=RDR&at=840&date=2025-12-12');
+    check('M20', t.api === 'OK' && t.conformant === 'CONFORMANT' && t.rows.some(x => x.kind === 'resolved') && t.rows.some(x => x.kind === 'share') && t.rows.every(x => x.ok),
+      'a place reached today is shown as its time («уже дошли в …»), not a share, next to the open places of the same cut', t.rows);
   },
 
   // M10: switching layers off or framing the price leaves every count; the residual and the events out of the frame are
@@ -1030,6 +1073,37 @@ const S = {
     }
   },
 
+  // the variant «Отсюда до места» (branch ekran-24-otsyuda, operator 2026-10-12) for his acceptance: each scene as the live
+  // screen at its cut (LIVE: no candle after it), 1600×900; OTSYUDA_SHOTS = the folder (opt-in: `node … otsyuda`)
+  async otsyuda(B) {
+    const dir = process.env.OTSYUDA_SHOTS || path.join(ROOT, 'spec', 'ekran-24', 'img', 'otsyuda');
+    fs.mkdirSync(dir, { recursive: true });
+    const scenes = [
+      ['1-otsyuda-vse-dni', 'NQ', 'RDR', '2025-12-17', 670, 'all', null], ['2-navedenie-seredina', 'NQ', 'RDR', '2025-12-17', 670, 'all', '-1/2'],
+      ['3-den-nedeli-malo-sessij', 'NQ', 'RDR', '2025-12-17', 670, 'weekday', null], ['4-uzhe-doshli', 'NQ', 'RDR', '2025-12-12', 840, 'all', null],
+      ['5-navedenie-minus-07', 'NQ', 'RDR', '2025-12-12', 840, 'all', '-7/10'], ['6-dr-sloman', 'NQ', 'RDR', '2025-12-10', 900, 'all', null]];
+    for (const [name, inst, session, date, now, scope, pinned] of scenes) {
+      await open(B, `#date=${date}&inst=${inst}&session=${session}` + (scope === 'all' ? '&scope=all' : ''), [1600, 900]);
+      await evaluate(B.cdp, LIVE, date, now);
+      const p = await evaluate(B.cdp, async (scope, pinned) => {
+        const H = window.__h, { D } = H;
+        if (D.st.scope !== scope) { D.st.scope = scope; D.render(true); }
+        await H.settle();
+        for (let i = 0; i < 60 && !D.arriveOf(D.cur()); i++) { await H.wait(100); D.render(true); }
+        await H.settle();
+        if (pinned) { D.st.pin = { k: 'arrive', id: pinned }; D.st.hover = null; D.render(true); await H.wait(150); D.render(true); }
+        const blk = H.panel.querySelector('.p24-arrblk');
+        if (blk) H.panel.scrollTop = Math.max(0, blk.offsetTop - 120);
+        return { arrive: blk ? blk.innerText : null, insp: document.getElementById('insp').innerText.slice(0, 300), v: D.contract().violations };
+      }, scope, pinned);
+      await sleep(400);
+      const r = await B.cdp.send('Page.captureScreenshot', { format: 'png' });
+      fs.writeFileSync(path.join(dir, name + '.png'), Buffer.from(r.data, 'base64'));
+      check('OTSYUDA', !!p.arrive && !p.v.length, `${name}: ${inst} ${session} ${date} live at ${String(Math.floor(now / 60)).padStart(2, '0')}:${String(now % 60).padStart(2, '0')} · ${scope}${pinned ? ' · pinned ' + pinned : ''}`, p);
+      console.log('  ..   ' + path.relative(ROOT, path.join(dir, name + '.png')) + ' · ' + (p.arrive || '').split(String.fromCharCode(10)).join(' | ').slice(0, 200));
+    }
+  },
+
   // the screen's own check (tests/ui_check24.js) in this isolated instance, at both sizes of AGENTS.md, on several states
   async ui24(B) {
     const code = fs.readFileSync(path.join(ROOT, 'tests', 'ui_check24.js'), 'utf8');
@@ -1333,7 +1407,7 @@ const want = process.argv.slice(2);
 const B = await launch();
 try {
   for (const [name, fn] of Object.entries(S)) {
-    if (want.length ? !want.includes(name) : ['shots', 'same', 'variant'].includes(name)) continue;
+    if (want.length ? !want.includes(name) : ['shots', 'same', 'variant', 'otsyuda'].includes(name)) continue;
     console.log('— ' + name);
     try { await fn(B); } catch (e) { check(name.toUpperCase(), false, 'the scenario failed to run', String(e.stack || e).slice(0, 900)); }
   }

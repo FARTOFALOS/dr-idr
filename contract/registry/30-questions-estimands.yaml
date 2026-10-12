@@ -24,6 +24,7 @@ questions:
   - {id: Q:ZM3-STUDY, version: "1", sc_ref: ["T0", "V3"], grounds: RESEARCH_RESULT, text_ru: "Как часто зоны такого статуса сбывались в исследовании?", scene_ru: "разведка 2018–2025: доля зон со статусом «держится» / «возможна» / «невозможна», в которых потом лёг окончательный экстремум"}
   - {id: Q:P-DIR, version: "1", sc_ref: ["T0", "§12.5"], grounds: OPERATOR_REQUIREMENT, text_ru: "В какую сторону подтверждали похожие?", scene_ru: "до сегодняшнего подтверждения — как часто похожие к этому часу сессии (тот же цвет коробки, те же модели дня, цена там же в коробке) потом подтверждали лонг, шорт или не подтверждали"}
   - {id: Q:P-WHEN, version: "1", sc_ref: ["T0", "§12.5"], grounds: OPERATOR_REQUIREMENT, text_ru: "Когда подтверждали?", scene_ru: "в какие 15 минут было подтверждение у тех похожих, кто подтвердил в эту сторону"}
+  - {id: Q:K-ARRIVE, version: "1", sc_ref: ["T0", "§12.6"], grounds: OPERATOR_REQUIREMENT, text_ru: "Дойдёт ли отсюда до места?", scene_ru: "после сегодняшнего подтверждения, на этой закрытой M5: из сессий семьи, которые в этот же час стояли там же и ещё не были у места (край IDR, середина IDR, −0,7), — сколько потом до конца сессии до него дошли"}
   - {id: Q:P-AFTER, version: "1", sc_ref: ["T0", "§12.5"], grounds: OPERATOR_REQUIREMENT, text_ru: "Что было после подтверждения?", scene_ru: "заранее: куда шли похожие сессии после своего подтверждения в каждую сторону — исход DR, окончательный откат и продолжение"}
 
 estimands:
@@ -534,6 +535,30 @@ estimands:
     id: EST:P-X
     q1_formalised_part_ru: "квартили окончательного продолжения X после собственного подтверждения у подтвердивших в эту сторону похожих сессий, где оно известно (в ширинах IDR от своего края IDR)"
     q5_outcome: OUT:FINAL-X-1
+  # ------------------------------------------------------------------ ARRIVE-24: «Отсюда до места» (Q1, 2026-10-12)
+  - id: EST:K-ARRIVE
+    version: "1.0"
+    sc_ref: ["T1", "§12.6", "V2.1"]
+    grounds: OPERATOR_REQUIREMENT
+    question: Q:K-ARRIVE
+    q1_formalised_part_ru: "доля сессий набора «стояли там же и ещё не были у места» на общем часовом срезе t, у которых хотя бы одна M5, закрывшаяся после t до конца блока, дошла до места L (low_u ≤ L против подтверждения); L ∈ {0, −1/2, −7/10}"
+    q2_target: FIXED_HISTORICAL_SET
+    q3_unit: SESSION_AT_CUT
+    q4_case_set: [CS:K-ARRIVE-1, CS:K-ARRIVE-ALL-1]
+    q4_denominator: N_MATCH_AT_CUT
+    q5_outcome: OUT:REACH-REST-1
+    q5_region: REG:LEVEL-1
+    q6_time_ru: "M5, закрывшиеся после общего среза t до конца блока H; все члены набора к t уже подтвердились, поэтому max(t, собственная активация) = t"
+    q6_cut: CUT:NOW-COMMON-CLOCK-1
+    q7_measure: SHARE
+    q8_unknown: POINT_AMONG_KNOWN_WITH_BOUNDS
+    q8_weights: NONE
+    q8_order_ru: "точка — «дошли» среди известных; границы [дошли/n; (дошли + неизвестно)/n] передаются всегда; n — число стоявших там же; при n < 20 числа нет («мало сессий»), набор не расширяется; доля набора не выдаётся за долю семьи"
+    parameters:
+      - {name: a, parameter_kind: LEVEL_RATIONAL, meaning_ru: "числитель места u = a / b (0, −1, −7)"}
+      - {name: b, parameter_kind: LEVEL_RATIONAL, meaning_ru: "знаменатель места (1, 2, 10)"}
+      - {name: cut, parameter_kind: CUT, meaning_ru: "общий часовой срез t"}
+    profile: PROFILE:ARRIVE-24
 
 estimators:
   - id: ESTR:JOINT-CELLS-1
@@ -676,3 +701,13 @@ estimators:
     rounding_ru: "четыре знака в ответе, два на экране"
     implementations: ["lab/pre24.py::_q"]
     reference_definition: "lab/contract.py::ref_quantile"
+  - id: ESTR:K-POINT-BOUNDS-1
+    version: "1.0"
+    sc_ref: ["V0", "V2.1", "§12.6"]
+    grounds: PROPOSAL
+    estimands: [EST:K-ARRIVE]
+    rule: POINT_AMONG_KNOWN_AND_BOUNDS
+    unknown_handling_ru: "точка — дошли / (дошли + не дошли); границы [дошли / n; (дошли + неизвестно) / n]; неизвестное остаётся в n и не превращается в «не дошли»; без известных исходов точки нет"
+    rounding_ru: "точные счёты; проценты после деления, один знак"
+    implementations: ["lab/arrive24.py::_arrive", "lab/q1/engine.py::Table.attempt"]
+    reference_definition: "lab/contract.py::est_binary_bounds"

@@ -29,7 +29,7 @@
   };
   const ORDER = ['ADR', 'ODR', 'RDR'];
   let PREV = null;
-  const A = { inst: 'NQ', src: 'live', date: null, day: null, D: null, fams: new Map(), pending: new Set(), now: new Map(), nowPending: new Set(), pre: new Map(), prePending: new Set(), auto: true, timer: 0, busy: false, error: null, dates: null, jump: false };
+  const A = { inst: 'NQ', src: 'live', date: null, day: null, D: null, fams: new Map(), pending: new Set(), now: new Map(), nowPending: new Set(), pre: new Map(), prePending: new Set(), arr: new Map(), arrPending: new Set(), auto: true, timer: 0, busy: false, error: null, dates: null, jump: false };
   const C = {
     bg: '#08090C', grid: '#1C2027', text: '#D1D4DC', text2: '#A3A8B3', text3: '#6F7582', axis: '#0B0C10',
     up: '#089981', dn: '#F23645', dr: '#EEF1F5', idr: '#AEBACB', mid: '#8B95A5', open: '#6B7380', std: '#5F6877', stdOn: '#A7B2C3',
@@ -336,6 +336,27 @@
     }
     return null;
   }
+  // PROFILE:ARRIVE-24 (operator 2026-10-12, SC-1.1 §12.6): the verified Q1 answer «отсюда до места» of today's
+  // confirmation family at the slice (lab/arrive24.py), one request per closed M5 and scope; the map, the ladder and
+  // «Сейчас» are not touched by it
+  const arriveKey = ctx => [A.inst, A.src === 'hist' ? A.date : 'live', ctx.s.k, ctx.s.conf, sliceOf(ctx), st.scope].join('|');
+  function arriveOf(ctx) {
+    if (!ctx.F || !ctx.s.conf) return null;
+    const key = arriveKey(ctx), r = A.arr.get(key);
+    if (r) return r;
+    if (!A.arrPending.has(key)) {
+      A.arrPending.add(key);
+      fetch('/api/d24/arrive?instrument=' + A.inst + '&session=' + ctx.s.k + '&at=' + sliceOf(ctx) + (A.src === 'hist' ? '&date=' + A.date : '') + '&scope=' + st.scope)
+        .then(x => x.json()).then(x => { x._ctx = 'arr|' + (A.respSeq = (A.respSeq || 0) + 1); A.arr.set(key, x); if (A.arr.size > 80) A.arr.delete(A.arr.keys().next().value); })
+        // SWPC-1.1 W13: an answer that did not arrive says so in the block's place
+        .catch(() => A.arr.set(key, { status: 'ERROR', message: 'Локальный сервер не ответил', _ctx: 'arr|' + (A.respSeq = (A.respSeq || 0) + 1) }))
+        .finally(() => { A.arrPending.delete(key); redraw(true); });
+    }
+    return null;
+  }
+  // the place on today's chart: its u in today's confirmation scale (the break family's scale is another frame)
+  const arrPrice = (ctx, P) => ctx.s.price(P.a / P.b);
+  const arrPlace = (r, lvl) => r && r.status === 'OK' ? r.places.find(P => P.level === lvl) || null : null;
   function snapOf(D, s) {
     if (!s.conf || !['confirmed', 'broken', 'done'].includes(s.status) || D.d === 'none') return null;
     const view = wantView(s), fk = famKey(D, s, view), r = A.fams.get(fk);
@@ -586,6 +607,8 @@
       if (r && r.snapshot_id) out.add(r.snapshot_id);
       const n = ctx.F ? A.now.get(nowKey(ctx)) : null;
       if (n && n._ctx) out.add(n._ctx);
+      const ar = ctx.F ? A.arr.get(arriveKey(ctx)) : null;
+      if (ar && ar._ctx) out.add(ar._ctx);
     }
     if (s.status === 'waiting') { const p = A.pre.get(preKey(ctx)); if (p && p._ctx) out.add(p._ctx); }
     return out;
@@ -603,6 +626,9 @@
     const n = ctx.F ? A.now.get(nowKey(ctx)) : null;
     if (n && /^CONTRACT_/.test(n.status || '')) out.push(n.note || n.message || n.status);
     if (n) for (const ev of ['R', 'X']) if (n[ev] && n[ev].mode === 'WITHHELD') out.push('«Сейчас» ' + ev + ': ' + (n[ev].note || n[ev].mode));
+    const ar = ctx.F ? A.arr.get(arriveKey(ctx)) : null;
+    if (ar && /^CONTRACT_/.test(ar.status || '')) out.push(ar.note || ar.message || ar.status);
+    if (ar && ar.places) for (const P of ar.places) if (P.withheld) out.push('«Отсюда» ' + P.level + ': ' + (P.note || 'снято'));
     if (s.status === 'waiting') { const p = A.pre.get(preKey(ctx)); if (p && /^contract_/.test(p.status || '')) out.push(p.message || p.status); }
     return out;
   }
@@ -683,6 +709,23 @@
     if (!b) { kViolate('«До подтверждения»: no published bundle ' + est + (side ? ' (' + side + ')' : '') + ' on this cut', null, r._ctx); return null; }
     if (!f || b.claim_form !== f.id || b.claim.claim_class !== f.claim_class || !(b.admissible_claims || []).includes(f.claim_class)) { kViolate('«До подтверждения»: ' + est + ' published under another claim', null, r._ctx); return null; }
     if (est === 'EST:P-DIR' && b.estimates[0].denominator !== r.N) { kViolate('«До подтверждения»: N of the block is not that of its bundle', null, r._ctx); return null; }
+    return b;
+  }
+
+  // an «Отсюда» share (lab/contract.py::attach_arrive, C1) is shown only with its bundle on this cut, under the registered
+  // claim form admissible there, on the case set of the family on screen, and only if the counts shown are the bundle's
+  function arriveBundle(r, lvl, P) {
+    const c = r.contract, est = 'EST:K-ARRIVE', f = SC11 && SC11.forms[est], fault = regFault(c);
+    if (fault) { kViolate('«Отсюда»: ' + fault, null, r._ctx); return null; }
+    const b = (c.bundles || []).find(x => x.estimand === est && parOf(x).level === lvl);
+    if (!b) { kViolate('«Отсюда»: no published bundle ' + est + ' (' + lvl + ') on this cut', null, r._ctx); return null; }
+    if (!f || b.claim_form !== f.id || b.claim.claim_class !== f.claim_class || !(b.admissible_claims || []).includes(f.claim_class)) { kViolate('«Отсюда»: ' + est + ' published under another claim', null, r._ctx); return null; }
+    const k = P.counts, pt = b.estimates.find(x => x.value_kind === 'POINT'), bd = b.estimates.find(x => x.value_kind === 'BOUNDS'), s0 = b.supports[0] || {}, cm = (s0.components || [])[0] || {};
+    const cs = r.scope === 'all' ? 'CS:K-ARRIVE-ALL-1' : 'CS:K-ARRIVE-1';
+    if ((pt ? pt.numerator !== k.yes || pt.denominator !== k.n_known : k.n_known) || !bd || bd.denominator !== k.n_match || s0.n_eligible !== k.N_eligible || s0.n_base !== r.N_parent ||
+        cm.yes !== k.yes || cm.no !== k.no || cm.unknown !== k.unknown || b.claim.selected_case_set !== cs) {
+      kViolate('«Отсюда» ' + lvl + ': the shown numbers are not those of its bundle', null, r._ctx); return null;
+    }
     return b;
   }
 
@@ -1173,6 +1216,8 @@
     const F = ctx.F, h = hv();
     if (!h) return;
     if (h.k === 'now') { drawNowLevels(c, ctx, h.ev); return; }
+    // «Отсюда»: the place lit like a level (its price stands on the price scale), nothing written over the candles
+    if (h.k === 'arrive') { const P = arrPlace(arriveOf(ctx), h.id); if (P) brightLine(c, arrPrice(ctx, P), null); return; }
     const col = cfg[h.ev || st.ev];
     if (h.k === 'pcell') {
       const [ya, yb] = cellY(F, h.k0, h.k1);
@@ -1352,6 +1397,10 @@
       if (h.k === 'hcell') return h.ev === q.ev && q.k === h.kk && q.b === h.b;
       if (h.k === 'order') { const o = q.m.order; return h.key === 'unknown' ? !['X_before_R', 'R_before_X', 'same_M5', 'no_period'].includes(o) : o === h.key; }
       if (h.k === 'lvl' && h.l && ctx) { const L = levelRat(F, h.l.p), up = levelUp(F, ctx, L); return reachOne(F, q.m, L, up, q.m.act) === 'yes'; }
+      // «Отсюда»: the final pullbacks (R) of the sessions behind the answer are lit — on the place's line or beyond it (in
+      // the pullback's direction) those that reached it, short of it those that did not (an R ending at or beyond the
+      // place is exactly a reach after the cut for a session not yet there at the cut); every other point is dimmed
+      if (h.k === 'arrive' && ctx) { const P = arrPlace(arriveOf(ctx), h.id); return !!(P && P.members && q.ev === 'R' && P.members.some(x => x[0] === q.m.id)); }
     }
     if (st.area) return inArea(q, st.area) ? true : null;
     return null;
@@ -2523,6 +2572,7 @@
       }
       return out;
     }
+    if (h.k === 'arrive' && F) return arriveTip(ctx, h.id);
     if (h.k === 'vib') { const v = h.v; return '<b>VI ' + (v.dir === 1 ? '↑' : '↓') + '</b> · ' + px(v.lo) + '–' + px(v.hi) + ' · ' + clk(v.t) + '<br><span class="k">' + (v.fill != null ? 'ребалансирован в ' + clk(v.fill) : 'открыт: цена ещё не заходила') + '</span>'; }
     if (h.k === 'prev') {
       const P = h.P, q = P.s;
@@ -2530,6 +2580,48 @@
       return '<b>' + P.name + ' · ' + h.nm + '</b> · ' + px(h.p) + '<br><span class="k">' + how + ' · цена сейчас ' + (ctx.s.priceNow > h.p ? 'выше' : 'ниже') + '</span>';
     }
     return '';
+  }
+  // the passport of an «Отсюда» answer (window 1 of the six; the inspector has the same in its compact lines): the
+  // question, the family, the chain of the selection, the outcomes, the share, what the lit stars are, and whether the cut
+  // lies in the domain of the A/D reconciliation
+  const ARRK = { '0': 'p0', '-1/2': 'p12', '-7/10': 'p710' };
+  function arriveTip(ctx, lvl) {
+    const r = arriveOf(ctx), P = arrPlace(r, lvl), K_ = 'EST:K-ARRIVE', T_ = 'FF:K-TARGET', F = ctx.F;
+    if (!P) return '';
+    const cut = r.cut.cut_clock_et, end = r.cut.horizon_end;
+    let out = '<div class="ih">' + lbl(K_, 'win_head', { place: lbl(K_, ARRK[lvl]), price: px(arrPrice(ctx, P)) }) + '</div>';
+    if (F && !F.brk) out += '<div class="is">' + esc(lbl(K_, 'win_set_v', { cond: F.cond, N: r.N_parent })) + '</div>';
+    out += '<div class="iq">' + lbl(K_, 'win_q_v', { cut, end }) + '</div>';
+    if (P.withheld) return out + '<div class="il">' + lbl(T_, 'withheld') + '</div>';
+    if (P.state.status === 'RESOLVED') return out + '<div class="il">' + lbl(T_, 'RESOLVED', { time: P.state.time }) + '</div>';
+    const k = P.counts;
+    out += '<div class="is">' + lbl(K_, 'win_chain', { cut }) + ': ' + lbl(K_, 'win_chain_v', { eligible: k.N_eligible, notyet: k.N_not_yet, n: k.n_match }) + '</div>';
+    if (P.publication === 'WITHHELD_FEW_SESSIONS') return out + '<div class="il">' + lbl('FF:FEW-SESSIONS', 'few', { n: k.n_match }) + '</div><span class="k">' + lbl('FF:FEW-SESSIONS', 'title_none') + '</span>';
+    const b = arriveBundle(r, lvl, P), lo = 100 * k.yes / k.n_match, hi = 100 * (k.yes + k.unknown) / k.n_match;
+    out += '<div class="ir">' + lbl(K_, 'win_out_v', { yes: k.yes, no: k.no, unknown: k.unknown }) + '<b>' + (!b ? '—' : k.unknown ? pct(lo) + '–' + pct(hi) : pct(lo)) + '</b></div>';
+    if (b && k.unknown && k.n_known) out += '<div class="ir">' + lbl(K_, 'insp_known') + '<b>' + pct(100 * k.yes / k.n_known) + '</b></div>';
+    return out + '<span class="k">' + lbl(K_, 'win_stars_v') + ' · ' + lbl(K_, r.cut.on_ad_15min_grid && r.evidence.ad_target_domain ? 'win_ad_in' : 'win_ad_out') + '</span>';
+  }
+  function arriveBody(ctx, lvl) {
+    const r = arriveOf(ctx), P = arrPlace(r, lvl), K_ = 'EST:K-ARRIVE', T_ = 'FF:K-TARGET', F = ctx.F;
+    if (!P) return null;
+    const head = lbl(K_, 'win_head', { place: lbl(K_, ARRK[lvl]), price: px(arrPrice(ctx, P)) });
+    const row = (k, v) => '<div class="p24-dr"><span>' + k + '</span><b>' + v + '</b></div>', cut = r.cut.cut_clock_et, end = r.cut.horizon_end;
+    let body = row(lbl(K_, 'win_q'), lbl(K_, 'win_q_v', { cut, end }));
+    if (P.withheld) return { head, body: body + row(lbl(T_, 'withheld'), '') };
+    if (P.state.status === 'RESOLVED') return { head, body: body + row(lbl('FF:TODAY-Z', 'row'), lbl(T_, 'RESOLVED', { time: P.state.time })) };
+    const k = P.counts, b = P.publication === 'PUBLISHED' || P.publication === 'NO_KNOWN_OUTCOME' ? arriveBundle(r, lvl, P) : null;
+    const cond = F && !F.brk ? F.cond : '';
+    body += row(lbl(K_, 'win_set'), esc(lbl(K_, 'win_set_v', { cond, N: r.N_parent }))) + row(lbl(K_, 'win_chain', { cut }), lbl(K_, 'win_chain_v', { eligible: k.N_eligible, notyet: k.N_not_yet, n: k.n_match }));
+    if (P.publication === 'WITHHELD_FEW_SESSIONS') return { head, body: body + row(lbl('FF:FEW-SESSIONS', 'few', { n: k.n_match }), '') + '<span class="k">' + lbl('FF:FEW-SESSIONS', 'title_none') + '</span>' };
+    body += row(lbl(K_, 'win_out'), lbl(K_, 'win_out_v', { yes: k.yes, no: k.no, unknown: k.unknown }));
+    if (b) {
+      const lo = 100 * k.yes / k.n_match, hi = 100 * (k.yes + k.unknown) / k.n_match;
+      const shown = k.unknown ? pct(lo) + '–' + pct(hi) : pct(lo);
+      body += row(lbl(K_, 'win_share'), k.n_known ? lbl(K_, 'win_share_v', { shown, pct: pct(100 * k.yes / k.n_known) }) : lbl(T_, 'none_known'));
+    } else body += row(lbl(K_, 'win_share'), '—');
+    body += row(lbl(K_, 'win_stars'), lbl(K_, 'win_stars_v')) + row(lbl(K_, 'win_ad'), lbl(K_, r.cut.on_ad_15min_grid && r.evidence.ad_target_domain ? 'win_ad_in' : 'win_ad_out'));
+    return { head, body };
   }
   // «на уровне или дальше» of a level (spec §5.4): on each session's whole horizon and on the common hours after the slice;
   // the side is the sign of the level's u (levelUp: beyond the edge of play = along), and it is named
@@ -3247,7 +3339,7 @@
   }
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
-  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, preOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, preOf, arriveOf, emphOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)
     // violations: those of the scene on screen (SWPC-1.1 M16); all: every one found since the page opened
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),

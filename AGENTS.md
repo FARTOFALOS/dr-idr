@@ -109,6 +109,8 @@ shown. Any date of 2006–2025 opens as if it were today («История»); c
 start-dr-lab.cmd / .ps1   the operator's shortcut target: TradingView (port 9222) -> history -> server -> page
 start-dr-lab-24.cmd       the shortcut «DR Lab 24»: the same start, then the page /24/ (the root / opens it too)
 stop-dr-lab.cmd / .ps1    stop the local server
+start-dr-lab-otsyuda.cmd  (branch ekran-24-otsyuda) the shortcut «DR Lab 24 · отсюда (вариант)»: this variant's own server on
+                          127.0.0.1:8772 and screen 24 on the pilot's demo scene; stop-dr-lab-otsyuda.cmd stops 8772 only
 start-q1-pilot.cmd / .ps1 the shortcut «DR Lab Q1 (пилот)»: the isolated historical Q1 pilot on 127.0.0.1:8771 (its own
                           server, page and store; the working DR Lab is untouched); stop-q1-pilot.cmd stops 8771 only
 contract/                 the machine contract of DR-LAB-SC-1.1: LinkML schema, registry, build tool, products;
@@ -120,6 +122,8 @@ lab/
   scene24.py              screen 24's data (/api/d24/day, family, dates): families, R / X, DR outcome, order, path
   zonemap24.py            screen 24's zone map zone-map-3 (meaning/12): zones, diagnostics, today's two axes
   now24.py                screen 24's layer «Сейчас» (/api/d24/now, DR-LAB-NOW-1.0); now24_validate.py: walk-forward
+  arrive24.py             screen 24's block «Отсюда до места» (/api/d24/arrive, profile ARRIVE-24, SC-1.1 §12.6; branch
+                          ekran-24-otsyuda): the verified Q1 engine (lab/q1) on the family on screen
   scene21.py              the trading day from TradingView (used by 24), design 22's data (legacy: /api/day, /api/cohort,
                           /api/family), design 23's /api/family-v1
   cluster24.py            main-cluster-1 (meaning/11): kept for its archived studies, not on the screen
@@ -160,6 +164,7 @@ tests/ui_check24.js       screen 24: in-page check (passports, page = server, on
                           the contract layer: every passport recomputed by the reference, K16, K30, K33)
 tests/ui_check21.js       design 22 (legacy) in-page check; ui_check.js: the classic screen
 tests/q1_pilot.py         the Q1 pilot: the contract's discriminating examples (synthetic) and the storage invariants
+tests/arrive24.py         «Отсюда до места» on screen 24: identity with the pilot's engine, the boundary, the gate, the statuses
 tests/q1_page_check.js    the Q1 pilot: in-page check of its review scene (what the page shows = what the server says)
 README.md                 the front page on GitHub
 ```
