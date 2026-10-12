@@ -105,6 +105,8 @@ shown. Any date of 2006–2025 opens as if it were today («История»); c
 start-dr-lab.cmd / .ps1   the operator's shortcut target: TradingView (port 9222) -> history -> server -> page
 start-dr-lab-24.cmd       the shortcut «DR Lab 24»: the same start, then the page /24/ (the root / opens it too)
 stop-dr-lab.cmd / .ps1    stop the local server
+start-q1-pilot.cmd / .ps1 the shortcut «DR Lab Q1 (пилот)»: the isolated historical Q1 pilot on 127.0.0.1:8771 (its own
+                          server, page and store; the working DR Lab is untouched); stop-q1-pilot.cmd stops 8771 only
 contract/                 the machine contract of DR-LAB-SC-1.1: LinkML schema, registry, build tool, products;
                           start at contract/README.md (.venv-linkml/ = its LinkML environment, git-ignored)
 lab/
@@ -127,6 +129,9 @@ lab/
                           (design 22, legacy, built from design/sozvezdiya-22/src), sem-v1/ (design 23, legacy),
                           classic.html + app.js + live.js + styles.css (the classic screen, legacy)
   .runtime/               git-ignored: built history, live candles, server logs, NOW validation
+  q1/                     the Q1 pilot (Q1-PILOT-0.2, C1, outside the SC-1.1 gate): engine, write-once store of issues and
+                          outcomes, review scene, A/D reconciliation, demo; start at lab/q1/README.md
+  .q1-pilot/              git-ignored: the pilot's issues, outcomes, reconciliation output and logs (case-level)
 design/sozvezdiya-24/src  screen 24's source (app.js, panel.js, page.html, panel.css; build.py embeds the contract)
 spec/                     DR-LAB-SC-1.1 (normative) and 1.0 (previous edition); DR-LAB-SWPC-1.1 (current visual
                           implementation target) and SWPC-1.0 (predecessor); deep-research-report (16).md as its
@@ -145,6 +150,8 @@ tests/now24.py            screen 24: the acceptance tests of «Сейчас» (D
 tests/ui_check24.js       screen 24: in-page check (passports, page = server, one table, film columns, slices, zones,
                           the contract layer: every passport recomputed by the reference, K16, K30, K33)
 tests/ui_check21.js       design 22 (legacy) in-page check; ui_check.js: the classic screen
+tests/q1_pilot.py         the Q1 pilot: the contract's discriminating examples (synthetic) and the storage invariants
+tests/q1_page_check.js    the Q1 pilot: in-page check of its review scene (what the page shows = what the server says)
 README.md                 the front page on GitHub
 ```
 
