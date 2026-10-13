@@ -217,11 +217,6 @@
         "EST:N-NO-NEW-X",
         "EST:N-TIME-R",
         "EST:N-TIME-X",
-        "EST:P-DIR",
-        "EST:P-DR",
-        "EST:P-R",
-        "EST:P-WHEN",
-        "EST:P-X",
         "EST:ZD-BOOT-R",
         "EST:ZD-BOOT-X",
         "EST:ZD-GRID-R",
@@ -230,7 +225,13 @@
         "EST:ZD-NULL-X",
         "EST:ZM3-STUDY"
       ],
-      "forbidden_ids": [],
+      "forbidden_ids": [
+        "EST:P-DIR",
+        "EST:P-WHEN",
+        "EST:P-DR",
+        "EST:P-R",
+        "EST:P-X"
+      ],
       "held_out": false,
       "machine_gate": true,
       "evidence": [
@@ -238,7 +239,7 @@
         "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
       ],
       "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
-      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+      "expected_ru": "Направленная рамка касается BASE/NOW/ARRIVE. PRE использует (close − IDR low)/w без направления. Общее изменение единицы w — отдельный запрос FND:IDR-UNIT, достигающий 59. Причина поправки сохранена."
     },
     {
       "id": "CQ-04",
