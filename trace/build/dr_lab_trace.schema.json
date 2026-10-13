@@ -1305,6 +1305,88 @@
             "title": "ClaimForm",
             "type": "object"
         },
+        "CompetencyQuestion": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "answer_kind": {
+                    "type": "string"
+                },
+                "argument": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "baseline_status": {
+                    "type": "string"
+                },
+                "boundary_ru": {
+                    "type": "string"
+                },
+                "evidence": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "expected_ids": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "expected_ru": {
+                    "type": "string"
+                },
+                "forbidden_ids": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "held_out": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "machine_gate": {
+                    "type": "boolean"
+                },
+                "query": {
+                    "type": "string"
+                },
+                "question_kind": {
+                    "$ref": "#/$defs/QuestionKind"
+                },
+                "title_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "title_ru",
+                "question_kind",
+                "query",
+                "baseline_status",
+                "answer_kind",
+                "held_out",
+                "machine_gate",
+                "evidence",
+                "boundary_ru",
+                "expected_ru"
+            ],
+            "title": "CompetencyQuestion",
+            "type": "object"
+        },
         "ComponentSupport": {
             "additionalProperties": false,
             "description": "The counts of one knowledge component over the set it is counted on. There is no single \"known\": existence, magnitude and first time are separate components (E2).",
@@ -2145,6 +2227,21 @@
             "title": "DensityRegion",
             "type": "object"
         },
+        "DependencyKind": {
+            "description": "",
+            "enum": [
+                "DEFINING",
+                "COMPUTATIONAL",
+                "CONTROL_SELECTION",
+                "MEASUREMENT",
+                "TEMPORAL",
+                "EVIDENTIAL",
+                "PRESENTATIONAL",
+                "NORMATIVE"
+            ],
+            "title": "DependencyKind",
+            "type": "string"
+        },
         "DerivationRecord": {
             "additionalProperties": false,
             "description": "Which operation produced the outputs from which inputs (versions), with which parameters, and how the result was verified. Names the meaning kept and the information lost; never hides a future input behind a cache (\u00a71.3).",
@@ -2917,6 +3014,59 @@
             "title": "Exclusion",
             "type": "object"
         },
+        "FacetDefinition": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "basis_ru": {
+                    "type": "string"
+                },
+                "cardinality": {
+                    "type": "string"
+                },
+                "evidence": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "projection": {
+                    "type": "string"
+                },
+                "scope_ru": {
+                    "type": "string"
+                },
+                "title_ru": {
+                    "type": "string"
+                },
+                "unknown_rule": {
+                    "type": "string"
+                },
+                "used_by": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "id",
+                "title_ru",
+                "basis_ru",
+                "projection",
+                "scope_ru",
+                "cardinality",
+                "unknown_rule",
+                "evidence",
+                "used_by"
+            ],
+            "title": "FacetDefinition",
+            "type": "object"
+        },
         "FactForm": {
             "additionalProperties": false,
             "description": "The form of a statement of an observed fact (today's prefix, a reachability or history-clock status, a session's own record). Facts are not statistics: they carry no claim class and no percentage (\u00a710: a fact of observation refers directly to E1/P1/E3; \u00a712.4 TODAY-Z).",
@@ -3193,6 +3343,201 @@
             "title": "FirstTimeKnowledge",
             "type": "string"
         },
+        "FomCatalog": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "bindings": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/StatisticalPresentationBinding"
+                            },
+                            {
+                                "$ref": "#/$defs/FactPresentationBinding"
+                            },
+                            {
+                                "$ref": "#/$defs/AbsencePresentationBinding"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "boundaries": {
+                    "items": {
+                        "$ref": "#/$defs/CoverageBoundary"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "catalog_part": {
+                    "type": "string"
+                },
+                "competency_questions": {
+                    "items": {
+                        "$ref": "#/$defs/CompetencyQuestion"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "editions": {
+                    "items": {
+                        "$ref": "#/$defs/EditionStanding"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "entries": {
+                    "items": {
+                        "$ref": "#/$defs/ArchitectureEntry"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "facet_definitions": {
+                    "items": {
+                        "$ref": "#/$defs/FacetDefinition"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "fact_surfaces": {
+                    "items": {
+                        "$ref": "#/$defs/FactSurface"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "foundation_bindings": {
+                    "items": {
+                        "$ref": "#/$defs/FoundationBinding"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "foundations": {
+                    "items": {
+                        "$ref": "#/$defs/FoundationRecord"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "mapped_artifacts": {
+                    "items": {
+                        "$ref": "#/$defs/MappedArtifact"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "mapped_lines": {
+                    "items": {
+                        "$ref": "#/$defs/MappedLine"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "presentation_obligations": {
+                    "items": {
+                        "$ref": "#/$defs/PresentationObligation"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "research_coverage": {
+                    "items": {
+                        "$ref": "#/$defs/ResearchCoverage"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "research_findings": {
+                    "items": {
+                        "$ref": "#/$defs/ResearchFinding"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "scenes": {
+                    "items": {
+                        "$ref": "#/$defs/SceneSpecification"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "source_references": {
+                    "items": {
+                        "$ref": "#/$defs/SourceReference"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "standings": {
+                    "items": {
+                        "$ref": "#/$defs/ProfileStanding"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "term_relations": {
+                    "items": {
+                        "$ref": "#/$defs/TermRelation"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "terms": {
+                    "items": {
+                        "$ref": "#/$defs/TermRecord"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "catalog_part"
+            ],
+            "title": "FomCatalog",
+            "type": "object"
+        },
         "FormAcceptance": {
             "description": "",
             "enum": [
@@ -3202,6 +3547,99 @@
             ],
             "title": "FormAcceptance",
             "type": "string"
+        },
+        "FoundationBinding": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "availability": {
+                    "type": "string"
+                },
+                "collection": {
+                    "type": "string"
+                },
+                "dependency_kind": {
+                    "$ref": "#/$defs/DependencyKind"
+                },
+                "depends_on": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "evidence": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "field": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "match_value": {
+                    "type": "string"
+                },
+                "scope_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "collection",
+                "field",
+                "match_value",
+                "depends_on",
+                "dependency_kind",
+                "scope_ru",
+                "availability",
+                "evidence"
+            ],
+            "title": "FoundationBinding",
+            "type": "object"
+        },
+        "FoundationRecord": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "evidence": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "exception_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "field": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "registry_id": {
+                    "type": "string"
+                },
+                "title_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "title_ru",
+                "registry_id",
+                "field",
+                "evidence"
+            ],
+            "title": "FoundationRecord",
+            "type": "object"
         },
         "GroundsCategory": {
             "description": "",
@@ -3685,6 +4123,127 @@
             ],
             "title": "LiveUse",
             "type": "string"
+        },
+        "MappedArtifact": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "path": {
+                    "type": "string"
+                },
+                "protected": {
+                    "type": "boolean"
+                },
+                "revision": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "sha256_lf": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "path",
+                "revision",
+                "sha256_lf",
+                "role",
+                "protected"
+            ],
+            "title": "MappedArtifact",
+            "type": "object"
+        },
+        "MappedLine": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "added_estimands": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "base_commit": {
+                    "type": "string"
+                },
+                "changed_estimands": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "changed_files": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "depends_on_lines": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "evidence": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "human_acceptance": {
+                    "$ref": "#/$defs/HumanAcceptance"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "layer_commits": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "line": {
+                    "$ref": "#/$defs/LineReference"
+                },
+                "line_kind": {
+                    "type": "string"
+                },
+                "scope_ru": {
+                    "type": "string"
+                },
+                "title_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "title_ru",
+                "line",
+                "line_kind",
+                "evidence",
+                "base_commit",
+                "scope_ru",
+                "human_acceptance"
+            ],
+            "title": "MappedLine",
+            "type": "object"
         },
         "MeasurementFrameRecord": {
             "additionalProperties": false,
@@ -4603,6 +5162,81 @@
             "title": "PresentationConformance",
             "type": "string"
         },
+        "PresentationObligation": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "alpha_ru": {
+                    "type": "string"
+                },
+                "availability": {
+                    "type": "string"
+                },
+                "bindings": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "evidence": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "forbidden_ru": {
+                    "type": "string"
+                },
+                "human_boundary_ru": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "omega_ru": {
+                    "type": "string"
+                },
+                "semantic_refs": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "test_id": {
+                    "type": "string"
+                },
+                "time_rule": {
+                    "type": "string"
+                },
+                "title_ru": {
+                    "type": "string"
+                },
+                "work_refs": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "id",
+                "title_ru",
+                "semantic_refs",
+                "bindings",
+                "work_refs",
+                "availability",
+                "alpha_ru",
+                "omega_ru",
+                "forbidden_ru",
+                "time_rule",
+                "test_id",
+                "evidence",
+                "human_boundary_ru"
+            ],
+            "title": "PresentationObligation",
+            "type": "object"
+        },
         "PriceTransfer": {
             "description": "",
             "enum": [
@@ -4996,6 +5630,18 @@
             ],
             "title": "QuantileValue",
             "type": "object"
+        },
+        "QuestionKind": {
+            "description": "",
+            "enum": [
+                "SCOPING",
+                "VALIDATING",
+                "FOUNDATIONAL_ALIGNMENT",
+                "RELATIONSHIP",
+                "METAPROPERTY"
+            ],
+            "title": "QuestionKind",
+            "type": "string"
         },
         "QuestionRequest": {
             "additionalProperties": false,
@@ -5458,7 +6104,14 @@
                 },
                 "validations": {
                     "items": {
-                        "$ref": "#/$defs/ValidationRecord"
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/ValidationRecord"
+                            },
+                            {
+                                "$ref": "#/$defs/ResearchFinding"
+                            }
+                        ]
                     },
                     "type": [
                         "array",
@@ -5479,6 +6132,218 @@
                 "TEST_HARNESS"
             ],
             "title": "RequesterKind",
+            "type": "string"
+        },
+        "ResearchConclusion": {
+            "description": "",
+            "enum": [
+                "OBSERVED",
+                "NOT_DETECTED",
+                "INCONCLUSIVE",
+                "EQUIVALENCE",
+                "REFUTED_IN_SCOPE",
+                "HYPOTHESIS"
+            ],
+            "title": "ResearchConclusion",
+            "type": "string"
+        },
+        "ResearchCoverage": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "disposition": {
+                    "type": "string"
+                },
+                "findings": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "reason_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "path",
+                "disposition",
+                "reason_ru"
+            ],
+            "title": "ResearchCoverage",
+            "type": "object"
+        },
+        "ResearchFinding": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "accepted_basis": {
+                    "type": "boolean"
+                },
+                "allowed_claim_ru": {
+                    "type": "string"
+                },
+                "claim_level": {
+                    "$ref": "#/$defs/ResearchLevel"
+                },
+                "conclusion": {
+                    "$ref": "#/$defs/ResearchConclusion"
+                },
+                "corpus_ru": {
+                    "type": "string"
+                },
+                "corpus_seen_before": {
+                    "type": "boolean"
+                },
+                "decision_ref": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "dependence_control": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "equivalence_method": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "evidence": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "grounds": {
+                    "$ref": "#/$defs/GroundsCategory",
+                    "description": "The category of the basis of this element (\u00a71.3); categories are not a scale of quality."
+                },
+                "id": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+                    "type": "string"
+                },
+                "lifecycle": {
+                    "$ref": "#/$defs/Lifecycle"
+                },
+                "negative_scope_ru": {
+                    "type": "string"
+                },
+                "not_generalised_ru": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "protocol_ru": {
+                    "type": "string"
+                },
+                "result_ru": {
+                    "type": "string"
+                },
+                "runtime_artifact": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sc_ref": {
+                    "description": "Clauses of DR-LAB-SC-1.1 this element represents: card ids (O1, P0.2, V2.1, T0.1), sections (\u00a712.4), \u00a712.4 rows (\u00a712.4/N-NEW), conformance examples (K13), or IMPLEMENTATION for containers without meaning.",
+                    "items": {
+                        "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|\u00a7[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "sesoi": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "source_refs": {
+                    "description": "Where the definition comes from (exact documents and places).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "title_ru": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "uncertainty_ru": {
+                    "type": "string"
+                },
+                "validates": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "validation_kind": {
+                    "$ref": "#/$defs/ValidationKind"
+                },
+                "version": {
+                    "description": "Version of the specification; any change of meaning needs a new version (\u00a714.1).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "claim_level",
+                "conclusion",
+                "allowed_claim_ru",
+                "negative_scope_ru",
+                "uncertainty_ru",
+                "not_generalised_ru",
+                "evidence",
+                "accepted_basis",
+                "validates",
+                "validation_kind",
+                "protocol_ru",
+                "corpus_ru",
+                "corpus_seen_before",
+                "result_ru",
+                "lifecycle",
+                "id",
+                "version",
+                "sc_ref",
+                "grounds"
+            ],
+            "title": "ResearchFinding",
+            "type": "object"
+        },
+        "ResearchLevel": {
+            "description": "",
+            "enum": [
+                "A_CORRECTNESS",
+                "B_INFORMATION",
+                "C_TRANSFER",
+                "D_POLICY"
+            ],
+            "title": "ResearchLevel",
             "type": "string"
         },
         "SceneSpecification": {
@@ -6497,6 +7362,130 @@
             "title": "TemporalFrame",
             "type": "object"
         },
+        "TermMapping": {
+            "description": "",
+            "enum": [
+                "EXACT",
+                "CLOSE",
+                "BROAD",
+                "NARROW",
+                "RELATED",
+                "NOT_IDENTICAL"
+            ],
+            "title": "TermMapping",
+            "type": "string"
+        },
+        "TermRecord": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "aliases": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "boundary_ru": {
+                    "type": "string"
+                },
+                "definition_ru": {
+                    "type": "string"
+                },
+                "denotes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "evidence": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "legacy_reference": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "scheme": {
+                    "type": "string"
+                },
+                "title_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "title_ru",
+                "scheme",
+                "definition_ru",
+                "evidence",
+                "boundary_ru"
+            ],
+            "title": "TermRecord",
+            "type": "object"
+        },
+        "TermRelation": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "evidence": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "guards": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "left": {
+                    "type": "string"
+                },
+                "mapping": {
+                    "$ref": "#/$defs/TermMapping"
+                },
+                "reason_ru": {
+                    "type": "string"
+                },
+                "right": {
+                    "type": "string"
+                },
+                "scope_ru": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "left",
+                "right",
+                "mapping",
+                "scope_ru",
+                "reason_ru",
+                "guards",
+                "evidence"
+            ],
+            "title": "TermRelation",
+            "type": "object"
+        },
         "TieRule": {
             "description": "",
             "enum": [
@@ -7123,10 +8112,10 @@
             "type": "string"
         }
     },
-    "$id": "https://github.com/FARTOFALOS/dr-idr/trace/dr_lab_trace",
+    "$id": "https://drlab.local/fom",
     "$schema": "https://json-schema.org/draft/2019-09/schema",
     "additionalProperties": true,
-    "description": "One file (or the compiled whole) of the trace catalog: a container without meaning of its own. The compiled catalog adds the presentation bindings generated from SWPC-1.1 \u00a79 and tests/swpc11.py (never written by hand).",
+    "description": "",
     "metamodel_version": "1.11.0",
     "properties": {
         "bindings": {
@@ -7160,6 +8149,15 @@
         "catalog_part": {
             "type": "string"
         },
+        "competency_questions": {
+            "items": {
+                "$ref": "#/$defs/CompetencyQuestion"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
         "editions": {
             "items": {
                 "$ref": "#/$defs/EditionStanding"
@@ -7178,9 +8176,81 @@
                 "null"
             ]
         },
+        "facet_definitions": {
+            "items": {
+                "$ref": "#/$defs/FacetDefinition"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
         "fact_surfaces": {
             "items": {
                 "$ref": "#/$defs/FactSurface"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "foundation_bindings": {
+            "items": {
+                "$ref": "#/$defs/FoundationBinding"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "foundations": {
+            "items": {
+                "$ref": "#/$defs/FoundationRecord"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "mapped_artifacts": {
+            "items": {
+                "$ref": "#/$defs/MappedArtifact"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "mapped_lines": {
+            "items": {
+                "$ref": "#/$defs/MappedLine"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "presentation_obligations": {
+            "items": {
+                "$ref": "#/$defs/PresentationObligation"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "research_coverage": {
+            "items": {
+                "$ref": "#/$defs/ResearchCoverage"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "research_findings": {
+            "items": {
+                "$ref": "#/$defs/ResearchFinding"
             },
             "type": [
                 "array",
@@ -7213,12 +8283,30 @@
                 "array",
                 "null"
             ]
+        },
+        "term_relations": {
+            "items": {
+                "$ref": "#/$defs/TermRelation"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "terms": {
+            "items": {
+                "$ref": "#/$defs/TermRecord"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
         }
     },
     "required": [
         "catalog_part"
     ],
-    "title": "dr_lab_trace",
+    "title": "dr_lab_fom",
     "type": "object",
-    "version": "0.2.0"
+    "version": "1.2.0"
 }

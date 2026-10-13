@@ -4502,5 +4502,785 @@
       "role": "DOCUMENT",
       "protected": false
     }
+  ],
+  "mapped_lines": [
+    {
+      "id": "LINE:main",
+      "title_ru": "Принятые BASE-24/NOW-1.0",
+      "line": {
+        "branch": "main",
+        "commit": "2672841da928f7379e5d7bc27eef8ff3e0fa5738",
+        "merged_into_main": true
+      },
+      "line_kind": "ACCEPTED_LINE",
+      "base_commit": "2672841da928f7379e5d7bc27eef8ff3e0fa5738",
+      "evidence": [
+        "meaning/07-cepochka-reshenij.md",
+        "trace/catalog/00-standing.yaml",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Принятые BASE-24/NOW-1.0",
+      "human_acceptance": "PENDING",
+      "layer_commits": [],
+      "depends_on_lines": [],
+      "changed_files": [],
+      "added_estimands": [],
+      "changed_estimands": []
+    },
+    {
+      "id": "LINE:resheniya-08-10",
+      "title_ru": "SWPC и решения 08.10, PRE",
+      "line": {
+        "branch": "resheniya-08-10",
+        "commit": "b7a52f17fac3fd3f980f4687ad5f21a0b8f2d57b",
+        "merged_into_main": false,
+        "pull_request": 2
+      },
+      "line_kind": "CANDIDATE",
+      "base_commit": "2672841da928f7379e5d7bc27eef8ff3e0fa5738",
+      "evidence": [
+        "meaning/07-cepochka-reshenij.md",
+        "trace/catalog/00-standing.yaml",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "SWPC и решения 08.10, PRE",
+      "human_acceptance": "PENDING",
+      "layer_commits": [
+        "b7a52f17fac3fd3f980f4687ad5f21a0b8f2d57b",
+        "4c28ef5cffe9a16f95f40afe1fb6ac750a072b26",
+        "16410177c6678c82f8450e18fbf6ac91e416c84a",
+        "387d35af9b18e8f308f2d18c0d16cd828b6307e4",
+        "c9e61ec5d84cdcf1d0af8115f4dec98a7f5c7496"
+      ],
+      "depends_on_lines": [
+        "LINE:main"
+      ],
+      "changed_files": [
+        "AGENTS.md",
+        "contract/build/dr_lab_sc.schema.json",
+        "contract/build/page_registry.json",
+        "contract/build/registry.json",
+        "contract/build/runtime_spec.json",
+        "contract/registry/00-editions.yaml",
+        "contract/registry/10-observation-strategy-measurement.yaml",
+        "contract/registry/20-cases-outcomes.yaml",
+        "contract/registry/30-questions-estimands.yaml",
+        "contract/registry/40-claims.yaml",
+        "contract/registry/60-surfaces.yaml",
+        "contract/registry/70-obligations.yaml",
+        "contract/schema/dr_lab_sc.yaml",
+        "design/sozvezdiya-24/src/app.js",
+        "design/sozvezdiya-24/src/panel.css",
+        "design/sozvezdiya-24/src/panel.js",
+        "docs/ARCHITECTURE.md",
+        "docs/DECISIONS.md",
+        "docs/SEMANTICS.md",
+        "docs/UI_RULES.md",
+        "lab/contract.py",
+        "lab/dist/24/d24.js",
+        "lab/dist/24/index.html",
+        "lab/pre24.py",
+        "lab/server.py",
+        "meaning/07-cepochka-reshenij.md",
+        "meaning/13-zhurnal-vizualizacii.md",
+        "meaning/16-priyomka-swpc.md",
+        "meaning/16a-list-zadanij.md",
+        "meaning/17-rabota-treidera.md",
+        "meaning/README.md",
+        "meaning/lens/2026-10-08-osc-1.0/DR-LAB-OSC-1.0.md",
+        "research/.gitignore",
+        "research/now-1/img/s1-A-hover.png",
+        "research/now-1/img/s1-A.png",
+        "research/now-1/img/s1-B.png",
+        "research/now-1/img/s1-C.png",
+        "research/now-1/img/s2-A-hover.png",
+        "research/now-1/img/s2-A.png",
+        "research/now-1/img/s2-B.png",
+        "research/now-1/img/s2-C.png",
+        "research/now-1/img/s3-A-hover.png",
+        "research/now-1/img/s3-A.png",
+        "research/now-1/img/s3-B.png",
+        "research/now-1/img/s3-C.png",
+        "research/now-1/shots.mjs",
+        "research/now-1/src/app.js",
+        "research/now-1/src/build.py",
+        "research/now-1/src/page.html",
+        "research/now-1/src/panel.css",
+        "research/now-1/src/panel.js",
+        "research/rabota-1/img/brk-okna.png",
+        "research/rabota-1/img/brk.png",
+        "research/rabota-1/img/late-okna.png",
+        "research/rabota-1/img/late.png",
+        "research/rabota-1/img/live-2026-10-08-0504.jpg",
+        "research/rabota-1/img/pre.png",
+        "research/rabota-1/img/r1-okna.png",
+        "research/rabota-1/img/r1.png",
+        "research/rabota-1/img/r2-okna.png",
+        "research/rabota-1/img/r2.png",
+        "research/rabota-1/now_joint.py",
+        "research/rabota-1/order_by_state.py",
+        "research/rabota-1/scenes.mjs",
+        "spec/DR-LAB-SWPC-1.1.md",
+        "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
+        "spec/ekran-24/03-obzor-panel.md",
+        "spec/ekran-24/11-invarianty.md",
+        "spec/ekran-24/12-swpc.md",
+        "spec/ekran-24/README.md",
+        "spec/ekran-24/img/resheniya-08-10/1-do-podtverzhdeniya.png",
+        "spec/ekran-24/img/resheniya-08-10/2-malo-sessij.png",
+        "spec/ekran-24/img/resheniya-08-10/3-faza-otkat-ne-sdelan.png",
+        "spec/ekran-24/img/resheniya-08-10/4-faza-otkat-sdelan.png",
+        "spec/ekran-24/img/resheniya-08-10/5-semya-sloma-malo.png",
+        "spec/ekran-24/img/swpc/1-svodka-skryta-baza.png",
+        "spec/ekran-24/img/swpc/1-svodka-skryta-kandidat.png",
+        "spec/ekran-24/img/swpc/2-zona-snyata-baza.png",
+        "spec/ekran-24/img/swpc/2-zona-snyata-kandidat.png",
+        "spec/ekran-24/img/swpc/3-slom-1600-baza.png",
+        "spec/ekran-24/img/swpc/3-slom-1600-kandidat.png",
+        "spec/ekran-24/img/swpc/4-sejchas-nedostupno-baza.png",
+        "spec/ekran-24/img/swpc/4-sejchas-nedostupno-kandidat.png",
+        "spec/ekran-24/swpc-kandidat.json",
+        "tests/contract_sc11.py",
+        "tests/swpc11.py",
+        "tests/swpc11_browser.mjs"
+      ],
+      "added_estimands": [
+        "EST:P-DIR",
+        "EST:P-DR",
+        "EST:P-R",
+        "EST:P-WHEN",
+        "EST:P-X"
+      ],
+      "changed_estimands": []
+    },
+    {
+      "id": "LINE:lens-2026-10-12-film-i-moment",
+      "title_ru": "KADR 1.0",
+      "line": {
+        "branch": "lens-2026-10-12-film-i-moment",
+        "commit": "af90505bb83b07c99b2ce1265b8961f7a07347a4",
+        "merged_into_main": false,
+        "pull_request": 3
+      },
+      "line_kind": "PROPOSAL",
+      "base_commit": "2672841da928f7379e5d7bc27eef8ff3e0fa5738",
+      "evidence": [
+        "meaning/07-cepochka-reshenij.md",
+        "trace/catalog/00-standing.yaml",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "KADR 1.0",
+      "human_acceptance": "PENDING",
+      "layer_commits": [
+        "af90505bb83b07c99b2ce1265b8961f7a07347a4"
+      ],
+      "depends_on_lines": [
+        "LINE:main"
+      ],
+      "changed_files": [
+        "meaning/07-cepochka-reshenij.md",
+        "meaning/lens/2026-10-09-smyslovoj-karkas-i-roadmap.md",
+        "meaning/lens/2026-10-10-prihody-i-prodolzheniya.md",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/01-esse.md",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/02-semanticheskaya-specifikaciya.md",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/03-smyslovoj-kontur.svg",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/README.md",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/01-put-mesto-i-reshenie.md",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/02-linejka-a-ne-orakul.md",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/input-schema.svg",
+        "meaning/lens/2026-10-12-esse-linejka-a-ne-orakul.md",
+        "meaning/lens/2026-10-12-film-i-moment/01-esse.md",
+        "meaning/lens/2026-10-12-film-i-moment/02-semanticheskaya-specifikaciya.md",
+        "meaning/lens/2026-10-12-film-i-moment/README.md",
+        "meaning/lens/2026-10-12-otvet-budushchee-mesto-moment.md",
+        "meaning/lens/2026-10-12-put-mesto-i-reshenie.md",
+        "meaning/lens/2026-10-12-samodopros-smysla.md",
+        "studies/semantic_paths_2026_10_10/check.mjs",
+        "studies/semantic_paths_2026_10_10/check_v2.mjs",
+        "studies/semantic_paths_2026_10_10/check_v3.mjs"
+      ],
+      "added_estimands": [],
+      "changed_estimands": []
+    },
+    {
+      "id": "LINE:lens-2026-10-12-kurator",
+      "title_ru": "KADR 1.1",
+      "line": {
+        "branch": "lens-2026-10-12-kurator",
+        "commit": "47e2fd0c9fd1a6df31380044c638fdc766ca57e6",
+        "merged_into_main": false,
+        "pull_request": 4
+      },
+      "line_kind": "PROPOSAL",
+      "base_commit": "af90505bb83b07c99b2ce1265b8961f7a07347a4",
+      "evidence": [
+        "meaning/07-cepochka-reshenij.md",
+        "trace/catalog/00-standing.yaml",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "KADR 1.1",
+      "human_acceptance": "PENDING",
+      "layer_commits": [
+        "47e2fd0c9fd1a6df31380044c638fdc766ca57e6"
+      ],
+      "depends_on_lines": [
+        "LINE:lens-2026-10-12-film-i-moment"
+      ],
+      "changed_files": [
+        "meaning/07-cepochka-reshenij.md",
+        "meaning/lens/2026-10-12-kurator/01-esse.md",
+        "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+        "meaning/lens/2026-10-12-kurator/README.md",
+        "studies/kadr_2026_10_12/README.md",
+        "studies/kadr_2026_10_12/kadr_checks.json",
+        "studies/kadr_2026_10_12/kadr_checks.py"
+      ],
+      "added_estimands": [],
+      "changed_estimands": []
+    },
+    {
+      "id": "LINE:codex/q1-pilot-handoff",
+      "title_ru": "Передача Q1",
+      "line": {
+        "branch": "codex/q1-pilot-handoff",
+        "commit": "3dac91357ceb4c66dda3a8554138df360b4be9d9",
+        "merged_into_main": false,
+        "pull_request": 5
+      },
+      "line_kind": "PROPOSAL",
+      "base_commit": "47e2fd0c9fd1a6df31380044c638fdc766ca57e6",
+      "evidence": [
+        "meaning/07-cepochka-reshenij.md",
+        "trace/catalog/00-standing.yaml",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Передача Q1",
+      "human_acceptance": "PENDING",
+      "layer_commits": [
+        "3dac91357ceb4c66dda3a8554138df360b4be9d9"
+      ],
+      "depends_on_lines": [
+        "LINE:lens-2026-10-12-kurator"
+      ],
+      "changed_files": [
+        "meaning/07-cepochka-reshenij.md",
+        "meaning/lens/2026-10-12-independent-srs/01-semantic-audit.md",
+        "meaning/lens/2026-10-12-independent-srs/02-srs.md",
+        "meaning/lens/2026-10-12-independent-srs/03-q1-historical-pilot.md",
+        "meaning/lens/2026-10-12-independent-srs/04-engineer-roadmap.md",
+        "meaning/lens/2026-10-12-independent-srs/05-self-check.md",
+        "meaning/lens/2026-10-12-independent-srs/README.md",
+        "meaning/lens/2026-10-12-kurator/01-esse.md",
+        "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+        "meaning/lens/2026-10-12-kurator/README.md",
+        "studies/kadr_2026_10_12/README.md"
+      ],
+      "added_estimands": [],
+      "changed_estimands": []
+    },
+    {
+      "id": "LINE:q1-pilot-c1",
+      "title_ru": "Пилот Q1",
+      "line": {
+        "branch": "q1-pilot-c1",
+        "commit": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+        "merged_into_main": false,
+        "pull_request": 6
+      },
+      "line_kind": "CANDIDATE",
+      "base_commit": "3dac91357ceb4c66dda3a8554138df360b4be9d9",
+      "evidence": [
+        "meaning/07-cepochka-reshenij.md",
+        "trace/catalog/00-standing.yaml",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Пилот Q1",
+      "human_acceptance": "PENDING",
+      "layer_commits": [
+        "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+        "bef65d487b7bdc34465117aa82c8c2f2f4375bc0",
+        "350357a13941c5c502018acbda5eaea0344c01dd"
+      ],
+      "depends_on_lines": [
+        "LINE:codex/q1-pilot-handoff"
+      ],
+      "changed_files": [
+        ".gitignore",
+        "AGENTS.md",
+        "lab/q1/README.md",
+        "lab/q1/__init__.py",
+        "lab/q1/demo.py",
+        "lab/q1/engine.py",
+        "lab/q1/passport.py",
+        "lab/q1/recon.py",
+        "lab/q1/server.py",
+        "lab/q1/store.py",
+        "lab/q1/web/app.js",
+        "lab/q1/web/index.html",
+        "lab/q1/web/style.css",
+        "meaning/07-cepochka-reshenij.md",
+        "meaning/README.md",
+        "start-q1-pilot.cmd",
+        "start-q1-pilot.ps1",
+        "stop-q1-pilot.cmd",
+        "stop-q1-pilot.ps1",
+        "studies/q1_pilot_2026_10_12/README.md",
+        "studies/q1_pilot_2026_10_12/reading_check.md",
+        "studies/q1_pilot_2026_10_12/recon_summary.json",
+        "tests/q1_page_check.js",
+        "tests/q1_pilot.py"
+      ],
+      "added_estimands": [],
+      "changed_estimands": []
+    },
+    {
+      "id": "LINE:ekran-24-otsyuda",
+      "title_ru": "ARRIVE-24",
+      "line": {
+        "branch": "ekran-24-otsyuda",
+        "commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+        "merged_into_main": false,
+        "pull_request": 7
+      },
+      "line_kind": "CANDIDATE",
+      "base_commit": "b7a52f17fac3fd3f980f4687ad5f21a0b8f2d57b",
+      "evidence": [
+        "meaning/07-cepochka-reshenij.md",
+        "trace/catalog/00-standing.yaml",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "ARRIVE-24",
+      "human_acceptance": "PENDING",
+      "layer_commits": [
+        "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+        "8fdd16fe18f11c721cedd3138f9afb2fd9fc29f7"
+      ],
+      "depends_on_lines": [
+        "LINE:resheniya-08-10",
+        "LINE:q1-pilot-c1"
+      ],
+      "changed_files": [
+        ".gitignore",
+        "AGENTS.md",
+        "contract/build/dr_lab_sc.schema.json",
+        "contract/build/page_registry.json",
+        "contract/build/registry.json",
+        "contract/build/runtime_spec.json",
+        "contract/registry/00-editions.yaml",
+        "contract/registry/20-cases-outcomes.yaml",
+        "contract/registry/30-questions-estimands.yaml",
+        "contract/registry/40-claims.yaml",
+        "contract/registry/60-surfaces.yaml",
+        "contract/registry/70-obligations.yaml",
+        "contract/schema/dr_lab_sc.yaml",
+        "design/sozvezdiya-24/src/app.js",
+        "design/sozvezdiya-24/src/panel.js",
+        "docs/ARCHITECTURE.md",
+        "docs/SEMANTICS.md",
+        "lab/arrive24.py",
+        "lab/contract.py",
+        "lab/dist/24/d24.js",
+        "lab/q1/README.md",
+        "lab/q1/__init__.py",
+        "lab/q1/demo.py",
+        "lab/q1/engine.py",
+        "lab/q1/passport.py",
+        "lab/q1/recon.py",
+        "lab/q1/server.py",
+        "lab/q1/store.py",
+        "lab/q1/web/app.js",
+        "lab/q1/web/index.html",
+        "lab/q1/web/style.css",
+        "lab/server.py",
+        "meaning/07-cepochka-reshenij.md",
+        "meaning/13-zhurnal-vizualizacii.md",
+        "meaning/18-otsyuda-na-ekrane-24.md",
+        "meaning/README.md",
+        "meaning/lens/2026-10-09-smyslovoj-karkas-i-roadmap.md",
+        "meaning/lens/2026-10-10-prihody-i-prodolzheniya.md",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/01-esse.md",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/02-semanticheskaya-specifikaciya.md",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/03-smyslovoj-kontur.svg",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/README.md",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/01-put-mesto-i-reshenie.md",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/02-linejka-a-ne-orakul.md",
+        "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/input-schema.svg",
+        "meaning/lens/2026-10-12-esse-linejka-a-ne-orakul.md",
+        "meaning/lens/2026-10-12-film-i-moment/01-esse.md",
+        "meaning/lens/2026-10-12-film-i-moment/02-semanticheskaya-specifikaciya.md",
+        "meaning/lens/2026-10-12-film-i-moment/README.md",
+        "meaning/lens/2026-10-12-independent-srs/01-semantic-audit.md",
+        "meaning/lens/2026-10-12-independent-srs/02-srs.md",
+        "meaning/lens/2026-10-12-independent-srs/03-q1-historical-pilot.md",
+        "meaning/lens/2026-10-12-independent-srs/04-engineer-roadmap.md",
+        "meaning/lens/2026-10-12-independent-srs/05-self-check.md",
+        "meaning/lens/2026-10-12-independent-srs/README.md",
+        "meaning/lens/2026-10-12-kurator/01-esse.md",
+        "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+        "meaning/lens/2026-10-12-kurator/README.md",
+        "meaning/lens/2026-10-12-otvet-budushchee-mesto-moment.md",
+        "meaning/lens/2026-10-12-put-mesto-i-reshenie.md",
+        "meaning/lens/2026-10-12-samodopros-smysla.md",
+        "spec/DR-LAB-SWPC-1.1.md",
+        "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
+        "spec/ekran-24/03-obzor-panel.md",
+        "spec/ekran-24/12-swpc.md",
+        "spec/ekran-24/img/otsyuda/1-otsyuda-vse-dni.png",
+        "spec/ekran-24/img/otsyuda/2-navedenie-seredina.png",
+        "spec/ekran-24/img/otsyuda/3-den-nedeli-malo-sessij.png",
+        "spec/ekran-24/img/otsyuda/4-uzhe-doshli.png",
+        "spec/ekran-24/img/otsyuda/5-navedenie-minus-07.png",
+        "spec/ekran-24/img/otsyuda/6-dr-sloman.png",
+        "start-dr-lab-otsyuda.cmd",
+        "start-dr-lab-otsyuda.ps1",
+        "start-q1-pilot.cmd",
+        "start-q1-pilot.ps1",
+        "stop-dr-lab-otsyuda.cmd",
+        "stop-dr-lab-otsyuda.ps1",
+        "stop-q1-pilot.cmd",
+        "stop-q1-pilot.ps1",
+        "studies/kadr_2026_10_12/README.md",
+        "studies/kadr_2026_10_12/kadr_checks.json",
+        "studies/kadr_2026_10_12/kadr_checks.py",
+        "studies/q1_pilot_2026_10_12/README.md",
+        "studies/q1_pilot_2026_10_12/reading_check.md",
+        "studies/q1_pilot_2026_10_12/recon_summary.json",
+        "studies/semantic_paths_2026_10_10/check.mjs",
+        "studies/semantic_paths_2026_10_10/check_v2.mjs",
+        "studies/semantic_paths_2026_10_10/check_v3.mjs",
+        "tests/arrive24.py",
+        "tests/contract_sc11.py",
+        "tests/q1_page_check.js",
+        "tests/q1_pilot.py",
+        "tests/swpc11.py",
+        "tests/swpc11_browser.mjs",
+        "tests/ui_check24.js"
+      ],
+      "added_estimands": [
+        "EST:K-ARRIVE"
+      ],
+      "changed_estimands": []
+    },
+    {
+      "id": "LINE:semantic-trace",
+      "title_ru": "Исполняемая трассировка",
+      "line": {
+        "branch": "semantic-trace",
+        "commit": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+        "merged_into_main": false,
+        "pull_request": 8
+      },
+      "line_kind": "CANDIDATE",
+      "base_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+      "evidence": [
+        "meaning/07-cepochka-reshenij.md",
+        "trace/catalog/00-standing.yaml",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Исполняемая трассировка",
+      "human_acceptance": "PENDING",
+      "layer_commits": [
+        "3031c954cbfb7184df3f606689ad787ed258f8ad",
+        "d7cf4c701aeba26d62f4d7dc8b0cdfd815c40b11",
+        "31835dd44934dacb1f6d46a9f016dd19e79df1d2",
+        "952d52acf667e9db877ed3be2d6bce87b482f6fb",
+        "b08fb11450d9aab521243a7605406bdcf82d8ab8",
+        "9bc9367d0cac328beb6f0b5525649250cf0147c8",
+        "d5a5295195f18bf7c16f1d0786134bf83118db22"
+      ],
+      "depends_on_lines": [
+        "LINE:ekran-24-otsyuda"
+      ],
+      "changed_files": [
+        "AGENTS.md",
+        "docs/ARCHITECTURE.md",
+        "lab/semtrace.py",
+        "meaning/07-cepochka-reshenij.md",
+        "meaning/lens/2026-10-13-semantic-architecture/01-DR-LAB-SEMANTIC-ARCHITECTURE-0.1.md",
+        "meaning/lens/2026-10-13-semantic-architecture/02-DR-LAB-SEMANTIC-ARCHITECTURE-0.2-dopolnenie.md",
+        "meaning/lens/2026-10-13-semantic-architecture/README.md",
+        "studies/q1_pilot_2026_10_12/README.md",
+        "studies/q1_pilot_2026_10_12/reading_check.md",
+        "studies/trace_2026_10_13/README.md",
+        "studies/trace_2026_10_13/coverage.md",
+        "studies/trace_2026_10_13/impact/CMP-K-POS-1.json",
+        "studies/trace_2026_10_13/impact/OUT-NEW-R-1.json",
+        "studies/trace_2026_10_13/impact/OUT-REACH-REST-1.json",
+        "studies/trace_2026_10_13/impact/OUT-ZONE-MEMBERSHIP-1.json",
+        "studies/trace_2026_10_13/impact/code-lab-now24-py-near.json",
+        "studies/trace_2026_10_13/lineage/arrive-few.json",
+        "studies/trace_2026_10_13/lineage/arrive-half.json",
+        "studies/trace_2026_10_13/lineage/base-zone.json",
+        "studies/trace_2026_10_13/lineage/now-new.json",
+        "studies/trace_2026_10_13/run.json",
+        "studies/trace_2026_10_13/scenes/arrive-few.json",
+        "studies/trace_2026_10_13/scenes/arrive-half.json",
+        "studies/trace_2026_10_13/scenes/base-zone.json",
+        "studies/trace_2026_10_13/scenes/now-new.json",
+        "studies/trace_2026_10_13/screens/date-2025-12-17-inst-nq-session-rdr-at-11-10-scope-all.json",
+        "studies/trace_2026_10_13/screens/date-2025-12-17-inst-nq-session-rdr-at-11-10.json",
+        "tests/trace_arch.py",
+        "tests/trace_page.mjs",
+        "trace/README.md",
+        "trace/build/catalog.json",
+        "trace/build/dr_lab_trace.schema.json",
+        "trace/build/trace_runtime_spec.json",
+        "trace/catalog/00-standing.yaml",
+        "trace/catalog/10-architecture.yaml",
+        "trace/catalog/20-boundaries.yaml",
+        "trace/catalog/30-scenes.yaml",
+        "trace/schema/dr_lab_trace.yaml",
+        "trace/schema/linkml-lint.yaml",
+        "trace/tools/build.py"
+      ],
+      "added_estimands": [],
+      "changed_estimands": []
+    },
+    {
+      "id": "LINE:codex/family-path-linked-summary",
+      "title_ru": "Сводка и Путь семьи; только источник представлений",
+      "line": {
+        "branch": "codex/family-path-linked-summary",
+        "commit": "0f1ae26828db402f203660b6deab14d15262c185",
+        "merged_into_main": false,
+        "pull_request": 9
+      },
+      "line_kind": "CANDIDATE",
+      "base_commit": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "evidence": [
+        "meaning/07-cepochka-reshenij.md",
+        "trace/catalog/00-standing.yaml",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Сводка и Путь семьи; только источник представлений",
+      "human_acceptance": "PENDING",
+      "layer_commits": [
+        "0f1ae26828db402f203660b6deab14d15262c185",
+        "90f8a05dec525f18a543013e63b0ccd4fdc06117",
+        "a2d076a552d967a268a1c494b2bbbefa7ca6f3e6"
+      ],
+      "depends_on_lines": [
+        "LINE:semantic-trace"
+      ],
+      "changed_files": [
+        "AGENTS.md",
+        "contract/build/page_registry.json",
+        "contract/build/registry.json",
+        "contract/registry/40-claims.yaml",
+        "design/sozvezdiya-24/src/app.js",
+        "design/sozvezdiya-24/src/build.py",
+        "design/sozvezdiya-24/src/graph.js",
+        "design/sozvezdiya-24/src/page.html",
+        "design/sozvezdiya-24/src/panel.css",
+        "design/sozvezdiya-24/src/panel.js",
+        "docs/ARCHITECTURE.md",
+        "docs/DECISIONS.md",
+        "lab/dist/24/d24.js",
+        "lab/dist/24/index.html",
+        "lab/semtrace.py",
+        "meaning/07-cepochka-reshenij.md",
+        "meaning/13-zhurnal-vizualizacii.md",
+        "meaning/19-svodka-kandidat.md",
+        "meaning/20-put-semi-kandidat.md",
+        "meaning/README.md",
+        "spec/DR-LAB-SWPC-1.1.md",
+        "spec/ekran-24/03-obzor-panel.md",
+        "spec/ekran-24/09-put-semi.md",
+        "spec/ekran-24/12-swpc.md",
+        "spec/ekran-24/README.md",
+        "spec/ekran-24/img/family-path/bounds.png",
+        "spec/ekran-24/img/family-path/middle.png",
+        "spec/ekran-24/img/family-path/put.png",
+        "spec/ekran-24/img/family-path/raw/before.json",
+        "spec/ekran-24/img/family-path/raw/before.png",
+        "spec/ekran-24/img/family-path/raw/bounds.json",
+        "spec/ekran-24/img/family-path/raw/bounds.png",
+        "spec/ekran-24/img/family-path/raw/middle.json",
+        "spec/ekran-24/img/family-path/raw/middle.png",
+        "spec/ekran-24/img/family-path/raw/put.json",
+        "spec/ekran-24/img/family-path/raw/put.png",
+        "spec/ekran-24/img/family-path/raw/r.json",
+        "spec/ekran-24/img/family-path/raw/r.png",
+        "spec/ekran-24/img/family-path/raw/resolved.json",
+        "spec/ekran-24/img/family-path/raw/resolved.png",
+        "spec/ekran-24/img/family-path/resolved.png",
+        "spec/ekran-24/tools/annotate.py",
+        "spec/ekran-24/tools/shots.py",
+        "start-dr-lab-path.cmd",
+        "start-dr-lab-path.ps1",
+        "start-dr-lab-svodka.cmd",
+        "start-dr-lab-svodka.ps1",
+        "stop-dr-lab-path.cmd",
+        "stop-dr-lab-path.ps1",
+        "stop-dr-lab-svodka.cmd",
+        "stop-dr-lab-svodka.ps1",
+        "tests/family_path24_check.js",
+        "tests/svodka24.mjs",
+        "tests/svodka24_check.js",
+        "tests/svodka_shots.mjs",
+        "tests/swpc11.py",
+        "tests/swpc11_browser.mjs",
+        "tests/trace_arch.py",
+        "tests/trace_page.mjs",
+        "tests/ui_check24.js",
+        "trace/build/catalog.json",
+        "trace/catalog/00-standing.yaml",
+        "trace/catalog/10-architecture.yaml",
+        "trace/catalog/30-scenes.yaml",
+        "trace/tools/build.py"
+      ],
+      "added_estimands": [],
+      "changed_estimands": []
+    },
+    {
+      "id": "LINE:q1-sopostavimost",
+      "title_ru": "Локальное исследование; не перенесено",
+      "line": {
+        "branch": "q1-sopostavimost",
+        "commit": "2a36608e04fbdf896b313b5cde477df13b229e0b",
+        "merged_into_main": false
+      },
+      "line_kind": "LOCAL_ONLY",
+      "base_commit": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "evidence": [
+        "meaning/07-cepochka-reshenij.md",
+        "trace/catalog/00-standing.yaml",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Локальное исследование; не перенесено",
+      "human_acceptance": "PENDING",
+      "layer_commits": [
+        "2a36608e04fbdf896b313b5cde477df13b229e0b",
+        "323401ac6f8211b7b2cbc4fde8f1f14d898a394b",
+        "4af2cce7c3fc8ea385108544904dbd9df52b4a0b"
+      ],
+      "depends_on_lines": [
+        "LINE:semantic-trace"
+      ],
+      "changed_files": [
+        "meaning/07-cepochka-reshenij.md",
+        "meaning/lens/2026-10-13-sabiox/01-razbor-sabiox.md",
+        "meaning/lens/2026-10-13-sabiox/02-recenziya-plana.md",
+        "meaning/lens/2026-10-13-sabiox/03-utochnenie-napravleniya.md",
+        "meaning/lens/2026-10-13-sabiox/README.md",
+        "studies/q1_sopostavimost_2026_10_13/README.md",
+        "studies/q1_sopostavimost_2026_10_13/checks.json",
+        "studies/q1_sopostavimost_2026_10_13/checks.py"
+      ],
+      "added_estimands": [],
+      "changed_estimands": []
+    },
+    {
+      "id": "LINE:archive/swpc-1.0-drafts",
+      "title_ru": "archive/swpc-1.0-drafts",
+      "line": {
+        "branch": "archive/swpc-1.0-drafts",
+        "commit": "000a724675b5c57b9b4c54b4366198a23e3bcd5f",
+        "merged_into_main": false
+      },
+      "line_kind": "EXCLUDED_HISTORY",
+      "base_commit": "0f7958108627f5036e156edadb6a85b30823e478",
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Инвентарь локальных веток; не новая рабочая линия и не источник текущих формул.",
+      "human_acceptance": "NOT_APPLICABLE"
+    },
+    {
+      "id": "LINE:design-22",
+      "title_ru": "design-22",
+      "line": {
+        "branch": "design-22",
+        "commit": "715fa913ab12a3e802c483d906527f7c86259036",
+        "merged_into_main": false
+      },
+      "line_kind": "EXCLUDED_HISTORY",
+      "base_commit": "715fa913ab12a3e802c483d906527f7c86259036",
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Инвентарь локальных веток; не новая рабочая линия и не источник текущих формул.",
+      "human_acceptance": "NOT_APPLICABLE"
+    },
+    {
+      "id": "LINE:design-24",
+      "title_ru": "design-24",
+      "line": {
+        "branch": "design-24",
+        "commit": "a4061605378f2b8dcd5fdf4e2bdeb4ed367683ea",
+        "merged_into_main": false
+      },
+      "line_kind": "EXCLUDED_HISTORY",
+      "base_commit": "a4061605378f2b8dcd5fdf4e2bdeb4ed367683ea",
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Инвентарь локальных веток; не новая рабочая линия и не источник текущих формул.",
+      "human_acceptance": "NOT_APPLICABLE"
+    },
+    {
+      "id": "LINE:ekran-24-mesta",
+      "title_ru": "ekran-24-mesta",
+      "line": {
+        "branch": "ekran-24-mesta",
+        "commit": "b7a52f17fac3fd3f980f4687ad5f21a0b8f2d57b",
+        "merged_into_main": false
+      },
+      "line_kind": "EXCLUDED_HISTORY",
+      "base_commit": "2672841da928f7379e5d7bc27eef8ff3e0fa5738",
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Инвентарь локальных веток; не новая рабочая линия и не источник текущих формул.",
+      "human_acceptance": "NOT_APPLICABLE"
+    },
+    {
+      "id": "LINE:sozvezdiya",
+      "title_ru": "sozvezdiya",
+      "line": {
+        "branch": "sozvezdiya",
+        "commit": "d8f4eb781a175c0cec1ec576c979ed96c2a541c9",
+        "merged_into_main": false
+      },
+      "line_kind": "EXCLUDED_HISTORY",
+      "base_commit": "d8f4eb781a175c0cec1ec576c979ed96c2a541c9",
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Инвентарь локальных веток; не новая рабочая линия и не источник текущих формул.",
+      "human_acceptance": "NOT_APPLICABLE"
+    },
+    {
+      "id": "LINE:svodka-24",
+      "title_ru": "svodka-24",
+      "line": {
+        "branch": "svodka-24",
+        "commit": "a2d076a552d967a268a1c494b2bbbefa7ca6f3e6",
+        "merged_into_main": false
+      },
+      "line_kind": "EXCLUDED_HISTORY",
+      "base_commit": "2672841da928f7379e5d7bc27eef8ff3e0fa5738",
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Инвентарь локальных веток; не новая рабочая линия и не источник текущих формул.",
+      "human_acceptance": "NOT_APPLICABLE"
+    },
+    {
+      "id": "LINE:swpc-1.1",
+      "title_ru": "swpc-1.1",
+      "line": {
+        "branch": "swpc-1.1",
+        "commit": "387d35af9b18e8f308f2d18c0d16cd828b6307e4",
+        "merged_into_main": false
+      },
+      "line_kind": "EXCLUDED_HISTORY",
+      "base_commit": "2672841da928f7379e5d7bc27eef8ff3e0fa5738",
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ],
+      "scope_ru": "Инвентарь локальных веток; не новая рабочая линия и не источник текущих формул.",
+      "human_acceptance": "NOT_APPLICABLE"
+    }
   ]
 }

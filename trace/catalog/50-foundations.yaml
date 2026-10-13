@@ -1,0 +1,427 @@
+{
+  "catalog_part": "fom-foundations",
+  "foundations": [
+    {
+      "id": "RULE:DRIDR-24-1#box_rule",
+      "title_ru": "Формирование DR/IDR",
+      "registry_id": "RULE:DRIDR-24-1",
+      "field": "box_rule",
+      "evidence": [
+        "contract/registry/10-observation-strategy-measurement.yaml"
+      ]
+    },
+    {
+      "id": "RULE:DRIDR-24-1#confirmation_rule",
+      "title_ru": "Подтверждение закрытием M5",
+      "registry_id": "RULE:DRIDR-24-1",
+      "field": "confirmation_rule",
+      "evidence": [
+        "contract/registry/10-observation-strategy-measurement.yaml"
+      ]
+    },
+    {
+      "id": "RULE:DRIDR-24-1#break_rule",
+      "title_ru": "Поглощающее событие слома",
+      "registry_id": "RULE:DRIDR-24-1",
+      "field": "break_rule",
+      "evidence": [
+        "contract/registry/10-observation-strategy-measurement.yaml"
+      ]
+    },
+    {
+      "id": "RULE:DRIDR-24-1#blocks",
+      "title_ru": "Часы и конец блока",
+      "registry_id": "RULE:DRIDR-24-1",
+      "field": "blocks",
+      "evidence": [
+        "contract/registry/10-observation-strategy-measurement.yaml"
+      ]
+    },
+    {
+      "id": "RULE:DRIDR-24-1#early_close_calendar",
+      "title_ru": "Календарь ранних закрытий",
+      "registry_id": "RULE:DRIDR-24-1",
+      "field": "early_close_calendar",
+      "evidence": [
+        "contract/registry/10-observation-strategy-measurement.yaml"
+      ],
+      "exception_ru": "NOT_CERTIFIED; никакой новый календарь не вводится."
+    },
+    {
+      "id": "RULE:DRIDR-24-1#weekend_rule",
+      "title_ru": "Торговые даты по будням",
+      "registry_id": "RULE:DRIDR-24-1",
+      "field": "weekend_rule",
+      "evidence": [
+        "contract/registry/10-observation-strategy-measurement.yaml"
+      ]
+    },
+    {
+      "id": "FND:COORDINATE",
+      "title_ru": "Направление, якорь и ширина нормированной рамки",
+      "registry_id": "MF:CONFIRMATION-1",
+      "field": "forward_formula",
+      "evidence": [
+        "contract/registry/10-observation-strategy-measurement.yaml",
+        "meaning/10-dizajn-24.md"
+      ]
+    },
+    {
+      "id": "FND:ACTIVATION-WINDOW",
+      "title_ru": "15 минут по метке открывшейся M5",
+      "registry_id": "CS:F-CONF-1",
+      "field": "key_fields",
+      "evidence": [
+        "contract/registry/20-cases-outcomes.yaml",
+        "meaning/10-dizajn-24.md"
+      ]
+    },
+    {
+      "id": "FND:BREAK-WINDOW",
+      "title_ru": "Отдельное 15-минутное окно слома",
+      "registry_id": "CS:F-BREAK-1",
+      "field": "key_fields",
+      "evidence": [
+        "contract/registry/20-cases-outcomes.yaml",
+        "meaning/10-dizajn-24.md"
+      ]
+    },
+    {
+      "id": "FND:PRE-COORDINATE",
+      "title_ru": "Ненаправленное положение от нижнего края IDR до подтверждения",
+      "registry_id": "CMP:PRE-1",
+      "field": "features",
+      "evidence": [
+        "contract/registry/20-cases-outcomes.yaml"
+      ]
+    },
+    {
+      "id": "FND:IDR-UNIT",
+      "title_ru": "Общая единица — собственная ширина IDR",
+      "registry_id": "RULE:DRIDR-24-1",
+      "field": "box_rule",
+      "evidence": [
+        "contract/registry/10-observation-strategy-measurement.yaml",
+        "contract/registry/20-cases-outcomes.yaml"
+      ]
+    }
+  ],
+  "foundation_bindings": [
+    {
+      "id": "FB:01",
+      "collection": "measurement_frames",
+      "field": "activation_kind",
+      "match_value": "CONFIRMATION",
+      "depends_on": [
+        "RULE:DRIDR-24-1#confirmation_rule",
+        "FND:COORDINATE",
+        "FND:IDR-UNIT"
+      ],
+      "dependency_kind": "DEFINING",
+      "scope_ru": "Рамка определена активацией и направленным координатным соглашением; общая единица — отдельная зависимость.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:02",
+      "collection": "measurement_frames",
+      "field": "activation_kind",
+      "match_value": "DR_BREAK",
+      "depends_on": [
+        "RULE:DRIDR-24-1#break_rule",
+        "FND:COORDINATE",
+        "FND:IDR-UNIT"
+      ],
+      "dependency_kind": "DEFINING",
+      "scope_ru": "Ориентация и якорь после слома; сама конфигурация слома отдельна от подтверждения.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:03",
+      "collection": "case_sets",
+      "field": "activation_kind",
+      "match_value": "CONFIRMATION",
+      "depends_on": [
+        "MF:CONFIRMATION-1"
+      ],
+      "dependency_kind": "DEFINING",
+      "scope_ru": "Интерпретация семей и снимков в рамке подтверждения; не доказательство изменения каждой частоты от смены единицы.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:04",
+      "collection": "case_sets",
+      "field": "activation_kind",
+      "match_value": "DR_BREAK",
+      "depends_on": [
+        "MF:BREAK-1"
+      ],
+      "dependency_kind": "CONTROL_SELECTION",
+      "scope_ru": "Отдельная семья активируется собственным сломом.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:05",
+      "collection": "case_sets",
+      "field": "id",
+      "match_value": "CS:UNIVERSE-1",
+      "depends_on": [
+        "RULE:DRIDR-24-1#box_rule",
+        "RULE:DRIDR-24-1#weekend_rule",
+        "OBS:G3-TAPE",
+        "TF:ET-M5-1"
+      ],
+      "dependency_kind": "CONTROL_SELECTION",
+      "scope_ru": "Допустимые наблюдения и календарь исходной вселенной.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:06",
+      "collection": "case_sets",
+      "field": "key_fields",
+      "match_value": "CONFIRMATION_WINDOW",
+      "depends_on": [
+        "FND:ACTIVATION-WINDOW"
+      ],
+      "dependency_kind": "CONTROL_SELECTION",
+      "scope_ru": "Собственное окно этого типа активации входит в ключ; PRE не использует этот ключ.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:07",
+      "collection": "case_sets",
+      "field": "key_fields",
+      "match_value": "BREAK_WINDOW",
+      "depends_on": [
+        "FND:BREAK-WINDOW"
+      ],
+      "dependency_kind": "CONTROL_SELECTION",
+      "scope_ru": "Собственное окно этого типа активации входит в ключ; PRE не использует этот ключ.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:08",
+      "collection": "case_sets",
+      "field": "id",
+      "match_value": "CS:P-SIMILAR-1",
+      "depends_on": [
+        "CS:UNIVERSE-1",
+        "RULE:DRIDR-24-1#confirmation_rule"
+      ],
+      "dependency_kind": "CONTROL_SELECTION",
+      "scope_ru": "PRE отбирает ещё не подтверждённые случаи; направленная рамка подтверждения здесь не используется.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:09",
+      "collection": "case_sets",
+      "field": "id",
+      "match_value": "CS:P-SIMILAR-ALL-1",
+      "depends_on": [
+        "CS:UNIVERSE-1",
+        "RULE:DRIDR-24-1#confirmation_rule"
+      ],
+      "dependency_kind": "CONTROL_SELECTION",
+      "scope_ru": "PRE отбирает ещё не подтверждённые случаи; направленная рамка подтверждения здесь не используется.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:10",
+      "collection": "outcomes",
+      "field": "event",
+      "match_value": "DR",
+      "depends_on": [
+        "RULE:DRIDR-24-1#break_rule"
+      ],
+      "dependency_kind": "COMPUTATIONAL",
+      "scope_ru": "Исход определяется закрытием за собственным противоположным DR.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:11",
+      "collection": "comparisons",
+      "field": "id",
+      "match_value": "CMP:B0-1",
+      "depends_on": [
+        "RULE:DRIDR-24-1#break_rule"
+      ],
+      "dependency_kind": "CONTROL_SELECTION",
+      "scope_ru": "Пригодность NOW и ARRIVE: DR должен оставаться целым на срезе, не по будущему fail.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:12",
+      "collection": "case_sets",
+      "field": "id",
+      "match_value": "CS:K-ARRIVE-1",
+      "depends_on": [
+        "RULE:DRIDR-24-1#break_rule"
+      ],
+      "dependency_kind": "CONTROL_SELECTION",
+      "scope_ru": "У ARRIVE собственная проверка пригодности на срезе (правило B0); comparison ссылается на положение, не на B0.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:13",
+      "collection": "case_sets",
+      "field": "id",
+      "match_value": "CS:K-ARRIVE-ALL-1",
+      "depends_on": [
+        "RULE:DRIDR-24-1#break_rule"
+      ],
+      "dependency_kind": "CONTROL_SELECTION",
+      "scope_ru": "У ARRIVE собственная проверка пригодности на срезе (правило B0); comparison ссылается на положение, не на B0.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:14",
+      "collection": "outcomes",
+      "field": "horizon_end",
+      "match_value": "BLOCK_END_CLOSE_INCLUSIVE",
+      "depends_on": [
+        "RULE:DRIDR-24-1#blocks"
+      ],
+      "dependency_kind": "TEMPORAL",
+      "scope_ru": "Объявленный собственный конец блока.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:15",
+      "collection": "outcomes",
+      "field": "horizon_end",
+      "match_value": "SINGLE_M5",
+      "depends_on": [
+        "TF:ET-M5-1"
+      ],
+      "dependency_kind": "TEMPORAL",
+      "scope_ru": "Одна клетка общих часов, не длительность пребывания.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:16",
+      "collection": "outcomes",
+      "field": "horizon_start",
+      "match_value": "BOX_END",
+      "depends_on": [
+        "RULE:DRIDR-24-1#blocks"
+      ],
+      "dependency_kind": "TEMPORAL",
+      "scope_ru": "Путь семьи начинается с конца коробки.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:17",
+      "collection": "outcomes",
+      "field": "horizon_start",
+      "match_value": "COMMON_CUT_EXCLUSIVE",
+      "depends_on": [
+        "TF:ET-M5-1"
+      ],
+      "dependency_kind": "TEMPORAL",
+      "scope_ru": "Остаток после закрытого среза, не время одинакового возраста.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    },
+    {
+      "id": "FB:18",
+      "collection": "comparisons",
+      "field": "id",
+      "match_value": "CMP:PRE-1",
+      "depends_on": [
+        "FND:PRE-COORDINATE",
+        "FND:IDR-UNIT"
+      ],
+      "dependency_kind": "CONTROL_SELECTION",
+      "scope_ru": "PRE: (close − IDR low)/w, без стороны; изменение общей единицы отдельно от изменения направленного якоря.",
+      "availability": "DEFINITION_VERSION",
+      "evidence": [
+        "meaning/10-dizajn-24.md",
+        "docs/SEMANTICS.md",
+        "meaning/lens/2026-10-14-fom-baseline.md"
+      ]
+    }
+  ]
+}

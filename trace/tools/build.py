@@ -4,7 +4,7 @@
     .venv-linkml\\Scripts\\python.exe trace/tools/build.py --check   # regenerate in memory, compare with the files
 
 Sources (the only places the trace is written by hand):
-    trace/schema/dr_lab_trace.yaml   the LinkML module (imports contract/schema/dr_lab_sc.yaml unchanged)
+    trace/schema/dr_lab_fom.yaml     FOM extension over dr_lab_trace (imports SC-1.1 unchanged)
     trace/catalog/*.yaml             the catalog: standing, architecture entries, boundaries, scenes, absence bindings
 Read, never written:
     contract/build/registry.json     the compiled SC-1.1 registry the catalog points into
@@ -38,7 +38,8 @@ from linkml.validator.plugins import JsonschemaValidationPlugin
 from linkml_runtime.utils.schemaview import SchemaView
 
 ROOT = Path(__file__).resolve().parents[2]
-SCHEMA = ROOT / "trace" / "schema" / "dr_lab_trace.yaml"
+SCHEMA = ROOT / "trace" / "schema" / "dr_lab_fom.yaml"
+CATALOG_CLASS = "FomCatalog"
 LINT = ROOT / "trace" / "schema" / "linkml-lint.yaml"
 CAT_DIR = ROOT / "trace" / "catalog"
 OUT = ROOT / "trace" / "build"
@@ -200,17 +201,22 @@ def build(check=False):
     merged["bindings"] = list(merged.get("bindings", [])) + gen
     errs = []
     for f, d in parts.items():
-        errs += [f"{rel(f)}: {res.message}" for res in validator.validate(d, "TraceCatalog").results]
-    errs += [f"compiled catalog: {res.message}" for res in validator.validate(merged, "TraceCatalog").results]
+        errs += [f"{rel(f)}: {res.message}" for res in validator.validate(d, CATALOG_CLASS).results]
+    errs += [f"compiled catalog: {res.message}" for res in validator.validate(merged, CATALOG_CLASS).results]
     if errs:
         fail(errs[:40])
-    print(f"  ok   {len(files)} catalog files and the compiled catalog valid against TraceCatalog (closed world); {len(gen)} bindings generated from SWPC-1.1 §9")
+    print(f"  ok   {len(files)} catalog files and the compiled catalog valid against {CATALOG_CLASS} (closed world); {len(gen)} bindings generated from SWPC-1.1 §9")
     spec = runtime_spec(sv)
     spec_text = dumps(spec)
     body_text = dumps(merged)
-    jschema = JsonSchemaGenerator(str(SCHEMA), top_class="TraceCatalog", include_range_class_descendants=True).serialize()
-    sources = {rel(p): sha256_lf(p) for p in [SCHEMA, LINT, SC_SCHEMA, SC_REGISTRY, SWPC_DOC, SWPC_RECORD] + ARCH + files}
-    stamps = dict(trace_version="dr-lab-trace-1", sources=dict(sorted(sources.items())), linkml=version("linkml"),
+    jschema = JsonSchemaGenerator(str(SCHEMA), top_class=CATALOG_CLASS, include_range_class_descendants=True).serialize()
+    referenced = {ROOT / ref.split("#", 1)[0] for values in merged.values() if isinstance(values, list)
+                  for obj in values if isinstance(obj, dict) for ref in obj.get("evidence", [])}
+    source_files = [SCHEMA, ROOT / "trace/schema/dr_lab_trace.yaml", LINT, SC_SCHEMA, SC_REGISTRY, SWPC_DOC,
+                    SWPC_RECORD, ROOT / "trace/fom.py", ROOT / "lab/semtrace.py", ROOT / "tests/fom_map.py",
+                    ROOT / "tests/trace_page.mjs", Path(__file__)] + ARCH + files + sorted(referenced)
+    sources = {rel(p): sha256_lf(p) for p in source_files if p.is_file()}
+    stamps = dict(trace_version="dr-lab-trace-1", fom_version="1.2.0", sources=dict(sorted(sources.items())), linkml=version("linkml"),
                   runtime_spec_sha256=hashlib.sha256(spec_text.encode()).hexdigest(), catalog_sha256=hashlib.sha256(body_text.encode()).hexdigest(),
                   sc_registry_sha256=reg_doc["stamps"]["registry_sha256"])
     cat_text = dumps(dict(stamps=stamps, catalog=merged))

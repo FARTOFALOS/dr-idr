@@ -20,6 +20,8 @@ const argv = process.argv.slice(2);
 const opt = (name, dflt) => { const i = argv.indexOf(name); if (i < 0) return dflt; const v = argv[i + 1]; argv.splice(i, 2); return v; };
 const BASE = opt('--base', 'http://127.0.0.1:8767/24/');
 const OUT = opt('--out', null);
+const FOM = argv.includes('--fom');
+if (FOM) argv.splice(argv.indexOf('--fom'), 1);
 const FRAGMENTS = argv;
 const CHROMES = [process.env.CHROME, 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
   'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe', '/usr/bin/google-chrome', '/usr/bin/chromium'].filter(Boolean);
@@ -27,15 +29,17 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function connect(url) {
   return new Promise((resolve, reject) => {
-    const ws = new WebSocket(url), pend = new Map();
+    const ws = new WebSocket(url), pend = new Map(), handlers = new Map();
     let id = 0;
     ws.onopen = () => resolve({
       send(method, params = {}) { const i = ++id; ws.send(JSON.stringify({ id: i, method, params })); return new Promise((ok, no) => pend.set(i, { ok, no, method })); },
+      on(method, callback) { handlers.set(method, callback); },
       close() { try { ws.close(); } catch (e) { /* closed */ } }
     });
     ws.onmessage = ev => {
       const m = JSON.parse(ev.data);
       if (m.id) { const p = pend.get(m.id); pend.delete(m.id); if (p) m.error ? p.no(new Error(p.method + ': ' + JSON.stringify(m.error))) : p.ok(m.result); }
+      else if (handlers.has(m.method)) Promise.resolve(handlers.get(m.method)(m.params)).catch(e => console.error('CDP event: ' + e.message));
     };
     ws.onerror = e => reject(new Error('CDP: ' + (e.message || 'socket error')));
   });
@@ -136,26 +140,67 @@ const COLLECT = function () {
     contract: { registry_hash: C.registry_hash, violations: C.violations, unchecked: C.unchecked }, elements: els };
 };
 
+// FOM's semantic state of the existing rendering, independent of DOM byte order and pixels.
+// Raw states stay in the caller's local runtime directory. Existing trace runs omit --fom.
+const FOM_STATE = function () {
+  const d = window.__d24, c = d.cur(), F = c.F, n = d.nowOf(c), a = d.arriveOf(c);
+  const cells = ev => [...F.ev[ev].cells.values()].map(x => [x.k, x.b, x.list.length]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const zones = ev => (F.zones[ev] && F.zones[ev].zones || []).map(z => ({ id: z.zone_id, n: z.n_zone, mask: z.cell_mask })).sort((a, b) => String(a.id).localeCompare(String(b.id)));
+  const base = { family_id: F.r.family_id, snapshot_id: F.r.snapshot_id, N: F.N, view: F.view,
+    points: F.M.map(m => ({ id: m.id, w: m.w, R: m.R, X: m.X })).sort((a, b) => a.id.localeCompare(b.id)),
+    R: cells('R'), X: cells('X'), zonesR: zones('R'), zonesX: zones('X'), outcome: F.out || null };
+  const cut = c.obs;
+  return { base, cut, orientation: F.d0, activation: F.act0, family_key: F.r.key,
+    prefix: c.D.bars.filter(b => b.t + 5 > F.act0 && b.t + 5 <= cut).map(b => [b.t, b.o, b.h, b.l, b.c]),
+    now_cut: n && n.cut, now_base: n && n.base, now_status: n && n.status,
+    arrive_cut: a && a.cut, arrive_status: a && a.status, places: a && a.places && a.places.map(p => ({ level: p.level, state: p.state, publication: p.publication,
+      counts: p.counts, has_bundle: !!(a.contract && a.contract.bundles || []).find(b => JSON.parse(b.parameters || '{}').level === p.level) })) };
+};
+
+async function opened(B, fragment) {
+  await B.cdp.send('Page.navigate', { url: 'about:blank' });
+  await sleep(200);
+  await B.cdp.send('Page.navigate', { url: BASE + fragment });
+  let state = '', t0 = Date.now();
+  while (Date.now() - t0 < 120000) {
+    try { state = await evaluate(B.cdp, READY); } catch (e) { state = String(e.message || e); }
+    if (state === 'ok') break;
+    await sleep(500);
+  }
+  if (state !== 'ok') throw new Error(`${fragment}: the scene did not complete (${state})`);
+  await sleep(1500);
+  for (let i = 0; i < 40 && (await evaluate(B.cdp, READY)) !== 'ok'; i++) await sleep(500);
+}
+
 async function main() {
   if (!FRAGMENTS.length) throw new Error('no fragment given');
   const B = await startChrome();
   const out = [];
   try {
     for (const f of FRAGMENTS) {
-      await B.cdp.send('Page.navigate', { url: 'about:blank' });
-      await sleep(200);
-      await B.cdp.send('Page.navigate', { url: BASE + f });
-      let state = '', t0 = Date.now();
-      while (Date.now() - t0 < 120000) {
-        try { state = await evaluate(B.cdp, READY); } catch (e) { state = String(e.message || e); }
-        if (state === 'ok') break;
-        await sleep(500);
-      }
-      if (state !== 'ok') throw new Error(`${f}: the scene did not complete (${state})`);
-      await sleep(1500);                                  // passports made by the last render are verified too
-      for (let i = 0; i < 40 && (await evaluate(B.cdp, READY)) !== 'ok'; i++) await sleep(500);
+      await opened(B, f);
       out.push(await evaluate(B.cdp, COLLECT));
+      if (FOM) out[out.length - 1].fom = await evaluate(B.cdp, FOM_STATE);
       console.log(`  ok   ${f}: ${out[out.length - 1].elements.length} elements`);
+    }
+    if (FOM) {
+      let transformed = 0;
+      B.cdp.on('Fetch.requestPaused', async p => {
+        const response = await B.cdp.send('Fetch.getResponseBody', { requestId: p.requestId });
+        const body = JSON.parse(response.base64Encoded ? Buffer.from(response.body, 'base64').toString('utf8') : response.body);
+        if (body.members) { body.members.reverse(); transformed++; }
+        await B.cdp.send('Fetch.fulfillRequest', { requestId: p.requestId, responseCode: p.responseStatusCode,
+          responseHeaders: (p.responseHeaders || []).filter(h => !/^(content-length|content-encoding)$/i.test(h.name)),
+          body: Buffer.from(JSON.stringify(body)).toString('base64') });
+      });
+      await B.cdp.send('Fetch.enable', { patterns: [{ urlPattern: '*/api/d24/family?*', requestStage: 'Response' }] });
+      await opened(B, FRAGMENTS[0]);
+      const permutation = await evaluate(B.cdp, COLLECT);
+      permutation.fom = await evaluate(B.cdp, FOM_STATE);
+      permutation.fom_variant = 'PERMUTED_MEMBERS';
+      permutation.transformed_responses = transformed;
+      out.push(permutation);
+      await B.cdp.send('Fetch.disable');
     }
   } finally {
     await B.close();

@@ -1,0 +1,724 @@
+{
+  "catalog_part": "fom-terms",
+  "terms": [
+    {
+      "id": "TERM:FINAL-R",
+      "title_ru": "окончательный R",
+      "scheme": "BASE24",
+      "aliases": [
+        "R",
+        "откат"
+      ],
+      "denotes": [
+        "OUT:FINAL-R-1"
+      ],
+      "definition_ru": "Самый глубокий направленный low на собственном полном горизонте; окончательность известна ретроспективно.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:TODAY-LOW",
+      "title_ru": "сегодняшнее дно",
+      "scheme": "OBSERVED",
+      "aliases": [
+        "сегодняшний минимум"
+      ],
+      "denotes": [
+        "FF:TODAY-PREFIX"
+      ],
+      "definition_ru": "Наблюдённый минимум закрытого префикса; следующий бар может его обновить.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:NEW-R",
+      "title_ru": "новый минимум",
+      "scheme": "NOW",
+      "aliases": [
+        "углубление",
+        "откат"
+      ],
+      "denotes": [
+        "EST:N-NEW-R"
+      ],
+      "definition_ru": "В истории остаток после общего среза строго углубил дно того префикса.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:PULLBACK-MAX",
+      "title_ru": "откат от максимума",
+      "scheme": "TRADER",
+      "aliases": [
+        "насколько глубоким будет этот откат",
+        "откат"
+      ],
+      "denotes": [
+        "EST:B-LEVEL-REST"
+      ],
+      "definition_ru": "Лесенка уровней против движения, после общих часов среза, на всей семье N.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:ARRIVAL",
+      "title_ru": "первый приход",
+      "scheme": "ARRIVE24",
+      "aliases": [
+        "место"
+      ],
+      "denotes": [
+        "EST:K-ARRIVE"
+      ],
+      "definition_ru": "Достижение названного уровня после среза среди стоявших там же и ещё не бывших у уровня.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:PLACE22",
+      "title_ru": "место",
+      "scheme": "DESIGN22",
+      "aliases": [],
+      "denotes": [],
+      "definition_ru": "Полоса первых посещений и её ядро плотности прежнего дизайна; не вход SC-1.1.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией.",
+      "legacy_reference": "meaning/04-dizajn-22.md"
+    },
+    {
+      "id": "TERM:ZONE",
+      "title_ru": "зона",
+      "scheme": "BASE24",
+      "aliases": [
+        "место",
+        "кластер"
+      ],
+      "denotes": [
+        "OUT:ZONE-MEMBERSHIP-1"
+      ],
+      "definition_ru": "Клетки окончательных R/X; членство не определяется контуром дымки.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:CONSTELLATION",
+      "title_ru": "созвездие",
+      "scheme": "PRESENTATION",
+      "aliases": [
+        "дымка",
+        "кластер"
+      ],
+      "denotes": [
+        "EST:B-ZONE-R",
+        "EST:B-ZONE-X"
+      ],
+      "definition_ru": "Рисунок точек зоны, а не отдельный подсчитанный объект; рисунок не добавляет частоты.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:DENSITY",
+      "title_ru": "ядро плотности",
+      "scheme": "DESIGN22",
+      "aliases": [],
+      "denotes": [],
+      "definition_ru": "Плотная часть первых посещений; доля полосы не является долей её ядра.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией.",
+      "legacy_reference": "meaning/04-dizajn-22.md"
+    },
+    {
+      "id": "TERM:SHARE",
+      "title_ru": "доля",
+      "scheme": "HISTORY",
+      "aliases": [
+        "вероятность"
+      ],
+      "denotes": [
+        "EST:B-LEVEL-REST",
+        "EST:K-ARRIVE"
+      ],
+      "definition_ru": "Счёт исторических случаев с собственным знаменателем.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:CHANCE",
+      "title_ru": "шанс сегодня",
+      "scheme": "PREDICTION",
+      "aliases": [
+        "шанс",
+        "вероятность"
+      ],
+      "denotes": [],
+      "definition_ru": "Будущий шанс требует отдельной проверки переноса и допуска C2; в продукте не установлен.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:CLOCK",
+      "title_ru": "время зоны",
+      "scheme": "BASE24",
+      "aliases": [],
+      "denotes": [
+        "EST:B-RX-WINDOW-R"
+      ],
+      "definition_ru": "Когда исторические сессии ставили окончательную точку; не длительность нахождения цены.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:DURATION",
+      "title_ru": "длительность",
+      "scheme": "TRADER",
+      "aliases": [
+        "сколько простоит"
+      ],
+      "denotes": [
+        "EST:B-CLOSE"
+      ],
+      "definition_ru": "Путь семьи даёт положения закрытий по M5. Непрерывная длительность пребывания из M5 OHLC не установлена.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:FAMILY",
+      "title_ru": "семья",
+      "scheme": "BASE24",
+      "aliases": [
+        "похожие сессии"
+      ],
+      "denotes": [
+        "CS:F-CONF-1",
+        "CS:F-BREAK-1"
+      ],
+      "definition_ru": "Зафиксированная исходная семья F, собственный N.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:MATCHED",
+      "title_ru": "похожие сессии",
+      "scheme": "AT_CUT",
+      "aliases": [
+        "набор",
+        "пригодные"
+      ],
+      "denotes": [
+        "CS:NOW-ELIGIBLE-1",
+        "CS:K-ARRIVE-1"
+      ],
+      "definition_ru": "Конкретный пригодный или совпавший набор на общем срезе; не новая исходная семья.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:NO-PERIOD",
+      "title_ru": "нет периода",
+      "scheme": "ABSENCE",
+      "aliases": [],
+      "denotes": [
+        "OUT:FINAL-R-1"
+      ],
+      "definition_ru": "Нет горизонта после активации; это отдельная категория массы.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:NO-SUPPORT",
+      "title_ru": "нет опоры",
+      "scheme": "ABSENCE",
+      "aliases": [
+        "мало сессий"
+      ],
+      "denotes": [],
+      "definition_ru": "Нельзя выдать оценку этого условия на пригодном наборе.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:FEW-BASE",
+      "title_ru": "мало сессий",
+      "scheme": "BASE24",
+      "aliases": [],
+      "denotes": [
+        "FF:FEW-SESSIONS"
+      ],
+      "definition_ru": "Малая семья слома отмечена своим n; её исторические доли остаются видимыми.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:ZERO",
+      "title_ru": "ноль",
+      "scheme": "VALUE",
+      "aliases": [],
+      "denotes": [],
+      "definition_ru": "Известный нулевой числитель при пригодном ненулевом знаменателе.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:UNKNOWN",
+      "title_ru": "неизвестно",
+      "scheme": "KNOWLEDGE",
+      "aliases": [],
+      "denotes": [
+        "OUT:FINAL-R-1"
+      ],
+      "definition_ru": "Наблюдений недостаточно для исхода; сохраняется в знаменателе, без ценовой координаты.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:WITHHELD",
+      "title_ru": "число отозвано",
+      "scheme": "PUBLICATION",
+      "aliases": [],
+      "denotes": [],
+      "definition_ru": "Публикация не прошла проверку; старое число и зависимый рисунок нельзя удерживать.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:ARCH-R",
+      "title_ru": "R",
+      "scheme": "ARCHITECTURE",
+      "aliases": [],
+      "denotes": [],
+      "definition_ru": "Префикс R01–R16 отношений архитектуры; совпадение строки не означает рыночный откат.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    },
+    {
+      "id": "TERM:FINAL-X",
+      "title_ru": "окончательный X",
+      "scheme": "BASE24",
+      "aliases": [
+        "X",
+        "продолжение"
+      ],
+      "denotes": [
+        "OUT:FINAL-X-1"
+      ],
+      "definition_ru": "Самый дальний направленный high на собственном полном горизонте. R и X — раздельные распределения, но события не объявлены статистически независимыми.",
+      "evidence": [
+        "docs/SEMANTICS.md",
+        "meaning/17-rabota-treidera.md",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "boundary_ru": "Исторический ответ не является прогнозом или торговой рекомендацией."
+    }
+  ],
+  "term_relations": [
+    {
+      "id": "TM:01",
+      "left": "TERM:FINAL-R",
+      "right": "TERM:TODAY-LOW",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Ретроспективный финал не равен минимуму префикса.",
+      "guards": [
+        "W04",
+        "M05"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:02",
+      "left": "TERM:FINAL-R",
+      "right": "TERM:NEW-R",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Итоговая точка не равна условному обновлению после среза.",
+      "guards": [
+        "W04",
+        "W08"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:03",
+      "left": "TERM:FINAL-R",
+      "right": "TERM:PULLBACK-MAX",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Якорь трейдерского отката иной.",
+      "guards": [
+        "W04",
+        "W12"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:04",
+      "left": "TERM:NEW-R",
+      "right": "TERM:PULLBACK-MAX",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Новое дно от префикса не откат от максимума.",
+      "guards": [
+        "W08",
+        "W12"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:05",
+      "left": "TERM:ARRIVAL",
+      "right": "TERM:ZONE",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Достижение уровня не членство окончательной точки в зоне.",
+      "guards": [
+        "W04",
+        "W05",
+        "M20"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:06",
+      "left": "TERM:ARRIVAL",
+      "right": "TERM:PLACE22",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Старое место не является новым условным набором Q1.",
+      "guards": [
+        "W08",
+        "M20"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:07",
+      "left": "TERM:PLACE22",
+      "right": "TERM:ZONE",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Первые посещения не окончательные точки.",
+      "guards": [
+        "W04",
+        "M05"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:08",
+      "left": "TERM:SHARE",
+      "right": "TERM:CHANCE",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Описание выборки не сегодняшний прогноз.",
+      "guards": [
+        "K33",
+        "W08"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:09",
+      "left": "TERM:CLOCK",
+      "right": "TERM:DURATION",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Время точки не время пребывания.",
+      "guards": [
+        "W12",
+        "M11"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:10",
+      "left": "TERM:FAMILY",
+      "right": "TERM:MATCHED",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "F неподвижна, M(t) зависит от среза.",
+      "guards": [
+        "W02",
+        "W08"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:11",
+      "left": "TERM:FINAL-R",
+      "right": "TERM:ARCH-R",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Строка R совпадает, понятийного соответствия нет.",
+      "guards": [
+        "NOTATION-LINT"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:12",
+      "left": "TERM:ZERO",
+      "right": "TERM:UNKNOWN",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Недостаток знания не нулевой исход.",
+      "guards": [
+        "W09",
+        "K16"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:13",
+      "left": "TERM:ZERO",
+      "right": "TERM:NO-PERIOD",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Нет периода не известное отсутствие события.",
+      "guards": [
+        "W09"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:14",
+      "left": "TERM:ZERO",
+      "right": "TERM:NO-SUPPORT",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Нет поддержки не нулевой числитель.",
+      "guards": [
+        "W09"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:15",
+      "left": "TERM:ZERO",
+      "right": "TERM:WITHHELD",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Отзыв не нулевая частота.",
+      "guards": [
+        "W09",
+        "W13"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:16",
+      "left": "TERM:ZONE",
+      "right": "TERM:CONSTELLATION",
+      "mapping": "RELATED",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Рисунок связан с клетками, но не взаимозаменяем с membership.",
+      "guards": [
+        "W05",
+        "M05"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:17",
+      "left": "TERM:PLACE22",
+      "right": "TERM:DENSITY",
+      "mapping": "BROAD",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Ядро — часть полосы, доля относится к конкретной области.",
+      "guards": [
+        "W05"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:18",
+      "left": "TERM:NO-SUPPORT",
+      "right": "TERM:FEW-BASE",
+      "mapping": "NOT_IDENTICAL",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "BASE показывает доли малой семьи, ARRIVE при n<20 снимает долю; одинаковая фраза не одинаковое правило публикации.",
+      "guards": [
+        "W09",
+        "M19",
+        "M20"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "TM:19",
+      "left": "TERM:FINAL-R",
+      "right": "TERM:FINAL-X",
+      "mapping": "RELATED",
+      "scope_ru": "Объявленные контексты этих записей",
+      "reason_ru": "Раздельные распределения одной семьи нельзя складывать в 100 % или перемножать как независимые события.",
+      "guards": [
+        "W06",
+        "W12"
+      ],
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/17-rabota-treidera.md",
+        "AGENTS.md"
+      ]
+    }
+  ]
+}

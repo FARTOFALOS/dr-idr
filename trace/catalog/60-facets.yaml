@@ -1,0 +1,165 @@
+{
+  "catalog_part": "fom-facets",
+  "facet_definitions": [
+    {
+      "id": "FACET:CATEGORY",
+      "title_ru": "Категория объекта",
+      "basis_ru": "Каков тип объекта?",
+      "projection": "class",
+      "scope_ru": "REGISTERED_OBJECTS",
+      "cardinality": "ONE",
+      "unknown_rule": "NOT_APPLICABLE вне области; UNKNOWN если поле/связь отсутствует; не подставлять догадку.",
+      "evidence": [
+        "contract/schema/dr_lab_sc.yaml",
+        "trace/schema/dr_lab_trace.yaml"
+      ],
+      "used_by": [
+        "CQ-05"
+      ]
+    },
+    {
+      "id": "FACET:PHASE",
+      "title_ru": "Фаза рынка",
+      "basis_ru": "В какой фазе сессии определено?",
+      "projection": "phase",
+      "scope_ru": "ESTIMANDS",
+      "cardinality": "MANY",
+      "unknown_rule": "NOT_APPLICABLE вне области; UNKNOWN если поле/связь отсутствует; не подставлять догадку.",
+      "evidence": [
+        "contract/schema/dr_lab_sc.yaml",
+        "trace/schema/dr_lab_trace.yaml"
+      ],
+      "used_by": [
+        "CQ-17"
+      ]
+    },
+    {
+      "id": "FACET:KNOWLEDGE",
+      "title_ru": "Доступность информации",
+      "basis_ru": "Когда доступны вход и метка?",
+      "projection": "knowledge",
+      "scope_ru": "ESTIMANDS",
+      "cardinality": "MANY",
+      "unknown_rule": "NOT_APPLICABLE вне области; UNKNOWN если поле/связь отсутствует; не подставлять догадку.",
+      "evidence": [
+        "contract/schema/dr_lab_sc.yaml",
+        "trace/schema/dr_lab_trace.yaml"
+      ],
+      "used_by": [
+        "CQ-20"
+      ]
+    },
+    {
+      "id": "FACET:PRICE",
+      "title_ru": "Ценовая рамка",
+      "basis_ru": "В какой рамке интерпретируется?",
+      "projection": "price",
+      "scope_ru": "ESTIMANDS",
+      "cardinality": "MANY",
+      "unknown_rule": "NOT_APPLICABLE вне области; UNKNOWN если поле/связь отсутствует; не подставлять догадку.",
+      "evidence": [
+        "contract/schema/dr_lab_sc.yaml",
+        "trace/schema/dr_lab_trace.yaml"
+      ],
+      "used_by": [
+        "CQ-03"
+      ]
+    },
+    {
+      "id": "FACET:TIME",
+      "title_ru": "Временное выравнивание",
+      "basis_ru": "Общие часы или собственный горизонт?",
+      "projection": "time",
+      "scope_ru": "ESTIMANDS",
+      "cardinality": "MANY",
+      "unknown_rule": "NOT_APPLICABLE вне области; UNKNOWN если поле/связь отсутствует; не подставлять догадку.",
+      "evidence": [
+        "contract/schema/dr_lab_sc.yaml",
+        "trace/schema/dr_lab_trace.yaml"
+      ],
+      "used_by": [
+        "CQ-18"
+      ]
+    },
+    {
+      "id": "FACET:SET_ROLE",
+      "title_ru": "Роль набора",
+      "basis_ru": "Какую роль имеет набор?",
+      "projection": "set_role",
+      "scope_ru": "CASE_SETS",
+      "cardinality": "ONE",
+      "unknown_rule": "NOT_APPLICABLE вне области; UNKNOWN если поле/связь отсутствует; не подставлять догадку.",
+      "evidence": [
+        "contract/schema/dr_lab_sc.yaml",
+        "trace/schema/dr_lab_trace.yaml"
+      ],
+      "used_by": [
+        "CQ-18"
+      ]
+    },
+    {
+      "id": "FACET:DENOMINATOR",
+      "title_ru": "Правило знаменателя",
+      "basis_ru": "Что находится в знаменателе?",
+      "projection": "denominator",
+      "scope_ru": "ESTIMANDS",
+      "cardinality": "ONE",
+      "unknown_rule": "NOT_APPLICABLE вне области; UNKNOWN если поле/связь отсутствует; не подставлять догадку.",
+      "evidence": [
+        "contract/schema/dr_lab_sc.yaml",
+        "trace/schema/dr_lab_trace.yaml"
+      ],
+      "used_by": [
+        "CQ-08"
+      ]
+    },
+    {
+      "id": "FACET:CLAIM",
+      "title_ru": "Форма утверждения",
+      "basis_ru": "Какой класс утверждения?",
+      "projection": "claim",
+      "scope_ru": "ESTIMANDS",
+      "cardinality": "ONE",
+      "unknown_rule": "NOT_APPLICABLE вне области; UNKNOWN если поле/связь отсутствует; не подставлять догадку.",
+      "evidence": [
+        "contract/schema/dr_lab_sc.yaml",
+        "trace/schema/dr_lab_trace.yaml"
+      ],
+      "used_by": [
+        "CQ-12"
+      ]
+    },
+    {
+      "id": "FACET:GROUNDS",
+      "title_ru": "Основание",
+      "basis_ru": "На каком основании записан объект?",
+      "projection": "grounds",
+      "scope_ru": "REGISTERED_OBJECTS",
+      "cardinality": "ONE",
+      "unknown_rule": "NOT_APPLICABLE вне области; UNKNOWN если поле/связь отсутствует; не подставлять догадку.",
+      "evidence": [
+        "contract/schema/dr_lab_sc.yaml",
+        "trace/schema/dr_lab_trace.yaml"
+      ],
+      "used_by": [
+        "CQ-24"
+      ]
+    },
+    {
+      "id": "FACET:SURFACE",
+      "title_ru": "Поверхность",
+      "basis_ru": "Где представляется объект?",
+      "projection": "surface",
+      "scope_ru": "ESTIMANDS",
+      "cardinality": "MANY",
+      "unknown_rule": "NOT_APPLICABLE вне области; UNKNOWN если поле/связь отсутствует; не подставлять догадку.",
+      "evidence": [
+        "contract/schema/dr_lab_sc.yaml",
+        "trace/schema/dr_lab_trace.yaml"
+      ],
+      "used_by": [
+        "CQ-09"
+      ]
+    }
+  ]
+}

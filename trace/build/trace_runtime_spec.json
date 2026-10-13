@@ -1252,6 +1252,113 @@
     }
    }
   },
+  "CompetencyQuestion": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "answer_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "argument": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "baseline_status": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "boundary_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "evidence": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "expected_ids": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "expected_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "forbidden_ids": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "held_out": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "machine_gate": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "query": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "question_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "QuestionKind",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
   "ComponentSupport": {
    "abstract": false,
    "descendants": [],
@@ -2835,6 +2942,78 @@
     }
    }
   },
+  "FacetDefinition": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "basis_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "cardinality": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "evidence": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "projection": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "scope_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "unknown_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "used_by": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
   "FactForm": {
    "abstract": false,
    "descendants": [],
@@ -3090,6 +3269,277 @@
      "multivalued": true,
      "range": "TokenMapping",
      "required": false
+    }
+   }
+  },
+  "FomCatalog": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "bindings": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ArchitecturePresentationBinding",
+     "required": false
+    },
+    "boundaries": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "CoverageBoundary",
+     "required": false
+    },
+    "catalog_part": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "competency_questions": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "CompetencyQuestion",
+     "required": false
+    },
+    "editions": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "EditionStanding",
+     "required": false
+    },
+    "entries": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ArchitectureEntry",
+     "required": false
+    },
+    "facet_definitions": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "FacetDefinition",
+     "required": false
+    },
+    "fact_surfaces": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "FactSurface",
+     "required": false
+    },
+    "foundation_bindings": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "FoundationBinding",
+     "required": false
+    },
+    "foundations": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "FoundationRecord",
+     "required": false
+    },
+    "mapped_artifacts": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "MappedArtifact",
+     "required": false
+    },
+    "mapped_lines": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "MappedLine",
+     "required": false
+    },
+    "presentation_obligations": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "PresentationObligation",
+     "required": false
+    },
+    "research_coverage": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ResearchCoverage",
+     "required": false
+    },
+    "research_findings": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ResearchFinding",
+     "required": false
+    },
+    "scenes": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "SceneSpecification",
+     "required": false
+    },
+    "source_references": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "standings": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ProfileStanding",
+     "required": false
+    },
+    "term_relations": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "TermRelation",
+     "required": false
+    },
+    "terms": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "TermRecord",
+     "required": false
+    }
+   }
+  },
+  "FoundationBinding": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "availability": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "collection": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "dependency_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "DependencyKind",
+     "required": true
+    },
+    "depends_on": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "evidence": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "field": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "match_value": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "scope_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "FoundationRecord": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "evidence": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "exception_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "field": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "registry_id": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
     }
    }
   },
@@ -3468,6 +3918,149 @@
      "multivalued": false,
      "range": "integer",
      "required": false
+    }
+   }
+  },
+  "MappedArtifact": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "path": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "protected": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "revision": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "role": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "sha256_lf": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "MappedLine": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "added_estimands": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "base_commit": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "changed_estimands": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "changed_files": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "depends_on_lines": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "evidence": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "human_acceptance": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "HumanAcceptance",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "layer_commits": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "line": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "LineReference",
+     "required": true
+    },
+    "line_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "scope_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
     }
    }
   },
@@ -4519,6 +5112,106 @@
     }
    }
   },
+  "PresentationObligation": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "alpha_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "availability": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "bindings": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "evidence": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "forbidden_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "human_boundary_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "omega_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "semantic_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "test_id": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "time_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "work_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
   "Profile": {
    "abstract": false,
    "descendants": [],
@@ -5389,6 +6082,249 @@
     }
    }
   },
+  "ResearchCoverage": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "disposition": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "findings": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "ResearchFinding",
+     "required": false
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "path": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "reason_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ResearchFinding": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "accepted_basis": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "allowed_claim_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "claim_level": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ResearchLevel",
+     "required": true
+    },
+    "conclusion": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ResearchConclusion",
+     "required": true
+    },
+    "corpus_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "corpus_seen_before": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "decision_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "dependence_control": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "equivalence_method": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "evidence": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "lifecycle": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Lifecycle",
+     "required": true
+    },
+    "negative_scope_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "not_generalised_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "protocol_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "result_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "runtime_artifact": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "sesoi": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "uncertainty_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "validates": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "validation_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ValidationKind",
+     "required": true
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
   "SceneSpecification": {
    "abstract": false,
    "descendants": [],
@@ -5839,6 +6775,7 @@
     "PredictiveAdmission",
     "Profile",
     "RegionSpecification",
+    "ResearchFinding",
     "StateComparisonSpecification",
     "StrategyRuleSpecification",
     "TemporalFrame",
@@ -6523,6 +7460,143 @@
     }
    }
   },
+  "TermRecord": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "aliases": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "boundary_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "definition_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "denotes": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "evidence": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "legacy_reference": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "scheme": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "TermRelation": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "evidence": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "guards": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "left": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "TermRecord",
+     "required": true
+    },
+    "mapping": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "TermMapping",
+     "required": true
+    },
+    "reason_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "right": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "TermRecord",
+     "required": true
+    },
+    "scope_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
   "TokenMapping": {
    "abstract": false,
    "descendants": [],
@@ -6547,7 +7621,9 @@
   },
   "TraceCatalog": {
    "abstract": false,
-   "descendants": [],
+   "descendants": [
+    "FomCatalog"
+   ],
    "designator": null,
    "rules": [],
    "slots": {
@@ -6910,7 +7986,9 @@
   },
   "ValidationRecord": {
    "abstract": false,
-   "descendants": [],
+   "descendants": [
+    "ResearchFinding"
+   ],
    "designator": null,
    "rules": [],
    "slots": {
@@ -7196,6 +8274,16 @@
    "N_BASE_UNIQUE_MEMBERS",
    "N_ELIGIBLE_AT_CUT",
    "N_MATCH_AT_CUT"
+  ],
+  "DependencyKind": [
+   "COMPUTATIONAL",
+   "CONTROL_SELECTION",
+   "DEFINING",
+   "EVIDENTIAL",
+   "MEASUREMENT",
+   "NORMATIVE",
+   "PRESENTATIONAL",
+   "TEMPORAL"
   ],
   "DerivationSite": [
    "PAGE_PASSPORT",
@@ -7496,6 +8584,13 @@
    "RESIDUAL_NEW_EXTREME",
    "RESIDUAL_TIME_TO_NEW"
   ],
+  "QuestionKind": [
+   "FOUNDATIONAL_ALIGNMENT",
+   "METAPROPERTY",
+   "RELATIONSHIP",
+   "SCOPING",
+   "VALIDATING"
+  ],
   "ReachabilityStatus": [
    "HOLDS",
    "IMPOSSIBLE",
@@ -7526,6 +8621,20 @@
   "RequesterKind": [
    "LOCAL_HTTP_CLIENT",
    "TEST_HARNESS"
+  ],
+  "ResearchConclusion": [
+   "EQUIVALENCE",
+   "HYPOTHESIS",
+   "INCONCLUSIVE",
+   "NOT_DETECTED",
+   "OBSERVED",
+   "REFUTED_IN_SCOPE"
+  ],
+  "ResearchLevel": [
+   "A_CORRECTNESS",
+   "B_INFORMATION",
+   "C_TRANSFER",
+   "D_POLICY"
   ],
   "ScreenBlock": [
    "AREA",
@@ -7589,6 +8698,14 @@
   "TargetKind": [
    "FIXED_HISTORICAL_SET",
    "FUTURE_OUTCOME"
+  ],
+  "TermMapping": [
+   "BROAD",
+   "CLOSE",
+   "EXACT",
+   "NARROW",
+   "NOT_IDENTICAL",
+   "RELATED"
   ],
   "TieRule": [
    "ONE_VOTE_PER_CASE",
@@ -7669,6 +8786,6 @@
    "NONE"
   ]
  },
- "schema": "dr_lab_trace",
- "version": "0.2.0"
+ "schema": "dr_lab_fom",
+ "version": "1.2.0"
 }

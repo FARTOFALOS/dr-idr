@@ -66,6 +66,8 @@ CATALOG_FILE = BUILD / "catalog.json"
 SPEC_FILE = BUILD / "trace_runtime_spec.json"
 ARCH_DOC = ROOT / "meaning" / "lens" / "2026-10-13-semantic-architecture" / "01-DR-LAB-SEMANTIC-ARCHITECTURE-0.1.md"
 VERSION = "dr-lab-trace-1"
+sys.path.insert(0, str(TRACE))
+import fom as F  # noqa: E402; diagnostic extension, never imported by the server
 WORST = ["MISSING", "PROPOSED", "IMPLEMENTED_UNVERIFIED", "VERIFIED", "NOT_APPLICABLE"]       # worst first
 
 TRACE_CHECKS = {
@@ -91,6 +93,7 @@ TRACE_CHECKS = {
     "SCREEN": "the element the page rendered is bound to the published bundle or a reference-checked passport, shows its value in the value form and its registered words, with no violation",
     "IMPACT": "the reverse closure of every definition on a traced chain contains the traced claim and its presentation",
 }
+TRACE_CHECKS.update(F.CHECKS)
 
 
 def _rel(p):
@@ -148,6 +151,9 @@ def stale_reasons(st):
             out.append(f"catalog file not compiled: {_rel(p)}")
     if SPEC_FILE.exists() and sha256_lf(SPEC_FILE) != st["stamps"].get("runtime_spec_sha256"):
         out.append("trace_runtime_spec.json does not match the catalog stamps")
+    catalog_text = json.dumps(st["cat"], ensure_ascii=False, sort_keys=True, indent=1) + "\n"
+    if hashlib.sha256(catalog_text.encode("utf-8")).hexdigest() != st["stamps"].get("catalog_sha256"):
+        out.append("compiled catalog content does not match its source stamps")
     if st.get("sc_stale"):
         out.append("the SC-1.1 contract itself is CONTRACT_STALE: " + "; ".join(st["sc_stale"])[:200])
     return out
@@ -436,6 +442,8 @@ class Graph:
 
 
 def _collections(spec, root):
+    if root == "TraceCatalog" and F.CATALOG_CLASS in spec["classes"]:
+        root = F.CATALOG_CLASS
     return {n: S["range"] for n, S in spec["classes"][root]["slots"].items() if S.get("multivalued") and S["range"] in spec["classes"]}
 
 
@@ -580,6 +588,7 @@ def build_graph(st, code=None):
     # every stored Q1 issue carries that MODEL in its identity: a change of it makes reproduce() say MODEL_CHANGED
     g.node("q1:STORED-ISSUES", "q1records")
     g.edge("q1:STORED-ISSUES", "made_with", "q1:MODEL", DEP)
+    F.extend_graph(st, g)
     return g, code
 
 
@@ -798,7 +807,7 @@ def check_edition(st):
     if hashlib.sha256(old).hexdigest() != ed["accepted_text_sha256_lf"]:
         return _result("EDITION-ADDITIVE", False, 1, [_viol("ACCEPTED_TEXT_HASH", ["INV-12"], "the accepted commit holds another text than the accepted hash", ed["accepted_text_commit"])], det)
     a, b = old.decode("utf-8").split("\n"), now.decode("utf-8").split("\n")
-    bad, extended, added = [], 0, 0
+    bad, extended, added, review = [], 0, 0, []
     for op, i1, i2, j1, j2 in difflib.SequenceMatcher(a=a, b=b, autojunk=False).get_opcodes():
         if op == "insert":
             added += j2 - j1
@@ -807,10 +816,14 @@ def check_edition(st):
             for line in a[i1:i2]:
                 if any(n.rstrip().startswith(line.rstrip()) for n in new):
                     extended += 1
+                    candidate = next(n for n in new if n.rstrip().startswith(line.rstrip()))
+                    if line.strip() and candidate.rstrip() != line.rstrip():
+                        review.append(dict(accepted_line=line, candidate_line=candidate, status="SEMANTIC_REVIEW_OPEN"))
                 else:
                     bad.append(line[:120])
             added += max(0, (j2 - j1) - (i2 - i1))
-    det.update(state="the line pins an amended text (a proposal, not the accepted one)", accepted_lines_extended=extended, lines_added=added, accepted_lines_removed_or_rewritten=len(bad))
+    det.update(state="the line pins an amended text (a proposal, not the accepted one)", accepted_lines_extended=extended, extended_lines_review=review,
+               lines_added=added, accepted_lines_removed_or_rewritten=len(bad))
     v = [_viol("AMENDMENT_NOT_ADDITIVE", ["INV-12", "0.1 §0"], f"an accepted line is removed or rewritten: {x}", path) for x in bad[:10]]
     return _result("EDITION-ADDITIVE", not bad, len(a), v, det)
 
@@ -843,6 +856,8 @@ def static_checks(st, g=None, code=None):
     if g is None:
         g, code = build_graph(st, code)
     out = check_refs(st, g, code) + check_estimands(st, g, code) + [check_standing(st), check_edition(st), check_coverage(st)]
+    if st["cat"].get("foundation_bindings"):
+        out += F.checks(st, g)
     return out, g, code
 
 
@@ -1700,7 +1715,7 @@ def free_port():
     return p
 
 
-def collect_screens(fragments, workdir):
+def collect_screens(fragments, workdir, fom=False):
     """Starts this checkout's server on a free port (never 8767 / 8771 / 8772), runs tests/trace_page.mjs in a throw-away
     headless Chrome on each fragment, stops the server. Returns {fragment: raw state}. The raw state (it may hold
     prices) stays in workdir; only ingest_screen's digests leave it."""
@@ -1721,11 +1736,11 @@ def collect_screens(fragments, workdir):
         else:
             raise RuntimeError("the server of this checkout did not start (see " + str(workdir / "server.err.log") + ")")
         raw_file = workdir / "screens.raw.json"
-        r = subprocess.run(["node", str(ROOT / "tests" / "trace_page.mjs"), "--base", url + "/24/", "--out", str(raw_file)] + list(fragments),
+        r = subprocess.run(["node", str(ROOT / "tests" / "trace_page.mjs"), "--base", url + "/24/", "--out", str(raw_file)] + (["--fom"] if fom else []) + list(fragments),
                            cwd=str(ROOT), capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600)
         if r.returncode != 0:
             raise RuntimeError("tests/trace_page.mjs: " + (r.stdout + r.stderr)[-1500:])
-        return {x["fragment"]: x for x in json.loads(raw_file.read_text(encoding="utf-8"))}
+        return {x["fragment"] + ("|PERMUTED_MEMBERS" if x.get("fom_variant") else ""): x for x in json.loads(raw_file.read_text(encoding="utf-8"))}
     finally:
         srv.terminate()
         try:
@@ -2309,6 +2324,11 @@ def counterexamples(st, g, code, static, base_reports=None, reps=None):
             el["label_ok"] = False
             el["shown_value"] = "41%"
             add("CX-1c", "изменённая метка на экране", "элемент «Отсюда» −1/2: другие слова и другое число", check_screen(st, arr, scr, bundle, body)[0])
+    if st["cat"].get("foundation_bindings"):
+        for item in F.counterexamples(st, lambda fault: build_graph(fault, code)):
+            out.append(dict(id=item["id"], kind="FOM mapping integrity", tamper=item["tamper"], check=item["check"],
+                            detected=item["detected"], where=[v["where"] for v in item["violations"]][:3],
+                            codes=sorted({v["code"] for v in item["violations"]}), reliable_after=None))
     return out
 
 
@@ -2445,14 +2465,58 @@ def main(argv=None):
     p.add_argument("affected")
     sub.add_parser("q1")
     sub.add_parser("counterexamples")
+    p = sub.add_parser("cq")
+    p.add_argument("question", nargs="?")
+    p.add_argument("--held-out", action="store_true")
+    p = sub.add_parser("term")
+    p.add_argument("word")
+    p.add_argument("--scheme")
+    p = sub.add_parser("facet")
+    p.add_argument("filters", nargs="*")
+    p = sub.add_parser("fom")
+    p.add_argument("--out")
+    p.add_argument("--verify-report")
     p = sub.add_parser("run")
     p.add_argument("--out")
     p.add_argument("--screens", action="store_true")
     p.add_argument("--no-accepted", action="store_true")
     a = ap.parse_args(argv)
     st = load()
-    for r in stale_reasons(st):
+    stale = stale_reasons(st)
+    for r in stale:
         print("  STALE", r)
+    if stale and a.cmd in ("check", "cq", "term", "facet", "fom", "impact", "lineage", "why"):
+        return 2
+    if a.cmd in ("cq", "term", "facet", "fom"):
+        g, code = build_graph(st)
+        if a.cmd == "cq":
+            out = F.questions(st, g, True if a.held_out else None)
+            if a.question:
+                out = [q for q in out if q["id"] == a.question]
+            if not out:
+                print("No registered question matched")
+                return 1
+        elif a.cmd == "term":
+            out = F.term_query(st, a.word, a.scheme)
+        elif a.cmd == "facet":
+            try:
+                out = F.facet_query(st, a.filters)
+            except ValueError as e:
+                print(str(e))
+                return 1
+        else:
+            out = F.report(st, g)
+            out["counterexamples"] = F.counterexamples(st, lambda fault: build_graph(fault, code))
+            if not all(c["detected"] for c in out["counterexamples"]):
+                out["status"] = "FAIL"
+            if a.verify_report:
+                old = json.loads(Path(a.verify_report).read_text(encoding="utf-8"))
+                out = dict(status="CURRENT" if old.get("sources") == st["stamps"] else "STALE",
+                           boundary="A report is evidence only for its stamped sources.")
+            if a.out:
+                Path(a.out).write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        print(json.dumps(out, ensure_ascii=False, indent=1))
+        return 1 if isinstance(out, dict) and out.get("status") in ("FAIL", "STALE") else 0
     if a.cmd == "check":
         res, g, _ = static_checks(st)
         for c in res:
