@@ -63,14 +63,14 @@
         "EST:ZD-GRID-R",
         "EST:ZD-GRID-X",
         "EST:ZD-NULL-R",
-        "EST:ZD-NULL-X",
-        "EST:ZM3-STUDY"
+        "EST:ZD-NULL-X"
       ],
       "forbidden_ids": [
         "EST:P-DIR",
         "EST:P-WHEN",
         "EST:P-R",
-        "EST:P-X"
+        "EST:P-X",
+        "EST:ZM3-STUDY"
       ],
       "held_out": false,
       "machine_gate": true,
