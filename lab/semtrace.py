@@ -889,6 +889,8 @@ def compute_raw(scene):
         out, fam, _, _ = arrive24._arrive(inst, blk, at, date, "all" if allw else "weekday")
         return dict(route=route, out=out, family_id=(fam or {}).get("family_id"))
     fam = scene24.family(inst, blk, at, date, "conf" + (":all" if allw else ""))
+    if fam.get("status") != "ok" or "today" not in fam or not fam.get("N"):          # the guard of now24.live
+        return dict(route=route, out=dict(status="NO_FAMILY", family_status=fam.get("status")), family_id=fam.get("family_id"), selection={})
     day = scene24.day_view(inst, date)
     tick = float(day.get("tick") or 0.25)
     pay = now24.payload(fam, day["bars"], tick)
@@ -1030,6 +1032,30 @@ def mutate_future_ohlc(bars, lo, hi, shift, after, width_ticks):
     return changed
 
 
+def rederive_future_attributes(inst, B, bars, touched):
+    """The base stores one attribute derived from a session's own future: its DR break (`fail`, lab/build_boxes.py; the
+    box levels, the confirmation, its side and `complete` come from the prefix or from which M5 exist). A replaced future
+    must carry its own break, or the base contradicts itself: the gate re-derives the break from the candles and withholds
+    the family (BASE_DERIVATION), and a computation reading the stored break would never see the replacement. The break
+    is re-derived by the gate's reference (lab/contract.py::derive_base); every attribute of the prefix must come out as
+    stored, or the replacement reached the prefix. touched: {box index: block}. Returns (boxes, breaks changed)."""
+    boxes, moved = list(B["boxes"]), 0
+    B1 = dict(B, bars=bars)
+    for block in sorted(set(touched.values())):
+        der, shift = C.derive_base(inst, B1, block), C._blocks()[block]["history_minute_shift"]
+        for i in (i for i, b in touched.items() if b == block):
+            d, m = der[i], B["boxes"][i]
+            sc = None if m["conf"] is None else int(m["conf"]) - shift
+            same = "box_error" not in d and all(d[k] == m[k] for k in ("dr_high", "dr_low", "idr_high", "idr_low")) \
+                and (sc, m["side"] if sc is not None else None) == (d["conf"], d["side"])
+            if not same:
+                raise ValueError(f"the replaced future reached the prefix of {m['date']} {block}: box or confirmation changed")
+            fail = None if d["fail"] is None else int(d["fail"]) + shift
+            if fail != m["fail"]:
+                boxes[i], moved = dict(m, fail=fail), moved + 1
+    return boxes, moved
+
+
 @contextmanager
 def replaced_future(inst, plans):
     """plans: [(trading date, block, after_minute, 'full')].
@@ -1037,13 +1063,17 @@ def replaced_future(inst, plans):
     For target AND analogue futures, change all four OHLC after the cut. Keep the original
     M5 close-minute clock and every prefix candle byte-identical. Any weaker 'wicks' mode
     is forbidden: it cannot falsify selection depending on a future open or close.
+    The stored attribute derived from the future (the DR break) is re-derived from the replaced candles, so the base in
+    memory stays one consistent history (rederive_future_attributes).
     Only a temporary copy is changed, with caches invalidated before/after the test.
+    Yields dict(m5=replaced M5, fields=the OHLC fields changed on every replaced M5, breaks=stored breaks that changed).
     """
+    import numpy as np
     import scene21
     import scene24
     B = scene21._boxes(inst)
     bars = B["bars"].copy()
-    changed = 0
+    changed, touched, rows = 0, {}, []
     for date, block, after, mode in plans:
         if mode != "full":
             raise ValueError("future mutation must replace all four OHLC fields")
@@ -1053,13 +1083,21 @@ def replaced_future(inst, plans):
         box = B["boxes"][i]
         w = int(box["idr_high"] - box["idr_low"]) or 1
         lo, hi = int(B["off"][i]), int(B["off"][i + 1])
-        changed += mutate_future_ohlc(bars, lo, hi, scene24.SHIFT[block], after, w)
-    B2 = dict(B, bars=bars)
+        before = bars[lo:hi].copy()
+        n = mutate_future_ohlc(bars, lo, hi, scene24.SHIFT[block], after, w)
+        if n:
+            touched[i] = block
+            rows += [lo + r for r in np.flatnonzero((bars[lo:hi] != before).any(axis=1))]
+        changed += n
+    rows = np.asarray(rows, dtype=np.int64)
+    fields = "".join(f for k, f in enumerate("OHLC", 1) if rows.size and bool(np.all(bars[rows, k] != B["bars"][rows, k])))
+    _clear_caches()          # before the re-derivation: the reference's cache is keyed by the id() of the candle array
+    boxes, breaks = rederive_future_attributes(inst, B, bars, touched)
+    B2 = dict(B, bars=bars, boxes=boxes)
     saved = scene21._B.get(inst)
-    _clear_caches()
     scene21._B[inst] = B2
     try:
-        yield changed
+        yield dict(m5=changed, fields=fields, breaks=breaks)
     finally:
         scene21._B[inst] = saved
         _clear_caches()
@@ -1108,7 +1146,8 @@ def check_future_target(scene, base_body=None):
     _clear_caches()
     b0 = base_body or compute(scene)
     o0 = outcome_of(route, b0)
-    with replaced_future(scene["instrument"], target_plan(scene)) as n:
+    with replaced_future(scene["instrument"], target_plan(scene)) as rep:
+        n = rep["m5"]
         r1 = canon(computed_fields(route, compute_raw(scene)["out"]))
         _clear_caches()
         o1 = outcome_of(route, compute(scene))
@@ -1120,7 +1159,8 @@ def check_future_target(scene, base_body=None):
         v.append(_viol("FUTURE_DEPENDENCE", ["INV-03", "R07", "A07", "A08"], "the published answer changed when only the target's candles after the cut changed", f"{scene['id']}:{route} (after the gate)"))
     if n == 0:
         v.append(_viol("NO_MUTATION", ["INV-03"], "nothing after the cut to replace on this day", scene["id"], "WARNING"))
-    return _result("FUTURE-TARGET", same and n > 0, n, v, dict(replaced_m5=n, gate_status=[o0["status"], o1["status"]]))
+    return _result("FUTURE-TARGET", same and n > 0, n, v, dict(replaced_m5=n, mutated_fields=rep["fields"], breaks_rederived=rep["breaks"],
+                                                               gate_status=[o0["status"], o1["status"]]))
 
 
 def check_future_members(scene, base_body=None):
@@ -1133,7 +1173,8 @@ def check_future_members(scene, base_body=None):
     fb0 = family_of(scene)
     m0, l0, ref0 = raw_membership(raw0), raw_labels(raw0), membership_of(route, b0, scene, fb0)
     plan = member_plan(scene, fb0[0])
-    with replaced_future(scene["instrument"], plan) as n:
+    with replaced_future(scene["instrument"], plan) as rep:
+        n = rep["m5"]
         raw1 = compute_raw(scene)
         _clear_caches()
         b1 = compute(scene)
@@ -1148,7 +1189,8 @@ def check_future_members(scene, base_body=None):
         v.append(_viol("SELECTION_USES_FUTURE", ["INV-03", "R09", "A09"], "the selection of the published answer changed when only the analogues' futures changed", f"{scene['id']}:{route} (after the gate)"))
     if not moved:
         v.append(_viol("NO_TEETH", ["INV-03"], "the replaced futures changed no label: the check proves nothing here", scene["id"], "WARNING"))
-    return _result("FUTURE-MEMBERS", same and moved and n > 0, n, v, dict(replaced_m5=n, sessions=len(plan), labels_changed=moved, mutated_fields="OHLC"))
+    return _result("FUTURE-MEMBERS", same and moved and n > 0, n, v, dict(replaced_m5=n, sessions=len(plan), labels_changed=moved,
+                                                                          mutated_fields=rep["fields"], breaks_rederived=rep["breaks"]))
 
 
 # =====================================================================================================================
@@ -1680,7 +1722,7 @@ def collect_screens(fragments, workdir):
             raise RuntimeError("the server of this checkout did not start (see " + str(workdir / "server.err.log") + ")")
         raw_file = workdir / "screens.raw.json"
         r = subprocess.run(["node", str(ROOT / "tests" / "trace_page.mjs"), "--base", url + "/24/", "--out", str(raw_file)] + list(fragments),
-                           cwd=str(ROOT), capture_output=True, text=True, timeout=600)
+                           cwd=str(ROOT), capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600)
         if r.returncode != 0:
             raise RuntimeError("tests/trace_page.mjs: " + (r.stdout + r.stderr)[-1500:])
         return {x["fragment"]: x for x in json.loads(raw_file.read_text(encoding="utf-8"))}
@@ -2066,7 +2108,7 @@ def check_accepted_identity(st, scene_list, runtime=None):
         with tarfile.open(fileobj=io.BytesIO(arch)) as tf:
             tf.extractall(tmp, filter="data")
         args = [dict(id=s["id"], route=s["route"].split(":", 1)[1], inst=s["instrument"], block=s["block"], date=s["trading_date"], at=s["at_clock_et"], all=s["scope"] == "ALL_WEEKDAYS") for s in scene_list]
-        r = subprocess.run([sys.executable, "-B", "-c", _REF_SCRIPT, str(tmp), str(runtime), json.dumps(args)], capture_output=True, text=True, timeout=600,
+        r = subprocess.run([sys.executable, "-B", "-c", _REF_SCRIPT, str(tmp), str(runtime), json.dumps(args)], capture_output=True, text=True, encoding="utf-8", timeout=600,
                            env=dict(os.environ, PYTHONUTF8="1"))
         if r.returncode != 0:
             v.append(_viol("ACCEPTED_RUN", ["INV-12"], (r.stderr or r.stdout)[-400:], ref))
@@ -2206,6 +2248,30 @@ def counterexamples(st, g, code, static, base_reports=None, reps=None):
     try:
         add("CX-4c", "запрещённое будущее",
             "Table.select читает будущее CLOSE после среза для отбора (контроль против wicks-only)",
+            check_future_members(arr))
+    finally:
+        Q.Table.select = orig_sel
+        _clear_caches()
+    # CX-4d · a selector reading an analogue's STORED future attribute (its DR break in the base), not its candles: caught
+    # only because the replacement re-derives the stored break (rederive_future_attributes); without it the stored break
+    # stays as it was and the leak passes.
+    import scene21
+
+    def leaky_stored_break(self, par, cs, level, cl_t, w_t):
+        m = dict(orig_sel(self, par, cs, level, cl_t, w_t))
+        B_ = scene21._boxes(arr["instrument"])
+        keep = np.ones(len(par), dtype=bool)
+        for row, j in enumerate(par):
+            _, date_, block_ = _sid_parts(self.ids[int(j)])
+            i = B_["idx"].get((date_, block_))
+            keep[row] = i is None or B_["boxes"][i]["fail"] is None
+        m["match"] = m["match"] & keep[:, None]
+        return m
+
+    Q.Table.select = leaky_stored_break
+    try:
+        add("CX-4d", "запрещённое будущее",
+            "Table.select отбирает аналоги, у которых DR потом не сломался, по сохранённому в базе слому (fail)",
             check_future_members(arr))
     finally:
         Q.Table.select = orig_sel

@@ -118,9 +118,15 @@ python -B tests/trace_arch.py [--screens]               # приёмка (ALL GO
   до шлюза, ни ответ после него.
 - **FUTURE-MEMBERS.** Будущее аналогов заменяется в памяти **по всем четырём OHLC**: для базовой семьи — после
   собственной активации, для отбора на срезе — после среза. Часы и известный префикс не меняются. Меняются
-  метки, но не состав. Если ни одна метка не изменилась, проверка не засчитывается. Отдельный контрпример
-  **CX-4c** намеренно допускает в отбор будущий `close`: проверка обязана его обнаружить (старый режим
-  `wicks` такую ошибку пропускал).
+  метки, но не состав. Если ни одна метка не изменилась, проверка не засчитывается.
+
+Обе подмены дают согласованную историю. В базе есть один атрибут, выведенный из будущего сессии: слом DR (`fail`,
+`lab/build_boxes.py`). Его пересчитывает эталон шлюза (`derive_base`) по подменённым свечам. Если пересчёт сдвигает
+префикс (коробку, подтверждение, сторону), подмена отклоняется. Поля OHLC, изменённые на каждой подменённой свече,
+и число пересчитанных сломов измеряются и записываются в отчёт.
+
+Контрпримеры CX-4c и CX-4d намеренно отбирают аналоги по будущему закрытию свечи и по сохранённому слому DR.
+Проверка обязана поймать оба.
 - **Q1-ISSUE-MATCH, Q1-STORE.** Сохранённый выпуск того же вопроса отвечает так же и воспроизводится IDENTICAL.
   Идентичности, связи, ревизии и `verify()` хранилищ согласны, байты не меняются.
 - **SCREEN.** Элемент страницы привязан к тому же bundle или к проверенному паспорту, показывает значение в его форме
@@ -164,19 +170,29 @@ python -B tests/trace_arch.py [--screens]               # приёмка (ALL GO
 Ни одно число этой работой не меняется; реестр SC-1.1, его текст, экран и шлюз не правились.
 
 
-## Post-review hardening of FUTURE-MEMBERS (13.10.2026)
+## Усиление FUTURE-MEMBERS после ревью (13.10.2026)
 
-The GitHub P1 review found that the former `wicks` perturbation changed high/low while preserving
-the future open/close, so a selector accidentally reading a future close could pass the check.
-`mutate_future_ohlc` now changes all four OHLC for every observed M5 after the permitted cut,
-keeping all pre-cut rows and the close-minute clock unchanged. The isolated synthetic assertion
-`future_ohlc_unit` and the deliberately leaky future-close control CX-4c are part of
-`tests/trace_arch.py`.
+**Что нашло ревью (P1, Codex на GitHub).** Прежний режим `wicks` расширял будущие максимумы и минимумы аналогов, но
+оставлял их открытия и закрытия. Отбор, читающий будущее закрытие, проходил проверку.
 
-**Evidence status:** `studies/trace_2026_10_13/run.json` was recorded on **b08fb11**, before
-this correction. It remains historical evidence and **must not** be represented as a new passing
-run. Re-run `python -B tests/trace_arch.py --screens` and
-`python -B lab/semtrace.py run --out studies/trace_2026_10_13 --screens` with the local
-G3 session base available, then commit updated evidence separately. Only a fresh passing run
-can establish the strengthened invariant on the actual sessions. BND-02/BND-03, operator
-acceptance and C2 remain outside this patch.
+**Исправление в два шага.**
+1. **`31835dd` (агент оператора на GitHub).**
+   - `mutate_future_ohlc` меняет все четыре OHLC каждой свечи после допустимого среза.
+   - Добавлены синтетический тест `future_ohlc_unit` и контрпример CX-4c.
+
+   Полного прогона на базе не было.
+2. **Прогон на локальной базе показал, что одного первого шага мало.**
+   - Подменённые закрытия меняют слом DR аналога, а сохранённый в базе слом (`fail`) оставался прежним. Шлюз сверяет
+     его с пересчётом по свечам и снимал семью (BASE_DERIVATION).
+   - Трасса принимала снятие за смену состава: ложное SELECTION_USES_FUTURE на BASE-ZONE. На NOW-NEW трасса падала,
+     обращаясь к снятой семье.
+   - Отбор по сохранённому слому не ловили ни старый, ни новый режим: поле не менялось.
+
+   Следующий коммит:
+   - пересчитывает сохранённый слом (`rederive_future_attributes`);
+   - измеряет изменённые поля вместо записанной константы;
+   - ставит в расчёт NOW ту же защиту от снятой семьи, что у сервера (`now24.live`);
+   - добавляет контрпример CX-4d и синтетический тест `future_break_unit`.
+
+**Свидетельства.** `studies/trace_2026_10_13` относится к версии кода, указанной в его README. Прогон на версии до
+этого исправления свидетельством усиленной проверки не считается.

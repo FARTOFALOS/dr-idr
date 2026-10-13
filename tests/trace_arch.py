@@ -76,6 +76,39 @@ def future_ohlc_unit():
           "future OHLC unit: a selector reading future CLOSE sees a changed input")
 
 
+def future_break_unit():
+    """No G3 data required: a replaced future carries its own DR break into the stored record; the prefix never moves."""
+    import numpy as np
+
+    blk = T.C._blocks()["RDR"]
+    fs, fe, sh = blk["formation_start"], blk["formation_end"], blk["history_minute_shift"]
+    box = [[t + sh, 98, 110 if k == 0 else 104, 90 if k == 1 else 96, 102] for k, t in enumerate(range(fs + 5, fe + 1, 5))]
+    after = [[fe + 5 + sh, 99, 100, 84, 85], [fe + 10 + sh, 85, 92, 84, 88], [fe + 15 + sh, 88, 95, 86, 94]]
+    bars = np.asarray(box + after, dtype=np.int32)
+    rec = dict(date="2000-01-05", weekday=2, session="RDR", dr_high=110, dr_low=90, idr_high=102, idr_low=98,
+               conf=fe + 5 + sh, side=-1, fail=None, complete=True)
+    B = dict(bars=bars, off=np.asarray([0, len(bars)]), boxes=[rec], idx={("2000-01-05", "RDR"): 0}, info=dict(boxes=1))
+    T.C._DERIVED.clear()
+    d0 = T.C.derive_base("UNIT", B, "RDR")[0]
+    check((d0["conf"], d0["side"], d0["fail"]) == (fe + 5, -1, None), "future break unit: the synthetic session is short-confirmed at its first M5 and its DR holds")
+    m = bars.copy()
+    T.mutate_future_ohlc(m, 0, len(m), sh, fe + 5, 8)
+    T.C._DERIVED.clear()
+    boxes, moved = T.rederive_future_attributes("UNIT", B, m, {0: "RDR"})
+    check(moved == 1 and boxes[0]["fail"] == fe + 10 + sh and rec["fail"] is None,
+          "future break unit: the replaced future breaks the DR at the first replaced M5; the stored record follows, the original is untouched")
+    m = bars.copy()
+    T.mutate_future_ohlc(m, 0, len(m), sh, fe, 8)
+    T.C._DERIVED.clear()
+    try:
+        T.rederive_future_attributes("UNIT", B, m, {0: "RDR"})
+        reached = False
+    except ValueError:
+        reached = True
+    T.C._DERIVED.clear()
+    check(reached, "future break unit: a replacement that reaches the confirmation is refused (the prefix moved)")
+
+
 def products():
     print("the products")
     if VENV.exists():
@@ -131,8 +164,10 @@ def scenes(st, static, g, reps, shots):
         by = {c["check"]: c for c in ex["checks"]}
         check(by["FUTURE-TARGET"]["outcome"] == "PASS" and by["FUTURE-TARGET"]["details"]["replaced_m5"] > 0,
               f"{sid}: the target day's candles after the cut replaced in memory ({by['FUTURE-TARGET']['details']['replaced_m5']} M5) change nothing, before or after the gate")
-        check(by["FUTURE-MEMBERS"]["outcome"] == "PASS" and by["FUTURE-MEMBERS"]["details"]["labels_changed"] and by["FUTURE-MEMBERS"]["details"].get("mutated_fields") == "OHLC",
-              f"{sid}: the analogues' futures replaced ({by['FUTURE-MEMBERS']['details']['sessions']} sessions) change their labels but no membership")
+        fm = by["FUTURE-MEMBERS"]["details"]
+        check(by["FUTURE-MEMBERS"]["outcome"] == "PASS" and fm["labels_changed"] and fm.get("mutated_fields") == "OHLC" and fm.get("breaks_rederived", 0) > 0,
+              f"{sid}: the analogues' futures replaced ({fm['sessions']} sessions; open, high, low and close of every replaced M5 changed, "
+              f"{fm.get('breaks_rederived')} stored DR breaks re-derived) change their labels but no membership")
         want = "ACCEPTED" if sc["profile_key"] in ("BASE-24", "NOW-1.0") else "PROPOSED_FOR_ACCEPTANCE"
         check(a["decision"] == want and a["presentation_human"] == "PENDING" and a["model_definiteness"] == "DEFINED" and a["implementation"] == "VERIFIED_IN_RUN",
               f"{sid}: decision {a['decision']}, model {a['model_definiteness']}, implementation {a['implementation']}, presentation (machine) {a['presentation_machine']}, (human) {a['presentation_human']} — separate axes")
@@ -204,8 +239,8 @@ def counterexamples(st, g, code, static, reps, shots):
     print("the counterexamples")
     cx = T.counterexamples(st, g, code, static, base_reports=dict(screens=shots), reps=reps)
     kinds = {x["kind"] for x in cx}
-    check({"CX-4a", "CX-4b", "CX-4c"} <= {x["id"] for x in cx},
-          "negative controls include target future, analogue future event, AND analogue future close")
+    check({"CX-4a", "CX-4b", "CX-4c", "CX-4d"} <= {x["id"] for x in cx},
+          "negative controls include target future, analogue future event, analogue future close AND analogue stored future break")
     for x in cx:
         check(x["detected"] and (x["reliable_after"] in (None, False)), f"{x['id']} {x['kind']}: {x['tamper']} → {x['check']} {x['codes']} at {x['where'][:1]}")
     for k in ("изменённая метка исхода", "нарушенная ссылка", "несовпадающий знаменатель", "запрещённое будущее", "неправильный профиль утверждения", "отсутствие исходных свидетельств"):
@@ -227,6 +262,7 @@ def saved_screens(st):
 def main():
     collect = "--screens" in sys.argv[1:]
     future_ohlc_unit()
+    future_break_unit()
     st = products()
     static, g, code = model(st)
     reps = stores(st)
