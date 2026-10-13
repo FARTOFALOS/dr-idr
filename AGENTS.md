@@ -115,6 +115,9 @@ start-q1-pilot.cmd / .ps1 the shortcut «DR Lab Q1 (пилот)»: the isolated 
                           server, page and store; the working DR Lab is untouched); stop-q1-pilot.cmd stops 8771 only
 contract/                 the machine contract of DR-LAB-SC-1.1: LinkML schema, registry, build tool, products;
                           start at contract/README.md (.venv-linkml/ = its LinkML environment, git-ignored)
+trace/                    (branch semantic-trace) the executable semantic trace of DR-LAB-SEMANTIC-ARCHITECTURE 0.1 / 0.2:
+                          a LinkML module over the SC-1.1 schema, the catalog (standing, entries, boundaries, scenes),
+                          build tool, products; start at trace/README.md
 lab/
   server.py               local HTTP server 127.0.0.1:8767 (stdlib): static pages + JSON API; / -> /24/, /22/ -> design 22
   contract.py             the DR-LAB-SC-1.1 gate (stdlib): reference definitions, re-derivation at publication,
@@ -124,6 +127,9 @@ lab/
   now24.py                screen 24's layer «Сейчас» (/api/d24/now, DR-LAB-NOW-1.0); now24_validate.py: walk-forward
   arrive24.py             screen 24's block «Отсюда до места» (/api/d24/arrive, profile ARRIVE-24, SC-1.1 §12.6; branch
                           ekran-24-otsyuda): the verified Q1 engine (lab/q1) on the family on screen
+  semtrace.py             (branch semantic-trace) the semantic trace (stdlib): link checks, the provenance of a claim
+                          from the tape to the screen, impact / why / lineage, Q1 stores, the rendered screen; no number
+                          of its own, nothing in the server calls it
   scene21.py              the trading day from TradingView (used by 24), design 22's data (legacy: /api/day, /api/cohort,
                           /api/family), design 23's /api/family-v1
   cluster24.py            main-cluster-1 (meaning/11): kept for its archived studies, not on the screen
@@ -166,6 +172,9 @@ tests/ui_check21.js       design 22 (legacy) in-page check; ui_check.js: the cla
 tests/q1_pilot.py         the Q1 pilot: the contract's discriminating examples (synthetic) and the storage invariants
 tests/arrive24.py         «Отсюда до места» on screen 24: identity with the pilot's engine, the boundary, the gate, the statuses
 tests/q1_page_check.js    the Q1 pilot: in-page check of its review scene (what the page shows = what the server says)
+tests/trace_arch.py       the semantic trace on the real system: static links, the declared scenes forward and backward,
+                          replaced futures, the accepted line, the Q1 stores, the counterexamples, the screen
+tests/trace_page.mjs      the state screen 24 actually rendered, in a throw-away headless Chrome (used by the trace)
 README.md                 the front page on GitHub
 ```
 
@@ -235,6 +244,14 @@ If you touched the machine contract (`contract/`), `lab/contract.py`, a route or
 ```bash
 .venv-linkml\Scripts\python.exe contract/tools/build.py   # after editing contract/ (PYTHONUTF8=1); then rebuild screen 24
 python -B tests/contract_sc11.py                            # expect ALL GOOD
+```
+
+On the branch `semantic-trace` the trace stamps the compiled registry, SWPC-1.1, `tests/swpc11.py` and its own sources:
+after any of these changes, rebuild it and run it (a stale trace declares no claim reliable):
+
+```bash
+.venv-linkml\Scripts\python.exe trace/tools/build.py      # PYTHONUTF8=1
+python -B tests/trace_arch.py                               # expect ALL GOOD; --screens re-collects the screen states
 ```
 
 If you touched screen 24: run `python design/sozvezdiya-24/src/build.py`, `python -B tests/sem24.py` and

@@ -244,6 +244,52 @@ complete_n, median_retr, median_ext, median_rtime`.
 - `styles.css` — base styles plus later override blocks (commented by purpose, the last ones win). Consolidating them
   is welcome if the look stays identical (verify with screenshots).
 
+## The semantic trace (`lab/semtrace.py`, `trace/`; branch `semantic-trace`, 13.10.2026)
+
+The executable form of DR-LAB-SEMANTIC-ARCHITECTURE 0.1 with its addendum 0.2 (`meaning/lens/2026-10-13-semantic-architecture/`).
+It is an index and a verifier over what exists, not a second engine and not a runtime service: nothing in the server
+or the page calls it, and it changes no number. Start at `trace/README.md`.
+
+- **Model.** `trace/schema/dr_lab_trace.yaml` is a LinkML module that imports `contract/schema/dr_lab_sc.yaml`
+  unchanged and adds only the missing relations:
+  - the standing of a profile on independent axes;
+  - the architecture's entries mapped to registry objects, code and checks;
+  - explicit coverage boundaries;
+  - statistical, fact and absence presentation bindings;
+  - Q1 identity indexes;
+  - check evidence;
+  - the rendered screen state;
+  - the trace report.
+
+  `trace/catalog/*.yaml` holds the instances. `trace/tools/build.py`, in the LinkML environment, validates them in a
+  closed world and generates the bindings from SWPC-1.1 §9 through `tests/swpc11.py`. It writes `trace/build/*.json`
+  stamped with every source's SHA-256; a changed source makes the trace stale, and then no claim is reliable.
+- **Graph.** `lab/semtrace.py` (stdlib) builds one graph of typed links:
+  - every reference slot of the compiled SC-1.1 registry and of the catalog (depends on);
+  - every code reference (implemented by);
+  - every check reference (checked by);
+  - the source references;
+  - the static calls of the lab's Python (by names, an upper estimate).
+
+  `impact` is the reverse closure, `why` explains one branch of it link by link, and `lineage` walks back from a place
+  on the screen to its definitions, sources, code and checks.
+- **Scenes.** The routes' own functions are called in-process, through the gate, exactly as the page asks (the same
+  view and scope). The trace then re-checks:
+  - links, claim profile, counts and identities;
+  - replaced futures: the target's candles after the cut, and the analogues' after the cut or their own activation,
+    replaced in a copy of the session base in memory — compared on the production computation before the gate and on
+    the answer after it;
+  - the stored Q1 issue of the same question;
+  - the rendered element: `tests/trace_page.mjs`, a throw-away headless Chrome against a server of this checkout
+    started on a free port.
+- **Three operations stay apart:** computing an answer (the bundle), presenting it (the element) and saving an issue
+  (the pilot's store). The report records each with its own evidence.
+- **Assessments, not one status:** the decision on the profile (from sources), model definiteness, implementation
+  conformance in this run, machine check of presentation, human acceptance. Human acceptance stays PENDING until the
+  SWPC H-tasks are run.
+- **Evidence:** `studies/trace_2026_10_13/` holds aggregates and digests only. The raw page state, which may hold
+  prices, never leaves the temporary folder.
+
 ## Performance
 
 History query 0.05–0.25 s; live state with overlay ~0.2–0.5 s; a passive TradingView read ~1–2 s, a switched read

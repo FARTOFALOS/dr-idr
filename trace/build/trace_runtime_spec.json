@@ -1,0 +1,7673 @@
+{
+ "classes": {
+  "AbsencePresentationBinding": {
+   "abstract": false,
+   "descendants": [],
+   "designator": "binding_class",
+   "rules": [],
+   "slots": {
+    "absence_reason": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "AbsenceReason",
+     "required": true
+    },
+    "applies_to": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "EstimandSpecification",
+     "required": true
+    },
+    "binding": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^B[0-9][0-9]$",
+     "range": "string",
+     "required": true
+    },
+    "binding_class": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "code_anchors": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "human_checks": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "machine_checks": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "semantic_source": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "SourceReference",
+     "required": true
+    },
+    "shown_by": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^((CF|FF):[A-Z0-9-]+#[A-Za-z0-9_]+|page:[^ ]+::[A-Za-z0-9_]+)$",
+     "range": "string",
+     "required": true
+    },
+    "surfaces": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "ApiSurface",
+     "required": true
+    }
+   }
+  },
+  "AcceptanceRecord": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "actor_role": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ActorRole",
+     "required": true
+    },
+    "channel": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "date": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "date",
+     "required": true
+    },
+    "exclusions": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "not_established": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "quote": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "scope": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ActionAuthorityReference": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "consequence_class": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "human_act": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "AcceptanceRecord",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "revoked": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ActivationEvent": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "direction": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Direction",
+     "required": true
+    },
+    "evidence_close_minute": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "first_time_known": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ActivationKind",
+     "required": true
+    },
+    "window_index": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    }
+   }
+  },
+  "ApiSurface": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "definitions": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "SourceReference",
+     "required": true
+    },
+    "estimands": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "EstimandSpecification",
+     "required": false
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "legacy_discrepancies_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "marking": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "route": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "surface_profile": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "SurfaceProfile",
+     "required": true
+    }
+   }
+  },
+  "ArchitectureCheckEvidence": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "artifact_versions": {
+     "identifier": false,
+     "inlined": true,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "ArtifactVersion",
+     "required": true
+    },
+    "check": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "checked": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "detail": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "obligation": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "origin": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EvidenceOrigin",
+     "required": true
+    },
+    "outcome": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EvidenceOutcome",
+     "required": true
+    },
+    "source": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ArchitectureEntry": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [
+    {
+     "description": "an entry that is not out of scope is realised by something or bounded explicitly",
+     "post": {
+      "realized_by": {
+       "required": true
+      }
+     },
+     "pre": {
+      "decision": "ACCEPTED"
+     }
+    }
+   ],
+   "slots": {
+    "arch_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "boundaries": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "CoverageBoundary",
+     "required": false
+    },
+    "checked_by": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "correction_0_2_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "decision": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "DecisionStanding",
+     "required": true
+    },
+    "entry_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EntryKind",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "implemented_by": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "profiles": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "realized_by": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    }
+   }
+  },
+  "ArchitecturePresentationBinding": {
+   "abstract": true,
+   "descendants": [
+    "AbsencePresentationBinding",
+    "FactPresentationBinding",
+    "StatisticalPresentationBinding"
+   ],
+   "designator": "binding_class",
+   "rules": [],
+   "slots": {
+    "binding": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^B[0-9][0-9]$",
+     "range": "string",
+     "required": true
+    },
+    "binding_class": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "code_anchors": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "human_checks": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "machine_checks": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "semantic_source": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "SourceReference",
+     "required": true
+    },
+    "surfaces": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "ApiSurface",
+     "required": true
+    }
+   }
+  },
+  "ArtifactVersion": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "artifact": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "CaseSetSnapshot": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "cut_close_minute": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "cutoff_date": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "data_revision": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "exclusions": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "Exclusion",
+     "required": false
+    },
+    "family_id": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "n_members": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "parent_snapshot": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "snapshot_id": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "spec": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "CaseSetSpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [
+    {
+     "description": "a base family is fixed by a key known at its activation and may be used live",
+     "post": {
+      "condition_availability": {
+       "equals": "AT_ACTIVATION"
+      },
+      "live_use": {
+       "equals": "PERMITTED"
+      }
+     },
+     "pre": {
+      "role": "BASE_FAMILY"
+     }
+    },
+    {
+     "description": "the eligible set at a cut has a parent and a prefix-available condition",
+     "post": {
+      "condition_availability": {
+       "equals": "PREFIX_AT_CUT"
+      },
+      "parent": {
+       "required": true
+      }
+     },
+     "pre": {
+      "role": "ELIGIBLE_AT_CUT"
+     }
+    },
+    {
+     "description": "the matched set at a cut has a parent, a named comparison and a prefix-available condition",
+     "post": {
+      "comparison": {
+       "required": true
+      },
+      "condition_availability": {
+       "equals": "PREFIX_AT_CUT"
+      },
+      "parent": {
+       "required": true
+      }
+     },
+     "pre": {
+      "role": "MATCHED_AT_CUT"
+     }
+    },
+    {
+     "description": "a subgroup selected by an outcome component uses the future of the cut; never used live",
+     "post": {
+      "live_use": {
+       "equals": "FORBIDDEN"
+      },
+      "parent": {
+       "required": true
+      }
+     },
+     "pre": {
+      "role": "OUTCOME_SUBGROUP"
+     }
+    },
+    {
+     "description": "a retrospective research set is named as such and never used live",
+     "post": {
+      "condition_availability": {
+       "equals": "RETROSPECTIVE"
+      },
+      "live_use": {
+       "equals": "FORBIDDEN"
+      }
+     },
+     "pre": {
+      "role": "RETROSPECTIVE_RESEARCH"
+     }
+    },
+    {
+     "description": "a retrospective condition is never used live",
+     "post": {
+      "live_use": {
+       "equals": "FORBIDDEN"
+      }
+     },
+     "pre": {
+      "condition_availability": "RETROSPECTIVE"
+     }
+    }
+   ],
+   "slots": {
+    "activation_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ActivationKind",
+     "required": false
+    },
+    "comparison": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "StateComparisonSpecification",
+     "required": false
+    },
+    "condition_availability": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ConditionAvailability",
+     "required": true
+    },
+    "condition_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "history_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "key_fields": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "KeyField",
+     "required": false
+    },
+    "live_use": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "LiveUse",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "parent": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "CaseSetSpecification",
+     "required": false
+    },
+    "profile": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Profile",
+     "required": true
+    },
+    "role": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "CaseSetRole",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "undetermined_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "weekday_scope": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "WeekdayScope",
+     "required": false
+    }
+   }
+  },
+  "CategoryCount": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "category": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "count": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    }
+   }
+  },
+  "CellCount": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "count": {
+     "identifier": false,
+     "inlined": false,
+     "min": 1,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "price_cell": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "time_cell": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    }
+   }
+  },
+  "CheckResult": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "check": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "checked": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "outcome": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "CheckOutcome",
+     "required": true
+    }
+   }
+  },
+  "Claim": {
+   "abstract": true,
+   "descendants": [
+    "ConditionalDescriptiveClaim",
+    "DecisionClaim",
+    "DescriptiveClaim",
+    "PredictiveClaim"
+   ],
+   "designator": "claim_class",
+   "rules": [],
+   "slots": {
+    "applies_to_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "claim_class": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "claim_form": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "estimand": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "forbidden_readings_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "statement_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ClaimAssessment": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "decision": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "DecisionStanding",
+     "required": true
+    },
+    "implementation": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ImplementationConformance",
+     "required": true
+    },
+    "model_definiteness": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ModelDefiniteness",
+     "required": true
+    },
+    "presentation_human": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "HumanAcceptance",
+     "required": true
+    },
+    "presentation_machine": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "PresentationConformance",
+     "required": true
+    },
+    "reliable": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    }
+   }
+  },
+  "ClaimForm": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [
+    {
+     "description": "a conditional description names its condition",
+     "post": {
+      "condition_ru": {
+       "required": true
+      }
+     },
+     "pre": {
+      "claim_class": "ConditionalDescriptiveClaim"
+     }
+    }
+   ],
+   "slots": {
+    "acceptance": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "FormAcceptance",
+     "required": true
+    },
+    "claim_class": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ClaimClassName",
+     "required": true
+    },
+    "condition_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "estimand": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EstimandSpecification",
+     "required": true
+    },
+    "forbidden_readings_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "labels": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "LabelTemplate",
+     "required": false
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "price_transfer": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "PriceTransfer",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "statement_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "subject_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "value_form": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ValueForm",
+     "required": true
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ComponentSupport": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "component": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "KnowledgeComponent",
+     "required": true
+    },
+    "condition_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "known": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "no": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "no_event": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "no_period": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "of": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "unknown": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "yes": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    }
+   }
+  },
+  "ConditionalDescriptiveClaim": {
+   "abstract": false,
+   "descendants": [],
+   "designator": "claim_class",
+   "rules": [],
+   "slots": {
+    "applies_to_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "claim_class": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "claim_form": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "condition_availability": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ConditionAvailability",
+     "required": true
+    },
+    "condition_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "cut_close_minute": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "estimand": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "forbidden_readings_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "parent_case_set": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "selected_case_set": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "statement_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ConformanceExample": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "checks": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(test|runtime|page|schema|build|human):[^\\s]+$",
+     "range": "string",
+     "required": true
+    },
+    "expected_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "situation_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ContractEdition": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "acceptances": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "AcceptanceRecord",
+     "required": false
+    },
+    "document_path": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "document_sha256_lf": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-9a-f]{64}$",
+     "range": "string",
+     "required": true
+    },
+    "edition_status": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EditionStatus",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "supersedes": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ContractEdition",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ContractEnvelope": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [
+    {
+     "description": "a stale contract publishes no statistic",
+     "post": {
+      "bundles": {
+       "absent": true
+      }
+     },
+     "pre": {
+      "status": "CONTRACT_STALE"
+     }
+    }
+   ],
+   "slots": {
+    "bundles": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "StatisticalResultBundle",
+     "required": false
+    },
+    "case_sets": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "CaseSetSnapshot",
+     "required": false
+    },
+    "checks": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "CheckResult",
+     "required": false
+    },
+    "cut": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "KnowledgeCut",
+     "required": false
+    },
+    "edition": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "frame": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "MeasurementFrameRecord",
+     "required": false
+    },
+    "history_clock": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "HistoryClockAssessment",
+     "required": false
+    },
+    "observation": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "ObservationSnapshot",
+     "required": false
+    },
+    "prefix": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "PrefixState",
+     "required": false
+    },
+    "profile": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "reachability": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ReachabilityAssessment",
+     "required": false
+    },
+    "regions": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "DensityRegion",
+     "required": false
+    },
+    "registry_hash": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "request": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "QuestionRequest",
+     "required": true
+    },
+    "route": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "session": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "StrategySessionRecord",
+     "required": false
+    },
+    "status": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ContractStatus",
+     "required": true
+    },
+    "violations": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "Violation",
+     "required": false
+    }
+   }
+  },
+  "ContractObligation": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "enforcement": {
+     "identifier": false,
+     "inlined": true,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "EnforcementCheck",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "obligation_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ObligationKind",
+     "required": true
+    },
+    "residual_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "statement_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "CoverageBoundary": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "admissible_now_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "affects": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "arch_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "boundary_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "BoundaryKind",
+     "required": true
+    },
+    "detected_by": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "not_admissible_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "owner_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "sources": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "statement_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    }
+   }
+  },
+  "CoverageNote": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "clause": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "coverage": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "CoverageStatus",
+     "required": true
+    },
+    "reason_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "DecisionClaim": {
+   "abstract": false,
+   "descendants": [],
+   "designator": "claim_class",
+   "rules": [],
+   "slots": {
+    "action_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "applies_to_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "authority": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "claim_class": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "claim_form": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "criterion_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "estimand": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "forbidden_readings_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "policy": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "statement_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "DensityAlgorithmSpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "density_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "diagnostics": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "frozen": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "grid": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "MeasurementGrid",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "min_support_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "order_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "region_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "seed_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "DensityRegion": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "algorithm": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "event": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EventKind",
+     "required": true
+    },
+    "mask_verified": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "min_support": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "n_cells": {
+     "identifier": false,
+     "inlined": false,
+     "min": 1,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "n_zone": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "snapshot_id": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "zone_id": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "DerivationRecord": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "derivation_id": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "executed_at_utc": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "information_lost_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "inputs": {
+     "identifier": false,
+     "inlined": true,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "InputVersion",
+     "required": true
+    },
+    "operation": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "reference_definition": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "verification": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "VerificationStatus",
+     "required": true
+    }
+   }
+  },
+  "DescriptiveClaim": {
+   "abstract": false,
+   "descendants": [],
+   "designator": "claim_class",
+   "rules": [],
+   "slots": {
+    "applies_to_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "case_set_snapshot": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "claim_class": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "claim_form": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "estimand": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "forbidden_readings_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "statement_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "EditionStanding": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "accepted_by": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": true
+    },
+    "accepted_text_commit": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-9a-f]{7,40}$",
+     "range": "string",
+     "required": true
+    },
+    "accepted_text_sha256_lf": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-9a-f]{64}$",
+     "range": "string",
+     "required": true
+    },
+    "amendments_proposed": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "arch_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "edition": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ContractEdition",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    }
+   }
+  },
+  "EnforcementCheck": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "check": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^(test|runtime|page|schema|build|human):[^\\s]+$",
+     "range": "string",
+     "required": true
+    },
+    "mechanism": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EnforcementMechanism",
+     "required": true
+    }
+   }
+  },
+  "EstimandSpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "parameters": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ParameterDeclaration",
+     "required": false
+    },
+    "profile": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Profile",
+     "required": true
+    },
+    "q1_formalised_part_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "q2_target": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "TargetKind",
+     "required": true
+    },
+    "q3_unit": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "UnitOfAnalysis",
+     "required": true
+    },
+    "q4_case_set": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "CaseSetSpecification",
+     "required": true
+    },
+    "q4_denominator": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "DenominatorRule",
+     "required": true
+    },
+    "q5_outcome": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "OutcomeSpecification",
+     "required": true
+    },
+    "q5_region": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "RegionSpecification",
+     "required": false
+    },
+    "q6_cut": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "KnowledgeCutSpecification",
+     "required": false
+    },
+    "q6_time_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "q7_measure": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "SummaryMeasure",
+     "required": true
+    },
+    "q8_order_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "q8_unknown": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "UnknownPolicy",
+     "required": true
+    },
+    "q8_weights": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "WeightPolicy",
+     "required": true
+    },
+    "question": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "TraderQuestionSpecification",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "Estimate": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [
+    {
+     "description": "no estimate carries its reason and no value",
+     "post": {
+      "no_estimate_reason": {
+       "required": true
+      },
+      "value": {
+       "absent": true
+      }
+     },
+     "pre": {
+      "value_kind": "NO_ESTIMATE"
+     }
+    },
+    {
+     "description": "a point estimate has a value and a positive denominator",
+     "post": {
+      "denominator": {
+       "required": true
+      },
+      "value": {
+       "required": true
+      }
+     },
+     "pre": {
+      "value_kind": "POINT"
+     }
+    },
+    {
+     "description": "bounds have both ends and a positive denominator",
+     "post": {
+      "denominator": {
+       "required": true
+      },
+      "lower": {
+       "required": true
+      },
+      "upper": {
+       "required": true
+      }
+     },
+     "pre": {
+      "value_kind": "BOUNDS"
+     }
+    },
+    {
+     "description": "an index carries a value and no case denominator",
+     "post": {
+      "denominator": {
+       "absent": true
+      },
+      "value": {
+       "required": true
+      }
+     },
+     "pre": {
+      "value_kind": "INDEX"
+     }
+    },
+    {
+     "description": "a stored research table is quoted, with no value of its own",
+     "post": {
+      "table_ru": {
+       "required": true
+      },
+      "value": {
+       "absent": true
+      }
+     },
+     "pre": {
+      "value_kind": "STORED_TABLE"
+     }
+    }
+   ],
+   "slots": {
+    "categories": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "CategoryCount",
+     "required": false
+    },
+    "cells": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "CellCount",
+     "required": false
+    },
+    "denominator": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "estimate_id": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "estimator": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "lower": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "float",
+     "required": false
+    },
+    "no_estimate_reason": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "numerator": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "quantiles": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "QuantileValue",
+     "required": false
+    },
+    "table_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "unit": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "upper": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "float",
+     "required": false
+    },
+    "value": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "float",
+     "required": false
+    },
+    "value_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ValueKind",
+     "required": true
+    }
+   }
+  },
+  "EstimatorSpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "estimands": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "EstimandSpecification",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "implementations": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "reference_definition": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "rounding_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EstimatorRule",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "unknown_handling_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "Exclusion": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "count": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "reason": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "FactForm": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "acceptance": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "FormAcceptance",
+     "required": true
+    },
+    "forbidden_readings_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "labels": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "LabelTemplate",
+     "required": false
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "record_class": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "statement_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "FactPresentationBinding": {
+   "abstract": false,
+   "descendants": [],
+   "designator": "binding_class",
+   "rules": [],
+   "slots": {
+    "binding": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^B[0-9][0-9]$",
+     "range": "string",
+     "required": true
+    },
+    "binding_class": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "code_anchors": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "fact_form": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "FactForm",
+     "required": true
+    },
+    "human_checks": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "machine_checks": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "semantic_source": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "SourceReference",
+     "required": true
+    },
+    "surfaces": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "ApiSurface",
+     "required": true
+    }
+   }
+  },
+  "FactSurface": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "fact_form": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "FactForm",
+     "required": true
+    },
+    "surfaces": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "ApiSurface",
+     "required": true
+    }
+   }
+  },
+  "FieldEncoding": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "field_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "FieldKind",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "path": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "surface": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ApiSurface",
+     "required": true
+    },
+    "target": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "token_map": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "TokenMapping",
+     "required": false
+    }
+   }
+  },
+  "HistoryClockAssessment": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "cut_close_minute": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "event": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EventKind",
+     "required": true
+    },
+    "history_clock": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "HistoryClockStatus",
+     "required": true
+    },
+    "region_id": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ImpactGroup": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "group": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ImpactKind",
+     "required": true
+    },
+    "members": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ImpactReport": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "changed": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "groups": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ImpactGroup",
+     "required": true
+    },
+    "unresolved": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    }
+   }
+  },
+  "InputVersion": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "input_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "InputKind",
+     "required": true
+    },
+    "ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "InstrumentSeries": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "instrument": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Instrument",
+     "required": true
+    },
+    "roll_adjustment": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "series": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "tick_size": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "float",
+     "required": true
+    }
+   }
+  },
+  "KnowledgeCut": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "cut_clock_et": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-2][0-9]:[0-5][0-9]$",
+     "range": "string",
+     "required": true
+    },
+    "cut_close_minute": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "frozen_reason": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "mode": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ObservationMode",
+     "required": true
+    },
+    "spec": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "state_age_m5": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "target_session": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "KnowledgeCutSpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "cut_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "forming_m5_in_statistics": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "historical_alignment": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Alignment",
+     "required": true
+    },
+    "honesty_level": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "modes": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "ObservationMode",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "LabelTemplate": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "key": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "surface": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Surface",
+     "required": true
+    },
+    "text_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "view": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ViewScope",
+     "required": true
+    }
+   }
+  },
+  "LineReference": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "branch": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "commit": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-9a-f]{7,40}$",
+     "range": "string",
+     "required": true
+    },
+    "merged_into_main": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "pull_request": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    }
+   }
+  },
+  "MeasurementFrameRecord": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "direction": {
+     "identifier": false,
+     "inlined": false,
+     "max": 1,
+     "min": -1,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "origin_price": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "float",
+     "required": true
+    },
+    "spec": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "tick_size": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "float",
+     "required": true
+    },
+    "width_ticks": {
+     "identifier": false,
+     "inlined": false,
+     "min": 1,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    }
+   }
+  },
+  "MeasurementFrameSpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "activation_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ActivationKind",
+     "required": true
+    },
+    "direction_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "forward_formula": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "inverse_formula": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "origin_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "transfer_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "unit": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "MeasurementGrid": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "boundary_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "price_cell_denominator": {
+     "identifier": false,
+     "inlined": false,
+     "min": 1,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "price_cell_numerator": {
+     "identifier": false,
+     "inlined": false,
+     "min": 1,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "price_index_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "time_cell_minutes": {
+     "identifier": false,
+     "inlined": false,
+     "min": 1,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "time_origin": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ObservationRecordForm": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "closed_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "encoding": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "label_meaning": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "LabelMeaning",
+     "required": true
+    },
+    "ohlc_invariant": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ObservationSnapshot": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "closed_through_minute": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "content_version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "forming_m5_present": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": false
+    },
+    "history_range": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "mode": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ObservationMode",
+     "required": true
+    },
+    "source": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ObservationSource": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "admissible_from": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "date",
+     "required": false
+    },
+    "admissible_to": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "date",
+     "required": false
+    },
+    "aggregation_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "availability_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "bar_interval_minutes": {
+     "identifier": false,
+     "inlined": false,
+     "min": 1,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "excluded_years": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "integer",
+     "required": false
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "instruments": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "InstrumentSeries",
+     "required": true
+    },
+    "label_meaning": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "LabelMeaning",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "provider": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "SourceKind",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "unknown_properties": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "volume_used": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    }
+   }
+  },
+  "OperationRecord": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "evidence": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "not_implied_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "operation": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "OperationKind",
+     "required": true
+    },
+    "performed": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    }
+   }
+  },
+  "OutcomeSpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "components": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "KnowledgeComponent",
+     "required": true
+    },
+    "contribution": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ContributionKind",
+     "required": true
+    },
+    "event": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EventKind",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "horizon_end": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "HorizonEnd",
+     "required": true
+    },
+    "horizon_start": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "HorizonStart",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "implementations": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "projection": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ProjectionKind",
+     "required": true
+    },
+    "reference_definition": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "statuses": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "tie_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "TieRule",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "uses_case_future_as_label": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ParameterDeclaration": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "meaning_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "name": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "parameter_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ParameterKind",
+     "required": true
+    }
+   }
+  },
+  "PolicySpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "abstention_rule_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "actions_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "domain_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "execution_model_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "objective_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "PredictiveAdmission": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "admission": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "AcceptanceRecord",
+     "required": true
+    },
+    "domain_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "estimand": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EstimandSpecification",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "issue_rule_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "validation": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ValidationRecord",
+     "required": true
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "PredictiveClaim": {
+   "abstract": false,
+   "descendants": [],
+   "designator": "claim_class",
+   "rules": [],
+   "slots": {
+    "admission": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "applies_to_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "claim_class": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "claim_form": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "estimand": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "forbidden_readings_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "issued_at_utc": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "model": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "statement_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "target_cut": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "training_cutoff": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "validation": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "PrefixState": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [
+    {
+     "description": "a complete prefix carries its extreme",
+     "post": {
+      "seen_ticks": {
+       "required": true
+      },
+      "seen_u": {
+       "required": true
+      }
+     },
+     "pre": {
+      "prefix_status": "OK"
+     }
+    }
+   ],
+   "slots": {
+    "case": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "event": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EventKind",
+     "required": true
+    },
+    "from_close_minute": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "prefix_status": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "PrefixStatus",
+     "required": true
+    },
+    "seen_first_open_minute": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "seen_ticks": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "seen_u": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "float",
+     "required": false
+    },
+    "to_close_minute": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    }
+   }
+  },
+  "Profile": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "edition": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ContractEdition",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "profile_status": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ProfileStatus",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ProfileStanding": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [
+    {
+     "description": "a profile whose decision is accepted names no pending acceptance of itself",
+     "post": {
+      "sc_profile": {
+       "required": true
+      }
+     },
+     "pre": {
+      "decision": "ACCEPTED"
+     }
+    }
+   ],
+   "slots": {
+    "arch_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "decision": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "DecisionStanding",
+     "required": true
+    },
+    "decision_sources": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": true
+    },
+    "human_acceptance": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "HumanAcceptance",
+     "required": true
+    },
+    "human_acceptance_sources": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "in_trace_scope": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "line": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "LineReference",
+     "required": true
+    },
+    "not_established_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "profile_key": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^(BASE-24|NOW-1\\.0|PRE-24|ARRIVE-24|Q1-PILOT-0\\.2)$",
+     "range": "string",
+     "required": true
+    },
+    "sc_profile": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Profile",
+     "required": false
+    },
+    "scope_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    }
+   }
+  },
+  "Q1IssueIdentity": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "cut_close": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "cut_index": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "estimator": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "input_digest": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "issue_id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-9a-f]{64}$",
+     "range": "string",
+     "required": true
+    },
+    "issue_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "model": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "payload_sha256": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-9a-f]{64}$",
+     "range": "string",
+     "required": true
+    },
+    "publication": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "recomputed": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "store": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "target": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Q1TargetIdentity",
+     "required": true
+    }
+   }
+  },
+  "Q1OutcomeLink": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "issue": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Q1IssueIdentity",
+     "required": true
+    },
+    "issue_payload_sha256": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-9a-f]{64}$",
+     "range": "string",
+     "required": true
+    },
+    "label": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "outcome_id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-9a-f]{64}$",
+     "range": "string",
+     "required": true
+    },
+    "recomputed": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "revision": {
+     "identifier": false,
+     "inlined": false,
+     "min": 1,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "store": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "supersedes": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Q1OutcomeLink",
+     "required": false
+    },
+    "target": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Q1TargetIdentity",
+     "required": true
+    }
+   }
+  },
+  "Q1TargetIdentity": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "block": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Block",
+     "required": true
+    },
+    "horizon_end": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "instrument": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Instrument",
+     "required": true
+    },
+    "level_name": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "question": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "recomputed": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "side": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "target_id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-9a-f]{64}$",
+     "range": "string",
+     "required": true
+    },
+    "trading_date": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "QuantileValue": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "quantile": {
+     "identifier": false,
+     "inlined": false,
+     "max": 1,
+     "min": 0,
+     "multivalued": false,
+     "range": "float",
+     "required": true
+    },
+    "value": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "float",
+     "required": false
+    }
+   }
+  },
+  "QuestionRequest": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "authority": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "AuthorityNeed",
+     "required": true
+    },
+    "parameters": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "questions": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "request_id": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "requested_at_utc": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "requester": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "RequesterKind",
+     "required": true
+    }
+   }
+  },
+  "ReachabilityAssessment": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "cut_close_minute": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "event": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EventKind",
+     "required": true
+    },
+    "logic_version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "reachability": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ReachabilityStatus",
+     "required": true
+    },
+    "region_id": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "RegionSpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [
+    {
+     "description": "an algorithmic region names its algorithm",
+     "post": {
+      "density_algorithm": {
+       "required": true
+      }
+     },
+     "pre": {
+      "origin": "ALGORITHM"
+     }
+    }
+   ],
+   "slots": {
+    "bounds_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "density_algorithm": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "DensityAlgorithmSpecification",
+     "required": false
+    },
+    "grid": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "MeasurementGrid",
+     "required": false
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "origin": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "RegionOrigin",
+     "required": true
+    },
+    "region_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "RegionKind",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "Registry": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "authorities": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ActionAuthorityReference",
+     "required": false
+    },
+    "case_sets": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "CaseSetSpecification",
+     "required": false
+    },
+    "claim_forms": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ClaimForm",
+     "required": false
+    },
+    "comparisons": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "StateComparisonSpecification",
+     "required": false
+    },
+    "coverage_notes": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "CoverageNote",
+     "required": false
+    },
+    "density_algorithms": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "DensityAlgorithmSpecification",
+     "required": false
+    },
+    "editions": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ContractEdition",
+     "required": false
+    },
+    "encodings": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "FieldEncoding",
+     "required": false
+    },
+    "estimands": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "EstimandSpecification",
+     "required": false
+    },
+    "estimators": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "EstimatorSpecification",
+     "required": false
+    },
+    "examples": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ConformanceExample",
+     "required": false
+    },
+    "fact_forms": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "FactForm",
+     "required": false
+    },
+    "knowledge_cuts": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "KnowledgeCutSpecification",
+     "required": false
+    },
+    "measurement_frames": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "MeasurementFrameSpecification",
+     "required": false
+    },
+    "measurement_grids": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "MeasurementGrid",
+     "required": false
+    },
+    "obligations": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ContractObligation",
+     "required": false
+    },
+    "observation_sources": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ObservationSource",
+     "required": false
+    },
+    "outcomes": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "OutcomeSpecification",
+     "required": false
+    },
+    "policies": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "PolicySpecification",
+     "required": false
+    },
+    "predictive_admissions": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "PredictiveAdmission",
+     "required": false
+    },
+    "profiles": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "Profile",
+     "required": false
+    },
+    "questions": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "TraderQuestionSpecification",
+     "required": false
+    },
+    "regions": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "RegionSpecification",
+     "required": false
+    },
+    "registry_part": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "source_references": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "strategy_rules": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "StrategyRuleSpecification",
+     "required": false
+    },
+    "surfaces": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ApiSurface",
+     "required": false
+    },
+    "temporal_frames": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "TemporalFrame",
+     "required": false
+    },
+    "validations": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ValidationRecord",
+     "required": false
+    }
+   }
+  },
+  "SceneSpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "arch_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "at_clock_et": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-2][0-9]:[0-5][0-9]$",
+     "range": "string",
+     "required": true
+    },
+    "block": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Block",
+     "required": true
+    },
+    "estimand": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EstimandSpecification",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "instrument": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Instrument",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "page_fragment": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "profile_key": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "route": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ApiSurface",
+     "required": true
+    },
+    "scope": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "WeekdayScope",
+     "required": true
+    },
+    "selector": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "trading_date": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^20(0[6-9]|1[0-9]|2[0-5])-[01][0-9]-[0-3][0-9]$",
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ScreenElementRecord": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "absence_reason": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "AbsenceReason",
+     "required": false
+    },
+    "binding": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^B[0-9][0-9]$",
+     "range": "string",
+     "required": false
+    },
+    "block": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ScreenBlock",
+     "required": true
+    },
+    "bound_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "BoundKind",
+     "required": true
+    },
+    "bundle_digest": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-9a-f]{64}$",
+     "range": "string",
+     "required": false
+    },
+    "claim_form": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "counts": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "element": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "estimand": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "label_ok": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": false
+    },
+    "parameters": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "passport_checked": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": false
+    },
+    "passport_violation": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "shown_value": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "text_sha256": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-9a-f]{64}$",
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ScreenStateRecord": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "collected_at_utc": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "elements": {
+     "identifier": false,
+     "inlined": true,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "ScreenElementRecord",
+     "required": true
+    },
+    "fragment": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "page_build_sha256": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[0-9a-f]{64}$",
+     "range": "string",
+     "required": true
+    },
+    "page_violations": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "registry_hash": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "scenes": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SceneSpecification",
+     "required": false
+    },
+    "unchecked_passports": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "viewport": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "SessionBlock": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "block": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Block",
+     "required": true
+    },
+    "block_end": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "formation_end": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "formation_m5_count": {
+     "identifier": false,
+     "inlined": false,
+     "min": 1,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "formation_start": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "history_minute_shift": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "trading_date_offset_days": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    }
+   }
+  },
+  "SourceReference": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "document": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "locator": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "revision": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "role": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "SourceRole",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "Specification": {
+   "abstract": true,
+   "descendants": [
+    "ActionAuthorityReference",
+    "CaseSetSpecification",
+    "ClaimForm",
+    "ContractEdition",
+    "DensityAlgorithmSpecification",
+    "EstimandSpecification",
+    "EstimatorSpecification",
+    "FactForm",
+    "KnowledgeCutSpecification",
+    "MeasurementFrameSpecification",
+    "MeasurementGrid",
+    "ObservationSource",
+    "OutcomeSpecification",
+    "PolicySpecification",
+    "PredictiveAdmission",
+    "Profile",
+    "RegionSpecification",
+    "StateComparisonSpecification",
+    "StrategyRuleSpecification",
+    "TemporalFrame",
+    "TraderQuestionSpecification",
+    "ValidationRecord"
+   ],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "StateComparisonSpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [
+    {
+     "description": "a comparison may only use features available at the cut",
+     "post": {
+      "feature_availability": {
+       "equals": "PREFIX_AT_CUT"
+      }
+     },
+     "pre": {}
+    }
+   ],
+   "slots": {
+    "alignment": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Alignment",
+     "required": true
+    },
+    "feature_availability": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ConditionAvailability",
+     "required": true
+    },
+    "features": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "frozen": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "tolerance": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "weights": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "WeightPolicy",
+     "required": true
+    }
+   }
+  },
+  "StatisticalPresentationBinding": {
+   "abstract": false,
+   "descendants": [],
+   "designator": "binding_class",
+   "rules": [],
+   "slots": {
+    "binding": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^B[0-9][0-9]$",
+     "range": "string",
+     "required": true
+    },
+    "binding_class": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "claim_form": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ClaimForm",
+     "required": true
+    },
+    "code_anchors": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "derivation_site": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "DerivationSite",
+     "required": true
+    },
+    "estimand": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "EstimandSpecification",
+     "required": true
+    },
+    "human_checks": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "machine_checks": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "semantic_source": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "SourceReference",
+     "required": true
+    },
+    "surfaces": {
+     "identifier": false,
+     "inlined": false,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "ApiSurface",
+     "required": true
+    }
+   }
+  },
+  "StatisticalResultBundle": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "admissible_claims": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "ClaimClassName",
+     "required": true
+    },
+    "claim": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "Claim",
+     "required": true
+    },
+    "claim_form": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "derivation": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "DerivationRecord",
+     "required": true
+    },
+    "estimand": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "estimates": {
+     "identifier": false,
+     "inlined": true,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "Estimate",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "parameters": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "supports": {
+     "identifier": false,
+     "inlined": true,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "SupportRecord",
+     "required": true
+    },
+    "validations": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    }
+   }
+  },
+  "StrategyRuleSpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "blocks": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "SessionBlock",
+     "required": true
+    },
+    "box_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "break_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "confirmation_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "early_close_calendar": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "CalendarStatus",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "weekend_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "StrategySessionRecord": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "activation": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "ActivationEvent",
+     "required": true
+    },
+    "block": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Block",
+     "required": true
+    },
+    "dr_break": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "ActivationEvent",
+     "required": false
+    },
+    "dr_high": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "float",
+     "required": true
+    },
+    "dr_low": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "float",
+     "required": true
+    },
+    "idr_high": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "float",
+     "required": true
+    },
+    "idr_low": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "float",
+     "required": true
+    },
+    "instrument": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Instrument",
+     "required": true
+    },
+    "rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "trading_date": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "SupportRecord": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "case_set": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "components": {
+     "identifier": false,
+     "inlined": true,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "ComponentSupport",
+     "required": true
+    },
+    "n_base": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": true
+    },
+    "n_eligible": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "n_match": {
+     "identifier": false,
+     "inlined": false,
+     "min": 0,
+     "multivalued": false,
+     "range": "integer",
+     "required": false
+    },
+    "support_id": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "TemporalFrame": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "availability_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "dst_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "label_meaning": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "LabelMeaning",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "record_form": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "ObservationRecordForm",
+     "required": true
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "timezone": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^America/New_York$",
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "trading_date_rule": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "TokenMapping": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "code_token": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "contract_value": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "TraceCatalog": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "bindings": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ArchitecturePresentationBinding",
+     "required": false
+    },
+    "boundaries": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "CoverageBoundary",
+     "required": false
+    },
+    "catalog_part": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "editions": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "EditionStanding",
+     "required": false
+    },
+    "entries": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ArchitectureEntry",
+     "required": false
+    },
+    "fact_surfaces": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "FactSurface",
+     "required": false
+    },
+    "scenes": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "SceneSpecification",
+     "required": false
+    },
+    "source_references": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "standings": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ProfileStanding",
+     "required": false
+    }
+   }
+  },
+  "TraceLink": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "evidence": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "mandatory": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "relation": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "source": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "status": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "LinkStatus",
+     "required": true
+    },
+    "target": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "TraceReport": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "artifact_versions": {
+     "identifier": false,
+     "inlined": true,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "ArtifactVersion",
+     "required": true
+    },
+    "assessment": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": false,
+     "range": "ClaimAssessment",
+     "required": true
+    },
+    "claim": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "evidence": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "ArchitectureCheckEvidence",
+     "required": false
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "operations": {
+     "identifier": false,
+     "inlined": true,
+     "max_card": 3,
+     "min_card": 3,
+     "multivalued": true,
+     "range": "OperationRecord",
+     "required": true
+    },
+    "profile_key": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "scene": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "SceneSpecification",
+     "required": true
+    },
+    "stages": {
+     "identifier": false,
+     "inlined": true,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "TraceStage",
+     "required": true
+    },
+    "violations": {
+     "identifier": false,
+     "inlined": true,
+     "multivalued": true,
+     "range": "TraceViolation",
+     "required": false
+    }
+   }
+  },
+  "TraceStage": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "links": {
+     "identifier": false,
+     "inlined": true,
+     "min_card": 1,
+     "multivalued": true,
+     "range": "TraceLink",
+     "required": true
+    },
+    "stage": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "TraceStageKind",
+     "required": true
+    },
+    "status": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "LinkStatus",
+     "required": true
+    },
+    "summary_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "TraceViolation": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "arch_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "code": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "message": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "severity": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Severity",
+     "required": true
+    },
+    "where": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "TraderQuestionSpecification": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "scene_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "text_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "ValidationRecord": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "corpus_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "corpus_seen_before": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "boolean",
+     "required": true
+    },
+    "grounds": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "GroundsCategory",
+     "required": true
+    },
+    "id": {
+     "identifier": true,
+     "inlined": false,
+     "multivalued": false,
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+=\\-]*$",
+     "range": "string",
+     "required": true
+    },
+    "lifecycle": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Lifecycle",
+     "required": true
+    },
+    "note": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "protocol_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "result_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "runtime_artifact": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "pattern": "^(O[0-3]|S[0-2]|M[01]|E[0-4]|H[0-3]|P[0-3](\\.[1-3])?|T0(\\.1)?|T1|V[0-3](\\.[12])?|C[0-3]|D[0-2]|K(0[1-9]|[12][0-9]|3[0-3])|§[0-9]+(\\.[0-9]+)*(/[A-Z][A-Z0-9-]*)?|IMPLEMENTATION)$",
+     "range": "string",
+     "required": true
+    },
+    "source_refs": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "SourceReference",
+     "required": false
+    },
+    "title_ru": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "validates": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "validation_kind": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "ValidationKind",
+     "required": true
+    },
+    "version": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    }
+   }
+  },
+  "Violation": {
+   "abstract": false,
+   "descendants": [],
+   "designator": null,
+   "rules": [],
+   "slots": {
+    "code": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "message": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": true
+    },
+    "path": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "string",
+     "required": false
+    },
+    "sc_ref": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": true
+    },
+    "severity": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": false,
+     "range": "Severity",
+     "required": true
+    },
+    "withheld": {
+     "identifier": false,
+     "inlined": false,
+     "multivalued": true,
+     "range": "string",
+     "required": false
+    }
+   }
+  }
+ },
+ "enums": {
+  "AbsenceReason": [
+   "BLOCK_OVER",
+   "CONTRACT_STALE",
+   "CONTRACT_WITHHELD",
+   "DR_BROKEN",
+   "EMPTY_FAMILY",
+   "FEW_SESSIONS",
+   "INSUFFICIENT_SUPPORT",
+   "NO_FAMILY",
+   "NO_KNOWN_OUTCOME",
+   "NO_PREFIX",
+   "OUT_OF_SCOPE",
+   "PREFIX_UNKNOWN",
+   "RESOLVED_TODAY"
+  ],
+  "ActivationKind": [
+   "CONFIRMATION",
+   "DR_BREAK"
+  ],
+  "ActorRole": [
+   "EXECUTOR_AGENT",
+   "METHOD_AUTHOR",
+   "OPERATOR",
+   "SEMANTIC_LENS"
+  ],
+  "Alignment": [
+   "BOX_END_CLOCK",
+   "COMMON_SESSION_CLOCK",
+   "OWN_HORIZON"
+  ],
+  "AuthorityNeed": [
+   "NONE_DESCRIPTIVE"
+  ],
+  "BinaryKnowledge": [
+   "NO",
+   "UNKNOWN",
+   "YES"
+  ],
+  "Block": [
+   "ADR",
+   "ODR",
+   "RDR"
+  ],
+  "BoundKind": [
+   "ABSENCE",
+   "BUNDLE",
+   "FACT",
+   "PASSPORT",
+   "UNBOUND"
+  ],
+  "BoundaryKind": [
+   "FINDING",
+   "KNOWN_LIMIT",
+   "OPEN_DECISION",
+   "OPEN_EVIDENCE",
+   "OUT_OF_SCOPE"
+  ],
+  "CalendarStatus": [
+   "CERTIFIED",
+   "NOT_CERTIFIED"
+  ],
+  "CaseSetRole": [
+   "BASE_FAMILY",
+   "ELIGIBLE_AT_CUT",
+   "HISTORICAL_UNIVERSE",
+   "MATCHED_AT_CUT",
+   "OUTCOME_SUBGROUP",
+   "RETROSPECTIVE_RESEARCH"
+  ],
+  "CheckOutcome": [
+   "FAIL",
+   "PASS"
+  ],
+  "ClaimClassName": [
+   "ConditionalDescriptiveClaim",
+   "DecisionClaim",
+   "DescriptiveClaim",
+   "PredictiveClaim"
+  ],
+  "ConditionAvailability": [
+   "AT_ACTIVATION",
+   "PREFIX_AND_RETROSPECTIVE",
+   "PREFIX_AT_CUT",
+   "RETROSPECTIVE"
+  ],
+  "ContractStatus": [
+   "CONFORMANT",
+   "CONTRACT_STALE",
+   "VIOLATION"
+  ],
+  "ContributionKind": [
+   "BAND_INDICATORS_AT_M5",
+   "ONE_BINARY_VOTE",
+   "ONE_CATEGORY",
+   "ONE_CELL_AT_M5",
+   "ONE_DURATION",
+   "ONE_MAGNITUDE",
+   "ONE_MEMBERSHIP",
+   "ONE_POINT"
+  ],
+  "CoverageStatus": [
+   "EDITORIAL",
+   "NOT_INSTANTIATED",
+   "OUT_OF_SCOPE",
+   "REPRESENTED"
+  ],
+  "DecisionStanding": [
+   "ACCEPTED",
+   "IMPLEMENTATION_TARGET",
+   "OPEN",
+   "OUT_OF_SCOPE",
+   "PILOT_OUTSIDE_GATE",
+   "PROPOSAL",
+   "PROPOSED_FOR_ACCEPTANCE"
+  ],
+  "DenominatorRule": [
+   "KNOWN_COMPONENT_SUPPORT",
+   "NONE_LOGICAL",
+   "N_BASE_UNIQUE_MEMBERS",
+   "N_ELIGIBLE_AT_CUT",
+   "N_MATCH_AT_CUT"
+  ],
+  "DerivationSite": [
+   "PAGE_PASSPORT",
+   "SERVER_BUNDLE"
+  ],
+  "Direction": [
+   "LONG",
+   "SHORT"
+  ],
+  "DrOutcome": [
+   "BROKEN",
+   "HELD",
+   "NO_PERIOD",
+   "UNKNOWN"
+  ],
+  "EditionStatus": [
+   "ACCEPTED_FOR_PROFILES",
+   "ACCEPTED_FOR_THIS_WORK",
+   "PREVIOUS_EDITION",
+   "PROPOSED"
+  ],
+  "EndpointKnowledge": [
+   "KNOWN",
+   "NO_PERIOD",
+   "UNKNOWN"
+  ],
+  "EnforcementMechanism": [
+   "HUMAN_ACCEPTANCE",
+   "PATH_COMPUTATION",
+   "PROVENANCE_RECONCILIATION",
+   "STATISTICAL_CHECK",
+   "STRUCTURAL_SCHEMA"
+  ],
+  "EntryKind": [
+   "ENTITY",
+   "INVARIANT",
+   "PROCESS",
+   "RELATION",
+   "TRANSITION",
+   "VERIFIABLE_STATEMENT"
+  ],
+  "EstimatorRule": [
+   "ALGORITHMIC_REGION_SHARE",
+   "BINARY_BOUNDS_OVER_N",
+   "CATEGORY_COUNTS_OVER_N",
+   "COUNT_OVER_N",
+   "HELD_OUT_NULL_EXCESS",
+   "JACCARD_RECOVERY",
+   "JOINT_CELL_COUNTS_OVER_N",
+   "LINEAR_QUANTILES_AMONG_KNOWN",
+   "LOGICAL_ASSESSMENT",
+   "POINT_AMONG_KNOWN_AND_BOUNDS",
+   "STORED_RESEARCH_TABLE",
+   "THRESHOLD_SHARE_AMONG_KNOWN"
+  ],
+  "EventKind": [
+   "CLOSE",
+   "CONFIRMATION",
+   "CROSS",
+   "DELTA_R",
+   "DELTA_X",
+   "DR",
+   "LEVEL",
+   "NEW_R",
+   "NEW_X",
+   "ORDER",
+   "R",
+   "RANGE",
+   "TAU_R",
+   "TAU_X",
+   "VISIT",
+   "X"
+  ],
+  "EvidenceOrigin": [
+   "HUMAN_SESSION",
+   "MACHINE_RUN_HERE",
+   "NOT_RUN",
+   "REPORTED_BY_ENGINEER"
+  ],
+  "EvidenceOutcome": [
+   "FAIL",
+   "NOT_RUN",
+   "PASS"
+  ],
+  "FieldKind": [
+   "ASSESSMENT",
+   "CASE_RECORD",
+   "DENOMINATOR",
+   "DIAGNOSTIC",
+   "IDENTIFIER",
+   "MEASUREMENT",
+   "OBSERVATION",
+   "PARAMETER",
+   "PREFIX_STATE",
+   "PROVENANCE",
+   "STATISTIC",
+   "STRATEGY_OBJECT",
+   "SUPPORT_COUNT",
+   "TIME",
+   "VALIDATION_EVIDENCE"
+  ],
+  "FirstOrder": [
+   "NO_PERIOD",
+   "R_BEFORE_X",
+   "SAME_M5",
+   "UNKNOWN",
+   "X_BEFORE_R"
+  ],
+  "FirstTimeKnowledge": [
+   "KNOWN",
+   "NO_EVENT",
+   "NO_PERIOD",
+   "UNKNOWN"
+  ],
+  "FormAcceptance": [
+   "ACCEPTED_BY_OPERATOR",
+   "INHERITED_FROM_ACCEPTED_SCREEN",
+   "PROPOSED_BY_EXECUTOR"
+  ],
+  "GroundsCategory": [
+   "AUTHOR_RULE",
+   "CONTRACT_FORMALISATION",
+   "DR_LAB_DECISION",
+   "HYPOTHESIS",
+   "IMPLEMENTATION_FACT",
+   "OPERATOR_REQUIREMENT",
+   "PROPOSAL",
+   "RESEARCH_RESULT",
+   "SUPERSEDED_DEFINITION",
+   "UNRESOLVED_DISCREPANCY"
+  ],
+  "HistoryClockStatus": [
+   "FUTURE_EMPTY",
+   "FUTURE_PRESENT",
+   "PAST_ONLY"
+  ],
+  "HorizonEnd": [
+   "BLOCK_END_CLOSE_INCLUSIVE",
+   "NOT_APPLICABLE",
+   "SINGLE_M5"
+  ],
+  "HorizonStart": [
+   "BOX_END",
+   "COMMON_CUT_EXCLUSIVE",
+   "NOT_APPLICABLE",
+   "OWN_ACTIVATION_CLOSE_EXCLUSIVE",
+   "SINGLE_M5"
+  ],
+  "HumanAcceptance": [
+   "ACCEPTED",
+   "NOT_APPLICABLE",
+   "PENDING"
+  ],
+  "ImpactKind": [
+   "ARCHITECTURE",
+   "CHECK",
+   "CLAIM",
+   "CODE",
+   "DEFINITION",
+   "ESTIMAND",
+   "PRESENTATION",
+   "ROUTE",
+   "STORED_RECORD"
+  ],
+  "ImplementationConformance": [
+   "NOT_VERIFIED",
+   "VERIFIED_IN_RUN",
+   "VIOLATED"
+  ],
+  "InputKind": [
+   "CASE_SET_SNAPSHOT",
+   "CODE",
+   "OBSERVATION_SNAPSHOT",
+   "PARAMETERS",
+   "REGISTRY",
+   "TODAY_PREFIX",
+   "VALIDATION"
+  ],
+  "Instrument": [
+   "ES",
+   "NQ",
+   "YM"
+  ],
+  "KeyField": [
+   "BLOCK",
+   "BREAK_WINDOW",
+   "CONFIRMATION_WINDOW",
+   "DATE_BEFORE_TARGET",
+   "DIRECTION",
+   "INSTRUMENT",
+   "WEEKDAY"
+  ],
+  "KnowledgeComponent": [
+   "CATEGORY",
+   "ENDPOINT",
+   "EXISTENCE",
+   "FIRST_TIME",
+   "MAGNITUDE",
+   "MEMBERSHIP"
+  ],
+  "LabelMeaning": [
+   "CLOSE_OF_INTERVAL",
+   "OPEN_OF_INTERVAL"
+  ],
+  "Lifecycle": [
+   "FROZEN",
+   "HYPOTHESIS",
+   "NOT_PROMOTED",
+   "NOT_TESTABLE",
+   "RESEARCH_EXPLORATORY",
+   "VALIDATED_FOR_PROFILE"
+  ],
+  "LinkStatus": [
+   "IMPLEMENTED_UNVERIFIED",
+   "MISSING",
+   "NOT_APPLICABLE",
+   "PROPOSED",
+   "VERIFIED"
+  ],
+  "LiveUse": [
+   "FORBIDDEN",
+   "PERMITTED"
+  ],
+  "ModelDefiniteness": [
+   "DEFINED",
+   "INCOMPLETE"
+  ],
+  "ObligationKind": [
+   "FORBIDDEN_TRANSFORMATION",
+   "INVARIANT",
+   "REQUIREMENT"
+  ],
+  "ObservationMode": [
+   "HISTORY_DAY_REPLAY_BY_CLOSE",
+   "LIVE",
+   "RESEARCH_WALK_FORWARD"
+  ],
+  "OperationKind": [
+   "COMPUTE",
+   "ISSUE",
+   "PRESENT"
+  ],
+  "ParameterKind": [
+   "CATEGORY",
+   "CUT",
+   "EVENT",
+   "LEVEL_RATIONAL",
+   "LEVEL_SIDE",
+   "M5_INDEX",
+   "MATCHER",
+   "PRICE_BAND_CELLS",
+   "PRICE_CELL",
+   "ROLE_IN_BUNDLE",
+   "THRESHOLD",
+   "TIME_WINDOW_CELLS",
+   "ZONE_ID"
+  ],
+  "PrefixStatus": [
+   "FROZEN_AT_BREAK",
+   "HORIZON_OVER",
+   "NO_PREFIX",
+   "OK",
+   "UNKNOWN_PREFIX"
+  ],
+  "PresentationConformance": [
+   "NOT_APPLICABLE",
+   "NOT_COLLECTED",
+   "VERIFIED_IN_RUN",
+   "VIOLATED"
+  ],
+  "PriceTransfer": [
+   "M0_TODAY_EDGE",
+   "M0_TODAY_EXTREME",
+   "NONE"
+  ],
+  "ProfileStatus": [
+   "ACTIVE",
+   "FROZEN",
+   "LEGACY"
+  ],
+  "ProjectionKind": [
+   "ALGORITHMIC_REGION_MEMBERSHIP",
+   "AT_LEVEL_OR_BEYOND",
+   "BAND_VISIT",
+   "CLOCK_SPLIT",
+   "CLOSE_AT_M5",
+   "DR_OUTCOME",
+   "FINAL_EXTREME",
+   "FIRST_CONFIRMATION_AFTER_CUT",
+   "FIRST_ORDER",
+   "FIRST_QUALIFIED_VISIT",
+   "LITERAL_LEVEL_CROSSING",
+   "RANGE_AT_M5",
+   "REACTION_SWING_TARGET",
+   "REGION_STABILITY",
+   "RESIDUAL_DELTA",
+   "RESIDUAL_NEW_EXTREME",
+   "RESIDUAL_TIME_TO_NEW"
+  ],
+  "ReachabilityStatus": [
+   "HOLDS",
+   "IMPOSSIBLE",
+   "POSSIBLE",
+   "UNKNOWN"
+  ],
+  "RegionKind": [
+   "JOINT_PRICE_TIME",
+   "LEVEL",
+   "M5_CELL",
+   "NONE",
+   "OUT_OF_FRAME",
+   "PRICE_BAND",
+   "RESIDUAL_OUTSIDE_ZONES",
+   "TIME_WINDOW",
+   "UNDETERMINED_MASS",
+   "WHOLE_DISTRIBUTION",
+   "ZONE_MASK"
+  ],
+  "RegionOrigin": [
+   "ALGORITHM",
+   "FIXED_GRID",
+   "OPERATOR_SELECTION",
+   "SCREEN_FRAME",
+   "TODAY_LEVEL",
+   "WHOLE"
+  ],
+  "RequesterKind": [
+   "LOCAL_HTTP_CLIENT",
+   "TEST_HARNESS"
+  ],
+  "ScreenBlock": [
+   "AREA",
+   "ARRIVE",
+   "DR_OUTCOME",
+   "NOW",
+   "OTHER",
+   "PHASE",
+   "SUMMARY_FAMILY",
+   "ZONES"
+  ],
+  "Severity": [
+   "BLOCKING",
+   "WARNING"
+  ],
+  "SourceKind": [
+   "HISTORICAL_TAPE",
+   "LIVE_FEED"
+  ],
+  "SourceRole": [
+   "AMENDMENT",
+   "ANALYTICAL_INPUT",
+   "DECISION",
+   "DEFINITION",
+   "IMPLEMENTATION",
+   "NORMATIVE_CONTRACT",
+   "RESEARCH"
+  ],
+  "SummaryMeasure": [
+   "CATEGORY_SHARES",
+   "DISTRIBUTION",
+   "LOGICAL_STATUS",
+   "QUANTILES",
+   "SHARE",
+   "SHARE_DIFFERENCE",
+   "STABILITY_INDEX",
+   "THRESHOLD_SHARES",
+   "TIME_TO_EVENT_QUANTILES"
+  ],
+  "Surface": [
+   "CANVAS",
+   "INSPECTOR",
+   "PANEL",
+   "PASSPORT",
+   "TOOLTIP",
+   "WINDOW"
+  ],
+  "SurfaceProfile": [
+   "LEGACY_CLASSIC",
+   "LEGACY_RESEARCH_DASHBOARD",
+   "LEGACY_SCREEN_22",
+   "LEGACY_SEM_V1",
+   "SC11_ARRIVE_24",
+   "SC11_BASE_24",
+   "SC11_CONTRACT_SERVICE",
+   "SC11_NOW_1_0",
+   "SC11_OBSERVATION",
+   "SC11_PRE_24",
+   "SERVICE"
+  ],
+  "TargetKind": [
+   "FIXED_HISTORICAL_SET",
+   "FUTURE_OUTCOME"
+  ],
+  "TieRule": [
+   "ONE_VOTE_PER_CASE",
+   "REPEATS_KEPT_NO_EXTRA_VOTE",
+   "TIE_IS_NOT_NEW"
+  ],
+  "TraceStageKind": [
+   "ADMISSION",
+   "CASE_SET",
+   "COMPUTATION",
+   "ESTIMATE_SUPPORT",
+   "ISSUE",
+   "OBSERVATION",
+   "OUTCOMES",
+   "PRESENTATION",
+   "QUESTION",
+   "STATE"
+  ],
+  "UnitOfAnalysis": [
+   "EVENT",
+   "M5",
+   "SESSION",
+   "SESSION_AT_CUT",
+   "TRADE",
+   "ZONE"
+  ],
+  "UnknownPolicy": [
+   "AMONG_KNOWN_COMPONENT_WITH_COUNTS",
+   "BINARY_BOUNDS_OVER_D",
+   "LOGICAL_UNKNOWN_STATUS",
+   "NOT_APPLICABLE",
+   "POINT_AMONG_KNOWN_WITH_BOUNDS",
+   "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  ],
+  "ValidationKind": [
+   "ALGORITHM_STABILITY",
+   "COMPUTATIONAL_INVARIANT",
+   "POLICY_FITNESS",
+   "RESEARCH_EXPLORATORY",
+   "STATISTICAL_TRANSFER",
+   "STRUCTURE"
+  ],
+  "ValueForm": [
+   "BOUNDS_IF_UNKNOWN",
+   "CATEGORY_SHARES",
+   "LOGICAL_STATUS",
+   "NONE",
+   "POINT",
+   "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN",
+   "QUANTILES"
+  ],
+  "ValueKind": [
+   "BOUNDS",
+   "CATEGORY_SHARES",
+   "DISTRIBUTION",
+   "INDEX",
+   "NO_ESTIMATE",
+   "POINT",
+   "QUANTILES",
+   "STORED_TABLE"
+  ],
+  "VerificationStatus": [
+   "MISMATCH",
+   "NOT_RECOMPUTED",
+   "RECOUNTED",
+   "VERIFIED_BY_REFERENCE"
+  ],
+  "ViewScope": [
+   "ANY",
+   "BRK",
+   "CONF"
+  ],
+  "WeekdayScope": [
+   "ALL_WEEKDAYS",
+   "WEEKDAY"
+  ],
+  "WeightPolicy": [
+   "NONE"
+  ]
+ },
+ "schema": "dr_lab_trace",
+ "version": "0.2.0"
+}

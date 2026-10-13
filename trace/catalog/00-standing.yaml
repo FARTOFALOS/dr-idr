@@ -1,0 +1,187 @@
+# Trace catalog · the standing of the contract edition and of every profile on independent axes, and the sources the
+# trace adds to those of the SC-1.1 registry. Instance data of trace/schema/dr_lab_trace.yaml (class TraceCatalog).
+#
+# A record here preserves evidence of a decision; it does not create one (AGENTS.md, SC-1.1 §14.1). The axis
+# «decision» is authored from those sources; «model definiteness» and «implementation conformance» are never authored:
+# lab/semtrace.py computes them at every run; «human acceptance» is authored only from a human session on record.
+catalog_part: standing
+
+source_references:
+  - id: SRC:ARCH-0.1
+    sc_ref: ["IMPLEMENTATION"]
+    grounds: PROPOSAL
+    role: ANALYTICAL_INPUT
+    document: "meaning/lens/2026-10-13-semantic-architecture/01-DR-LAB-SEMANTIC-ARCHITECTURE-0.1.md"
+    revision: "sha256:ce986e332f4ad0a036e5d4181809e7ce1578ca5042920d94a2b4930e23c7ccd6"
+    note: "the integration map of the semantic architecture, a proposal for review (not a new edition of SC-1.1)"
+  - id: SRC:ARCH-0.2
+    sc_ref: ["IMPLEMENTATION"]
+    grounds: PROPOSAL
+    role: ANALYTICAL_INPUT
+    document: "meaning/lens/2026-10-13-semantic-architecture/02-DR-LAB-SEMANTIC-ARCHITECTURE-0.2-dopolnenie.md"
+    revision: "sha256:a780119df2f6585e4c7f33466c929331d8856f6e55aab5fae45fc64a84207f47"
+    note: "the addendum: three operations, definitions apart from instances, three assessments, separate binding types"
+  - id: SRC:GOAL-2026-10-13
+    sc_ref: ["IMPLEMENTATION"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "chat of 2026-10-13, the operator's goal «DR Lab — реализация единого исполняемого смыслового контура»"
+    locator: "the whole message; recorded in meaning/07-cepochka-reshenij.md, node of 13.10"
+  - id: SRC:ACCEPT-SC11-2026-10-07
+    sc_ref: ["§14.3"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "contract/registry/00-editions.yaml"
+    revision: "2672841da928f7379e5d7bc27eef8ff3e0fa5738"
+    locator: "editions[DR-LAB-SC-1.1].acceptances: the operator's words of 2026-10-07 accepting SC-1.1 for BASE-24 and NOW-1.0"
+  - id: SRC:SWPC-1.1
+    sc_ref: ["§12.3"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DEFINITION
+    document: "spec/DR-LAB-SWPC-1.1.md"
+    locator: "§3.1 PresentationBinding, §5 B01-B18, §8 M and H, §9 routes estimand -> bindings"
+    note: "the operator-authorized implementation target of the presentation (AGENTS.md); its result is not accepted (H01-H14 not run)"
+  - id: SRC:SWPC-RECORD
+    sc_ref: ["IMPLEMENTATION"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "tests/swpc11.py"
+    locator: "REC: per binding the code anchors, clock, channels and the browser scenarios that execute its M checks"
+  - id: SRC:SWPC-H-PROTOCOL
+    sc_ref: ["IMPLEMENTATION"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "meaning/16-priyomka-swpc.md"
+    note: "the protocol of the human tasks H01-H14; on 2026-10-08 the operator found the sheet unreadable, the tasks were not run"
+  - id: SRC:Q1-STORE
+    sc_ref: ["IMPLEMENTATION"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "lab/q1/store.py"
+    note: "write-once issues and outcomes, their identities (target_id, issue_id, outcome_id) and verify()"
+  - id: SRC:M18
+    sc_ref: ["IMPLEMENTATION"]
+    grounds: IMPLEMENTATION_FACT
+    role: IMPLEMENTATION
+    document: "meaning/18-otsyuda-na-ekrane-24.md"
+    note: "which elements of screen 24 carry «Отсюда до места»"
+  - id: SRC:Q1-READING-CHECK
+    sc_ref: ["IMPLEMENTATION"]
+    grounds: PROPOSAL
+    role: ANALYTICAL_INPUT
+    document: "studies/q1_pilot_2026_10_12/reading_check.md"
+    note: "a pre-registered reading check of the Q1 answer, prepared for the operator, not run with him"
+
+editions:
+  - id: EDST:SC-1.1
+    title_ru: принятый текст SC-1.1 и текст, закреплённый в этой линии
+    arch_ref: "0.1 §0, §2 S04; 0.2 §1"
+    edition: DR-LAB-SC-1.1
+    accepted_text_sha256_lf: bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b
+    accepted_text_commit: 2672841da928f7379e5d7bc27eef8ff3e0fa5738
+    accepted_by: [SRC:GOAL-2026-10-07, SRC:ACCEPT-SC11-2026-10-07]
+    amendments_proposed:
+      - "§0.5 and §12.5 (08.10.2026, PRE-24, the phase rule, «мало сессий», words of the NOW pullback line) — branch resheniya-08-10, PR #2, awaiting acceptance"
+      - "§0.6 and §12.6 (12.10.2026, ARRIVE-24 «отсюда до места») — branch ekran-24-otsyuda, PR #7, awaiting acceptance; no explicit permission to change the text is on record"
+    note: >-
+      The operator accepted the text with SHA-256 (LF) bdba7276… on 2026-10-07. A line that pins another text under the
+      same edition id carries amendments for his acceptance; the trace reads the accepted text from git and checks that
+      the amendment keeps every accepted line (EDITION_ADDITIVE), and reports the line's pin as a proposal.
+
+standings:
+  - id: STANDING:BASE-24
+    title_ru: базовая карта экрана 24
+    arch_ref: "0.1 §8.1"
+    profile_key: BASE-24
+    sc_profile: PROFILE:BASE-24
+    decision: ACCEPTED
+    decision_sources: [SRC:GOAL-2026-10-07, SRC:ACCEPT-SC11-2026-10-07]
+    scope_ru: "SC-1.1 — нормативный контракт BASE-24 и его дальнейших изменений (оператор, 07.10.2026); экран 24 на main — рабочий"
+    not_established_ru:
+      - "человеческое различение смыслов на экране: H01–H12 SWPC-1.1 не проводились"
+      - "перенос на новые дни (C2): не допущен ни для одного числа"
+    line: {branch: main, commit: 2672841da928f7379e5d7bc27eef8ff3e0fa5738, merged_into_main: true}
+    human_acceptance: PENDING
+    human_acceptance_sources: [SRC:SWPC-H-PROTOCOL]
+    in_trace_scope: true
+  - id: STANDING:NOW-1.0
+    title_ru: условный слой «Сейчас»
+    arch_ref: "0.1 §8.2"
+    profile_key: NOW-1.0
+    sc_profile: PROFILE:NOW-1.0
+    decision: ACCEPTED
+    decision_sources: [SRC:GOAL-2026-10-07, SRC:ACCEPT-SC11-2026-10-07, SRC:NOW-1.0]
+    scope_ru: "SC-1.1 для NOW-1.0 (07.10.2026); сопоставители, пороги и шлюзы заморожены (NOW-1.0 закрыт оператором 06.10.2026); слова «В истории: R позже углублялся… / Если углублялся…» — оператора"
+    not_established_ru:
+      - "человеческое различение: H01–H12 не проводились"
+      - "переносимость условной доли на новые дни (C2) не установлена; путь не обогнал базу по времени (режим TIME_BASELINE)"
+    line: {branch: main, commit: 2672841da928f7379e5d7bc27eef8ff3e0fa5738, merged_into_main: true}
+    human_acceptance: PENDING
+    human_acceptance_sources: [SRC:SWPC-H-PROTOCOL]
+    in_trace_scope: true
+  - id: STANDING:ARRIVE-24
+    title_ru: «Отсюда до места» на экране 24
+    arch_ref: "0.1 §8.3, §10.2; 0.2 §1"
+    profile_key: ARRIVE-24
+    sc_profile: PROFILE:ARRIVE-24
+    decision: PROPOSED_FOR_ACCEPTANCE
+    decision_sources: [SRC:INSTRUCTION-2026-10-12, SRC:M18]
+    scope_ru: "вариант для приёмки оператором в ветке ekran-24-otsyuda (PR #7): ответ Q1 на семье экрана, места 0 / −1/2 / −7/10, ODR и RDR после подтверждения до слома"
+    not_established_ru:
+      - "приёмка варианта и текста §0.6 / §12.6 SC-1.1 — отдельный акт оператора"
+      - "D1 (родитель), D2 (место на экране), N5 — решения оператора не приняты"
+      - "человеческая задача H14 не проводилась"
+      - "C2: качество на новых днях не установлено"
+    line: {branch: ekran-24-otsyuda, commit: 1412567e30e7de4659b51dcea5f0d7e8f26de494, pull_request: 7, merged_into_main: false}
+    human_acceptance: PENDING
+    human_acceptance_sources: [SRC:SWPC-H-PROTOCOL, SRC:Q1-READING-CHECK]
+    in_trace_scope: true
+    note: >-
+      The SC-1.1 registry of this line marks PROFILE:ARRIVE-24 profile_status ACTIVE (the enum has no value for a
+      proposal); its non-acceptance stands only in a free-text note. The trace takes the decision from this record and
+      reports the conflict (BND-02).
+  - id: STANDING:PRE-24
+    title_ru: второй экран до подтверждения
+    arch_ref: "0.1 GAP-04"
+    profile_key: PRE-24
+    sc_profile: PROFILE:PRE-24
+    decision: PROPOSED_FOR_ACCEPTANCE
+    decision_sources: [SRC:DECISIONS-2026-10-08]
+    scope_ru: "вариант 08.10 (PR #2) для приёмки оператором"
+    not_established_ru:
+      - "приёмка варианта и текста §0.5 / §12.5"
+    line: {branch: resheniya-08-10, commit: b7a52f17fac3fd3f980f4687ad5f21a0b8f2d57b, pull_request: 2, merged_into_main: false}
+    human_acceptance: PENDING
+    human_acceptance_sources: [SRC:SWPC-H-PROTOCOL]
+    in_trace_scope: false
+    note: "Outside the declared area of this work (the goal names BASE-24, NOW-1.0 and Q1/ARRIVE-24): its estimands are covered by the static checks only (BND-09)."
+  - id: STANDING:Q1-PILOT-0.2
+    title_ru: исторический пилот Q1 C1 (диагностический стенд 8771)
+    arch_ref: "0.1 §8.3, S09, S11"
+    profile_key: Q1-PILOT-0.2
+    decision: PILOT_OUTSIDE_GATE
+    decision_sources: [SRC:Q1-PILOT, SRC:Q1-EVIDENCE]
+    scope_ru: "изолированный C1: выпуски и исходы, воспроизведение, сравнение наборов; паспорт PILOT_OUTSIDE_SC11_GATE"
+    not_established_ru:
+      - "приёмка пилота (PR #6) и чтения ответа оператором"
+      - "C2: перенос на новые дни"
+      - "живой журнал выпусков: все выпуски — SIMULATED_ISSUE исторического воспроизведения"
+    line: {branch: q1-pilot-c1, commit: e9b5bc68cbfe11cc529f11502876cfd748bdba57, pull_request: 6, merged_into_main: false}
+    human_acceptance: PENDING
+    human_acceptance_sources: [SRC:Q1-READING-CHECK]
+    in_trace_scope: true
+
+# the API route whose response carries what each fact form words (fact forms are not listed in ApiSurface.estimands)
+fact_surfaces:
+  - {fact_form: FF:TODAY-Z, surfaces: [API:/api/d24/family]}
+  - {fact_form: FF:HISTORY-CLOCK, surfaces: [API:/api/d24/family]}
+  - {fact_form: FF:TODAY-PREFIX, surfaces: [API:/api/d24/day]}
+  - {fact_form: FF:TODAY-LEVEL, surfaces: [API:/api/d24/day]}
+  - {fact_form: FF:SHARE-STEP, surfaces: [API:/api/d24/family]}
+  - {fact_form: FF:PASSPORT-VIEW, surfaces: [API:/api/d24/family]}
+  - {fact_form: FF:MEMBER, surfaces: [API:/api/d24/family]}
+  - {fact_form: FF:SESSION, surfaces: [API:/api/d24/day]}
+  - {fact_form: FF:PHASE-RULE, surfaces: [API:/api/d24/family]}
+  - {fact_form: FF:PRE-STATE, surfaces: [API:/api/d24/pre]}
+  - {fact_form: FF:FEW-SESSIONS, surfaces: [API:/api/d24/family, API:/api/d24/pre, API:/api/d24/arrive]}
+  - {fact_form: FF:K-TARGET, surfaces: [API:/api/d24/arrive]}

@@ -1,0 +1,493 @@
+# Trace catalog · the entries of DR-LAB-SEMANTIC-ARCHITECTURE-0.1 (§§4-7, 11, 12) with the corrections of 0.2, each
+# mapped to the existing objects that realise it (SC-1.1 registry ids, trace catalog ids, schema classes), the code that
+# implements it (file::function) and the checks that test it. lab/semtrace.py resolves every reference at every run (a
+# reference that does not resolve is a violation, not a gap) and computes the status of each entry from the checks it
+# names; nothing here asserts a status. What an entry does not cover is named by its boundaries (20-boundaries.yaml).
+#
+# Check references: test:<file>[::<function>|#<marker>], runtime:<file>::<name>, page:<file>::<function>,
+# build:<file>[::<function>], schema:<class>, trace:<check id of lab/semtrace.py>, reported:<file> (an engineer's report,
+# not re-run unless a trace check re-runs it), human:<role> (a human act; never counted as machine evidence).
+catalog_part: architecture
+
+entries:
+  # ============================================================================ §4.1 market, clock, frame
+  - id: ENT-01
+    title_ru: наблюдение M1 (ObservationM1)
+    arch_ref: "0.1 §4.1/ENT-01"
+    entry_kind: ENTITY
+    realized_by: [OBS:G3-TAPE, class:ObservationSource]
+    implemented_by: ["lab/build_market.py::load_minutes"]
+    checked_by: ["test:tests/smoke.py"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+    boundaries: [GAP-09]
+    note: "порядок high/low внутри минуты не восстанавливается; качество самой ленты G3 здесь не переаудировано"
+  - id: ENT-02
+    title_ru: закрытая M5 — атом измерения (ObservationM5)
+    arch_ref: "0.1 §4.1/ENT-02"
+    entry_kind: ENTITY
+    realized_by: [TF:ET-M5-1, class:ObservationRecordForm, SRC:OPERATOR-ATOM-2026-10-01]
+    implemented_by: ["lab/build_market.py::m5", "lab/build_boxes.py::build", "lab/scene24.py::_rows", "lab/scene24.py::_missing"]
+    checked_by: ["test:tests/sem24.py", "test:tests/contract_sc11.py::k12", "runtime:lab/contract.py::attach_day", "trace:GATE-CONFORMANT"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+  - id: ENT-03
+    title_ru: торговая сессия (TradingSession)
+    arch_ref: "0.1 §4.1/ENT-03"
+    entry_kind: ENTITY
+    realized_by: [RULE:DRIDR-24-1, class:StrategySessionRecord, class:SessionBlock]
+    implemented_by: ["lab/build_market.py::instances", "lab/scene24.py::_sid", "lab/scene21.py::_boxes"]
+    checked_by: ["test:tests/contract_sc11.py::k05", "test:tests/smoke.py", "trace:GATE-CONFORMANT"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+    boundaries: [BND-01]
+    correction_0_2_ru: "соответствие TradingSession → StrategySessionRecord ограничено: машинная запись требует коробку и активацию и не покрывает формирующуюся или неподтверждённую сессию"
+  - id: ENT-04
+    title_ru: коробка DR / IDR
+    arch_ref: "0.1 §4.1/ENT-04"
+    entry_kind: ENTITY
+    realized_by: [RULE:DRIDR-24-1, class:StrategySessionRecord]
+    implemented_by: ["lab/build_boxes.py::build", "lab/contract.py::derive_base"]
+    checked_by: ["test:tests/sem24.py", "runtime:lab/contract.py::verify_snapshot", "trace:GATE-CONFORMANT"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+  - id: ENT-05
+    title_ru: подтверждение (Confirmation)
+    arch_ref: "0.1 §4.1/ENT-05"
+    entry_kind: ENTITY
+    realized_by: [RULE:DRIDR-24-1, class:ActivationEvent]
+    implemented_by: ["lab/scene24.py::window_of", "lab/scene21.py::_state", "lab/contract.py::ref_window"]
+    checked_by: ["test:tests/contract_sc11.py::k01", "test:tests/contract_sc11.py::k02", "test:tests/sem24.py", "trace:GATE-CONFORMANT"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+  - id: ENT-06
+    title_ru: слом DR (DRBreak)
+    arch_ref: "0.1 §4.1/ENT-06"
+    entry_kind: ENTITY
+    realized_by: [RULE:DRIDR-24-1, CS:F-BREAK-1, OUT:DR-OUTCOME-1]
+    implemented_by: ["lab/scene21.py::_state", "lab/contract.py::ref_dr_outcome"]
+    checked_by: ["test:tests/contract_sc11.py::k14", "test:tests/contract_sc11.py::k26", "test:tests/sem24.py"]
+    profiles: [BASE-24, NOW-1.0]
+    decision: ACCEPTED
+  - id: ENT-07
+    title_ru: измерительная рамка u = d (p − e) / w
+    arch_ref: "0.1 §4.1/ENT-07"
+    entry_kind: ENTITY
+    realized_by: [MF:CONFIRMATION-1, MF:BREAK-1, GRID:K10-J15-1, class:MeasurementFrameRecord]
+    implemented_by: ["lab/scene24.py::directed", "lab/contract.py::ref_directed", "lab/q1/engine.py::BaseProvider.frame"]
+    checked_by: ["test:tests/contract_sc11.py::k06", "test:tests/contract_sc11.py::k07", "test:tests/q1_pilot.py", "trace:GATE-CONFORMANT"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+  - id: ENT-08
+    title_ru: часы и срез (Clock / Cut)
+    arch_ref: "0.1 §4.1/ENT-08"
+    entry_kind: ENTITY
+    realized_by: [TF:ET-M5-1, CUT:LAST-CLOSED-M5-1, CUT:NOW-COMMON-CLOCK-1, class:KnowledgeCut]
+    implemented_by: ["lab/scene24.py::_family", "lab/now24.py::payload", "lab/q1/engine.py::Table.target_state"]
+    checked_by: ["test:tests/contract_sc11.py::k04", "test:tests/contract_sc11.py::k10", "trace:FUTURE-TARGET"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+  - id: ENT-09
+    title_ru: известный префикс (ObservedPrefix)
+    arch_ref: "0.1 §4.1/ENT-09"
+    entry_kind: ENTITY
+    realized_by: [CUT:NOW-COMMON-CLOCK-1, class:PrefixState]
+    implemented_by: ["lab/now24.py::series", "lab/now24.py::today_path", "lab/q1/engine.py::Table.target_state", "lab/contract.py::ref_prefix"]
+    checked_by: ["test:tests/contract_sc11.py::k08", "test:tests/now24.py", "test:tests/arrive24.py::test_boundary", "trace:FUTURE-TARGET"]
+    profiles: [NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+  - id: ENT-10
+    title_ru: состояние на срезе (CurrentState)
+    arch_ref: "0.1 §4.1/ENT-10"
+    entry_kind: ENTITY
+    realized_by: [class:PrefixState, class:ReachabilityAssessment, class:HistoryClockAssessment, FF:TODAY-PREFIX, FF:K-TARGET]
+    implemented_by: ["lab/scene24.py::_today_zones", "lab/now24.py::payload", "lab/arrive24.py::_arrive", "lab/contract.py::verify_today_zones"]
+    checked_by: ["test:tests/contract_sc11.py::k24", "test:tests/contract_sc11.py::k25", "test:tests/arrive24.py::test_statuses", "trace:FUTURE-TARGET"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24]
+    decision: ACCEPTED
+
+  # ============================================================================ §4.2 history, questions, computation
+  - id: ENT-11
+    title_ru: базовая семья F (BASEFamily)
+    arch_ref: "0.1 §4.2/ENT-11"
+    entry_kind: ENTITY
+    realized_by: [CS:F-CONF-1, CS:F-CONF-ALL-1, CS:F-BREAK-1, CS:F-BREAK-ALL-1, class:CaseSetSnapshot]
+    implemented_by: ["lab/scene24.py::_snapshot", "lab/contract.py::ref_family"]
+    checked_by: ["runtime:lab/contract.py::verify_snapshot", "test:tests/contract_sc11.py::k09", "test:tests/contract_sc11.py::k11", "trace:IDENTITY", "trace:FUTURE-MEMBERS"]
+    profiles: [BASE-24]
+    decision: ACCEPTED
+    correction_0_2_ru: "правило включения (CaseSetSpecification) и фактический состав (CaseSetSnapshot) — разные объекты"
+  - id: ENT-12
+    title_ru: исторический путь (HistoryPath)
+    arch_ref: "0.1 §4.2/ENT-12"
+    entry_kind: ENTITY
+    realized_by: [OBS:G3-TAPE, class:CaseSetSnapshot]
+    implemented_by: ["lab/scene24.py::_snapshot", "lab/q1/engine.py::BaseProvider.bars"]
+    checked_by: ["runtime:lab/contract.py::verify_snapshot", "test:tests/sem24.py", "trace:GATE-CONFORMANT"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+  - id: ENT-13
+    title_ru: окончательные R / X (ProjectionR/X)
+    arch_ref: "0.1 §4.2/ENT-13"
+    entry_kind: ENTITY
+    realized_by: [OUT:FINAL-R-1, OUT:FINAL-X-1, EST:B-RX-JOINT-R, EST:B-RX-JOINT-X]
+    implemented_by: ["lab/scene24.py::measure", "lab/contract.py::ref_final_extreme"]
+    checked_by: ["test:tests/contract_sc11.py::k03", "test:tests/contract_sc11.py::k04", "test:tests/contract_sc11.py::k31", "trace:GATE-CONFORMANT"]
+    profiles: [BASE-24]
+    decision: ACCEPTED
+    correction_0_2_ru: "определение измеряемого свойства (OutcomeSpecification) и результат измерения одного случая — разные объекты"
+  - id: ENT-14
+    title_ru: карта зон (ZoneMap)
+    arch_ref: "0.1 §4.2/ENT-14"
+    entry_kind: ENTITY
+    realized_by: [ALG:ZONE-MAP-3, REG:ZONE-MASK-1, OUT:ZONE-MEMBERSHIP-1, EST:B-ZONE-R, EST:B-ZONE-X, class:DensityRegion]
+    implemented_by: ["lab/zonemap24.py::evaluate", "lab/contract.py::ref_zone_map"]
+    checked_by: ["runtime:lab/contract.py::verify_zones", "test:tests/contract_sc11.py::k30", "test:tests/sem24.py", "trace:IDENTITY"]
+    profiles: [BASE-24]
+    decision: ACCEPTED
+  - id: ENT-15
+    title_ru: набор NOW (NOWCaseSet)
+    arch_ref: "0.1 §4.2/ENT-15"
+    entry_kind: ENTITY
+    realized_by: [CS:NOW-ELIGIBLE-1, CS:NOW-MATCH-M1-1, CS:NOW-MATCH-M2-1, CS:NOW-MATCH-M3-1, CMP:B0-1]
+    implemented_by: ["lab/now24.py::series", "lab/now24.py::masks", "lab/contract.py::ref_now_sets"]
+    checked_by: ["test:tests/now24.py", "test:tests/contract_sc11.py::k27", "trace:FUTURE-MEMBERS"]
+    profiles: [NOW-1.0]
+    decision: ACCEPTED
+  - id: ENT-16
+    title_ru: вопрос (Question) — определение, запрос, цель, оцениваемая величина
+    arch_ref: "0.1 §4.2/ENT-16; 0.2 §2"
+    entry_kind: ENTITY
+    realized_by: [class:TraderQuestionSpecification, class:QuestionRequest, class:EstimandSpecification, Q:B-ZONE, Q:N-NEW, Q:K-ARRIVE]
+    implemented_by: ["lab/contract.py::Envelope"]
+    checked_by: ["trace:ESTIMAND-CHAIN", "test:tests/contract_sc11.py::test_registry_structure"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24]
+    decision: ACCEPTED
+    correction_0_2_ru: "одна групповая сущность раскрыта в четыре: определение вопроса → конкретный запрос → цель → оцениваемая величина; вопрос не зависит от автора и времени запроса"
+  - id: ENT-17
+    title_ru: цель Q1 (Target)
+    arch_ref: "0.1 §4.2/ENT-17; 0.2 §2, §4"
+    entry_kind: ENTITY
+    realized_by: [class:Q1TargetIdentity, SRC:Q1-STORE]
+    implemented_by: ["lab/q1/store.py::target_id", "lab/q1/engine.py::Table.target_record"]
+    checked_by: ["trace:Q1-STORE", "test:tests/q1_pilot.py"]
+    profiles: [Q1-PILOT-0.2]
+    decision: PILOT_OUTSIDE_GATE
+    correction_0_2_ru: "цель Q1 сохраняется при смене среза, пока сохраняются сессия, вопрос, рамка, L и H — это свойство именно этого вопроса; на NOW не переносится"
+  - id: ENT-18
+    title_ru: правило сопоставления и способ оценки (Estimator / Matcher)
+    arch_ref: "0.1 §4.2/ENT-18; 0.2 §2"
+    entry_kind: ENTITY
+    realized_by: [CMP:B0-1, CMP:M1-1, CMP:K-POS-1, ESTR:NOW-POINT-BOUNDS-1, ESTR:K-POINT-BOUNDS-1]
+    implemented_by: ["lab/now24.py::_near", "lab/q1/engine.py::Table.select", "lab/contract.py::ref_matchers"]
+    checked_by: ["test:tests/now24.py", "test:tests/arrive24.py::test_identity", "reported:studies/q1_pilot_2026_10_12/README.md"]
+    profiles: [NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+    correction_0_2_ru: "правило сопоставления состояний (StateComparisonSpecification) отделено от способа получения оценки (EstimatorSpecification)"
+  - id: ENT-19
+    title_ru: родитель Q1 (Q1Parent)
+    arch_ref: "0.1 §4.2/ENT-19"
+    entry_kind: ENTITY
+    realized_by: [CS:F-CONF-1, CS:F-CONF-ALL-1]
+    implemented_by: ["lab/q1/engine.py::Table.parent", "lab/arrive24.py::family_table"]
+    checked_by: ["test:tests/arrive24.py::test_identity", "trace:Q1-ISSUE-MATCH"]
+    profiles: [ARRIVE-24, Q1-PILOT-0.2]
+    decision: PROPOSED_FOR_ACCEPTANCE
+    boundaries: [GAP-01]
+  - id: ENT-20
+    title_ru: набор сопоставимых Q1 (Q1MatchSet)
+    arch_ref: "0.1 §4.2/ENT-20"
+    entry_kind: ENTITY
+    realized_by: [CS:K-ARRIVE-1, CS:K-ARRIVE-ALL-1, CMP:K-POS-1]
+    implemented_by: ["lab/q1/engine.py::Table.select", "lab/q1/engine.py::Table.reasons", "lab/contract.py::ref_arrive"]
+    checked_by: ["runtime:lab/contract.py::verify_arrive", "test:tests/arrive24.py::test_identity", "trace:FUTURE-MEMBERS", "trace:BUNDLE-COUNTS"]
+    profiles: [ARRIVE-24, Q1-PILOT-0.2]
+    decision: PROPOSED_FOR_ACCEPTANCE
+  - id: ENT-21
+    title_ru: метка исхода YES / NO / UNKNOWN (OutcomeLabel)
+    arch_ref: "0.1 §4.2/ENT-21; 0.2 §2"
+    entry_kind: ENTITY
+    realized_by: [OUT:REACH-REST-1, OUT:NEW-R-1, enum:BinaryKnowledge]
+    implemented_by: ["lab/contract.py::ref_reach", "lab/contract.py::ref_residual", "lab/q1/engine.py::Table.scalar_classify"]
+    checked_by: ["test:tests/contract_sc11.py::k13", "test:tests/contract_sc11.py::k23", "test:tests/q1_pilot.py", "trace:BUNDLE-COUNTS"]
+    profiles: [NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+    correction_0_2_ru: "определение события (OutcomeSpecification) и результат одного случая разделены; метка вычисляется из пути отдельной ветвью от отбора"
+  - id: ENT-22
+    title_ru: опора (Support)
+    arch_ref: "0.1 §4.2/ENT-22; 0.2 §2"
+    entry_kind: ENTITY
+    realized_by: [class:SupportRecord, class:ComponentSupport]
+    implemented_by: ["lab/contract.py::Envelope"]
+    checked_by: ["trace:BUNDLE-COUNTS", "test:tests/contract_sc11.py::test_live_envelopes"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24]
+    decision: ACCEPTED
+    correction_0_2_ru: "оценка и опора — параллельные результаты общего расчёта; одна не причина другой"
+  - id: ENT-23
+    title_ru: оценка (Estimate)
+    arch_ref: "0.1 §4.2/ENT-23; 0.2 §2"
+    entry_kind: ENTITY
+    realized_by: [class:Estimate, class:DerivationRecord, class:StatisticalResultBundle]
+    implemented_by: ["lab/contract.py::Envelope"]
+    checked_by: ["trace:BUNDLE-COUNTS", "trace:GATE-CONFORMANT", "test:tests/contract_sc11.py::k16"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24]
+    decision: ACCEPTED
+  - id: ENT-24
+    title_ru: допустимое утверждение (Claim)
+    arch_ref: "0.1 §4.2/ENT-24"
+    entry_kind: ENTITY
+    realized_by: [class:ClaimForm, class:Claim, CF:B-ZONE-R, CF:N-NEW-R, CF:K-ARRIVE]
+    implemented_by: ["lab/contract.py::admissible_claims", "lab/contract.py::claim_form_of"]
+    checked_by: ["trace:CLAIM-PROFILE", "trace:BUNDLE-CLAIM", "test:tests/contract_sc11.py::k28", "test:tests/contract_sc11.py::k33"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24]
+    decision: ACCEPTED
+  - id: ENT-25
+    title_ru: выпуск (Issue)
+    arch_ref: "0.1 §4.2/ENT-25; 0.2 §1, §2"
+    entry_kind: ENTITY
+    realized_by: [class:Q1IssueIdentity, SRC:Q1-STORE]
+    implemented_by: ["lab/q1/store.py::Store.put_issue", "lab/q1/engine.py::issue", "lab/q1/store.py::issue_id"]
+    checked_by: ["trace:Q1-STORE", "test:tests/q1_pilot.py"]
+    profiles: [Q1-PILOT-0.2]
+    decision: PILOT_OUTSIDE_GATE
+    boundaries: [BND-07]
+    correction_0_2_ru: "расчёт ответа, показ ответа и сохранение выпуска — три операции; журнал выпусков не является журналом всех рассчитанных или показанных ответов"
+  - id: ENT-26
+    title_ru: последующий исход и его ревизии (ObservedOutcome)
+    arch_ref: "0.1 §4.2/ENT-26; 0.2 §4"
+    entry_kind: ENTITY
+    realized_by: [class:Q1OutcomeLink, SRC:Q1-STORE]
+    implemented_by: ["lab/q1/store.py::Store.put_outcome", "lab/q1/engine.py::attach_outcome", "lab/q1/engine.py::Table.outcome_payload"]
+    checked_by: ["trace:Q1-STORE", "test:tests/q1_pilot.py"]
+    profiles: [Q1-PILOT-0.2]
+    decision: PILOT_OUTSIDE_GATE
+  - id: ENT-27
+    title_ru: свидетельство и проверка (Evidence / Validation)
+    arch_ref: "0.1 §4.2/ENT-27; 0.2 §4"
+    entry_kind: ENTITY
+    realized_by: [class:ValidationRecord, class:ContractObligation, class:ArchitectureCheckEvidence, VAL:NOW-1.0-WALKFORWARD, VAL:SC-1.1-CONFORMANCE]
+    implemented_by: ["lab/contract.py::Envelope"]
+    checked_by: ["trace:CHECK-REFS", "test:tests/contract_sc11.py::test_enforcement_map"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+    correction_0_2_ru: "произвольная запись Validation не даёт допуска; у каждого свидетельства — версия артефакта, происхождение и источник"
+
+  # ============================================================================ §4.3 presentation, governance
+  - id: ENT-28
+    title_ru: привязка представления (PresentationBinding)
+    arch_ref: "0.1 §4.3/ENT-28; 0.2 §2, §4"
+    entry_kind: ENTITY
+    realized_by: [class:StatisticalPresentationBinding, class:FactPresentationBinding, class:AbsencePresentationBinding, SRC:SWPC-1.1]
+    implemented_by: ["design/sozvezdiya-24/src/app.js::bindPassport", "design/sozvezdiya-24/src/app.js::nowBundle", "design/sozvezdiya-24/src/app.js::arriveBundle", "design/sozvezdiya-24/src/panel.js::link"]
+    checked_by: ["trace:BINDING-COVERAGE", "test:tests/swpc11.py", "trace:SCREEN"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24]
+    decision: IMPLEMENTATION_TARGET
+    correction_0_2_ru: "правило представления и конкретное состояние представления — разные объекты; привязки статистики, факта и отсутствия ответа — раздельные типы"
+  - id: ENT-29
+    title_ru: состояние экрана (ScreenState)
+    arch_ref: "0.1 §4.3/ENT-29"
+    entry_kind: ENTITY
+    realized_by: [class:ScreenStateRecord, class:ScreenElementRecord]
+    implemented_by: ["design/sozvezdiya-24/src/app.js::pp", "design/sozvezdiya-24/src/app.js::verifyNow"]
+    checked_by: ["trace:SCREEN", "test:tests/ui_check24.js"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24]
+    decision: IMPLEMENTATION_TARGET
+    boundaries: [BND-05]
+  - id: ENT-30
+    title_ru: прочтение трейдером (OperatorReading)
+    arch_ref: "0.1 §4.3/ENT-30"
+    entry_kind: ENTITY
+    realized_by: [SRC:SWPC-H-PROTOCOL, SRC:Q1-READING-CHECK]
+    checked_by: ["human:operator"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: OPEN
+    boundaries: [GAP-10]
+  - id: ENT-31
+    title_ru: решение оператора (OperatorDecision)
+    arch_ref: "0.1 §4.3/ENT-31"
+    entry_kind: ENTITY
+    realized_by: [class:AcceptanceRecord, class:ProfileStanding, SRC:DECISIONS, SRC:M07]
+    checked_by: ["trace:STANDING", "human:operator"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
+    decision: ACCEPTED
+    boundaries: [GAP-01, GAP-02, GAP-03]
+  - id: ENT-32
+    title_ru: реестр контракта и шлюз (ContractRegistry / Gate)
+    arch_ref: "0.1 §4.3/ENT-32"
+    entry_kind: ENTITY
+    realized_by: [DR-LAB-SC-1.1, OB:SOURCE-OF-TRUTH, OB:CLAIM-ADMISSION, class:ContractEnvelope]
+    implemented_by: ["lab/contract.py::finalize", "lab/contract.py::attach_family", "lab/contract.py::attach_now", "lab/contract.py::attach_arrive"]
+    checked_by: ["test:tests/contract_sc11.py::test_stale_fails_closed", "trace:GATE-CONFORMANT"]
+    profiles: [BASE-24, NOW-1.0, ARRIVE-24]
+    decision: ACCEPTED
+    correction_0_2_ru: "0.1 считал Q1 вне шлюза; в PR #7 есть кандидат attach_arrive (не принят)"
+
+  # ============================================================================ §5.1 relations
+  - {id: R01, title_ru: "M1 → M5", arch_ref: "0.1 §5.1/R01", entry_kind: RELATION, realized_by: [TF:ET-M5-1], implemented_by: ["lab/build_market.py::m5", "lab/build_boxes.py::build"], checked_by: ["test:tests/smoke.py"], decision: ACCEPTED, boundaries: [GAP-09]}
+  - {id: R02, title_ru: "M5 → сессия", arch_ref: "0.1 §5.1/R02", entry_kind: RELATION, realized_by: [RULE:DRIDR-24-1, TF:ET-M5-1], implemented_by: ["lab/build_market.py::instances", "lab/scene24.py::_rows"], checked_by: ["test:tests/contract_sc11.py::k05", "test:tests/sem24.py"], decision: ACCEPTED}
+  - {id: R03, title_ru: "сессия → коробка DR / IDR", arch_ref: "0.1 §5.1/R03", entry_kind: RELATION, realized_by: [RULE:DRIDR-24-1], implemented_by: ["lab/contract.py::derive_base"], checked_by: ["runtime:lab/contract.py::verify_snapshot", "trace:GATE-CONFORMANT"], decision: ACCEPTED}
+  - {id: R04, title_ru: "коробка + M5 после неё → подтверждение / слом", arch_ref: "0.1 §5.1/R04", entry_kind: RELATION, realized_by: [RULE:DRIDR-24-1, class:ActivationEvent], implemented_by: ["lab/scene21.py::_state", "lab/contract.py::today_state"], checked_by: ["test:tests/contract_sc11.py::k02", "trace:GATE-CONFORMANT"], decision: ACCEPTED}
+  - {id: R05, title_ru: "подтверждение → рамка (d, e, w своей сессии)", arch_ref: "0.1 §5.1/R05", entry_kind: RELATION, realized_by: [MF:CONFIRMATION-1, MF:BREAK-1], implemented_by: ["lab/scene24.py::directed"], checked_by: ["test:tests/contract_sc11.py::k06"], decision: ACCEPTED}
+  - {id: R06, title_ru: "подтверждение + ключ → семья F (один N)", arch_ref: "0.1 §5.1/R06", entry_kind: RELATION, realized_by: [CS:F-CONF-1, CS:F-BREAK-1], implemented_by: ["lab/scene24.py::_snapshot"], checked_by: ["runtime:lab/contract.py::verify_snapshot", "test:tests/contract_sc11.py::k26", "trace:IDENTITY"], decision: ACCEPTED}
+  - {id: R07, title_ru: "сессия + срез → префикс / состояние", arch_ref: "0.1 §5.1/R07", entry_kind: RELATION, realized_by: [CUT:LAST-CLOSED-M5-1, CUT:NOW-COMMON-CLOCK-1, class:PrefixState], implemented_by: ["lab/now24.py::today_path", "lab/contract.py::ref_prefix"], checked_by: ["test:tests/contract_sc11.py::k08", "trace:FUTURE-TARGET"], decision: ACCEPTED}
+  - {id: R08, title_ru: "вопрос + цель + рамка + срез → предикат события", arch_ref: "0.1 §5.1/R08", entry_kind: RELATION, realized_by: [class:EstimandSpecification, OUT:REACH-REST-1, OUT:NEW-R-1], checked_by: ["trace:ESTIMAND-CHAIN"], decision: ACCEPTED}
+  - id: R09
+    title_ru: "допустимый префикс → отбор набора (метка не выбирает)"
+    arch_ref: "0.1 §5.1/R09; 0.2 §3"
+    entry_kind: RELATION
+    realized_by: [CS:NOW-ELIGIBLE-1, CS:K-ARRIVE-1, CS:K-ARRIVE-ALL-1]
+    implemented_by: ["lab/now24.py::series", "lab/q1/engine.py::Table.select"]
+    checked_by: ["test:tests/contract_sc11.py::k09", "trace:FUTURE-MEMBERS"]
+    decision: ACCEPTED
+    correction_0_2_ru: "членство определяется только допустимыми входами отбора; ветвь отбора и ветвь измерения исходов разделены"
+  - id: R10
+    title_ru: "путь + предикат → метка исхода"
+    arch_ref: "0.1 §5.1/R10; 0.2 §3"
+    entry_kind: RELATION
+    realized_by: [OUT:REACH-REST-1, OUT:NEW-R-1, OUT:FINAL-R-1]
+    implemented_by: ["lab/contract.py::ref_reach", "lab/contract.py::ref_residual", "lab/contract.py::ref_final_extreme"]
+    checked_by: ["test:tests/contract_sc11.py::k13", "test:tests/contract_sc11.py::k23", "trace:BUNDLE-COUNTS"]
+    decision: ACCEPTED
+  - id: R11
+    title_ru: "набор + метки + правило неизвестного → оценка и опора (параллельно)"
+    arch_ref: "0.1 §5.1/R11; 0.2 §3"
+    entry_kind: RELATION
+    realized_by: [class:DerivationRecord, class:Estimate, class:SupportRecord]
+    implemented_by: ["lab/contract.py::est_binary_bounds", "lab/contract.py::est_count_over_n"]
+    checked_by: ["trace:BUNDLE-COUNTS", "test:tests/contract_sc11.py::k16"]
+    decision: ACCEPTED
+    correction_0_2_ru: "оценка и опора — результаты общего расчёта; одна не является причиной другой"
+  - id: R12
+    title_ru: "оценка + форма утверждения + профиль → допуск"
+    arch_ref: "0.1 §5.1/R12; 0.2 §3"
+    entry_kind: RELATION
+    realized_by: [class:ClaimForm, OB:CLAIM-ADMISSION]
+    implemented_by: ["lab/contract.py::admissible_claims", "lab/contract.py::Envelope"]
+    checked_by: ["trace:CLAIM-PROFILE", "trace:BUNDLE-CLAIM", "test:tests/contract_sc11.py::k32"]
+    decision: ACCEPTED
+    correction_0_2_ru: "допуск учитывает величину, набор, профиль и форму высказывания; произвольная Validation допуска не даёт"
+  - {id: R13, title_ru: "утверждение + привязка → элемент экрана", arch_ref: "0.1 §5.1/R13", entry_kind: RELATION, realized_by: [class:StatisticalPresentationBinding, SRC:SWPC-1.1], implemented_by: ["design/sozvezdiya-24/src/app.js::lbl", "design/sozvezdiya-24/src/app.js::arriveBundle", "design/sozvezdiya-24/src/app.js::nowBundle"], checked_by: ["trace:SCREEN", "test:tests/ui_check24.js"], decision: IMPLEMENTATION_TARGET}
+  - {id: R14, title_ru: "элемент экрана + H-задача → свидетельство прочтения", arch_ref: "0.1 §5.1/R14", entry_kind: RELATION, realized_by: [SRC:SWPC-H-PROTOCOL], checked_by: ["human:operator"], decision: OPEN, boundaries: [GAP-10]}
+  - {id: R15, title_ru: "выпуск + последующий исход → связь (выпуск не меняется)", arch_ref: "0.1 §5.1/R15", entry_kind: RELATION, realized_by: [class:Q1OutcomeLink], implemented_by: ["lab/q1/store.py::Store.put_outcome", "lab/q1/store.py::Store.verify"], checked_by: ["trace:Q1-STORE", "test:tests/q1_pilot.py"], decision: PILOT_OUTSIDE_GATE}
+  - {id: R16, title_ru: "результат проверки → новая модель / решение (не задним числом)", arch_ref: "0.1 §5.1/R16", entry_kind: RELATION, realized_by: [class:ValidationRecord, class:AcceptanceRecord], checked_by: ["human:operator"], decision: OPEN, boundaries: [GAP-07]}
+
+  # ============================================================================ §6 invariants
+  - {id: INV-01, title_ru: "измерительная шкала u = d (p − e) / w, целые тики", arch_ref: "0.1 §6/INV-01", entry_kind: INVARIANT, realized_by: [MF:CONFIRMATION-1, GRID:K10-J15-1], implemented_by: ["lab/scene24.py::directed", "lab/scene24.py::cell"], checked_by: ["test:tests/contract_sc11.py::k06", "test:tests/contract_sc11.py::k07"], decision: ACCEPTED}
+  - {id: INV-02, title_ru: "часы ET, метка M5 = открытие, знание = закрытие", arch_ref: "0.1 §6/INV-02", entry_kind: INVARIANT, realized_by: [TF:ET-M5-1, RULE:DRIDR-24-1], checked_by: ["test:tests/contract_sc11.py::k01", "test:tests/contract_sc11.py::k05", "test:tests/contract_sc11.py::k10"], decision: ACCEPTED}
+  - id: INV-03
+    title_ru: "асимметрия знания: будущее цели не вход; будущее аналога — метка, не отбор"
+    arch_ref: "0.1 §6/INV-03"
+    entry_kind: INVARIANT
+    realized_by: [CUT:NOW-COMMON-CLOCK-1, CS:NOW-ELIGIBLE-1, CS:K-ARRIVE-ALL-1]
+    implemented_by: ["lab/now24.py::today_path", "lab/q1/engine.py::Table.target_state"]
+    checked_by: ["trace:FUTURE-TARGET", "trace:FUTURE-MEMBERS", "test:tests/contract_sc11.py::k08", "test:tests/contract_sc11.py::k09", "test:tests/arrive24.py::test_boundary"]
+    decision: ACCEPTED
+  - {id: INV-04, title_ru: "разные вопросы — разные величины", arch_ref: "0.1 §6/INV-04", entry_kind: INVARIANT, realized_by: [OUT:FINAL-R-1, OUT:REACH-REST-1, OUT:NEW-R-1], checked_by: ["trace:ESTIMAND-CHAIN", "test:tests/contract_sc11.py::k31"], decision: ACCEPTED}
+  - {id: INV-05, title_ru: "честный знаменатель: N семьи, n набора, n_known отдельно", arch_ref: "0.1 §6/INV-05", entry_kind: INVARIANT, realized_by: [class:SupportRecord, EST:B-ZONE-R, EST:N-NEW-R, EST:K-ARRIVE], checked_by: ["trace:BUNDLE-COUNTS", "test:tests/contract_sc11.py::k16", "test:tests/contract_sc11.py::k27"], decision: ACCEPTED}
+  - {id: INV-06, title_ru: "бинарный Q1: YES / NO / UNKNOWN на (t, H]", arch_ref: "0.1 §6/INV-06", entry_kind: INVARIANT, realized_by: [OUT:REACH-REST-1, EST:K-ARRIVE], implemented_by: ["lab/q1/engine.py::Table.select", "lab/contract.py::ref_reach"], checked_by: ["test:tests/q1_pilot.py", "runtime:lab/contract.py::verify_arrive", "trace:BUNDLE-COUNTS"], decision: PROPOSED_FOR_ACCEPTANCE}
+  - {id: INV-07, title_ru: "точная близость Q1: 4 |v_h w_t − v_t w_h| ≤ w_h w_t", arch_ref: "0.1 §6/INV-07", entry_kind: INVARIANT, realized_by: [CMP:K-POS-1], implemented_by: ["lab/now24.py::_near", "lab/contract.py::_near"], checked_by: ["test:tests/q1_pilot.py", "runtime:lab/contract.py::verify_arrive"], decision: PROPOSED_FOR_ACCEPTANCE}
+  - {id: INV-08, title_ru: "неизвестность и публикация Q1: n < 20 — без числа, точка среди известных, границы всей группы", arch_ref: "0.1 §6/INV-08", entry_kind: INVARIANT, realized_by: [ESTR:K-POINT-BOUNDS-1, FF:FEW-SESSIONS, CF:K-ARRIVE], implemented_by: ["lab/arrive24.py::_arrive", "lab/q1/engine.py::Table.attempt"], checked_by: ["test:tests/arrive24.py::test_statuses", "trace:BUNDLE-COUNTS"], decision: PROPOSED_FOR_ACCEPTANCE}
+  - {id: INV-09, title_ru: "неизменяемость ответа: target_id, issue_id, отдельный исход, ревизии", arch_ref: "0.1 §6/INV-09", entry_kind: INVARIANT, realized_by: [class:Q1IssueIdentity, class:Q1OutcomeLink], implemented_by: ["lab/q1/store.py::Store.verify", "lab/q1/store.py::issue_id"], checked_by: ["trace:Q1-STORE", "test:tests/q1_pilot.py"], decision: PILOT_OUTSIDE_GATE}
+  - {id: INV-10, title_ru: "утверждение о прошлом не становится прогнозом (C1 ≠ C2 ≠ C3)", arch_ref: "0.1 §6/INV-10", entry_kind: INVARIANT, realized_by: [OB:CLAIM-ADMISSION, K33], implemented_by: ["lab/contract.py::admissible_claims"], checked_by: ["trace:CLAIM-PROFILE", "test:tests/contract_sc11.py::k33"], decision: ACCEPTED}
+  - {id: INV-11, title_ru: "графические каналы не меняют величину; при ошибке число скрыто", arch_ref: "0.1 §6/INV-11", entry_kind: INVARIANT, realized_by: [K30, SRC:SWPC-1.1], implemented_by: ["design/sozvezdiya-24/src/app.js::ppHeld"], checked_by: ["test:tests/contract_sc11.py::k30", "test:tests/swpc11_browser.mjs#m14", "trace:SCREEN"], decision: IMPLEMENTATION_TARGET}
+  - {id: INV-12, title_ru: "происхождение каждой версии; 2026 закрыт", arch_ref: "0.1 §6/INV-12", entry_kind: INVARIANT, realized_by: [OB:NAMED-VERSIONS, OB:PROVENANCE, EDST:SC-1.1], implemented_by: ["lab/contract.py::_check_stale"], checked_by: ["test:tests/smoke.py", "test:tests/contract_sc11.py::test_pins_and_products", "trace:EDITION-ADDITIVE", "trace:ACCEPTED-CODE-IDENTITY"], decision: ACCEPTED}
+
+  # ============================================================================ §7 processes
+  - {id: PROC-01, title_ru: "приём истории", arch_ref: "0.1 §7/PROC-01", entry_kind: PROCESS, realized_by: [OBS:G3-TAPE], implemented_by: ["lab/build_market.py::load_minutes"], checked_by: ["test:tests/smoke.py"], decision: ACCEPTED, boundaries: [GAP-09]}
+  - {id: PROC-02, title_ru: "сборка свечей M5", arch_ref: "0.1 §7/PROC-02", entry_kind: PROCESS, realized_by: [TF:ET-M5-1], implemented_by: ["lab/build_boxes.py::build", "lab/build_market.py::m5"], checked_by: ["test:tests/smoke.py", "test:tests/sem24.py"], decision: ACCEPTED}
+  - {id: PROC-03, title_ru: "сегментация ADR / ODR / RDR", arch_ref: "0.1 §7/PROC-03", entry_kind: PROCESS, realized_by: [RULE:DRIDR-24-1], implemented_by: ["lab/build_market.py::instances"], checked_by: ["test:tests/contract_sc11.py::k05"], decision: ACCEPTED}
+  - {id: PROC-04, title_ru: "коробка", arch_ref: "0.1 §7/PROC-04", entry_kind: PROCESS, realized_by: [RULE:DRIDR-24-1], implemented_by: ["lab/build_boxes.py::build", "lab/contract.py::derive_base"], checked_by: ["runtime:lab/contract.py::verify_snapshot", "test:tests/sem24.py"], decision: ACCEPTED}
+  - {id: PROC-05, title_ru: "события правила: подтверждение, окно, слом", arch_ref: "0.1 §7/PROC-05", entry_kind: PROCESS, realized_by: [RULE:DRIDR-24-1], implemented_by: ["lab/scene21.py::_state", "lab/scene24.py::window_of"], checked_by: ["test:tests/contract_sc11.py::k01", "test:tests/contract_sc11.py::k02", "trace:GATE-CONFORMANT"], decision: ACCEPTED}
+  - {id: PROC-06, title_ru: "время знания: префикс и фаза на срезе", arch_ref: "0.1 §7/PROC-06", entry_kind: PROCESS, realized_by: [CUT:LAST-CLOSED-M5-1, CUT:NOW-COMMON-CLOCK-1], implemented_by: ["lab/scene24.py::_today_zones", "lab/now24.py::today_path"], checked_by: ["trace:FUTURE-TARGET", "test:tests/contract_sc11.py::k08"], decision: ACCEPTED}
+  - {id: PROC-07, title_ru: "статическая семья F / N", arch_ref: "0.1 §7/PROC-07", entry_kind: PROCESS, realized_by: [CS:F-CONF-1, CS:F-CONF-ALL-1], implemented_by: ["lab/scene24.py::_snapshot"], checked_by: ["runtime:lab/contract.py::verify_snapshot", "trace:FUTURE-MEMBERS", "trace:IDENTITY"], decision: ACCEPTED}
+  - {id: PROC-08, title_ru: "исторический фильм: R / X, порядок, зоны", arch_ref: "0.1 §7/PROC-08", entry_kind: PROCESS, realized_by: [OUT:FINAL-R-1, OUT:FIRST-ORDER-1, ALG:ZONE-MAP-3], implemented_by: ["lab/scene24.py::measure", "lab/zonemap24.py::evaluate"], checked_by: ["runtime:lab/contract.py::verify_snapshot", "runtime:lab/contract.py::verify_zones", "trace:GATE-CONFORMANT"], decision: ACCEPTED}
+  - {id: PROC-09, title_ru: "NOW на общем часу", arch_ref: "0.1 §7/PROC-09", entry_kind: PROCESS, realized_by: [CS:NOW-ELIGIBLE-1, EST:N-NEW-R], implemented_by: ["lab/now24.py::payload", "lab/now24.py::forecast"], checked_by: ["test:tests/now24.py", "runtime:lab/contract.py::attach_now", "trace:FUTURE-TARGET", "trace:FUTURE-MEMBERS"], decision: ACCEPTED}
+  - {id: PROC-10, title_ru: "постановка вопроса Q1: OPEN / решён / неприменим", arch_ref: "0.1 §7/PROC-10", entry_kind: PROCESS, realized_by: [FF:K-TARGET], implemented_by: ["lab/q1/engine.py::Table.target_state", "lab/arrive24.py::today_case"], checked_by: ["test:tests/arrive24.py::test_statuses", "test:tests/q1_pilot.py", "trace:FUTURE-TARGET"], decision: PROPOSED_FOR_ACCEPTANCE}
+  - {id: PROC-11, title_ru: "родитель и сопоставление Q1", arch_ref: "0.1 §7/PROC-11", entry_kind: PROCESS, realized_by: [CS:K-ARRIVE-1, CS:K-ARRIVE-ALL-1, CMP:K-POS-1], implemented_by: ["lab/q1/engine.py::Table.parent", "lab/q1/engine.py::Table.select"], checked_by: ["test:tests/arrive24.py::test_identity", "runtime:lab/contract.py::verify_arrive", "trace:FUTURE-MEMBERS"], decision: PROPOSED_FOR_ACCEPTANCE, boundaries: [GAP-01]}
+  - {id: PROC-12, title_ru: "разрешение исторического исхода (метка аналога)", arch_ref: "0.1 §7/PROC-12", entry_kind: PROCESS, realized_by: [OUT:REACH-REST-1], implemented_by: ["lab/q1/engine.py::Table.select", "lab/q1/engine.py::Table.scalar_classify"], checked_by: ["runtime:lab/contract.py::verify_arrive", "reported:studies/q1_pilot_2026_10_12/README.md", "trace:BUNDLE-COUNTS"], decision: PROPOSED_FOR_ACCEPTANCE}
+  - {id: PROC-13, title_ru: "оценка и публикация Q1", arch_ref: "0.1 §7/PROC-13", entry_kind: PROCESS, realized_by: [EST:K-ARRIVE, CF:K-ARRIVE, ESTR:K-POINT-BOUNDS-1], implemented_by: ["lab/arrive24.py::_arrive", "lab/contract.py::attach_arrive"], checked_by: ["test:tests/arrive24.py::test_gate", "trace:BUNDLE-CLAIM", "trace:BUNDLE-COUNTS"], decision: PROPOSED_FOR_ACCEPTANCE}
+  - {id: PROC-14, title_ru: "контрактный шлюз main", arch_ref: "0.1 §7/PROC-14", entry_kind: PROCESS, realized_by: [OB:CLAIM-ADMISSION, OB:REFERENCE-RECOMPUTATION], implemented_by: ["lab/contract.py::attach_family", "lab/contract.py::attach_now", "lab/contract.py::finalize"], checked_by: ["test:tests/contract_sc11.py::test_live_envelopes", "trace:GATE-CONFORMANT"], decision: ACCEPTED}
+  - id: PROC-15
+    title_ru: "выпуск и ревизии Q1"
+    arch_ref: "0.1 §7/PROC-15; 0.2 §1"
+    entry_kind: PROCESS
+    realized_by: [class:Q1IssueIdentity, class:Q1OutcomeLink]
+    implemented_by: ["lab/q1/engine.py::issue", "lab/q1/engine.py::attach_outcome", "lab/q1/engine.py::reproduce"]
+    checked_by: ["trace:Q1-STORE", "test:tests/q1_pilot.py"]
+    decision: PILOT_OUTSIDE_GATE
+    boundaries: [BND-07]
+    correction_0_2_ru: "сохранение вызывается отдельно от расчёта (lab/q1/web/app.js); выпуск не доказывает показ, показ не доказывает выпуск"
+  - {id: PROC-16, title_ru: "API: ответ или отказ с контекстом и версией", arch_ref: "0.1 §7/PROC-16", entry_kind: PROCESS, realized_by: [API:/api/d24/family, API:/api/d24/now, API:/api/d24/arrive, class:ContractEnvelope], implemented_by: ["lab/contract.py::finalize", "lab/contract.py::header_for"], checked_by: ["test:tests/contract_sc11.py::test_routes_and_encodings", "trace:GATE-CONFORMANT"], decision: ACCEPTED, boundaries: [GAP-08]}
+  - id: PROC-17
+    title_ru: "представление на экране 24"
+    arch_ref: "0.1 §7/PROC-17; 0.2 §1"
+    entry_kind: PROCESS
+    realized_by: [SRC:SWPC-1.1, class:StatisticalPresentationBinding]
+    implemented_by: ["design/sozvezdiya-24/src/panel.js::panelHtml", "design/sozvezdiya-24/src/panel.js::nowHtml", "design/sozvezdiya-24/src/panel.js::arriveHtml"]
+    checked_by: ["test:tests/swpc11.py", "test:tests/ui_check24.js", "reported:spec/ekran-24/swpc-kandidat.json", "trace:SCREEN"]
+    decision: IMPLEMENTATION_TARGET
+    correction_0_2_ru: "реализация SWPC-кандидата существует; машинные M01–M18 опубликованы исполнителем; человеческая приёмка H не проводилась — три разных факта"
+  - {id: PROC-18, title_ru: "прочтение трейдером", arch_ref: "0.1 §7/PROC-18", entry_kind: PROCESS, realized_by: [SRC:SWPC-H-PROTOCOL], checked_by: ["human:operator"], decision: OPEN, boundaries: [GAP-10]}
+  - {id: PROC-19, title_ru: "внешний прогнозный тест (C2)", arch_ref: "0.1 §7/PROC-19", entry_kind: PROCESS, realized_by: [OB:STATISTICAL-TRANSFER], checked_by: ["human:operator"], decision: OPEN, boundaries: [GAP-07]}
+  - {id: PROC-20, title_ru: "эволюция определений и версий", arch_ref: "0.1 §7/PROC-20", entry_kind: PROCESS, realized_by: [OB:NAMED-VERSIONS, OB:SOURCE-OF-TRUTH, EDST:SC-1.1], implemented_by: ["build:contract/tools/build.py::build"], checked_by: ["test:tests/contract_sc11.py::test_pins_and_products", "trace:EDITION-ADDITIVE", "trace:IMPACT"], decision: ACCEPTED}
+
+  # ============================================================================ §11 transitions T01-T19
+  - {id: T01, title_ru: "G3 → M1", arch_ref: "0.1 §11/T01", entry_kind: TRANSITION, realized_by: [OBS:G3-TAPE], implemented_by: ["lab/build_market.py::load_minutes"], checked_by: ["test:tests/smoke.py"], decision: ACCEPTED, boundaries: [GAP-09]}
+  - {id: T02, title_ru: "M1 → M5", arch_ref: "0.1 §11/T02", entry_kind: TRANSITION, realized_by: [TF:ET-M5-1], implemented_by: ["lab/build_boxes.py::build"], checked_by: ["test:tests/sem24.py", "test:tests/smoke.py"], decision: ACCEPTED}
+  - {id: T03, title_ru: "M5 → DR / IDR", arch_ref: "0.1 §11/T03", entry_kind: TRANSITION, realized_by: [RULE:DRIDR-24-1], implemented_by: ["lab/contract.py::derive_base"], checked_by: ["runtime:lab/contract.py::verify_snapshot", "trace:GATE-CONFORMANT"], decision: ACCEPTED}
+  - {id: T04, title_ru: "DR / IDR → подтверждение", arch_ref: "0.1 §11/T04", entry_kind: TRANSITION, realized_by: [RULE:DRIDR-24-1, class:ActivationEvent], implemented_by: ["lab/scene21.py::_state"], checked_by: ["test:tests/contract_sc11.py::k02", "trace:GATE-CONFORMANT"], decision: ACCEPTED}
+  - {id: T05, title_ru: "подтверждение → F / N", arch_ref: "0.1 §11/T05", entry_kind: TRANSITION, realized_by: [CS:F-CONF-1], implemented_by: ["lab/scene24.py::_snapshot"], checked_by: ["runtime:lab/contract.py::verify_snapshot", "trace:FUTURE-MEMBERS", "trace:IDENTITY"], decision: ACCEPTED}
+  - {id: T06, title_ru: "F и пути → R / X / зоны", arch_ref: "0.1 §11/T06", entry_kind: TRANSITION, realized_by: [OUT:FINAL-R-1, ALG:ZONE-MAP-3], implemented_by: ["lab/scene24.py::measure", "lab/zonemap24.py::evaluate"], checked_by: ["runtime:lab/contract.py::verify_zones", "trace:GATE-CONFORMANT"], decision: ACCEPTED}
+  - {id: T07, title_ru: "срез → состояние NOW", arch_ref: "0.1 §11/T07", entry_kind: TRANSITION, realized_by: [CUT:NOW-COMMON-CLOCK-1, class:PrefixState], implemented_by: ["lab/now24.py::today_path"], checked_by: ["trace:FUTURE-TARGET", "test:tests/now24.py"], decision: ACCEPTED}
+  - {id: T08, title_ru: "состояние → отбор NOW", arch_ref: "0.1 §11/T08", entry_kind: TRANSITION, realized_by: [CS:NOW-ELIGIBLE-1, CMP:B0-1], implemented_by: ["lab/now24.py::series"], checked_by: ["runtime:lab/contract.py::attach_now", "trace:FUTURE-MEMBERS"], decision: ACCEPTED}
+  - {id: T09, title_ru: "текущая цель → вопрос Q1", arch_ref: "0.1 §11/T09", entry_kind: TRANSITION, realized_by: [FF:K-TARGET, class:Q1TargetIdentity], implemented_by: ["lab/q1/engine.py::Table.target_state"], checked_by: ["test:tests/arrive24.py::test_statuses", "trace:FUTURE-TARGET"], decision: PROPOSED_FOR_ACCEPTANCE}
+  - {id: T10, title_ru: "родитель Q1 → состав набора", arch_ref: "0.1 §11/T10", entry_kind: TRANSITION, realized_by: [CS:K-ARRIVE-1, CS:K-ARRIVE-ALL-1], implemented_by: ["lab/q1/engine.py::Table.select"], checked_by: ["test:tests/arrive24.py::test_identity", "trace:FUTURE-MEMBERS", "reported:studies/q1_pilot_2026_10_12/README.md"], decision: PROPOSED_FOR_ACCEPTANCE, boundaries: [GAP-01]}
+  - {id: T11, title_ru: "состав → метки", arch_ref: "0.1 §11/T11", entry_kind: TRANSITION, realized_by: [OUT:REACH-REST-1], implemented_by: ["lab/q1/engine.py::Table.select"], checked_by: ["runtime:lab/contract.py::verify_arrive", "trace:BUNDLE-COUNTS"], decision: PROPOSED_FOR_ACCEPTANCE}
+  - {id: T12, title_ru: "метки → неизменяемый выпуск / исход", arch_ref: "0.1 §11/T12", entry_kind: TRANSITION, realized_by: [class:Q1IssueIdentity, class:Q1OutcomeLink], implemented_by: ["lab/q1/store.py::Store.put_issue", "lab/q1/store.py::Store.put_outcome"], checked_by: ["trace:Q1-STORE", "trace:Q1-ISSUE-MATCH"], decision: PILOT_OUTSIDE_GATE, boundaries: [BND-07]}
+  - {id: T13, title_ru: "оценка BASE / NOW → утверждение", arch_ref: "0.1 §11/T13", entry_kind: TRANSITION, realized_by: [OB:CLAIM-ADMISSION, CF:B-ZONE-R, CF:N-NEW-R], implemented_by: ["lab/contract.py::admissible_claims"], checked_by: ["trace:BUNDLE-CLAIM", "test:tests/contract_sc11.py::k28"], decision: ACCEPTED}
+  - id: T14
+    title_ru: "оценка Q1 → утверждение под шлюзом SC-1.1"
+    arch_ref: "0.1 §11/T14; 0.2 §1"
+    entry_kind: TRANSITION
+    realized_by: [EST:K-ARRIVE, CF:K-ARRIVE, API:/api/d24/arrive, STANDING:ARRIVE-24]
+    implemented_by: ["lab/contract.py::attach_arrive", "lab/contract.py::verify_arrive"]
+    checked_by: ["test:tests/contract_sc11.py::test_arrive_profile", "test:tests/arrive24.py::test_gate", "trace:BUNDLE-CLAIM"]
+    decision: PROPOSED_FOR_ACCEPTANCE
+    boundaries: [GAP-06]
+    correction_0_2_ru: "в 0.1 «OPEN»: кандидат интеграции с шлюзом существует в PR #7; принятие поправки контракта — отдельный вопрос"
+  - {id: T15, title_ru: "утверждение → экран 24", arch_ref: "0.1 §11/T15", entry_kind: TRANSITION, realized_by: [class:StatisticalPresentationBinding, SRC:SWPC-1.1], implemented_by: ["design/sozvezdiya-24/src/app.js::bindPassport", "design/sozvezdiya-24/src/app.js::nowBundle"], checked_by: ["trace:SCREEN", "test:tests/ui_check24.js"], decision: IMPLEMENTATION_TARGET, boundaries: [BND-05]}
+  - id: T16
+    title_ru: "Q1 → экран 24"
+    arch_ref: "0.1 §11/T16; 0.2 §1"
+    entry_kind: TRANSITION
+    realized_by: [STANDING:ARRIVE-24, SRC:M18]
+    implemented_by: ["design/sozvezdiya-24/src/panel.js::arriveHtml", "design/sozvezdiya-24/src/app.js::arriveBundle"]
+    checked_by: ["trace:SCREEN", "test:tests/swpc11_browser.mjs#m20"]
+    decision: PROPOSED_FOR_ACCEPTANCE
+    boundaries: [GAP-02]
+    correction_0_2_ru: "в 0.1 «нет реализации»: блок ARRIVE-24 существует в PR #7 (привязка B18); приёмка и D2 открыты"
+  - {id: T17, title_ru: "экран → понимание трейдера", arch_ref: "0.1 §11/T17", entry_kind: TRANSITION, realized_by: [SRC:SWPC-H-PROTOCOL], checked_by: ["human:operator"], decision: OPEN, boundaries: [GAP-10]}
+  - {id: T18, title_ru: "C1 → C2", arch_ref: "0.1 §11/T18", entry_kind: TRANSITION, realized_by: [OB:STATISTICAL-TRANSFER], checked_by: ["test:tests/contract_sc11.py::k28", "human:operator"], decision: OPEN, boundaries: [GAP-07]}
+  - {id: T19, title_ru: "C2 → C3", arch_ref: "0.1 §11/T19", entry_kind: TRANSITION, realized_by: [K32], checked_by: ["test:tests/contract_sc11.py::k32"], decision: OUT_OF_SCOPE}
+
+  # ============================================================================ §12 verifiable statements A01-A20
+  - {id: A01, title_ru: "использована реальная история, а не demo", arch_ref: "0.1 §12/A01", entry_kind: VERIFIABLE_STATEMENT, realized_by: [OBS:G3-TAPE], checked_by: ["test:tests/smoke.py", "trace:GATE-CONFORMANT"], decision: ACCEPTED, boundaries: [GAP-09]}
+  - {id: A02, title_ru: "2026 не вошёл в историческую базу", arch_ref: "0.1 §12/A02", entry_kind: VERIFIABLE_STATEMENT, realized_by: [OBS:G3-TAPE], checked_by: ["test:tests/smoke.py"], decision: ACCEPTED}
+  - {id: A03, title_ru: "DR / IDR по действующей M5-формуле", arch_ref: "0.1 §12/A03", entry_kind: VERIFIABLE_STATEMENT, realized_by: [RULE:DRIDR-24-1], checked_by: ["test:tests/sem24.py", "runtime:lab/contract.py::verify_snapshot"], decision: ACCEPTED}
+  - {id: A04, title_ru: "окно 15m / день / сторона вычислены верно", arch_ref: "0.1 §12/A04", entry_kind: VERIFIABLE_STATEMENT, realized_by: [CS:F-CONF-1], checked_by: ["test:tests/contract_sc11.py::k01", "runtime:lab/contract.py::verify_snapshot"], decision: ACCEPTED}
+  - {id: A05, title_ru: "после слома исходная F не перезаписана", arch_ref: "0.1 §12/A05", entry_kind: VERIFIABLE_STATEMENT, realized_by: [CS:F-BREAK-1], checked_by: ["test:tests/contract_sc11.py::k26"], decision: ACCEPTED}
+  - {id: A06, title_ru: "доля BASE имеет один N", arch_ref: "0.1 §12/A06", entry_kind: VERIFIABLE_STATEMENT, realized_by: [EST:B-ZONE-R], checked_by: ["trace:BUNDLE-COUNTS", "test:tests/ui_check24.js"], decision: ACCEPTED}
+  - {id: A07, title_ru: "NOW не использует будущее цели для отбора", arch_ref: "0.1 §12/A07", entry_kind: VERIFIABLE_STATEMENT, realized_by: [CS:NOW-ELIGIBLE-1], checked_by: ["test:tests/contract_sc11.py::k08", "trace:FUTURE-TARGET"], decision: ACCEPTED}
+  - {id: A08, title_ru: "будущее цели Q1 не влияет на выпуск", arch_ref: "0.1 §12/A08", entry_kind: VERIFIABLE_STATEMENT, realized_by: [class:Q1IssueIdentity], checked_by: ["test:tests/q1_pilot.py", "test:tests/arrive24.py::test_boundary", "trace:FUTURE-TARGET"], decision: PILOT_OUTSIDE_GATE}
+  - {id: A09, title_ru: "аналог Q1 выбирается без будущего", arch_ref: "0.1 §12/A09", entry_kind: VERIFIABLE_STATEMENT, realized_by: [CS:K-ARRIVE-ALL-1], checked_by: ["trace:FUTURE-MEMBERS", "reported:studies/q1_pilot_2026_10_12/README.md"], decision: PROPOSED_FOR_ACCEPTANCE}
+  - {id: A10, title_ru: "точное сравнение ±1/4 без округления", arch_ref: "0.1 §12/A10", entry_kind: VERIFIABLE_STATEMENT, realized_by: [CMP:K-POS-1], checked_by: ["test:tests/q1_pilot.py"], decision: PROPOSED_FOR_ACCEPTANCE}
+  - {id: A11, title_ru: "UNKNOWN не исчезает из группы", arch_ref: "0.1 §12/A11", entry_kind: VERIFIABLE_STATEMENT, realized_by: [ESTR:K-POINT-BOUNDS-1], checked_by: ["trace:BUNDLE-COUNTS", "test:tests/q1_pilot.py"], decision: PROPOSED_FOR_ACCEPTANCE}
+  - {id: A12, title_ru: "n < 20 оставляет след, но не число", arch_ref: "0.1 §12/A12", entry_kind: VERIFIABLE_STATEMENT, realized_by: [FF:FEW-SESSIONS], checked_by: ["test:tests/arrive24.py::test_statuses", "trace:Q1-STORE"], decision: PROPOSED_FOR_ACCEPTANCE}
+  - {id: A13, title_ru: "выпуск неизменен, исход отдельный", arch_ref: "0.1 §12/A13", entry_kind: VERIFIABLE_STATEMENT, realized_by: [class:Q1OutcomeLink], checked_by: ["trace:Q1-STORE", "test:tests/q1_pilot.py"], decision: PILOT_OUTSIDE_GATE}
+  - {id: A14, title_ru: "повтор воспроизводит входы выпуска", arch_ref: "0.1 §12/A14", entry_kind: VERIFIABLE_STATEMENT, realized_by: [class:Q1IssueIdentity], implemented_by: ["lab/q1/engine.py::reproduce"], checked_by: ["trace:Q1-STORE"], decision: PILOT_OUTSIDE_GATE}
+  - {id: A15, title_ru: "пройденный A/D — равенство процедур", arch_ref: "0.1 §12/A15", entry_kind: VERIFIABLE_STATEMENT, realized_by: [SRC:Q1-EVIDENCE], checked_by: ["reported:studies/q1_pilot_2026_10_12/README.md", "test:tests/arrive24.py::test_identity"], decision: PILOT_OUTSIDE_GATE, boundaries: [BND-08]}
+  - {id: A16, title_ru: "счёт и слова экрана 24 относятся к одному estimand", arch_ref: "0.1 §12/A16", entry_kind: VERIFIABLE_STATEMENT, realized_by: [OB:PAGE-PASSPORTS, OB:PAGE-WORDS], checked_by: ["test:tests/ui_check24.js", "trace:SCREEN"], decision: ACCEPTED, boundaries: [GAP-10]}
+  - {id: A17, title_ru: "ошибки контракта скрывают число", arch_ref: "0.1 §12/A17", entry_kind: VERIFIABLE_STATEMENT, realized_by: [OB:SOURCE-OF-TRUTH], checked_by: ["test:tests/contract_sc11.py::test_stale_fails_closed", "test:tests/arrive24.py::test_gate"], decision: ACCEPTED}
+  - {id: A18, title_ru: "Q1 не спутают с BASE, NOW, прогнозом", arch_ref: "0.1 §12/A18", entry_kind: VERIFIABLE_STATEMENT, realized_by: [CF:K-ARRIVE], checked_by: ["human:operator"], decision: OPEN, boundaries: [GAP-10]}
+  - {id: A19, title_ru: "Q1 переносим на следующие дни", arch_ref: "0.1 §12/A19", entry_kind: VERIFIABLE_STATEMENT, realized_by: [OB:STATISTICAL-TRANSFER], checked_by: ["human:operator"], decision: OPEN, boundaries: [GAP-07]}
+  - {id: A20, title_ru: "визуальная интеграция Q1 сохраняет смысл экрана 24", arch_ref: "0.1 §12/A20; 0.2 §1", entry_kind: VERIFIABLE_STATEMENT, realized_by: [STANDING:ARRIVE-24], checked_by: ["test:tests/swpc11_browser.mjs#m20", "trace:SCREEN", "human:operator"], decision: PROPOSED_FOR_ACCEPTANCE, boundaries: [GAP-02, GAP-10], correction_0_2_ru: "в 0.1 «реализации ещё нет»: блок B18 существует в PR #7; человеческая проверка H14 не проводилась"}

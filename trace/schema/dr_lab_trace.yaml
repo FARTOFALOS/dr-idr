@@ -1,0 +1,490 @@
+id: https://github.com/FARTOFALOS/dr-idr/trace/dr_lab_trace
+name: dr_lab_trace
+title: DR Lab semantic trace — the executable contour of DR-LAB-SEMANTIC-ARCHITECTURE 0.1 with its addendum 0.2
+description: >-
+  The machine form of the traceability layer proposed in DR-LAB-SEMANTIC-ARCHITECTURE-0.1 and corrected by its addendum
+  0.2 (meaning/lens/2026-10-13-semantic-architecture/). It imports the schema of DR-LAB-SC-1.1 unchanged and reuses its
+  classes wherever they already carry the meaning (questions, requests, estimands, case sets and snapshots, outcomes,
+  estimators, derivations, bundles, claim forms, fact forms, API surfaces, obligations, source references). It adds
+  only what SC-1.1 does not express: the standing of each profile on independent axes, the catalog of the
+  architecture's entries mapped to existing objects, the explicit boundaries of coverage, the presentation bindings as
+  separate statistical / fact / absence types (0.2 §4), the index records of Q1 identities and outcome links (0.2 §4),
+  the evidence of a check, the actually presented screen state, and the trace report itself. These records index
+  existing objects; they never create a new identity in place of a stored one and never change how one is hashed.
+  Precedence: the operator's decisions, then SC-1.1, then this module; a disagreement with SC-1.1 is a defect here.
+version: 0.2.0
+license: Proprietary (repository FARTOFALOS/dr-idr)
+prefixes:
+  linkml: https://w3id.org/linkml/
+  drtrace: https://github.com/FARTOFALOS/dr-idr/trace/
+  drlab: https://github.com/FARTOFALOS/dr-idr/contract/
+default_prefix: drtrace
+default_range: string
+imports:
+  - linkml:types
+  - ../../contract/schema/dr_lab_sc
+annotations:
+  architecture_source: meaning/lens/2026-10-13-semantic-architecture/01-DR-LAB-SEMANTIC-ARCHITECTURE-0.1.md
+  architecture_addendum: meaning/lens/2026-10-13-semantic-architecture/02-DR-LAB-SEMANTIC-ARCHITECTURE-0.2-dopolnenie.md
+  precedence: operator decisions, then DR-LAB-SC-1.1, then this module
+
+slots:
+  arch_ref:
+    description: >-
+      The place of DR-LAB-SEMANTIC-ARCHITECTURE this element represents: "0.1 §4.1/ENT-17", "0.2 §3", or "13.10" for
+      what this work adds; free text, read by people.
+    range: string
+    required: true
+
+classes:
+
+  # ================================================================================= the catalog (authored, compiled)
+  TraceCatalog:
+    tree_root: true
+    description: >-
+      One file (or the compiled whole) of the trace catalog: a container without meaning of its own. The compiled
+      catalog adds the presentation bindings generated from SWPC-1.1 §9 and tests/swpc11.py (never written by hand).
+    attributes:
+      catalog_part: {range: string, required: true}
+      source_references: {range: SourceReference, multivalued: true, inlined_as_list: true}
+      editions: {range: EditionStanding, multivalued: true, inlined_as_list: true}
+      standings: {range: ProfileStanding, multivalued: true, inlined_as_list: true}
+      entries: {range: ArchitectureEntry, multivalued: true, inlined_as_list: true}
+      boundaries: {range: CoverageBoundary, multivalued: true, inlined_as_list: true}
+      fact_surfaces: {range: FactSurface, multivalued: true, inlined_as_list: true}
+      bindings: {range: ArchitecturePresentationBinding, multivalued: true, inlined_as_list: true}
+      scenes: {range: SceneSpecification, multivalued: true, inlined_as_list: true}
+
+  LineReference:
+    description: A line of the repository an implementation lives on (branch, the exact commit, the pull request if any).
+    attributes:
+      branch: {range: string, required: true}
+      commit: {range: string, required: true, pattern: "^[0-9a-f]{7,40}$"}
+      pull_request: {range: integer}
+      merged_into_main: {range: boolean, required: true}
+    annotations: {arch_ref: "0.1 §0 (Реализация: MAIN / PR / ЧАСТИЧНО)"}
+
+  EditionStanding:
+    description: >-
+      The text of a contract edition the operator accepted, against the text a line pins. A line may pin an amended
+      text (a proposal for acceptance) under the same edition id; this record keeps the accepted bytes apart, so an
+      amendment is never read as accepted because the registry calls the edition accepted (0.1 §0, 0.2 §1).
+    slots: [id, title_ru, note]
+    attributes:
+      arch_ref: {range: string, required: true}
+      edition: {range: ContractEdition, required: true}
+      accepted_text_sha256_lf: {range: string, required: true, pattern: "^[0-9a-f]{64}$"}
+      accepted_text_commit: {range: string, required: true, pattern: "^[0-9a-f]{7,40}$"}
+      accepted_by: {range: SourceReference, multivalued: true, required: true, minimum_cardinality: 1}
+      amendments_proposed: {range: string, multivalued: true}
+
+  ProfileStanding:
+    description: >-
+      The standing of one profile on independent axes (0.1 §0; 0.2 §3): the decision (who decided what, from a source),
+      the line it is implemented on, and the human acceptance of its presentation. Model definiteness and
+      implementation conformance are not authored here: the trace computes them from the checks of each run.
+    slots: [id, title_ru, note]
+    attributes:
+      arch_ref: {range: string, required: true}
+      profile_key: {range: string, required: true, pattern: "^(BASE-24|NOW-1\\.0|PRE-24|ARRIVE-24|Q1-PILOT-0\\.2)$"}
+      sc_profile: {range: Profile, description: "the SC-1.1 profile record, when the profile has one"}
+      decision: {range: DecisionStanding, required: true}
+      decision_sources: {range: SourceReference, multivalued: true, required: true, minimum_cardinality: 1}
+      scope_ru: {range: string, required: true}
+      not_established_ru: {range: string, multivalued: true, required: true}
+      line: {range: LineReference, inlined: true, required: true}
+      human_acceptance: {range: HumanAcceptance, required: true}
+      human_acceptance_sources: {range: SourceReference, multivalued: true, required: true, minimum_cardinality: 1}
+      in_trace_scope: {range: boolean, required: true}
+    rules:
+      - description: a profile whose decision is accepted names no pending acceptance of itself
+        preconditions: {slot_conditions: {decision: {equals_string: ACCEPTED}}}
+        postconditions: {slot_conditions: {sc_profile: {required: true}}}
+
+  ArchitectureEntry:
+    description: >-
+      One entry of the architecture (an entity ENT, a relation R, an invariant INV, a process PROC, a transition T, a
+      verifiable statement A) mapped to the existing objects that realise it, the code that implements it and the checks
+      that test it. Every mapped id must resolve; what is not covered is a CoverageBoundary, never an empty field.
+    slots: [id, title_ru, note]
+    attributes:
+      arch_ref: {range: string, required: true}
+      entry_kind: {range: EntryKind, required: true}
+      realized_by: {range: string, multivalued: true, description: "SC-1.1 registry ids, trace catalog ids, or class:<schema class>"}
+      implemented_by: {range: string, multivalued: true, description: "code references file::function (Python or the page)"}
+      checked_by: {range: string, multivalued: true, description: "test:, runtime:, page:, build:, schema:, trace:, reported:, human: references"}
+      profiles: {range: string, multivalued: true}
+      decision: {range: DecisionStanding, required: true}
+      boundaries: {range: CoverageBoundary, multivalued: true}
+      correction_0_2_ru: {range: string, description: "what the addendum 0.2 corrected in this entry"}
+    rules:
+      - description: an entry that is not out of scope is realised by something or bounded explicitly
+        preconditions: {slot_conditions: {decision: {equals_string: ACCEPTED}}}
+        postconditions: {slot_conditions: {realized_by: {required: true}}}
+
+  CoverageBoundary:
+    description: >-
+      A dependency the trace does not close: an open decision, missing evidence, a known limit or an explicit
+      exclusion from the declared scope. It names whose move it is, what is admissible now and what is not; it is never
+      reported as closed (0.1 §13; completion criterion 7 of the goal of 2026-10-13).
+    slots: [id, title_ru, note]
+    attributes:
+      arch_ref: {range: string, required: true}
+      boundary_kind: {range: BoundaryKind, required: true}
+      statement_ru: {range: string, required: true}
+      owner_ru: {range: string, required: true}
+      admissible_now_ru: {range: string, required: true}
+      not_admissible_ru: {range: string, required: true}
+      affects: {range: string, multivalued: true, required: true, minimum_cardinality: 1}
+      sources: {range: SourceReference, multivalued: true}
+      detected_by: {range: string, description: "the trace check that finds it at every run, when it is a finding"}
+
+  FactSurface:
+    description: The API route whose response carries the observed facts a fact form words (fact forms are not in ApiSurface.estimands).
+    attributes:
+      fact_form: {range: FactForm, required: true}
+      surfaces: {range: ApiSurface, multivalued: true, required: true, minimum_cardinality: 1}
+
+  # --------------------------------------------------------------------------------- presentation bindings (0.2 §4)
+  ArchitecturePresentationBinding:
+    abstract: true
+    description: >-
+      The index of one way a meaning object is presented: a binding of SWPC-1.1 (B01-B18) for one estimand, one fact
+      form, or one reason of absence. Three separate types, so a fact never gets a denominator and an absence never
+      gets an estimate (0.2 §4). The full passport of a binding stays in its sources (SWPC-1.1 §3.1, tests/swpc11.py).
+    slots: [id, note]
+    attributes:
+      binding_class: {range: string, designates_type: true, required: true}
+      binding: {range: string, required: true, pattern: "^B[0-9][0-9]$"}
+      surfaces: {range: ApiSurface, multivalued: true, required: true, minimum_cardinality: 1, description: "the routes that carry the meaning to the page (for a page passport: the data route and the verification route)"}
+      semantic_source: {range: SourceReference, required: true}
+      code_anchors: {range: string, multivalued: true, required: true, minimum_cardinality: 1}
+      machine_checks: {range: string, multivalued: true}
+      human_checks: {range: string, multivalued: true}
+
+  StatisticalPresentationBinding:
+    is_a: ArchitecturePresentationBinding
+    description: A number of a registered estimand under its claim form, computed on the server (a bundle) or on the page (a passport re-verified by the server).
+    attributes:
+      estimand: {range: EstimandSpecification, required: true}
+      claim_form: {range: ClaimForm, required: true}
+      derivation_site: {range: DerivationSite, required: true}
+
+  FactPresentationBinding:
+    is_a: ArchitecturePresentationBinding
+    description: An observed fact under its fact form; no claim class, no share, no denominator.
+    attributes:
+      fact_form: {range: FactForm, required: true}
+
+  AbsencePresentationBinding:
+    is_a: ArchitecturePresentationBinding
+    description: >-
+      The presentation of «no number here» with its reason. It carries no estimate and no value: the reason is a fact
+      of the state, the support, the contract or the scope, never a 0 % (V1).
+    attributes:
+      absence_reason: {range: AbsenceReason, required: true}
+      shown_by: {range: string, required: true, pattern: "^((CF|FF):[A-Z0-9-]+#[A-Za-z0-9_]+|page:[^ ]+::[A-Za-z0-9_]+)$", description: "the registered label that words the absence (<form id>#<key>), or the page function whose interface words carry no claim (page:<file>::<function>)"}
+      applies_to: {range: EstimandSpecification, multivalued: true, required: true, minimum_cardinality: 1}
+
+  # --------------------------------------------------------------------------------- scenes of the declared area
+  SceneSpecification:
+    description: >-
+      One real end-to-end scene of the declared area: a history day of 2006-2025 opened as today, a cut, and the
+      claim to trace on it. The run reads these; nothing outside them is reported as traced.
+    slots: [id, title_ru, note]
+    attributes:
+      arch_ref: {range: string, required: true}
+      profile_key: {range: string, required: true}
+      route: {range: ApiSurface, required: true}
+      instrument: {range: Instrument, required: true}
+      trading_date: {range: string, required: true, pattern: "^20(0[6-9]|1[0-9]|2[0-5])-[01][0-9]-[0-3][0-9]$"}
+      block: {range: Block, required: true}
+      at_clock_et: {range: string, required: true, pattern: "^[0-2][0-9]:[0-5][0-9]$"}
+      scope: {range: WeekdayScope, required: true}
+      estimand: {range: EstimandSpecification, required: true}
+      selector: {range: string, required: true, description: "JSON of the bundle parameters that pick the one claim (e.g. {\"label\": \"R1\"})"}
+      page_fragment: {range: string, required: true}
+
+  # ================================================================================= runtime records (emitted by lab/semtrace.py)
+  ArtifactVersion:
+    description: The exact version of one artifact a result depends on (a commit, a file hash, a registry hash, a base build).
+    attributes:
+      artifact: {range: string, required: true}
+      version: {range: string, required: true}
+
+  ArchitectureCheckEvidence:
+    description: >-
+      The evidence of one check: which obligation, on which exact artifact versions, of which origin (run here, reported
+      by an engineer, a human session), with which result and where it is kept (0.2 §4). A reported result is never
+      shown as run here; a machine result is never shown as human acceptance.
+    attributes:
+      check: {range: string, required: true}
+      obligation: {range: string, required: true}
+      origin: {range: EvidenceOrigin, required: true}
+      outcome: {range: EvidenceOutcome, required: true}
+      artifact_versions: {range: ArtifactVersion, multivalued: true, inlined_as_list: true, required: true, minimum_cardinality: 1}
+      checked: {range: integer, minimum_value: 0}
+      source: {range: string, required: true}
+      detail: {range: string}
+
+  Q1TargetIdentity:
+    description: >-
+      Index of a stored Q1 target (0.2 §4): the existing target_id with the fields it hashes. The cut and the estimator
+      are not part of a target; the identity rule is specific to this question (a target persists across cuts while
+      the session, question, frame, place L and horizon persist) and is never carried over to NOW.
+    attributes:
+      target_id: {range: string, required: true, identifier: true, pattern: "^[0-9a-f]{64}$"}
+      question: {range: string, required: true}
+      instrument: {range: Instrument, required: true}
+      trading_date: {range: string, required: true}
+      block: {range: Block, required: true}
+      side: {range: integer, required: true}
+      level_name: {range: string, required: true}
+      horizon_end: {range: string, required: true}
+      recomputed: {range: boolean, required: true, description: "target_id recomputed from its fields by lab/q1/store.py::target_id equals the stored one"}
+
+  Q1IssueIdentity:
+    description: >-
+      Index of a stored Q1 issue (0.2 §4): the existing issue_id with its target, cut, estimator, model version, input
+      snapshot, kind and the fingerprint of its payload. An issue exists once its record is written; that proves
+      neither that a person saw it nor that it was read correctly.
+    attributes:
+      issue_id: {range: string, required: true, identifier: true, pattern: "^[0-9a-f]{64}$"}
+      store: {range: string, required: true}
+      target: {range: Q1TargetIdentity, required: true}
+      cut_index: {range: integer, required: true, minimum_value: 0}
+      cut_close: {range: string, required: true}
+      estimator: {range: string, required: true}
+      model: {range: string, required: true}
+      input_digest: {range: string, required: true}
+      issue_kind: {range: string, required: true}
+      publication: {range: string, required: true}
+      payload_sha256: {range: string, required: true, pattern: "^[0-9a-f]{64}$"}
+      recomputed: {range: boolean, required: true}
+
+  Q1OutcomeLink:
+    description: >-
+      Index of a stored outcome (0.2 §4): the outcome, its issue, that issue's payload fingerprint, the target, the
+      revision and the revision it supersedes. A revision never rewrites the issue.
+    attributes:
+      outcome_id: {range: string, required: true, identifier: true, pattern: "^[0-9a-f]{64}$"}
+      store: {range: string, required: true}
+      issue: {range: Q1IssueIdentity, required: true}
+      target: {range: Q1TargetIdentity, required: true}
+      issue_payload_sha256: {range: string, required: true, pattern: "^[0-9a-f]{64}$"}
+      revision: {range: integer, required: true, minimum_value: 1}
+      supersedes: {range: Q1OutcomeLink}
+      label: {range: string, required: true}
+      recomputed: {range: boolean, required: true}
+
+  ScreenElementRecord:
+    description: >-
+      One element of the page as it was actually rendered: where it stands, what it showed, which passport or bundle
+      it is bound to, or which absence it words. Its visible text is kept as a digest (it may hold prices).
+    attributes:
+      element: {range: string, required: true}
+      block: {range: ScreenBlock, required: true}
+      binding: {range: string, pattern: "^B[0-9][0-9]$"}
+      shown_value: {range: string}
+      text_sha256: {range: string, required: true, pattern: "^[0-9a-f]{64}$"}
+      bound_kind: {range: BoundKind, required: true}
+      estimand: {range: string}
+      claim_form: {range: string}
+      parameters: {range: string}
+      counts: {range: string, description: "JSON of the counts shown or carried (yes, no, unknown, n, N)"}
+      passport_checked: {range: boolean}
+      passport_violation: {range: string}
+      absence_reason: {range: AbsenceReason}
+      bundle_digest: {range: string, pattern: "^[0-9a-f]{64}$", description: "SHA-256 of the normalized bundle the element is bound to (lab/semtrace.py::norm_bundle)"}
+      label_ok: {range: boolean, description: "the visible words equal the registered labels rendered by the page's own lbl() with the element's values"}
+
+  ScreenStateRecord:
+    description: >-
+      The actually presented state of screen 24 for one scene (collected in a throw-away headless browser by
+      tests/trace_page.mjs): the build of the page, its registry, the scene, the elements and the violations it
+      showed. Presenting is a separate operation: it neither proves the computation nor makes an issue.
+    attributes:
+      id: {range: string, required: true, identifier: true}
+      page_build_sha256: {range: string, required: true, pattern: "^[0-9a-f]{64}$"}
+      registry_hash: {range: string, required: true}
+      fragment: {range: string, required: true}
+      viewport: {range: string, required: true}
+      collected_at_utc: {range: string, required: true}
+      page_violations: {range: string, multivalued: true}
+      unchecked_passports: {range: integer, required: true, minimum_value: 0}
+      scenes: {range: SceneSpecification, multivalued: true, description: "the declared scenes this state was collected for"}
+      elements: {range: ScreenElementRecord, multivalued: true, inlined_as_list: true, required: true, minimum_cardinality: 1}
+
+  TraceLink:
+    description: One typed link of a trace with its status in this run and the evidence of that status.
+    attributes:
+      source: {range: string, required: true}
+      relation: {range: string, required: true}
+      target: {range: string, required: true}
+      status: {range: LinkStatus, required: true}
+      mandatory: {range: boolean, required: true}
+      evidence: {range: string, required: true}
+      note: {range: string}
+
+  TraceStage:
+    description: One stage of the chain observation → state → question → set → outcomes → computation → estimate and support → admission → presentation (→ issue).
+    attributes:
+      stage: {range: TraceStageKind, required: true}
+      status: {range: LinkStatus, required: true}
+      summary_ru: {range: string, required: true}
+      links: {range: TraceLink, multivalued: true, inlined_as_list: true, required: true, minimum_cardinality: 1}
+
+  OperationRecord:
+    description: >-
+      Whether one of the three operations happened for this claim (0.2 §1): computing the answer, presenting it,
+      saving an issue. Each has its own evidence; none is evidence of another.
+    attributes:
+      operation: {range: OperationKind, required: true}
+      performed: {range: boolean, required: true}
+      evidence: {range: string, required: true}
+      not_implied_ru: {range: string, required: true}
+
+  ClaimAssessment:
+    description: >-
+      The independent assessments of one traced claim (0.2 §3): the decision standing of its profile, the definiteness
+      of its model, the conformance of its implementation in this run, the machine check of its presentation, the
+      human acceptance of its presentation. «reliable» is true only when every mandatory link is verified (or not
+      applicable) and no violation stands; it never depends on human acceptance, which is reported apart.
+    attributes:
+      decision: {range: DecisionStanding, required: true}
+      model_definiteness: {range: ModelDefiniteness, required: true}
+      implementation: {range: ImplementationConformance, required: true}
+      presentation_machine: {range: PresentationConformance, required: true}
+      presentation_human: {range: HumanAcceptance, required: true}
+      reliable: {range: boolean, required: true}
+
+  TraceViolation:
+    description: A broken mandatory link or a failed check, with its place; the claim it touches is not reported reliable.
+    attributes:
+      code: {range: string, required: true}
+      arch_ref: {range: string, multivalued: true, required: true}
+      message: {range: string, required: true}
+      where: {range: string, required: true}
+      severity: {range: Severity, required: true}
+
+  TraceReport:
+    description: >-
+      The provenance report of one claim of one scene: the stages with their links, the three operations, the
+      assessments, the violations and the exact versions of every artifact it depends on.
+    attributes:
+      id: {range: string, required: true, identifier: true}
+      scene: {range: SceneSpecification, required: true}
+      claim: {range: string, required: true, description: "estimand and parameters of the traced claim"}
+      profile_key: {range: string, required: true}
+      stages: {range: TraceStage, multivalued: true, inlined_as_list: true, required: true, minimum_cardinality: 1}
+      operations: {range: OperationRecord, multivalued: true, inlined_as_list: true, required: true, minimum_cardinality: 3, maximum_cardinality: 3}
+      assessment: {range: ClaimAssessment, inlined: true, required: true}
+      violations: {range: TraceViolation, multivalued: true, inlined_as_list: true}
+      artifact_versions: {range: ArtifactVersion, multivalued: true, inlined_as_list: true, required: true, minimum_cardinality: 1}
+      evidence: {range: ArchitectureCheckEvidence, multivalued: true, inlined_as_list: true}
+
+  ImpactGroup:
+    attributes:
+      group: {range: ImpactKind, required: true}
+      members: {range: string, multivalued: true, required: true}
+
+  ImpactReport:
+    description: >-
+      The reverse closure of a changed definition, rule or code object: every dependent definition, computation,
+      check, route, presentation and stored record.
+    attributes:
+      changed: {range: string, required: true}
+      groups: {range: ImpactGroup, multivalued: true, inlined_as_list: true, required: true}
+      unresolved: {range: string, multivalued: true}
+
+enums:
+  DecisionStanding:
+    permissible_values:
+      ACCEPTED: {description: "принято оператором (прямое решение или принятый профиль); источник обязателен"}
+      IMPLEMENTATION_TARGET: {description: "разрешено реализовать; приёмка результата не состоялась (SWPC-1.1)"}
+      PROPOSED_FOR_ACCEPTANCE: {description: "собрано как вариант для приёмки оператором; не принято"}
+      PILOT_OUTSIDE_GATE: {description: "изолированный пилот со своим паспортом вне шлюза SC-1.1"}
+      PROPOSAL: {description: "предложение линзы или исполнителя без решения"}
+      OPEN: {description: "решение не принято, владелец назван"}
+      OUT_OF_SCOPE: {description: "вне области этой работы"}
+  HumanAcceptance:
+    permissible_values:
+      ACCEPTED: {description: "человеческая проверка различения пройдена (протокол и результат названы)"}
+      PENDING: {description: "человеческая проверка не проводилась; машинные проверки её не заменяют"}
+      NOT_APPLICABLE: {}
+  ModelDefiniteness:
+    permissible_values:
+      DEFINED: {description: "все определяющие связи разрешаются в объекты своих типов"}
+      INCOMPLETE: {description: "есть неразрешённая или отсутствующая определяющая связь"}
+  ImplementationConformance:
+    permissible_values:
+      VERIFIED_IN_RUN: {description: "в этом прогоне пересчитано эталоном и проверено мутацией будущего"}
+      NOT_VERIFIED: {description: "реализовано, но в этом прогоне не проверено"}
+      VIOLATED: {description: "проверка нашла нарушение"}
+  PresentationConformance:
+    permissible_values:
+      VERIFIED_IN_RUN: {description: "показанное на странице совпало с опубликованным и с зарегистрированным смыслом"}
+      NOT_COLLECTED: {description: "привязка есть, состояние экрана в этом прогоне не снималось"}
+      VIOLATED: {}
+      NOT_APPLICABLE: {}
+  LinkStatus:
+    permissible_values:
+      VERIFIED: {description: "связь фактически проверена в этом прогоне"}
+      IMPLEMENTED_UNVERIFIED: {description: "связь реализована, но в этом прогоне не проверялась"}
+      PROPOSED: {description: "связь предложена (решение или реализация не приняты)"}
+      MISSING: {description: "обязательной связи нет или она нарушена"}
+      NOT_APPLICABLE: {description: "для этого утверждения связь не определена по смыслу"}
+  TraceStageKind:
+    permissible_values: {OBSERVATION: {}, STATE: {}, QUESTION: {}, CASE_SET: {}, OUTCOMES: {}, COMPUTATION: {}, ESTIMATE_SUPPORT: {}, ADMISSION: {}, PRESENTATION: {}, ISSUE: {}}
+  OperationKind:
+    permissible_values:
+      COMPUTE: {description: "расчёт ответа"}
+      PRESENT: {description: "предъявление ответа на экране"}
+      ISSUE: {description: "сохранение выпуска"}
+  EntryKind:
+    permissible_values: {ENTITY: {}, RELATION: {}, INVARIANT: {}, PROCESS: {}, TRANSITION: {}, VERIFIABLE_STATEMENT: {}}
+  BoundaryKind:
+    permissible_values:
+      OPEN_DECISION: {description: "решение оператора не принято"}
+      OPEN_EVIDENCE: {description: "нет нужного свидетельства (переноса, человеческой приёмки, независимого прогона)"}
+      KNOWN_LIMIT: {description: "известная граница утверждения или реализации"}
+      OUT_OF_SCOPE: {description: "явно вне объявленной области этой работы"}
+      FINDING: {description: "найдено этой работой; проверка обнаруживает при каждом прогоне"}
+  DerivationSite:
+    permissible_values:
+      SERVER_BUNDLE: {description: "число публикует шлюз сервера в конверте (bundle)"}
+      PAGE_PASSPORT: {description: "число собирает страница; паспорт пересчитывается сервером (POST /api/d24/verify)"}
+  AbsenceReason:
+    permissible_values:
+      FEW_SESSIONS: {description: "мало сессий: n < 20, числа нет, набор не расширяется"}
+      NO_KNOWN_OUTCOME: {description: "у всех сессий набора исход неизвестен"}
+      RESOLVED_TODAY: {description: "место уже достигнуто сегодня: факт со временем, доли нет"}
+      PREFIX_UNKNOWN: {description: "в сегодняшнем префиксе нет целой M5"}
+      DR_BROKEN: {description: "DR сломан: вопрос профиля не задаётся"}
+      NO_PREFIX: {description: "после активации ещё не закрылась ни одна M5"}
+      BLOCK_OVER: {description: "блок закончился"}
+      OUT_OF_SCOPE: {description: "блок вне проверенной области профиля (ADR для ARRIVE-24)"}
+      NO_FAMILY: {description: "семьи нет (до подтверждения, нет базы)"}
+      EMPTY_FAMILY: {description: "в семье нет сессий: процентов нет"}
+      INSUFFICIENT_SUPPORT: {description: "опора NOW меньше порога: числа нет"}
+      CONTRACT_WITHHELD: {description: "шлюз SC-1.1 снял число: нарушение названо"}
+      CONTRACT_STALE: {description: "исполняемый контракт не совпадает со своим источником: статистика не публикуется"}
+  EvidenceOrigin:
+    permissible_values:
+      MACHINE_RUN_HERE: {description: "выполнено этим прогоном на указанных версиях"}
+      REPORTED_BY_ENGINEER: {description: "результат заявлен инженером в репозитории; здесь не повторялся"}
+      HUMAN_SESSION: {description: "человеческая сессия по протоколу"}
+      NOT_RUN: {description: "не выполнялось"}
+  EvidenceOutcome:
+    permissible_values: {PASS: {}, FAIL: {}, NOT_RUN: {}}
+  ScreenBlock:
+    permissible_values: {SUMMARY_FAMILY: {}, ZONES: {}, DR_OUTCOME: {}, NOW: {}, ARRIVE: {}, PHASE: {}, AREA: {}, OTHER: {}}
+  BoundKind:
+    permissible_values:
+      PASSPORT: {description: "число страницы с паспортом зарегистрированной величины"}
+      BUNDLE: {description: "число из опубликованного bundle ответа сервера"}
+      ABSENCE: {description: "отсутствие числа с причиной"}
+      FACT: {description: "наблюдаемый факт без доли"}
+      UNBOUND: {description: "элемент с числом без паспорта и bundle (нарушение)"}
+  ImpactKind:
+    permissible_values: {DEFINITION: {}, ESTIMAND: {}, CLAIM: {}, CODE: {}, CHECK: {}, ROUTE: {}, PRESENTATION: {}, STORED_RECORD: {}, ARCHITECTURE: {}}
