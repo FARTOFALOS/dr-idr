@@ -9,6 +9,7 @@ python spec/ekran-24/tools/shots.py        (the server must run: start-dr-lab.cm
 python spec/ekran-24/tools/annotate.py     (then: the numbered pictures in spec/ekran-24/img/)
 """
 import json
+import argparse
 import re
 import subprocess
 from pathlib import Path
@@ -40,9 +41,23 @@ def run(args):
 
 
 def main():
+    args = argparse.ArgumentParser()
+    args.add_argument('--base', default=BASE)
+    args.add_argument('--candidate', action='store_true')
+    cfg = args.parse_args()
+    if cfg.candidate:
+        # Same exact runtime as the M checks, and measured DOM/chart geometry from each saved frame. No case paths saved.
+        raw = HERE.parent / 'img' / 'family-path' / 'raw'
+        scene = '#date=2024-03-04&inst=ES&session=RDR&at='
+        specs = ['put=' + scene + '11:20&mode=path', 'middle=' + scene + '11:20&mode=path|hover=arrive:-1/2',
+                 'bounds=' + scene + '11:20&mode=bounds|hover=arrive:-1/2', 'r=' + scene + '11:20&mode=path|hover=now:R',
+                 'resolved=' + scene + '11:25&mode=path|hover=arrive:-1/2', 'before=' + scene + '11:15&mode=path|hover=arrive:-1/2']
+        root = HERE.parents[2]
+        subprocess.run(['node', str(root / 'tests' / 'svodka_shots.mjs'), '--base', cfg.base, '--dir', str(raw), '--w', '1920', '--h', '1000'] + specs, check=True, cwd=root)
+        return
     RAW.mkdir(parents=True, exist_ok=True)
     for name, frag in STATES.items():
-        url = BASE + frag + '&geo=1'
+        url = cfg.base + frag + '&geo=1'
         run(['--window-size=1920,1000', '--screenshot=' + str(RAW / (name + '.png')), url])
         # in --dump-dom the visible area is 16 x 95 px smaller than the window: a larger window gives the same 1920 x 1000
         dom = run(['--window-size=1936,1095', '--dump-dom', url]).stdout

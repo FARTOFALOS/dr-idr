@@ -9,7 +9,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::railHtml"
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml"
     ],
     "human_checks": [
      "H14"
@@ -32,7 +32,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::railHtml"
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml"
     ],
     "id": "PB:ABS/NO-KNOWN/ARRIVE",
     "semantic_source": "SRC:SWPC-1.1",
@@ -49,14 +49,14 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::railHtml"
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml"
     ],
     "id": "PB:ABS/RESOLVED/ARRIVE",
     "machine_checks": [
      "test:tests/swpc11_browser.mjs#m20"
     ],
     "semantic_source": "SRC:SWPC-1.1",
-    "shown_by": "FF:K-TARGET#RESOLVED",
+    "shown_by": "FF:K-TARGET#RESOLVED_mark",
     "surfaces": [
      "API:/api/d24/arrive"
     ]
@@ -69,7 +69,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::railHtml"
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml"
     ],
     "id": "PB:ABS/PREFIX-UNKNOWN/ARRIVE",
     "semantic_source": "SRC:SWPC-1.1",
@@ -86,7 +86,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::railHtml"
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml"
     ],
     "id": "PB:ABS/DR-BROKEN/ARRIVE",
     "semantic_source": "SRC:SWPC-1.1",
@@ -103,7 +103,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::railHtml"
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml"
     ],
     "id": "PB:ABS/NO-PREFIX/ARRIVE",
     "semantic_source": "SRC:SWPC-1.1",
@@ -120,7 +120,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::railHtml"
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml"
     ],
     "id": "PB:ABS/BLOCK-OVER/ARRIVE",
     "semantic_source": "SRC:SWPC-1.1",
@@ -137,7 +137,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::railHtml"
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml"
     ],
     "id": "PB:ABS/OUT-OF-SCOPE/ARRIVE",
     "semantic_source": "SRC:SWPC-1.1",
@@ -154,7 +154,7 @@
     "binding": "B15",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::arriveBundle"
     ],
     "id": "PB:ABS/WITHHELD/ARRIVE",
@@ -176,7 +176,7 @@
     "binding": "B15",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle"
     ],
     "id": "PB:ABS/WITHHELD/NOW",
@@ -199,12 +199,12 @@
     "binding": "B10",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::railHtml"
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml"
     ],
     "id": "PB:ABS/INSUFFICIENT/NOW",
     "note": "INSUFFICIENT_SUPPORT: the payload's note is shown, no number",
     "semantic_source": "SRC:SWPC-1.1",
-    "shown_by": "page:design/sozvezdiya-24/src/panel.js::railHtml",
+    "shown_by": "page:design/sozvezdiya-24/src/panel.js::queryPanelHtml",
     "surfaces": [
      "API:/api/d24/now"
     ]
@@ -675,6 +675,8 @@
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::filmOf",
      "design/sozvezdiya-24/src/app.js::drawFilm",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/graph.js::familyCloseSegments",
      "design/sozvezdiya-24/src/app.js::drawProj",
      "design/sozvezdiya-24/src/app.js::drawBandProfile",
      "design/sozvezdiya-24/src/app.js::closePass",
@@ -685,11 +687,13 @@
     "derivation_site": "PAGE_PASSPORT",
     "estimand": "EST:B-CLOSE",
     "human_checks": [
-     "H08"
+     "H08",
+     "H15"
     ],
     "id": "PB:B12/EST:B-CLOSE",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m11"
+     "test:tests/swpc11_browser.mjs#m11",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -762,6 +766,8 @@
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::filmOf",
      "design/sozvezdiya-24/src/app.js::drawFilm",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/graph.js::familyCloseSegments",
      "design/sozvezdiya-24/src/app.js::drawProj",
      "design/sozvezdiya-24/src/app.js::drawBandProfile",
      "design/sozvezdiya-24/src/app.js::closePass",
@@ -772,11 +778,13 @@
     "derivation_site": "PAGE_PASSPORT",
     "estimand": "EST:B-CLOSE-MISSING",
     "human_checks": [
-     "H08"
+     "H08",
+     "H15"
     ],
     "id": "PB:B12/EST:B-CLOSE-MISSING",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m11"
+     "test:tests/swpc11_browser.mjs#m11",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -821,6 +829,8 @@
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::filmOf",
      "design/sozvezdiya-24/src/app.js::drawFilm",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/graph.js::familyCloseSegments",
      "design/sozvezdiya-24/src/app.js::drawProj",
      "design/sozvezdiya-24/src/app.js::drawBandProfile",
      "design/sozvezdiya-24/src/app.js::closePass",
@@ -831,11 +841,13 @@
     "derivation_site": "PAGE_PASSPORT",
     "estimand": "EST:B-CLOSE-PREACT",
     "human_checks": [
-     "H08"
+     "H08",
+     "H15"
     ],
     "id": "PB:B12/EST:B-CLOSE-PREACT",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m11"
+     "test:tests/swpc11_browser.mjs#m11",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -1117,6 +1129,8 @@
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::filmOf",
      "design/sozvezdiya-24/src/app.js::drawFilm",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/graph.js::familyCloseSegments",
      "design/sozvezdiya-24/src/app.js::drawProj",
      "design/sozvezdiya-24/src/app.js::drawBandProfile",
      "design/sozvezdiya-24/src/app.js::closePass",
@@ -1127,11 +1141,13 @@
     "derivation_site": "PAGE_PASSPORT",
     "estimand": "EST:B-RANGE",
     "human_checks": [
-     "H08"
+     "H08",
+     "H15"
     ],
     "id": "PB:B12/EST:B-RANGE",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m11"
+     "test:tests/swpc11_browser.mjs#m11",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2449,20 +2465,53 @@
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::arriveOf",
      "design/sozvezdiya-24/src/app.js::arriveBundle",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::arriveTip",
      "design/sozvezdiya-24/src/app.js::arriveBody",
-     "design/sozvezdiya-24/src/app.js::drawHighlight",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
      "design/sozvezdiya-24/src/app.js::emphOf"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:K-ARRIVE",
     "human_checks": [
-     "H14"
+     "H14",
+     "H15"
     ],
     "id": "PB:B18/EST:K-ARRIVE",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m20"
+     "test:tests/swpc11_browser.mjs#m20",
+     "test:tests/swpc11_browser.mjs#m21"
+    ],
+    "semantic_source": "SRC:SWPC-1.1",
+    "surfaces": [
+     "API:/api/d24/arrive"
+    ]
+   },
+   {
+    "binding": "B19",
+    "binding_class": "StatisticalPresentationBinding",
+    "claim_form": "CF:K-ARRIVE",
+    "code_anchors": [
+     "design/sozvezdiya-24/src/graph.js::graphQuestion",
+     "design/sozvezdiya-24/src/graph.js::graphContextKey",
+     "design/sozvezdiya-24/src/graph.js::graphQueryKind",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
+     "design/sozvezdiya-24/src/graph.js::familyCloseSegments",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/graph.js::drawCurrentClose",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::graphQuestionTip"
+    ],
+    "derivation_site": "SERVER_BUNDLE",
+    "estimand": "EST:K-ARRIVE",
+    "human_checks": [
+     "H15"
+    ],
+    "id": "PB:B19/EST:K-ARRIVE",
+    "machine_checks": [
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2475,20 +2524,22 @@
     "claim_form": "CF:N-DELTA-GE-R",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
-     "design/sozvezdiya-24/src/app.js::drawNowLevels",
-     "design/sozvezdiya-24/src/app.js::drawNowRange",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
      "design/sozvezdiya-24/src/app.js::drawNowMarks"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:N-DELTA-GE-R",
     "human_checks": [
-     "H07"
+     "H07",
+     "H15"
     ],
     "id": "PB:B10/EST:N-DELTA-GE-R",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m09"
+     "test:tests/swpc11_browser.mjs#m09",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2501,20 +2552,22 @@
     "claim_form": "CF:N-DELTA-GE-X",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
-     "design/sozvezdiya-24/src/app.js::drawNowLevels",
-     "design/sozvezdiya-24/src/app.js::drawNowRange",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
      "design/sozvezdiya-24/src/app.js::drawNowMarks"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:N-DELTA-GE-X",
     "human_checks": [
-     "H07"
+     "H07",
+     "H15"
     ],
     "id": "PB:B10/EST:N-DELTA-GE-X",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m09"
+     "test:tests/swpc11_browser.mjs#m09",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2527,20 +2580,22 @@
     "claim_form": "CF:N-DELTA-Q-R",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
-     "design/sozvezdiya-24/src/app.js::drawNowLevels",
-     "design/sozvezdiya-24/src/app.js::drawNowRange",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
      "design/sozvezdiya-24/src/app.js::drawNowMarks"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:N-DELTA-Q-R",
     "human_checks": [
-     "H07"
+     "H07",
+     "H15"
     ],
     "id": "PB:B10/EST:N-DELTA-Q-R",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m09"
+     "test:tests/swpc11_browser.mjs#m09",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2553,20 +2608,22 @@
     "claim_form": "CF:N-DELTA-Q-X",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
-     "design/sozvezdiya-24/src/app.js::drawNowLevels",
-     "design/sozvezdiya-24/src/app.js::drawNowRange",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
      "design/sozvezdiya-24/src/app.js::drawNowMarks"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:N-DELTA-Q-X",
     "human_checks": [
-     "H07"
+     "H07",
+     "H15"
     ],
     "id": "PB:B10/EST:N-DELTA-Q-X",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m09"
+     "test:tests/swpc11_browser.mjs#m09",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2579,20 +2636,22 @@
     "claim_form": "CF:N-IF-NEW-R",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
-     "design/sozvezdiya-24/src/app.js::drawNowLevels",
-     "design/sozvezdiya-24/src/app.js::drawNowRange",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
      "design/sozvezdiya-24/src/app.js::drawNowMarks"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:N-IF-NEW-R",
     "human_checks": [
-     "H07"
+     "H07",
+     "H15"
     ],
     "id": "PB:B10/EST:N-IF-NEW-R",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m09"
+     "test:tests/swpc11_browser.mjs#m09",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2631,25 +2690,57 @@
     ]
    },
    {
+    "binding": "B19",
+    "binding_class": "StatisticalPresentationBinding",
+    "claim_form": "CF:N-IF-NEW-R",
+    "code_anchors": [
+     "design/sozvezdiya-24/src/graph.js::graphQuestion",
+     "design/sozvezdiya-24/src/graph.js::graphContextKey",
+     "design/sozvezdiya-24/src/graph.js::graphQueryKind",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
+     "design/sozvezdiya-24/src/graph.js::familyCloseSegments",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/graph.js::drawCurrentClose",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::graphQuestionTip"
+    ],
+    "derivation_site": "SERVER_BUNDLE",
+    "estimand": "EST:N-IF-NEW-R",
+    "human_checks": [
+     "H15"
+    ],
+    "id": "PB:B19/EST:N-IF-NEW-R",
+    "machine_checks": [
+     "test:tests/swpc11_browser.mjs#m21"
+    ],
+    "semantic_source": "SRC:SWPC-1.1",
+    "surfaces": [
+     "API:/api/d24/now"
+    ]
+   },
+   {
     "binding": "B10",
     "binding_class": "StatisticalPresentationBinding",
     "claim_form": "CF:N-IF-NEW-X",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
-     "design/sozvezdiya-24/src/app.js::drawNowLevels",
-     "design/sozvezdiya-24/src/app.js::drawNowRange",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
      "design/sozvezdiya-24/src/app.js::drawNowMarks"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:N-IF-NEW-X",
     "human_checks": [
-     "H07"
+     "H07",
+     "H15"
     ],
     "id": "PB:B10/EST:N-IF-NEW-X",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m09"
+     "test:tests/swpc11_browser.mjs#m09",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2688,25 +2779,87 @@
     ]
    },
    {
+    "binding": "B19",
+    "binding_class": "StatisticalPresentationBinding",
+    "claim_form": "CF:N-IF-NEW-X",
+    "code_anchors": [
+     "design/sozvezdiya-24/src/graph.js::graphQuestion",
+     "design/sozvezdiya-24/src/graph.js::graphContextKey",
+     "design/sozvezdiya-24/src/graph.js::graphQueryKind",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
+     "design/sozvezdiya-24/src/graph.js::familyCloseSegments",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/graph.js::drawCurrentClose",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::graphQuestionTip"
+    ],
+    "derivation_site": "SERVER_BUNDLE",
+    "estimand": "EST:N-IF-NEW-X",
+    "human_checks": [
+     "H15"
+    ],
+    "id": "PB:B19/EST:N-IF-NEW-X",
+    "machine_checks": [
+     "test:tests/swpc11_browser.mjs#m21"
+    ],
+    "semantic_source": "SRC:SWPC-1.1",
+    "surfaces": [
+     "API:/api/d24/now"
+    ]
+   },
+   {
     "binding": "B10",
     "binding_class": "StatisticalPresentationBinding",
     "claim_form": "CF:N-NEW-R",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
-     "design/sozvezdiya-24/src/app.js::drawNowLevels",
-     "design/sozvezdiya-24/src/app.js::drawNowRange",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
      "design/sozvezdiya-24/src/app.js::drawNowMarks"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:N-NEW-R",
     "human_checks": [
-     "H07"
+     "H07",
+     "H15"
     ],
     "id": "PB:B10/EST:N-NEW-R",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m09"
+     "test:tests/swpc11_browser.mjs#m09",
+     "test:tests/swpc11_browser.mjs#m21"
+    ],
+    "semantic_source": "SRC:SWPC-1.1",
+    "surfaces": [
+     "API:/api/d24/now"
+    ]
+   },
+   {
+    "binding": "B19",
+    "binding_class": "StatisticalPresentationBinding",
+    "claim_form": "CF:N-NEW-R",
+    "code_anchors": [
+     "design/sozvezdiya-24/src/graph.js::graphQuestion",
+     "design/sozvezdiya-24/src/graph.js::graphContextKey",
+     "design/sozvezdiya-24/src/graph.js::graphQueryKind",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
+     "design/sozvezdiya-24/src/graph.js::familyCloseSegments",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/graph.js::drawCurrentClose",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::graphQuestionTip"
+    ],
+    "derivation_site": "SERVER_BUNDLE",
+    "estimand": "EST:N-NEW-R",
+    "human_checks": [
+     "H15"
+    ],
+    "id": "PB:B19/EST:N-NEW-R",
+    "machine_checks": [
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2719,20 +2872,52 @@
     "claim_form": "CF:N-NEW-X",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
-     "design/sozvezdiya-24/src/app.js::drawNowLevels",
-     "design/sozvezdiya-24/src/app.js::drawNowRange",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
      "design/sozvezdiya-24/src/app.js::drawNowMarks"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:N-NEW-X",
     "human_checks": [
-     "H07"
+     "H07",
+     "H15"
     ],
     "id": "PB:B10/EST:N-NEW-X",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m09"
+     "test:tests/swpc11_browser.mjs#m09",
+     "test:tests/swpc11_browser.mjs#m21"
+    ],
+    "semantic_source": "SRC:SWPC-1.1",
+    "surfaces": [
+     "API:/api/d24/now"
+    ]
+   },
+   {
+    "binding": "B19",
+    "binding_class": "StatisticalPresentationBinding",
+    "claim_form": "CF:N-NEW-X",
+    "code_anchors": [
+     "design/sozvezdiya-24/src/graph.js::graphQuestion",
+     "design/sozvezdiya-24/src/graph.js::graphContextKey",
+     "design/sozvezdiya-24/src/graph.js::graphQueryKind",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
+     "design/sozvezdiya-24/src/graph.js::familyCloseSegments",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/graph.js::drawCurrentClose",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::graphQuestionTip"
+    ],
+    "derivation_site": "SERVER_BUNDLE",
+    "estimand": "EST:N-NEW-X",
+    "human_checks": [
+     "H15"
+    ],
+    "id": "PB:B19/EST:N-NEW-X",
+    "machine_checks": [
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2745,20 +2930,22 @@
     "claim_form": "CF:N-NO-NEW-R",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
-     "design/sozvezdiya-24/src/app.js::drawNowLevels",
-     "design/sozvezdiya-24/src/app.js::drawNowRange",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
      "design/sozvezdiya-24/src/app.js::drawNowMarks"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:N-NO-NEW-R",
     "human_checks": [
-     "H07"
+     "H07",
+     "H15"
     ],
     "id": "PB:B10/EST:N-NO-NEW-R",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m09"
+     "test:tests/swpc11_browser.mjs#m09",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2771,20 +2958,22 @@
     "claim_form": "CF:N-NO-NEW-X",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
-     "design/sozvezdiya-24/src/app.js::drawNowLevels",
-     "design/sozvezdiya-24/src/app.js::drawNowRange",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
      "design/sozvezdiya-24/src/app.js::drawNowMarks"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:N-NO-NEW-X",
     "human_checks": [
-     "H07"
+     "H07",
+     "H15"
     ],
     "id": "PB:B10/EST:N-NO-NEW-X",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m09"
+     "test:tests/swpc11_browser.mjs#m09",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2797,20 +2986,52 @@
     "claim_form": "CF:N-TIME-R",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
-     "design/sozvezdiya-24/src/app.js::drawNowLevels",
-     "design/sozvezdiya-24/src/app.js::drawNowRange",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
      "design/sozvezdiya-24/src/app.js::drawNowMarks"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:N-TIME-R",
     "human_checks": [
-     "H07"
+     "H07",
+     "H15"
     ],
     "id": "PB:B10/EST:N-TIME-R",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m09"
+     "test:tests/swpc11_browser.mjs#m09",
+     "test:tests/swpc11_browser.mjs#m21"
+    ],
+    "semantic_source": "SRC:SWPC-1.1",
+    "surfaces": [
+     "API:/api/d24/now"
+    ]
+   },
+   {
+    "binding": "B19",
+    "binding_class": "StatisticalPresentationBinding",
+    "claim_form": "CF:N-TIME-R",
+    "code_anchors": [
+     "design/sozvezdiya-24/src/graph.js::graphQuestion",
+     "design/sozvezdiya-24/src/graph.js::graphContextKey",
+     "design/sozvezdiya-24/src/graph.js::graphQueryKind",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
+     "design/sozvezdiya-24/src/graph.js::familyCloseSegments",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/graph.js::drawCurrentClose",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::graphQuestionTip"
+    ],
+    "derivation_site": "SERVER_BUNDLE",
+    "estimand": "EST:N-TIME-R",
+    "human_checks": [
+     "H15"
+    ],
+    "id": "PB:B19/EST:N-TIME-R",
+    "machine_checks": [
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -2823,20 +3044,52 @@
     "claim_form": "CF:N-TIME-X",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
-     "design/sozvezdiya-24/src/app.js::drawNowLevels",
-     "design/sozvezdiya-24/src/app.js::drawNowRange",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
      "design/sozvezdiya-24/src/app.js::drawNowMarks"
     ],
     "derivation_site": "SERVER_BUNDLE",
     "estimand": "EST:N-TIME-X",
     "human_checks": [
-     "H07"
+     "H07",
+     "H15"
     ],
     "id": "PB:B10/EST:N-TIME-X",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m09"
+     "test:tests/swpc11_browser.mjs#m09",
+     "test:tests/swpc11_browser.mjs#m21"
+    ],
+    "semantic_source": "SRC:SWPC-1.1",
+    "surfaces": [
+     "API:/api/d24/now"
+    ]
+   },
+   {
+    "binding": "B19",
+    "binding_class": "StatisticalPresentationBinding",
+    "claim_form": "CF:N-TIME-X",
+    "code_anchors": [
+     "design/sozvezdiya-24/src/graph.js::graphQuestion",
+     "design/sozvezdiya-24/src/graph.js::graphContextKey",
+     "design/sozvezdiya-24/src/graph.js::graphQueryKind",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
+     "design/sozvezdiya-24/src/graph.js::familyCloseSegments",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/graph.js::drawCurrentClose",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::graphQuestionTip"
+    ],
+    "derivation_site": "SERVER_BUNDLE",
+    "estimand": "EST:N-TIME-X",
+    "human_checks": [
+     "H15"
+    ],
+    "id": "PB:B19/EST:N-TIME-X",
+    "machine_checks": [
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -3223,22 +3476,54 @@
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::arriveOf",
      "design/sozvezdiya-24/src/app.js::arriveBundle",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::arriveTip",
      "design/sozvezdiya-24/src/app.js::arriveBody",
-     "design/sozvezdiya-24/src/app.js::drawHighlight",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
      "design/sozvezdiya-24/src/app.js::emphOf"
     ],
     "fact_form": "FF:FEW-SESSIONS",
     "human_checks": [
-     "H14"
+     "H14",
+     "H15"
     ],
     "id": "PB:B18/FF:FEW-SESSIONS",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m20"
+     "test:tests/swpc11_browser.mjs#m20",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
+     "API:/api/d24/arrive"
+    ]
+   },
+   {
+    "binding": "B19",
+    "binding_class": "FactPresentationBinding",
+    "code_anchors": [
+     "design/sozvezdiya-24/src/graph.js::graphQuestion",
+     "design/sozvezdiya-24/src/graph.js::graphContextKey",
+     "design/sozvezdiya-24/src/graph.js::graphQueryKind",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
+     "design/sozvezdiya-24/src/graph.js::familyCloseSegments",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/graph.js::drawCurrentClose",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
+     "design/sozvezdiya-24/src/graph.js::graphNowTip",
+     "design/sozvezdiya-24/src/graph.js::graphQuestionTip"
+    ],
+    "fact_form": "FF:GRAPH-QUESTIONS",
+    "human_checks": [
+     "H15"
+    ],
+    "id": "PB:B19/FF:GRAPH-QUESTIONS",
+    "machine_checks": [
+     "test:tests/swpc11_browser.mjs#m21"
+    ],
+    "semantic_source": "SRC:SWPC-1.1",
+    "surfaces": [
+     "API:/api/d24/now",
      "API:/api/d24/arrive"
     ]
    },
@@ -3276,19 +3561,22 @@
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::arriveOf",
      "design/sozvezdiya-24/src/app.js::arriveBundle",
-     "design/sozvezdiya-24/src/panel.js::railHtml",
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
      "design/sozvezdiya-24/src/app.js::arriveTip",
      "design/sozvezdiya-24/src/app.js::arriveBody",
-     "design/sozvezdiya-24/src/app.js::drawHighlight",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
      "design/sozvezdiya-24/src/app.js::emphOf"
     ],
     "fact_form": "FF:K-TARGET",
     "human_checks": [
-     "H14"
+     "H14",
+     "H15"
     ],
     "id": "PB:B18/FF:K-TARGET",
     "machine_checks": [
-     "test:tests/swpc11_browser.mjs#m20"
+     "test:tests/swpc11_browser.mjs#m20",
+     "test:tests/swpc11_browser.mjs#m21"
     ],
     "semantic_source": "SRC:SWPC-1.1",
     "surfaces": [
@@ -5958,7 +6246,9 @@
     "id": "PROC-17",
     "implemented_by": [
      "design/sozvezdiya-24/src/panel.js::panelHtml",
-     "design/sozvezdiya-24/src/panel.js::railHtml"
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
+     "design/sozvezdiya-24/src/graph.js::graphQuestion",
+     "design/sozvezdiya-24/src/graph.js::drawQuestionOverlay"
     ],
     "realized_by": [
      "SRC:SWPC-1.1",
@@ -6322,8 +6612,10 @@
     "entry_kind": "TRANSITION",
     "id": "T16",
     "implemented_by": [
-     "design/sozvezdiya-24/src/panel.js::railHtml",
-     "design/sozvezdiya-24/src/app.js::arriveBundle"
+     "design/sozvezdiya-24/src/panel.js::queryPanelHtml",
+     "design/sozvezdiya-24/src/app.js::arriveBundle",
+     "design/sozvezdiya-24/src/graph.js::drawFamilyPaths",
+     "design/sozvezdiya-24/src/app.js::emphOf"
     ],
     "realized_by": [
      "STANDING:ARRIVE-24",
@@ -6752,6 +7044,15 @@
     "surfaces": [
      "API:/api/d24/arrive"
     ]
+   },
+   {
+    "fact_form": "FF:GRAPH-QUESTIONS",
+    "surfaces": [
+     "API:/api/d24/day",
+     "API:/api/d24/family",
+     "API:/api/d24/now",
+     "API:/api/d24/arrive"
+    ]
    }
   ],
   "scenes": [
@@ -7069,21 +7370,21 @@
   ]
  },
  "stamps": {
-  "catalog_sha256": "e2108318d7f40b6beb11b8c346793369fc811289cf268482b5873ee80f168559",
+  "catalog_sha256": "7555ec5c6a5951d64479e02ebcd1fa49be2af54549eced92fab0f1751ae78774",
   "linkml": "1.11.1",
   "runtime_spec_sha256": "d82990fb6608f64e55313ec5bc0e292d1cb0c77bbdcd6b029f7cdb899d5c7d9f",
-  "sc_registry_sha256": "5511ac171af75d8d075465b991b76b3eff00018dd8e79eb41cb505485bb7cbe7",
+  "sc_registry_sha256": "717babadb137f513401cff58bcc55e6a7d3ecfb32bf52b5cc8f85a0b5f5cee8e",
   "sources": {
-   "contract/build/registry.json": "a00d4d4cd05776b834b57647c508b23c313c763f19b4c66bc83ad350180c8d84",
+   "contract/build/registry.json": "24ba35a8a4db3c0772ed56b6485a2209951a7df13de6aaffa297925099e740e4",
    "contract/schema/dr_lab_sc.yaml": "f5918411914130b4bc9d6a5757a9cd781cdd28f527c38b41f56a47a02f09f90b",
    "meaning/lens/2026-10-13-semantic-architecture/01-DR-LAB-SEMANTIC-ARCHITECTURE-0.1.md": "ce986e332f4ad0a036e5d4181809e7ce1578ca5042920d94a2b4930e23c7ccd6",
    "meaning/lens/2026-10-13-semantic-architecture/02-DR-LAB-SEMANTIC-ARCHITECTURE-0.2-dopolnenie.md": "a780119df2f6585e4c7f33466c929331d8856f6e55aab5fae45fc64a84207f47",
-   "spec/DR-LAB-SWPC-1.1.md": "d0a79d01579d04dff789ff48ee9014389d15bfe3108dbe6322baafc047c50635",
-   "tests/swpc11.py": "5a437643e717f0b61c315cb338e09a87da150b2bdc1ed738e836becdac45e477",
-   "trace/catalog/00-standing.yaml": "d85637878ffd1cf72495d95d832e45e166ea88b580f142fc8c1cdf2687e514b0",
-   "trace/catalog/10-architecture.yaml": "9fe8cd21aa3361d1b2dac75d3834ac399cd8adb0014c401ae2b57b9bc338096d",
+   "spec/DR-LAB-SWPC-1.1.md": "7d3986c5d10673944d6019ecd63a1e5b2eaa6d9cf9549d41f8c21b1861822ae7",
+   "tests/swpc11.py": "92a8687167684d63295e90fabe6dcfbf12aabd29161fcb127a4a0c9f2528e749",
+   "trace/catalog/00-standing.yaml": "e64a43a1060034d18e6276c69e6920132a820d220d298c66a0c3fbe218b73e01",
+   "trace/catalog/10-architecture.yaml": "a39976efa484fa1b8bde6dd5fb77f70fd6971203e1814ac5b2493b1c34bffee5",
    "trace/catalog/20-boundaries.yaml": "516e7f53a14fa7e63f6aa4a1ac7958829740d99626fbb8031b8ac784599b1330",
-   "trace/catalog/30-scenes.yaml": "a3f05077d71ef687fafd0243494fffa1e9768ce9a9d9eaf4bf54d21ef97207e5",
+   "trace/catalog/30-scenes.yaml": "52a23d491ef97977c55f388d8a3ec790956c596943357f315c9d915f9eafecb7",
    "trace/schema/dr_lab_trace.yaml": "7b9a526c394c54e1738ddd0f9f2b3731475d3cfdfe2cb6e87a06e03029f09272",
    "trace/schema/linkml-lint.yaml": "fd96f4ac9b5d6872be1bcdfa4f4b579c68c31e1862b222d4fea74d8721dc0dc9"
   },

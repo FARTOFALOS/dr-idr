@@ -48,7 +48,7 @@ SWPC_DOC = ROOT / "spec" / "DR-LAB-SWPC-1.1.md"
 SWPC_RECORD = ROOT / "tests" / "swpc11.py"
 ARCH = [ROOT / "meaning" / "lens" / "2026-10-13-semantic-architecture" / "01-DR-LAB-SEMANTIC-ARCHITECTURE-0.1.md",
         ROOT / "meaning" / "lens" / "2026-10-13-semantic-architecture" / "02-DR-LAB-SEMANTIC-ARCHITECTURE-0.2-dopolnenie.md"]
-PAGE = {"app.js": ROOT / "design" / "sozvezdiya-24" / "src" / "app.js", "panel.js": ROOT / "design" / "sozvezdiya-24" / "src" / "panel.js"}
+PAGE = {name: ROOT / "design" / "sozvezdiya-24" / "src" / name for name in ("app.js", "panel.js", "graph.js")}
 
 
 def sha256_lf(p):

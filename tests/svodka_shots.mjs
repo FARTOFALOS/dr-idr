@@ -80,7 +80,8 @@ const READY = function () {
 };
 const HOVER = function (k) {
   const d = window.__d24, L = d.links(), els = [...document.querySelectorAll('#panel [data-l21]')];
-  const el = els.find(e => (L[+e.dataset.l21] || {}).k === k);
+  const [kind, key] = k.split(':');
+  const el = els.find(e => { const h = L[+e.dataset.l21] || {}; return h.k === kind && (!key || (kind === 'now' ? h.ev : h.id) === key); });
   if (!el) return false;
   el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
   d.render(false);
@@ -88,7 +89,14 @@ const HOVER = function (k) {
 };
 const STATE = function () {
   const d = window.__d24, C = d.contract(), p = document.getElementById('panel');
-  return { contract: { registry_hash: C.registry_hash, violations: C.violations, unchecked: C.unchecked }, panel_scroll: [p.scrollHeight, p.clientHeight] };
+  const rect = el => { if (!el) return null; const r = el.getBoundingClientRect(); return [r.x, r.y, r.width, r.height]; };
+  const cv = document.getElementById('cv').getBoundingClientRect(), V = d.V, P = (x, y) => [cv.x + x, cv.y + y];
+  const queries = [...p.querySelectorAll('.p24-q')].map(el => ({ text: el.innerText.split('\n')[0], r: rect(el) }));
+  const geometry = { W: innerWidth, H: innerHeight, dom: { mode: rect(document.getElementById('mode')), frequencies: rect(document.getElementById('pathfreq21')), insp: rect(document.getElementById('insp')) },
+    panel: { queries }, chart: { current: V.currentClose ? P(V.X(V.currentClose.t), V.Y(V.currentClose.p)) : null,
+      place: V.graphEvidence && V.graphEvidence.price != null ? P(V.plot.w + V.axisW / 2, V.Y(V.graphEvidence.price)) : null,
+      time: V.win && V.win.t0 != null ? P(V.X((V.win.t0 + V.win.t1) / 2), V.taxisY + 14) : null } };
+  return { contract: { registry_hash: C.registry_hash, violations: C.violations, unchecked: C.unchecked }, panel_scroll: [p.scrollHeight, p.clientHeight], geometry };
 };
 
 async function main() {

@@ -1685,7 +1685,13 @@ def check_screen(st, scene, screen, bundle, body):
         if el.get("shown_value") != want:
             v.append(_viol("SHOWN_VALUE", ["R13", "INV-11"], f"shown {el.get('shown_value')!r}, the value form gives {want!r}", el["element"]))
     else:
-        if el["bound_kind"] != "ABSENCE" or (el.get("shown_value") or "") not in ("", "—"):
+        # Candidate §0.4 replaces a resolved ARRIVE percentage by the registered fact mark. Admit it only when the
+        # recomputed answer confirms RESOLVED for this exact place; never admit a number or a mark on an open target.
+        value = el.get("shown_value") or ""
+        place = next((p for p in body.get("places") or [] if p.get("level") == sel.get("level")), {}) if est == "EST:K-ARRIVE" else {}
+        mark = next((x["text_ru"] for x in (C.get("FF:K-TARGET") or {}).get("labels", []) if x["key"] == "RESOLVED_mark"), None)
+        resolved_mark = el.get("absence_reason") == "RESOLVED_TODAY" and place.get("state", {}).get("status") == "RESOLVED" and value == mark == "✓"
+        if el["bound_kind"] != "ABSENCE" or (value not in ("", "—") and not resolved_mark):
             v.append(_viol("NUMBER_WITHOUT_BUNDLE", ["R13", "0.2 §4"], f"the element shows {el.get('shown_value')!r} although no number is published", el["element"]))
     if el.get("label_ok") is False:
         v.append(_viol("WORDS", ["OB:PAGE-WORDS", "R13"], "the visible words are not the registered labels rendered with these values", el["element"]))

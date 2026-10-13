@@ -6,6 +6,7 @@ never by hand-measured pixels, so a new snapshot after a change of the screen re
 python spec/ekran-24/tools/annotate.py
 """
 import json
+import sys
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -166,6 +167,31 @@ MARKS = {
 
 
 def main():
+    if '--candidate' in sys.argv:
+        raw = HERE.parent / 'img' / 'family-path' / 'raw'
+        outdir = raw.parent
+        q = lambda G, name: ctr(next(x['r'] for x in G['panel']['queries'] if name in x['text']))
+        marks = {
+            'put': [(1, lambda G: G['chart']['current'], (35, -25)), (2, lambda G: ctr(G['dom']['frequencies']), (0, 30)),
+                    (3, lambda G: q(G, 'Середина IDR'), (-32, 0))],
+            'middle': [(1, lambda G: G['chart']['current'], (35, -25)), (2, lambda G: G['chart']['place'], (-42, 30)),
+                       (3, lambda G: q(G, 'Середина IDR'), (-32, 0)), (4, lambda G: left(G['dom']['insp'], 20), (-32, 0))],
+            'bounds': [(1, lambda G: q(G, 'Середина IDR'), (-32, 0)), (2, lambda G: G['chart']['place'], (-42, 30)),
+                       (3, lambda G: left(G['dom']['insp'], 20), (-32, 0))],
+            'resolved': [(1, lambda G: q(G, 'Середина IDR'), (-32, 0)), (2, lambda G: G['chart']['time'], (0, -30))],
+        }
+        for name, labels in marks.items():
+            state = json.loads((raw / (name + '.json')).read_text(encoding='utf-8'))
+            if not state['complete'] or state['contract']['violations']: raise SystemExit('incomplete or faulty frame: ' + name)
+            G = state['geometry']; im = Image.open(raw / (name + '.png')).convert('RGB'); d = ImageDraw.Draw(im)
+            for n, target, off in labels:
+                tx, ty = target(G); mx, my = tx + off[0], ty + off[1]
+                d.line([(tx, ty), (mx, my)], fill=YELLOW, width=2)
+                d.ellipse([mx - 13, my - 13, mx + 13, my + 13], fill=YELLOW, outline=INK, width=2)
+                text = str(n); d.text((mx - d.textlength(text, font=FONT) / 2, my - 9), text, fill=INK, font=FONT)
+            im.save(outdir / (name + '.png'), optimize=True)
+            print('img/family-path/' + name + '.png')
+        return
     for out, (state, marks) in MARKS.items():
         G = json.loads((RAW / (state + '.json')).read_text(encoding='utf-8'))
         im = Image.open(RAW / (state + '.png')).convert('RGB')

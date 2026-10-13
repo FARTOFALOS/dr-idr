@@ -52,6 +52,20 @@ def check(cond, msg):
         failures.append(msg)
 
 
+def resolved_mark_unit():
+    scene = dict(estimand="EST:K-ARRIVE", selector='{"level":"-1/2"}')
+    el = dict(element="test:resolved", block="ARRIVE", estimand="EST:K-ARRIVE", parameters='{"level":"-1/2"}',
+              bound_kind="ABSENCE", absence_reason="RESOLVED_TODAY", shown_value="✓", label_ok=True)
+    screen = dict(id="SCREEN:test", registry_hash=C.registry_hash(), elements=[el], page_violations=[])
+    body = dict(places=[dict(level="-1/2", state=dict(status="RESOLVED"))])
+    result, _ = T.check_screen({}, scene, screen, None, body)
+    check(result["outcome"] == "PASS", "resolved mark: the registered fact ✓ with no bundle is admitted only for the recomputed resolved place")
+    for value, status, reason in [("100%", "RESOLVED", "RESOLVED_TODAY"), ("✓", "OPEN", "RESOLVED_TODAY"), ("✓", "RESOLVED", "FEW_SESSIONS")]:
+        el.update(shown_value=value, absence_reason=reason); body["places"][0]["state"]["status"] = status
+        result, _ = T.check_screen({}, scene, screen, None, body)
+        check(result["outcome"] == "FAIL", f"resolved mark: refused {value!r}, target {status}, reason {reason} (no relaxation for an unbound number)")
+
+
 def future_ohlc_unit():
     """No G3 data required: a future perturbation must change every OHLC, never the M5 prefix."""
     import numpy as np
@@ -261,6 +275,7 @@ def saved_screens(st):
 
 def main():
     collect = "--screens" in sys.argv[1:]
+    resolved_mark_unit()
     future_ohlc_unit()
     future_break_unit()
     st = products()

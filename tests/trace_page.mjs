@@ -110,7 +110,9 @@ const COLLECT = function () {
       Object.assign(rec, { estimand: est, counts: { yes: sp.N_new_yes, no: sp.N_new_no, unknown: sp.N_match_unknown, n: sp.N_match_total, eligible: sp.N_eligible, N: n.base && n.base.N_base } });
       if (bun) Object.assign(rec, { bound_kind: 'BUNDLE', bundle: bun, claim_form: bun.claim_form, parameters: par(bun) });
       else rec.bound_kind = rec.shown && rec.shown !== '—' ? 'UNBOUND' : 'ABSENCE';
-      if (h.ev === 'R') { const first = el.querySelector('.t > span'); rec.label_ok = !!first && strip(first.textContent).startsWith(strip(d.lbl(est, 'row_mark', { ev: 'R' }))); }
+      const name = el.querySelector('.qname');
+      if (name) rec.label_ok = strip(name.textContent) === strip(d.lbl(est, 'query_head'));
+      else if (h.ev === 'R') { const first = el.querySelector('.t > span'); rec.label_ok = !!first && strip(first.textContent).startsWith(strip(d.lbl(est, 'row_mark', { ev: 'R' }))); }
     } else if (h.k === 'arrive' && r) {
       const lvl = String(h.id), place = (r.places || []).find(p => p.level === lvl) || {};
       const bun = r.contract && (r.contract.bundles || []).find(x => x.estimand === 'EST:K-ARRIVE' && par(x).level === lvl);
@@ -122,6 +124,7 @@ const COLLECT = function () {
         rec.bound_kind = rec.shown && rec.shown !== '—' ? 'UNBOUND' : 'ABSENCE';
         rec.absence_reason = place.withheld ? 'CONTRACT_WITHHELD' : stt === 'RESOLVED' ? 'RESOLVED_TODAY' : place.publication === 'WITHHELD_FEW_SESSIONS' ? 'FEW_SESSIONS'
           : place.publication === 'NO_KNOWN_OUTCOME' ? 'NO_KNOWN_OUTCOME' : null;
+        if (rec.absence_reason && !/%/.test(rec.shown)) rec.bound_kind = 'ABSENCE'; // ✓ / · are facts or absence, no unbound statistic
       }
       // the words of the accepted block, or of the price ladder of the «Сводка» candidate (13.10): the place reached today by
       // the opening minute of its M5, the count with who they are
@@ -129,7 +132,9 @@ const COLLECT = function () {
       const wants = place.withheld ? [d.lbl('FF:K-TARGET', 'withheld')] : stt === 'RESOLVED' ? [d.lbl('FF:K-TARGET', 'RESOLVED', { time: place.state.time }), d.lbl('FF:K-TARGET', 'RESOLVED_rail', { time: open5(place.state.time) })]
         : place.publication === 'WITHHELD_FEW_SESSIONS' ? [d.lbl('FF:FEW-SESSIONS', 'few', { n: k.n_match })]
         : k.n_known ? [d.lbl('EST:K-ARRIVE', k.unknown ? 'sub_unknown' : 'sub', { yes: k.yes, n: k.n_match, unknown: k.unknown }), d.lbl('EST:K-ARRIVE', k.unknown ? 'rail_sub_unknown' : 'rail_sub', { yes: k.yes, n: k.n_match, unknown: k.unknown })] : [d.lbl('FF:K-TARGET', 'none_known')];
-      rec.label_ok = rec.sub.some(s => wants.some(w => strip(s) === strip(w)));
+      const name = el.querySelector('.qname'), key = lvl === '0' ? 'edge' : lvl === '-1/2' ? 'middle' : 'retirement';
+      rec.label_ok = name ? strip(name.textContent) === strip(d.lbl('EST:K-ARRIVE', 'query_' + key)) && wants.some(w => strip(rec.title) === strip(w) || strip(rec.title) === strip(d.lbl('FF:K-TARGET', 'RESOLVED_rail_title', { time: open5(place.state && place.state.time) })))
+        : rec.sub.some(s => wants.some(w => strip(s) === strip(w)));
     } else {
       rec.bound_kind = /\d\s*%/.test(rec.shown) ? 'UNBOUND' : 'FACT';
     }

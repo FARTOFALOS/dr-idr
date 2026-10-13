@@ -191,3 +191,4 @@ fact_surfaces:
   - {fact_form: FF:PRE-STATE, surfaces: [API:/api/d24/pre]}
   - {fact_form: FF:FEW-SESSIONS, surfaces: [API:/api/d24/family, API:/api/d24/pre, API:/api/d24/arrive]}
   - {fact_form: FF:K-TARGET, surfaces: [API:/api/d24/arrive]}
+  - {fact_form: FF:GRAPH-QUESTIONS, surfaces: [API:/api/d24/day, API:/api/d24/family, API:/api/d24/now, API:/api/d24/arrive]}

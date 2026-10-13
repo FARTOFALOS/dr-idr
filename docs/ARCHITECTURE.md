@@ -223,6 +223,14 @@ complete_n, median_retr, median_ext, median_rtime`.
   forms with the words of every number, fact forms): the page shows a number only as a passport of a registered
   estimand, renders only those words, refuses envelopes of another registry and sends its passports to
   `POST /api/d24/verify` (`contract/README.md`).
+- Candidate 13.10 (operator-approved plan, isolated branch `codex/family-path-linked-summary`, port **8775**):
+  `src/graph.js` is embedded before `panel.js` by the screen build. `graphQuestion` owns the selected question's
+  context and admission; `drawFamilyPaths` and the existing final-R renderer present the same case set in two modes.
+  `queryPanelHtml` provides the shared compact controls. `familyCloseSegments` maps each member's own directed ticks
+  through its own IDR width onto today's price frame; missing M5 breaks the line. The existing frequency renderer is
+  toggled by «Частоты», unchanged. API and calculations are unchanged. Own launchers: `start-dr-lab-path.cmd/.ps1`
+  and `stop-dr-lab-path.cmd/.ps1`; own pid and logs in ignored `.runtime/`, localhost only. Main 8767 and candidate
+  8774 are independent. Semantic boundaries and acceptance: `meaning/20-put-semi-kandidat.md`, SWPC B19/M21/H15.
 - `classic.html` — **the previous screen**, kept at `/classic.html` (it was `index.html` until 2026-09-28): one page.
   `body.focus` (default) hides the research sidebar and headings; ☰ toggles it (`localStorage dr-lab-focus`).
 - `app.js` — the history dashboard (sidebar filters, KPIs, bottom charts `drawPath/drawHeat/drawHist`, scenes view,

@@ -2613,6 +2613,12 @@
     "id": "CF:N-NEW-R",
     "labels": [
      {
+      "key": "query_head",
+      "surface": "PANEL",
+      "text_ru": "Откат R",
+      "view": "ANY"
+     },
+     {
       "key": "row",
       "surface": "PANEL",
       "text_ru": "В истории: {ev} позже углублялся",
@@ -2687,6 +2693,12 @@
     "grounds": "CONTRACT_FORMALISATION",
     "id": "CF:N-NEW-X",
     "labels": [
+     {
+      "key": "query_head",
+      "surface": "PANEL",
+      "text_ru": "Продолжение X",
+      "view": "ANY"
+     },
      {
       "key": "row",
       "surface": "PANEL",
@@ -3232,6 +3244,24 @@
     "id": "CF:K-ARRIVE",
     "labels": [
      {
+      "key": "query_edge",
+      "surface": "PANEL",
+      "text_ru": "Край IDR",
+      "view": "ANY"
+     },
+     {
+      "key": "query_middle",
+      "surface": "PANEL",
+      "text_ru": "Середина IDR",
+      "view": "ANY"
+     },
+     {
+      "key": "query_retirement",
+      "surface": "PANEL",
+      "text_ru": "−0,7",
+      "view": "ANY"
+     },
+     {
       "key": "head",
       "surface": "PANEL",
       "text_ru": "Отсюда до места",
@@ -3373,6 +3403,12 @@
       "key": "win_stars_v",
       "surface": "INSPECTOR",
       "text_ru": "на графике — окончательные откаты этих сессий: на линии места и за ней — дошли",
+      "view": "ANY"
+     },
+     {
+      "key": "win_paths_v",
+      "surface": "INSPECTOR",
+      "text_ru": "на графике — реальные закрытия выбранных сессий после среза и диапазоны их M5; янтарные — потом дошли, серые — исход неизвестен",
       "view": "ANY"
      },
      {
@@ -8533,6 +8569,266 @@
   ],
   "fact_forms": [
    {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "forbidden_readings_ru": [
+     "прогнозная траектория",
+     "единственный будущий путь",
+     "вход или сделка",
+     "время первого прихода по времени окончательного R"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "FF:GRAPH-QUESTIONS",
+    "labels": [
+     {
+      "key": "head",
+      "surface": "PANEL",
+      "text_ru": "На графике",
+      "view": "ANY"
+     },
+     {
+      "key": "past",
+      "surface": "PANEL",
+      "text_ru": "Уже было",
+      "view": "ANY"
+     },
+     {
+      "key": "pullback",
+      "surface": "PANEL",
+      "text_ru": "Откат R",
+      "view": "ANY"
+     },
+     {
+      "key": "extension",
+      "surface": "PANEL",
+      "text_ru": "Продолжение X",
+      "view": "ANY"
+     },
+     {
+      "key": "places",
+      "surface": "PANEL",
+      "text_ru": "До места",
+      "view": "ANY"
+     },
+     {
+      "key": "from_here",
+      "surface": "PANEL",
+      "text_ru": "стояли здесь",
+      "view": "ANY"
+     },
+     {
+      "key": "edge",
+      "surface": "PANEL",
+      "text_ru": "Край IDR",
+      "view": "ANY"
+     },
+     {
+      "key": "middle",
+      "surface": "PANEL",
+      "text_ru": "Середина IDR",
+      "view": "ANY"
+     },
+     {
+      "key": "retirement",
+      "surface": "PANEL",
+      "text_ru": "−0,7",
+      "view": "ANY"
+     },
+     {
+      "key": "dr",
+      "surface": "PANEL",
+      "text_ru": "DR",
+      "view": "ANY"
+     },
+     {
+      "key": "dr_held",
+      "surface": "PANEL",
+      "text_ru": "цел",
+      "view": "ANY"
+     },
+     {
+      "key": "dr_broken",
+      "surface": "PANEL",
+      "text_ru": "сломан",
+      "view": "ANY"
+     },
+     {
+      "key": "dr_unknown",
+      "surface": "PANEL",
+      "text_ru": "нет M5",
+      "view": "ANY"
+     },
+     {
+      "key": "frequencies",
+      "surface": "PANEL",
+      "text_ru": "Частоты",
+      "view": "ANY"
+     },
+     {
+      "key": "frequencies_title",
+      "surface": "PANEL",
+      "text_ru": "Доли закрытий семьи на каждой M5: прежние числа и общая линейная шкала. Каждая колонка — своя сотня.",
+      "view": "ANY"
+     },
+     {
+      "key": "by_time",
+      "surface": "PANEL",
+      "text_ru": "по времени",
+      "view": "ANY"
+     },
+     {
+      "key": "by_path",
+      "surface": "PANEL",
+      "text_ru": "по пути",
+      "view": "ANY"
+     },
+     {
+      "key": "support_mode",
+      "surface": "PANEL",
+      "text_ru": "{mode} · {n} сессий",
+      "view": "ANY"
+     },
+     {
+      "key": "support",
+      "surface": "PANEL",
+      "text_ru": "{n} сессий",
+      "view": "ANY"
+     },
+     {
+      "key": "support_few",
+      "surface": "PANEL",
+      "text_ru": "мало · {n}",
+      "view": "ANY"
+     },
+     {
+      "key": "family",
+      "surface": "PANEL",
+      "text_ru": "Семья · {n}",
+      "view": "ANY"
+     },
+     {
+      "key": "family_break",
+      "surface": "PANEL",
+      "text_ru": "По слому · {n}",
+      "view": "ANY"
+     },
+     {
+      "key": "show",
+      "surface": "PANEL",
+      "text_ru": "Показать ответ на графике; клик — закрепить",
+      "view": "ANY"
+     },
+     {
+      "key": "loading",
+      "surface": "PANEL",
+      "text_ru": "считаю…",
+      "view": "ANY"
+     },
+     {
+      "key": "unavailable",
+      "surface": "PANEL",
+      "text_ru": "нет ответа",
+      "view": "ANY"
+     },
+     {
+      "key": "past_title",
+      "surface": "PANEL",
+      "text_ru": "Только закрытые M5 сегодняшнего дня: подтверждение, сделанные экстремумы и достигнутые уровни. Отсутствующие M5 не восстанавливаются.",
+      "view": "ANY"
+     },
+     {
+      "key": "now_title",
+      "surface": "PANEL",
+      "text_ru": "В истории после {cut}: обновление собственного экстремума {ev}. На цене — дополнительное движение, на времени — первое обновление; это отдельные измерения.",
+      "view": "ANY"
+     },
+     {
+      "key": "dr_title",
+      "surface": "PANEL",
+      "text_ru": "Наблюдаемое состояние сегодняшнего DR и исход всей исторической семьи на её собственных горизонтах — разные сведения.",
+      "view": "ANY"
+     },
+     {
+      "key": "details",
+      "surface": "PANEL",
+      "text_ru": "Подробности семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "compare",
+      "surface": "PANEL",
+      "text_ru": "Почему доли разные",
+      "view": "ANY"
+     },
+     {
+      "key": "first_time",
+      "surface": "PANEL",
+      "text_ru": "Первое {ev}",
+      "view": "ANY"
+     },
+     {
+      "key": "no_event",
+      "surface": "PANEL",
+      "text_ru": "на {cut}: новых отмеченных событий нет",
+      "view": "ANY"
+     },
+     {
+      "key": "anchor",
+      "surface": "INSPECTOR",
+      "text_ru": "Сегодняшний якорь {ev}: {price} · к {cut}",
+      "view": "ANY"
+     },
+     {
+      "key": "new_counts",
+      "surface": "INSPECTOR",
+      "text_ru": "обновлялся у {yes} из {n} · неизвестно {unknown}",
+      "view": "ANY"
+     },
+     {
+      "key": "amount_head",
+      "surface": "INSPECTOR",
+      "text_ru": "Если обновлялся: окончательная добавка",
+      "view": "ANY"
+     },
+     {
+      "key": "amount_value",
+      "surface": "INSPECTOR",
+      "text_ru": "медиана {mid} · половина {lo}–{hi} · известно у {n}",
+      "view": "ANY"
+     },
+     {
+      "key": "time_head",
+      "surface": "INSPECTOR",
+      "text_ru": "Первое обновление после среза",
+      "view": "ANY"
+     },
+     {
+      "key": "time_value",
+      "surface": "INSPECTOR",
+      "text_ru": "медиана ~{min} мин · известно у {n}",
+      "view": "ANY"
+     },
+     {
+      "key": "own_anchor",
+      "surface": "INSPECTOR",
+      "text_ru": "Каждая историческая сессия — относительно собственного сделанного экстремума. Добавка перенесена на сегодняшний якорь; её окончательная величина и первое время обновления — отдельные измерения.",
+      "view": "ANY"
+     }
+    ],
+    "note": "Прямой запрос оператора в текущем чате Codex 13.10.2026 PLEASE IMPLEMENT THIS PLAN: Путь семьи и общая сводка с пространственными ответами. Разрешение локальной реализации кандидата, не перцептивная приёмка и не допуск C2/C3. Никакое старое определение или число не изменено.",
+    "record_class": "QuestionRequest",
+    "sc_ref": [
+     "M0",
+     "E0",
+     "E1",
+     "H2",
+     "P0.2",
+     "P0.3",
+     "§12.4"
+    ],
+    "statement_ru": "Выбранный человеком вопрос связан с историческим набором и сегодняшним срезом; наведение показывает соответствующее измерение в координатах графика, клик закрепляет его.",
+    "version": "1"
+   },
+   {
     "acceptance": "INHERITED_FROM_ACCEPTED_SCREEN",
     "forbidden_readings_ru": [
      "HOLDS — гарантия финала",
@@ -9801,6 +10097,18 @@
       "key": "RESOLVED_rail_title",
       "surface": "PANEL",
       "text_ru": "Сегодня свеча M5 {time} дошла до места: вопрос решён фактом, доли нет. Время свечи — минута её открытия.",
+      "view": "ANY"
+     },
+     {
+      "key": "RESOLVED_mark",
+      "surface": "PANEL",
+      "text_ru": "✓",
+      "view": "ANY"
+     },
+     {
+      "key": "RESOLVED_head",
+      "surface": "INSPECTOR",
+      "text_ru": "Сегодня дошли до {place} · {price}",
       "view": "ANY"
      }
     ],
@@ -12559,7 +12867,7 @@
   "document_sha256_lf": "895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb",
   "edition": "DR-LAB-SC-1.1",
   "linkml": "1.11.1",
-  "registry_sha256": "5511ac171af75d8d075465b991b76b3eff00018dd8e79eb41cb505485bb7cbe7",
+  "registry_sha256": "717babadb137f513401cff58bcc55e6a7d3ecfb32bf52b5cc8f85a0b5f5cee8e",
   "runtime_spec_sha256": "cf30eb49f7ec6ce9292a6b56ee10ce98135ba27621148280a301118b29aa64db",
   "schema_sha256_lf": "f5918411914130b4bc9d6a5757a9cd781cdd28f527c38b41f56a47a02f09f90b",
   "sources": {
@@ -12567,7 +12875,7 @@
    "contract/registry/10-observation-strategy-measurement.yaml": "017dff6cc6ea9ef2340a78aa633fa44306a27d27875f856165a6e6d586a0cb27",
    "contract/registry/20-cases-outcomes.yaml": "5f6535e69d557fee9d05c6de7ffbb0b206aeec11362259454d5b4c6bc456afcd",
    "contract/registry/30-questions-estimands.yaml": "a2325bf90b17d7d742853609a92dc1f29de0099ec5a3e3c3d479a6425929b699",
-   "contract/registry/40-claims.yaml": "30d3f85f354cc04f730981bfe23105d6b2fb7e73e63623101a8a7de284414ca9",
+   "contract/registry/40-claims.yaml": "5dbda698070cc59d4f27603853160482ee8f1764f5a1fe804a3ef3a3a4a52d3d",
    "contract/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
    "contract/registry/60-surfaces.yaml": "974b6786f3f0eaead74bb0133667e6ecff7f72127da8bcff9e8e629fc6e5a605",
    "contract/registry/70-obligations.yaml": "222c8ef1523ddad91d930b98c44ca360679257460f305b56d5bcad86eef2ae90",

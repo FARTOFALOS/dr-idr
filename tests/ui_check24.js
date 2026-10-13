@@ -27,6 +27,12 @@
   const noNow = () => { const q = panel.cloneNode(true); q.querySelectorAll('.p24-nowblk, .p24-arrblk').forEach(e => e.remove()); return q.innerText; };
   if (/\d+\s*(из\s+\d|сесси[йи])/i.test(noNow())) problems.push('panel shows session counts');
   if (!c.F) return { problems, info, note: 'no family on screen (status ' + c.s.status + ')' };
+  // The candidate keeps the same passports in the operator-openable family details. Open that real control to check
+  // its displayed values, and exercise both modes irrespective of the entry mode; restore the operator's view at end.
+  const entry = { mode: D.st.mode, familyDetails: D.st.familyDetails, pin: D.st.pin, hover: D.st.hover };
+  const more = panel.querySelector('.p24-more');
+  if (more && !more.open) more.querySelector('summary').click();
+  D.st.mode = 'bounds'; D.st.hover = D.st.pin = null; D.render(true);
   const F = c.F, N = F.N;
   info.family = F.cond; info.snapshot = F.r.snapshot_id;
   if (F.mismatch.length) problems.push('page and server disagree on ' + F.mismatch.join(', '));
@@ -118,7 +124,7 @@
     }
   };
   const clkOf = t => String(Math.floor(((t % 1440) + 1440) % 1440 / 60)).padStart(2, '0') + ':' + String(((t % 60) + 60) % 60).padStart(2, '0');
-  if (!/Сейчас/.test(txt())) problems.push('the panel has no «Сейчас» block');
+  if (!/Сейчас/.test(txt()) && !(panel.querySelector('.p24-nowblk[data-event="R"]') && panel.querySelector('.p24-nowblk[data-event="X"]'))) problems.push('the panel has no «Сейчас» answers for R and X');
   // 8) moving the slice rewrites nothing: the same snapshot, the same distributions
   const sig = f => f ? f.r.snapshot_id + '|' + [...f.ev.R.cells.keys()].sort().join(',') + '|' + [...f.ev.X.cells.keys()].sort().join(',') + '|' + JSON.stringify(f.zones) : null;
   const s0 = sig(F), steps = [];
@@ -215,13 +221,17 @@
         if (P.publication === 'PUBLISHED') {
           const want = k.unknown ? fmt(100 * k.yes / k.n_match) + '–' + fmt(100 * (k.yes + k.unknown) / k.n_match) : fmt(100 * k.yes / k.n_match);
           if (!blk.innerText.includes(want)) problems.push('«Отсюда» ' + P.level + ': the share ' + want + ' of its counts is not shown');
-          if (!blk.innerText.includes(k.yes + ' из ' + k.n_match)) problems.push('«Отсюда» ' + P.level + ': its counts are not shown');
+          const keep = D.st.hover;
+          D.st.hover = D.links().find(h => h.k === 'arrive' && h.id === P.level) || { k: 'arrive', id: P.level };
+          D.render(true);
+          if (!document.getElementById('insp').innerText.includes(k.yes + ' из ' + k.n_match)) problems.push('«Отсюда» ' + P.level + ': its counts are not available with the answer in the inspector');
+          D.st.hover = keep; D.render(true);
         }
         const h = { k: 'arrive', id: P.level }, lab = new Map(P.members), save = D.st.hover;
         D.st.hover = h;
         const lit = cc.F.ev.R.pts.filter(q => D.emphOf(q, h, cc.F, cc) === true);
         D.st.hover = save;
-        const known = P.members.filter(([id]) => cc.F.M.some(m => m.id === id && m.R.s === 'known')).length;
+        const known = P.publication === 'PUBLISHED' ? P.members.filter(([id]) => cc.F.M.some(m => m.id === id && m.R.s === 'known')).length : 0;
         if (lit.some(q => !lab.has(q.m.id))) problems.push('«Отсюда» ' + P.level + ': a lit pullback outside its sessions');
         if (lit.length !== known) problems.push('«Отсюда» ' + P.level + ': lit ' + lit.length + ' pullbacks, known ' + known);
         if (lit.some(q => (q.m.R.v * P.b <= P.a * q.m.w) !== (lab.get(q.m.id) === 'YES'))) problems.push('«Отсюда» ' + P.level + ': a lit pullback on the wrong side of the place');
@@ -229,5 +239,6 @@
     }
   }
   info.checkedSlices = steps;
+  Object.assign(D.st, entry); D.render(true);
   return { problems, info };
 })()

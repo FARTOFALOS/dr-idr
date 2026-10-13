@@ -113,16 +113,16 @@ REC = {
                 recover="статус в строке зоны сводки и в инспекторе", tune="⚙ «Созвездия · цвет и дымка» (яркость отработанных)", rules=["meaning/14", "meaning/15 F1–F3"],
                 origin="INHERITED; NEW_SWPC: снятый статус не утверждается (M14)", checks=["m07", "m14"]),
     "B09": dict(code=["outcomeHtml", "drPass", "detBody"], clock="BASE-снимок", ctx=BASE_CTX, channels="одна полоса на 100 % N из четырёх категорий; строки с долями; неизвестно и «нет периода» только при наличии; снятая категория — пустой отрезок",
-                recover="блок «Исход DR» в постоянном месте сводки", tune="нет", rules=["spec/ekran-24/03-obzor-panel.md № 13–14"], origin="INHERITED", checks=["m08", "m14"]),
-    "B10": dict(code=["nowOf", "railHtml", "nowBundle", "drawNowLevels", "drawNowRange", "drawNowMarks"], clock="закрытая M5 (срез NOW)", ctx=BASE_CTX + ", срез",
-                channels="текст: исторические слова K33 (подписи CF:N-*), режим «по времени», опора; строка отката — только число, её слова и опора в подсказке; отметки отката у шкалы цены постоянно; наведение: пунктир сегодняшнего экстремума и полоса остатка q25–q75",
+                recover="постоянный вопрос DR; полоса и категории в его инспекторе и раскрываемых подробностях семьи", tune="нет", rules=["spec/ekran-24/03-obzor-panel.md № 13–14", "meaning/13 № 59"], origin="INHERITED; размещение кандидата §0.4", checks=["m08", "m14"]),
+    "B10": dict(code=["nowOf", "queryPanelHtml", "nowBundle", "graphNowTip", "drawQuestionOverlay", "drawNowMarks"], clock="закрытая M5 (срез NOW)", ctx=BASE_CTX + ", срез",
+                channels="короткие вопросы R/X, доля, режим и опора; исторические слова K33, счёты и отдельные опоры в инспекторе; основной вид сохраняет отметки R; выбранный вопрос: якорь и окончательная добавка у цены, первое обновление отдельно у времени",
                 recover="блок «Сейчас» в постоянном месте; загрузка — «считаю…», недоступность — «Локальный сервер не ответил»", tune="нет", rules=["meaning/15", "meaning/13 № 46–48"],
                 origin="INHERITED; NEW_SWPC: недоступный ответ называется недоступным, а не «нет данных» (W13)", checks=["m09", "m08", "m14"]),
     "B11": dict(code=["undPass", "resPass", "outPass", "zonesHtml", "drawBand", "drawProjRX"], clock="BASE-снимок", ctx=BASE_CTX,
                 channels="строки сводки «вне зон» и «не определено»; столбик «?» ленты; ▲ / ▼ колонки; неизвестное не имеет координаты",
                 recover="строки остатка и неизвестного в сводке; причина отсутствия чисел — в сводке и в имени кнопки «Сводка»", tune="слои ⚙ «Слои» не удаляют счёт", rules=["meaning/12 §1", "spec/ekran-24/11-invarianty.md И5, И11"],
                 origin="INHERITED", checks=["m08", "m10"]),
-    "B12": dict(code=["filmOf", "drawFilm", "drawProj", "drawBandProfile", "closePass", "missPass", "rangePass", "columnHtml"], clock="BASE-снимок; срез (впереди / прошло)", ctx=BASE_CTX,
+    "B12": dict(code=["filmOf", "drawFilm", "drawFamilyPaths", "familyCloseSegments", "drawProj", "drawBandProfile", "closePass", "missPass", "rangePass", "columnHtml"], clock="BASE-снимок; срез (впереди / прошло)", ctx=BASE_CTX,
                 channels="яркость клетки: доля N по одной шкале; профиль полосы: столбики n, классы цвета — место n среди впереди (не доля); подписи n из N; снятая доля — без клетки и столбика",
                 recover="режим назван на переключателе «Границы хода / Путь семьи»", tune="⚙ «Путь семьи»", rules=["meaning/13 № 37, 38"], origin="INHERITED", checks=["m11", "m12"]),
     "B13": dict(code=["hit", "linkOf", "drawLink", "drawHighlight", "showTip", "tipHtml", "pin", "pinKey", "panelMarks", "areaInfo", "levelQuery"], clock="действие пользователя", ctx=BASE_CTX,
@@ -143,10 +143,15 @@ REC = {
                 channels="текст: подписи CF:P-*, FF:PRE-STATE, FF:FEW-SESSIONS; полоса на 100 % N: лонг (цвет растущей свечи), шорт (цвет падающей), не подтвердили, неизвестно; у сторон — счёты «k из n» и медианы, квартили в подсказке; на графике ничего",
                 recover="блок стоит в сводке под строкой статуса до подтверждения; загрузка — «Подбираю похожие сессии…», недоступность — «Локальный сервер не ответил»", tune="охват «день недели / все дни» (прежний переключатель)",
                 rules=["meaning/17 §7", "meaning/13 № 55", "SC-1.1 §12.5"], origin="NEW_SWPC 08.10: решение оператора «второй экран до подтверждения нужен» (Н6)", checks=["m19"]),
-    "B18": dict(code=["arriveOf", "arriveBundle", "railHtml", "arriveTip", "arriveBody", "drawHighlight", "emphOf"], clock="закрытая M5 (срез ARRIVE-24) после подтверждения", ctx="реестр SC-1.1, инструмент, торговая дата, блок, подтверждение, срез, scope, family_id и snapshot_id семьи-родителя",
-                channels="текст: подписи CF:K-ARRIVE, FF:K-TARGET, FF:FEW-SESSIONS; доля или диапазон и «дошли k из n» у каждого места; при наведении — яркая линия места (как у уровня) и яркие окончательные откаты сессий ответа, остальные точки тише; паспорт в инспекторе и окне 1",
+    "B18": dict(code=["arriveOf", "arriveBundle", "queryPanelHtml", "arriveTip", "arriveBody", "drawQuestionOverlay", "drawFamilyPaths", "emphOf"], clock="закрытая M5 (срез ARRIVE-24) после подтверждения", ctx="реестр SC-1.1, инструмент, торговая дата, блок, подтверждение, срез, scope, family_id и snapshot_id семьи-родителя",
+                channels="короткие имена мест, доля и опора; «дошли k из n» и неизвестность вместе в инспекторе и title; ✓ — достигнуто сегодня, M5 по открытию; мало n — без доли и условной графики; тот же набор: реальные продолжения в путях либо окончательные R в границах",
                 recover="блок стоит в сводке под «Сейчас» после подтверждения; загрузка — «считаю…», недоступность — «Локальный сервер не ответил»; закреплённая строка держит подсветку", tune="охват «день недели / все дни» (прежний переключатель семьи)",
                 rules=["meaning/13 № 57", "SC-1.1 §12.6", "meaning/18-otsyuda-na-ekrane-24.md"], origin="NEW_SWPC 12.10: поручение оператора интегрировать проверенный механизм Q1, не подменяя BASE/NOW", checks=["m20"]),
+    "B19": dict(code=["graphQuestion", "graphContextKey", "graphQueryKind", "queryPanelHtml", "familyCloseSegments", "drawFamilyPaths", "drawCurrentClose", "drawQuestionOverlay", "graphNowTip", "graphQuestionTip"],
+                clock="закрытая M5, общий час, действие пользователя", ctx=BASE_CTX + ", срез; pin принадлежит семье и охвату, но обновляется на новом срезе",
+                channels="тонкие линии: реальные закрытия сессий, разрыв M5 и собственная активация; яркий маркер: сегодняшний закрытый срез; вопрос ARRIVE: точный набор, окончательные R либо реальные продолжения; NOW: окончательная добавка у цены и первое обновление у времени отдельно; цены вне кадра с указателями у оси",
+                recover="один вопрос; временное наведение уступает pin; pin сохраняется при смене режима и среза той же семьи; малая опора, загрузка и отзыв снимают условный рисунок, базовые свечи остаются", tune="«Частоты» включает прежнее поле закрытий; ручная шкала цены сохраняется", rules=["meaning/20-put-semi-kandidat.md", "meaning/13 № 59"],
+                origin="NEW_SWPC 13.10: прямое поручение оператора PLEASE IMPLEMENT THIS PLAN, локальный кандидат на a2d076a; человеческая приёмка не получена", checks=["m21"]),
 }
 HARNESS_OF = {m: "m" + m[1:] for m in M}          # M01 is executed by the scenario m01, …
 
@@ -159,12 +164,12 @@ def claim_basis(refs, page):
 
 
 def passports(page):
-    lines = ["# 12 · SWPC-1.1: паспорта привязок B01–B18", "", "[← к оглавлению](README.md)", "",
+    lines = ["# 12 · SWPC-1.1: паспорта привязок B01–B19", "", "[← к оглавлению](README.md)", "",
              "Сгенерировано `python -B tests/swpc11.py --write` из нормативного текста [DR-LAB-SWPC-1.1](../DR-LAB-SWPC-1.1.md) "
              "(§2, §2.1, §3.4, §5, §9) и инженерной записи в `tests/swpc11.py` (код, часы, каналы, настройки, проверки). Руками не править: "
              "`python -B tests/swpc11.py` сверяет файл с источниками.", "",
-             "**Статус.** Машинные обязанности M01–M19 исполняет `tests/swpc11_browser.mjs` (изолированный Chrome; результат прогона — в узле "
-             "[`meaning/07`](../../meaning/07-cepochka-reshenij.md)). Человеческие задачи H01–H13 оператором не проводились: "
+             "**Статус.** Машинные обязанности M01–M21 исполняет `tests/swpc11_browser.mjs` (изолированный Chrome; результат прогона — в узле "
+             "[`meaning/07`](../../meaning/07-cepochka-reshenij.md)). Человеческая приёмка кандидата H01–H15 не получена: "
              "`PERCEPTUALLY_UNVERIFIED`. Протокол — [`meaning/16-priyomka-swpc.md`](../../meaning/16-priyomka-swpc.md).", ""]
     for bid, b in B.items():
         r = REC[bid]
@@ -207,8 +212,8 @@ def main(write):
     check(set(DEADLINE) == set(W), f"§2.1: every W has its term ({len(DEADLINE)})")
     check(ROLES == ["SCAFFOLD", "AMBIENT_STATE", "TRANSITION", "ON_DEMAND", "WITHHELD", "USER_ALERT"], f"§3.2: six roles {ROLES}")
     check(list(ANCHORS) == [f"A{i}" for i in range(1, 10)], f"§3.3: anchors A1–A9 ({len(ANCHORS)})")
-    check(list(B) == [f"B{i:02d}" for i in range(1, 19)], f"§5: bindings B01–B18 ({len(B)})")
-    check(list(M) == [f"M{i:02d}" for i in range(1, 21)] and list(H) == [f"H{i:02d}" for i in range(1, 15)], f"§8: M01–M20 ({len(M)}) and H01–H14 ({len(H)})")
+    check(list(B) == [f"B{i:02d}" for i in range(1, 20)], f"§5: bindings B01–B19 ({len(B)})")
+    check(list(M) == [f"M{i:02d}" for i in range(1, 22)] and list(H) == [f"H{i:02d}" for i in range(1, 16)], f"§8: M01–M21 ({len(M)}) and H01–H15 ({len(H)})")
     bad = [(b, x) for b, v in B.items() for x in v["w"] if x not in W] + [(b, x) for b, v in B.items() for x in v["roles"] if x not in ROLES] + \
           [(b, x) for b, v in B.items() for x in v["anchors"] if x not in ANCHORS] + [(b, x) for b, v in B.items() for x in v["m"] + v["h"] if x not in M and x not in H]
     check(not bad and all(v["w"] and v["roles"] and v["anchors"] and v["m"] for v in B.values()), f"every B row names existing W, roles, anchors, M and H{': ' + str(bad) if bad else ''}")
@@ -217,9 +222,9 @@ def main(write):
     print("§9 against the compiled SC-1.1 registry and the page")
     est, ff = {k for k in ROUTES if k.startswith("EST:")}, {k for k in ROUTES if k.startswith("FF:")}
     check(est == set(page["estimands"]) and len(est) == 59, f"§9 routes exactly the {len(page['estimands'])} estimands of the registry by exact ids{': ' + str(sorted(est ^ set(page['estimands']))) if est != set(page['estimands']) else ''}")
-    check(ff == set(page["facts"]) and len(ff) == 12, f"§9 routes exactly the {len(page['facts'])} fact forms{': ' + str(sorted(ff ^ set(page['facts']))) if ff != set(page['facts']) else ''}")
+    check(ff == set(page["facts"]) and len(ff) == 13, f"§9 routes exactly the {len(page['facts'])} fact forms{': ' + str(sorted(ff ^ set(page['facts']))) if ff != set(page['facts']) else ''}")
     check(all(set(v) <= set(B) for v in ROUTES.values()), "every route names existing bindings")
-    both = (SRC / "app.js").read_text(encoding="utf-8") + (SRC / "panel.js").read_text(encoding="utf-8")
+    both = "\n".join((SRC / name).read_text(encoding="utf-8") for name in ("app.js", "panel.js", "graph.js"))
     EV = r"(?:ev|h\.ev|r\.ev|e|I\.ev|g\.ev)"
     used = set()
     for name, plus in re.findall(r"'(EST:[A-Z0-9-]+)'(\s*\+\s*" + EV + r")?", both):
@@ -233,10 +238,10 @@ def main(write):
     check(set(REC) == set(B) and not missing, f"every binding has its record and every code anchor exists{': ' + str(missing) if missing else ''}")
     harness = HARNESS.read_text(encoding="utf-8")
     lost = [m for m in M if f"check('{m}'" not in harness or not re.search(rf"\n  async {HARNESS_OF[m]}\(B\)", harness)]
-    check(not lost, f"every M01–M20 is executed by its scenario of tests/swpc11_browser.mjs{': ' + str(lost) if lost else ''}")
+    check(not lost, f"every M01–M21 is executed by its scenario of tests/swpc11_browser.mjs{': ' + str(lost) if lost else ''}")
     gen = passports(page)
     filled = all("|  |" not in gen.split(f"## {b} ")[1].split("\n## ")[0] for b in B)
-    check(filled, "every passport of B01–B18 has every field of §3.1")
+    check(filled, "every passport of B01–B19 has every field of §3.1")
     print("SC-1.1 and the generated passports")
     reg = C.registry()
     ed = next(e for e in reg["editions"] if e["id"] == "DR-LAB-SC-1.1")

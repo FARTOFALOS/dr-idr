@@ -4,7 +4,7 @@
   // closes on one M5. No list of «best» places, no targets, no session counts.
   function link(h, html, cls, p, title) {
     const i = P24.links.push(h) - 1;
-    return '<div class="p21-link' + (cls ? ' ' + cls : '') + '" data-l21="' + i + '"' + (p ? ' data-pp="' + p.id + '"' : '') + (title ? ' title="' + esc(title) + '"' : '') + '>' + html + '</div>';
+    return '<div class="p21-link' + (cls ? ' ' + cls : '') + '" data-l21="' + i + '"' + (cls && cls.includes('p24-q') ? ' role="button" tabindex="0" aria-pressed="' + String(!!st.pin && pinKey(st.pin) === pinKey(h)) + '"' : '') + (p ? ' data-pp="' + p.id + '"' : '') + (title ? ' title="' + esc(title) + '"' : '') + '>' + html + '</div>';
   }
   const prow = (text, val) => '<span class="t">' + text + '</span><b>' + val + '</b>';
   const plainTitle = p => (p.phrase + ' · ' + p.horizon + (p.unknown_count ? lbl('FF:PASSPORT-VIEW', 'title_unknown', { pct: pct(100 * p.unknown_count / p.N) }) : '')).replace(/<[^>]+>/g, '');
@@ -55,16 +55,18 @@
       cutoff: F.r.key.cutoff, snapshot: F.r.snapshot_id, family: F.r.family_id, semantics: F.r.semantics });
     // the scope switch changes the family itself (another key, another N): it stands at the frame, not inside one block
     out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F.cond) + '</span><span>' + (sl >= F.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
-    out.push('<div class="p24-frame"><span title="' + esc(ttl) + '">' + lbl('FF:SHARE-STEP', F.brk ? 'frame_brk' : 'frame', { N: F.N, t: clk(F.act0), end: clk(F.end) }) + '</span>' + scopeSwitch() + '</div>');
+    out.push('<div class="p24-frame"><span title="' + esc(ttl) + '">' + lbl(GRAPH_FF, F.brk ? 'family_break' : 'family', { n: F.N }) + '</span>' + scopeSwitch() + '</div>');
     if (s.failed) out.push(viewSwitch(s));
     // a small break family is shown as it is, marked (operator 2026-10-08: «честно писать «мало»», FF:FEW-SESSIONS)
     if (F.brk && F.N < FEW) out.push('<div class="p21-note" title="' + esc(lbl('FF:FEW-SESSIONS', 'title', { step: pct(step) })) + '"><b>' + lbl('FF:FEW-SESSIONS', 'few', { n: F.N }) + '</b></div>');
-    out.push(todayHtml(F, ctx));
-    out.push(railHtml(F, ctx));
-    out.push(layerHead('Ориентир', 'история семьи · не меняется с ' + clk(F.act0)));
+    out.push(queryPanelHtml(F, ctx));
+    // The same registered details remain available, but the first view is the question bank, not a text report.
+    out.push('<details class="p24-more"' + (st.familyDetails ? ' open' : '') + '><summary>' + lbl(GRAPH_FF, 'details') + '</summary>');
     if (F.out) out.push(outcomeHtml(F, true));
     if (st.mode === 'bounds') out.push(zonesHtml(F, ctx));
     if (st.mode === 'path') out.push(columnHtml(F, ctx));
+    out.push(link({ k: 'cmp', context: graphContextKey(ctx) }, '<span class="t">' + lbl(GRAPH_FF, 'compare') + '</span>', 'p24-cmp'));
+    out.push('</details>');
     if (st.area && st.mode === 'bounds') out.push(areaHtml(F, ctx));
     const h = st.pin;
     if (h && h.k === 'lvl' && h.l) out.push(levelHtml(F, ctx, h.l));
@@ -75,6 +77,49 @@
     const sk = (st.area ? [st.area.k0, st.area.k1, st.area.b0, st.area.b1, st.area.ev].join(',') : '') + '|' + pinKey(st.pin);
     if (sk !== P24.selKey) { P24.selKey = sk; const el = panel.querySelector('.p24-sel'); if (el) panel.scrollTop = Math.min(panel.scrollHeight - panel.clientHeight, el.offsetTop - 8); }
     panelMarks();
+  }
+  function queryPanelHtml(F, ctx) {
+    const n = nowOf(ctx), r = arriveOf(ctx), out = [], context = graphContextKey(ctx), v = VW(F), T = 'FF:K-TARGET';
+    const row = (h, key, value, meta, cls, title) => {
+      const name = h.k === 'now' ? lbl('EST:N-NEW-' + h.ev, 'query_head') : h.k === 'arrive' ? lbl('EST:K-ARRIVE', 'query_' + key) : lbl(GRAPH_FF, key);
+      return link(Object.assign({ context }, h), '<span class="qdot qdot-' + (h.ev || h.k) + '"></span><span class="t"><span class="qname">' + name + '</span>' + (meta ? '<span class="qmeta">' + meta + '</span>' : '') + '</span>' + (value ? '<b>' + value + '</b>' : '<span class="qgo">↗</span>'), 'p24-q ' + (cls || ''), null, title || lbl(GRAPH_FF, 'show'));
+    };
+    out.push('<div class="p24-qhead">' + lbl(GRAPH_FF, 'head') + '</div>');
+    out.push(row({ k: 'past' }, 'past', '', '', '', lbl(GRAPH_FF, 'past_title')));
+    for (const ev of ['R', 'X']) {
+      const E = n && n[ev], Cn = E && E.continuation, b = Cn && ['OK', 'FROZEN_AT_BREAK'].includes(n.status) ? nowBundle(n, 'EST:N-NEW-' + ev, 'MAIN', Cn) : null;
+      let value = '—', meta = '', title = '';
+      if (b) {
+        const bounds = Cn.p_new_bounds || [], k = Cn.support;
+        value = k.N_match_unknown ? pct(100 * bounds[0]) + '–' + pct(100 * bounds[1]) : Cn.p_new_extreme == null ? '—' : pct(100 * Cn.p_new_extreme);
+        meta = lbl(GRAPH_FF, 'support_mode', { mode: lbl(GRAPH_FF, E.mode === 'PATH_CONDITIONED' ? 'by_path' : 'by_time'), n: k.N_match_total });
+        if (n.status === 'FROZEN_AT_BREAK') meta += ' · ' + n.cut.cut_clock_et;
+        title = lbl('EST:N-NEW-' + ev, 'title', { cut: n.cut.cut_clock_et }, v) + ' · ' + lbl(GRAPH_FF, 'new_counts', { yes: k.N_new_yes, n: k.N_match_total, unknown: k.N_match_unknown }) + ' · ' + lbl(GRAPH_FF, 'now_title', { ev, cut: n.cut.cut_clock_et });
+      } else meta = !n ? lbl(GRAPH_FF, 'loading') : esc((E && E.note) || n.note || n.message || lbl(GRAPH_FF, 'unavailable'));
+      out.push('<div class="p24-nowblk" data-event="' + ev + '">' + row({ k: 'now', ev }, ev === 'R' ? 'pullback' : 'extension', value, meta, 'mc', title) + '</div>');
+    }
+    out.push('<div class="p24-qhead p24-qhead-places">' + lbl(GRAPH_FF, 'places') + '<span>' + lbl(GRAPH_FF, 'from_here') + '</span></div><div class="p24-arrblk">');
+    for (const [id, key] of [['0', 'edge'], ['-1/2', 'middle'], ['-7/10', 'retirement']]) {
+      const P = arrPlace(r, id); let value = '—', meta = '', title = '';
+      if (P && r.status === 'OK') {
+        if (P.counts) meta = lbl(GRAPH_FF, 'support', { n: P.counts.n_match });
+        if (P.withheld) { meta = lbl(T, 'withheld'); title = lbl(T, 'withheld'); }
+        else if (P.state.status === 'RESOLVED') { value = lbl(T, 'RESOLVED_mark'); title = lbl(T, 'RESOLVED_rail_title', { time: clk(hm(P.state.time) - 5) }); }
+        else if (P.publication === 'WITHHELD_FEW_SESSIONS') { value = '—'; meta = lbl(GRAPH_FF, 'support_few', { n: P.counts.n_match }); title = lbl('FF:FEW-SESSIONS', 'few', { n: P.counts.n_match }); }
+        else if (P.publication === 'NO_KNOWN_OUTCOME') title = lbl(T, 'none_known');
+        else {
+          const b = arriveBundle(r, P.level, P), k = P.counts;
+          value = !b ? '—' : k.unknown ? pct(100 * k.yes / k.n_match) + '–' + pct(100 * (k.yes + k.unknown) / k.n_match) : pct(100 * k.yes / k.n_match);
+          title = lbl('EST:K-ARRIVE', k.unknown ? 'sub_unknown' : 'sub', { yes: k.yes, n: k.n_match, unknown: k.unknown });
+        }
+      } else title = r && r.status !== 'OK' ? esc(r.note || r.message || (['DR_BROKEN', 'PREFIX_UNKNOWN', 'NO_PREFIX', 'BLOCK_OVER', 'OUT_OF_SCOPE', 'NO_FAMILY'].includes(r.status) ? lbl(T, r.status, { time: r.time || '' }) : r.status)) : lbl(GRAPH_FF, 'loading');
+      out.push(row({ k: 'arrive', id }, key, value, meta, 'mc qplace', title));
+    }
+    out.push('</div>');
+    const rows = todayRows(F, ctx), known = new Set(rows.map(x => x.T));
+    let missing = false; for (let t = F.act0 + 5; t <= sliceOf(ctx); t += 5) if (!known.has(t)) missing = true;
+    out.push(row({ k: 'drctx' }, 'dr', lbl(GRAPH_FF, ctx.s.failed ? 'dr_broken' : missing ? 'dr_unknown' : 'dr_held'), '', '', lbl(GRAPH_FF, 'dr_title')));
+    return '<div class="p24-queries">' + out.join('') + '</div>';
   }
   // the zone map of the chosen event (zone-map-3): the family scope (weekday by default, all weekdays only by an explicit
   // click), every zone in the order of time with its share of the family and today's status, then the residual. No
@@ -606,9 +651,14 @@
     drawHeat('dcR', F, ctx, 'R'); drawHeat('dcX', F, ctx, 'X'); drawFilmMini('dcF', F, ctx);
   }
   function initPanel24() {
+    panel.addEventListener('focusin', e => { const el = e.target.closest('.p24-q[data-l21]'); if (el) { st.hover = P24.links[+el.dataset.l21]; redraw(); } });
+    panel.addEventListener('focusout', e => { if (e.target.closest('.p24-q')) { st.hover = null; redraw(); } });
+    panel.addEventListener('keydown', e => { const el = e.target.closest('.p24-q[data-l21]'); if (el && ['Enter', ' '].includes(e.key)) { e.preventDefault(); pin(P24.links[+el.dataset.l21]); } });
     panel.addEventListener('mouseover', e => { const el = e.target.closest('[data-l21]'); if (!el) return; st.hover = P24.links[+el.dataset.l21]; if (st.hover && st.hover.ev) st.ev = st.hover.ev; showTip(st.hover); redraw(); });
     panel.addEventListener('mouseout', e => { const el = e.target.closest('[data-l21]'); if (!el || el.contains(e.relatedTarget)) return; st.hover = null; animStrip(); redraw(); });
     panel.addEventListener('click', e => {
+      const more = e.target.closest('.p24-more > summary');
+      if (more) { st.familyDetails = !more.parentElement.open; return; }
       if (e.target.closest('[data-hist]')) {
         if (A.src === 'live') histFallback();
         else ensureDates().then(list => { const i = list.findIndex(x => x >= A.date), d = list[Math.max(0, (i < 0 ? list.length : i) - 1)]; if (d) openHist(d); });

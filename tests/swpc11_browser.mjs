@@ -237,26 +237,37 @@ const HELPERS = function () {
     pps(F) { return D.passports().filter(p => !F || p.snapshot_id === F.r.snapshot_id).map(p => ({ id: p.id, key: p.key, est: p.estimand, params: p.params, yes: p.yes_count, unk: p.unknown_count, no: p.no_event_count, N: p.N, cf: p.claim_form, sid: p.snapshot_id, fid: p.family_id, req: !!p.req, v: p.violation || null })); },
     base(F) { return JSON.stringify([F.N, F.r.snapshot_id, ...['R', 'X'].map(ev => [...F.ev[ev].cells.values()].map(q => [q.k, q.b, q.list.length].join(',')).sort().join(';')),
       ...['R', 'X'].map(ev => F.zones[ev] ? F.zones[ev].zones.map(z => z.zone_id + ':' + z.n_zone).join(',') : '-'), JSON.stringify(F.out || null)]); },
-    zoneRows() { return [...panel.querySelectorAll('.p21-link[class*="zst-"]')].map(e => e.innerText.replace(/\s+/g, ' ').trim()); },
+    familyDetails() { const e = panel.querySelector('.p24-more'); if (e && !e.open) { e.querySelector('summary').click(); D.render(true); } },
+    zoneRows() { H.familyDetails(); return [...panel.querySelectorAll('.p21-link[class*="zst-"]')].map(e => e.innerText.replace(/\s+/g, ' ').trim()); },
     heads() { return [...panel.querySelectorAll('.p21-h')].map(e => (e.firstChild && e.firstChild.textContent || e.innerText).split(/\s·\s|\n/)[0].trim().replace(/\d\d:\d\d/g, 'ЧЧ:ММ')); },
     notice() { const n = panel.querySelector('.p24-sc'); return n ? n.innerText : null; },
     // «Сейчас»: one block on the accepted screen; on the «Сводка» candidate (13.10) its rows stand in the price ladder,
     // its cut in the ladder's head and its mode in the legend — the same words, gathered
     nowBlock() {
+      if (panel.querySelector('.p24-queries')) {
+        const rows = [...panel.querySelectorAll('.p24-nowblk')], out = rows.map(e => e.innerText), keep = D.st.hover;
+        for (const el of rows) { const q = el.querySelector('[data-l21]'), h = q && D.links()[+q.dataset.l21]; if (h) { D.st.hover = h; D.render(true); out.push(document.getElementById('insp').innerText); } }
+        D.st.hover = keep; D.render(true);
+        return out.length ? out.join('\n') : null;
+      }
       const rail = panel.querySelector('.p24-rail');
       if (!rail) { const n = panel.querySelector('.p24-nowblk'); return n ? n.innerText : null; }
       const head = rail.previousElementSibling && rail.previousElementSibling.classList.contains('p24-leg') ? rail.previousElementSibling.previousElementSibling : rail.previousElementSibling;
       const parts = [head, panel.querySelector('.p24-leg'), ...panel.querySelectorAll('.p24-nowblk')].filter(Boolean).map(e => e.innerText);
       return parts.length > (head ? 1 : 0) ? parts.join('\n') : null;
     },
-    arrText() { return [panel.querySelector('.p24-leg'), ...panel.querySelectorAll('.p24-arrblk')].filter(Boolean).map(e => e.innerText).join('\n'); },
+    arrText() {
+      const out = [panel.querySelector('.p24-leg'), ...panel.querySelectorAll('.p24-arrblk')].filter(Boolean).map(e => e.innerText), keep = D.st.hover;
+      if (panel.querySelector('.p24-queries')) for (const h of D.links().filter(h => h.context && h.k === 'arrive')) { D.st.hover = h; D.render(true); out.push(document.getElementById('insp').innerText); }
+      D.st.hover = keep; D.render(true); return out.join('\n');
+    },
     toggle() { const t = document.getElementById('panel21toggle'); return { alert: t.classList.contains('sc-alert'), title: t.title, aria: t.getAttribute('aria-label'), badge: getComputedStyle(t, '::after').content, hidden: document.getElementById('dr21-root').classList.contains('panel21closed') }; },
     // the toolbar: the controls left of its spacer keep their places; right of it they keep their widths (the clock's
     // text decides where the right group starts, by design)
     toolbarGeo() { const out = []; let right = false; for (const e of document.querySelectorAll('#tb > *')) { if (!e.offsetParent) continue; if (e.classList.contains('sp')) { right = true; continue; } const r = e.getBoundingClientRect(), id = e.id || e.className; if (/^(clock|apibar)$/.test(id)) continue; out.push(id + (right ? ' w' + Math.round(r.width) : ' @' + Math.round(r.left) + ' w' + Math.round(r.width))); } return out; },
     hide(on) { const root = document.getElementById('dr21-root'); if (root.classList.contains('panel21closed') !== on) document.getElementById('panel21toggle').click(); D.render(true); },
     async refresh() { document.getElementById('refresh21').click(); await wait(200); return H.settle(); },
-    dataPP() { const byId = new Map(D.passports().map(p => [p.id, p])); return [...panel.querySelectorAll('[data-pp]')].map(el => { const p = byId.get(+el.dataset.pp); return { sid: p && p.snapshot_id, text: el.innerText.split('\n')[0], b: (el.querySelector('b') || {}).innerText || '' }; }); }
+    dataPP() { H.familyDetails(); const byId = new Map(D.passports().map(p => [p.id, p])); return [...panel.querySelectorAll('[data-pp]')].map(el => { const p = byId.get(+el.dataset.pp); return { sid: p && p.snapshot_id, text: el.innerText.split('\n')[0], b: (el.querySelector('b') || {}).innerText || '' }; }); }
   };
   return true;
 };
@@ -319,8 +330,8 @@ const S = {
   // its family context, and a binding of §9 found by its exact id (no similar name gets a presentation)
   async m01(B) {
     const routes = swpcRoutes();
-    check('M01', Object.keys(routes).filter(k => k.startsWith('EST:')).length === 59 && Object.keys(routes).filter(k => k.startsWith('FF:')).length === 12,
-      '§9 of the document routes 59 estimands and 12 fact forms (PRE-24 and FF:PHASE-RULE since 2026-10-08, ARRIVE-24 since 2026-10-12) (read from the document)', Object.keys(routes).length);
+    check('M01', Object.keys(routes).filter(k => k.startsWith('EST:')).length === 59 && Object.keys(routes).filter(k => k.startsWith('FF:')).length === 13,
+      '§9 routes the same 59 estimands and 13 fact/control forms, including the shared graph question (no new statistic)', Object.keys(routes).length);
     await open(B, DAY + '&at=11:40');
     const r = await evaluate(B.cdp, async () => {
       const H = window.__h, { D } = H, F0 = D.cur().F, z = (D.zonesOf(F0, 'R') || { zones: [] }).zones;
@@ -455,7 +466,7 @@ const S = {
     check('M04', snd === 0 && notes === 0 && !toast, 'across 5 days and every zone / NOW hover no sound, no system notification and no toast happened', { snd, notes, toast });
     check('M04', still, 'an idle history screen does not change between frames 1,6 s apart (no pulse, no animation)');
     const arrows = [...texts.keys()].filter(t => /[↑↓▲▼←→⬆⬇]/.test(t));
-    const known = t => /^[↑↓] \d\d:\d\d$/.test(t) || /^Слом DR [↑↓] \d\d:\d\d$/.test(t) || /^[↑↓] [+−]\d+,\d · [\d\s\u00a0\u202f]+(,\d+)?$/.test(t) || /^[▲▼]$/.test(t) || /^[▲▼] (\d+(,\d+)?%|—)$/.test(t);
+    const known = t => /^[↑↓] \d\d:\d\d$/.test(t) || /^Слом DR [↑↓] \d\d:\d\d$/.test(t) || /^[↑↓] [+−]\d+,\d · [\d\s\u00a0\u202f]+(,\d+)?$/.test(t) || /^[↑↓] [\d\s\u00a0\u202f]+(,\d+)?$/.test(t) || /^[▲▼]$/.test(t) || /^[▲▼] (\d+(,\d+)?%|—)$/.test(t);
     check('M04', arrows.every(known), `every arrow drawn comes from an observation or the frame (confirmation / break pill, the next STD beyond the frame, a column's out-of-frame mark and share): ${arrows.length} kinds`, arrows.filter(t => !known(t)));
     const all = [...texts.keys(), ...dom].join('\n');
     const future = all.match(/углуб[ия]тся|пойд[её]т|(?<![а-яё])будет|если да/gi) || [];
@@ -545,7 +556,7 @@ const S = {
   async m08(B) {
     await open(B, DAY);
     const r = await evaluate(B.cdp, async () => {
-      const H = window.__h, { D, panel } = H, F = D.cur().F, txt = panel.innerText;
+      const H = window.__h, { D, panel } = H, F = D.cur().F; H.familyDetails(); const txt = panel.innerText;
       const und = ['R', 'X'].map(ev => (F.ev[ev].unknown + F.ev[ev].none > 0) === txt.includes(D.lbl('EST:B-RX-UNDETERMINED-' + ev, 'row', { ev })));
       const out = (panel.querySelector('.p24-out') || {}).innerText || '';
       const held = out.includes(D.lbl('EST:B-DR', 'held')) && out.includes(D.lbl('EST:B-DR', 'broken'));
@@ -671,7 +682,7 @@ const S = {
         const known = P.members.filter(([id]) => c.F.M.some(m => m.id === id && m.R.s === 'known')).length;
         return { lvl: P.level, kind: 'share', ok: !!b && text.includes(want) && text.includes('дошли ' + k.yes + ' из ' + k.n_match) && lit.length === known && lit.every(q => ids.has(q.m.id) && ((q.m.R.v * P.b <= P.a * q.m.w) === (ids.get(q.m.id) === 'YES'))) };
       });
-      return { status: c.s.status, N: c.F && c.F.N, parent: api.N_parent, conformant: (api.contract || {}).status, api: api.status, rows, head: text.includes(D.lbl('EST:K-ARRIVE', 'head')), base: H.base(c.F), now: H.nowBlock() };
+      return { status: c.s.status, N: c.F && c.F.N, parent: api.N_parent, conformant: (api.contract || {}).status, api: api.status, rows, head: text.includes(D.lbl('EST:K-ARRIVE', 'head')) || !!(H.panel.querySelector('.p24-qhead-places') && H.panel.querySelector('.p24-qhead-places').innerText.includes(D.lbl('FF:GRAPH-QUESTIONS', 'places'))), base: H.base(c.F), now: H.nowBlock() };
     };
     await open(B, '#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all');
     const r = await evaluate(B.cdp, read, 'instrument=NQ&session=RDR&at=670&date=2025-12-17');
@@ -686,6 +697,66 @@ const S = {
     const t = await evaluate(B.cdp, read, 'instrument=NQ&session=RDR&at=840&date=2025-12-12');
     check('M20', t.api === 'OK' && t.conformant === 'CONFORMANT' && t.rows.some(x => x.kind === 'resolved') && t.rows.some(x => x.kind === 'share') && t.rows.every(x => x.ok),
       'a place reached today is shown as its time («уже дошли в …»), not a share, next to the open places of the same cut', t.rows);
+  },
+
+  // M21: the new shared question bank and real family paths, under the same contract and fault seam as M01–M20.
+  async m21(B) {
+    const source = fs.readFileSync(path.join(ROOT, 'tests', 'family_path24_check.js'), 'utf8');
+    const scenes = ['#date=2024-03-04&inst=ES&session=RDR&at=11:15', '#date=2024-03-04&inst=ES&session=RDR&at=11:20',
+      '#date=2024-03-04&inst=ES&session=RDR&at=11:25', '#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all',
+      '#date=2025-12-17&inst=NQ&session=RDR&at=11:10', '#date=2025-02-27&inst=NQ&session=RDR&at=10:55',
+      '#date=2025-03-07&inst=NQ&session=RDR&at=14:35', '#date=2024-08-02&inst=ES&session=RDR&at=12:05'];
+    for (const hash of scenes) {
+      await open(B, hash);
+      const got = await B.cdp.send('Runtime.evaluate', { expression: source, returnByValue: true, awaitPromise: true });
+      const r = got.result.value;
+      check('M21', !got.exceptionDetails && r && !r.problems.length, 'real geometry, exact cases, both mode adapters, question pin and visible controls: ' + hash, got.exceptionDetails || r);
+    }
+    for (const [width, height] of [[1920, 1000], [1600, 900]]) {
+      await B.cdp.send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: false });
+      await open(B, scenes[1]);
+      const got = await B.cdp.send('Runtime.evaluate', { expression: source, returnByValue: true, awaitPromise: true });
+      check('M21', !got.exceptionDetails && got.result.value && !got.result.value.problems.length, 'geometry and all main controls at ' + width + '×' + height, got.exceptionDetails || got.result.value);
+    }
+    await open(B, scenes[1]);
+    const race = await evaluate(B.cdp, async () => {
+      const H = window.__h, { D, T } = H;
+      D.st.mode = 'path'; D.render(true);
+      const h = D.links().find(h => h.context && h.k === 'arrive' && h.id === '-1/2');
+      D.st.pin = h; D.st.hover = null; D.render(true);
+      T.rules.push({ name: 'question cut delayed', match: '/api/d24/arrive', delay: 1200, once: true });
+      document.querySelector('#step21 [data-step="5"]').click(); await H.wait(200); D.render(true);
+      const loading = { pin: D.st.pin && D.st.pin.id, cut: D.sliceOf(D.cur()), ev: D.graphEvidence, paths: D.pathEvidence && D.pathEvidence.ids.length };
+      await H.settle(); const after = D.graphEvidence;
+      D.st.scope = 'all'; D.render(true); const changed = D.st.pin;
+      return { loading, after, cleared: !changed };
+    });
+    check('M21', race.loading.pin === '-1/2' && race.loading.cut === 685 && !race.loading.ev.ready && !race.loading.ev.members.length && race.loading.paths > 100,
+      'next M5 keeps the question while withdrawing the previous conditional answer; real parent paths stay', race.loading);
+    check('M21', race.after && race.after.resolved && race.after.observedM5.join() === '680,685' && race.cleared,
+      'middle IDR becomes an observed M5 fact at 11:25; switching family scope clears the old context', { after: race.after, cleared: race.cleared });
+    await open(B, scenes[0]);
+    const withdrawn = await evaluate(B.cdp, async () => {
+      const H = window.__h, { D, T } = H;
+      D.st.mode = 'path'; D.render(true);
+      D.st.pin = D.links().find(h => h.context && h.k === 'arrive' && h.id === '-1/2'); D.st.hover = null;
+      T.rules.push({ name: 'ARRIVE withheld', match: '/api/d24/arrive', when: u => u.includes('at=680'), tamper: body => {
+        const p = body.places.find(p => p.level === '-1/2'); p.withheld = true; p.note = 'reference withdrew this place';
+        body.contract.bundles = body.contract.bundles.filter(b => JSON.parse(b.parameters || '{}').level !== '-1/2'); return body;
+      } });
+      D.st.rp = 680; await H.settle();
+      const arr = { ev: D.graphEvidence, parent: D.pathEvidence.ids.length, marker: D.V.currentClose };
+      D.st.pin = D.links().find(h => h.context && h.k === 'now' && h.ev === 'R'); D.st.hover = null;
+      T.rules.push({ name: 'NOW R withheld', match: '/api/d24/now', when: u => u.includes('at=685'), tamper: body => {
+        body.contract.bundles = body.contract.bundles.filter(b => b.estimand !== 'EST:N-NEW-R'); return body;
+      } });
+      D.st.rp = 685; await H.settle();
+      return { arr, now: { ev: D.graphEvidence, parent: D.pathEvidence.ids.length, marker: D.V.currentClose }, N: D.cur().F.N };
+    });
+    check('M21', !withdrawn.arr.ev.ready && !withdrawn.arr.ev.members.length && withdrawn.arr.ev.price == null && withdrawn.arr.parent === withdrawn.N && withdrawn.arr.marker,
+      'withdrawn ARRIVE: no conditional subset or dependent level; healthy real paths and today’s candle stay', withdrawn.arr);
+    check('M21', !withdrawn.now.ev.ready && !withdrawn.now.ev.priceRange && !withdrawn.now.ev.firstTimeRange && withdrawn.now.parent === withdrawn.N && withdrawn.now.marker,
+      'withdrawn NOW R: no conditional price/time geometry; healthy real paths and today’s candle stay', withdrawn.now);
   },
 
   // M10: switching layers off or framing the price leaves every count; the residual and the events out of the frame are
@@ -747,8 +818,8 @@ const S = {
       const k = [...F.ev.X.P.keys()].sort((a, b) => F.ev.X.P.get(b) - F.ev.X.P.get(a))[0];
       D.st.hover = { k: 'pcell', ev: 'X', k0: k, k1: k + 1, src: 'proj' }; D.render(true);
       const band = D.V.lk && D.V.lk.src === 'pcell' && D.V.win.t1 - D.V.win.t0 === 15;
-      D.st.hover = { k: 'now', ev: 'R' }; D.render(true);
-      const now = !!(D.V.win && D.V.win.pA != null && D.V.win.t0 == null);
+      D.st.hover = D.links().find(h => h.context && h.k === 'now' && h.ev === 'R') || { k: 'now', ev: 'R' }; D.render(true);
+      const now = !!(D.V.win && D.V.win.pA != null && D.graphEvidence && D.graphEvidence.priceRange && D.graphEvidence.firstTimeRange);
       D.st.hover = null; D.st.pin = { k: 'zone', ev: 'X', i: 0 }; D.render(true);
       const pinned = insp(), zx = D.zonesOf(F, 'X').zones[0].label;
       D.st.hover = { k: 'tcell', b0: 3, b1: 4, src: 'strip' }; D.render(true); const over = insp();

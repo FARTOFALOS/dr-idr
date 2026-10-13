@@ -683,6 +683,7 @@ claim_forms:
     condition_ru: "к общему часовому срезу t: собственная активация, полный префикс, в исходной семье — DR ещё цел (B0); для M1–M3 — ещё и названное правило сравнения"
     statement_ru: "После среза {cut} новый, более глубокий R наблюдался у {pct} допустимых исторических случаев этой семьи ({yes} из {D}; неизвестно у {unknown}). Это описание истории, не прогноз сегодняшнего дня."
     labels:
+      - {surface: PANEL, view: ANY, key: query_head, text_ru: "Откат R"}
       - {surface: PANEL, view: CONF, key: row, text_ru: "В истории: {ev} позже углублялся"}
       - {surface: PANEL, view: BRK, key: row, text_ru: "В истории: {ev} против слома позже углублялся"}
       - {surface: PANEL, view: ANY, key: title, text_ru: "Доля сопоставимых сессий этой семьи, у которых после {cut} был более глубокий R (повтор того же уровня не считается). Не вероятность сделки."}
@@ -706,6 +707,7 @@ claim_forms:
     condition_ru: "к общему часовому срезу t: собственная активация, полный префикс, в исходной семье — DR ещё цел (B0); для M1–M3 — ещё и названное правило сравнения"
     statement_ru: "После среза {cut} новый, более дальний X наблюдался у {pct} допустимых исторических случаев этой семьи ({yes} из {D}; неизвестно у {unknown}). Это описание истории, не прогноз сегодняшнего дня."
     labels:
+      - {surface: PANEL, view: ANY, key: query_head, text_ru: "Продолжение X"}
       - {surface: PANEL, view: CONF, key: row, text_ru: "В истории: {ev} позже шёл дальше"}
       - {surface: PANEL, view: BRK, key: row, text_ru: "В истории: {ev} по слому позже шёл дальше"}
       - {surface: PANEL, view: ANY, key: title, text_ru: "Доля сопоставимых сессий этой семьи, у которых после {cut} был более дальний X (повтор того же уровня не считается). Не вероятность сделки."}
@@ -955,6 +957,9 @@ claim_forms:
     condition_ru: "в этот же час по часам Нью-Йорка подтверждение уже было и после него закрылась хотя бы одна M5, все M5 после подтверждения есть, DR цел; после своего подтверждения до места ещё не доходили; закрытие на срезе — в пределах ¼ ширины IDR от сегодняшнего"
     statement_ru: "После {cut} до конца блока ({end}) из {n} сессий семьи, которые в {cut} стояли там же и ещё не были у места {level}, до него дошли {yes}, не дошли {no}, неизвестно у {unknown}. Это история этих сессий, не шанс сегодняшнего дня."
     labels:
+      - {surface: PANEL, view: ANY, key: query_edge, text_ru: "Край IDR"}
+      - {surface: PANEL, view: ANY, key: query_middle, text_ru: "Середина IDR"}
+      - {surface: PANEL, view: ANY, key: query_retirement, text_ru: "−0,7"}
       - {surface: PANEL, view: ANY, key: head, text_ru: "Отсюда до места"}
       - {surface: PANEL, view: ANY, key: head_title, text_ru: "Сессии семьи, которые в этот же час стояли там же (закрытие в пределах ¼ ширины IDR от сегодняшнего) и ещё не были у места: сколько из них потом до конца сессии до него дошли. Считается заново на каждой закрытой M5. У каждого места свой набор — те, кто ещё не был именно у него, — поэтому строки не вкладываются друг в друга. Доли всей семьи (лесенка, «Сейчас») не меняются."}
       - {surface: PANEL, view: ANY, key: weekday, text_ru: "день недели"}
@@ -979,6 +984,7 @@ claim_forms:
       - {surface: INSPECTOR, view: ANY, key: win_share_v, text_ru: "{shown} · среди известных {pct}"}
       - {surface: INSPECTOR, view: ANY, key: win_stars, text_ru: "на графике"}
       - {surface: INSPECTOR, view: ANY, key: win_stars_v, text_ru: "на графике — окончательные откаты этих сессий: на линии места и за ней — дошли"}
+      - {surface: INSPECTOR, view: ANY, key: win_paths_v, text_ru: "на графике — реальные закрытия выбранных сессий после среза и диапазоны их M5; янтарные — потом дошли, серые — исход неизвестен"}
       - {surface: INSPECTOR, view: ANY, key: insp_known, text_ru: "среди известных"}
       - {surface: INSPECTOR, view: ANY, key: win_ad, text_ru: "проверка"}
       - {surface: INSPECTOR, view: ANY, key: win_ad_in, text_ru: "15-минутный срез семьи дня недели ≥ 40 — в области сверки с замером A/D"}
@@ -994,6 +1000,55 @@ claim_forms:
     note: "Operator 2026-10-12: integrate the verified Q1 mechanism into screen 24, «не подменяя существующие показатели BASE/NOW». The words follow the curator's trader wording (KADR-1.1 §10: «отсюда до −0,5 доходили 41 из 100», «уже дошли в 11:20», «мало сессий: n=…») and the pilot's passport; they are the executor's, for his acceptance; 13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys rail, rail_sub, rail_sub_unknown, rail_who are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed"
 
 fact_forms:
+  - id: FF:GRAPH-QUESTIONS
+    version: "1"
+    sc_ref: ["M0", "E0", "E1", "H2", "P0.2", "P0.3", "§12.4"]
+    grounds: OPERATOR_REQUIREMENT
+    record_class: QuestionRequest
+    statement_ru: "Выбранный человеком вопрос связан с историческим набором и сегодняшним срезом; наведение показывает соответствующее измерение в координатах графика, клик закрепляет его."
+    labels:
+      - {surface: PANEL, view: ANY, key: head, text_ru: "На графике"}
+      - {surface: PANEL, view: ANY, key: past, text_ru: "Уже было"}
+      - {surface: PANEL, view: ANY, key: pullback, text_ru: "Откат R"}
+      - {surface: PANEL, view: ANY, key: extension, text_ru: "Продолжение X"}
+      - {surface: PANEL, view: ANY, key: places, text_ru: "До места"}
+      - {surface: PANEL, view: ANY, key: from_here, text_ru: "стояли здесь"}
+      - {surface: PANEL, view: ANY, key: edge, text_ru: "Край IDR"}
+      - {surface: PANEL, view: ANY, key: middle, text_ru: "Середина IDR"}
+      - {surface: PANEL, view: ANY, key: retirement, text_ru: "−0,7"}
+      - {surface: PANEL, view: ANY, key: dr, text_ru: "DR"}
+      - {surface: PANEL, view: ANY, key: dr_held, text_ru: "цел"}
+      - {surface: PANEL, view: ANY, key: dr_broken, text_ru: "сломан"}
+      - {surface: PANEL, view: ANY, key: dr_unknown, text_ru: "нет M5"}
+      - {surface: PANEL, view: ANY, key: frequencies, text_ru: "Частоты"}
+      - {surface: PANEL, view: ANY, key: frequencies_title, text_ru: "Доли закрытий семьи на каждой M5: прежние числа и общая линейная шкала. Каждая колонка — своя сотня."}
+      - {surface: PANEL, view: ANY, key: by_time, text_ru: "по времени"}
+      - {surface: PANEL, view: ANY, key: by_path, text_ru: "по пути"}
+      - {surface: PANEL, view: ANY, key: support_mode, text_ru: "{mode} · {n} сессий"}
+      - {surface: PANEL, view: ANY, key: support, text_ru: "{n} сессий"}
+      - {surface: PANEL, view: ANY, key: support_few, text_ru: "мало · {n}"}
+      - {surface: PANEL, view: ANY, key: family, text_ru: "Семья · {n}"}
+      - {surface: PANEL, view: ANY, key: family_break, text_ru: "По слому · {n}"}
+      - {surface: PANEL, view: ANY, key: show, text_ru: "Показать ответ на графике; клик — закрепить"}
+      - {surface: PANEL, view: ANY, key: loading, text_ru: "считаю…"}
+      - {surface: PANEL, view: ANY, key: unavailable, text_ru: "нет ответа"}
+      - {surface: PANEL, view: ANY, key: past_title, text_ru: "Только закрытые M5 сегодняшнего дня: подтверждение, сделанные экстремумы и достигнутые уровни. Отсутствующие M5 не восстанавливаются."}
+      - {surface: PANEL, view: ANY, key: now_title, text_ru: "В истории после {cut}: обновление собственного экстремума {ev}. На цене — дополнительное движение, на времени — первое обновление; это отдельные измерения."}
+      - {surface: PANEL, view: ANY, key: dr_title, text_ru: "Наблюдаемое состояние сегодняшнего DR и исход всей исторической семьи на её собственных горизонтах — разные сведения."}
+      - {surface: PANEL, view: ANY, key: details, text_ru: "Подробности семьи"}
+      - {surface: PANEL, view: ANY, key: compare, text_ru: "Почему доли разные"}
+      - {surface: PANEL, view: ANY, key: first_time, text_ru: "Первое {ev}"}
+      - {surface: PANEL, view: ANY, key: no_event, text_ru: "на {cut}: новых отмеченных событий нет"}
+      - {surface: INSPECTOR, view: ANY, key: anchor, text_ru: "Сегодняшний якорь {ev}: {price} · к {cut}"}
+      - {surface: INSPECTOR, view: ANY, key: new_counts, text_ru: "обновлялся у {yes} из {n} · неизвестно {unknown}"}
+      - {surface: INSPECTOR, view: ANY, key: amount_head, text_ru: "Если обновлялся: окончательная добавка"}
+      - {surface: INSPECTOR, view: ANY, key: amount_value, text_ru: "медиана {mid} · половина {lo}–{hi} · известно у {n}"}
+      - {surface: INSPECTOR, view: ANY, key: time_head, text_ru: "Первое обновление после среза"}
+      - {surface: INSPECTOR, view: ANY, key: time_value, text_ru: "медиана ~{min} мин · известно у {n}"}
+      - {surface: INSPECTOR, view: ANY, key: own_anchor, text_ru: "Каждая историческая сессия — относительно собственного сделанного экстремума. Добавка перенесена на сегодняшний якорь; её окончательная величина и первое время обновления — отдельные измерения."}
+    forbidden_readings_ru: ["прогнозная траектория", "единственный будущий путь", "вход или сделка", "время первого прихода по времени окончательного R"]
+    acceptance: PROPOSED_BY_EXECUTOR
+    note: "Прямой запрос оператора в текущем чате Codex 13.10.2026 PLEASE IMPLEMENT THIS PLAN: Путь семьи и общая сводка с пространственными ответами. Разрешение локальной реализации кандидата, не перцептивная приёмка и не допуск C2/C3. Никакое старое определение или число не изменено."
   - id: FF:TODAY-Z
     version: "1"
     sc_ref: ["§12.4/TODAY-Z", "E3"]
@@ -1275,6 +1330,8 @@ fact_forms:
       - {surface: PANEL, view: ANY, key: none_known, text_ru: "исход неизвестен у всех"}
       - {surface: PANEL, view: ANY, key: RESOLVED_rail, text_ru: "сегодня дошли · M5 {time}"}
       - {surface: PANEL, view: ANY, key: RESOLVED_rail_title, text_ru: "Сегодня свеча M5 {time} дошла до места: вопрос решён фактом, доли нет. Время свечи — минута её открытия."}
+      - {surface: PANEL, view: ANY, key: RESOLVED_mark, text_ru: "✓"}
+      - {surface: INSPECTOR, view: ANY, key: RESOLVED_head, text_ru: "Сегодня дошли до {place} · {price}"}
     forbidden_readings_ru: ["процент", "сигнал", "прогноз"]
     acceptance: PROPOSED_BY_EXECUTOR
     note: "the status of the same place today, from today's prefix only (KADR-1.1 §5.3): a place reached today is a fact with its time, never «100 %»; the words are the executor's, for the operator's acceptance; 13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys RESOLVED_rail, RESOLVED_rail_title are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed"

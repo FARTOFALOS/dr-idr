@@ -190,3 +190,38 @@
 .p24-rail .p21-link>b{grid-column:4;grid-row:1}
 .p24-rail .p21-link .rs{grid-row:2}
 .p24-leg{font-size:10.5px;letter-spacing:-.1px}
+/* Linked summary, approved plan 13.10: all primary questions fit; details stay in the fixed inspector. */
+#dr21-root{--insp-h:clamp(180px,29vh,260px)}
+#panel{padding:10px 12px 8px;overflow-y:auto}
+#insp{overflow-y:auto}
+#insp .ir{gap:8px}
+#insp .ir>b{white-space:nowrap;flex-shrink:0}
+.p24-frame{margin:3px 0 8px;flex-wrap:wrap;font-size:11px}
+.p24-frame>span{display:block;color:#AEB8C6}
+.p24-frame .p24-seg.sm{width:100%}
+.p24-frame .p24-seg.sm button{flex:1;height:24px;font-size:11.5px}
+.p24-qhead{display:flex;align-items:center;justify-content:space-between;color:#8F98A6;font-size:11px;margin:5px 0 3px}
+.p24-qhead-places{margin-top:10px}
+.p24-qhead>span{font-size:10.5px;color:#8F98A6}
+.p21-link.p24-q{display:flex;align-items:center;gap:9px;min-height:39px;margin:1px 0;padding:6px 8px;border:1px solid #202631;border-radius:7px;background:#0F1218}
+.p21-link.p24-q:hover,.p21-link.p24-q.on{background:#1D2837;border-color:#526A88}
+.p21-link.p24-q.pinned{border-color:#8DA6C7;background:#223045}
+.p21-link.p24-q:focus-visible{outline:2px solid #8DA6C7;outline-offset:1px}
+.p24-q .qdot{flex:0 0 6px;height:20px;border-radius:3px;background:#8DA6C7}
+.p24-q .qdot-R{background:#EBA06C}
+.p24-q .qdot-X{background:#72A9EC}
+.p24-q .qdot-arrive{background:#EBA06C;height:6px;border-radius:50%}
+.p24-q .qdot-past{background:#F7C948}
+.p24-q .qdot-drctx{background:#C9CFD8}
+.p24-q .qname{font-size:14px;font-weight:600;color:#E6EAF0}
+.p24-q .qmeta{font-size:10.5px;line-height:1.2;color:#9AA5B6;max-width:145px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p24-q>b{font-size:13px;white-space:nowrap}
+.p24-q .qgo{color:#8DA6C7;font-size:17px;font-weight:600}
+.p21-link.p24-q.qplace{min-height:31px;padding:4px 8px}
+.qplace .qname{font-size:13px}
+.p24-more{margin-top:9px;color:#8F98A6;font-size:12px}
+.p24-more>summary{cursor:pointer;padding:4px 1px}
+.p24-more[open]{border-top:1px solid #303744;padding-top:4px}
+#pathfreq21[hidden]{display:none!important}
+#pathfreq21.on{background:#223045;color:#C3D9F5}
+@media(max-height:720px){#dr21-root{--insp-h:180px}.p21-link.p24-q{min-height:35px;padding-top:4px;padding-bottom:4px}.p24-qhead-places{margin-top:6px}.p24-q .qname{font-size:13px}.p24-frame{margin-bottom:4px}.p24-more{margin-top:4px}}
