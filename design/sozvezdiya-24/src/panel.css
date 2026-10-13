@@ -141,3 +141,52 @@
 #panel21toggle.sc-alert::after{content:'!';position:absolute;top:-6px;right:-6px;width:14px;height:14px;border-radius:50%;background:#F23645;color:#fff;font:700 10px/14px -apple-system,BlinkMacSystemFont,"Trebuchet MS",Roboto,Ubuntu,sans-serif;text-align:center;pointer-events:none}
 /* DR-LAB-SC-1.1: a violation of the machine contract (a withheld number, another registry, a mismatch with the reference) */
 .p24-sc{margin:0 0 8px;padding:5px 8px;border:1px solid rgba(242,54,69,.5);border-radius:5px;background:rgba(242,54,69,.08);color:#F2A0A6;font-size:11.5px;line-height:1.35;overflow-wrap:anywhere}
+/* candidate 13.10.2026 (branch svodka-24): the frame, the parts «Ориентир / Сегодня / Дальше / Зоны семьи», the facts of
+   today, the change of the last M5 and the price ladder of the conditional answers (as on the chart: higher on top) */
+.p24-frame{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:-2px 0 2px;color:#8F98A6;font-size:11.5px}
+.p24-frame>span:first-child{min-width:0}
+.p24-frame .p24-seg.sm{margin:0;padding:2px;flex:0 0 auto}
+.p24-frame .p24-seg.sm button{flex:0 0 auto;height:20px;padding:0 7px;font-size:11px;font-weight:500}
+.p24-L{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:10px 0 3px;padding-top:6px;border-top:1px solid #2F3743}
+.p24-L .n{color:#E6EAF0;font-size:12.5px;font-weight:700;letter-spacing:.3px}
+.p24-L>span:last-child{color:#7F8896;font-size:11px;text-align:right}
+.p24-fact{display:grid;grid-template-columns:84px minmax(0,1fr);column-gap:6px;padding:1px 6px;margin:0 -6px;border-radius:4px;font-size:12px;line-height:1.35}
+.p21-link.p24-fact{display:grid;align-items:baseline}
+.p24-fact .fk{color:#8F98A6}
+.p24-fact .fv{color:#E6EAF0;font-variant-numeric:tabular-nums}
+.p24-fact .fv b{font-weight:600}
+.p24-rule{padding:0 0 0 90px;color:#8F98A6;font-size:11.5px}
+.p21-link.p24-rule{margin:0 -6px;padding:0 6px 0 96px}
+.p21-link.p24-rule .t{color:#8F98A6;font-size:11.5px}
+.p24-chg{margin:3px 0 0;color:#F7C948;font-size:11.5px;line-height:1.35}
+.p24-leg{margin:-1px 0 3px;color:#7F8896;font-size:11px}
+.p24-rail .p21-link{display:grid;grid-template-columns:56px 10px minmax(0,1fr) auto;column-gap:5px;align-items:baseline;border-top:1px solid #181D25;border-radius:0;padding:3px 6px;font-size:12.5px}
+.p24-rail .p21-link:hover,.p24-rail .p21-link.on{border-radius:4px}
+.p24-rail .rp{color:#A6AFBC;font-size:12px}
+.p24-rail .rg{text-align:center;font-size:10.5px}
+.p24-rail .p21-link .t{display:flex;flex-direction:column;gap:1px}
+.p24-railnow{display:flex;align-items:center;gap:6px;margin:3px 0;color:#F7C948;font-size:11.5px}
+.p24-railnow i{flex:1;border-top:1px dashed rgba(247,201,72,.7)}
+.p21-link.p24-cmp{margin-top:4px;padding:3px 6px}
+#insp .ic{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1.25fr) 30px 62px;column-gap:6px;padding:2px 0;border-top:1px solid #1C2027;font-size:11px;line-height:1.3}
+#insp .ic.hd{border-top:0;color:#6F7582}
+#insp .ic b{text-align:right;font-weight:600;color:#E6EAF0}
+#insp .ic span:nth-child(3){text-align:right;color:#A6AFBC}
+#panel .p24-L+.p21-h{margin-top:2px}
+.p24-rail .p21-link.p24-anchor .t{color:#E6EAF0}
+.p24-rail .p24-nowblk .p21-link{border-top:0;padding-top:0}
+.p24-rail .p21-link .rs{grid-column:3 / 5;display:flex;flex-direction:column;gap:0}
+.p24-rail .p21-link.p24-anchor .t{grid-column:3 / 5}
+.p24-rail .p21-link{line-height:1.3}
+.p24-rail .p21-link{grid-template-columns:50px 10px minmax(0,1fr) auto;font-size:12px;column-gap:4px;padding:2px 6px}
+.p24-rail .p21-sub{font-size:11px}
+.p24-rail .rp{font-size:11.5px}
+#panel .p21-h .p24-seg.sm{margin:0;padding:2px;flex:0 0 auto}
+#panel .p21-h .p24-seg.sm button{flex:0 0 auto;height:20px;padding:0 6px;font-size:11px;font-weight:500}
+.p24-rule,.p21-link.p24-rule{padding-left:18px}
+.p21-link.p24-rule{padding-left:24px}
+.p24-rail .p21-link .rs{grid-column:1 / 5;padding-left:14px}
+#insp .ic{grid-template-columns:minmax(0,1.5fr) minmax(0,0.9fr) 28px 66px;padding:1px 0}
+.p24-rail .p21-link>b{grid-column:4;grid-row:1}
+.p24-rail .p21-link .rs{grid-row:2}
+.p24-leg{font-size:10.5px;letter-spacing:-.1px}

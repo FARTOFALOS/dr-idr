@@ -240,7 +240,16 @@ const HELPERS = function () {
     zoneRows() { return [...panel.querySelectorAll('.p21-link[class*="zst-"]')].map(e => e.innerText.replace(/\s+/g, ' ').trim()); },
     heads() { return [...panel.querySelectorAll('.p21-h')].map(e => (e.firstChild && e.firstChild.textContent || e.innerText).split(/\s·\s|\n/)[0].trim().replace(/\d\d:\d\d/g, 'ЧЧ:ММ')); },
     notice() { const n = panel.querySelector('.p24-sc'); return n ? n.innerText : null; },
-    nowBlock() { const n = panel.querySelector('.p24-nowblk'); return n ? n.innerText : null; },
+    // «Сейчас»: one block on the accepted screen; on the «Сводка» candidate (13.10) its rows stand in the price ladder,
+    // its cut in the ladder's head and its mode in the legend — the same words, gathered
+    nowBlock() {
+      const rail = panel.querySelector('.p24-rail');
+      if (!rail) { const n = panel.querySelector('.p24-nowblk'); return n ? n.innerText : null; }
+      const head = rail.previousElementSibling && rail.previousElementSibling.classList.contains('p24-leg') ? rail.previousElementSibling.previousElementSibling : rail.previousElementSibling;
+      const parts = [head, panel.querySelector('.p24-leg'), ...panel.querySelectorAll('.p24-nowblk')].filter(Boolean).map(e => e.innerText);
+      return parts.length > (head ? 1 : 0) ? parts.join('\n') : null;
+    },
+    arrText() { return [panel.querySelector('.p24-leg'), ...panel.querySelectorAll('.p24-arrblk')].filter(Boolean).map(e => e.innerText).join('\n'); },
     toggle() { const t = document.getElementById('panel21toggle'); return { alert: t.classList.contains('sc-alert'), title: t.title, aria: t.getAttribute('aria-label'), badge: getComputedStyle(t, '::after').content, hidden: document.getElementById('dr21-root').classList.contains('panel21closed') }; },
     // the toolbar: the controls left of its spacer keep their places; right of it they keep their widths (the clock's
     // text decides where the right group starts, by design)
@@ -644,13 +653,16 @@ const S = {
       await H.settle();
       for (let i = 0; i < 50 && !D.arriveOf(D.cur()); i++) { await H.wait(100); D.render(true); }
       await H.settle();
-      const c = D.cur(), box = H.panel.querySelector('.p24-arrblk'), text = box ? box.innerText : '';
+      const c = D.cur(), box = H.panel.querySelector('.p24-arrblk'), text = H.arrText();
       const api = await (await fetch('/api/d24/arrive?' + q + '&scope=' + D.st.scope)).json();
       const bs = (api.contract || {}).bundles || [];
       const pct = v => { const r = Math.round(v * 10) / 10; return r.toLocaleString('ru-RU', { minimumFractionDigits: Number.isInteger(r) ? 0 : 1, maximumFractionDigits: Number.isInteger(r) ? 0 : 1 }) + '%'; };
       const rows = (api.places || []).map(P => {
         const k = P.counts, b = bs.find(x => JSON.parse(x.parameters || '{}').level === P.level);
-        if (P.state.status === 'RESOLVED') return { lvl: P.level, kind: 'resolved', ok: text.includes('уже дошли в ' + P.state.time) && !b };
+        // the accepted words name the closing minute; the candidate names the M5 by its opening minute, as its other facts
+        const [hh, mm] = P.state.status === 'RESOLVED' ? P.state.time.split(':').map(Number) : [0, 0], lab = new Date(0, 0, 1, hh, mm - 5);
+        const open5 = String(lab.getHours()).padStart(2, '0') + ':' + String(lab.getMinutes()).padStart(2, '0');
+        if (P.state.status === 'RESOLVED') return { lvl: P.level, kind: 'resolved', ok: (text.includes('уже дошли в ' + P.state.time) || text.includes('сегодня дошли · M5 ' + open5)) && !b };
         if (P.publication === 'WITHHELD_FEW_SESSIONS') return { lvl: P.level, kind: 'few', ok: text.includes('мало сессий: n=' + k.n_match) && !b };
         const bd = b && b.estimates.find(e => e.value_kind === 'BOUNDS');
         const want = k.unknown ? pct(100 * bd.lower) + '–' + pct(100 * bd.upper) : pct(100 * bd.lower);

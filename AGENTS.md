@@ -111,6 +111,8 @@ start-dr-lab-24.cmd       the shortcut «DR Lab 24»: the same start, then the p
 stop-dr-lab.cmd / .ps1    stop the local server
 start-dr-lab-otsyuda.cmd  (branch ekran-24-otsyuda) the shortcut «DR Lab 24 · отсюда (вариант)»: this variant's own server on
                           127.0.0.1:8772 and screen 24 on the pilot's demo scene; stop-dr-lab-otsyuda.cmd stops 8772 only
+start-dr-lab-svodka.cmd  (branch svodka-24) the shortcut «DR Lab 24 · сводка (вариант)»: the «Сводка» candidate of 13.10 on
+                          127.0.0.1:8774, screen 24 on ES RDR 04.03.2024 11:20; stop-dr-lab-svodka.cmd stops 8774 only
 start-q1-pilot.cmd / .ps1 the shortcut «DR Lab Q1 (пилот)»: the isolated historical Q1 pilot on 127.0.0.1:8771 (its own
                           server, page and store; the working DR Lab is untouched); stop-q1-pilot.cmd stops 8771 only
 contract/                 the machine contract of DR-LAB-SC-1.1: LinkML schema, registry, build tool, products;
@@ -175,6 +177,9 @@ tests/q1_page_check.js    the Q1 pilot: in-page check of its review scene (what 
 tests/trace_arch.py       the semantic trace on the real system: static links, the declared scenes forward and backward,
                           replaced futures, the accepted line, the Q1 stores, the counterexamples, the screen
 tests/trace_page.mjs      the state screen 24 actually rendered, in a throw-away headless Chrome (used by the trace)
+tests/svodka24.mjs        (branch svodka-24) the «Сводка» candidate on 16 real scenes: svodka24_check.js (C1-C12) +
+                          ui_check24.js + the contract, in a throw-away headless Chrome (the stand 8774 must run)
+tests/svodka_shots.mjs    full-size snapshots of named scenes of screen 24 (optionally one summary row hovered)
 README.md                 the front page on GitHub
 ```
 

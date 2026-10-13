@@ -423,7 +423,7 @@ entries:
     arch_ref: "0.1 §7/PROC-17; 0.2 §1"
     entry_kind: PROCESS
     realized_by: [SRC:SWPC-1.1, class:StatisticalPresentationBinding]
-    implemented_by: ["design/sozvezdiya-24/src/panel.js::panelHtml", "design/sozvezdiya-24/src/panel.js::nowHtml", "design/sozvezdiya-24/src/panel.js::arriveHtml"]
+    implemented_by: ["design/sozvezdiya-24/src/panel.js::panelHtml", "design/sozvezdiya-24/src/panel.js::railHtml"]
     checked_by: ["test:tests/swpc11.py", "test:tests/ui_check24.js", "reported:spec/ekran-24/swpc-kandidat.json", "trace:SCREEN"]
     decision: IMPLEMENTATION_TARGET
     correction_0_2_ru: "реализация SWPC-кандидата существует; машинные M01–M18 опубликованы исполнителем; человеческая приёмка H не проводилась — три разных факта"
@@ -461,7 +461,7 @@ entries:
     arch_ref: "0.1 §11/T16; 0.2 §1"
     entry_kind: TRANSITION
     realized_by: [STANDING:ARRIVE-24, SRC:M18]
-    implemented_by: ["design/sozvezdiya-24/src/panel.js::arriveHtml", "design/sozvezdiya-24/src/app.js::arriveBundle"]
+    implemented_by: ["design/sozvezdiya-24/src/panel.js::railHtml", "design/sozvezdiya-24/src/app.js::arriveBundle"]
     checked_by: ["trace:SCREEN", "test:tests/swpc11_browser.mjs#m20"]
     decision: PROPOSED_FOR_ACCEPTANCE
     boundaries: [GAP-02]

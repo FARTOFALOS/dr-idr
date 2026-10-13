@@ -188,8 +188,8 @@
     Object.assign(D.cfg, keep); D.render(true);
     if (z0.some(k => !z1.has(k)) || D.contract().violations.length) problems.push('K30: a drawing change changed a count');
     // [K33] the NOW block speaks of the history in historical grammar
-    const nb = panel.querySelector('.p24-nowblk');
-    if (nb && /углуб[ия]тся|пойд[её]т|если да/.test(nb.innerText)) problems.push('K33: the NOW block speaks of today in forecast grammar');
+    const nb = [...panel.querySelectorAll('.p24-nowblk')].map(e => e.innerText).join('\n');
+    if (nb && /углуб[ия]тся|пойд[её]т|если да/.test(nb)) problems.push('K33: the NOW block speaks of today in forecast grammar');
   }
   // 11) «Отсюда до места» (PROFILE:ARRIVE-24, SC-1.1 §12.6): the block shows what the server published — the selection
   // chain adds up, the share is the one of the shown counts, history grammar only — and a hovered place lights exactly the
@@ -199,7 +199,8 @@
     let cc = D.cur(), r = D.arriveOf(cc);
     for (let i = 0; i < 40 && !r; i++) { await wait(200); cc = D.cur(); r = D.arriveOf(cc); }
     D.render(true);
-    const blk = panel.querySelector('.p24-arrblk');
+    // one block on the accepted screen, the rows of the price ladder on the «Сводка» candidate (13.10): all of them
+    const blks = [...panel.querySelectorAll('.p24-arrblk')], blk = blks.length ? { innerText: blks.map(e => e.innerText).join('\n') } : null;
     if (!blk) problems.push('«Отсюда»: no block in the summary');
     else if (/дойд[её]т|вероятн|шанс/i.test(blk.innerText)) problems.push('K33: «Отсюда» speaks of today in forecast grammar');
     const fmt = v => { const x = Math.round(v * 10) / 10; return (Number.isInteger(x) ? String(x) : x.toFixed(1).replace('.', ',')) + '%'; };

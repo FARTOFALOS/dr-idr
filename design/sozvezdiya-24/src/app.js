@@ -1211,6 +1211,15 @@
     }
     c.restore();
   }
+  // today's own extreme after the activation as a dashed line across the chart: a fact of the closed prefix, the same
+  // line the «Сейчас» row starts from, without its conditional band
+  function drawFactLine(c, ctx, ev) {
+    const F = ctx.F, rows = F ? todayRows(F, ctx) : [];
+    if (!rows.length) return;
+    const u = ev === 'R' ? Math.min(...rows.map(q => q.lo)) : Math.max(...rows.map(q => q.hi)), y = Math.round(V.Y(F.u2p(u / F.w0t))) + 0.5;
+    c.save(); c.strokeStyle = rgba(cfg[ev], 0.85); c.lineWidth = 1; c.setLineDash([4, 3]);
+    c.beginPath(); c.moveTo(0, y); c.lineTo(V.plot.w, y); c.stroke(); c.restore();
+  }
   // a hovered price cell or band of the histogram runs across the chart; a hovered time cell runs down to the time axis
   function drawHighlight(c, ctx) {
     const F = ctx.F, h = hv();
@@ -1218,6 +1227,10 @@
     if (h.k === 'now') { drawNowLevels(c, ctx, h.ev); return; }
     // «Отсюда»: the place lit like a level (its price stands on the price scale), nothing written over the candles
     if (h.k === 'arrive') { const P = arrPlace(arriveOf(ctx), h.id); if (P) brightLine(c, arrPrice(ctx, P), null); return; }
+    // «Сегодня» (candidate 13.10): a fact row lights today's own extreme; «почему доли разные» lights the anchors it compares
+    // (today's deepest point and the open places), nothing written over the candles
+    if (h.k === 'fact') { drawFactLine(c, ctx, h.ev); return; }
+    if (h.k === 'cmp') { drawFactLine(c, ctx, 'R'); const r = arriveOf(ctx); if (r && r.status === 'OK' && !F.brk) for (const P of r.places) if (P.state.status === 'OPEN') brightLine(c, arrPrice(ctx, P), null); return; }
     const col = cfg[h.ev || st.ev];
     if (h.k === 'pcell') {
       const [ya, yb] = cellY(F, h.k0, h.k1);
@@ -2573,6 +2586,8 @@
       return out;
     }
     if (h.k === 'arrive' && F) return arriveTip(ctx, h.id);
+    if (h.k === 'fact' && F) return factTip(F, ctx, h.ev);
+    if (h.k === 'cmp' && F) return cmpTip(F, ctx);
     if (h.k === 'vib') { const v = h.v; return '<b>VI ' + (v.dir === 1 ? '↑' : '↓') + '</b> · ' + px(v.lo) + '–' + px(v.hi) + ' · ' + clk(v.t) + '<br><span class="k">' + (v.fill != null ? 'ребалансирован в ' + clk(v.fill) : 'открыт: цена ещё не заходила') + '</span>'; }
     if (h.k === 'prev') {
       const P = h.P, q = P.s;
@@ -2585,6 +2600,44 @@
   // question, the family, the chain of the selection, the outcomes, the share, what the lit stars are, and whether the cut
   // lies in the domain of the A/D reconciliation
   const ARRK = { '0': 'p0', '-1/2': 'p12', '-7/10': 'p710' };
+  // a fact of «Сегодня» in the inspector: what it is and what it is not (FF:TODAY-PREFIX)
+  function factTip(F, ctx, ev) {
+    const rows = todayRows(F, ctx), T = 'FF:TODAY-PREFIX', V_ = VW(F);
+    if (!rows.length) return '';
+    let q = rows[0];
+    for (const x of rows) if (ev === 'R' ? x.lo < q.lo : x.hi > q.hi) q = x;
+    const u = (ev === 'R' ? q.lo : q.hi) / F.w0t;
+    return '<div class="ih">' + lbl(T, ev === 'R' ? 'deep_k' : 'far_k', null, V_) + '</div><div class="is">' + lbl(T, 'pt_v', { sd: sd(u), price: px(F.u2p(u)), t: clk(q.T - 5) }) + ' · ' + esc(where(ctx.s, F.u2p(u))) + '</div>' +
+      '<div class="iq">' + lbl(T, 'block_title', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, V_) }) + '</div>';
+  }
+  // «почему доли разные» (candidate 13.10, brief §7): the answers about the pullback after the cut side by side, each with
+  // its own question, anchor and set — the family's zones of the final R, the whole family «до места или дальше» (the
+  // ladder of window 5), «Сейчас» R from today's deepest point, «Отсюда» from the same place — so that a difference reads
+  // as another question or another set, not as another price. Every number is the one its own row or window shows
+  function cmpTip(F, ctx) {
+    const sl = sliceOf(ctx), PV = 'FF:PASSPORT-VIEW', K_ = 'EST:K-ARRIVE', n = nowOf(ctx), r = arriveOf(ctx), rows = [];
+    const row = (q, who, nn, v) => '<div class="ic"><span>' + q + '</span><span>' + who + '</span><span>' + nn + '</span><b>' + v + '</b></div>';
+    const Zm = zonesOf(F, 'R');
+    if (Zm) Zm.zones.forEach((z, i) => { if (!zoneHeld(F, 'R', i)) rows.push(row(lbl(PV, 'cmp_zone_q', { ev: 'R', zone: z.label }), lbl(PV, 'cmp_zone_who'), F.N, ppTxt(zonePass(F, 'R', z)))); });
+    const E = n && n.status === 'OK' ? n.R : null;
+    if (E && E.continuation && E.state) {
+      const C = E.continuation, sp = C.support, b = C.p_new_bounds || [], bN = nowBundle(n, 'EST:N-NEW-R', 'MAIN', C);
+      const v = !bN ? '—' : sp.N_match_unknown ? pct(100 * b[0]) + '–' + pct(100 * b[1]) : C.p_new_extreme == null ? '—' : pct(100 * C.p_new_extreme);
+      rows.push(row(lbl(PV, 'cmp_now_q', { ev: 'R', price: px(F.u2p(E.state.r_seen)) }), lbl(PV, 'cmp_now_who', { cut: clk(sl) }), sp.N_match_total, v));
+    }
+    if (r && r.status === 'OK' && !F.brk) for (const P of r.places) {
+      if (P.state.status !== 'OPEN') continue;
+      const p = arrPrice(ctx, P), place = lbl(K_, ARRK[P.level]), q = levelQuery(F, ctx, p, place);
+      rows.push(row(lbl(PV, 'cmp_lvl_q', { place }), lbl(PV, 'cmp_lvl_who'), F.N, ppTxt(q.rest, true)));
+      if (P.withheld) continue;
+      // a place with fewer than 20 there has no bundle by design: never ask for one (it would be reported as withheld)
+      const k = P.counts, few = P.publication === 'WITHHELD_FEW_SESSIONS', bA = few ? null : arriveBundle(r, P.level, P);
+      const v = few ? lbl('FF:FEW-SESSIONS', 'few', { n: k.n_match }) : !bA ? '—' : k.unknown ? pct(100 * k.yes / k.n_match) + '–' + pct(100 * (k.yes + k.unknown) / k.n_match) : pct(100 * k.yes / k.n_match);
+      rows.push(row(lbl(PV, 'cmp_arr_q', { place }), lbl(PV, 'cmp_arr_who'), k.n_match, v));
+    }
+    return '<div class="ih">' + lbl(PV, 'cmp_head', { cut: clk(sl) }) + '</div><div class="ic hd"><span>' + lbl(PV, 'cmp_q') + '</span><span>' + lbl(PV, 'cmp_who') + '</span><span>' + lbl(PV, 'cmp_n') + '</span><b>' + lbl(PV, 'cmp_share') + '</b></div>' +
+      rows.join('') + '<div class="is">' + lbl(PV, 'cmp_note') + '</div>';
+  }
   function arriveTip(ctx, lvl) {
     const r = arriveOf(ctx), P = arrPlace(r, lvl), K_ = 'EST:K-ARRIVE', T_ = 'FF:K-TARGET', F = ctx.F;
     if (!P) return '';
@@ -3339,7 +3392,7 @@
   }
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
-  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, preOf, arriveOf, emphOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, preOf, arriveOf, todayRows, changeOf, sess, sliceOf, emphOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)
     // violations: those of the scene on screen (SWPC-1.1 M16); all: every one found since the page opened
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),

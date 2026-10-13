@@ -1506,6 +1506,12 @@
     "RESOLVED": {
      "ANY": "уже дошли в {time}"
     },
+    "RESOLVED_rail": {
+     "ANY": "сегодня дошли · M5 {time}"
+    },
+    "RESOLVED_rail_title": {
+     "ANY": "Сегодня свеча M5 {time} дошла до места: вопрос решён фактом, доли нет. Время свечи — минута её открытия."
+    },
     "RESOLVED_title": {
      "ANY": "Сегодня закрытая M5 {time} уже дошла до места: вопрос решён фактом, доли нет"
     },
@@ -1619,6 +1625,51 @@
      "BRK": "сломе DR",
      "CONF": "подтверждении"
     },
+    "cmp_arr_q": {
+     "ANY": "дошли до {place}"
+    },
+    "cmp_arr_who": {
+     "ANY": "стояли там же"
+    },
+    "cmp_head": {
+     "ANY": "Почему доли разные · после {cut}"
+    },
+    "cmp_link": {
+     "ANY": "почему доли разные"
+    },
+    "cmp_lvl_q": {
+     "ANY": "до {place} или дальше"
+    },
+    "cmp_lvl_who": {
+     "ANY": "вся семья"
+    },
+    "cmp_n": {
+     "ANY": "n"
+    },
+    "cmp_note": {
+     "ANY": "Разные вопросы и разные наборы: строки не вложены и не складываются; одна цена даёт разные доли. История, не прогноз."
+    },
+    "cmp_now_q": {
+     "ANY": "{ev} дальше, чем сегодня ({price})"
+    },
+    "cmp_now_who": {
+     "ANY": "живые к {cut}"
+    },
+    "cmp_q": {
+     "ANY": "вопрос"
+    },
+    "cmp_share": {
+     "ANY": "доля"
+    },
+    "cmp_who": {
+     "ANY": "кто считается"
+    },
+    "cmp_zone_q": {
+     "ANY": "{zone}: окончательный {ev}"
+    },
+    "cmp_zone_who": {
+     "ANY": "вся семья"
+    },
     "dir_down": {
      "BRK": "против слома",
      "CONF": "против подтверждения"
@@ -1647,6 +1698,15 @@
     "name_X": {
      "BRK": "Продолжение слома",
      "CONF": "Продолжение"
+    },
+    "px_above": {
+     "ANY": "выше"
+    },
+    "px_below": {
+     "ANY": "ниже"
+    },
+    "rail_legend": {
+     "ANY": "◆ сегодня · ┄ Сейчас ({mode}) · ▸ {arrive}"
     },
     "sentence": {
      "ANY": "семьи — {phrase} · {horizon}"
@@ -1694,6 +1754,9 @@
   },
   "FF:PHASE-RULE": {
    "labels": {
+    "chg_done": {
+     "ANY": "ваше правило: «откат сделан»"
+    },
     "clock": {
      "ANY": "окончательный R семьи к {cut} был у {share} · нужно половина"
     },
@@ -1708,6 +1771,21 @@
     },
     "open": {
      "ANY": "откат не сделан"
+    },
+    "rule_clock": {
+     "ANY": "{mark}R семьи к {cut}: {share}, нужна ½"
+    },
+    "rule_depth": {
+     "ANY": "{mark}откат {r} из −0,7"
+    },
+    "rule_done": {
+     "ANY": "«откат сделан»: да — смотрим X"
+    },
+    "rule_k": {
+     "ANY": "ваше правило"
+    },
+    "rule_open": {
+     "ANY": "«откат сделан»: нет"
     },
     "title": {
      "ANY": "Ваше правило от 08.10: «откат сделан», когда откат достиг −0,7 и у половины сессий семьи окончательный R по часам уже был. Это правило, а не факт рынка и не сигнал; окончательный R до конца блока неизвестен."
@@ -1765,6 +1843,12 @@
     "foot_zone": {
      "ANY": " · не шанс на сегодня"
     },
+    "frame": {
+     "ANY": "N = {N} · не меняется до {end}"
+    },
+    "frame_brk": {
+     "ANY": "N = {N} · другая семья: ориентация по слому, не меняется до {end}"
+    },
     "head_title": {
      "ANY": "Слепок зафиксирован при {event} {t} и за день не меняется. Все проценты — доли всей семьи, шаг доли {step}. История {history}, только дни раньше {cutoff}. Слепок {snapshot} · семья {family} · {semantics}."
     },
@@ -1811,9 +1895,80 @@
   },
   "FF:TODAY-PREFIX": {
    "labels": {
+    "block_title": {
+     "ANY": "Факты закрытых M5 сегодняшнего дня после {act} до среза. Это не окончательные R и X: они известны только в конце блока. Время свечи — минута её открытия."
+    },
+    "chg_brk": {
+     "ANY": "DR сломан: дальше семья слома"
+    },
+    "chg_clock": {
+     "ANY": "у {zone} события семьи по часам кончились"
+    },
+    "chg_conf": {
+     "ANY": "подтверждение: семья зафиксирована"
+    },
+    "chg_deep": {
+     "ANY": "глубже всего теперь {sd} SD"
+    },
+    "chg_far": {
+     "ANY": "дальше всего теперь {sd} SD"
+    },
+    "chg_head": {
+     "ANY": "на {cut}: "
+    },
+    "chg_level": {
+     "ANY": "взят {name}"
+    },
+    "chg_none": {
+     "ANY": "на {cut} новых фактов нет; доли пересчитаны"
+    },
+    "chg_place": {
+     "ANY": "дошли до {place}"
+    },
+    "chg_title": {
+     "ANY": "Что изменилось с прошлой закрытой M5 — только факты сегодняшнего пути и состояния. Доли «Дальше» пересчитываются на каждом срезе и без новых фактов: меняются часы и набор сопоставимых сессий."
+    },
+    "chg_zone": {
+     "ANY": "{zone} {status}"
+    },
+    "deep_k": {
+     "BRK": "против слома глубже всего",
+     "CONF": "глубже всего"
+    },
+    "dr_broken": {
+     "ANY": "сломан · M5 {t}"
+    },
+    "dr_held": {
+     "ANY": "цел · {opp}"
+    },
+    "dr_k": {
+     "ANY": "DR"
+    },
+    "far_k": {
+     "BRK": "по слому дальше всего",
+     "CONF": "дальше всего"
+    },
+    "hole": {
+     "ANY": "по известным свечам: нет M5 {t}, экстремум мог быть дальше"
+    },
+    "hole_short": {
+     "ANY": " · по известным свечам: нет M5 {t}"
+    },
     "line": {
      "BRK": "сегодня пока: против слома {r} SD в {rt} · по слому {x} SD в {xt}",
      "CONF": "сегодня пока: глубже всего {r} SD в {rt} · дальше всего {x} SD в {xt}"
+    },
+    "price_now": {
+     "ANY": "{price} · цена на срезе"
+    },
+    "pt_v": {
+     "ANY": "{sd} SD · {price} · M5 {t}"
+    },
+    "rail_fact": {
+     "ANY": "{k} {sd} SD · {t}"
+    },
+    "rail_px": {
+     "ANY": "{price}"
     },
     "title": {
      "ANY": "Наблюдённые закрытые свечи сегодняшнего дня после {act} до среза; не окончательные значения"
@@ -2639,6 +2794,18 @@
     "p710": {
      "ANY": "−0,7"
     },
+    "rail": {
+     "ANY": "до {place}"
+    },
+    "rail_sub": {
+     "ANY": "дошли {yes} из {n} стоявших там же"
+    },
+    "rail_sub_unknown": {
+     "ANY": "дошли {yes} из {n} стоявших там же · неизв. {unknown}"
+    },
+    "rail_who": {
+     "ANY": "стояли там же и ещё не были у места"
+    },
     "row": {
      "ANY": "до {place} · {price}"
     },
@@ -2774,6 +2941,9 @@
     },
     "title_mark": {
      "ANY": "{ev}: после {cut} новый, более глубокий откат — ниже сегодняшнего дна {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка."
+    },
+    "title_rail": {
+     "ANY": "{ev}: после {cut} новый, более глубокий откат — дальше сегодняшнего {today}, то есть {where} по цене, — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка."
     }
    },
    "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN"
@@ -3029,7 +3199,7 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "91f2b874fb5efe9d"
+ "registry_hash": "5511ac171af75d8d"
 };
   // A violation belongs to the scene it was found in (DR-LAB-SWPC-1.1 M16): a passport's snapshot, one family response or
   // one NOW response (each its own number: a new answer to the same request starts clean), or the page itself ('*': a page without its registry,
@@ -3660,6 +3830,15 @@
     }
     c.restore();
   }
+  // today's own extreme after the activation as a dashed line across the chart: a fact of the closed prefix, the same
+  // line the «Сейчас» row starts from, without its conditional band
+  function drawFactLine(c, ctx, ev) {
+    const F = ctx.F, rows = F ? todayRows(F, ctx) : [];
+    if (!rows.length) return;
+    const u = ev === 'R' ? Math.min(...rows.map(q => q.lo)) : Math.max(...rows.map(q => q.hi)), y = Math.round(V.Y(F.u2p(u / F.w0t))) + 0.5;
+    c.save(); c.strokeStyle = rgba(cfg[ev], 0.85); c.lineWidth = 1; c.setLineDash([4, 3]);
+    c.beginPath(); c.moveTo(0, y); c.lineTo(V.plot.w, y); c.stroke(); c.restore();
+  }
   // a hovered price cell or band of the histogram runs across the chart; a hovered time cell runs down to the time axis
   function drawHighlight(c, ctx) {
     const F = ctx.F, h = hv();
@@ -3667,6 +3846,10 @@
     if (h.k === 'now') { drawNowLevels(c, ctx, h.ev); return; }
     // «Отсюда»: the place lit like a level (its price stands on the price scale), nothing written over the candles
     if (h.k === 'arrive') { const P = arrPlace(arriveOf(ctx), h.id); if (P) brightLine(c, arrPrice(ctx, P), null); return; }
+    // «Сегодня» (candidate 13.10): a fact row lights today's own extreme; «почему доли разные» lights the anchors it compares
+    // (today's deepest point and the open places), nothing written over the candles
+    if (h.k === 'fact') { drawFactLine(c, ctx, h.ev); return; }
+    if (h.k === 'cmp') { drawFactLine(c, ctx, 'R'); const r = arriveOf(ctx); if (r && r.status === 'OK' && !F.brk) for (const P of r.places) if (P.state.status === 'OPEN') brightLine(c, arrPrice(ctx, P), null); return; }
     const col = cfg[h.ev || st.ev];
     if (h.k === 'pcell') {
       const [ya, yb] = cellY(F, h.k0, h.k1);
@@ -5022,6 +5205,8 @@
       return out;
     }
     if (h.k === 'arrive' && F) return arriveTip(ctx, h.id);
+    if (h.k === 'fact' && F) return factTip(F, ctx, h.ev);
+    if (h.k === 'cmp' && F) return cmpTip(F, ctx);
     if (h.k === 'vib') { const v = h.v; return '<b>VI ' + (v.dir === 1 ? '↑' : '↓') + '</b> · ' + px(v.lo) + '–' + px(v.hi) + ' · ' + clk(v.t) + '<br><span class="k">' + (v.fill != null ? 'ребалансирован в ' + clk(v.fill) : 'открыт: цена ещё не заходила') + '</span>'; }
     if (h.k === 'prev') {
       const P = h.P, q = P.s;
@@ -5034,6 +5219,44 @@
   // question, the family, the chain of the selection, the outcomes, the share, what the lit stars are, and whether the cut
   // lies in the domain of the A/D reconciliation
   const ARRK = { '0': 'p0', '-1/2': 'p12', '-7/10': 'p710' };
+  // a fact of «Сегодня» in the inspector: what it is and what it is not (FF:TODAY-PREFIX)
+  function factTip(F, ctx, ev) {
+    const rows = todayRows(F, ctx), T = 'FF:TODAY-PREFIX', V_ = VW(F);
+    if (!rows.length) return '';
+    let q = rows[0];
+    for (const x of rows) if (ev === 'R' ? x.lo < q.lo : x.hi > q.hi) q = x;
+    const u = (ev === 'R' ? q.lo : q.hi) / F.w0t;
+    return '<div class="ih">' + lbl(T, ev === 'R' ? 'deep_k' : 'far_k', null, V_) + '</div><div class="is">' + lbl(T, 'pt_v', { sd: sd(u), price: px(F.u2p(u)), t: clk(q.T - 5) }) + ' · ' + esc(where(ctx.s, F.u2p(u))) + '</div>' +
+      '<div class="iq">' + lbl(T, 'block_title', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, V_) }) + '</div>';
+  }
+  // «почему доли разные» (candidate 13.10, brief §7): the answers about the pullback after the cut side by side, each with
+  // its own question, anchor and set — the family's zones of the final R, the whole family «до места или дальше» (the
+  // ladder of window 5), «Сейчас» R from today's deepest point, «Отсюда» from the same place — so that a difference reads
+  // as another question or another set, not as another price. Every number is the one its own row or window shows
+  function cmpTip(F, ctx) {
+    const sl = sliceOf(ctx), PV = 'FF:PASSPORT-VIEW', K_ = 'EST:K-ARRIVE', n = nowOf(ctx), r = arriveOf(ctx), rows = [];
+    const row = (q, who, nn, v) => '<div class="ic"><span>' + q + '</span><span>' + who + '</span><span>' + nn + '</span><b>' + v + '</b></div>';
+    const Zm = zonesOf(F, 'R');
+    if (Zm) Zm.zones.forEach((z, i) => { if (!zoneHeld(F, 'R', i)) rows.push(row(lbl(PV, 'cmp_zone_q', { ev: 'R', zone: z.label }), lbl(PV, 'cmp_zone_who'), F.N, ppTxt(zonePass(F, 'R', z)))); });
+    const E = n && n.status === 'OK' ? n.R : null;
+    if (E && E.continuation && E.state) {
+      const C = E.continuation, sp = C.support, b = C.p_new_bounds || [], bN = nowBundle(n, 'EST:N-NEW-R', 'MAIN', C);
+      const v = !bN ? '—' : sp.N_match_unknown ? pct(100 * b[0]) + '–' + pct(100 * b[1]) : C.p_new_extreme == null ? '—' : pct(100 * C.p_new_extreme);
+      rows.push(row(lbl(PV, 'cmp_now_q', { ev: 'R', price: px(F.u2p(E.state.r_seen)) }), lbl(PV, 'cmp_now_who', { cut: clk(sl) }), sp.N_match_total, v));
+    }
+    if (r && r.status === 'OK' && !F.brk) for (const P of r.places) {
+      if (P.state.status !== 'OPEN') continue;
+      const p = arrPrice(ctx, P), place = lbl(K_, ARRK[P.level]), q = levelQuery(F, ctx, p, place);
+      rows.push(row(lbl(PV, 'cmp_lvl_q', { place }), lbl(PV, 'cmp_lvl_who'), F.N, ppTxt(q.rest, true)));
+      if (P.withheld) continue;
+      // a place with fewer than 20 there has no bundle by design: never ask for one (it would be reported as withheld)
+      const k = P.counts, few = P.publication === 'WITHHELD_FEW_SESSIONS', bA = few ? null : arriveBundle(r, P.level, P);
+      const v = few ? lbl('FF:FEW-SESSIONS', 'few', { n: k.n_match }) : !bA ? '—' : k.unknown ? pct(100 * k.yes / k.n_match) + '–' + pct(100 * (k.yes + k.unknown) / k.n_match) : pct(100 * k.yes / k.n_match);
+      rows.push(row(lbl(PV, 'cmp_arr_q', { place }), lbl(PV, 'cmp_arr_who'), k.n_match, v));
+    }
+    return '<div class="ih">' + lbl(PV, 'cmp_head', { cut: clk(sl) }) + '</div><div class="ic hd"><span>' + lbl(PV, 'cmp_q') + '</span><span>' + lbl(PV, 'cmp_who') + '</span><span>' + lbl(PV, 'cmp_n') + '</span><b>' + lbl(PV, 'cmp_share') + '</b></div>' +
+      rows.join('') + '<div class="is">' + lbl(PV, 'cmp_note') + '</div>';
+  }
   function arriveTip(ctx, lvl) {
     const r = arriveOf(ctx), P = arrPlace(r, lvl), K_ = 'EST:K-ARRIVE', T_ = 'FF:K-TARGET', F = ctx.F;
     if (!P) return '';
@@ -5385,22 +5608,29 @@
         (noFam ? '<button class="p24-btn" data-hist="1">' + (A.src === 'live' ? 'Открыть ' + st.session + ' на истории' : 'Ближайший день с подтверждением ' + st.session) + '</button>' : '');
       return;
     }
+    // the candidate of 13.10.2026 (branch svodka-24, the operator's brief «смысловая организация рыночного знания»): one
+    // frame and four parts in a fixed order, never rearranged by a share or a state (SWPC-1.1 §3.3, §6.3) —
+    //   the frame: which family, its N, when it was fixed and that it does not change until the block end;
+    //   «Сегодня»: facts of today's closed M5 that have no single price (the DR so far, the operator's named rule) and
+    //     what the last M5 changed;
+    //   «Цена: сегодня и дальше»: one price ladder, as on the chart — today's extremes and the close of the slice (facts),
+    //     each «Сейчас» answer under the extreme it starts from, the places of «Отсюда» with their own sets;
+    //   «Ориентир»: the family's own history — the DR outcome and the zone map by time — fixed with the snapshot
+    //     (today's zone status is a separate channel).
     const out = [], sl = sliceOf(ctx), step = 100 / F.N, src = F.r.source || {};
     const ttl = lbl('FF:SHARE-STEP', 'head_title', { event: lbl('FF:PASSPORT-VIEW', 'at_act_dr', null, VW(F)), t: clk(F.act0), step: pct(step), history: src.history || '2006–2025',
       cutoff: F.r.key.cutoff, snapshot: F.r.snapshot_id, family: F.r.family_id, semantics: F.r.semantics });
+    // the scope switch changes the family itself (another key, another N): it stands at the frame, not inside one block
     out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F.cond) + '</span><span>' + (sl >= F.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
+    out.push('<div class="p24-frame"><span title="' + esc(ttl) + '">' + lbl('FF:SHARE-STEP', F.brk ? 'frame_brk' : 'frame', { N: F.N, t: clk(F.act0), end: clk(F.end) }) + '</span>' + scopeSwitch() + '</div>');
     if (s.failed) out.push(viewSwitch(s));
     // a small break family is shown as it is, marked (operator 2026-10-08: «честно писать «мало»», FF:FEW-SESSIONS)
     if (F.brk && F.N < FEW) out.push('<div class="p21-note" title="' + esc(lbl('FF:FEW-SESSIONS', 'title', { step: pct(step) })) + '"><b>' + lbl('FF:FEW-SESSIONS', 'few', { n: F.N }) + '</b></div>');
-    if (F.out) out.push(outcomeHtml(F));
-    out.push(phaseHtml(F, ctx));
-    out.push(nowHtml(F, ctx));
-    out.push(arriveHtml(F, ctx));
-    if (st.mode === 'bounds') {
-      out.push(zonesHtml(F, ctx));
-      const tf = todayFacts(F, ctx);
-      if (tf) out.push('<div class="p21-note" title="' + esc(lbl('FF:TODAY-PREFIX', 'title', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)) })) + '">' + tf + '</div>');
-    }
+    out.push(todayHtml(F, ctx));
+    out.push(railHtml(F, ctx));
+    out.push(layerHead('Ориентир', 'история семьи · не меняется с ' + clk(F.act0)));
+    if (F.out) out.push(outcomeHtml(F, true));
+    if (st.mode === 'bounds') out.push(zonesHtml(F, ctx));
     if (st.mode === 'path') out.push(columnHtml(F, ctx));
     if (st.area && st.mode === 'bounds') out.push(areaHtml(F, ctx));
     const h = st.pin;
@@ -5427,7 +5657,7 @@
     }
     if (!rows.length && !zonesOf(F, 'R') && !zonesOf(F, 'X')) return '';
     rows.sort((a, b) => a.z.time_start - b.z.time_start || b.z.p_snapshot - a.z.p_snapshot);
-    const out = ['<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
+    const out = ['<div class="p21-h" title="Зоны семьи: доли не меняются; статус — по сегодняшнему пути">Зоны по времени<span>статус — по сегодня</span></div>'];
     if (!rows.length) out.push('<div class="p21-note">' + lbl('EST:B-ZONE-R', 'none') + '</div>');
     let sep = false;
     for (const r of rows) {
@@ -5447,101 +5677,170 @@
     }
     return out.join('');
   }
-  // today's own path after the activation (facts, not shares): the deepest and the farthest closed-M5 point so far
-  function todayFacts(F, ctx) {
-    const rows = todayRows(F, ctx);
-    if (!rows.length) return '';
-    let lo = rows[0], hi = rows[0];
-    for (const q of rows) { if (q.lo < lo.lo) lo = q; if (q.hi > hi.hi) hi = q; }
-    return lbl('FF:TODAY-PREFIX', 'line', { r: sd(lo.lo / F.w0t), rt: clk(lo.T - 5), x: sd(hi.hi / F.w0t), xt: clk(hi.T - 5) }, VW(F));
+  // a part of the summary: its name and what it is (the candidate of 13.10.2026); no text transform, so the words stay
+  // as written for the reader and the checks
+  const layerHead = (name, right, title) => '<div class="p24-L"' + (title ? ' title="' + esc(title) + '"' : '') + '><span class="n">' + name + '</span><span>' + right + '</span></div>';
+  // «Сегодня»: what the market has done by the slice, from closed M5 only — the two extremes after the activation with
+  // their price and their M5 (FF:TODAY-PREFIX; the minute of the M5 is its opening one, as everywhere on the screen), the
+  // DR so far, the operator's named rule (FF:PHASE-RULE: his rule, not a state of the market; the share of its clock
+  // criterion is the passport of EST:B-CLOCK-R, as before) and what the last closed M5 changed. Facts, never shares
+  function todayHtml(F, ctx) {
+    const s = ctx.s, sl = sliceOf(ctx), V_ = VW(F), T = 'FF:TODAY-PREFIX', act = lbl('FF:PASSPORT-VIEW', 'act_gen', null, V_);
+    const out = [layerHead('Сегодня', 'факты закрытых M5 к ' + clk(sl), lbl(T, 'block_title', { act }))];
+    // a closed M5 missing from today's prefix: the DR and the depth are those of the known candles, and say so (W09)
+    const seen = new Set(todayRows(F, ctx).map(q => q.T)), gap = [];
+    for (let T_ = F.act0 + 5; T_ <= sl; T_ += 5) if (!seen.has(T_)) gap.push(T_);
+    const hole = gap.length ? lbl(T, 'hole_short', { t: clk(gap[0] - 5) }) : '';
+    const fact = (k, v, h, title) => h ? link(h, '<span class="fk">' + k + '</span><span class="fv">' + v + '</span>', 'p24-fact', null, title)
+      : '<div class="p24-fact"' + (title ? ' title="' + esc(title) + '"' : '') + '><span class="fk">' + k + '</span><span class="fv">' + v + '</span></div>';
+    if (s.failed && s.failed <= sl) out.push(fact(lbl(T, 'dr_k'), lbl(T, 'dr_broken', { t: clk(s.failed - 5) })));
+    else if (s.conf) out.push(fact(lbl(T, 'dr_k'), lbl(T, 'dr_held', { opp: (s.side === 1 ? 'DR low ' : 'DR high ') + px(s.opp) }) + hole));
+    const ph = phaseOf(F, ctx), P = 'FF:PHASE-RULE';
+    if (ph) {
+      const ok = b => b ? '✓ ' : '';
+      out.push(fact(lbl(P, 'rule_k'), '<b>' + lbl(P, ph.done ? 'rule_done' : 'rule_open') + '</b>', null, lbl(P, 'title')));
+      out.push('<div class="p24-rule">' + lbl(P, 'rule_depth', { mark: ok(ph.deep), r: sd(ph.r) }) + hole + '</div>');
+      out.push(link({ k: 'phase' }, '<span class="t"><span>' + lbl(P, 'rule_clock', { mark: ok(ph.half), cut: clk(ph.cut), share: ppTxt(ph.pass, true) }) + '</span></span>', 'mc p24-rule', ph.pass, lbl('EST:B-CLOCK-R', 'title')));
+    }
+    const ch = changeOf(F, ctx);
+    out.push('<div class="p24-chg" title="' + esc(lbl(T, 'chg_title')) + '">' + (ch.length ? lbl(T, 'chg_head', { cut: clk(sl) }) + ch.join(' · ') : lbl(T, 'chg_none', { cut: clk(sl) })) + '</div>');
+    return out.join('');
   }
-  // DR-LAB-NOW-1.0 §21: the quiet block «Сейчас» — after the path lived today, how much movement usually remained ahead
-  // for comparable states of this family (the time baseline unless a path matcher passed the walk-forward gates). Its
-  // support is always shown; it never rewrites the base map; it is not a trade.
+  // what the last closed M5 changed (the time of the session, brief §4): only facts of today's path and states derived
+  // from them — a new extreme, a level taken, a place of «Отсюда» reached, a zone that became impossible or holds, a zone
+  // whose family events are all behind the clock, the operator's rule switching, the break. The shares of «Дальше» are
+  // recomputed on every cut anyway; without new facts the line says so. Nothing here is a share or a new passport
+  function changeOf(F, ctx) {
+    const s = ctx.s, sl = sliceOf(ctx), T = 'FF:TODAY-PREFIX', out = [];
+    if (sl <= F.act0) return [lbl(T, F.brk ? 'chg_brk' : 'chg_conf')];       // the M5 that fixed this family
+    if (!F.brk && s.failed === sl) out.push(lbl(T, 'chg_brk'));
+    const rows = todayRows(F, ctx), prev = rows.filter(q => q.T <= sl - 5), last = rows.find(q => q.T === sl);
+    if (last && prev.length) {
+      if (last.hi > Math.max(...prev.map(q => q.hi))) out.push(lbl(T, 'chg_far', { sd: sd(last.hi / F.w0t) }));
+      if (last.lo < Math.min(...prev.map(q => q.lo))) out.push(lbl(T, 'chg_deep', { sd: sd(last.lo / F.w0t) }));
+    }
+    for (const z of ((F.brk ? s.takenN : s.taken) || [])) if (z.t === sl) out.push(lbl(T, 'chg_level', { name: z.name }));
+    const r = arriveOf(ctx);
+    if (r && r.status === 'OK' && !F.brk) for (const P of r.places) if (P.state.status === 'RESOLVED' && P.state.time === clk(sl)) out.push(lbl(T, 'chg_place', { place: lbl('EST:K-ARRIVE', ARR_KEY[P.level]) }));
+    const c0 = { D: ctx.D, obs: sl - 5, live: false, s: sess(ctx.D, s.k, sl - 5, false), F };
+    for (const ev of ['R', 'X']) {
+      const Zm = zonesOf(F, ev);
+      if (!Zm) continue;
+      const a = zoneStatus(F, ctx, ev), b = zoneStatus(F, c0, ev), ka = zoneClock(F, ctx, ev), kb = zoneClock(F, c0, ev);
+      Zm.zones.forEach((z, i) => {
+        if (a[i] !== b[i] && !['WITHHELD', 'STATUS_UNKNOWN'].includes(a[i]) && !['WITHHELD', 'STATUS_UNKNOWN'].includes(b[i])) out.push(lbl(T, 'chg_zone', { zone: z.label, status: zst(a[i]) }));
+        else if (kb[i] === 'FUTURE_PRESENT' && ka[i] && ka[i] !== 'FUTURE_PRESENT') out.push(lbl(T, 'chg_clock', { zone: z.label }));
+      });
+    }
+    // the operator's rule switched on this M5: the same inputs as phaseOf, for the previous cut, without a new passport
+    const ph = !F.brk ? phaseOf(F, ctx) : null;
+    if (ph && ph.done) {
+      const lo0 = prev.length ? Math.min(...prev.map(q => q.lo)) : null, n0 = F.ev.R.pts.filter(q => q.t + 5 <= sl - 5).length;
+      if (!(lo0 != null && 10 * lo0 <= -7 * F.w0t && 2 * n0 >= F.N)) out.push(lbl('FF:PHASE-RULE', 'chg_done'));
+    }
+    return out;
+  }
+  // «Цена: сегодня и дальше»: one price ladder, top to bottom as on the chart — today's two extremes (facts), each with
+  // the answer of «Сейчас» (DR-LAB-NOW-1.0) that starts from it right under it, the places of «Отсюда»
+  // (PROFILE:ARRIVE-24) with their own sets, and the close of the slice between them. Each row keeps its own anchor
+  // (its price) and its own set; nothing is summed or nested. The rows keep the words the operator chose: R of «Сейчас» —
+  // the letter and the number, its words in the title (08.10); X of «Сейчас» — as it was; «Отсюда» — its count «дошли k
+  // из n» and who they are. Every row lights on the chart what it lit before
+  const ARR_KEY = { '0': 'p0', '-1/2': 'p12', '-7/10': 'p710' };
   const NOWST = { VALIDATED: 'путь проверен на истории', TIME_BASELINE: 'путь не добавил к базе по времени', NOT_VALIDATED: 'проверка на истории не прогнана',
     NOT_TESTABLE: 'семьи слома малы для проверки пути', UNSTABLE: 'путь неустойчив к порогу', CELL_FALLBACK: 'в этой связке путь хуже базы',
     NOT_VALIDATED_SCOPE: 'путь проверен только для дня недели', STALE: 'паспорт проверки устарел' };
-  function nowHtml(F, ctx) {
-    const n = nowOf(ctx), head = right => '<div class="p21-h second"><span title="DR-LAB-NOW-1.0: доли считаются заново на каждой закрытой M5 по уже прожитому сегодня пути; базовая карта и её проценты не меняются">Сейчас</span><span>' + right + '</span></div>';
-    if (!n) return '<div class="p24-nowblk">' + head('считаю…') + '</div>';
-    if (n.status !== 'OK' && n.status !== 'FROZEN_AT_BREAK') return '<div class="p24-nowblk">' + head('') + '<div class="p21-note">' + esc(n.note || n.message || 'нет данных') + '</div></div>';
-    const what = F.brk ? 'после слома' : 'после подтверждения', out = [];
-    const modes = ['R', 'X'].map(ev => n[ev] && n[ev].mode), path = modes.includes('PATH_CONDITIONED');
-    out.push(head('<span title="' + (path ? 'похожий уже прожитый путь' : 'только время ' + what + ': все сессии семьи к этому же часу') + '">' + (path ? 'похожий путь' : 'по времени') + '</span>' + (n.status === 'FROZEN_AT_BREAK' ? ' · на ' : ' · ') + n.cut.cut_clock_et));
-    if (n.status === 'FROZEN_AT_BREAK') out.push('<div class="p21-note">исходная семья: заморожено на последней M5 до слома DR</div>');
-    for (const ev of ['R', 'X']) {
-      const E = n[ev];
-      if (E && !E.continuation && E.note) { out.push('<div class="p21-note"><i style="color:' + cfg[ev] + '">' + ev + '</i> ' + esc(E.note) + '</div>'); continue; }
-      if (!E || !E.continuation) continue;
-      // DR-LAB-SC-1.1 K33: a C1 share of the history, in historical grammar (CF:N-NEW, CF:N-IF-NEW, CF:N-TIME), shown only
-      // with its bundle published by the server on this cut
-      const C = E.continuation, p = C.p_new_extreme, b = C.p_new_bounds || [], sp = C.support, NE = 'EST:N-NEW-' + ev, bN = nowBundle(n, NE, 'MAIN', C);
-      const val = !bN ? '—' : C.support.N_match_unknown ? pct(100 * b[0]) + '–' + pct(100 * b[1]) : p == null ? '—' : pct(100 * p);
-      const name = lbl(NE, 'row', { ev: '<i style="color:' + cfg[ev] + '">' + ev + '</i>' }, VW(F));
-      const sgn = ev === 'R' ? -1 : 1, u0 = ev === 'R' ? E.state.r_seen : E.state.x_seen, q = C.delta_if_new || {}, tm = C.time_to_new || {};
-      const lv = v => num(Math.round(F.u2p(u0 + sgn * v)), 0);   // whole points: a level to watch, not a quote
-      const bI = bN && q.q50 != null && p ? nowBundle(n, 'EST:N-IF-NEW-' + ev, 'MAIN') : null, bT = bI && tm.q50_min != null ? nowBundle(n, 'EST:N-TIME-' + ev, 'MAIN') : null;
-      const sub = bI ? lbl('EST:N-IF-NEW-' + ev, 'sub', { p50: lv(q.q50), p25: lv(q.q25), p75: lv(q.q75) }) + (bT ? lbl('EST:N-TIME-' + ev, 'sub', { min: Math.round(tm.q50_min) }) : '') : '';
-      const support = E.mode === 'PATH_CONDITIONED' ? lbl(NE, 'support_path', { m: sp.N_match_total, n: sp.N_eligible, matcher: E.matcher }) : lbl(NE, 'support_b0', { n: sp.N_eligible, N: n.base.N_base });
-      // the pullback line (operator 2026-10-08, meaning/17 §7): only the number; its levels are the marks at the price
-      // scale (drawNowMarks); the historical words, the conditional levels, the time and the support are in its title
-      if (ev === 'R') {
-        const P = v => Math.round(F.u2p(u0 + sgn * v)), cnt = sp.N_match_unknown ? sp.N_new_yes + '–' + (sp.N_new_yes + sp.N_match_unknown) : String(sp.N_new_yes);
-        const t1 = bN ? lbl(NE, 'title_mark', { ev: 'R', cut: n.cut.cut_clock_et, today: num(P(0), 0), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base }) : '';
-        const t2 = bI ? lbl('EST:N-IF-NEW-R', 'title_mark', { p50: lv(q.q50), lo: num(Math.min(P(q.q25), P(q.q75)), 0), hi: num(Math.max(P(q.q25), P(q.q75)), 0), time: bT ? lbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' }) : '';
-        out.push(link({ k: 'now', ev }, '<span class="t"><span>' + lbl(NE, 'row_mark', { ev: '<i style="color:' + cfg[ev] + '">' + ev + '</i>' }) + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' ')));
-        continue;
+  const hm = t => { const [h, m] = String(t).split(':').map(Number); return h * 60 + m; };
+  function railHtml(F, ctx) {
+    const sl = sliceOf(ctx), n = nowOf(ctx), r = arriveOf(ctx), V_ = VW(F), K_ = 'EST:K-ARRIVE', T_ = 'FF:K-TARGET', PV = 'FF:PASSPORT-VIEW', T = 'FF:TODAY-PREFIX';
+    const act = lbl(PV, 'act_gen', null, V_), items = [], notes = [], tag = ev => '<i style="color:' + cfg[ev] + '">' + ev + '</i>';
+    // one row of the ladder: its price (or none for an answer under its anchor), its sign, its words and value on the
+    // first line, its sub-lines under both (they need the width the value column would take)
+    const row = (p, o, glyph, col, label, subs, val, h, cls, title, blk) => ({ p, o, html: (blk ? '<div class="' + blk + '">' : '') + link(h, '<span class="rp">' + (o === 1 ? '' : lbl(T, 'rail_px', { price: px(p) })) +
+      '</span><span class="rg" style="color:' + col + '">' + glyph + '</span><span class="t"><span>' + label + '</span></span>' +
+      (subs.length ? '<span class="rs">' + subs.map(x => '<span class="p21-sub">' + x + '</span>').join('') + '</span>' : '') + (o === 0 ? '' : '<b>' + val + '</b>'), cls, null, title) + (blk ? '</div>' : '') });
+    // today's two extremes after the activation: facts of the closed prefix, the anchors of «Сейчас»
+    const rows = todayRows(F, ctx), at = {};
+    if (rows.length) {
+      let lo = rows[0], hi = rows[0];
+      for (const q of rows) { if (q.lo < lo.lo) lo = q; if (q.hi > hi.hi) hi = q; }
+      // a closed M5 missing from today's prefix: the extremes are those of the known candles, and say so (W09)
+      const seen = new Set(rows.map(q => q.T)), gap = [];
+      for (let T_ = F.act0 + 5; T_ <= sl; T_ += 5) if (!seen.has(T_)) gap.push(T_);
+      for (const [ev, q, v] of [['X', hi, hi.hi], ['R', lo, lo.lo]]) {
+        const u = v / F.w0t;
+        at[ev] = F.u2p(u);
+        items.push(row(at[ev], 0, '◆', '#E6EAF0', lbl(T, 'rail_fact', { k: lbl(T, ev === 'R' ? 'deep_k' : 'far_k', null, V_), sd: sd(u), t: clk(q.T - 5) }), gap.length ? [lbl(T, 'hole', { t: clk(gap[0] - 5) })] : [], '',
+          { k: 'fact', ev }, 'p24-anchor', lbl(T, 'block_title', { act }), ''));
       }
-      out.push(link({ k: 'now', ev }, '<span class="t"><span>' + name + '</span>' + (sub ? '<span class="p21-sub">' + sub + '</span>' : '') +
-        '<span class="p21-sub">' + support + (E.note ? ' · ' + esc(E.note) : '') + '</span></span><b>' + val + '</b>', 'mc', null, lbl(NE, 'title', { cut: n.cut.cut_clock_et })));
     }
-    const v = (n.R && n.R.validation) || {};
-    out.push('<div class="if" title="правила ' + esc(n.rules_id || '') + (v.tested_through ? ' · проверено на истории до ' + v.tested_through : '') + '">' + esc(NOWST[v.status] || v.status || '') + ' · не сделка</div>');
-    // the spec (§9.3, §21.2) requires the support next to every NOW number: the only place of the panel with session counts
-    return '<div class="p24-nowblk">' + out.join('') + '</div>';
-  }
-  // PROFILE:ARRIVE-24 (operator 2026-10-12, SC-1.1 §12.6): «Отсюда до места» — the verified Q1 answer for the IDR edge,
-  // the IDR middle and −0,7 below today's deepest point: of the family's sessions that at this clock time stood where
-  // today stands and had not yet been at the place, how many then reached it by the block end. A place reached today is
-  // a fact with its time; fewer than 20 there: no number. Each row lights its place and the pullbacks of these sessions;
-  // its passport is in the inspector. Counts are shown next to the share, as in «Сейчас» (the support of a C1 number)
-  const ARR_KEY = { '0': 'p0', '-1/2': 'p12', '-7/10': 'p710' };
-  function arriveHtml(F, ctx) {
-    const r = arriveOf(ctx), K_ = 'EST:K-ARRIVE', T_ = 'FF:K-TARGET';
-    const head = right => '<div class="p21-h second"><span title="' + esc(lbl(K_, 'head_title')) + '">' + lbl(K_, 'head') + '</span><span>' + right + '</span></div>';
-    if (!r) return '<div class="p24-arrblk">' + head('считаю…') + '</div>';
-    if (r.status !== 'OK') {
+    let mode = '', legTitle = '';
+    // «Сейчас»: each answer under the extreme it starts from
+    if (!n) notes.push('<div class="p24-nowblk"><div class="p21-note">Сейчас: считаю…</div></div>');
+    else if (n.status !== 'OK' && n.status !== 'FROZEN_AT_BREAK') notes.push('<div class="p24-nowblk"><div class="p21-note">Сейчас: ' + esc(n.note || n.message || 'нет данных') + '</div></div>');
+    else {
+      const path = ['R', 'X'].some(ev => n[ev] && n[ev].mode === 'PATH_CONDITIONED'), v = (n.R && n.R.validation) || {};
+      mode = path ? 'похожий путь' : 'по времени';
+      legTitle = (path ? 'похожий уже прожитый путь' : 'только время ' + (F.brk ? 'после слома' : 'после подтверждения') + ': все сессии семьи к этому же часу') +
+        ' · ' + (NOWST[v.status] || v.status || '') + ' · правила ' + (n.rules_id || '') + (v.tested_through ? ' · проверено на истории до ' + v.tested_through : '');
+      if (n.status === 'FROZEN_AT_BREAK') notes.push('<div class="p24-nowblk"><div class="p21-note">Сейчас: исходная семья, заморожено на последней M5 до слома DR</div></div>');
+      for (const ev of ['R', 'X']) {
+        const E = n[ev];
+        if (E && !E.continuation && E.note) { notes.push('<div class="p24-nowblk"><div class="p21-note">Сейчас ' + tag(ev) + ': ' + esc(E.note) + '</div></div>'); continue; }
+        if (!E || !E.continuation || !E.state) continue;
+        // DR-LAB-SC-1.1 K33: a C1 share of the history, in historical grammar, shown only with its bundle of this cut
+        const C = E.continuation, p = C.p_new_extreme, b = C.p_new_bounds || [], sp = C.support, NE = 'EST:N-NEW-' + ev, bN = nowBundle(n, NE, 'MAIN', C);
+        const val = !bN ? '—' : C.support.N_match_unknown ? pct(100 * b[0]) + '–' + pct(100 * b[1]) : p == null ? '—' : pct(100 * p);
+        const sgn = ev === 'R' ? -1 : 1, u0 = ev === 'R' ? E.state.r_seen : E.state.x_seen, q = C.delta_if_new || {}, tm = C.time_to_new || {};
+        const lv = x => num(Math.round(F.u2p(u0 + sgn * x)), 0);   // whole points: a level to watch, not a quote
+        const bI = bN && q.q50 != null && p ? nowBundle(n, 'EST:N-IF-NEW-' + ev, 'MAIN') : null, bT = bI && tm.q50_min != null ? nowBundle(n, 'EST:N-TIME-' + ev, 'MAIN') : null;
+        if (ev === 'R') {
+          // the operator's line of 08.10: the letter and the number; the words, the set, the levels and the time in the
+          // title — now with the side of the price named (for a short a deeper pullback is higher)
+          const P_ = x => Math.round(F.u2p(u0 + sgn * x)), cnt = sp.N_match_unknown ? sp.N_new_yes + '–' + (sp.N_new_yes + sp.N_match_unknown) : String(sp.N_new_yes);
+          const t1 = bN ? lbl(NE, 'title_rail', { ev: 'R', cut: n.cut.cut_clock_et, today: num(P_(0), 0), where: lbl(PV, F.d0 === 1 ? 'px_below' : 'px_above'), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base }) : '';
+          const t2 = bI ? lbl('EST:N-IF-NEW-R', 'title_mark', { p50: lv(q.q50), lo: num(Math.min(P_(q.q25), P_(q.q75)), 0), hi: num(Math.max(P_(q.q25), P_(q.q75)), 0), time: bT ? lbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' }) : '';
+          items.push(row(at.R != null ? at.R : F.u2p(u0), 1, '┄', cfg.R, lbl(NE, 'row_mark', { ev: tag('R') }), E.note ? [esc(E.note)] : [], val, { k: 'now', ev }, 'mc', [t1, t2].filter(Boolean).join(' '), 'p24-nowblk'));
+          continue;
+        }
+        const sub = bI ? lbl('EST:N-IF-NEW-' + ev, 'sub', { p50: lv(q.q50), p25: lv(q.q25), p75: lv(q.q75) }) + (bT ? lbl('EST:N-TIME-' + ev, 'sub', { min: Math.round(tm.q50_min) }) : '') : '';
+        const support = E.mode === 'PATH_CONDITIONED' ? lbl(NE, 'support_path', { m: sp.N_match_total, n: sp.N_eligible, matcher: E.matcher }) : lbl(NE, 'support_b0', { n: sp.N_eligible, N: n.base.N_base });
+        items.push(row(at.X != null ? at.X : F.u2p(u0), 1, '┄', cfg.X, lbl(NE, 'row', { ev: tag(ev) }, V_), (sub ? [sub] : []).concat([support + (E.note ? ' · ' + esc(E.note) : '')]),
+          val, { k: 'now', ev }, 'mc', lbl(NE, 'title', { cut: n.cut.cut_clock_et }), 'p24-nowblk'));
+      }
+    }
+    // «Отсюда»: only for the confirmation family (its own profile); its time of a place reached today is the opening
+    // minute of that M5, as the other facts of the summary (the server's time is the closing minute)
+    if (!r) notes.push('<div class="p24-arrblk"><div class="p21-note">' + lbl(K_, 'head') + ': считаю…</div></div>');
+    else if (r.status !== 'OK') {
       const known = ['DR_BROKEN', 'PREFIX_UNKNOWN', 'NO_PREFIX', 'BLOCK_OVER', 'OUT_OF_SCOPE', 'NO_FAMILY'].includes(r.status);
-      const msg = known ? lbl(T_, r.status, r.status === 'DR_BROKEN' ? { time: r.time } : null) : (r.note || r.message || r.status);
-      return '<div class="p24-arrblk">' + head('') + '<div class="p21-note">' + esc(msg) + '</div></div>';
-    }
-    const out = [head(lbl(K_, r.scope) + ' · ' + r.cut.cut_clock_et)];
-    for (const P of r.places) {
-      const row = lbl(K_, 'row', { place: lbl(K_, ARR_KEY[P.level]), price: px(arrPrice(ctx, P)) });
-      let val = '', sub = '', cls = 'mc', title = '';
-      if (P.withheld) { val = '—'; sub = lbl(T_, 'withheld'); }
-      else if (P.state.status === 'RESOLVED') { sub = lbl(T_, 'RESOLVED', { time: P.state.time }); cls += ' dim'; title = lbl(T_, 'RESOLVED_title', { time: P.state.time }); }
-      else if (P.publication === 'WITHHELD_FEW_SESSIONS') { sub = lbl('FF:FEW-SESSIONS', 'few', { n: P.counts.n_match }); title = lbl('FF:FEW-SESSIONS', 'title_none'); }
+      notes.push('<div class="p24-arrblk"><div class="p21-note">' + lbl(K_, 'head') + ': ' + esc(known ? lbl(T_, r.status, r.status === 'DR_BROKEN' ? { time: r.time } : null) : (r.note || r.message || r.status)) + '</div></div>');
+    } else for (const P of r.places) {
+      const k = P.counts || {}, subs = [];
+      let val = '', cls = 'mc', title = '';
+      if (P.withheld) { val = '—'; subs.push(lbl(T_, 'withheld')); }
+      else if (P.state.status === 'RESOLVED') { const t = clk(hm(P.state.time) - 5); subs.push(lbl(T_, 'RESOLVED_rail', { time: t })); cls += ' dim'; title = lbl(T_, 'RESOLVED_rail_title', { time: t }); }
+      else if (P.publication === 'WITHHELD_FEW_SESSIONS') { subs.push(lbl('FF:FEW-SESSIONS', 'few', { n: k.n_match })); title = lbl('FF:FEW-SESSIONS', 'title_none'); }
       else {
-        const k = P.counts, b = arriveBundle(r, P.level, P);
-        const lo = 100 * k.yes / k.n_match, hi = 100 * (k.yes + k.unknown) / k.n_match;
+        const b = arriveBundle(r, P.level, P), lo = 100 * k.yes / k.n_match, hi = 100 * (k.yes + k.unknown) / k.n_match;
         val = !b ? '—' : k.unknown ? pct(lo) + '–' + pct(hi) : pct(lo);
-        sub = k.n_known ? lbl(K_, k.unknown ? 'sub_unknown' : 'sub', { yes: k.yes, n: k.n_match, unknown: k.unknown }) : lbl(T_, 'none_known');
+        subs.push(k.n_known ? lbl(K_, k.unknown ? 'rail_sub_unknown' : 'rail_sub', { yes: k.yes, n: k.n_match, unknown: k.unknown }) : lbl(T_, 'none_known'));
         title = lbl(K_, 'title', { cut: r.cut.cut_clock_et, end: r.cut.horizon_end, n: k.n_match, scope: lbl(K_, r.scope), yes: k.yes, no: k.no, unknown: k.unknown, pct: k.n_known ? pct(100 * k.yes / k.n_known) : '—' });
       }
-      out.push(link({ k: 'arrive', id: P.level }, '<span class="t"><span>' + row + '</span>' + (sub ? '<span class="p21-sub">' + sub + '</span>' : '') + '</span><b>' + val + '</b>', cls, null, title));
+      items.push(row(arrPrice(ctx, P), 2, '▸', cfg.R, lbl(K_, 'rail', { place: lbl(K_, ARR_KEY[P.level]) }), subs, val, { k: 'arrive', id: P.level }, cls, title, 'p24-arrblk'));
     }
-    return '<div class="p24-arrblk">' + out.join('') + '</div>';
-  }
-  // the operator's named phase rule in one place (2026-10-08, FF:PHASE-RULE): its state and both criteria with today's
-  // values; the share is the passport of EST:B-CLOCK-R over the whole price range (part EARLIER, of N)
-  function phaseHtml(F, ctx) {
-    const ph = phaseOf(F, ctx), P = 'FF:PHASE-RULE';
-    if (!ph) return '';
-    const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true);
-    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
-      '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
-      link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
+    // as on the chart: the higher price on top, each «Сейчас» answer right under its extreme; the close of the slice
+    // between the rows
+    items.sort((a, b) => b.p - a.p || a.o - b.o);
+    const bar = ctx.D.bars.find(q => q.t + 5 === sl), pNow = bar ? bar.c : null, sep = p => '<div class="p24-railnow"><span>' + lbl(T, 'price_now', { price: px(p) }) + '</span><i></i></div>';
+    const rail = [];
+    let placed = pNow == null || !items.length;
+    for (const it of items) { if (!placed && it.o !== 1 && it.p < pNow) { rail.push(sep(pNow)); placed = true; } rail.push(it.html); }
+    if (!placed) rail.push(sep(pNow));
+    return layerHead('По цене', 'после ' + clk(sl) + ' · история, не прогноз', lbl(PV, 'rail_legend', { mode: mode || '—', arrive: lbl(K_, 'head') }) + ': ◆ — сегодняшний экстремум (факт); ┄ — ответ «Сейчас», который от него отсчитывается; ▸ — место «Отсюда» со своим набором. Порядок — по цене, как на графике') +
+      (mode ? '<div class="p24-leg" title="' + esc(legTitle) + '">' + lbl(PV, 'rail_legend', { mode, arrive: lbl(K_, 'head') }) + '</div>' : '') +
+      '<div class="p24-rail">' + rail.join('') + '</div>' + notes.join('') +
+      (items.some(it => it.o === 2) ? link({ k: 'cmp' }, '<span class="t"><span class="p24-a">' + lbl(PV, 'cmp_link') + '</span></span>', 'p24-cmp') : '');
   }
   // PROFILE:PRE-24 (operator 2026-10-08, SC-1.1 §12.5): before the confirmation, the similar sessions of history at the
   // cut — box colour, models of the day, price position — and, from their verified bundles only: in which direction they
@@ -5583,13 +5882,13 @@
     return out.join('') + '</div>';
   }
   // the DR outcome of the family (spec §5.2): four categories that add up to 100 % of N; one compact bar
-  function outcomeHtml(F) {
+  function outcomeHtml(F, first) {
     const D = 'EST:B-DR', cats = [['held', '#6FB59A'], ['broken', '#E5877F'], ['unknown', '#8C95A3'], ['none', '#5F6877']], P = {};
     for (const [k] of cats) P[k] = drPass(F, k);
     // a withheld category (its passport «—», DR-LAB-SWPC-1.1 M14) leaves its part of the bar empty
     const bar = '<div class="p24-bar">' + cats.filter(([k]) => F.out[k]).map(([k, col]) => '<i style="width:' + (100 * F.out[k] / F.N).toFixed(2) + '%;background:' + (P[k].pct == null ? 'transparent' : col) + '"></i>').join('') + '</div>';
     const rows = cats.filter(([k]) => F.out[k] || k === 'held' || k === 'broken').map(([k, col]) => link({ k: 'out', cat: k }, '<span class="t"><i style="color:' + col + '">■</i> ' + lbl(D, k) + '</span><b>' + ppTxt(P[k]) + '</b>', 'in', P[k], plainTitle(P[k]))).join('');
-    return '<div class="p21-h second">' + lbl(D, 'head', { end: clk(F.end) }) + '<span>' + lbl(D, 'head_r') + '</span></div>' + bar + '<div class="p24-out big">' + rows + '</div>';
+    return '<div class="p21-h' + (first ? '' : ' second') + '">' + lbl(D, 'head', { end: clk(F.end) }) + '<span>' + lbl(D, 'head_r') + '</span></div>' + bar + '<div class="p24-out big">' + rows + '</div>';
   }
   function areaHtml(F, ctx) {
     const I = areaInfo(F, ctx), out = ['<div class="p21-h second p24-sel">Выбранная область <span><button class="p24-x" data-clear="area" title="Снять выбор (Esc)">✕</button></span></div>'];
@@ -6375,7 +6674,7 @@
   }
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
-  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, preOf, arriveOf, emphOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, preOf, arriveOf, todayRows, changeOf, sess, sliceOf, emphOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)
     // violations: those of the scene on screen (SWPC-1.1 M16); all: every one found since the page opened
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),

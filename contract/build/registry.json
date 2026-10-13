@@ -2653,9 +2653,15 @@
       "surface": "PANEL",
       "text_ru": "{ev}: после {cut} новый, более глубокий откат — ниже сегодняшнего дна {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка.",
       "view": "ANY"
+     },
+     {
+      "key": "title_rail",
+      "surface": "PANEL",
+      "text_ru": "{ev}: после {cut} новый, более глубокий откат — дальше сегодняшнего {today}, то есть {where} по цене, — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка.",
+      "view": "ANY"
      }
     ],
-    "note": "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark); the title_mark words are the executor's, for his acceptance",
+    "note": "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark); the title_mark words are the executor's, for his acceptance; 13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys title_rail are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed",
     "price_transfer": "NONE",
     "sc_ref": [
      "C1",
@@ -3392,9 +3398,33 @@
       "surface": "INSPECTOR",
       "text_ru": "вне области сверки A/D (5-минутный срез или семья дня недели меньше 40): счёт тот же, калибровка не проверена",
       "view": "ANY"
+     },
+     {
+      "key": "rail",
+      "surface": "PANEL",
+      "text_ru": "до {place}",
+      "view": "ANY"
+     },
+     {
+      "key": "rail_who",
+      "surface": "PANEL",
+      "text_ru": "стояли там же и ещё не были у места",
+      "view": "ANY"
+     },
+     {
+      "key": "rail_sub",
+      "surface": "PANEL",
+      "text_ru": "дошли {yes} из {n} стоявших там же",
+      "view": "ANY"
+     },
+     {
+      "key": "rail_sub_unknown",
+      "surface": "PANEL",
+      "text_ru": "дошли {yes} из {n} стоявших там же · неизв. {unknown}",
+      "view": "ANY"
      }
     ],
-    "note": "Operator 2026-10-12: integrate the verified Q1 mechanism into screen 24, «не подменяя существующие показатели BASE/NOW». The words follow the curator's trader wording (KADR-1.1 §10: «отсюда до −0,5 доходили 41 из 100», «уже дошли в 11:20», «мало сессий: n=…») and the pilot's passport; they are the executor's, for his acceptance",
+    "note": "Operator 2026-10-12: integrate the verified Q1 mechanism into screen 24, «не подменяя существующие показатели BASE/NOW». The words follow the curator's trader wording (KADR-1.1 §10: «отсюда до −0,5 доходили 41 из 100», «уже дошли в 11:20», «мало сессий: n=…») and the pilot's passport; they are the executor's, for his acceptance; 13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys rail, rail_sub, rail_sub_unknown, rail_who are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed",
     "price_transfer": "M0_TODAY_EDGE",
     "sc_ref": [
      "C1",
@@ -8667,8 +8697,159 @@
       "surface": "PANEL",
       "text_ru": "Наблюдённые закрытые свечи сегодняшнего дня после {act} до среза; не окончательные значения",
       "view": "ANY"
+     },
+     {
+      "key": "far_k",
+      "surface": "PANEL",
+      "text_ru": "дальше всего",
+      "view": "CONF"
+     },
+     {
+      "key": "far_k",
+      "surface": "PANEL",
+      "text_ru": "по слому дальше всего",
+      "view": "BRK"
+     },
+     {
+      "key": "deep_k",
+      "surface": "PANEL",
+      "text_ru": "глубже всего",
+      "view": "CONF"
+     },
+     {
+      "key": "deep_k",
+      "surface": "PANEL",
+      "text_ru": "против слома глубже всего",
+      "view": "BRK"
+     },
+     {
+      "key": "pt_v",
+      "surface": "PANEL",
+      "text_ru": "{sd} SD · {price} · M5 {t}",
+      "view": "ANY"
+     },
+     {
+      "key": "dr_k",
+      "surface": "PANEL",
+      "text_ru": "DR",
+      "view": "ANY"
+     },
+     {
+      "key": "dr_held",
+      "surface": "PANEL",
+      "text_ru": "цел · {opp}",
+      "view": "ANY"
+     },
+     {
+      "key": "dr_broken",
+      "surface": "PANEL",
+      "text_ru": "сломан · M5 {t}",
+      "view": "ANY"
+     },
+     {
+      "key": "rail_px",
+      "surface": "PANEL",
+      "text_ru": "{price}",
+      "view": "ANY"
+     },
+     {
+      "key": "rail_fact",
+      "surface": "PANEL",
+      "text_ru": "{k} {sd} SD · {t}",
+      "view": "ANY"
+     },
+     {
+      "key": "hole",
+      "surface": "PANEL",
+      "text_ru": "по известным свечам: нет M5 {t}, экстремум мог быть дальше",
+      "view": "ANY"
+     },
+     {
+      "key": "hole_short",
+      "surface": "PANEL",
+      "text_ru": " · по известным свечам: нет M5 {t}",
+      "view": "ANY"
+     },
+     {
+      "key": "price_now",
+      "surface": "PANEL",
+      "text_ru": "{price} · цена на срезе",
+      "view": "ANY"
+     },
+     {
+      "key": "block_title",
+      "surface": "PANEL",
+      "text_ru": "Факты закрытых M5 сегодняшнего дня после {act} до среза. Это не окончательные R и X: они известны только в конце блока. Время свечи — минута её открытия.",
+      "view": "ANY"
+     },
+     {
+      "key": "chg_none",
+      "surface": "PANEL",
+      "text_ru": "на {cut} новых фактов нет; доли пересчитаны",
+      "view": "ANY"
+     },
+     {
+      "key": "chg_head",
+      "surface": "PANEL",
+      "text_ru": "на {cut}: ",
+      "view": "ANY"
+     },
+     {
+      "key": "chg_far",
+      "surface": "PANEL",
+      "text_ru": "дальше всего теперь {sd} SD",
+      "view": "ANY"
+     },
+     {
+      "key": "chg_deep",
+      "surface": "PANEL",
+      "text_ru": "глубже всего теперь {sd} SD",
+      "view": "ANY"
+     },
+     {
+      "key": "chg_level",
+      "surface": "PANEL",
+      "text_ru": "взят {name}",
+      "view": "ANY"
+     },
+     {
+      "key": "chg_place",
+      "surface": "PANEL",
+      "text_ru": "дошли до {place}",
+      "view": "ANY"
+     },
+     {
+      "key": "chg_zone",
+      "surface": "PANEL",
+      "text_ru": "{zone} {status}",
+      "view": "ANY"
+     },
+     {
+      "key": "chg_clock",
+      "surface": "PANEL",
+      "text_ru": "у {zone} события семьи по часам кончились",
+      "view": "ANY"
+     },
+     {
+      "key": "chg_conf",
+      "surface": "PANEL",
+      "text_ru": "подтверждение: семья зафиксирована",
+      "view": "ANY"
+     },
+     {
+      "key": "chg_brk",
+      "surface": "PANEL",
+      "text_ru": "DR сломан: дальше семья слома",
+      "view": "ANY"
+     },
+     {
+      "key": "chg_title",
+      "surface": "PANEL",
+      "text_ru": "Что изменилось с прошлой закрытой M5 — только факты сегодняшнего пути и состояния. Доли «Дальше» пересчитываются на каждом срезе и без новых фактов: меняются часы и набор сопоставимых сессий.",
+      "view": "ANY"
      }
     ],
+    "note": "13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys block_title, rail_fact, hole, hole_short, chg_brk, chg_clock, chg_conf, chg_deep, chg_far, chg_head, chg_level, chg_none, chg_place, chg_title, chg_zone, deep_k, dr_broken, dr_held, dr_k, far_k, price_now, pt_v, rail_px are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed",
     "record_class": "PrefixState",
     "sc_ref": [
      "E1",
@@ -8810,8 +8991,21 @@
       "surface": "WINDOW",
       "text_ru": "вся семья, шаг доли {step}",
       "view": "ANY"
+     },
+     {
+      "key": "frame",
+      "surface": "PANEL",
+      "text_ru": "N = {N} · не меняется до {end}",
+      "view": "ANY"
+     },
+     {
+      "key": "frame_brk",
+      "surface": "PANEL",
+      "text_ru": "N = {N} · другая семья: ориентация по слому, не меняется до {end}",
+      "view": "ANY"
      }
     ],
+    "note": "13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys frame, frame_brk are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed",
     "record_class": "CaseSetSnapshot",
     "sc_ref": [
      "H2",
@@ -9044,8 +9238,117 @@
       "surface": "PANEL",
       "text_ru": " · неизвестно у {pct} семьи",
       "view": "ANY"
+     },
+     {
+      "key": "px_below",
+      "surface": "PANEL",
+      "text_ru": "ниже",
+      "view": "ANY"
+     },
+     {
+      "key": "px_above",
+      "surface": "PANEL",
+      "text_ru": "выше",
+      "view": "ANY"
+     },
+     {
+      "key": "rail_legend",
+      "surface": "PANEL",
+      "text_ru": "◆ сегодня · ┄ Сейчас ({mode}) · ▸ {arrive}",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_link",
+      "surface": "PANEL",
+      "text_ru": "почему доли разные",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_head",
+      "surface": "INSPECTOR",
+      "text_ru": "Почему доли разные · после {cut}",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_q",
+      "surface": "INSPECTOR",
+      "text_ru": "вопрос",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_who",
+      "surface": "INSPECTOR",
+      "text_ru": "кто считается",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_n",
+      "surface": "INSPECTOR",
+      "text_ru": "n",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_share",
+      "surface": "INSPECTOR",
+      "text_ru": "доля",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_zone_q",
+      "surface": "INSPECTOR",
+      "text_ru": "{zone}: окончательный {ev}",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_zone_who",
+      "surface": "INSPECTOR",
+      "text_ru": "вся семья",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_now_q",
+      "surface": "INSPECTOR",
+      "text_ru": "{ev} дальше, чем сегодня ({price})",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_now_who",
+      "surface": "INSPECTOR",
+      "text_ru": "живые к {cut}",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_lvl_q",
+      "surface": "INSPECTOR",
+      "text_ru": "до {place} или дальше",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_lvl_who",
+      "surface": "INSPECTOR",
+      "text_ru": "вся семья",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_arr_q",
+      "surface": "INSPECTOR",
+      "text_ru": "дошли до {place}",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_arr_who",
+      "surface": "INSPECTOR",
+      "text_ru": "стояли там же",
+      "view": "ANY"
+     },
+     {
+      "key": "cmp_note",
+      "surface": "INSPECTOR",
+      "text_ru": "Разные вопросы и разные наборы: строки не вложены и не складываются; одна цена даёт разные доли. История, не прогноз.",
+      "view": "ANY"
      }
     ],
+    "note": "13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys cmp_arr_q, cmp_arr_who, cmp_head, cmp_link, cmp_lvl_q, cmp_lvl_who, cmp_n, cmp_note, cmp_now_q, cmp_now_who, cmp_q, cmp_share, cmp_who, cmp_zone_q, cmp_zone_who, px_above, px_below, rail_legend are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed",
     "record_class": "StatisticalResultBundle",
     "sc_ref": [
      "§12.3"
@@ -9272,9 +9575,45 @@
       "surface": "PANEL",
       "text_ru": "Ваше правило от 08.10: «откат сделан», когда откат достиг −0,7 и у половины сессий семьи окончательный R по часам уже был. Это правило, а не факт рынка и не сигнал; окончательный R до конца блока неизвестен.",
       "view": "ANY"
+     },
+     {
+      "key": "rule_k",
+      "surface": "PANEL",
+      "text_ru": "ваше правило",
+      "view": "ANY"
+     },
+     {
+      "key": "rule_open",
+      "surface": "PANEL",
+      "text_ru": "«откат сделан»: нет",
+      "view": "ANY"
+     },
+     {
+      "key": "rule_done",
+      "surface": "PANEL",
+      "text_ru": "«откат сделан»: да — смотрим X",
+      "view": "ANY"
+     },
+     {
+      "key": "rule_depth",
+      "surface": "PANEL",
+      "text_ru": "{mark}откат {r} из −0,7",
+      "view": "ANY"
+     },
+     {
+      "key": "rule_clock",
+      "surface": "PANEL",
+      "text_ru": "{mark}R семьи к {cut}: {share}, нужна ½",
+      "view": "ANY"
+     },
+     {
+      "key": "chg_done",
+      "surface": "PANEL",
+      "text_ru": "ваше правило: «откат сделан»",
+      "view": "ANY"
      }
     ],
-    "note": "Operator 2026-10-08 (meaning/17 §7, Н2): the phase cue is his named rule with visible criteria (the rule is his: «все три»); the panel words are the executor's, for his acceptance. Its inputs are an observed fact (today's deepest point after the activation, FF:TODAY-PREFIX) and a registered estimand (EST:B-CLOCK-R over the whole price range, part EARLIER)",
+    "note": "Operator 2026-10-08 (meaning/17 §7, Н2): the phase cue is his named rule with visible criteria (the rule is his: «все три»); the panel words are the executor's, for his acceptance. Its inputs are an observed fact (today's deepest point after the activation, FF:TODAY-PREFIX) and a registered estimand (EST:B-CLOCK-R over the whole price range, part EARLIER); 13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys chg_done, rule_clock, rule_depth, rule_done, rule_k, rule_open are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed",
     "record_class": "OperatorNamedRule",
     "sc_ref": [
      "E1",
@@ -9451,9 +9790,21 @@
       "surface": "PANEL",
       "text_ru": "исход неизвестен у всех",
       "view": "ANY"
+     },
+     {
+      "key": "RESOLVED_rail",
+      "surface": "PANEL",
+      "text_ru": "сегодня дошли · M5 {time}",
+      "view": "ANY"
+     },
+     {
+      "key": "RESOLVED_rail_title",
+      "surface": "PANEL",
+      "text_ru": "Сегодня свеча M5 {time} дошла до места: вопрос решён фактом, доли нет. Время свечи — минута её открытия.",
+      "view": "ANY"
      }
     ],
-    "note": "the status of the same place today, from today's prefix only (KADR-1.1 §5.3): a place reached today is a fact with its time, never «100 %»; the words are the executor's, for the operator's acceptance",
+    "note": "the status of the same place today, from today's prefix only (KADR-1.1 §5.3): a place reached today is a fact with its time, never «100 %»; the words are the executor's, for the operator's acceptance; 13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys RESOLVED_rail, RESOLVED_rail_title are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed",
     "record_class": "PrefixState",
     "sc_ref": [
      "E1",
@@ -12208,7 +12559,7 @@
   "document_sha256_lf": "895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb",
   "edition": "DR-LAB-SC-1.1",
   "linkml": "1.11.1",
-  "registry_sha256": "91f2b874fb5efe9d8d3a0d91fa41f367631726513fa643364a21a567a5a9616c",
+  "registry_sha256": "5511ac171af75d8d075465b991b76b3eff00018dd8e79eb41cb505485bb7cbe7",
   "runtime_spec_sha256": "cf30eb49f7ec6ce9292a6b56ee10ce98135ba27621148280a301118b29aa64db",
   "schema_sha256_lf": "f5918411914130b4bc9d6a5757a9cd781cdd28f527c38b41f56a47a02f09f90b",
   "sources": {
@@ -12216,7 +12567,7 @@
    "contract/registry/10-observation-strategy-measurement.yaml": "017dff6cc6ea9ef2340a78aa633fa44306a27d27875f856165a6e6d586a0cb27",
    "contract/registry/20-cases-outcomes.yaml": "5f6535e69d557fee9d05c6de7ffbb0b206aeec11362259454d5b4c6bc456afcd",
    "contract/registry/30-questions-estimands.yaml": "a2325bf90b17d7d742853609a92dc1f29de0099ec5a3e3c3d479a6425929b699",
-   "contract/registry/40-claims.yaml": "eef6b05b6f48c6c393616efd2ba8c5c3e1d075a7e37dfa14e688c4a2c6086141",
+   "contract/registry/40-claims.yaml": "30d3f85f354cc04f730981bfe23105d6b2fb7e73e63623101a8a7de284414ca9",
    "contract/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
    "contract/registry/60-surfaces.yaml": "974b6786f3f0eaead74bb0133667e6ecff7f72127da8bcff9e8e629fc6e5a605",
    "contract/registry/70-obligations.yaml": "222c8ef1523ddad91d930b98c44ca360679257460f305b56d5bcad86eef2ae90",

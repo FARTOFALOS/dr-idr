@@ -690,11 +690,12 @@ claim_forms:
       - {surface: PANEL, view: ANY, key: support_path, text_ru: "похожих {m} из {n} · {matcher}"}
       - {surface: PANEL, view: ANY, key: row_mark, text_ru: "{ev}"}
       - {surface: PANEL, view: ANY, key: title_mark, text_ru: "{ev}: после {cut} новый, более глубокий откат — ниже сегодняшнего дна {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка."}
+      - {surface: PANEL, view: ANY, key: title_rail, text_ru: "{ev}: после {cut} новый, более глубокий откат — дальше сегодняшнего {today}, то есть {where} по цене, — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка."}
     value_form: POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN
     price_transfer: NONE
     forbidden_readings_ru: ["вероятность того, что сегодня откат углубится", "разворот", "вход или сделка", "новая семья вместо N_base"]
     acceptance: ACCEPTED_BY_OPERATOR
-    note: "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark); the title_mark words are the executor's, for his acceptance"
+    note: "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark); the title_mark words are the executor's, for his acceptance; 13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys title_rail are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed"
   - id: CF:N-NEW-X
     version: "1.1"
     sc_ref: ["C1", "§12.4/N-NEW", "K33"]
@@ -982,11 +983,15 @@ claim_forms:
       - {surface: INSPECTOR, view: ANY, key: win_ad, text_ru: "проверка"}
       - {surface: INSPECTOR, view: ANY, key: win_ad_in, text_ru: "15-минутный срез семьи дня недели ≥ 40 — в области сверки с замером A/D"}
       - {surface: INSPECTOR, view: ANY, key: win_ad_out, text_ru: "вне области сверки A/D (5-минутный срез или семья дня недели меньше 40): счёт тот же, калибровка не проверена"}
+      - {surface: PANEL, view: ANY, key: rail, text_ru: "до {place}"}
+      - {surface: PANEL, view: ANY, key: rail_who, text_ru: "стояли там же и ещё не были у места"}
+      - {surface: PANEL, view: ANY, key: rail_sub, text_ru: "дошли {yes} из {n} стоявших там же"}
+      - {surface: PANEL, view: ANY, key: rail_sub_unknown, text_ru: "дошли {yes} из {n} стоявших там же · неизв. {unknown}"}
     value_form: POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN
     price_transfer: M0_TODAY_EDGE
     forbidden_readings_ru: ["шанс, что сегодня дойдёт", "место разворота или конец отката", "вход или исполнение ордера на месте", "доля всей семьи", "время, когда дойдёт"]
     acceptance: PROPOSED_BY_EXECUTOR
-    note: "Operator 2026-10-12: integrate the verified Q1 mechanism into screen 24, «не подменяя существующие показатели BASE/NOW». The words follow the curator's trader wording (KADR-1.1 §10: «отсюда до −0,5 доходили 41 из 100», «уже дошли в 11:20», «мало сессий: n=…») and the pilot's passport; they are the executor's, for his acceptance"
+    note: "Operator 2026-10-12: integrate the verified Q1 mechanism into screen 24, «не подменяя существующие показатели BASE/NOW». The words follow the curator's trader wording (KADR-1.1 §10: «отсюда до −0,5 доходили 41 из 100», «уже дошли в 11:20», «мало сессий: n=…») and the pilot's passport; they are the executor's, for his acceptance; 13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys rail, rail_sub, rail_sub_unknown, rail_who are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed"
 
 fact_forms:
   - id: FF:TODAY-Z
@@ -1034,8 +1039,34 @@ fact_forms:
       - {surface: PANEL, view: CONF, key: line, text_ru: "сегодня пока: глубже всего {r} SD в {rt} · дальше всего {x} SD в {xt}"}
       - {surface: PANEL, view: BRK, key: line, text_ru: "сегодня пока: против слома {r} SD в {rt} · по слому {x} SD в {xt}"}
       - {surface: PANEL, view: ANY, key: title, text_ru: "Наблюдённые закрытые свечи сегодняшнего дня после {act} до среза; не окончательные значения"}
+      - {surface: PANEL, view: CONF, key: far_k, text_ru: "дальше всего"}
+      - {surface: PANEL, view: BRK, key: far_k, text_ru: "по слому дальше всего"}
+      - {surface: PANEL, view: CONF, key: deep_k, text_ru: "глубже всего"}
+      - {surface: PANEL, view: BRK, key: deep_k, text_ru: "против слома глубже всего"}
+      - {surface: PANEL, view: ANY, key: pt_v, text_ru: "{sd} SD · {price} · M5 {t}"}
+      - {surface: PANEL, view: ANY, key: dr_k, text_ru: "DR"}
+      - {surface: PANEL, view: ANY, key: dr_held, text_ru: "цел · {opp}"}
+      - {surface: PANEL, view: ANY, key: dr_broken, text_ru: "сломан · M5 {t}"}
+      - {surface: PANEL, view: ANY, key: rail_px, text_ru: "{price}"}
+      - {surface: PANEL, view: ANY, key: rail_fact, text_ru: "{k} {sd} SD · {t}"}
+      - {surface: PANEL, view: ANY, key: hole, text_ru: "по известным свечам: нет M5 {t}, экстремум мог быть дальше"}
+      - {surface: PANEL, view: ANY, key: hole_short, text_ru: " · по известным свечам: нет M5 {t}"}
+      - {surface: PANEL, view: ANY, key: price_now, text_ru: "{price} · цена на срезе"}
+      - {surface: PANEL, view: ANY, key: block_title, text_ru: "Факты закрытых M5 сегодняшнего дня после {act} до среза. Это не окончательные R и X: они известны только в конце блока. Время свечи — минута её открытия."}
+      - {surface: PANEL, view: ANY, key: chg_none, text_ru: "на {cut} новых фактов нет; доли пересчитаны"}
+      - {surface: PANEL, view: ANY, key: chg_head, text_ru: "на {cut}: "}
+      - {surface: PANEL, view: ANY, key: chg_far, text_ru: "дальше всего теперь {sd} SD"}
+      - {surface: PANEL, view: ANY, key: chg_deep, text_ru: "глубже всего теперь {sd} SD"}
+      - {surface: PANEL, view: ANY, key: chg_level, text_ru: "взят {name}"}
+      - {surface: PANEL, view: ANY, key: chg_place, text_ru: "дошли до {place}"}
+      - {surface: PANEL, view: ANY, key: chg_zone, text_ru: "{zone} {status}"}
+      - {surface: PANEL, view: ANY, key: chg_clock, text_ru: "у {zone} события семьи по часам кончились"}
+      - {surface: PANEL, view: ANY, key: chg_conf, text_ru: "подтверждение: семья зафиксирована"}
+      - {surface: PANEL, view: ANY, key: chg_brk, text_ru: "DR сломан: дальше семья слома"}
+      - {surface: PANEL, view: ANY, key: chg_title, text_ru: "Что изменилось с прошлой закрытой M5 — только факты сегодняшнего пути и состояния. Доли «Дальше» пересчитываются на каждом срезе и без новых фактов: меняются часы и набор сопоставимых сессий."}
     forbidden_readings_ru: ["окончательный R до конца блока", "процент"]
     acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+    note: "13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys block_title, rail_fact, hole, hole_short, chg_brk, chg_clock, chg_conf, chg_deep, chg_far, chg_head, chg_level, chg_none, chg_place, chg_title, chg_zone, deep_k, dr_broken, dr_held, dr_k, far_k, price_now, pt_v, rail_px are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed"
   - id: FF:TODAY-LEVEL
     version: "1"
     sc_ref: ["E1", "§10"]
@@ -1070,8 +1101,11 @@ fact_forms:
       - {surface: WINDOW, view: ANY, key: step, text_ru: "шаг доли"}
       - {surface: WINDOW, view: ANY, key: denominator, text_ru: "знаменатель"}
       - {surface: WINDOW, view: ANY, key: denominator_v, text_ru: "вся семья, шаг доли {step}"}
+      - {surface: PANEL, view: ANY, key: frame, text_ru: "N = {N} · не меняется до {end}"}
+      - {surface: PANEL, view: ANY, key: frame_brk, text_ru: "N = {N} · другая семья: ориентация по слому, не меняется до {end}"}
     forbidden_readings_ru: ["шаг доли — вероятность одного дня"]
     acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+    note: "13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys frame, frame_brk are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed"
   - id: FF:PASSPORT-VIEW
     version: "1"
     sc_ref: ["§12.3"]
@@ -1115,8 +1149,27 @@ fact_forms:
       - {surface: PASSPORT, view: CONF, key: at_act_dr, text_ru: "подтверждении"}
       - {surface: PASSPORT, view: BRK, key: at_act_dr, text_ru: "сломе DR"}
       - {surface: PANEL, view: ANY, key: title_unknown, text_ru: " · неизвестно у {pct} семьи"}
+      - {surface: PANEL, view: ANY, key: px_below, text_ru: "ниже"}
+      - {surface: PANEL, view: ANY, key: px_above, text_ru: "выше"}
+      - {surface: PANEL, view: ANY, key: rail_legend, text_ru: "◆ сегодня · ┄ Сейчас ({mode}) · ▸ {arrive}"}
+      - {surface: PANEL, view: ANY, key: cmp_link, text_ru: "почему доли разные"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_head, text_ru: "Почему доли разные · после {cut}"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_q, text_ru: "вопрос"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_who, text_ru: "кто считается"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_n, text_ru: "n"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_share, text_ru: "доля"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_zone_q, text_ru: "{zone}: окончательный {ev}"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_zone_who, text_ru: "вся семья"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_now_q, text_ru: "{ev} дальше, чем сегодня ({price})"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_now_who, text_ru: "живые к {cut}"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_lvl_q, text_ru: "до {place} или дальше"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_lvl_who, text_ru: "вся семья"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_arr_q, text_ru: "дошли до {place}"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_arr_who, text_ru: "стояли там же"}
+      - {surface: INSPECTOR, view: ANY, key: cmp_note, text_ru: "Разные вопросы и разные наборы: строки не вложены и не складываются; одна цена даёт разные доли. История, не прогноз."}
     forbidden_readings_ru: ["число без паспорта"]
     acceptance: INHERITED_FROM_ACCEPTED_SCREEN
+    note: "13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys cmp_arr_q, cmp_arr_who, cmp_head, cmp_link, cmp_lvl_q, cmp_lvl_who, cmp_n, cmp_note, cmp_now_q, cmp_now_who, cmp_q, cmp_share, cmp_who, cmp_zone_q, cmp_zone_who, px_above, px_below, rail_legend are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed"
   - id: FF:MEMBER
     version: "1"
     sc_ref: ["P1", "H0"]
@@ -1165,9 +1218,15 @@ fact_forms:
       - {surface: PANEL, view: ANY, key: depth, text_ru: "откат {r} SD · нужно −0,7"}
       - {surface: PANEL, view: ANY, key: clock, text_ru: "окончательный R семьи к {cut} был у {share} · нужно половина"}
       - {surface: PANEL, view: ANY, key: title, text_ru: "Ваше правило от 08.10: «откат сделан», когда откат достиг −0,7 и у половины сессий семьи окончательный R по часам уже был. Это правило, а не факт рынка и не сигнал; окончательный R до конца блока неизвестен."}
+      - {surface: PANEL, view: ANY, key: rule_k, text_ru: "ваше правило"}
+      - {surface: PANEL, view: ANY, key: rule_open, text_ru: "«откат сделан»: нет"}
+      - {surface: PANEL, view: ANY, key: rule_done, text_ru: "«откат сделан»: да — смотрим X"}
+      - {surface: PANEL, view: ANY, key: rule_depth, text_ru: "{mark}откат {r} из −0,7"}
+      - {surface: PANEL, view: ANY, key: rule_clock, text_ru: "{mark}R семьи к {cut}: {share}, нужна ½"}
+      - {surface: PANEL, view: ANY, key: chg_done, text_ru: "ваше правило: «откат сделан»"}
     forbidden_readings_ru: ["рынок закончил откат", "окончательный R известен", "сигнал входа"]
     acceptance: PROPOSED_BY_EXECUTOR
-    note: "Operator 2026-10-08 (meaning/17 §7, Н2): the phase cue is his named rule with visible criteria (the rule is his: «все три»); the panel words are the executor's, for his acceptance. Its inputs are an observed fact (today's deepest point after the activation, FF:TODAY-PREFIX) and a registered estimand (EST:B-CLOCK-R over the whole price range, part EARLIER)"
+    note: "Operator 2026-10-08 (meaning/17 §7, Н2): the phase cue is his named rule with visible criteria (the rule is his: «все три»); the panel words are the executor's, for his acceptance. Its inputs are an observed fact (today's deepest point after the activation, FF:TODAY-PREFIX) and a registered estimand (EST:B-CLOCK-R over the whole price range, part EARLIER); 13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys chg_done, rule_clock, rule_depth, rule_done, rule_k, rule_open are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed"
   - id: FF:PRE-STATE
     version: "1"
     sc_ref: ["E1", "§12.5"]
@@ -1214,9 +1273,11 @@ fact_forms:
       - {surface: PANEL, view: ANY, key: NO_FAMILY, text_ru: "семьи нет: ответа «отсюда» нет"}
       - {surface: PANEL, view: ANY, key: withheld, text_ru: "нарушение контракта SC-1.1: число не опубликовано"}
       - {surface: PANEL, view: ANY, key: none_known, text_ru: "исход неизвестен у всех"}
+      - {surface: PANEL, view: ANY, key: RESOLVED_rail, text_ru: "сегодня дошли · M5 {time}"}
+      - {surface: PANEL, view: ANY, key: RESOLVED_rail_title, text_ru: "Сегодня свеча M5 {time} дошла до места: вопрос решён фактом, доли нет. Время свечи — минута её открытия."}
     forbidden_readings_ru: ["процент", "сигнал", "прогноз"]
     acceptance: PROPOSED_BY_EXECUTOR
-    note: "the status of the same place today, from today's prefix only (KADR-1.1 §5.3): a place reached today is a fact with its time, never «100 %»; the words are the executor's, for the operator's acceptance"
+    note: "the status of the same place today, from today's prefix only (KADR-1.1 §5.3): a place reached today is a fact with its time, never «100 %»; the words are the executor's, for the operator's acceptance; 13.10.2026 (branch svodka-24, the operator's /design brief of 13.10): the keys RESOLVED_rail, RESOLVED_rail_title are proposed by the executor for the «Сводка» candidate (Ориентир / Сегодня / Дальше / Зоны), for the operator's acceptance; no existing label changed"
   - id: FF:SESSION
     version: "1"
     sc_ref: ["S1", "S2"]

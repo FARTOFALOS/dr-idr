@@ -123,10 +123,13 @@ const COLLECT = function () {
         rec.absence_reason = place.withheld ? 'CONTRACT_WITHHELD' : stt === 'RESOLVED' ? 'RESOLVED_TODAY' : place.publication === 'WITHHELD_FEW_SESSIONS' ? 'FEW_SESSIONS'
           : place.publication === 'NO_KNOWN_OUTCOME' ? 'NO_KNOWN_OUTCOME' : null;
       }
-      const want = place.withheld ? d.lbl('FF:K-TARGET', 'withheld') : stt === 'RESOLVED' ? d.lbl('FF:K-TARGET', 'RESOLVED', { time: place.state.time })
-        : place.publication === 'WITHHELD_FEW_SESSIONS' ? d.lbl('FF:FEW-SESSIONS', 'few', { n: k.n_match })
-        : k.n_known ? d.lbl('EST:K-ARRIVE', k.unknown ? 'sub_unknown' : 'sub', { yes: k.yes, n: k.n_match, unknown: k.unknown }) : d.lbl('FF:K-TARGET', 'none_known');
-      rec.label_ok = rec.sub.some(s => strip(s) === strip(want));
+      // the words of the accepted block, or of the price ladder of the «Сводка» candidate (13.10): the place reached today by
+      // the opening minute of its M5, the count with who they are
+      const open5 = t => { const [h, m] = String(t).split(':').map(Number), x = ((h * 60 + m - 5) % 1440 + 1440) % 1440; return String(Math.floor(x / 60)).padStart(2, '0') + ':' + String(x % 60).padStart(2, '0'); };
+      const wants = place.withheld ? [d.lbl('FF:K-TARGET', 'withheld')] : stt === 'RESOLVED' ? [d.lbl('FF:K-TARGET', 'RESOLVED', { time: place.state.time }), d.lbl('FF:K-TARGET', 'RESOLVED_rail', { time: open5(place.state.time) })]
+        : place.publication === 'WITHHELD_FEW_SESSIONS' ? [d.lbl('FF:FEW-SESSIONS', 'few', { n: k.n_match })]
+        : k.n_known ? [d.lbl('EST:K-ARRIVE', k.unknown ? 'sub_unknown' : 'sub', { yes: k.yes, n: k.n_match, unknown: k.unknown }), d.lbl('EST:K-ARRIVE', k.unknown ? 'rail_sub_unknown' : 'rail_sub', { yes: k.yes, n: k.n_match, unknown: k.unknown })] : [d.lbl('FF:K-TARGET', 'none_known')];
+      rec.label_ok = rec.sub.some(s => wants.some(w => strip(s) === strip(w)));
     } else {
       rec.bound_kind = /\d\s*%/.test(rec.shown) ? 'UNBOUND' : 'FACT';
     }

@@ -9,7 +9,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::arriveHtml"
+     "design/sozvezdiya-24/src/panel.js::railHtml"
     ],
     "human_checks": [
      "H14"
@@ -32,7 +32,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::arriveHtml"
+     "design/sozvezdiya-24/src/panel.js::railHtml"
     ],
     "id": "PB:ABS/NO-KNOWN/ARRIVE",
     "semantic_source": "SRC:SWPC-1.1",
@@ -49,7 +49,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::arriveHtml"
+     "design/sozvezdiya-24/src/panel.js::railHtml"
     ],
     "id": "PB:ABS/RESOLVED/ARRIVE",
     "machine_checks": [
@@ -69,7 +69,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::arriveHtml"
+     "design/sozvezdiya-24/src/panel.js::railHtml"
     ],
     "id": "PB:ABS/PREFIX-UNKNOWN/ARRIVE",
     "semantic_source": "SRC:SWPC-1.1",
@@ -86,7 +86,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::arriveHtml"
+     "design/sozvezdiya-24/src/panel.js::railHtml"
     ],
     "id": "PB:ABS/DR-BROKEN/ARRIVE",
     "semantic_source": "SRC:SWPC-1.1",
@@ -103,7 +103,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::arriveHtml"
+     "design/sozvezdiya-24/src/panel.js::railHtml"
     ],
     "id": "PB:ABS/NO-PREFIX/ARRIVE",
     "semantic_source": "SRC:SWPC-1.1",
@@ -120,7 +120,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::arriveHtml"
+     "design/sozvezdiya-24/src/panel.js::railHtml"
     ],
     "id": "PB:ABS/BLOCK-OVER/ARRIVE",
     "semantic_source": "SRC:SWPC-1.1",
@@ -137,7 +137,7 @@
     "binding": "B18",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::arriveHtml"
+     "design/sozvezdiya-24/src/panel.js::railHtml"
     ],
     "id": "PB:ABS/OUT-OF-SCOPE/ARRIVE",
     "semantic_source": "SRC:SWPC-1.1",
@@ -154,7 +154,7 @@
     "binding": "B15",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::arriveHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::arriveBundle"
     ],
     "id": "PB:ABS/WITHHELD/ARRIVE",
@@ -176,7 +176,7 @@
     "binding": "B15",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle"
     ],
     "id": "PB:ABS/WITHHELD/NOW",
@@ -199,12 +199,12 @@
     "binding": "B10",
     "binding_class": "AbsencePresentationBinding",
     "code_anchors": [
-     "design/sozvezdiya-24/src/panel.js::nowHtml"
+     "design/sozvezdiya-24/src/panel.js::railHtml"
     ],
     "id": "PB:ABS/INSUFFICIENT/NOW",
     "note": "INSUFFICIENT_SUPPORT: the payload's note is shown, no number",
     "semantic_source": "SRC:SWPC-1.1",
-    "shown_by": "page:design/sozvezdiya-24/src/panel.js::nowHtml",
+    "shown_by": "page:design/sozvezdiya-24/src/panel.js::railHtml",
     "surfaces": [
      "API:/api/d24/now"
     ]
@@ -504,7 +504,8 @@
      "design/sozvezdiya-24/src/app.js::winLine",
      "design/sozvezdiya-24/src/app.js::stateCol",
      "design/sozvezdiya-24/src/app.js::phaseOf",
-     "design/sozvezdiya-24/src/panel.js::phaseHtml",
+     "design/sozvezdiya-24/src/panel.js::todayHtml",
+     "design/sozvezdiya-24/src/panel.js::changeOf",
      "design/sozvezdiya-24/src/app.js::phaseK"
     ],
     "derivation_site": "PAGE_PASSPORT",
@@ -616,7 +617,8 @@
      "design/sozvezdiya-24/src/app.js::winLine",
      "design/sozvezdiya-24/src/app.js::stateCol",
      "design/sozvezdiya-24/src/app.js::phaseOf",
-     "design/sozvezdiya-24/src/panel.js::phaseHtml",
+     "design/sozvezdiya-24/src/panel.js::todayHtml",
+     "design/sozvezdiya-24/src/panel.js::changeOf",
      "design/sozvezdiya-24/src/app.js::phaseK"
     ],
     "derivation_site": "PAGE_PASSPORT",
@@ -2447,7 +2449,7 @@
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::arriveOf",
      "design/sozvezdiya-24/src/app.js::arriveBundle",
-     "design/sozvezdiya-24/src/panel.js::arriveHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::arriveTip",
      "design/sozvezdiya-24/src/app.js::arriveBody",
      "design/sozvezdiya-24/src/app.js::drawHighlight",
@@ -2473,7 +2475,7 @@
     "claim_form": "CF:N-DELTA-GE-R",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
      "design/sozvezdiya-24/src/app.js::drawNowLevels",
      "design/sozvezdiya-24/src/app.js::drawNowRange",
@@ -2499,7 +2501,7 @@
     "claim_form": "CF:N-DELTA-GE-X",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
      "design/sozvezdiya-24/src/app.js::drawNowLevels",
      "design/sozvezdiya-24/src/app.js::drawNowRange",
@@ -2525,7 +2527,7 @@
     "claim_form": "CF:N-DELTA-Q-R",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
      "design/sozvezdiya-24/src/app.js::drawNowLevels",
      "design/sozvezdiya-24/src/app.js::drawNowRange",
@@ -2551,7 +2553,7 @@
     "claim_form": "CF:N-DELTA-Q-X",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
      "design/sozvezdiya-24/src/app.js::drawNowLevels",
      "design/sozvezdiya-24/src/app.js::drawNowRange",
@@ -2577,7 +2579,7 @@
     "claim_form": "CF:N-IF-NEW-R",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
      "design/sozvezdiya-24/src/app.js::drawNowLevels",
      "design/sozvezdiya-24/src/app.js::drawNowRange",
@@ -2634,7 +2636,7 @@
     "claim_form": "CF:N-IF-NEW-X",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
      "design/sozvezdiya-24/src/app.js::drawNowLevels",
      "design/sozvezdiya-24/src/app.js::drawNowRange",
@@ -2691,7 +2693,7 @@
     "claim_form": "CF:N-NEW-R",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
      "design/sozvezdiya-24/src/app.js::drawNowLevels",
      "design/sozvezdiya-24/src/app.js::drawNowRange",
@@ -2717,7 +2719,7 @@
     "claim_form": "CF:N-NEW-X",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
      "design/sozvezdiya-24/src/app.js::drawNowLevels",
      "design/sozvezdiya-24/src/app.js::drawNowRange",
@@ -2743,7 +2745,7 @@
     "claim_form": "CF:N-NO-NEW-R",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
      "design/sozvezdiya-24/src/app.js::drawNowLevels",
      "design/sozvezdiya-24/src/app.js::drawNowRange",
@@ -2769,7 +2771,7 @@
     "claim_form": "CF:N-NO-NEW-X",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
      "design/sozvezdiya-24/src/app.js::drawNowLevels",
      "design/sozvezdiya-24/src/app.js::drawNowRange",
@@ -2795,7 +2797,7 @@
     "claim_form": "CF:N-TIME-R",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
      "design/sozvezdiya-24/src/app.js::drawNowLevels",
      "design/sozvezdiya-24/src/app.js::drawNowRange",
@@ -2821,7 +2823,7 @@
     "claim_form": "CF:N-TIME-X",
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::nowOf",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::nowBundle",
      "design/sozvezdiya-24/src/app.js::drawNowLevels",
      "design/sozvezdiya-24/src/app.js::drawNowRange",
@@ -3221,7 +3223,7 @@
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::arriveOf",
      "design/sozvezdiya-24/src/app.js::arriveBundle",
-     "design/sozvezdiya-24/src/panel.js::arriveHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::arriveTip",
      "design/sozvezdiya-24/src/app.js::arriveBody",
      "design/sozvezdiya-24/src/app.js::drawHighlight",
@@ -3251,7 +3253,8 @@
      "design/sozvezdiya-24/src/app.js::winLine",
      "design/sozvezdiya-24/src/app.js::stateCol",
      "design/sozvezdiya-24/src/app.js::phaseOf",
-     "design/sozvezdiya-24/src/panel.js::phaseHtml",
+     "design/sozvezdiya-24/src/panel.js::todayHtml",
+     "design/sozvezdiya-24/src/panel.js::changeOf",
      "design/sozvezdiya-24/src/app.js::phaseK"
     ],
     "fact_form": "FF:HISTORY-CLOCK",
@@ -3273,7 +3276,7 @@
     "code_anchors": [
      "design/sozvezdiya-24/src/app.js::arriveOf",
      "design/sozvezdiya-24/src/app.js::arriveBundle",
-     "design/sozvezdiya-24/src/panel.js::arriveHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::arriveTip",
      "design/sozvezdiya-24/src/app.js::arriveBody",
      "design/sozvezdiya-24/src/app.js::drawHighlight",
@@ -3465,7 +3468,8 @@
      "design/sozvezdiya-24/src/app.js::winLine",
      "design/sozvezdiya-24/src/app.js::stateCol",
      "design/sozvezdiya-24/src/app.js::phaseOf",
-     "design/sozvezdiya-24/src/panel.js::phaseHtml",
+     "design/sozvezdiya-24/src/panel.js::todayHtml",
+     "design/sozvezdiya-24/src/panel.js::changeOf",
      "design/sozvezdiya-24/src/app.js::phaseK"
     ],
     "fact_form": "FF:PHASE-RULE",
@@ -3751,7 +3755,8 @@
      "design/sozvezdiya-24/src/app.js::winLine",
      "design/sozvezdiya-24/src/app.js::stateCol",
      "design/sozvezdiya-24/src/app.js::phaseOf",
-     "design/sozvezdiya-24/src/panel.js::phaseHtml",
+     "design/sozvezdiya-24/src/panel.js::todayHtml",
+     "design/sozvezdiya-24/src/panel.js::changeOf",
      "design/sozvezdiya-24/src/app.js::phaseK"
     ],
     "fact_form": "FF:TODAY-PREFIX",
@@ -3778,7 +3783,8 @@
      "design/sozvezdiya-24/src/app.js::winLine",
      "design/sozvezdiya-24/src/app.js::stateCol",
      "design/sozvezdiya-24/src/app.js::phaseOf",
-     "design/sozvezdiya-24/src/panel.js::phaseHtml",
+     "design/sozvezdiya-24/src/panel.js::todayHtml",
+     "design/sozvezdiya-24/src/panel.js::changeOf",
      "design/sozvezdiya-24/src/app.js::phaseK"
     ],
     "fact_form": "FF:TODAY-Z",
@@ -5952,8 +5958,7 @@
     "id": "PROC-17",
     "implemented_by": [
      "design/sozvezdiya-24/src/panel.js::panelHtml",
-     "design/sozvezdiya-24/src/panel.js::nowHtml",
-     "design/sozvezdiya-24/src/panel.js::arriveHtml"
+     "design/sozvezdiya-24/src/panel.js::railHtml"
     ],
     "realized_by": [
      "SRC:SWPC-1.1",
@@ -6317,7 +6322,7 @@
     "entry_kind": "TRANSITION",
     "id": "T16",
     "implemented_by": [
-     "design/sozvezdiya-24/src/panel.js::arriveHtml",
+     "design/sozvezdiya-24/src/panel.js::railHtml",
      "design/sozvezdiya-24/src/app.js::arriveBundle"
     ],
     "realized_by": [
@@ -7064,21 +7069,21 @@
   ]
  },
  "stamps": {
-  "catalog_sha256": "48af53fc9a6e67aa4f4294899f872f4138e5a460f8e81ad44b29eb6fc186fcbc",
+  "catalog_sha256": "e2108318d7f40b6beb11b8c346793369fc811289cf268482b5873ee80f168559",
   "linkml": "1.11.1",
   "runtime_spec_sha256": "d82990fb6608f64e55313ec5bc0e292d1cb0c77bbdcd6b029f7cdb899d5c7d9f",
-  "sc_registry_sha256": "91f2b874fb5efe9d8d3a0d91fa41f367631726513fa643364a21a567a5a9616c",
+  "sc_registry_sha256": "5511ac171af75d8d075465b991b76b3eff00018dd8e79eb41cb505485bb7cbe7",
   "sources": {
-   "contract/build/registry.json": "7741a51937d06ca790746c2c03d1ef86d6c56c6751e84115746eea7e67939239",
+   "contract/build/registry.json": "a00d4d4cd05776b834b57647c508b23c313c763f19b4c66bc83ad350180c8d84",
    "contract/schema/dr_lab_sc.yaml": "f5918411914130b4bc9d6a5757a9cd781cdd28f527c38b41f56a47a02f09f90b",
    "meaning/lens/2026-10-13-semantic-architecture/01-DR-LAB-SEMANTIC-ARCHITECTURE-0.1.md": "ce986e332f4ad0a036e5d4181809e7ce1578ca5042920d94a2b4930e23c7ccd6",
    "meaning/lens/2026-10-13-semantic-architecture/02-DR-LAB-SEMANTIC-ARCHITECTURE-0.2-dopolnenie.md": "a780119df2f6585e4c7f33466c929331d8856f6e55aab5fae45fc64a84207f47",
    "spec/DR-LAB-SWPC-1.1.md": "d0a79d01579d04dff789ff48ee9014389d15bfe3108dbe6322baafc047c50635",
-   "tests/swpc11.py": "4dd1fbf864a8f50bd039004447adf73fb446fde8a78d648763dfd7f496d82a8c",
+   "tests/swpc11.py": "5a437643e717f0b61c315cb338e09a87da150b2bdc1ed738e836becdac45e477",
    "trace/catalog/00-standing.yaml": "d85637878ffd1cf72495d95d832e45e166ea88b580f142fc8c1cdf2687e514b0",
-   "trace/catalog/10-architecture.yaml": "c4b9eca1352b6455db17839629f090f65e6e8e0bde526dc228a06102a393bfd6",
+   "trace/catalog/10-architecture.yaml": "9fe8cd21aa3361d1b2dac75d3834ac399cd8adb0014c401ae2b57b9bc338096d",
    "trace/catalog/20-boundaries.yaml": "516e7f53a14fa7e63f6aa4a1ac7958829740d99626fbb8031b8ac784599b1330",
-   "trace/catalog/30-scenes.yaml": "53a149da5d6d6174418ff9dee24b3f1352a276843d360ac95dc0ab527d55f0d5",
+   "trace/catalog/30-scenes.yaml": "a3f05077d71ef687fafd0243494fffa1e9768ce9a9d9eaf4bf54d21ef97207e5",
    "trace/schema/dr_lab_trace.yaml": "7b9a526c394c54e1738ddd0f9f2b3731475d3cfdfe2cb6e87a06e03029f09272",
    "trace/schema/linkml-lint.yaml": "fd96f4ac9b5d6872be1bcdfa4f4b579c68c31e1862b222d4fea74d8721dc0dc9"
   },
