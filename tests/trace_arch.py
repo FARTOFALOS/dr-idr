@@ -52,6 +52,30 @@ def check(cond, msg):
         failures.append(msg)
 
 
+def future_ohlc_unit():
+    """No G3 data required: a future perturbation must change every OHLC, never the M5 prefix."""
+    import numpy as np
+
+    original = np.asarray([[665, 101, 105, 99, 103],
+                           [670, 103, 107, 102, 106],
+                           [675, 106, 108, 104, 107],
+                           [680, 107, 109, 103, 105]], dtype=np.int32)
+    mutated = original.copy()
+    n = T.mutate_future_ohlc(mutated, 0, len(mutated), shift=0, after=670, width_ticks=5)
+    check(n == 2, "future OHLC unit: exactly the two M5 after the close-minute cut are mutated")
+    check(np.array_equal(mutated[:2], original[:2]), "future OHLC unit: the entire allowed prefix is unchanged")
+    check(np.array_equal(mutated[:, 0], original[:, 0]), "future OHLC unit: the observation clock remains unchanged")
+    check(bool(np.all(mutated[2:, 1:5] != original[2:, 1:5])),
+          "future OHLC unit: every future open, high, low and close changes (no wicks-only blind spot)")
+    check(bool(np.all(mutated[2:, 3] <= mutated[2:, 1]) and
+               np.all(mutated[2:, 1] <= mutated[2:, 2]) and
+               np.all(mutated[2:, 3] <= mutated[2:, 4]) and
+               np.all(mutated[2:, 4] <= mutated[2:, 2])),
+          "future OHLC unit: every mutated M5 is a valid OHLC candle")
+    check(bool(np.any(mutated[2:, 4] != original[2:, 4])),
+          "future OHLC unit: a selector reading future CLOSE sees a changed input")
+
+
 def products():
     print("the products")
     if VENV.exists():
@@ -107,7 +131,7 @@ def scenes(st, static, g, reps, shots):
         by = {c["check"]: c for c in ex["checks"]}
         check(by["FUTURE-TARGET"]["outcome"] == "PASS" and by["FUTURE-TARGET"]["details"]["replaced_m5"] > 0,
               f"{sid}: the target day's candles after the cut replaced in memory ({by['FUTURE-TARGET']['details']['replaced_m5']} M5) change nothing, before or after the gate")
-        check(by["FUTURE-MEMBERS"]["outcome"] == "PASS" and by["FUTURE-MEMBERS"]["details"]["labels_changed"],
+        check(by["FUTURE-MEMBERS"]["outcome"] == "PASS" and by["FUTURE-MEMBERS"]["details"]["labels_changed"] and by["FUTURE-MEMBERS"]["details"].get("mutated_fields") == "OHLC",
               f"{sid}: the analogues' futures replaced ({by['FUTURE-MEMBERS']['details']['sessions']} sessions) change their labels but no membership")
         want = "ACCEPTED" if sc["profile_key"] in ("BASE-24", "NOW-1.0") else "PROPOSED_FOR_ACCEPTANCE"
         check(a["decision"] == want and a["presentation_human"] == "PENDING" and a["model_definiteness"] == "DEFINED" and a["implementation"] == "VERIFIED_IN_RUN",
@@ -180,6 +204,8 @@ def counterexamples(st, g, code, static, reps, shots):
     print("the counterexamples")
     cx = T.counterexamples(st, g, code, static, base_reports=dict(screens=shots), reps=reps)
     kinds = {x["kind"] for x in cx}
+    check({"CX-4a", "CX-4b", "CX-4c"} <= {x["id"] for x in cx},
+          "negative controls include target future, analogue future event, AND analogue future close")
     for x in cx:
         check(x["detected"] and (x["reliable_after"] in (None, False)), f"{x['id']} {x['kind']}: {x['tamper']} → {x['check']} {x['codes']} at {x['where'][:1]}")
     for k in ("изменённая метка исхода", "нарушенная ссылка", "несовпадающий знаменатель", "запрещённое будущее", "неправильный профиль утверждения", "отсутствие исходных свидетельств"):
@@ -200,6 +226,7 @@ def saved_screens(st):
 
 def main():
     collect = "--screens" in sys.argv[1:]
+    future_ohlc_unit()
     st = products()
     static, g, code = model(st)
     reps = stores(st)

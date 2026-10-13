@@ -116,9 +116,11 @@ python -B tests/trace_arch.py [--screens]               # приёмка (ALL GO
 - **IDENTITY.** Семья и снимок выведены заново; повторный расчёт даёт тот же bundle.
 - **FUTURE-TARGET.** Свечи сегодняшнего дня после среза заменяются в памяти. Не меняется ни производственный расчёт
   до шлюза, ни ответ после него.
-- **FUTURE-MEMBERS.** Будущее аналогов заменяется в памяти: для базовой семьи — после собственной активации, для
-  отбора на срезе — после среза. Меняются метки, но не состав. Если ни одна метка не изменилась, проверка не
-  засчитывается: она была бы холостой.
+- **FUTURE-MEMBERS.** Будущее аналогов заменяется в памяти **по всем четырём OHLC**: для базовой семьи — после
+  собственной активации, для отбора на срезе — после среза. Часы и известный префикс не меняются. Меняются
+  метки, но не состав. Если ни одна метка не изменилась, проверка не засчитывается. Отдельный контрпример
+  **CX-4c** намеренно допускает в отбор будущий `close`: проверка обязана его обнаружить (старый режим
+  `wicks` такую ошибку пропускал).
 - **Q1-ISSUE-MATCH, Q1-STORE.** Сохранённый выпуск того же вопроса отвечает так же и воспроизводится IDENTICAL.
   Идентичности, связи, ревизии и `verify()` хранилищ согласны, байты не меняются.
 - **SCREEN.** Элемент страницы привязан к тому же bundle или к проверенному паспорту, показывает значение в его форме
@@ -160,3 +162,21 @@ python -B tests/trace_arch.py [--screens]               # приёмка (ALL GO
   `studies/trace_2026_10_13/coverage.md`.
 
 Ни одно число этой работой не меняется; реестр SC-1.1, его текст, экран и шлюз не правились.
+
+
+## Post-review hardening of FUTURE-MEMBERS (13.10.2026)
+
+The GitHub P1 review found that the former `wicks` perturbation changed high/low while preserving
+the future open/close, so a selector accidentally reading a future close could pass the check.
+`mutate_future_ohlc` now changes all four OHLC for every observed M5 after the permitted cut,
+keeping all pre-cut rows and the close-minute clock unchanged. The isolated synthetic assertion
+`future_ohlc_unit` and the deliberately leaky future-close control CX-4c are part of
+`tests/trace_arch.py`.
+
+**Evidence status:** `studies/trace_2026_10_13/run.json` was recorded on **b08fb11**, before
+this correction. It remains historical evidence and **must not** be represented as a new passing
+run. Re-run `python -B tests/trace_arch.py --screens` and
+`python -B lab/semtrace.py run --out studies/trace_2026_10_13 --screens` with the local
+G3 session base available, then commit updated evidence separately. Only a fresh passing run
+can establish the strengthened invariant on the actual sessions. BND-02/BND-03, operator
+acceptance and C2 remain outside this patch.

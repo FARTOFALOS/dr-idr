@@ -1010,32 +1010,50 @@ def _sid_parts(sid):
     return inst, f"{d[:4]}-{d[4:6]}-{d[6:]}", block
 
 
+def mutate_future_ohlc(bars, lo, hi, shift, after, width_ticks):
+    """Perturb ALL OHLC on observed M5 closing strictly after the allowed cut, never the prefix.
+
+    Use plausible candles (low <= open/close <= high) but deliberately extreme future prices.
+    Leaving open/close unchanged would let a selector leaking future closes pass FUTURE-MEMBERS.
+    The caller passes an in-memory COPY; this function never opens or writes a market file.
+    """
+    if width_ticks <= 0:
+        raise ValueError("a positive IDR width is required for future mutation")
+    changed = 0
+    for r in range(lo, hi):
+        if int(bars[r, 0]) - shift <= after:
+            continue
+        high, low = int(bars[r, 2]), int(bars[r, 3])
+        low2, high2 = low - 4 * width_ticks, high + 4 * width_ticks
+        bars[r, 1:5] = (low2, high2, low2, high2)
+        changed += 1
+    return changed
+
+
 @contextmanager
 def replaced_future(inst, plans):
-    """plans: [(trading date, block, after_minute, mode)]; every M5 of that session closing after the minute is replaced:
-    'full' moves the whole candle far away (a target's future: open, high, low and close), 'wicks' widens it by four IDR
-    widths and keeps its close (an analogue's future: its label changes, its own confirmation and break stay). The base in
-    memory is a copy; the module caches are cleared before and after; nothing is written."""
+    """plans: [(trading date, block, after_minute, 'full')].
+
+    For target AND analogue futures, change all four OHLC after the cut. Keep the original
+    M5 close-minute clock and every prefix candle byte-identical. Any weaker 'wicks' mode
+    is forbidden: it cannot falsify selection depending on a future open or close.
+    Only a temporary copy is changed, with caches invalidated before/after the test.
+    """
     import scene21
     import scene24
     B = scene21._boxes(inst)
     bars = B["bars"].copy()
     changed = 0
     for date, block, after, mode in plans:
+        if mode != "full":
+            raise ValueError("future mutation must replace all four OHLC fields")
         i = B["idx"].get((date, block))
         if i is None:
             continue
         box = B["boxes"][i]
         w = int(box["idr_high"] - box["idr_low"]) or 1
         lo, hi = int(B["off"][i]), int(B["off"][i + 1])
-        shift = scene24.SHIFT[block]
-        for r in range(lo, hi):
-            if int(bars[r, 0]) - shift <= after:
-                continue
-            o, h, l, c = (int(x) for x in bars[r, 1:5])
-            l2, h2 = l - 4 * w, h + 4 * w
-            bars[r, 1:5] = (l2, h2, l2, h2) if mode == "full" else (o, h2, l2, c)
-            changed += 1
+        changed += mutate_future_ohlc(bars, lo, hi, scene24.SHIFT[block], after, w)
     B2 = dict(B, bars=bars)
     saved = scene21._B.get(inst)
     _clear_caches()
@@ -1060,7 +1078,7 @@ def member_plan(scene, fam):
     out = []
     for m in fam.get("members") or []:
         _, date, block = _sid_parts(m["id"])
-        out.append((date, block, max(int(m["act"]), cut), "wicks"))
+        out.append((date, block, max(int(m["act"]), cut), "full"))
     return out
 
 
@@ -1130,7 +1148,7 @@ def check_future_members(scene, base_body=None):
         v.append(_viol("SELECTION_USES_FUTURE", ["INV-03", "R09", "A09"], "the selection of the published answer changed when only the analogues' futures changed", f"{scene['id']}:{route} (after the gate)"))
     if not moved:
         v.append(_viol("NO_TEETH", ["INV-03"], "the replaced futures changed no label: the check proves nothing here", scene["id"], "WARNING"))
-    return _result("FUTURE-MEMBERS", same and moved and n > 0, n, v, dict(replaced_m5=n, sessions=len(plan), labels_changed=moved))
+    return _result("FUTURE-MEMBERS", same and moved and n > 0, n, v, dict(replaced_m5=n, sessions=len(plan), labels_changed=moved, mutated_fields="OHLC"))
 
 
 # =====================================================================================================================
@@ -2152,6 +2170,43 @@ def counterexamples(st, g, code, static, base_reports=None, reps=None):
     Q.Table.select = leaky
     try:
         add("CX-4b", "запрещённое будущее", "Table.select отбрасывает аналоги, которые потом дошли (отбор по будущей метке)", check_future_members(arr))
+    finally:
+        Q.Table.select = orig_sel
+        _clear_caches()
+    # CX-4c · specifically falsify a selector that reads a FUTURE CLOSE (not only a future wick/label).
+    # Capture the first observed close after the cut as the deliberately forbidden reference.
+    # With the old wicks-only mutation, the leaky selector stayed unchanged and this check went green.
+    import arrive24
+    fam_close, _, _ = family_of(arr)
+    table_close = arrive24.family_table(fam_close)
+    cut_close = (minute(arr["at_clock_et"]) - fam_close["schedule"]["formed"] - 5) // 5
+    original_future_closes = {}
+    for j, sid in enumerate(table_close.ids):
+        tail = table_close.P[j, cut_close + 1:, 2]
+        observed = np.flatnonzero(np.isfinite(tail))
+        if observed.size:
+            k = cut_close + 1 + int(observed[0])
+            original_future_closes[sid] = (k, float(table_close.P[j, k, 2]))
+
+    def leaky_future_close(self, par, cs, level, cl_t, w_t):
+        m = dict(orig_sel(self, par, cs, level, cl_t, w_t))
+        # An intentionally invalid future-dependent selector: membership hinges on a
+        # post-cut CLOSE equalling the reference captured from the unmodified future.
+        # The captured value makes the negative control deterministic on real sessions.
+        keep = np.ones(len(par), dtype=bool)
+        for row, j in enumerate(par):
+            witness = original_future_closes.get(self.ids[int(j)])
+            if witness is not None:
+                k, close0 = witness
+                keep[row] = bool(np.isfinite(self.P[int(j), k, 2]) and self.P[int(j), k, 2] == close0)
+        m["match"] = m["match"] & keep[:, None]
+        return m
+
+    Q.Table.select = leaky_future_close
+    try:
+        add("CX-4c", "запрещённое будущее",
+            "Table.select читает будущее CLOSE после среза для отбора (контроль против wicks-only)",
+            check_future_members(arr))
     finally:
         Q.Table.select = orig_sel
         _clear_caches()
