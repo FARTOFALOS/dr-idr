@@ -1,0 +1,108 @@
+{
+ "changed": "PB:B10/EST:N-NEW-R",
+ "groups": [
+  {
+   "group": "CHECK",
+   "members": [
+    "H:H07",
+    "check:test:tests/swpc11_browser.mjs#m09"
+   ]
+  },
+  {
+   "group": "CLAIM",
+   "members": [
+    "CF:N-NEW-R"
+   ]
+  },
+  {
+   "group": "CODE",
+   "members": [
+    "code:design/sozvezdiya-24/src/app.js::drawNowLevels",
+    "code:design/sozvezdiya-24/src/app.js::drawNowMarks",
+    "code:design/sozvezdiya-24/src/app.js::drawNowRange",
+    "code:design/sozvezdiya-24/src/app.js::nowBundle",
+    "code:design/sozvezdiya-24/src/app.js::nowOf",
+    "code:design/sozvezdiya-24/src/panel.js::nowHtml",
+    "code:lab/contract.py::ref_residual",
+    "code:lab/now24.py::series"
+   ]
+  },
+  {
+   "group": "DEFINITION",
+   "members": [
+    "CMP:B0-1",
+    "CMP:M1-1",
+    "CMP:M2-1",
+    "CMP:M3-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1",
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:NOW-DELTA-KNOWN-1",
+    "CS:NOW-ELIGIBLE-1",
+    "CS:NOW-MATCH-M1-1",
+    "CS:NOW-MATCH-M2-1",
+    "CS:NOW-MATCH-M3-1",
+    "CS:NOW-NEW-YES-DELTA-1",
+    "CS:NOW-NEW-YES-TAU-1",
+    "CS:UNIVERSE-1",
+    "CUT:NOW-COMMON-CLOCK-1",
+    "DR-LAB-SC-1.0",
+    "DR-LAB-SC-1.1",
+    "OUT:DELTA-R-1",
+    "OUT:DELTA-X-1",
+    "OUT:NEW-R-1",
+    "OUT:NEW-X-1",
+    "OUT:TAU-R-1",
+    "OUT:TAU-X-1",
+    "PROFILE:BASE-24",
+    "PROFILE:NOW-1.0",
+    "Q:N-DELTA",
+    "Q:N-IF-NEW",
+    "Q:N-NEW",
+    "Q:N-TIME",
+    "REG:NONE-1",
+    "SRC:AGENTS",
+    "SRC:CODE-BUILD-BOXES",
+    "SRC:CODE-NOW24",
+    "SRC:EKRAN-24",
+    "SRC:GOAL-2026-10-07",
+    "SRC:M10-P",
+    "SRC:M12",
+    "SRC:M15",
+    "SRC:NOW-1.0",
+    "SRC:NOW-PROVERKA",
+    "SRC:OPERATOR-ATOM-2026-10-01",
+    "SRC:SC-1.0",
+    "SRC:SC-1.1",
+    "SRC:SEM-1.0",
+    "SRC:SEMANTICS-24",
+    "SRC:SWPC-1.1"
+   ]
+  },
+  {
+   "group": "ESTIMAND",
+   "members": [
+    "EST:N-DELTA-GE-R",
+    "EST:N-DELTA-GE-X",
+    "EST:N-DELTA-Q-R",
+    "EST:N-DELTA-Q-X",
+    "EST:N-IF-NEW-R",
+    "EST:N-IF-NEW-X",
+    "EST:N-NEW-R",
+    "EST:N-NEW-X",
+    "EST:N-NO-NEW-R",
+    "EST:N-NO-NEW-X",
+    "EST:N-TIME-R",
+    "EST:N-TIME-X"
+   ]
+  },
+  {
+   "group": "ROUTE",
+   "members": [
+    "API:/api/d24/now"
+   ]
+  }
+ ],
+ "unresolved": []
+}

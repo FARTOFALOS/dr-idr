@@ -1,0 +1,136 @@
+{
+ "changed": "PB:B05/EST:B-ZONE-R",
+ "groups": [
+  {
+   "group": "CHECK",
+   "members": [
+    "H:H03",
+    "H:H04",
+    "check:test:tests/swpc11_browser.mjs#m05",
+    "check:test:tests/swpc11_browser.mjs#m06",
+    "check:test:tests/swpc11_browser.mjs#m07"
+   ]
+  },
+  {
+   "group": "CLAIM",
+   "members": [
+    "CF:B-ZONE-R"
+   ]
+  },
+  {
+   "group": "CODE",
+   "members": [
+    "code:design/sozvezdiya-24/src/app.js::buildSnap",
+    "code:design/sozvezdiya-24/src/app.js::drawBand",
+    "code:design/sozvezdiya-24/src/app.js::drawZones",
+    "code:design/sozvezdiya-24/src/app.js::evDist",
+    "code:design/sozvezdiya-24/src/app.js::zoneHeld",
+    "code:design/sozvezdiya-24/src/app.js::zoneMark",
+    "code:design/sozvezdiya-24/src/app.js::zonePass",
+    "code:design/sozvezdiya-24/src/app.js::zoneTip",
+    "code:design/sozvezdiya-24/src/panel.js::orderHtml",
+    "code:design/sozvezdiya-24/src/panel.js::zoneRows",
+    "code:design/sozvezdiya-24/src/panel.js::zonesHtml",
+    "code:lab/contract.py::_horizon",
+    "code:lab/contract.py::check_zone_diagnostics",
+    "code:lab/contract.py::ref_dr_outcome",
+    "code:lab/contract.py::ref_final_extreme",
+    "code:lab/contract.py::ref_first_order",
+    "code:lab/contract.py::ref_zone_map",
+    "code:lab/scene24.py::directed",
+    "code:lab/scene24.py::measure",
+    "code:lab/zonemap24.py::EIGHT",
+    "code:lab/zonemap24.py::NULL_MODEL",
+    "code:lab/zonemap24.py::SHIFTS",
+    "code:lab/zonemap24.py::STUDY",
+    "code:lab/zonemap24.py::VERSION",
+    "code:lab/zonemap24.py::_flip",
+    "code:lab/zonemap24.py::_jaccard",
+    "code:lab/zonemap24.py::_match",
+    "code:lab/zonemap24.py::_null",
+    "code:lab/zonemap24.py::cell_of",
+    "code:lab/zonemap24.py::evaluate",
+    "code:lab/zonemap24.py::map_of",
+    "code:lab/zonemap24.py::regions",
+    "code:lab/zonemap24.py::seed",
+    "code:lab/zonemap24.py::study_refs",
+    "code:lab/zonemap24.py::zone_map"
+   ]
+  },
+  {
+   "group": "DEFINITION",
+   "members": [
+    "ALG:ZONE-MAP-3",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1",
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:UNIVERSE-1",
+    "CS:ZM3-STUDY-1",
+    "CUT:LAST-CLOSED-M5-1",
+    "DR-LAB-SC-1.0",
+    "DR-LAB-SC-1.1",
+    "GRID:K10-J15-1",
+    "OUT:DR-OUTCOME-1",
+    "OUT:FINAL-R-1",
+    "OUT:FINAL-X-1",
+    "OUT:FIRST-ORDER-1",
+    "OUT:ZONE-MEMBERSHIP-1",
+    "OUT:ZONE-STABILITY-1",
+    "PROFILE:BASE-24",
+    "Q:B-DR",
+    "Q:B-ORDER",
+    "Q:B-RX",
+    "Q:B-ZONE",
+    "Q:ZM3-STUDY",
+    "Q:ZONE-DIAG",
+    "REG:NONE-1",
+    "REG:RESIDUAL-1",
+    "REG:WHOLE-1",
+    "REG:ZONE-MASK-1",
+    "SRC:AGENTS",
+    "SRC:CODE-BUILD-BOXES",
+    "SRC:CODE-ZONEMAP24",
+    "SRC:EKRAN-24",
+    "SRC:GOAL-2026-10-07",
+    "SRC:M10-P",
+    "SRC:M12",
+    "SRC:NOW-1.0",
+    "SRC:OPERATOR-ATOM-2026-10-01",
+    "SRC:SC-1.0",
+    "SRC:SC-1.1",
+    "SRC:SEM-1.0",
+    "SRC:SEMANTICS-24",
+    "SRC:SWPC-1.1",
+    "SRC:ZM3-STUDY"
+   ]
+  },
+  {
+   "group": "ESTIMAND",
+   "members": [
+    "EST:B-DR",
+    "EST:B-ORDER",
+    "EST:B-RX-JOINT-R",
+    "EST:B-RX-JOINT-X",
+    "EST:B-ZONE-R",
+    "EST:B-ZONE-RESIDUAL-R",
+    "EST:B-ZONE-RESIDUAL-X",
+    "EST:B-ZONE-X",
+    "EST:ZD-BOOT-R",
+    "EST:ZD-BOOT-X",
+    "EST:ZD-GRID-R",
+    "EST:ZD-GRID-X",
+    "EST:ZD-NULL-R",
+    "EST:ZD-NULL-X",
+    "EST:ZM3-STUDY"
+   ]
+  },
+  {
+   "group": "ROUTE",
+   "members": [
+    "API:/api/d24/family"
+   ]
+  }
+ ],
+ "unresolved": []
+}

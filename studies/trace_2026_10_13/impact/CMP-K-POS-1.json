@@ -1,0 +1,131 @@
+{
+ "changed": "CMP:K-POS-1",
+ "groups": [
+  {
+   "group": "ARCHITECTURE",
+   "members": [
+    "A09",
+    "A10",
+    "A11",
+    "A18",
+    "ENT-18",
+    "ENT-20",
+    "ENT-24",
+    "INV-03",
+    "INV-05",
+    "INV-06",
+    "INV-07",
+    "INV-08",
+    "PROC-11",
+    "PROC-13",
+    "PROC-16",
+    "R09",
+    "SCENE:ARRIVE-FEW",
+    "SCENE:ARRIVE-HALF",
+    "T10",
+    "T14"
+   ]
+  },
+  {
+   "group": "CHECK",
+   "members": [
+    "H:H01",
+    "H:H09",
+    "H:H14",
+    "check:human:operator",
+    "check:reported:studies/q1_pilot_2026_10_12/README.md",
+    "check:runtime:lab/contract.py::verify_arrive",
+    "check:test:tests/arrive24.py::test_boundary",
+    "check:test:tests/arrive24.py::test_gate",
+    "check:test:tests/arrive24.py::test_identity",
+    "check:test:tests/arrive24.py::test_statuses",
+    "check:test:tests/contract_sc11.py::k08",
+    "check:test:tests/contract_sc11.py::k09",
+    "check:test:tests/contract_sc11.py::k16",
+    "check:test:tests/contract_sc11.py::k27",
+    "check:test:tests/contract_sc11.py::k28",
+    "check:test:tests/contract_sc11.py::k33",
+    "check:test:tests/contract_sc11.py::test_arrive_profile",
+    "check:test:tests/contract_sc11.py::test_routes_and_encodings",
+    "check:test:tests/now24.py",
+    "check:test:tests/q1_pilot.py",
+    "check:test:tests/swpc11_browser.mjs#m01",
+    "check:test:tests/swpc11_browser.mjs#m02",
+    "check:test:tests/swpc11_browser.mjs#m12",
+    "check:test:tests/swpc11_browser.mjs#m14",
+    "check:test:tests/swpc11_browser.mjs#m19",
+    "check:test:tests/swpc11_browser.mjs#m20",
+    "check:trace:BUNDLE-CLAIM",
+    "check:trace:BUNDLE-COUNTS",
+    "check:trace:CLAIM-PROFILE",
+    "check:trace:FUTURE-MEMBERS",
+    "check:trace:FUTURE-TARGET",
+    "check:trace:GATE-CONFORMANT"
+   ]
+  },
+  {
+   "group": "CLAIM",
+   "members": [
+    "CF:K-ARRIVE"
+   ]
+  },
+  {
+   "group": "DEFINITION",
+   "members": [
+    "CS:K-ARRIVE-1",
+    "CS:K-ARRIVE-ALL-1",
+    "fact_surfaces[10]",
+    "fact_surfaces[11]"
+   ]
+  },
+  {
+   "group": "ESTIMAND",
+   "members": [
+    "EST:K-ARRIVE",
+    "ESTR:K-POINT-BOUNDS-1"
+   ]
+  },
+  {
+   "group": "PRESENTATION",
+   "members": [
+    "B:B01",
+    "B:B13",
+    "B:B15",
+    "B:B18",
+    "PB:ABS/BLOCK-OVER/ARRIVE",
+    "PB:ABS/DR-BROKEN/ARRIVE",
+    "PB:ABS/FEW-SESSIONS/ARRIVE",
+    "PB:ABS/NO-KNOWN/ARRIVE",
+    "PB:ABS/NO-PREFIX/ARRIVE",
+    "PB:ABS/OUT-OF-SCOPE/ARRIVE",
+    "PB:ABS/PREFIX-UNKNOWN/ARRIVE",
+    "PB:ABS/RESOLVED/ARRIVE",
+    "PB:ABS/STALE/ALL",
+    "PB:ABS/WITHHELD/ARRIVE",
+    "PB:B01/FF:FEW-SESSIONS",
+    "PB:B13/EST:K-ARRIVE",
+    "PB:B18/EST:K-ARRIVE",
+    "PB:B18/FF:FEW-SESSIONS",
+    "PB:B18/FF:K-TARGET"
+   ]
+  },
+  {
+   "group": "ROUTE",
+   "members": [
+    "API:/api/d24/arrive",
+    "FE:K.N",
+    "FE:K.cut",
+    "FE:K.levels",
+    "FE:K.p.bounds",
+    "FE:K.p.counts",
+    "FE:K.p.excluded",
+    "FE:K.p.level",
+    "FE:K.p.point",
+    "FE:K.p.state",
+    "FE:K.p.support",
+    "FE:K.today"
+   ]
+  }
+ ],
+ "unresolved": []
+}

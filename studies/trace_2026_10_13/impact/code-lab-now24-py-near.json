@@ -1,0 +1,192 @@
+{
+ "changed": "code:lab/now24.py::_near",
+ "groups": [
+  {
+   "group": "ARCHITECTURE",
+   "members": [
+    "A11",
+    "A14",
+    "A18",
+    "ENT-08",
+    "ENT-10",
+    "ENT-15",
+    "ENT-18",
+    "ENT-20",
+    "ENT-21",
+    "ENT-24",
+    "ENT-25",
+    "ENT-26",
+    "INV-04",
+    "INV-05",
+    "INV-06",
+    "INV-07",
+    "INV-08",
+    "PROC-09",
+    "PROC-11",
+    "PROC-12",
+    "PROC-13",
+    "PROC-15",
+    "PROC-16",
+    "R08",
+    "R09",
+    "R10",
+    "SCENE:ARRIVE-FEW",
+    "SCENE:ARRIVE-HALF",
+    "T10",
+    "T11",
+    "T14"
+   ]
+  },
+  {
+   "group": "CHECK",
+   "members": [
+    "H:H01",
+    "H:H08",
+    "H:H09",
+    "H:H14",
+    "check:human:operator",
+    "check:reported:studies/q1_pilot_2026_10_12/README.md",
+    "check:runtime:lab/contract.py::attach_now",
+    "check:runtime:lab/contract.py::verify_arrive",
+    "check:test:tests/arrive24.py::test_gate",
+    "check:test:tests/arrive24.py::test_identity",
+    "check:test:tests/arrive24.py::test_statuses",
+    "check:test:tests/contract_sc11.py::k04",
+    "check:test:tests/contract_sc11.py::k09",
+    "check:test:tests/contract_sc11.py::k10",
+    "check:test:tests/contract_sc11.py::k13",
+    "check:test:tests/contract_sc11.py::k16",
+    "check:test:tests/contract_sc11.py::k23",
+    "check:test:tests/contract_sc11.py::k24",
+    "check:test:tests/contract_sc11.py::k25",
+    "check:test:tests/contract_sc11.py::k27",
+    "check:test:tests/contract_sc11.py::k28",
+    "check:test:tests/contract_sc11.py::k31",
+    "check:test:tests/contract_sc11.py::k33",
+    "check:test:tests/contract_sc11.py::test_arrive_profile",
+    "check:test:tests/contract_sc11.py::test_routes_and_encodings",
+    "check:test:tests/now24.py",
+    "check:test:tests/q1_pilot.py",
+    "check:test:tests/swpc11_browser.mjs#m01",
+    "check:test:tests/swpc11_browser.mjs#m02",
+    "check:test:tests/swpc11_browser.mjs#m12",
+    "check:test:tests/swpc11_browser.mjs#m13",
+    "check:test:tests/swpc11_browser.mjs#m14",
+    "check:test:tests/swpc11_browser.mjs#m19",
+    "check:test:tests/swpc11_browser.mjs#m20",
+    "check:trace:BUNDLE-CLAIM",
+    "check:trace:BUNDLE-COUNTS",
+    "check:trace:CLAIM-PROFILE",
+    "check:trace:ESTIMAND-CHAIN",
+    "check:trace:FUTURE-MEMBERS",
+    "check:trace:FUTURE-TARGET",
+    "check:trace:GATE-CONFORMANT",
+    "check:trace:Q1-STORE"
+   ]
+  },
+  {
+   "group": "CLAIM",
+   "members": [
+    "CF:B-LEVEL-REST",
+    "CF:K-ARRIVE"
+   ]
+  },
+  {
+   "group": "CODE",
+   "members": [
+    "code:lab/arrive24.py::_arrive",
+    "code:lab/arrive24.py::arrive",
+    "code:lab/now24.py::live",
+    "code:lab/now24.py::masks",
+    "code:lab/now24.py::payload",
+    "code:lab/now24_validate.py::main",
+    "code:lab/now24_validate.py::run_universe",
+    "code:lab/q1/demo.py::main",
+    "code:lab/q1/engine.py::Table.attempt",
+    "code:lab/q1/engine.py::Table.issue_payload",
+    "code:lab/q1/engine.py::Table.outcome_payload",
+    "code:lab/q1/engine.py::Table.select",
+    "code:lab/q1/engine.py::attach_outcome",
+    "code:lab/q1/engine.py::issue",
+    "code:lab/q1/engine.py::model_digest",
+    "code:lab/q1/engine.py::reproduce",
+    "code:lab/q1/recon.py::run",
+    "code:lab/q1/server.py::Handler.do_GET",
+    "code:lab/q1/server.py::Handler.do_POST",
+    "code:lab/q1/server.py::make_issue",
+    "code:lab/q1/server.py::outcome_view",
+    "code:lab/q1/server.py::population",
+    "code:lab/q1/server.py::scene"
+   ]
+  },
+  {
+   "group": "DEFINITION",
+   "members": [
+    "OUT:REACH-REST-1",
+    "fact_surfaces[10]",
+    "fact_surfaces[11]"
+   ]
+  },
+  {
+   "group": "ESTIMAND",
+   "members": [
+    "EST:B-LEVEL-REST",
+    "EST:K-ARRIVE",
+    "ESTR:BINARY-BOUNDS-1",
+    "ESTR:K-POINT-BOUNDS-1"
+   ]
+  },
+  {
+   "group": "PRESENTATION",
+   "members": [
+    "B:B01",
+    "B:B13",
+    "B:B14",
+    "B:B15",
+    "B:B18",
+    "PB:ABS/BLOCK-OVER/ARRIVE",
+    "PB:ABS/DR-BROKEN/ARRIVE",
+    "PB:ABS/FEW-SESSIONS/ARRIVE",
+    "PB:ABS/NO-KNOWN/ARRIVE",
+    "PB:ABS/NO-PREFIX/ARRIVE",
+    "PB:ABS/OUT-OF-SCOPE/ARRIVE",
+    "PB:ABS/PREFIX-UNKNOWN/ARRIVE",
+    "PB:ABS/RESOLVED/ARRIVE",
+    "PB:ABS/STALE/ALL",
+    "PB:ABS/WITHHELD/ARRIVE",
+    "PB:B01/FF:FEW-SESSIONS",
+    "PB:B13/EST:B-LEVEL-REST",
+    "PB:B13/EST:K-ARRIVE",
+    "PB:B14/EST:B-LEVEL-REST",
+    "PB:B18/EST:K-ARRIVE",
+    "PB:B18/FF:FEW-SESSIONS",
+    "PB:B18/FF:K-TARGET"
+   ]
+  },
+  {
+   "group": "ROUTE",
+   "members": [
+    "API:/api/d24/arrive",
+    "FE:K.N",
+    "FE:K.cut",
+    "FE:K.levels",
+    "FE:K.p.bounds",
+    "FE:K.p.counts",
+    "FE:K.p.excluded",
+    "FE:K.p.level",
+    "FE:K.p.point",
+    "FE:K.p.state",
+    "FE:K.p.support",
+    "FE:K.today"
+   ]
+  },
+  {
+   "group": "STORED_RECORD",
+   "members": [
+    "q1:MODEL",
+    "q1:STORED-ISSUES"
+   ]
+  }
+ ],
+ "unresolved": []
+}

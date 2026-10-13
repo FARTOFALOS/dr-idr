@@ -1,0 +1,842 @@
+{
+ "accepted_identity": {
+  "checked": 2,
+  "details": {
+   "accepted_commit": "2672841da928f7379e5d7bc27eef8ff3e0fa5738",
+   "contract_functions_added": 16,
+   "contract_functions_changed": [
+    "_code_hash",
+    "finalize",
+    "stale_response"
+   ],
+   "modules_differ": [],
+   "modules_identical": [
+    "lab/scene24.py",
+    "lab/scene21.py",
+    "lab/zonemap24.py",
+    "lab/now24.py",
+    "lab/now24_validate.py",
+    "lab/build_boxes.py",
+    "lab/build_market.py",
+    "lab/live.py"
+   ],
+   "scenes": [
+    {
+     "accepted_bundles": 20,
+     "accepted_stale": null,
+     "accepted_status": "CONFORMANT",
+     "bundles": 20,
+     "identical": true,
+     "numbers_identical": true,
+     "scene": "SCENE:BASE-ZONE",
+     "words_identical": true
+    },
+    {
+     "accepted_bundles": 72,
+     "accepted_stale": null,
+     "accepted_status": "CONFORMANT",
+     "bundles": 72,
+     "identical": true,
+     "numbers_identical": true,
+     "scene": "SCENE:NOW-NEW",
+     "words_identical": true
+    }
+   ]
+  },
+  "outcome": "PASS",
+  "violations": []
+ },
+ "artifact_versions": [
+  {
+   "artifact": "git:HEAD",
+   "version": "b08fb11450d9aab521243a7605406bdcf82d8ab8"
+  },
+  {
+   "artifact": "DR-LAB-SC-1.1:registry",
+   "version": "91f2b874fb5efe9d"
+  },
+  {
+   "artifact": "DR-LAB-SC-1.1:document-pin",
+   "version": "895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb"
+  },
+  {
+   "artifact": "trace:catalog",
+   "version": "48af53fc9a6e67aa"
+  },
+  {
+   "artifact": "lab/contract.py::_code_hash",
+   "version": "5724c70031c8"
+  },
+  {
+   "artifact": "session-base:NQ",
+   "version": "dr-lab-boxes-1@1790625423"
+  },
+  {
+   "artifact": "q1:MODEL",
+   "version": "52307acc95a2"
+  },
+  {
+   "artifact": "dr-lab-trace-1",
+   "version": "c9337a8e0132"
+  }
+ ],
+ "counterexamples": [
+  {
+   "check": "BUNDLE-COUNTS",
+   "codes": [
+    "COUNTS"
+   ],
+   "detected": true,
+   "id": "CX-1a",
+   "kind": "изменённая метка исхода",
+   "reliable_after": false,
+   "tamper": "members[1] YES → NO в ответе «Отсюда» −1/2",
+   "where": [
+    "bundle B2 EST:K-ARRIVE",
+    "bundle B2 EST:K-ARRIVE"
+   ]
+  },
+  {
+   "check": "GATE (verify_arrive)",
+   "codes": [
+    "ARRIVE_RECOMPUTATION"
+   ],
+   "detected": true,
+   "id": "CX-1b",
+   "kind": "изменённая метка исхода",
+   "reliable_after": null,
+   "tamper": "тот же ответ через эталон шлюза (lab/contract.py::verify_arrive)",
+   "where": [
+    "place -1/2"
+   ]
+  },
+  {
+   "check": "REF-RESOLVE",
+   "codes": [
+    "UNRESOLVED"
+   ],
+   "detected": true,
+   "id": "CX-2a",
+   "kind": "нарушенная ссылка",
+   "reliable_after": null,
+   "tamper": "EST:K-ARRIVE.q5_outcome → OUT:REACH-REST-9 (несуществующий исход)",
+   "where": [
+    "EST:K-ARRIVE.q5_outcome"
+   ]
+  },
+  {
+   "check": "Q1-STORE",
+   "codes": [
+    "OUTCOME_WITHOUT_ISSUE"
+   ],
+   "detected": true,
+   "id": "CX-2b",
+   "kind": "нарушенная ссылка",
+   "reliable_after": null,
+   "tamper": "исход Q1 ссылается на отсутствующий выпуск (копия индекса хранилища)",
+   "where": [
+    "q1-pilot:store-dev-20261012/outcome 52c14e9d2629cb6c"
+   ]
+  },
+  {
+   "check": "BUNDLE-COUNTS",
+   "codes": [
+    "COUNTS"
+   ],
+   "detected": true,
+   "id": "CX-3",
+   "kind": "несовпадающий знаменатель",
+   "reliable_after": false,
+   "tamper": "bundle K-ARRIVE −1/2: n_match + 1 и знаменатель границ + 1",
+   "where": [
+    "bundle B2 EST:K-ARRIVE",
+    "bundle B2 EST:K-ARRIVE"
+   ]
+  },
+  {
+   "check": "FUTURE-TARGET",
+   "codes": [
+    "FUTURE_DEPENDENCE"
+   ],
+   "detected": true,
+   "id": "CX-4a",
+   "kind": "запрещённое будущее",
+   "reliable_after": null,
+   "tamper": "сегодняшний путь открыт после среза (now24.today_path) и «Отсюда» сравнивает аналоги с последним закрытием дня, а не со срезом",
+   "where": [
+    "SCENE:ARRIVE-HALF:/api/d24/arrive (before the gate)",
+    "SCENE:ARRIVE-HALF:/api/d24/arrive (after the gate)"
+   ]
+  },
+  {
+   "check": "FUTURE-MEMBERS",
+   "codes": [
+    "SELECTION_USES_FUTURE"
+   ],
+   "detected": true,
+   "id": "CX-4b",
+   "kind": "запрещённое будущее",
+   "reliable_after": null,
+   "tamper": "Table.select отбрасывает аналоги, которые потом дошли (отбор по будущей метке)",
+   "where": [
+    "SCENE:ARRIVE-HALF:/api/d24/arrive (before the gate)"
+   ]
+  },
+  {
+   "check": "BUNDLE-CLAIM",
+   "codes": [
+    "WRONG_CASE_SET",
+    "WRONG_CLASS",
+    "WRONG_FORM"
+   ],
+   "detected": true,
+   "id": "CX-5a",
+   "kind": "неправильный профиль утверждения",
+   "reliable_after": false,
+   "tamper": "bundle K-ARRIVE с классом C0 и формой CF:B-ZONE-R",
+   "where": [
+    "bundle B2 EST:K-ARRIVE",
+    "bundle B2 EST:K-ARRIVE",
+    "bundle B2 EST:K-ARRIVE"
+   ]
+  },
+  {
+   "check": "BUNDLE-CLAIM",
+   "codes": [
+    "WRONG_CASE_SET",
+    "WRONG_CLASS"
+   ],
+   "detected": true,
+   "id": "CX-5b",
+   "kind": "неправильный профиль утверждения",
+   "reliable_after": null,
+   "tamper": "bundle K-ARRIVE с классом PredictiveClaim (C2)",
+   "where": [
+    "bundle B2 EST:K-ARRIVE",
+    "bundle B2 EST:K-ARRIVE"
+   ]
+  },
+  {
+   "check": "trace report (обязательная связь)",
+   "codes": [
+    "BROKEN_LINK"
+   ],
+   "detected": true,
+   "id": "CX-6a",
+   "kind": "отсутствие исходных свидетельств",
+   "reliable_after": false,
+   "tamper": "bundle K-ARRIVE без входа OBSERVATION_SNAPSHOT",
+   "where": [
+    "base:? —input_of→ bundle:/api/d24/arrive#EST:K-ARRIVE{\"level\": \"-1/2\"}",
+    "base:? —re_derived_by→ code:lab/contract.py::verify_snapshot",
+    "CS:K-ARRIVE-ALL-1 —instantiated_as→ snapshot:206e5df1f62dee77"
+   ]
+  },
+  {
+   "check": "CHECK-REFS",
+   "codes": [
+    "NO_CHECK"
+   ],
+   "detected": true,
+   "id": "CX-6b",
+   "kind": "отсутствие исходных свидетельств",
+   "reliable_after": null,
+   "tamper": "запись A08 ссылается на несуществующую проверку",
+   "where": [
+    "A08.checked_by"
+   ]
+  },
+  {
+   "check": "SCREEN",
+   "codes": [
+    "SHOWN_VALUE",
+    "WORDS"
+   ],
+   "detected": true,
+   "id": "CX-1c",
+   "kind": "изменённая метка на экране",
+   "reliable_after": null,
+   "tamper": "элемент «Отсюда» −1/2: другие слова и другое число",
+   "where": [
+    "#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all#l21=7",
+    "#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all#l21=7"
+   ]
+  }
+ ],
+ "generated_utc": "2026-10-13T07:38:05Z",
+ "impact": {
+  "checked": 12,
+  "outcome": "PASS",
+  "violations": []
+ },
+ "q1_store": {
+  "checked": 195,
+  "details": {
+   "bytes_unchanged": true,
+   "files": 195,
+   "files_digest": "bd0688c1e3a7f291a7d7e5f706e90917480093adff668d38e8b79daa5c2413b5",
+   "stores": [
+    {
+     "issues": 1,
+     "outcomes": 0,
+     "own_verify_ok": true,
+     "store": "q1-pilot:store",
+     "targets": 1,
+     "writable": 0
+    },
+    {
+     "issues": 1,
+     "outcomes": 1,
+     "own_verify_ok": true,
+     "store": "q1-pilot:store-dev-20261012",
+     "targets": 1,
+     "writable": 0
+    },
+    {
+     "issues": 189,
+     "outcomes": 3,
+     "own_verify_ok": true,
+     "store": "q1-pilot:demo/20261012-210947/store",
+     "targets": 1,
+     "writable": 0
+    }
+   ]
+  },
+  "outcome": "PASS",
+  "violations": []
+ },
+ "scenes": [
+  {
+   "assessment": {
+    "decision": "ACCEPTED",
+    "implementation": "VERIFIED_IN_RUN",
+    "model_definiteness": "DEFINED",
+    "presentation_human": "PENDING",
+    "presentation_machine": "VERIFIED_IN_RUN",
+    "reliable": true
+   },
+   "checks": {
+    "BUNDLE-CLAIM": {
+     "checked": 1,
+     "details": {},
+     "outcome": "PASS"
+    },
+    "BUNDLE-COUNTS": {
+     "checked": 1,
+     "details": {
+      "N": 156,
+      "members_digest": "86b1d53124dd8c3ca445ba4ac4dba63e9bc8bc2889abc3ffd51ce0114fb82cf9",
+      "no_period": 0,
+      "unknown": 4,
+      "yes": 33
+     },
+     "outcome": "PASS"
+    },
+    "FUTURE-MEMBERS": {
+     "checked": 9916,
+     "details": {
+      "labels_changed": true,
+      "replaced_m5": 9916,
+      "sessions": 156
+     },
+     "outcome": "PASS"
+    },
+    "FUTURE-TARGET": {
+     "checked": 58,
+     "details": {
+      "gate_status": [
+       "CONFORMANT",
+       "CONFORMANT"
+      ],
+      "replaced_m5": 58
+     },
+     "outcome": "PASS"
+    },
+    "GATE-CONFORMANT": {
+     "checked": 5,
+     "details": {},
+     "outcome": "PASS"
+    },
+    "IDENTITY": {
+     "checked": 1,
+     "details": {
+      "N": 156,
+      "bundle_digest": "73409ee95a41fdfc7c6ccb489307ef4fed20d7fcdac1d6b2308921b41b4fd940",
+      "family_id": "71bf87040b7d51b7",
+      "snapshot_id": "e13b9585da1a0ef5"
+     },
+     "outcome": "PASS"
+    },
+    "SCREEN": {
+     "checked": 16,
+     "details": {
+      "bound_kind": "PASSPORT",
+      "element": "#date=2025-12-17&inst=NQ&session=RDR&at=11:10#l21=9",
+      "shown": "21,2%"
+     },
+     "outcome": "PASS"
+    }
+   },
+   "claim": "EST:B-ZONE-R {\"label\": \"R1\"}",
+   "scene": "SCENE:BASE-ZONE",
+   "stages": {
+    "ADMISSION": "VERIFIED",
+    "CASE_SET": "VERIFIED",
+    "COMPUTATION": "VERIFIED",
+    "ESTIMATE_SUPPORT": "VERIFIED",
+    "ISSUE": "NOT_APPLICABLE",
+    "OBSERVATION": "VERIFIED",
+    "OUTCOMES": "VERIFIED",
+    "PRESENTATION": "VERIFIED",
+    "QUESTION": "VERIFIED",
+    "STATE": "VERIFIED"
+   },
+   "violations": 0
+  },
+  {
+   "assessment": {
+    "decision": "ACCEPTED",
+    "implementation": "VERIFIED_IN_RUN",
+    "model_definiteness": "DEFINED",
+    "presentation_human": "PENDING",
+    "presentation_machine": "VERIFIED_IN_RUN",
+    "reliable": true
+   },
+   "checks": {
+    "BUNDLE-CLAIM": {
+     "checked": 1,
+     "details": {},
+     "outcome": "PASS"
+    },
+    "BUNDLE-COUNTS": {
+     "checked": 1,
+     "details": {
+      "D": 155,
+      "N": 156,
+      "eligible": 155,
+      "members_digest": "1935322f0d827e24be65734d2e9217b16614a00510ab51f9c145b5d82fdad569",
+      "no": 35,
+      "unknown": 1,
+      "yes": 119
+     },
+     "outcome": "PASS"
+    },
+    "FUTURE-MEMBERS": {
+     "checked": 8952,
+     "details": {
+      "labels_changed": true,
+      "replaced_m5": 8952,
+      "sessions": 156
+     },
+     "outcome": "PASS"
+    },
+    "FUTURE-TARGET": {
+     "checked": 58,
+     "details": {
+      "gate_status": [
+       "CONFORMANT",
+       "CONFORMANT"
+      ],
+      "replaced_m5": 58
+     },
+     "outcome": "PASS"
+    },
+    "GATE-CONFORMANT": {
+     "checked": 2,
+     "details": {},
+     "outcome": "PASS"
+    },
+    "IDENTITY": {
+     "checked": 1,
+     "details": {
+      "N": 156,
+      "bundle_digest": "8509a4cc935d263c1539ff4045724fda8d4e0be35b3eb5f2088e8cd90c62d0e1",
+      "family_id": "71bf87040b7d51b7",
+      "snapshot_id": "e13b9585da1a0ef5"
+     },
+     "outcome": "PASS"
+    },
+    "SCREEN": {
+     "checked": 16,
+     "details": {
+      "bound_kind": "BUNDLE",
+      "element": "#date=2025-12-17&inst=NQ&session=RDR&at=11:10#l21=4",
+      "shown": "76,8%–77,4%"
+     },
+     "outcome": "PASS"
+    }
+   },
+   "claim": "EST:N-NEW-R {\"role\": \"MAIN\"}",
+   "scene": "SCENE:NOW-NEW",
+   "stages": {
+    "ADMISSION": "VERIFIED",
+    "CASE_SET": "VERIFIED",
+    "COMPUTATION": "VERIFIED",
+    "ESTIMATE_SUPPORT": "VERIFIED",
+    "ISSUE": "NOT_APPLICABLE",
+    "OBSERVATION": "VERIFIED",
+    "OUTCOMES": "VERIFIED",
+    "PRESENTATION": "VERIFIED",
+    "QUESTION": "VERIFIED",
+    "STATE": "VERIFIED"
+   },
+   "violations": 0
+  },
+  {
+   "assessment": {
+    "decision": "PROPOSED_FOR_ACCEPTANCE",
+    "implementation": "VERIFIED_IN_RUN",
+    "model_definiteness": "DEFINED",
+    "presentation_human": "PENDING",
+    "presentation_machine": "VERIFIED_IN_RUN",
+    "reliable": true
+   },
+   "checks": {
+    "BUNDLE-CLAIM": {
+     "checked": 1,
+     "details": {},
+     "outcome": "PASS"
+    },
+    "BUNDLE-COUNTS": {
+     "checked": 1,
+     "details": {
+      "N": 709,
+      "eligible": 707,
+      "members_digest": "2bc3b691eaac21506dcba8b11f76cf428b4ab5b2b1591bd8a826a48fb63573ea",
+      "n": 37,
+      "no": 21,
+      "not_yet": 614,
+      "unknown": 2,
+      "yes": 14
+     },
+     "outcome": "PASS"
+    },
+    "FUTURE-MEMBERS": {
+     "checked": 40516,
+     "details": {
+      "labels_changed": true,
+      "replaced_m5": 40516,
+      "sessions": 709
+     },
+     "outcome": "PASS"
+    },
+    "FUTURE-TARGET": {
+     "checked": 58,
+     "details": {
+      "gate_status": [
+       "CONFORMANT",
+       "CONFORMANT"
+      ],
+      "replaced_m5": 58
+     },
+     "outcome": "PASS"
+    },
+    "GATE-CONFORMANT": {
+     "checked": 2,
+     "details": {},
+     "outcome": "PASS"
+    },
+    "IDENTITY": {
+     "checked": 1,
+     "details": {
+      "N": 709,
+      "bundle_digest": "f505c4918233e9d085b4756aebaad9507b34ac2c565f549627fea13955f767ac",
+      "family_id": "1f6b44ac17ff470a",
+      "snapshot_id": "206e5df1f62dee77"
+     },
+     "outcome": "PASS"
+    },
+    "Q1-ISSUE-MATCH": {
+     "checked": 1,
+     "details": {
+      "counts": {
+       "N_eligible": 707,
+       "N_not_yet": 614,
+       "n_known": 35,
+       "n_match": 37,
+       "no": 21,
+       "unknown": 2,
+       "yes": 14
+      },
+      "found": 2,
+      "issue_id": "f6e9a74eeee871c8f6fdc734f862f271e66492acced69caf2b7ff0b64f9b0f40",
+      "issue_kind": "SIMULATED_ISSUE",
+      "members_digest": "2bc3b691eaac21506dcba8b11f76cf428b4ab5b2b1591bd8a826a48fb63573ea",
+      "model": "52307acc95a2",
+      "outcomes": [
+       {
+        "label": "NO",
+        "linked": true,
+        "outcome_id": "52c14e9d2629cb6c5e132588f62c17a411e1d1f0fc5991257dd64382e2287891",
+        "revision": 1
+       }
+      ],
+      "publication": "PUBLISHED",
+      "reproduce": "IDENTICAL",
+      "screen_members_digest": "2bc3b691eaac21506dcba8b11f76cf428b4ab5b2b1591bd8a826a48fb63573ea",
+      "stores": [
+       "q1-pilot:demo/20261012-210947/store",
+       "q1-pilot:store-dev-20261012"
+      ]
+     },
+     "outcome": "PASS"
+    },
+    "SCREEN": {
+     "checked": 17,
+     "details": {
+      "bound_kind": "BUNDLE",
+      "element": "#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all#l21=7",
+      "shown": "37,8%–43,2%"
+     },
+     "outcome": "PASS"
+    }
+   },
+   "claim": "EST:K-ARRIVE {\"level\": \"-1/2\"}",
+   "scene": "SCENE:ARRIVE-HALF",
+   "stages": {
+    "ADMISSION": "VERIFIED",
+    "CASE_SET": "VERIFIED",
+    "COMPUTATION": "VERIFIED",
+    "ESTIMATE_SUPPORT": "VERIFIED",
+    "ISSUE": "VERIFIED",
+    "OBSERVATION": "VERIFIED",
+    "OUTCOMES": "VERIFIED",
+    "PRESENTATION": "VERIFIED",
+    "QUESTION": "VERIFIED",
+    "STATE": "VERIFIED"
+   },
+   "violations": 0
+  },
+  {
+   "assessment": {
+    "decision": "PROPOSED_FOR_ACCEPTANCE",
+    "implementation": "VERIFIED_IN_RUN",
+    "model_definiteness": "DEFINED",
+    "presentation_human": "PENDING",
+    "presentation_machine": "VERIFIED_IN_RUN",
+    "reliable": true
+   },
+   "checks": {
+    "BUNDLE-COUNTS": {
+     "checked": 1,
+     "details": {
+      "members_digest": "c06f88b8555d1834783edf8ca935c503bc5972c4ffc6eeac86162b7226a0128f",
+      "n": 9,
+      "support_min": 20
+     },
+     "outcome": "PASS"
+    },
+    "FUTURE-MEMBERS": {
+     "checked": 8952,
+     "details": {
+      "labels_changed": true,
+      "replaced_m5": 8952,
+      "sessions": 156
+     },
+     "outcome": "PASS"
+    },
+    "FUTURE-TARGET": {
+     "checked": 58,
+     "details": {
+      "gate_status": [
+       "CONFORMANT",
+       "CONFORMANT"
+      ],
+      "replaced_m5": 58
+     },
+     "outcome": "PASS"
+    },
+    "GATE-CONFORMANT": {
+     "checked": 2,
+     "details": {},
+     "outcome": "PASS"
+    },
+    "IDENTITY": {
+     "checked": 1,
+     "details": {
+      "N": 156,
+      "bundle_digest": null,
+      "family_id": "71bf87040b7d51b7",
+      "snapshot_id": "e13b9585da1a0ef5"
+     },
+     "outcome": "PASS"
+    },
+    "Q1-ISSUE-MATCH": {
+     "checked": 1,
+     "details": {
+      "counts": {
+       "N_eligible": 155,
+       "N_not_yet": 131,
+       "n_known": 9,
+       "n_match": 9,
+       "no": 3,
+       "unknown": 0,
+       "yes": 6
+      },
+      "found": 1,
+      "issue_id": "0ac92493d12ebb832b1baac06d86dd878d6069972ec546dd973c32f7524f9d2e",
+      "issue_kind": "SIMULATED_ISSUE",
+      "members_digest": "c06f88b8555d1834783edf8ca935c503bc5972c4ffc6eeac86162b7226a0128f",
+      "model": "52307acc95a2",
+      "outcomes": [
+       {
+        "label": "NO",
+        "linked": true,
+        "outcome_id": "217ff9a6330cfd8ae2d70d2504eecf851da3a7a6eb5b2f61d33f2874a2339b95",
+        "revision": 1
+       }
+      ],
+      "publication": "WITHHELD_FEW_SESSIONS",
+      "reproduce": "IDENTICAL",
+      "screen_members_digest": "c06f88b8555d1834783edf8ca935c503bc5972c4ffc6eeac86162b7226a0128f",
+      "stores": [
+       "q1-pilot:demo/20261012-210947/store"
+      ]
+     },
+     "outcome": "PASS"
+    },
+    "SCREEN": {
+     "checked": 16,
+     "details": {
+      "bound_kind": "ABSENCE",
+      "element": "#date=2025-12-17&inst=NQ&session=RDR&at=11:10#l21=7",
+      "shown": ""
+     },
+     "outcome": "PASS"
+    }
+   },
+   "claim": "EST:K-ARRIVE {\"level\": \"-1/2\"} — нет числа: FEW_SESSIONS",
+   "scene": "SCENE:ARRIVE-FEW",
+   "stages": {
+    "ADMISSION": "VERIFIED",
+    "CASE_SET": "VERIFIED",
+    "COMPUTATION": "VERIFIED",
+    "ESTIMATE_SUPPORT": "VERIFIED",
+    "ISSUE": "VERIFIED",
+    "OBSERVATION": "VERIFIED",
+    "OUTCOMES": "VERIFIED",
+    "PRESENTATION": "VERIFIED",
+    "QUESTION": "VERIFIED",
+    "STATE": "VERIFIED"
+   },
+   "violations": 0
+  }
+ ],
+ "screens": {
+  "#date=2025-12-17&inst=NQ&session=RDR&at=11:10": {
+   "elements": 16,
+   "page_build_sha256": "42da42cb31e1b3c8",
+   "unchecked": 0,
+   "violations": 0
+  },
+  "#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all": {
+   "elements": 17,
+   "page_build_sha256": "42da42cb31e1b3c8",
+   "unchecked": 0,
+   "violations": 0
+  }
+ },
+ "seconds": 200.3,
+ "stale": [],
+ "static": [
+  {
+   "check": "REF-RESOLVE",
+   "checked": 2043,
+   "details": {},
+   "outcome": "PASS",
+   "violations": []
+  },
+  {
+   "check": "CODE-REFS",
+   "checked": 1215,
+   "details": {},
+   "outcome": "PASS",
+   "violations": []
+  },
+  {
+   "check": "CHECK-REFS",
+   "checked": 583,
+   "details": {},
+   "outcome": "PASS",
+   "violations": []
+  },
+  {
+   "check": "ID-UNIQUE",
+   "checked": 793,
+   "details": {},
+   "outcome": "PASS",
+   "violations": []
+  },
+  {
+   "check": "ESTIMAND-CHAIN",
+   "checked": 59,
+   "details": {},
+   "outcome": "PASS",
+   "violations": []
+  },
+  {
+   "check": "CLAIM-PROFILE",
+   "checked": 59,
+   "details": {},
+   "outcome": "PASS",
+   "violations": []
+  },
+  {
+   "check": "BINDING-COVERAGE",
+   "checked": 71,
+   "details": {},
+   "outcome": "PASS",
+   "violations": []
+  },
+  {
+   "check": "STANDING",
+   "checked": 5,
+   "details": {
+    "conflicts": [
+     {
+      "boundary": "BND-02",
+      "decision": "PROPOSED_FOR_ACCEPTANCE",
+      "profile": "PROFILE:PRE-24",
+      "registry_status": "ACTIVE"
+     },
+     {
+      "boundary": "BND-02",
+      "decision": "PROPOSED_FOR_ACCEPTANCE",
+      "profile": "PROFILE:ARRIVE-24",
+      "registry_status": "ACTIVE"
+     }
+    ]
+   },
+   "outcome": "PASS",
+   "violations": []
+  },
+  {
+   "check": "EDITION-ADDITIVE",
+   "checked": 828,
+   "details": {
+    "accepted_lines_extended": 2,
+    "accepted_lines_removed_or_rewritten": 0,
+    "accepted_sha256": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b",
+    "edition": "DR-LAB-SC-1.1",
+    "file_sha256": "895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb",
+    "lines_added": 86,
+    "pinned_sha256": "895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb",
+    "state": "the line pins an amended text (a proposal, not the accepted one)"
+   },
+   "outcome": "PASS",
+   "violations": []
+  },
+  {
+   "check": "CATALOG-COVERAGE",
+   "checked": 130,
+   "details": {
+    "arch_ids": 130,
+    "boundaries": 22,
+    "entries": 119
+   },
+   "outcome": "PASS",
+   "violations": []
+  }
+ ],
+ "version": "dr-lab-trace-1"
+}

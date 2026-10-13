@@ -1,0 +1,505 @@
+{
+ "artifact_versions": [
+  {
+   "artifact": "git:HEAD",
+   "version": "b08fb11450d9aab521243a7605406bdcf82d8ab8"
+  },
+  {
+   "artifact": "DR-LAB-SC-1.1:registry",
+   "version": "91f2b874fb5efe9d"
+  },
+  {
+   "artifact": "DR-LAB-SC-1.1:document-pin",
+   "version": "895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb"
+  },
+  {
+   "artifact": "trace:catalog",
+   "version": "48af53fc9a6e67aa"
+  },
+  {
+   "artifact": "lab/contract.py::_code_hash",
+   "version": "5724c70031c8"
+  },
+  {
+   "artifact": "session-base:NQ",
+   "version": "dr-lab-boxes-1@1790625423"
+  },
+  {
+   "artifact": "q1:MODEL",
+   "version": "52307acc95a2"
+  },
+  {
+   "artifact": "dr-lab-trace-1",
+   "version": "c9337a8e0132"
+  }
+ ],
+ "assessment": {
+  "decision": "PROPOSED_FOR_ACCEPTANCE",
+  "implementation": "VERIFIED_IN_RUN",
+  "model_definiteness": "DEFINED",
+  "presentation_human": "PENDING",
+  "presentation_machine": "VERIFIED_IN_RUN",
+  "reliable": true
+ },
+ "claim": "EST:K-ARRIVE {\"level\": \"-1/2\"}",
+ "evidence": [
+  {
+   "artifact_versions": [
+    {
+     "artifact": "git:HEAD",
+     "version": "b08fb11450d9aab521243a7605406bdcf82d8ab8"
+    },
+    {
+     "artifact": "DR-LAB-SC-1.1:registry",
+     "version": "91f2b874fb5efe9d"
+    }
+   ],
+   "check": "trace:GATE-CONFORMANT",
+   "checked": 2,
+   "obligation": "GATE-CONFORMANT",
+   "origin": "MACHINE_RUN_HERE",
+   "outcome": "PASS",
+   "source": "lab/semtrace.py (dr-lab-trace-1)"
+  },
+  {
+   "artifact_versions": [
+    {
+     "artifact": "git:HEAD",
+     "version": "b08fb11450d9aab521243a7605406bdcf82d8ab8"
+    },
+    {
+     "artifact": "DR-LAB-SC-1.1:registry",
+     "version": "91f2b874fb5efe9d"
+    }
+   ],
+   "check": "trace:BUNDLE-CLAIM",
+   "checked": 1,
+   "obligation": "BUNDLE-CLAIM",
+   "origin": "MACHINE_RUN_HERE",
+   "outcome": "PASS",
+   "source": "lab/semtrace.py (dr-lab-trace-1)"
+  },
+  {
+   "artifact_versions": [
+    {
+     "artifact": "git:HEAD",
+     "version": "b08fb11450d9aab521243a7605406bdcf82d8ab8"
+    },
+    {
+     "artifact": "DR-LAB-SC-1.1:registry",
+     "version": "91f2b874fb5efe9d"
+    }
+   ],
+   "check": "trace:BUNDLE-COUNTS",
+   "checked": 1,
+   "obligation": "BUNDLE-COUNTS",
+   "origin": "MACHINE_RUN_HERE",
+   "outcome": "PASS",
+   "source": "lab/semtrace.py (dr-lab-trace-1)"
+  },
+  {
+   "artifact_versions": [
+    {
+     "artifact": "git:HEAD",
+     "version": "b08fb11450d9aab521243a7605406bdcf82d8ab8"
+    },
+    {
+     "artifact": "DR-LAB-SC-1.1:registry",
+     "version": "91f2b874fb5efe9d"
+    }
+   ],
+   "check": "trace:IDENTITY",
+   "checked": 1,
+   "obligation": "IDENTITY",
+   "origin": "MACHINE_RUN_HERE",
+   "outcome": "PASS",
+   "source": "lab/semtrace.py (dr-lab-trace-1)"
+  },
+  {
+   "artifact_versions": [
+    {
+     "artifact": "git:HEAD",
+     "version": "b08fb11450d9aab521243a7605406bdcf82d8ab8"
+    },
+    {
+     "artifact": "DR-LAB-SC-1.1:registry",
+     "version": "91f2b874fb5efe9d"
+    }
+   ],
+   "check": "trace:FUTURE-TARGET",
+   "checked": 58,
+   "obligation": "FUTURE-TARGET",
+   "origin": "MACHINE_RUN_HERE",
+   "outcome": "PASS",
+   "source": "lab/semtrace.py (dr-lab-trace-1)"
+  },
+  {
+   "artifact_versions": [
+    {
+     "artifact": "git:HEAD",
+     "version": "b08fb11450d9aab521243a7605406bdcf82d8ab8"
+    },
+    {
+     "artifact": "DR-LAB-SC-1.1:registry",
+     "version": "91f2b874fb5efe9d"
+    }
+   ],
+   "check": "trace:FUTURE-MEMBERS",
+   "checked": 40516,
+   "obligation": "FUTURE-MEMBERS",
+   "origin": "MACHINE_RUN_HERE",
+   "outcome": "PASS",
+   "source": "lab/semtrace.py (dr-lab-trace-1)"
+  },
+  {
+   "artifact_versions": [
+    {
+     "artifact": "git:HEAD",
+     "version": "b08fb11450d9aab521243a7605406bdcf82d8ab8"
+    },
+    {
+     "artifact": "DR-LAB-SC-1.1:registry",
+     "version": "91f2b874fb5efe9d"
+    }
+   ],
+   "check": "trace:Q1-ISSUE-MATCH",
+   "checked": 1,
+   "obligation": "Q1-ISSUE-MATCH",
+   "origin": "MACHINE_RUN_HERE",
+   "outcome": "PASS",
+   "source": "lab/semtrace.py (dr-lab-trace-1)"
+  },
+  {
+   "artifact_versions": [
+    {
+     "artifact": "git:HEAD",
+     "version": "b08fb11450d9aab521243a7605406bdcf82d8ab8"
+    },
+    {
+     "artifact": "DR-LAB-SC-1.1:registry",
+     "version": "91f2b874fb5efe9d"
+    }
+   ],
+   "check": "trace:SCREEN",
+   "checked": 17,
+   "obligation": "SCREEN",
+   "origin": "MACHINE_RUN_HERE",
+   "outcome": "PASS",
+   "source": "lab/semtrace.py (dr-lab-trace-1)"
+  },
+  {
+   "artifact_versions": [
+    {
+     "artifact": "q1-pilot-c1",
+     "version": "e9b5bc68cbfe11cc529f11502876cfd748bdba57"
+    }
+   ],
+   "check": "reported:studies/q1_pilot_2026_10_12/README.md",
+   "detail": "заявлено исполнителем пилота; в этом прогоне не повторялось (BND-08)",
+   "obligation": "A15: сверка A/D 296 738 строк × 3 оценивателя, скалярный пересчёт",
+   "origin": "REPORTED_BY_ENGINEER",
+   "outcome": "PASS",
+   "source": "studies/q1_pilot_2026_10_12/README.md"
+  }
+ ],
+ "id": "TRACE:SCENE:ARRIVE-HALF",
+ "operations": [
+  {
+   "evidence": "trace:GATE-CONFORMANT, trace:BUNDLE-COUNTS",
+   "not_implied_ru": "расчёт не доказывает показ и не создаёт выпуск",
+   "operation": "COMPUTE",
+   "performed": true
+  },
+  {
+   "evidence": "SCREEN:#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all",
+   "not_implied_ru": "показ не доказывает расчёт (сверяется с bundle отдельно) и не создаёт выпуск",
+   "operation": "PRESENT",
+   "performed": true
+  },
+  {
+   "evidence": "f6e9a74eeee871c8f6fdc734f862f271e66492acced69caf2b7ff0b64f9b0f40",
+   "not_implied_ru": "выпуск не доказывает, что ответ показан или прочитан",
+   "operation": "ISSUE",
+   "performed": true
+  }
+ ],
+ "profile_key": "ARRIVE-24",
+ "scene": "SCENE:ARRIVE-HALF",
+ "stages": [
+  {
+   "links": [
+    {
+     "evidence": "lab/build_boxes.py::build (не перезапускалась)",
+     "mandatory": false,
+     "note": "GAP-09",
+     "relation": "observed_as",
+     "source": "OBS:G3-TAPE",
+     "status": "IMPLEMENTED_UNVERIFIED",
+     "target": "base:dr-lab-boxes-1@1790625423"
+    },
+    {
+     "evidence": "derivation.inputs[OBSERVATION_SNAPSHOT]",
+     "mandatory": true,
+     "relation": "input_of",
+     "source": "base:dr-lab-boxes-1@1790625423",
+     "status": "VERIFIED",
+     "target": "bundle:/api/d24/arrive#EST:K-ARRIVE{\"level\": \"-1/2\"}"
+    },
+    {
+     "evidence": "runtime:lab/contract.py::verify_snapshot (пути, коробки, подтверждения членов из M5 базы)",
+     "mandatory": true,
+     "relation": "re_derived_by",
+     "source": "base:dr-lab-boxes-1@1790625423",
+     "status": "VERIFIED",
+     "target": "code:lab/contract.py::verify_snapshot"
+    }
+   ],
+   "stage": "OBSERVATION",
+   "status": "VERIFIED",
+   "summary_ru": "история из собранной базы сессий; лента G3 и сборка M1 → M5 вне прогона (GAP-09)"
+  },
+  {
+   "links": [
+    {
+     "evidence": "runtime:lab/contract.py::today_state (подтверждение / слом сегодня по закрытым M5)",
+     "mandatory": true,
+     "relation": "known_at",
+     "source": "session:NQ-20251217-RDR",
+     "status": "VERIFIED",
+     "target": "cut:NQ-20251217-RDR@11:10"
+    },
+    {
+     "evidence": "trace:FUTURE-TARGET (будущее сегодняшнего дня заменено в памяти)",
+     "mandatory": true,
+     "relation": "prefix_only",
+     "source": "cut:NQ-20251217-RDR@11:10",
+     "status": "VERIFIED",
+     "target": "CUT:NOW-COMMON-CLOCK-1"
+    }
+   ],
+   "stage": "STATE",
+   "status": "VERIFIED",
+   "summary_ru": "сегодняшняя сессия читается только через закрытые M5 до среза"
+  },
+  {
+   "links": [
+    {
+     "evidence": "trace:ESTIMAND-CHAIN",
+     "mandatory": true,
+     "relation": "asks",
+     "source": "Q:K-ARRIVE",
+     "status": "VERIFIED",
+     "target": "EST:K-ARRIVE"
+    },
+    {
+     "evidence": "trace:REF-RESOLVE",
+     "mandatory": true,
+     "relation": "measures",
+     "source": "EST:K-ARRIVE",
+     "status": "VERIFIED",
+     "target": "OUT:REACH-REST-1"
+    },
+    {
+     "evidence": "ContractEnvelope.request (QuestionRequest: кто и когда спросил, без полномочий)",
+     "mandatory": true,
+     "relation": "requests",
+     "source": "request:73db8c0f6ec04010",
+     "status": "VERIFIED",
+     "target": "EST:K-ARRIVE"
+    }
+   ],
+   "stage": "QUESTION",
+   "status": "VERIFIED",
+   "summary_ru": "Q:K-ARRIVE: Дойдёт ли отсюда до места?"
+  },
+  {
+   "links": [
+    {
+     "evidence": "trace:IDENTITY + runtime:lab/contract.py::verify_snapshot",
+     "mandatory": true,
+     "relation": "instantiated_as",
+     "source": "CS:K-ARRIVE-ALL-1",
+     "status": "VERIFIED",
+     "target": "snapshot:206e5df1f62dee77"
+    },
+    {
+     "evidence": "trace:FUTURE-MEMBERS (будущее аналогов заменено в памяти)",
+     "mandatory": true,
+     "relation": "selects_without_labels",
+     "source": "CS:K-ARRIVE-ALL-1",
+     "status": "VERIFIED",
+     "target": "selection:SCENE:ARRIVE-HALF"
+    }
+   ],
+   "stage": "CASE_SET",
+   "status": "VERIFIED",
+   "summary_ru": "правило CS:K-ARRIVE-ALL-1; состав — снимок семьи и отбор на срезе; метки исхода в отбор не входят"
+  },
+  {
+   "links": [
+    {
+     "evidence": "trace:CODE-REFS",
+     "mandatory": true,
+     "relation": "defined_by",
+     "source": "OUT:REACH-REST-1",
+     "status": "VERIFIED",
+     "target": "code:lab/contract.py::ref_reach"
+    },
+    {
+     "evidence": "trace:BUNDLE-COUNTS (пересчёт по эталонным определениям)",
+     "mandatory": true,
+     "relation": "labelled_by",
+     "source": "selection:SCENE:ARRIVE-HALF",
+     "status": "VERIFIED",
+     "target": "OUT:REACH-REST-1"
+    }
+   ],
+   "stage": "OUTCOMES",
+   "status": "VERIFIED",
+   "summary_ru": "OUT:REACH-REST-1: исход каждого случая по своему определению, отдельной ветвью от отбора"
+  },
+  {
+   "links": [
+    {
+     "evidence": "trace:ESTIMAND-CHAIN",
+     "mandatory": true,
+     "relation": "computes",
+     "source": "ESTR:K-POINT-BOUNDS-1",
+     "status": "VERIFIED",
+     "target": "EST:K-ARRIVE"
+    },
+    {
+     "evidence": "derivation.operation; verification VERIFIED_BY_REFERENCE",
+     "mandatory": true,
+     "relation": "derived_by",
+     "source": "bundle:/api/d24/arrive#EST:K-ARRIVE{\"level\": \"-1/2\"}",
+     "status": "VERIFIED",
+     "target": "code:lab/arrive24.py::_arrive"
+    },
+    {
+     "evidence": "derivation.inputs: наблюдения, снимок набора, реестр, код",
+     "mandatory": true,
+     "relation": "inputs_versioned",
+     "source": "bundle:/api/d24/arrive#EST:K-ARRIVE{\"level\": \"-1/2\"}",
+     "status": "VERIFIED",
+     "target": "inputs:CASE_SET_SNAPSHOT,CODE,CODE,OBSERVATION_SNAPSHOT,REGISTRY,TODAY_PREFIX"
+    }
+   ],
+   "stage": "COMPUTATION",
+   "status": "VERIFIED",
+   "summary_ru": "вычисление — то, что опубликовал шлюз; эталон пересчитал его в момент ответа"
+  },
+  {
+   "links": [
+    {
+     "evidence": "trace:BUNDLE-COUNTS (числитель, знаменатель, опора, неизвестные)",
+     "mandatory": true,
+     "relation": "estimate_and_support",
+     "source": "bundle:/api/d24/arrive#EST:K-ARRIVE{\"level\": \"-1/2\"}",
+     "status": "VERIFIED",
+     "target": "EST:K-ARRIVE"
+    },
+    {
+     "evidence": "trace:IDENTITY",
+     "mandatory": true,
+     "relation": "same_on_recompute",
+     "source": "bundle:/api/d24/arrive#EST:K-ARRIVE{\"level\": \"-1/2\"}",
+     "status": "VERIFIED",
+     "target": "EST:K-ARRIVE"
+    }
+   ],
+   "stage": "ESTIMATE_SUPPORT",
+   "status": "VERIFIED",
+   "summary_ru": "оценка и опора — параллельные результаты одного расчёта"
+  },
+  {
+   "links": [
+    {
+     "evidence": "trace:BUNDLE-CLAIM / trace:CLAIM-PROFILE",
+     "mandatory": true,
+     "relation": "worded_by",
+     "source": "EST:K-ARRIVE",
+     "status": "VERIFIED",
+     "target": "CF:K-ARRIVE"
+    },
+    {
+     "evidence": "lab/contract.py::admissible_claims",
+     "mandatory": true,
+     "relation": "admitted_on",
+     "source": "CF:K-ARRIVE",
+     "status": "VERIFIED",
+     "target": "CS:K-ARRIVE-ALL-1"
+    },
+    {
+     "evidence": "ProfileStanding.decision_sources",
+     "mandatory": false,
+     "note": "решение: PROPOSED_FOR_ACCEPTANCE",
+     "relation": "decided_by",
+     "source": "PROFILE:ARRIVE-24",
+     "status": "PROPOSED",
+     "target": "STANDING:ARRIVE-24"
+    }
+   ],
+   "stage": "ADMISSION",
+   "status": "VERIFIED",
+   "summary_ru": "форма CF:K-ARRIVE (ConditionalDescriptiveClaim); решение по профилю: PROPOSED_FOR_ACCEPTANCE"
+  },
+  {
+   "links": [
+    {
+     "evidence": "SWPC-1.1 §9 → trace:BINDING-COVERAGE",
+     "mandatory": true,
+     "relation": "presented_by",
+     "source": "EST:K-ARRIVE",
+     "status": "VERIFIED",
+     "target": "PB:B13/EST:K-ARRIVE,PB:B18/EST:K-ARRIVE"
+    },
+    {
+     "evidence": "trace:SCREEN (снятое состояние экрана)",
+     "mandatory": true,
+     "relation": "rendered_as",
+     "source": "PB:B13/EST:K-ARRIVE",
+     "status": "VERIFIED",
+     "target": "#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all#l21=7"
+    },
+    {
+     "evidence": "H-задачи SWPC не проводились (GAP-10)",
+     "mandatory": false,
+     "note": "человеческое прочтение — отдельная ось",
+     "relation": "read_by",
+     "source": "#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all#l21=7",
+     "status": "MISSING",
+     "target": "human:operator"
+    }
+   ],
+   "stage": "PRESENTATION",
+   "status": "VERIFIED",
+   "summary_ru": "привязка SWPC и элемент, который страница фактически показала"
+  },
+  {
+   "links": [
+    {
+     "evidence": "trace:Q1-ISSUE-MATCH (та же цель, срез, набор и модель; выпуск — отдельная операция)",
+     "mandatory": false,
+     "relation": "same_question_as",
+     "source": "answer:SCENE:ARRIVE-HALF",
+     "status": "VERIFIED",
+     "target": "q1:issue:f6e9a74eeee871c8"
+    },
+    {
+     "evidence": "trace:Q1-STORE (outcome_id пересчитан, ссылка на отпечаток выпуска)",
+     "mandatory": false,
+     "note": "ревизия 1: NO",
+     "relation": "resolved_by",
+     "source": "q1:issue:f6e9a74eeee871c8",
+     "status": "VERIFIED",
+     "target": "q1:outcome:52c14e9d2629cb6c"
+    }
+   ],
+   "stage": "ISSUE",
+   "status": "VERIFIED",
+   "summary_ru": "сохранённый выпуск того же вопроса — отдельная операция; показ его не создаёт"
+  }
+ ],
+ "violations": []
+}

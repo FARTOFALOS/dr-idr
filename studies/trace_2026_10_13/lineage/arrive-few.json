@@ -1,0 +1,83 @@
+{
+ "changed": "PB:ABS/FEW-SESSIONS/ARRIVE",
+ "groups": [
+  {
+   "group": "CHECK",
+   "members": [
+    "H:H14",
+    "check:test:tests/swpc11_browser.mjs#m20"
+   ]
+  },
+  {
+   "group": "CLAIM",
+   "members": [
+    "FF:FEW-SESSIONS"
+   ]
+  },
+  {
+   "group": "CODE",
+   "members": [
+    "code:design/sozvezdiya-24/src/app.js::reachOne",
+    "code:design/sozvezdiya-24/src/panel.js::arriveHtml",
+    "code:lab/contract.py::_horizon",
+    "code:lab/contract.py::ref_reach",
+    "code:lab/now24.py::_near",
+    "code:lab/q1/engine.py::TOL",
+    "code:lab/q1/engine.py::Table.select"
+   ]
+  },
+  {
+   "group": "DEFINITION",
+   "members": [
+    "CMP:K-POS-1",
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:K-ARRIVE-1",
+    "CS:K-ARRIVE-ALL-1",
+    "CS:UNIVERSE-1",
+    "CUT:NOW-COMMON-CLOCK-1",
+    "DR-LAB-SC-1.0",
+    "DR-LAB-SC-1.1",
+    "OUT:REACH-REST-1",
+    "PROFILE:ARRIVE-24",
+    "PROFILE:BASE-24",
+    "Q:K-ARRIVE",
+    "REG:LEVEL-1",
+    "SRC:AGENTS",
+    "SRC:CODE-ARRIVE24",
+    "SRC:CODE-BUILD-BOXES",
+    "SRC:CODE-NOW24",
+    "SRC:CODE-Q1-ENGINE",
+    "SRC:EKRAN-24",
+    "SRC:GOAL-2026-10-07",
+    "SRC:INSTRUCTION-2026-10-12",
+    "SRC:KADR-1.1",
+    "SRC:M10-P",
+    "SRC:M12",
+    "SRC:M15",
+    "SRC:NOW-1.0",
+    "SRC:OPERATOR-ATOM-2026-10-01",
+    "SRC:Q1-EVIDENCE",
+    "SRC:Q1-PILOT",
+    "SRC:SC-1.0",
+    "SRC:SC-1.1",
+    "SRC:SEM-1.0",
+    "SRC:SEMANTICS-24",
+    "SRC:SWPC-1.1"
+   ]
+  },
+  {
+   "group": "ESTIMAND",
+   "members": [
+    "EST:K-ARRIVE"
+   ]
+  },
+  {
+   "group": "ROUTE",
+   "members": [
+    "API:/api/d24/arrive"
+   ]
+  }
+ ],
+ "unresolved": []
+}
