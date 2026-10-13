@@ -297,7 +297,7 @@ entries:
     title_ru: прочтение трейдером (OperatorReading)
     arch_ref: "0.1 §4.3/ENT-30"
     entry_kind: ENTITY
-    realized_by: [SRC:SWPC-H-PROTOCOL, SRC:Q1-READING-CHECK]
+    realized_by: [SRC:SWPC-H-PROTOCOL, SRC:OPERATOR-2026-10-13-NO-READING-QUESTIONS]
     checked_by: ["human:operator"]
     profiles: [BASE-24, NOW-1.0, ARRIVE-24, Q1-PILOT-0.2]
     decision: OPEN

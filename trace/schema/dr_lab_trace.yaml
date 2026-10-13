@@ -411,6 +411,7 @@ enums:
     permissible_values:
       ACCEPTED: {description: "человеческая проверка различения пройдена (протокол и результат названы)"}
       PENDING: {description: "человеческая проверка не проводилась; машинные проверки её не заменяют"}
+      DECLINED_BY_OPERATOR: {description: "оператор отказался отвечать на вопросы проверки; прочтение не установлено и у него не запрашивается"}
       NOT_APPLICABLE: {}
   ModelDefiniteness:
     permissible_values:

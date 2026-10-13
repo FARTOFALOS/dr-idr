@@ -3987,9 +3987,9 @@
     "owner_ru": "оператор",
     "sources": [
      "SRC:SWPC-H-PROTOCOL",
-     "SRC:Q1-READING-CHECK"
+     "SRC:OPERATOR-2026-10-13-NO-READING-QUESTIONS"
     ],
-    "statement_ru": "Различение трейдером вопроса, места, срока, события и роли числа не проверено (SWPC H01–H14, reading_check Q1). Машинное совпадение показанного с опубликованным это не заменяет.",
+    "statement_ru": "Различение трейдером вопроса, места, срока, события и роли числа не проверено (SWPC H01–H14). Вопросы проверки прочтения ответа Q1 (Ч1–Ч4) оператор 13.10 снял: у него они не запрашиваются. Машинное совпадение показанного с опубликованным прочтение не заменяет.",
     "title_ru": "экран → человек"
    },
    {
@@ -5027,7 +5027,7 @@
     ],
     "realized_by": [
      "SRC:SWPC-H-PROTOCOL",
-     "SRC:Q1-READING-CHECK"
+     "SRC:OPERATOR-2026-10-13-NO-READING-QUESTIONS"
     ],
     "title_ru": "прочтение трейдером (OperatorReading)"
    },
@@ -6907,11 +6907,12 @@
     ]
    },
    {
-    "document": "studies/q1_pilot_2026_10_12/reading_check.md",
-    "grounds": "PROPOSAL",
-    "id": "SRC:Q1-READING-CHECK",
-    "note": "a pre-registered reading check of the Q1 answer, prepared for the operator, not run with him",
-    "role": "ANALYTICAL_INPUT",
+    "document": "chat of 2026-10-13, the operator's message during the work on the semantic trace",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "SRC:OPERATOR-2026-10-13-NO-READING-QUESTIONS",
+    "locator": "«я не хочу на них отвечать вообще удали эти вопросы … я все равно не понимал что ты там от меня спрашиваешь»",
+    "note": "The four questions of the Q1 reading check (Ч1-Ч4 of studies/q1_pilot_2026_10_12/reading_check.md, written on 2026-10-12 before asking him, never answered) are withdrawn at his request and are not to be asked again; the file is removed on the branch semantic-trace (kept in git history, commit e9b5bc6). The reading of the Q1 answer stays not established.",
+    "role": "DECISION",
     "sc_ref": [
      "IMPLEMENTATION"
     ]
@@ -6982,8 +6983,7 @@
     ],
     "human_acceptance": "PENDING",
     "human_acceptance_sources": [
-     "SRC:SWPC-H-PROTOCOL",
-     "SRC:Q1-READING-CHECK"
+     "SRC:SWPC-H-PROTOCOL"
     ],
     "id": "STANDING:ARRIVE-24",
     "in_trace_scope": true,
@@ -7039,9 +7039,9 @@
      "SRC:Q1-PILOT",
      "SRC:Q1-EVIDENCE"
     ],
-    "human_acceptance": "PENDING",
+    "human_acceptance": "DECLINED_BY_OPERATOR",
     "human_acceptance_sources": [
-     "SRC:Q1-READING-CHECK"
+     "SRC:OPERATOR-2026-10-13-NO-READING-QUESTIONS"
     ],
     "id": "STANDING:Q1-PILOT-0.2",
     "in_trace_scope": true,
@@ -7052,7 +7052,8 @@
      "pull_request": 6
     },
     "not_established_ru": [
-     "приёмка пилота (PR #6) и чтения ответа оператором",
+     "приёмка пилота (PR #6)",
+     "прочтение ответа оператором: вопросы проверки прочтения (Ч1–Ч4) оператор 13.10 снял — не установлено и не запрашивается",
      "C2: перенос на новые дни",
      "живой журнал выпусков: все выпуски — SIMULATED_ISSUE исторического воспроизведения"
     ],
@@ -7063,9 +7064,9 @@
   ]
  },
  "stamps": {
-  "catalog_sha256": "a758edace68699f4ec574e1d0e7a6036a81f1075dc410c271296f2363845ccc9",
+  "catalog_sha256": "48af53fc9a6e67aa4f4294899f872f4138e5a460f8e81ad44b29eb6fc186fcbc",
   "linkml": "1.11.1",
-  "runtime_spec_sha256": "8c6d1ff8615ea71d31c201cbdd3c36229c5c51481bf26952b41f1053ed6ded39",
+  "runtime_spec_sha256": "d82990fb6608f64e55313ec5bc0e292d1cb0c77bbdcd6b029f7cdb899d5c7d9f",
   "sc_registry_sha256": "91f2b874fb5efe9d8d3a0d91fa41f367631726513fa643364a21a567a5a9616c",
   "sources": {
    "contract/build/registry.json": "7741a51937d06ca790746c2c03d1ef86d6c56c6751e84115746eea7e67939239",
@@ -7074,11 +7075,11 @@
    "meaning/lens/2026-10-13-semantic-architecture/02-DR-LAB-SEMANTIC-ARCHITECTURE-0.2-dopolnenie.md": "a780119df2f6585e4c7f33466c929331d8856f6e55aab5fae45fc64a84207f47",
    "spec/DR-LAB-SWPC-1.1.md": "d0a79d01579d04dff789ff48ee9014389d15bfe3108dbe6322baafc047c50635",
    "tests/swpc11.py": "4dd1fbf864a8f50bd039004447adf73fb446fde8a78d648763dfd7f496d82a8c",
-   "trace/catalog/00-standing.yaml": "53de5b82200f520279a7762071810cc713c1bc8369bcb31a19733c4b7d239479",
-   "trace/catalog/10-architecture.yaml": "5ed8905af58d7247c2cd858e941c7e517875963b89c0877f501ccd9ab7ef5be9",
-   "trace/catalog/20-boundaries.yaml": "76a3f99f4f063a5f5233bb4597d9816fa464badcba6323685e94bd8194dd6416",
+   "trace/catalog/00-standing.yaml": "d85637878ffd1cf72495d95d832e45e166ea88b580f142fc8c1cdf2687e514b0",
+   "trace/catalog/10-architecture.yaml": "c4b9eca1352b6455db17839629f090f65e6e8e0bde526dc228a06102a393bfd6",
+   "trace/catalog/20-boundaries.yaml": "516e7f53a14fa7e63f6aa4a1ac7958829740d99626fbb8031b8ac784599b1330",
    "trace/catalog/30-scenes.yaml": "53a149da5d6d6174418ff9dee24b3f1352a276843d360ac95dc0ab527d55f0d5",
-   "trace/schema/dr_lab_trace.yaml": "276d99361ab65f3cee7420ea2a86b2dd9120fca6320199f9d9fc71e13cb65070",
+   "trace/schema/dr_lab_trace.yaml": "7b9a526c394c54e1738ddd0f9f2b3731475d3cfdfe2cb6e87a06e03029f09272",
    "trace/schema/linkml-lint.yaml": "fd96f4ac9b5d6872be1bcdfa4f4b579c68c31e1862b222d4fea74d8721dc0dc9"
   },
   "trace_version": "dr-lab-trace-1"

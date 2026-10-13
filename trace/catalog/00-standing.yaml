@@ -65,12 +65,17 @@ source_references:
     role: IMPLEMENTATION
     document: "meaning/18-otsyuda-na-ekrane-24.md"
     note: "which elements of screen 24 carry «Отсюда до места»"
-  - id: SRC:Q1-READING-CHECK
+  - id: SRC:OPERATOR-2026-10-13-NO-READING-QUESTIONS
     sc_ref: ["IMPLEMENTATION"]
-    grounds: PROPOSAL
-    role: ANALYTICAL_INPUT
-    document: "studies/q1_pilot_2026_10_12/reading_check.md"
-    note: "a pre-registered reading check of the Q1 answer, prepared for the operator, not run with him"
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "chat of 2026-10-13, the operator's message during the work on the semantic trace"
+    locator: "«я не хочу на них отвечать вообще удали эти вопросы … я все равно не понимал что ты там от меня спрашиваешь»"
+    note: >-
+      The four questions of the Q1 reading check (Ч1-Ч4 of studies/q1_pilot_2026_10_12/reading_check.md, written on
+      2026-10-12 before asking him, never answered) are withdrawn at his request and are not to be asked again; the file
+      is removed on the branch semantic-trace (kept in git history, commit e9b5bc6). The reading of the Q1 answer stays
+      not established.
 
 editions:
   - id: EDST:SC-1.1
@@ -134,7 +139,7 @@ standings:
       - "C2: качество на новых днях не установлено"
     line: {branch: ekran-24-otsyuda, commit: 1412567e30e7de4659b51dcea5f0d7e8f26de494, pull_request: 7, merged_into_main: false}
     human_acceptance: PENDING
-    human_acceptance_sources: [SRC:SWPC-H-PROTOCOL, SRC:Q1-READING-CHECK]
+    human_acceptance_sources: [SRC:SWPC-H-PROTOCOL]
     in_trace_scope: true
     note: >-
       The SC-1.1 registry of this line marks PROFILE:ARRIVE-24 profile_status ACTIVE (the enum has no value for a
@@ -163,12 +168,13 @@ standings:
     decision_sources: [SRC:Q1-PILOT, SRC:Q1-EVIDENCE]
     scope_ru: "изолированный C1: выпуски и исходы, воспроизведение, сравнение наборов; паспорт PILOT_OUTSIDE_SC11_GATE"
     not_established_ru:
-      - "приёмка пилота (PR #6) и чтения ответа оператором"
+      - "приёмка пилота (PR #6)"
+      - "прочтение ответа оператором: вопросы проверки прочтения (Ч1–Ч4) оператор 13.10 снял — не установлено и не запрашивается"
       - "C2: перенос на новые дни"
       - "живой журнал выпусков: все выпуски — SIMULATED_ISSUE исторического воспроизведения"
     line: {branch: q1-pilot-c1, commit: e9b5bc68cbfe11cc529f11502876cfd748bdba57, pull_request: 6, merged_into_main: false}
-    human_acceptance: PENDING
-    human_acceptance_sources: [SRC:Q1-READING-CHECK]
+    human_acceptance: DECLINED_BY_OPERATOR
+    human_acceptance_sources: [SRC:OPERATOR-2026-10-13-NO-READING-QUESTIONS]
     in_trace_scope: true
 
 # the API route whose response carries what each fact form words (fact forms are not listed in ApiSurface.estimands)

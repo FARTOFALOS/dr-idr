@@ -7346,6 +7346,7 @@
   ],
   "HumanAcceptance": [
    "ACCEPTED",
+   "DECLINED_BY_OPERATOR",
    "NOT_APPLICABLE",
    "PENDING"
   ],

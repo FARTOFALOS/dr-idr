@@ -98,12 +98,12 @@ boundaries:
     title_ru: экран → человек
     arch_ref: "0.1 §13/GAP-10"
     boundary_kind: OPEN_EVIDENCE
-    statement_ru: "Различение трейдером вопроса, места, срока, события и роли числа не проверено (SWPC H01–H14, reading_check Q1). Машинное совпадение показанного с опубликованным это не заменяет."
+    statement_ru: "Различение трейдером вопроса, места, срока, события и роли числа не проверено (SWPC H01–H14). Вопросы проверки прочтения ответа Q1 (Ч1–Ч4) оператор 13.10 снял: у него они не запрашиваются. Машинное совпадение показанного с опубликованным прочтение не заменяет."
     owner_ru: "оператор"
     admissible_now_ru: "машинная проверка показа (trace:SCREEN) как отдельная ось"
     not_admissible_ru: "заявлять готовность полезного интерфейса по зелёным тестам"
     affects: [ENT-30, R14, PROC-18, T17, A16, A18, A20]
-    sources: [SRC:SWPC-H-PROTOCOL, SRC:Q1-READING-CHECK]
+    sources: [SRC:SWPC-H-PROTOCOL, SRC:OPERATOR-2026-10-13-NO-READING-QUESTIONS]
   - id: GAP-11
     title_ru: широкая исследовательская программа (SRS 0.2)
     arch_ref: "0.1 §13/GAP-11"
