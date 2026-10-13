@@ -1,6 +1,6 @@
 # Покрытие архитектуры 0.1 / 0.2 — сгенерировано `python -B lab/semtrace.py run`
 
-Прогон 2026-10-13T07:38:05Z · git:HEAD b08fb11450d9aab5 · DR-LAB-SC-1.1:registry 91f2b874fb5efe9d · DR-LAB-SC-1.1:document-pin 895948b9926bfaf7 · trace:catalog 48af53fc9a6e67aa
+Прогон 2026-10-13T09:35:00Z · git:HEAD d7cf4c701aeba26d · DR-LAB-SC-1.1:registry 91f2b874fb5efe9d · DR-LAB-SC-1.1:document-pin 895948b9926bfaf7 · trace:catalog 48af53fc9a6e67aa
 
 Статус проверки — результат ЭТОГО прогона (`trace:`), запуск существующих тестов (`test:`) — их собственными командами; `reported:` — отчёт исполнителя без повтора; `human:` — человеческий акт, машиной не заменяется.
 

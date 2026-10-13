@@ -49,7 +49,7 @@
  "artifact_versions": [
   {
    "artifact": "git:HEAD",
-   "version": "b08fb11450d9aab521243a7605406bdcf82d8ab8"
+   "version": "d7cf4c701aeba26d62f4d7dc8b0cdfd815c40b11"
   },
   {
    "artifact": "DR-LAB-SC-1.1:registry",
@@ -77,7 +77,7 @@
   },
   {
    "artifact": "dr-lab-trace-1",
-   "version": "c9337a8e0132"
+   "version": "e14249d01d97"
   }
  ],
  "counterexamples": [
@@ -183,6 +183,35 @@
    ]
   },
   {
+   "check": "FUTURE-MEMBERS",
+   "codes": [
+    "SELECTION_USES_FUTURE"
+   ],
+   "detected": true,
+   "id": "CX-4c",
+   "kind": "запрещённое будущее",
+   "reliable_after": null,
+   "tamper": "Table.select читает будущее CLOSE после среза для отбора (контроль против wicks-only)",
+   "where": [
+    "SCENE:ARRIVE-HALF:/api/d24/arrive (before the gate)",
+    "SCENE:ARRIVE-HALF:/api/d24/arrive (after the gate)"
+   ]
+  },
+  {
+   "check": "FUTURE-MEMBERS",
+   "codes": [
+    "SELECTION_USES_FUTURE"
+   ],
+   "detected": true,
+   "id": "CX-4d",
+   "kind": "запрещённое будущее",
+   "reliable_after": null,
+   "tamper": "Table.select отбирает аналоги, у которых DR потом не сломался, по сохранённому в базе слому (fail)",
+   "where": [
+    "SCENE:ARRIVE-HALF:/api/d24/arrive (before the gate)"
+   ]
+  },
+  {
    "check": "BUNDLE-CLAIM",
    "codes": [
     "WRONG_CASE_SET",
@@ -263,7 +292,7 @@
    ]
   }
  ],
- "generated_utc": "2026-10-13T07:38:05Z",
+ "generated_utc": "2026-10-13T09:35:00Z",
  "impact": {
   "checked": 12,
   "outcome": "PASS",
@@ -335,7 +364,9 @@
     "FUTURE-MEMBERS": {
      "checked": 9916,
      "details": {
+      "breaks_rederived": 156,
       "labels_changed": true,
+      "mutated_fields": "OHLC",
       "replaced_m5": 9916,
       "sessions": 156
      },
@@ -344,10 +375,12 @@
     "FUTURE-TARGET": {
      "checked": 58,
      "details": {
+      "breaks_rederived": 1,
       "gate_status": [
        "CONFORMANT",
        "CONFORMANT"
       ],
+      "mutated_fields": "OHLC",
       "replaced_m5": 58
      },
      "outcome": "PASS"
@@ -424,7 +457,9 @@
     "FUTURE-MEMBERS": {
      "checked": 8952,
      "details": {
+      "breaks_rederived": 153,
       "labels_changed": true,
+      "mutated_fields": "OHLC",
       "replaced_m5": 8952,
       "sessions": 156
      },
@@ -433,10 +468,12 @@
     "FUTURE-TARGET": {
      "checked": 58,
      "details": {
+      "breaks_rederived": 1,
       "gate_status": [
        "CONFORMANT",
        "CONFORMANT"
       ],
+      "mutated_fields": "OHLC",
       "replaced_m5": 58
      },
      "outcome": "PASS"
@@ -514,7 +551,9 @@
     "FUTURE-MEMBERS": {
      "checked": 40516,
      "details": {
+      "breaks_rederived": 701,
       "labels_changed": true,
+      "mutated_fields": "OHLC",
       "replaced_m5": 40516,
       "sessions": 709
      },
@@ -523,10 +562,12 @@
     "FUTURE-TARGET": {
      "checked": 58,
      "details": {
+      "breaks_rederived": 1,
       "gate_status": [
        "CONFORMANT",
        "CONFORMANT"
       ],
+      "mutated_fields": "OHLC",
       "replaced_m5": 58
      },
      "outcome": "PASS"
@@ -629,7 +670,9 @@
     "FUTURE-MEMBERS": {
      "checked": 8952,
      "details": {
+      "breaks_rederived": 153,
       "labels_changed": true,
+      "mutated_fields": "OHLC",
       "replaced_m5": 8952,
       "sessions": 156
      },
@@ -638,10 +681,12 @@
     "FUTURE-TARGET": {
      "checked": 58,
      "details": {
+      "breaks_rederived": 1,
       "gate_status": [
        "CONFORMANT",
        "CONFORMANT"
       ],
+      "mutated_fields": "OHLC",
       "replaced_m5": 58
      },
      "outcome": "PASS"
@@ -736,7 +781,7 @@
    "violations": 0
   }
  },
- "seconds": 200.3,
+ "seconds": 290.6,
  "stale": [],
  "static": [
   {

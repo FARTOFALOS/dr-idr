@@ -278,7 +278,9 @@ or the page calls it, and it changes no number. Start at `trace/README.md`.
   - links, claim profile, counts and identities;
   - replaced futures: the target's candles after the cut, and the analogues' after the cut or their own activation,
     replaced in a copy of the session base in memory — compared on the production computation before the gate and on
-    the answer after it;
+    the answer after it. All four OHLC change. The one stored attribute derived from a session's future, its DR break,
+    is re-derived by the gate's reference, so the copy stays one consistent history. A replacement that would move the
+    prefix is refused;
   - the stored Q1 issue of the same question;
   - the rendered element: `tests/trace_page.mjs`, a throw-away headless Chrome against a server of this checkout
     started on a free port.
