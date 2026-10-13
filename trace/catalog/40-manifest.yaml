@@ -1,0 +1,4506 @@
+{
+  "catalog_part": "fom-manifest",
+  "mapped_artifacts": [
+    {
+      "path": ".gitignore",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "71b0fe686555077153af20c1f6b3fc10773d44f438d2a0f42b976376b19931c2",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "AGENTS.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "04d3c9eb45fe7f2efb8e91932d9c5f39d8611a21cd9c84909aaba50209ec088b",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "CLAUDE.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f5cece2238776ac50884ffb5f307e89fb97f9ff198de300e89eb2a2bf4de1422",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1c1c36c864d8805f125323e74d5940ad70802eb78d578dc1709fa830172c81a1",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "contract/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7042d3cf1ac4fb29f36227ad12158d03dfc04ef3329bcdb77262240f2d17664f",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/build/dr_lab_sc.schema.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "70e2a12de6cda94c2176ca31ab042575f476a3f003a3759fa79851f67d2392cc",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/build/page_registry.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9f88f048d588cb11ff5aae1d02558438d052afebe70a8a2e0a11500dbb8c59b5",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/build/registry.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7741a51937d06ca790746c2c03d1ef86d6c56c6751e84115746eea7e67939239",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/build/runtime_spec.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "cf30eb49f7ec6ce9292a6b56ee10ce98135ba27621148280a301118b29aa64db",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/registry/00-editions.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a96bca15db851f0806b3fc1b1d20e14a3bc942a43b5a2e28c07bc09c143f99e5",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/registry/10-observation-strategy-measurement.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "017dff6cc6ea9ef2340a78aa633fa44306a27d27875f856165a6e6d586a0cb27",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/registry/20-cases-outcomes.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5f6535e69d557fee9d05c6de7ffbb0b206aeec11362259454d5b4c6bc456afcd",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/registry/30-questions-estimands.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a2325bf90b17d7d742853609a92dc1f29de0099ec5a3e3c3d479a6425929b699",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/registry/40-claims.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "eef6b05b6f48c6c393616efd2ba8c5c3e1d075a7e37dfa14e688c4a2c6086141",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/registry/50-validation.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/registry/60-surfaces.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "974b6786f3f0eaead74bb0133667e6ecff7f72127da8bcff9e8e629fc6e5a605",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/registry/70-obligations.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "222c8ef1523ddad91d930b98c44ca360679257460f305b56d5bcad86eef2ae90",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/requirements-linkml.txt",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b81b178059cb617b404d95511e818679e7dc0e64595e753fac50dc7314961a77",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/schema/dr_lab_sc.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f5918411914130b4bc9d6a5757a9cd781cdd28f527c38b41f56a47a02f09f90b",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/schema/linkml-lint.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fe855972f08cebba42954bf80031f4c7e4f6c3ef99845cf35ec42cfc74fb0c39",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/setup-linkml.ps1",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "98518a3b90b58b15a934cecc39b133cbef1def5bf31d091e10141b1d1c94984f",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "contract/tools/build.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "eae7b0292afd27818995b581319d6861f7915c0538d9ff0522620a5e129699b1",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "design/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7f04c824899e70c13018711a5fcdac3c8fb8790e2743ed3ee57be5c5df20aec4",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/.gitignore",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "267aca31ca06bcf5be9f6680bfcfa97270eaa637c4fdcefe9a28e7450f354fc4",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/01-terminal.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9a6c531edaacf04aeadf821bb369eb94b0cf75c4e2956da8436aceda0aab2f74",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/02-scenario.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8050dade6793b41c07ed33aee14b2e99e470c498d469b24908c56ecc1bcb2b61",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/03-clean.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5f490af82e53d44d180ae23e61fd6dfeafa936519632f69b128312c626ecf10d",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/04-b-prime-column.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0ca7b5d0493ea5e51e3a38b7630a84c08f36fbf9b40be4450679d2e04bb90575",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/04-b-prime-live.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "572f0411f09f2023877015abfe2304e4e6faac4bdd904cec8920067a0011494e",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/04-b-prime-odr.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "19584447a4ed96642ef265d06adad60bcfd4298a7c7d17dcabfa439c028382c0",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/04-b-prime-scrub.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "eb565f81874000c1cf028bff1f424bef4ce40b7fc3c5e3a32ad43fdd88529ccb",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/05-pole-ceny.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ac965940e74d3265758242451843fd785a26be03865bafb4843c21b720285753",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/06-scenariy.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a7b912804e66b88141058261d7d8391574e70499fd7d4f2355b14df8c7767d38",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/07-dve-distancii.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "4dd8b0c8740012b45aeedc8b9b97ec8c45b1173e8164911ebe783e226f608c67",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/08-v1-klastery-brk.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "df6bd38c8051ba610c6f3a65ef3f8d3c99eed5dc117038dc00f5a69fb1cb66ee",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/08-v1-klastery-conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ca37e24baa297a2652f56a191e9dc36bf045a8f0f5c9e309ffc470171ac81e7a",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/08-v1-klastery-wait.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ea3f147b671f205dfdc489e6dc360e0635a1bc5b0c414e262a4b2da6405ca3eb",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/09-v1-svodka-conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9019b1d598650e32183614f5ec2629d5e329a816e8054074f70be2575195ddeb",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/10-v1-proekcii-conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "4e1fddfd90f60a2aeb96b30a129016af9f942ce1853c920663af200e9346a803",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/11-v2-klastery-brk.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0d97956c60a6efb2b963815e9a5fd48d5f5028e6326316b0df66f1f7e00f9b8c",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/11-v2-klastery-conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9a6c2b0a816f918e1c8ca2821e868a90ae26b8fc2c924d28cc21c5b21c05cfa8",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/11-v2-klastery-wait.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "98507ad294c7a9090a9181259616d7a78fe6177afab03769c9b6e0775a160377",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/12-v2-svodka-brk.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c917c556512fb8cd9b3d74b9f7c5f1d89227a75c989a4cba7023cb98f7b68119",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/12-v2-svodka-conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ee74a6522020568f5d978d076b05288c837ab1ba2639b57a901ac89f6910c7d9",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/13-v2-proekcii-brk.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "47ededcbc94ec027aad6321651e16434e3f8a2b19a2d67dc01175b3ba4b5dd8b",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/13-v2-proekcii-conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6f06b815d01f3ab642e7ae95ddbfb214456219346577c09f12877aab5a2a63db",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/14-nadezhnost-brk.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8743c661094aaa9d0426d22224038de3f0e5eb0b679cf2c877f6ed457c0da759",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/14-nadezhnost-conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "91c140cff1a095eeecdc28706259d713dc241a3c30977f77c9f43d7f597dd43c",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/14-nadezhnost-wait.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1a1e614e5bd6b70c1856a7bd1541ccc868b90989b3525bf3e52869fa54603183",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/15-edinicy-brk.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "343c447986edf06649beaa1b41f892669e7d0c752d314aae9223362bea60c2d4",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/15-edinicy-conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9ba711e7e0dc9b0fde35a1f177b534f87ca624b49c664acf31f87d06bdb54779",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/15-edinicy-wait.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f6b1f647f6edd3f73ad49e3fdfdee3b07b39f06b71d160ad231b6a7aae4c0291",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/16-mozaika-brk.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c0e5031010caa9fb6925ac96b8f73003249a8d236124e50924a756d9b36093f6",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/16-mozaika-conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "50b2664bf144f0961e0319514e3bc937f83cda26b87ee51cd482d0fdd08fd042",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/16-mozaika-wait.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6d80e57eb0aa4aa4003e0ea48b6ccbc0d9674216ab68044fa22f1b920012201e",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/20-sozvezdiya-brk.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "4dbb00a791635b67807036d830f802c9726201ad0334cf21ebe9c825c9a62475",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/20-sozvezdiya-conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1292d2ec16ecb7b1898086348ca920be1f02e56dffcbaf36cc44704d8dd4b650",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/20-sozvezdiya-wait.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9b1085abf4e299f55ce4d5539a0dedd4ec1e6c1f6739fd50aca767bf04d8f5ed",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/22-smysl-brk.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0a5baf4e665b7d30bcadf96b606c8d423576fc0c6caeb1a69b24569dd8d46615",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/22-smysl-conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3ef156cb990dff78fb207c94f87df983e70e2ed8b5fba345351ced5b11d9d722",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/22-smysl-own-dr.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "403de4a76e3472f728479affd45d78b2e9f9c8499eef73c6dac6f12bbe5f88f7",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/22-smysl-place.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b05f12e314081595e2cc2d189d3c074a32ad78532499be133260180a4025a619",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/22-smysl-wait.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7174310163a5dcb04108a83f5675f5ecf9c979dac63343a301cd7e51337ca437",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/fresh-board_broken.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f52b854cb73f887fea86dd662fa9f77ab3643e18df432c82da1ad7b6d0a4943c",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/fresh-board_conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "cb867efde8896da7c5b42d884be7531c3e8cb51a3f5e6a91ec0a667d9ed5c041",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/fresh-board_pre.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "462595ae1f154803a7ada9de96908a0b0995868c8b59691d25820d36fab233ea",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/fresh-profile_broken.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "00d699e9f9510e8717d47138917636fb883651f8929ee5b1f38576dd485e941e",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/fresh-profile_conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "704f8c7375a4adef538f248ebef9df7d1cd77a52965019c16c11bb37f302ac15",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/fresh-profile_pre.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2f4fbb04089b6d22c390690bbe482de4aed9125fd0ad4dfc94115993398bae5d",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/fresh-swarm_broken.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b2c184570e3ad26d81d5752615f114f90b9d301927ea38c82f00f30a5822f4d4",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/fresh-swarm_conf.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "80d506da8d955e94a0734d98cfe09fd1f97ca9b3e869ca6055de46ac49851dad",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/images/fresh-swarm_pre.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "01062343b9f6042aaf301fa9c09c3d11dcbc245e17c42ef263cafce2e4f00394",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/01-terminal.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2e03587c710ff8552171b19fbdc811536ebd6831ebcd9ab412ba635c293a53ea",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/02-scenariy.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "80822fa50382b1c0c331af3eef95aad715ccdce67ca3431c883a906fe0146716",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/03-chistyy-grafik.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6b9029410e284ae67ac8ebbc0bb7080d7c8241a1fd34d1826daa653e69ff5cfe",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/04-b-prime.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "62b83d5276a404342de87dcb4657f40bd8156b5a83fe98ed3a5f48197a29de26",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/05-07-smyslovaya-arkhitektura.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bf1b050abd4646cdb380210a2128ae123d84e3a14ae530bff835592d69c6ed17",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/08-v1-klastery.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2ebf14a3533d9f4770dcbffbc0968f85001d2f32ababd52266732439376d2a4a",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/09-v1-svodka.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8744ff410f7fccc558327608c3c70f1ad06f76c4e41df877ab28b51f2abfc54f",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/10-v1-proekcii.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b644823b7275262737020d7473006591dddc190eec72b17e7f9918e3e167194a",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/11-v2-klastery.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "35fbd6ee97f9118e8c873d8622edca3cccc733546b81a2c1945ea1dfcd7117cc",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/12-v2-svodka.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "69038b0063fef051e5bea23bfec87a9a84b8086ed46083b66febd8c0a9277723",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/13-v2-proekcii.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "240442437259ac2d28e9205f8d2218e3776621dbf4e8d7a443a7006e8b9901a6",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/14-nadezhnost.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7b7cc0fe8924254432a5b1536939e12f0b008cb9909d594bc0aea97fbcdbc3c1",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/15-edinicy.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "4ace1a46a488202408eb116c7a21d4d177411cfbd6b87299abad5003ae19524e",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/16-mozaika.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "345120492dd2f0f06bb4a16d0038358d1900d64200cc54f487ae365d0270dd88",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/17-19-svezhiy-vzglyad-NOTES.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1bdee5d4004319876566792a6a50b6fd03a21d5afdc63752034497005e72a254",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/17-19-svezhiy-vzglyad.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7282ccbde22a418ba26eaa7eb41f615b24ff651cf50c4fa2c411d0c4ff9af111",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/20-sozvezdiya.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e3de6d0bfddec6ed3fad16ff5c7d30b2a01fa261da0c7d033dc0b76bc103659c",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/21-sozvezdiya-panel.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8313c5c3a778aee33daa2c72eecfa48aab1533752424705f9d0c5ba2bdf23d94",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/22-smysl-chisla.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ace6dc898ef8973e87d87f7f55933281ced6689db19508ae9eef6c3b3e085cb8",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/23-sem-v1.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c5a0bfbb536d2525364138d47e4217f676b27941578f337c8bf84b0b5a7ea5de",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/interactive/24-granicy-khoda.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d7412121f6ec7413c116e563c815e56db8d56ddfb6304e22b290f57afe93c3e6",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/make_history.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "af6e3193abc4571eeccea8909a479d496661fb7d37d36ba74250e0655652ab30",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/sources/17-19-svezhiy-vzglyad/BRIEF.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "947d566ea7952ea333937d77605977a97f17121a7cf9e630032538f4c0f0d7e3",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/sources/17-19-svezhiy-vzglyad/NOTES.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1bdee5d4004319876566792a6a50b6fd03a21d5afdc63752034497005e72a254",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/sources/17-19-svezhiy-vzglyad/index.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7282ccbde22a418ba26eaa7eb41f615b24ff651cf50c4fa2c411d0c4ff9af111",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/sources/v1-sglazhennye/Main.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2ebf14a3533d9f4770dcbffbc0968f85001d2f32ababd52266732439376d2a4a",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/sources/v1-sglazhennye/Projections.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b644823b7275262737020d7473006591dddc190eec72b17e7f9918e3e167194a",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/sources/v1-sglazhennye/Summary.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8744ff410f7fccc558327608c3c70f1ad06f76c4e41df877ab28b51f2abfc54f",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/all-designs/ИСТОРИЯ.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "845725e60ffcf9fa58d957006b5adda5f0c285ee1bfa9017578d58cbab099566",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/.gitignore",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1f16e62201a0fafcee5df91a942415383bed4bd798a30f93b35b73c57ed6a840",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "71b3c650ea52b45857f5bc1bd0a256d6b98c78ec3ef6499a4a2971bd2ac5740b",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/built/project/Main.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "35fbd6ee97f9118e8c873d8622edca3cccc733546b81a2c1945ea1dfcd7117cc",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/built/project/Mosaic.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "345120492dd2f0f06bb4a16d0038358d1900d64200cc54f487ae365d0270dd88",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/built/project/Projections.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "240442437259ac2d28e9205f8d2218e3776621dbf4e8d7a443a7006e8b9901a6",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/built/project/Solid.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7b7cc0fe8924254432a5b1536939e12f0b008cb9909d594bc0aea97fbcdbc3c1",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/built/project/Steps.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "74bca021e5b8195d62c87d96f47937e14da0988c9c9bcbe06719d1d9555bb75b",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/built/project/Summary.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "69038b0063fef051e5bea23bfec87a9a84b8086ed46083b66febd8c0a9277723",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/built/project/Units.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "4ace1a46a488202408eb116c7a21d4d177411cfbd6b87299abad5003ae19524e",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/built/project/canvas.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7fb34c14108f48e63c9f0b666272b8bf522936d913b2a626ba9326591f907703",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/bars_a.min.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "73dd38f1d5c041e5638998eae913af2a13d35a8fb7c160daef71a224eec5883f",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/bars_b.min.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2a1e6b163f4d76b57db2a0a37b76a1f31135f981ffa9f1fc82e6a95cb65dc818",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/build.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c4598421ada5f83ad706e8b2555c8efdd470349ff16aa65607e1300b948b7d93",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/engine.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1cca86d424455fea672494fb535cf376a22c430acab589417271eab8a623a07d",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/gen_days.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "406c8c941ace9d174ad2a628c448c88123fa69bebb8fe7869e131f7ea6ec358f",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/render.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "582d24491867d0d911616d98460fdf5891d94ba9bcc2c318a4e1666569c5212d",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/shot.sh",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6d3b7fdbdb3a94dbfeae8df6c3d4fc581cd7e54b956cd2554177b4c648a4f42f",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/snaps.sh",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d4a21f0de6b7489a0a55e434bfcadf180238d83e09243d72931473d86409eaa0",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/test.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "839434af4097768236eebc51b78a0607420396cd8b92c5658d3242398ce6b792",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/v1.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "790e76999b04fbdc328676fcc377b5bd561490b964cb7ba7d5c15b2cada6f4c7",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/v2.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b8c18cda19ed8822ff7fbaad1e295815fd84aa91569fb7eb7fc28db9f080a788",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/v3.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "94544d8a27e2003cd09bc73a7c92bb76b3bc6805c01fe03c58ab5c35b4fe1b5f",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/clusters-2026-09-28/src/view.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "05b03a34aec2c3699322a512b907ae4d1e06cbeb59b46661c16b770cc0663d1e",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3612433b941723791b3873d136d55a673a1f146d8fdfcd21c2abe75aa0f858e7",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/built/Clean.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6b9029410e284ae67ac8ebbc0bb7080d7c8241a1fd34d1826daa653e69ff5cfe",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/built/Main.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2e03587c710ff8552171b19fbdc811536ebd6831ebcd9ab412ba635c293a53ea",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/built/Scenario.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "80822fa50382b1c0c331af3eef95aad715ccdce67ca3431c883a906fe0146716",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/built/ScenarioV2.dc.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "62b83d5276a404342de87dcb4657f40bd8156b5a83fe98ed3a5f48197a29de26",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/built/canvas.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "08ecb7f290805b3db74920321ed0d4068c1620626ecc313f8d97c4800382b7bd",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/snapshots/A_live.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9a6c531edaacf04aeadf821bb369eb94b0cf75c4e2956da8436aceda0aab2f74",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/snapshots/B2_col.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0ca7b5d0493ea5e51e3a38b7630a84c08f36fbf9b40be4450679d2e04bb90575",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/snapshots/B2_live.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "572f0411f09f2023877015abfe2304e4e6faac4bdd904cec8920067a0011494e",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/snapshots/B2_odr.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "19584447a4ed96642ef265d06adad60bcfd4298a7c7d17dcabfa439c028382c0",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/snapshots/B2_scrub.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "eb565f81874000c1cf028bff1f424bef4ce40b7fc3c5e3a32ad43fdd88529ccb",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/snapshots/B_live.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8050dade6793b41c07ed33aee14b2e99e470c498d469b24908c56ecc1bcb2b61",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/snapshots/C_live.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5f490af82e53d44d180ae23e61fd6dfeafa936519632f69b128312c626ecf10d",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/a.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "92685ebe0d54b3ff51e07b02c11e8e5c72967f00e421376842745f19fc4076af",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/a.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8f4f98b88342c72203c7ba09eaea8632a4d343e2e4b74d63f0a9235fdd0eab82",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/b.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "20698dab608f14fc781dd889ece0eceb6bb65f5cd37b2d720e152002e370c3ef",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/b.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fbf7ad85102d3f3ed06287e307391e69ad41cd3771c65c13428f61819bb81323",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/b2.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a4bc489322f588c302412a991e204c944c14368b4055be8022d04cce30cd6295",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/b2.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bdc43bb4e39020465080f936d18e54538d0ce7db64b3d2de58be0e4627351e95",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/bars.min.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "73dd38f1d5c041e5638998eae913af2a13d35a8fb7c160daef71a224eec5883f",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/build.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "16f174d4aa5d54c97117d3151ecde224229d355f42cc203a98ef1561080415e0",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/c.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "21b541bfdc87636306d6b080a9ff77308949bf2bb7fbf3f01e1aac21bf7bde7a",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/c.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "79a01779e03d4248cec0a1947ec78e5222488507e9700eed72f807a4f1b2a713",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/cl_b2.frag.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6224cc769a26551d841e3ff9cf509e7e4a533cc16be741f91cbb59d5cf2a3d75",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/common.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "56f88fefa1ab07d01e8e167f338e0900f74359c5d75da5d1d6e6e337e707cbe0",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/engine.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9bd9ff8fdce7e5b0fc3e5ce7526932e2fb1d1bc7cb840a13db4b865c5daef7f9",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/gen_day.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a74901fdafc5664bef25a0ab2e7928e25b0aa2c5a4e922e50ba87f9179a7c7bd",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/render.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "acbd143421c488a2c840e7d738fa3702cb05b497e8bfda3b94aa2d08f61c28db",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/shot.sh",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6d3b7fdbdb3a94dbfeae8df6c3d4fc581cd7e54b956cd2554177b4c648a4f42f",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/redesign-2026-09/src/test.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f417dd04c1747727edc542c81587be52ed9becaaf7b2980f2f404d46d3f8fce6",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/semantic-2026-09/CONCEPT.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ab4ea2e947a7069ea18c5dc7dfb7055c6355caf3508992200de0443c73f73b3b",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/semantic-2026-09/prototype.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "22a1bc26d423ff1127470c5b187784c4f201625d5dc9066a1380e9bd3aa437d6",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-2026-09-28/.gitignore",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1f16e62201a0fafcee5df91a942415383bed4bd798a30f93b35b73c57ed6a840",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-2026-09-28/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "95a0f97a3cc6d79564746ddce3d438379c8e906b212cb7e1bcddda2614448b06",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-2026-09-28/built/index.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e3de6d0bfddec6ed3fad16ff5c7d30b2a01fa261da0c7d033dc0b76bc103659c",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-2026-09-28/src/app.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9bc1c52a9babaa1d476c375a994c473b11043d458af54958f39fc73377023608",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-2026-09-28/src/bars_a.min.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "73dd38f1d5c041e5638998eae913af2a13d35a8fb7c160daef71a224eec5883f",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-2026-09-28/src/bars_b.min.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2a1e6b163f4d76b57db2a0a37b76a1f31135f981ffa9f1fc82e6a95cb65dc818",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-2026-09-28/src/build.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e6463585efbd71b8e87722f21557ebcdf42da73bef00278d2c1815236bf35e1a",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-2026-09-28/src/page.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0040fb9786be2cb803c19fbc292d18a596a1f8969565252be5caa3ec38101969",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-2026-09-28/src/shots.sh",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3f9293f700c4c4e42d409f3ccb8afb601f4f99db4b38adc73e55b1be62473f11",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-21/.gitignore",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5fe072a7f227bde6c3c1adb0898b8f856044615d946792c92d8f796a11bf2d75",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-21/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b10e3d62b4bb176c8d816201a5b8abfa39a967e165f947587a520f2fa1bdffb3",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-21/built/index.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8313c5c3a778aee33daa2c72eecfa48aab1533752424705f9d0c5ba2bdf23d94",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-21/src/app.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "42d5ced7d9ecc13c8d958bcdd7b1aaa139a833fe2ebe54583e65aa5c13db0384",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-21/src/bars_a.min.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "73dd38f1d5c041e5638998eae913af2a13d35a8fb7c160daef71a224eec5883f",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-21/src/bars_b.min.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2a1e6b163f4d76b57db2a0a37b76a1f31135f981ffa9f1fc82e6a95cb65dc818",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-21/src/build.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bc71d095a90e77668e8a35444b2dce13a07149bd018ecc1dedec725e5863adb9",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-21/src/page.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "64dd563fabdb378cff5e95d7269af49f792983847cefff3daf860108bf2cb109",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-21/src/panel21.css",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9950b5776e203a7d51d92cd8b36747b443c7bb09300f0e2a02769bf364ecdd03",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-21/src/panel21.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "12c33a2cee455cd32da0f00b88bd01592d0be6bcf8c415b56523d5113f55fbe1",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-22/.gitignore",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5fe072a7f227bde6c3c1adb0898b8f856044615d946792c92d8f796a11bf2d75",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-22/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c6de150a411099ad2327bc239bb5310c026d778c7c40cc16b4300dcfa4dbe309",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-22/built/index.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ace6dc898ef8973e87d87f7f55933281ced6689db19508ae9eef6c3b3e085cb8",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-22/src/app.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bdcc31e32ca5d02d8a8eb31ed107fda1d969908bef8911486409490ebc30dbbb",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-22/src/bars_a.min.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "73dd38f1d5c041e5638998eae913af2a13d35a8fb7c160daef71a224eec5883f",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-22/src/bars_b.min.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2a1e6b163f4d76b57db2a0a37b76a1f31135f981ffa9f1fc82e6a95cb65dc818",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-22/src/build.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ff441381739797b0766149db0c26e5cb6e574caa88cc86d622d5421cdf9eb1b7",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-22/src/page.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1444567b76d57a1c8f5fe6ac06958813439ab1fa41f5b063bf7e5b56a263374e",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-22/src/panel.css",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "585d40de1faffe818156a7b8f3a00de24dd086365984cc82bf5a20689e557633",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-22/src/panel.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6274c85c3ba079b995446f8d488b84c10960b5cfb0093b01b58d533ca0a2f5a8",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-22/src/shots.sh",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d81d68b9f9db2d6c1d93dfe90108ba97cb2372ec63f3a6b2f044a84f00fb9bab",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-23/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "afdaeedf2247fe99816d6c4b657edf985a80490460a00c3397a1953515fffd82",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-23/src/app.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2ff337e083ad913e68965e974f58d75a8d1cd2ed01ca0de1bdf6a323ecdde1bb",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-23/src/build.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "041ade9ef16d244b1b7ffb3f9ad02bf531085ccac9261741312d1ef57e3a9c7c",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-23/src/index.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "93943a4a1c3c67415752db62e375269f5b95b642a5a82beadc9fa03c5e3003fa",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-23/src/style.css",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "14dc8f9d125a7f26f32c326649ac132525672c9230237903ee3f1d1c4cd57078",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "design/sozvezdiya-24/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "89b613f531dc1a515d0328e1e6ec82274d9f803b9d9514678d8be89bdd0ab04c",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/shots/1-okna-vremeni.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bed8afc8f8ba25f47312af23300e93dd7bee2d69661767813af029f48d4de4b6",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/shots/2-polosa-pik.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f7e5ae2f0cfc3dfa6db3fa7e99b1c6decf9a0d5a3600ad45a7e8bb304c6c5fc3",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/shots/3-zona-okna-semi.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "38eed51223afba6ab5ebf79a23e662069a26ff85d11a1ce3d9f96b8b03bfd0ad",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/shots/4-semya-sloma.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "483b0e1bdac116fa4d7178e033da96ca0fac19dca50aff91bcb47b4e2462ba3c",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/shots/5-odr.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b516189075096cb7325f25be768f6ee739cfc2e6777bd5ef8dec107147d820df",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/shots/6-put-semi.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2def5bca58b660052cf3bdef6ca62691ff35c3af209631f2749ea26cf53b3bfa",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/shots/v1/1-rdr-otkat.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3022f1042aa5f4cad7618834d7dc996201d9269ae12dc36946d1f5e2b18bad01",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/shots/v1/2-rdr-rasshirenie-oblast.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f40cee93986927ed8d8fb8a31cd8651c5b561ddb7215d90fc33f4ee6f6e0eadb",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/shots/v1/3-put-semi.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c471c4c2d8bb9301c4c2a101e149ba1a2143f90097c27d7d757afc1cc999682d",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/shots/v1/4-semya-sloma.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e2b987f8a23a5ab3f24fc31a3af3a21b01964fc9771179bc9f364668aee60d8d",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/shots/v1/5-uroven-detali.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7eb35a230b20270facc97df7279dd6d3ea78b3124954fb174827a79dca919a5b",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/shots/v1/6-odr-sessiya.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3c8b1c7dd1c4c816014c2317c9496ced8d1059f87471c31bed3f51e802dae06b",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/src/app.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9b79a9513aa24e79ced5493a06a92122b010e67eff71d9e6f83028fc814cf009",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/src/build.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "84f48727d1f061de1e4842b14d7acce3a0bb6fbd1e947cbecb2df2cef3665c69",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/src/page.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "568bd96effdab04dfb814c273d2a63719b274df3a4b7346afd98922ca2026cbf",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/src/panel.css",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c93ecb57339a33e257c9f8383ca7ebc4b3b4fdcd427607aa47b78d074537c890",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "design/sozvezdiya-24/src/panel.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c66170569934266b5cf909ad021d2626aeab65567c68d0cf8d1f47b9ee0adf99",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "360554a2753b6cdfe353f3332eb77f4a1512e6f4c9b371687dfe6217b8334cc5",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "docs/DECISIONS.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "4826bacb676a489b336ad16b46dadcfbed74f2be4d9065d1ec7353afc1caca62",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "docs/DESIGN.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e761e85a987db12846d85cd5e67f75cc73071ef31d5bfa83d342589d90d02d4b",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "docs/DR_RULES_CROSSCHECK.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "91b59963291332b865c2c197852025e13fdc8b47a4dbac9b304f01188c92b38c",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "docs/DR_RULES_WEB.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c35627323275924f366243f05c12d6c732297a76818f522fe97ab1a8a7df97ff",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "docs/RESEARCH.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0b72787c9830e6460bfc6d4c585b1a4b8cc3165b7b9b0080ad2708de6011f879",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "docs/SEMANTICS.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5ea0b9ec5d96a1f72a23816e1b5631e95b2ca00a9024ecc4f7ed1853bfe6d6ca",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "docs/STRATEGY.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "61d69fa13f4ed5dd51b2b1728bd739d3fca228f4c24cd1e79cac8d4429c333dc",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "docs/UI_RULES.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "eaa4a4b5315e34b97d62f7bd6489ec9318bf4008c0c7a21ca65039a1ecdcf452",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "lab/arrive24.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f64604e5c616d485e5e1b5ecca41971149f93b918370d9537c992945f22f9ce9",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/build_boxes.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0f82daa6272475fb7b4413a0a465e19c24ef06ec52407817bb76ea5bafc2390a",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/build_market.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9789245887226e01152b1f96a57a892d1be0724187cedc9c824e66a03637c266",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/cluster24.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1fe3b782e518f41585096676edead70e8a34b588bea2b8ffae4ea37f23b559d0",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/contract.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "4619d34ffa4602b1877914dedadfb07fcfd29202f34f9a3283a134a50f1e31d1",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/dist/24/d24.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "42da42cb31e1b3c85f6e0201422ad36750c14bb4571a552e4063c050dc1d8a62",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/dist/24/index.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "be0d56c9e9457390c654bfc121dd2e5d0662885f6428bcc80a9e293b29eac703",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/dist/app.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "baf434b644fa6a41f7df19acbeb0c08e810e13330cfa7d07b65361fbe0c25140",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/dist/classic.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "365ebf91733edd4b377d0ca537b30e28a28a752efdb4382054849a4a5e663380",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/dist/index.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bb4601346723478771d3b8b7672eaf6f048980f360d83642627aaf6e98e15fd8",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/dist/live.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "db3033a93b9db6e9dc927c89aea18f0693baacbdcb990dd533479c66fd3d23dd",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/dist/sem-v1/app.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2ff337e083ad913e68965e974f58d75a8d1cd2ed01ca0de1bdf6a323ecdde1bb",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/dist/sem-v1/index.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "93943a4a1c3c67415752db62e375269f5b95b642a5a82beadc9fa03c5e3003fa",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/dist/sem-v1/style.css",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "14dc8f9d125a7f26f32c326649ac132525672c9230237903ee3f1d1c4cd57078",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/dist/sozvezdiya.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d4d5621f67ce6c4df7d64bc3df4430d86d7723c9b0e372e5ba63a8cb04aef5a4",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/dist/styles.css",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ce6bedda0b4a84eb7e2a6e2077df208d09948c398a5f1b991e5822241dee215c",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/engine.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "76f8e26f496b235e237be14318d448a955d54999d854aff81a5024d81a760058",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/engine_market.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1e494f42cc13d1ea23be1eaa214860536101c2a2f8b3346f5b36f5070366c60f",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/live.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ae837167ef494694a1898aec0db65caa3bab7a467b1c17adb2e3d27f9a93ae0b",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/now24.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bd7269f1d27464cc5236924280b49eef6c2fb4dccad51077fc62e22ebe05e64e",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/now24_validate.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "191d6c5f43971e4547749519c1148d3b6e6f8d826330d8ff5d55767235ea4472",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/pre24.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d782e83558b77dbc72719de6fe0228a6bae984dfe8a0edb89782be215daa7bfc",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/q1/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f3054f68ca0d3b346cc13858b5ee5e4cb8fbee03a9257eb67adc9742913ca676",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/q1/__init__.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5aab1e240f7b407669909a3d6e2e07424c4953634e7d7749ccfb8d2794f771ad",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/q1/demo.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "eb9d252ca085d539bd3999ad03fb81f6dd0edca6c4e2f1441099daf7ec3ca715",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/q1/engine.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "062647f0c9b3b54102598f65bfe92be43f9fec05e1f62b7a7618568f1402fe93",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/q1/passport.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5a374590d4b525d3a556039f91a24dba40151d259a680aac8c45c155e0c889d8",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/q1/recon.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "784f879e57a3d92b244ead0759ed45852b058db538f53e7fd2507b6eca643212",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/q1/server.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0851a0605f42613fdf583e8ce3e98f3ccc714a25a69185e977c07fc457ad9e24",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/q1/store.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ff31db563c4fccd20aafed35430e86e311bfdd555a4d5c578046278fa34fa096",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/q1/web/app.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "482839bb2be5e1950f91cbb157c900f752e94689915f52190356f923b6b7b781",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/q1/web/index.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0f21fad505c707f07e8a4b50e5119d698f22dbf09e551d9ac23efcd5b26ca0bb",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/q1/web/style.css",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5402aa90344def56fbe1729abba79053cf298edd0a21b0cfa9bd269bda816f37",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/scene21.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "34c5dbf8d42d2cd9841be15abc5fa997ff0984fdffe12660e04b967ca94fdd63",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/scene24.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "738108a7dbe4182a6444c9cf55eea415999bdaff123d84f4650169ae744e2590",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/semtrace.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e14249d01d97434519ee16157b30daf2e8046ecabf21c3874891c7b328f24062",
+      "role": "IMPLEMENTATION",
+      "protected": false
+    },
+    {
+      "path": "lab/server.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "06180393f53d84e8087e5b8bb8e5b1e3cb7f41d0c6fe2ae5dbe1cf5964d9517d",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/tv_fetch.mjs",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "adf19330de2ae17215d7ea8f6e4e8240fa23b3817755ca2b63e43eeb1ef3e8b3",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "lab/zonemap24.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b929c558ec7b31a1b15e71fe26256af50ef5392c06aa51a94688360409b33f1e",
+      "role": "IMPLEMENTATION",
+      "protected": true
+    },
+    {
+      "path": "meaning/01-zachem.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f8edd7ebbbed0760106a45b14bb6f2392fa3bd5fcb3bbf78ff87e0775ba1f131",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/02-sobytiya.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fa5a49ac7cb8f8319542dea96ab3c6c26a248b06c98b0ae8466158e1e1d0bcb7",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/03-dokazatelstva.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ee6327f3983c31ea17b7896cd688907fe50affbe470d54e27c87368de955ca57",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/04-dizajn-22.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1bf52de07b5e7381046c77aa391f97e49bb16dd8f6a635fda57975972ff463bf",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/05-otkrytye-voprosy.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "39f0ecd879bd83b1af051bab7a1c72d856b3c948cb00c8e4e8fdb9d356daa030",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/06-protokol.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3c19579ef9380575ceb6445bfccbf4084def16eb68a27416d298bc5f83c982dc",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/07-cepochka-reshenij.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3985ef5531618b5382599d35218b22d34355968cb798e47a60c7d2ca797a8033",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/08-semantika-klasterov.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a08947ad713d81ab147942e660cb9231671438fd2b6c7d47661b8a2c8bcbf810",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/09-chisla-ekrana.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a4a67639b3f8a552014a14d69bc6a534c461a103beb55695a6795d5d1e422b66",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/10-dizajn-24.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a71f8bc64ef903bbe74b208c96e768fb77864626a68e074ad18cdf9367da5b2b",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/11-glavnyj-klaster.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "627717e1c3c26ec40ce76f13fb7cd573fa465ebb67f860189e5922137d00bd5a",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/12-karta-zon.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "afa9aea1dd10669bb7dc1848eb7727c21be377c8f14de786519883b4dce5e85f",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/13-zhurnal-vizualizacii.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f335b08bfca55209dfdb667513822f021b735121c52c7e9d669fa6b2c5184579",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/14-vperedi-i-proshlo.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9225342bc7b805fef6e0c1d16dfd2b343db7ef6ca5dc3b7c32716e6fc5137672",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/15-sloj-seichas.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0150c0cd8a4566567417ee6526723a0f9a5dc27adb9a2a6a01a40eff7f1663b7",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/16-priyomka-swpc.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "13135551e5842fbcc4bc08e67b437527e71e3b11c439dc3e42ce13a5eede445f",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/16a-list-zadanij.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5327ac8b4d36cea40caf3d9f5fbde8500d27b880bfd61e48a3d3ab0805c0d434",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/17-rabota-treidera.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bedb326a5dfe61722bee1458986c0ed380e273f32efc69d935f4615c3a7496d0",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/18-otsyuda-na-ekrane-24.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3cc46ab07df67c1b7884ebeef4e436d3b94cdad702161887553eda97d309c64a",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "465e869ffe0d36ca78b0b1a220ac10bb6c2a45cfdbe50288b247ffb5234150b4",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/12-zony-r.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d870f11bf2e0865398221436b0eb398f0127bff7403c13819159fc6b273064f3",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/12-zony-x.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2fe5d23eb90a8496502c9dd95a0e1db6895ee2618d03da6af05cc03703b032fe",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/22-bez-sopostavleniya.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "de46529753f76d02914877e00590611c6e00c5ab98ec3d3c25b495e664d83e8b",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/22-do-podtverzhdeniya.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3e7bc4025a5dcfecdd308e5b83327d741725ca6420aa60982b6db874f8b7cb5f",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/22-mesto-navedenie.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "97def2d0eea5858a396e1ed00128c6cf0bf0b06b16b5573e8382493ec294d813",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/22-obzor.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f981bc71dba4c2f6756a5b3cff35e7daaf7821c75364435bfcbebdb697901307",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/24-oblast.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "90e3c578a258648fa51eeda1dd5de1ce4407ccf147f10d7a60732203e8b8100a",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/24-obzor.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "331e0820272e14c43a8686e6ad9cae2ff802debe2dc68fca9b285ead65492c05",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/24-put-semi.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "353446607f8740eee8b371881c55363dd56e80400e2f9d426edf6d06ed4c4d0a",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/24-sessiya.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "89177038316b7f39bdbdc88e1c6238564029709c6423c742274f568193e578ef",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/24-slom.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "842d8b68ba2837cc9ec9ee8c217e6444cd67247ddba49668d05786ffa111b11e",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/24-uroven.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ec75b46895a76c12930f708ea4c60273554e2f20ee3ad597fbfcc1e5ed810ac4",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/annotate.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "13b503d106ae723346b3db32e1011d5fe32e039ace58f69fab09abd10b3a3fa3",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/annotate24.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9e6f0b9e2aa85cb732b32e3a656ecf4789faaa41bafe36ba5b0c0697878865ad",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/lens15-nq-odr.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "75cf5d8564b1d97ec649720408724ccdcd2ee19002ba9e2e6352723916fb9b2e",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/lens15-nq-rdr.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b0b7b9489335b72d326465c6d14fc252785d3f6d764f729970770c18965cad8d",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/lens4-pole-nq-odr.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3d0ba79a2e423f77a8786bf02917ccc114b84afd38dd1b997e0df2d98fc3e342",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/img/lens4-pole-nq-rdr.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9d40f401c8dc69abfaf09cd4cfde4269a1a2098d60a06c90fc8d50ed45a08eff",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-29-linza-1.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "02e7e631ee6f5b12f4fa53c3e9bc212be4ee57465e664fb62d7fa76c96b10a48",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-29-linza-2.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "db659edd9a2da6b3915aae4ff2c5bc9c7319d007aade485cbbba51fa75e78c53",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-29-linza-3.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "344c6958c5a9a9f2fb03e08e966978e9efc8dde426f5745b6bfdbf6f2364f236",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-29-otvet-3.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "17f2e323f8442e79e37b7b35b6f5275175a2325c2d8e824a38a832b7295086d0",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-29-otvet.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0ae00c4b5a1a2909c49a622d4838e659fc2161462b1d9fa3224ea93b3b0793cc",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-10-patch-2-1.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5feb454475b33ff05fcce8a7bdc32e94a56de950ecf80b3b6394fa28300527a7",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-10.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f4dfe6c5a6eac5fdc9271882cc338b1b5dc1b72f7a64ba7f53cb3a936dd96a5e",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-11.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b954c0d806ceeb3d2e607bb956a65b96b8d3b7e196417996aa2bced94d76ffb5",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-12.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fc605f33021d90f8d37b22a8fe7f9d249940ce769ec79fd3bd6ca6792df82a38",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-13.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "82c33e2c899e5625e3d3e10ca6f199e4b9c4bd984b62671103f1e3d83fdb699f",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-14.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6b9996123b458cac20054ec5c3bcdce5866392d75fe6dcc5e1f6405de5231de1",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-4.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "32fad73bc1eddcbfdbfbe072f728b2ace88c2f0fce3417154de54173f4bb16a6",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-5.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "56a65e11fe4180a2e3ff4b19a64afe1452749cfd42217648e1f58e0520dc0e19",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-6.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "dbc7efdd6046d90834cb66291e8df04b75b8ec39baadf790ae10808fee2db1bd",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-7.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2987a36b6f6e01922b9f3cfc4602218a77bdc0d57a9d3b54bb535f6aeb50d9b4",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-8.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b63d1768e541434cfbff3cccf8c7aa6fc01fef1bd6d121d1a0390391377de0c4",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-9-patch.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "168b1ffb99a65024786f365781162be25394a26403be3077244fb81b54119159",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-linza-9.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "312d266279ef8c29c794116f71be9738c94f0a53cb12820d52f6b4f37d777066",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-otvet-10.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "29d9cbccea334602f662d08de6fab039e467af0d27c364d8ac3733979b49fcd0",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-otvet-14.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1cf6d48c91edb511d321c22ca0622465d7230860d5bebd4b90d195a059f5609f",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-otvet-4.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fe9287047c40e9b019c445905174c6d37ea8b4c3a71686e7167ee01651763ad2",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-otvet-5.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "52a86604d8496461eeae914bb44b20cffe2fa5c9ff6d659fef287057baf33f6c",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-otvet-6.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b5878f688bf9ee1362824d6ecf7bf0c85c2c7c3c63a9d8aee7ff75c9599c0443",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-otvet-7.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "15127f4cbb13ae06bfc88ff50705f5948ffd4e0d0d816d0e8c10f2caf9f5427e",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-otvet-8.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a9c4f67f55bd369c22b9a29d2214606ae49bd9729c2b3c859f7b6d32e8a765b5",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-09-30-otvet-9.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "78aceb3fc9f449cf575e020cc77e5630b1f6fbb923bb6cbe32bab72453755a9a",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-cluster-synthesis/DR-LAB-CLUSTER-SYNTHESIS-1.0.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e55df077113976954b3dd9f2794e32d7958daa40a8dbf1587f929a4367c7b0ab",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-cluster-synthesis/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "28a7b8559ff5ae987b077ab8d207392dfb60bde9746a071a448e51f0010360cb",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-cluster-synthesis/linzy-audita.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1d90df64a4d38df21af8730c7203012a426d2a9159d9fbc7e9715841781a09bb",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-cluster-synthesis/otvet-auditora.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ced76c7515d3211e39f8119932961b2087773c855d4d8ed1e25b01f1daf4c578",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-cluster-synthesis/peresmotr-avtora.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1bc52cc269ae4bb67fdab1ddc19561ac401af7a88815d0c9c1c3703d694b5983",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-linza-15.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d2f6c7e140ad0d53c1a42abd9a8fce0f0f4016f1aeb5b6c2e1c49c78551ba304",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-otvet-15.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0e6989ed258a8e1d96f023776d7fa9e39768945e9861d371c90bef083861d815",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-spec-v1/DR_Lab_semantic_specification_v1.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b9345f777586a8db84003f8bc6030be085c27fde055c8903c39f7d5cba57ef92",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-spec-v1/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c88d2586a6a37a5debafc8cbf5a12f2ed207985ff91fcd38e4ed1b1b46290ad9",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-spec-v1/validate_semantics_v1.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1a2e47b74ba23c730e16377917272791aa43bfe1879f1518b2dc01aa051d1362",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-spec-v1/validation_results.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "03ed36da76c300a752e9b682d81ae16a99c18dd8bfa069892fbcdcec8f436b3c",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-zone-map-2/DR-LAB-ZONE-MAP-2.0.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "089c56547c26e5277993dec9e07f4daa6c84a371ec33279c12969f6a7464cc43",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-zone-map-2/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "eebb702c1b3aff5406603d544006e22f86b32d962612beddb48a5bee3af86000",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-01-zone-map-2/otvet-auditora.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a2ca42d438d2359b3de5a0267b4dacf06b392e1704c16c23c3579ddc6f47e226",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-06-audit-vperedi.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "14f23ba40c9eb9a5fe2fde2a342c514a65d6208fa8ede103e7400fc39af51f9f",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-06-now-1.0/DR-LAB-NOW-1.0.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3e968594dcbbc17f617842c955da638430399ce797df873b97f0e11541ea60dd",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-06-now-1.0/proverka.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "177f4554992c34a7b65598f382534bfa9cb1596407c895e63fcb2a27720c074d",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-08-osc-1.0/DR-LAB-OSC-1.0.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "95d3ef2c5573a1bab2456ab89550d7e72db873382afb67f4b2990421f920b3e4",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-09-smyslovoj-karkas-i-roadmap.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "75395a76463c5e7c774b329fad778dd91c0ed7f6c4c7ba892f1d5da2b5b453bc",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-10-prihody-i-prodolzheniya.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b16023c750370f88d55993da52862d1ced265f5d4b47eaeee4832b4c8b6b29c6",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/01-esse.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "68659e6f0b1d11b26ef663805d11e4f8cd9d24cc0d74a20a192e1797d1c04326",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/02-semanticheskaya-specifikaciya.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "efc99808e36a5b66042fa4c535c66c4085684a5dd04813ca3a625e4671c2ce43",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/03-smyslovoj-kontur.svg",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b9b464b3e3606f115d8336f776f13c23c429f2a5bf5c3ba4f3cd046a1cbd943f",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bd63303b96f118b6b77a19f301615906078518610bbb546132cf0eb39cc3bc45",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/01-put-mesto-i-reshenie.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "da51e34447753102e64f11f26ea48d4fee7b1afbd53c2764a122ff8ea18b13da",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/02-linejka-a-ne-orakul.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f922b16f1bbcdf523eed346da5d286f8cdc94fe89668a58319721a3452cf74ab",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/input-schema.svg",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a47c243c4c2585b691ca463263262fd3664f68604bba5820e7fe2c31ccfe1149",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-esse-linejka-a-ne-orakul.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a0064ccd1f3586a8a0e2a259f5b8d9c672db177e7ad1f451b2c76e68ae2d1bca",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-film-i-moment/01-esse.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7924c5a3dd849fb7714a4a1360bb5e8cc5977781ca696dd6d1c64c480ddaf23b",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-film-i-moment/02-semanticheskaya-specifikaciya.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "40942bbbcae21b2381c86d6ff624c6bfbbf039737b1e44f67f7b035884e7518b",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-film-i-moment/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "96d1d807fd05cf24492953420724edb9be128da0e316a09da6d7705b680e14f9",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-independent-srs/01-semantic-audit.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "576efd4fe8dff076a7ab6a41734252e244f17163ad3f115224653d48e61a1295",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-independent-srs/02-srs.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "092b6f53d008390d9c1648b41ce39820093205eed726969be18f81ef063aa140",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-independent-srs/03-q1-historical-pilot.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ecbdeb480c00b0626616f4afc1ea2f3e3dab8cc53edc86d33905c0c123e542ab",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-independent-srs/04-engineer-roadmap.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f68afd648771a0bb1d54500ee4589132f43c4e569c2505a91845eafbe905ba78",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-independent-srs/05-self-check.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "da76ec4362113381b670b337bffc0ebd5d07bcfd27004ec49d2ac0088420a759",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-independent-srs/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9f7aab0ec63b80e24945e1f0a86dd04488e2a69190609da7e5f4201dc0fb763f",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-kurator/01-esse.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2207886dff35b707a13e52365428d9d6d49e89e8c22c74115daf1a5fbe0001a7",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "86bf569211413fc9d57a2bfc1e9c7c2d38a4b67364e67de9e3180bc9d09040d9",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-kurator/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "74ae63e4813b5bbe2930d74c0ad81789765ac69ec84e711b1444a40fe648225f",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-otvet-budushchee-mesto-moment.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c4c0979b9228693203891a34cac4df50b9006a3a314c498ed7858070c61d291a",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-put-mesto-i-reshenie.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0d4a02744828317ec15a7716b74d075c4de933d34ae9991af61b24e765b001b6",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-12-samodopros-smysla.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b388d0d52cb4dde7abd77a68c474b2068b29cdf44394f06d48a5fffd21531ec0",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-13-semantic-architecture/01-DR-LAB-SEMANTIC-ARCHITECTURE-0.1.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ce986e332f4ad0a036e5d4181809e7ce1578ca5042920d94a2b4930e23c7ccd6",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-13-semantic-architecture/02-DR-LAB-SEMANTIC-ARCHITECTURE-0.2-dopolnenie.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a780119df2f6585e4c7f33466c929331d8856f6e55aab5fae45fc64a84207f47",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/2026-10-13-semantic-architecture/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7e3d7397075741a6772682ac4af2b18b8b52609066960afd023edda490b68ae0",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/lens/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7a2993424f397c537a755f7ee405e4d4655ae21d810e476e9ec3983586fe9c34",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/razbor-2026-09-30/1-rdr-1150.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f420fc098db5a8ebe7c4456fde0f80e9ee061e7db687b7dacb75d3e70f997ab3",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/razbor-2026-09-30/2-rdr-1525.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3eb8441a19433564ff2403aa63c05595c8d911012dcd2f9ac77eaf25bd9aa744",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/razbor-2026-09-30/3-rdr-seychas.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2822a2092ba2dfce5c781ff7c4f628e28bc99fffcc1242b48683da0a8e99ec25",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/razbor-2026-09-30/4-istoriya-semi-1150.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "96f70e17160f7d5ea05f9ac1d3348ea33d3e8e9e02efd45d22ee23f1b12a92d3",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/razbor-2026-09-30/4-istoriya-semi-1525.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "cd7fbb3440937f610d7f31f49295969a4be08c805c801e13fdd4ebe3f8974a57",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "meaning/razbor-2026-09-30/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "922e457ab08deafba098e71e017565bb3ee68bdc7b34181ecd6ab5a1ebac5e49",
+      "role": "SEMANTIC",
+      "protected": false
+    },
+    {
+      "path": "research/.gitignore",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0819c34014129b112ffeb031b451139d745ddce52c023b0a8369a392aaa5d121",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/img/s1-A-hover.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "869671ecf22a1423cca7de7173de52f68f1864a0ac5f847649a5e50ef5dfd6fc",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/img/s1-A.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "16677a997508c98f5043ca246ff544817a250b287df9f01c3becbefeb3bb46e7",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/img/s1-B.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "914ba891f8068528ebfc230903cc857187564375199282091e6e39cd276801c5",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/img/s1-C.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3d88df692cf9fe5ca31f03f9a75aa3a8c73f1cc3ca4edde197bda36e88117451",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/img/s2-A-hover.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "03214b9ebf6e24edf9512f7790bcfdf0a3ea6483dace1148114ebaa3c80af2b2",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/img/s2-A.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "88ea5776ced20e2ffb77882bc2fea17e252e7af7c01f7e638861ff1153f46a1c",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/img/s2-B.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b012cecdbbcd5c03cdd084a7d0b3ee9085e634c2e845a3de3d78ca7dbef934f2",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/img/s2-C.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8193282439cc32565d7f63036d435d0e3877ae888e7fde092ec0abd493137822",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/img/s3-A-hover.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "51b1ef764dd0b2dff60969e04356572336aa33784293f93c20fd628d94609d5b",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/img/s3-A.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3ef10187ebc880133eebb8985daf4082eb1c38f923519f475ff3739474532943",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/img/s3-B.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7bdca9be10587ffb34954e97b916054de36a6a48c0003e80fbac87127d0ef8d0",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/img/s3-C.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d5b5b1c7e45dea4334cf6fc320dfda60acce096eeffeccd8c619b91941710111",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/shots.mjs",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7c2771938272d46d16a53508860da363883e99fab967019366540e69b6411950",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/src/app.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7ec51672aff3b4e2e7e21a59c612f650aefb37e684a0d89b3e67e213711da098",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/src/build.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fe4e18fdfc018eff573cdeffcbd1f271b5af9c3fd52ca10cb5c23ddab23f3843",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/src/page.html",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "568bd96effdab04dfb814c273d2a63719b274df3a4b7346afd98922ca2026cbf",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/src/panel.css",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "afa8af6345b455321bb455e5f461c7521cc1ef11a6aa25ec967d5109c5427826",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/now-1/src/panel.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e3a47595c9a1f948cdc728c5ab4dc6aedaf84a84e8b96c5bee3878ea59200f3d",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/img/brk-okna.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "40fc1eacb483d28a099698e7496a1610f0d7ae9857671f8d7cd4de1d83561335",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/img/brk.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "aa10cfb691953db354cc83f7a7363a2862f9be1531f0fd14128140bdf87c52eb",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/img/late-okna.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a8b28a9f4feb2fb8db4685bb52e54c551e3f15b404dec806ff1736a1072f32d5",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/img/late.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bcd56fd74e0332f411611d1007b117065cb7e73a69f1168fa9f76df66051c459",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/img/live-2026-10-08-0504.jpg",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ccda4013684649e70256718f431671808739ead1046eb1c3a725264f60f446b0",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/img/pre.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "87f3db523d5da8e634239acc64cd6516b20379100c08ac329bf6199f72dc91ee",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/img/r1-okna.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6a311731cffb528561cbd844407a52e09ce8998d3e3263595960d2002d9e35e3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/img/r1.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "85a26c4c52024551b9061d3dae6bcf554a045a6abe8e81e5f748c87cfa881c3e",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/img/r2-okna.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "047b03df081e39e190e640e8cbda4114c687401661f67025e5e83b814c8960da",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/img/r2.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "27820f98ff5bc0ad345ad4a320552e3acfb7bbb46cdb20bd2bda94500c717cd6",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/now_joint.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a6348b2fecd92e9b4b3bccf7d4bdf9e0bde41415b2ce9d4a2c8fb6785a1e9657",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/order_by_state.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "22c4a1094ac6615e71aaf954a2aa0b7a0d531af5926ac53392edb53a32477009",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "research/rabota-1/scenes.mjs",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "48dbab84046c7eb3b0b3014b88c8465465947e0c27c0d9f1ba03050b96c5fefa",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "spec/DR-LAB-SWPC-1.0.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f51df26ea31d6550f58f8af798da5e29a662f8a47299ce9120860f0ef22d299b",
+      "role": "NORMATIVE",
+      "protected": false
+    },
+    {
+      "path": "spec/DR-LAB-SWPC-1.1.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d0a79d01579d04dff789ff48ee9014389d15bfe3108dbe6322baafc047c50635",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "spec/DR-LAB-Semantic-Contract-1.0.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2a7bcee886642117e3fc36ad25b9fb4b0ed4bd2f812128f73bdd16365a5f0ae6",
+      "role": "NORMATIVE",
+      "protected": false
+    },
+    {
+      "path": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb",
+      "role": "NORMATIVE",
+      "protected": true
+    },
+    {
+      "path": "spec/deep-research-report (15).md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5a1d99dca14b2084a831e6efd3176e04d671a6c211c6e18fe77b5f967dc67e1e",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/deep-research-report (16).md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ba162a1c655a32d636ea958cf396cdcb00107ba19df49225bf01cd734eab8ba3",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/.gitignore",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d32f2dc9982ff96fab4e9774f95eff2f22649778aa72838f705358f38009ec07",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/01-stek.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "112f116eebdb7a2f7b5804e05d43e6b080dd398ae7e659ae2082e8357fc54b34",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/02-obzor-grafik.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "14cdb9cc4ced19a8579d4102d60c3db8966fa3718cc0e3771d6d35b42eadf5fa",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/03-obzor-panel.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "35035950d731940c6fe6b86ab1a7e08483fd35a6bd77612c4ba96d666349546f",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/04-polosa.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f222d3c20f012d9ff26bb87dfbc52209ff581ef8ba383ed53213966b19b6586d",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/05-okno.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5ab91defac9e1aa41868d88a15e236f3c6c65a82161fac4b800f67c9cf7a236e",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/06-zona-i-okna.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7c28127b9d7f50b6df5fd369851f6521826e99a66e7ffea25a251a14a57ef56d",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/07-sessiya.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8ed8af81e18a0e43f9c7522bb09af59dff84edccb115ef7af0c04e69c42dd2e6",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/08-oblast-i-uroven.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e8fd328fb765a07fff76de6233efd786499b3628088649af4d18d403616fd7f1",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/09-put-semi.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ce6d0ce5401918b713dedc15702a62e254377252a5f3c10c0ebe09d92c95d267",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/10-semya-sloma.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c314a781d8d65d1b7d2533cc9ff877e63dd22f483d7af71924fbb0a0c840dcd3",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/11-invarianty.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "54927c507cb049083fc02f49f0898993e71c786259be7dfa2fae06137a5c6a37",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/12-swpc.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "14075dbcdd49e64ffc705ed603e06a4f2c79656fa6aea8ec47bd97c959116375",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "319ce4c78344ef8aa1d799e0403751d3658d19f81a8919c0f2f78958c80138e5",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/oblast.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "85f4bf3dca4cdc9eafebc80b8e2af124853803b6026d3e2c5f3796e57b0b52f8",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/obzor-grafik.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2586fd318ecd89baeab4f77587d1293bbe788758e95647976f981c311de89902",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/obzor-panel.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2a8485b5a730b73c66796bc3031ba8af41b9e07bf7fa56729dc967e443bdb054",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/okno.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "063bc3525c52e65efd350da51b85c162b25b5a9ae17c7b4e5c8dd9de2e7a6ce7",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/otsyuda/1-otsyuda-vse-dni.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "01b34f213b746998792fdb302e99a06458069eee3bbb94ad98140d6ab8f34573",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/otsyuda/2-navedenie-seredina.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e4b807db38187a5914a9ed8e65fc841bfbbf8e2fab598ee426913557a0edb78b",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/otsyuda/3-den-nedeli-malo-sessij.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "044a1b82bd9b5084b74d53ae0e9518bd0c1e9fb5729fc64b788b2a059540ca33",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/otsyuda/4-uzhe-doshli.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fe67b90e810950299f2a3c141552ac39cc68cbad4326424d620d4e6f9064e237",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/otsyuda/5-navedenie-minus-07.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3e7994647e768f6370362a5d4ce718b4396e3238780afaed6e6e81c64a0440d5",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/otsyuda/6-dr-sloman.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "78cc645ec917aa69a1c771e8d242b64b8d68a9dd43865b485f560b8b06561d6c",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/polosa.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "96e4d93e4afb85fcd5f5d05c0da4344a8cccc1b945c76044566536bae625e1fd",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/put.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "99f3ca0e78e443d36bea2c522d76361d165c9ffa2ba3c15ddc7cf279eaba3b56",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/resheniya-08-10/1-do-podtverzhdeniya.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d8ba3320205101b6b6dae348b62c2395ea73de66d96ccd2cee91ab763b880d54",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/resheniya-08-10/2-malo-sessij.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "38f388c0860dedfcd59a1500129fde048befa9a0adcb11f635c0237b8800174d",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/resheniya-08-10/3-faza-otkat-ne-sdelan.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "493877f441da4208ac1ac19f15d02c9f66c0c73f836b734a197d82accd97af29",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/resheniya-08-10/4-faza-otkat-sdelan.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "cdf0b58c13d06c9f1fc59dcb4bfa427579daf3b1b2841f0808c406b0e53c317f",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/resheniya-08-10/5-semya-sloma-malo.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "715b73c9236eaf38f706fcfaaa2f38d38ef130d363bccfc323cb57d362760c6c",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/sessiya.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "48b392d368007af6af0846c94258bec3ed1d5d32cdc062abab146cd9ff583966",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/slom.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "00d4934a3012348c89d1c93a55e03a639bbcf686110d39218f740d1a45192182",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/swpc/1-svodka-skryta-baza.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ecc9ba35c0d2c1d9b367cf5f1380abe3324be69d8a4c1106b00122d94847237c",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/swpc/1-svodka-skryta-kandidat.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "edd4fea858a79025d313faa04d4c55ad0a4166b3cd089e72039606ecb884682a",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/swpc/2-zona-snyata-baza.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "816b4949051270b99a471a1085ff76678f454c0912fa3239daf9bfb156203292",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/swpc/2-zona-snyata-kandidat.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ece72a2f343d68a822f87026d8194abdb1305940354b84855d379e62e9e4c623",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/swpc/3-slom-1600-baza.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3101e9f9150332ad8c50c0a5c62b52c1876a6021c78f6ce46d5792ef99703036",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/swpc/3-slom-1600-kandidat.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "79d4edcc1632279021f21971898163186f49274abb07eaf0b60f5eda4109a5a2",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/swpc/4-sejchas-nedostupno-baza.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "61ddfe16a5dc0c758d17b32d958070bb66d123fbaf9b4c1d06dd7627058c2088",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/swpc/4-sejchas-nedostupno-kandidat.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "77e0bcfbfe244c78c52162ce80d91532b4a4dab55e8057a30ca7817f93a2ed5a",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/uroven.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8f84f366accf69a43f5e001fa6d791ad6b335b32b82219cc2d3c98c0593dfe01",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/img/zona.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5de58628064850ffc71610bd3f6f6031d5225810f804c27e938eba5d88802787",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/swpc-kandidat.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a61b570a7a2afbf3d65bd50dc0408dbcbaafda5fae91083ac8a44e5441de62dd",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/tools/annotate.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "4c34e960319565ba4b171498db277f97eedfb32f225701030fc4da7fa8ad2979",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "spec/ekran-24/tools/shots.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f938ea1daa4521f14b0c32c573ae757a0b3510b3b1b33ce1bc107751bec7e307",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "start-dr-lab-24.cmd",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e12f9be17fe1147c2b657d9b5fb8a20fa7507b2f82c016e0e50b74044451adf9",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "start-dr-lab-otsyuda.cmd",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b0111efad395b4b83072859b2d7904aaa6fb486c403bad8ae3a2c3bb69a05603",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "start-dr-lab-otsyuda.ps1",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "850ab994a25d33428af1197110b23a2d3ec85f480315d118a5d535c7f23fcfdb",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "start-dr-lab.cmd",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2448dc1e46e072e9470e3c8461b59c96daabf1a1fb3ce1cf26c9bd38e7ed84e7",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "start-dr-lab.ps1",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "78ba6139b846238b1b0ef1a9286f786006e2d0abc86d5a4ea10b35a25e82aa89",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "start-q1-pilot.cmd",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c8d91eb9d8df13b4db524082b8921d7d9b780a2a3c40de14d8d77410976e33fe",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "start-q1-pilot.ps1",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ae85c657afe71697521a3b8c6cbb6949096a65f8ba11cfd54027a4382698cc61",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "stop-dr-lab-otsyuda.cmd",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5989e201b964d8b4aba0b025364b5c8183d109b595152a01f9db68d924684d62",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "stop-dr-lab-otsyuda.ps1",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ee5cb5cf26a4ae363af33acd0da67de87652de309f1d9eeb5e2334db69189a8d",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "stop-dr-lab.cmd",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1074463e7321698ab6994f8b7675a27ed8ccf1a27706cf28e91023537228f000",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "stop-dr-lab.ps1",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "39d9001b9fdd3ae958127a58f8f992518f74e8b7968d5a335dbc12dcc80056c8",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "stop-q1-pilot.cmd",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "802a025dbaf468435b087c53aae62662a420015974f59715f9d939926c4c3ee8",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "stop-q1-pilot.ps1",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "aaa2142f788843586f1dd6fbb65ae4d91da0ecf74398f85e09f26df405fc0ac4",
+      "role": "DOCUMENT",
+      "protected": true
+    },
+    {
+      "path": "studies/audit_2026_09_29/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e69e001d604167183fe39622f2e1faf4a0da475e826470b8dc32667b70b1450a",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/anchor_exante.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3a144d7c659855df2ec6e91d7d37e792b8b7f36b37ca715f8f7b27fc3d0ff8a0",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/anchor_exante.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c4653fa6d621758160f37d63f8451103c69e818ef1186dd31d754efb77679fb3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/anchor_exante.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "04b1ffd9a6f95d3e1a21a437bd25ddfd650041e8cad50d71a331a30cc5d84946",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/anchor_exante_robust.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5520debd9e38794f397c243ed2a1df34fa5b1682166f2c6a7022c73d35e907f6",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/anchor_exante_robust.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "78e4b8c5e29c37430aa2043eb7959f09eda24196fec0f75c1ed233729fa9455f",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/anchor_placebo.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d94d65e6a8f387107d346b9c1d1346d0bd4756b5082c3b557ebc7aded07c45ee",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/anchor_placebo.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e7644458e217a6787ef4a20c6493425140e7fb07223b7315baae2ed14f580957",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/anchor_placebo.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f5e735f884d1f1b99e87b08fd50e3a9c8b963e63fcb069be841a22917b9855d4",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/anchor_placebo_fit.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "60b5458370503009825cf7e65a1345efcedc0efce41bf499db44a856ba3b32e7",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/anchor_placebo_fit.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "89aec2c340cd34412779614f4d397cc5a171347f6bc7afa82ef6d17b1cd2e881",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/common.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "69be88c2e3fe9db9ebe7e3dd298e50227b561f2fbad06603931ecaa3e630945f",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/empty_interval.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "661b0ca2c7c651a6488f9c196028a3fd4b174d21bd74746aad433c594fab40da",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/empty_interval.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b99e57d38b72c45a217b1da06ee2cb817145f5e2488b580aeb894abfac79b8c9",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/geometry_nulls.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "eb524f78e95ad430cefd517874960868197c9edde14cf6d62ce08fd83343431b",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/geometry_nulls.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b902708be36616bd519a894da292612bcb968a796ddfaaedcea00edc6285bf18",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/geometry_nulls.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5966cbbfa7ada228ff435cbf339997587a9c742c707a5ea448f432237d5829a4",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/models_vec.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2a0bcdc6b3fc1bc74edadb269081b6ecd40d319ce56fc19897ff97886575fea0",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/models_vs_colour.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "355a4479988af4604caeea2cd31fc7d01d765f19661ec60c1100ec220704a623",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/models_vs_colour.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ee1036a9a749d5ec5c33ae346c0cb93e9675010ca78c7a39c06351665c7e9b3a",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/place_arrivals.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "34bc418f81c8abd723e670c1c48e70937dfea6400d9051e27bdf351f3a2f809c",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/place_arrivals.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fe477101099b70638983e8b8d27a6fd23ba825e5f82a866185591318026c293d",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/place_core.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1c36aa105954e206958cc9f3e117f2affefcc485224bbee2ff8139eda10c3bb3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/place_core.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "aaeb8fa7715edc2b668c78da714ea86ec26c7ab64f96960e69f7f69a312cb08b",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/replay_core.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "73aff24b564a7544b7d9c1e4b832b441ad1396a9bbe47e7267049fe64b89a4f3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/replay_equivalence.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "29043f966d953980a814bd384b07e39e6bccab6288f7a46abc18fc64de88fef2",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/replay_equivalence.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ff1b3bbbabb47e3aa22c4267af0d7a99b47e1a0c852c4712b0eb28d95d174ca5",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/replay_equivalence_values.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "01ae1a1a9ef151fcc87ae52195f8a6cf8d69cc5b52c54dc89209c954d96829f5",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/replay_equivalence_values.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3494a80b35d74dccb79e31acb61070e292ef01ce3e11fcb2ed3c990b4b9a9e99",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/screen_replay.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fe471253fe397d6a42482d82b687351e1b6521c5b85eada8a94de53baaaf4662",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/screen_replay.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3321a488e85b720b45da7fafc2f9b7e8f8d51d0419c839643ac5b8acc95e3416",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/audit_2026_09_29/screen_replay_analyze.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c26983d9ef575559cb1344419332cdf631675c1b0fba40077dd2004958dc1f5b",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/break_to_std_2026_09_30/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7645da2a9e2ba093dc43f9cdc1c69f249e0650cca4b9202d39a89df21d55b369",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/break_to_std_2026_09_30/break_to_std.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "95bd4eec61186c545098af443ac576ecd8092de6eb4f0edad66e616ca4b9298a",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/break_to_std_2026_09_30/break_to_std.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bc4c2f4349327cddb8f35b14714b4fe8f6f737b6b0cafa569534124dd34b76e4",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/cluster_synthesis_audit_2026_10_01/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d54ee9ac05900a4890da308e1a47c20a44102fb9ccd083e07660d49e078b7b29",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/cluster_synthesis_audit_2026_10_01/audit.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d14764b207125c1cff90ab378988b3c8138827b108a017e9c3329b6d9a49cf20",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/cluster_synthesis_audit_2026_10_01/audit_results.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0c765e1de6ca31f9d95cab87a1eb7fa7c416096c7ea5010a767f84005d7811e0",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/forensic_window_2026_09_30/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3a8bc6a5cdc9093d0bcd4194c3bd56877a9c63d433103c1b71179955120a9a3c",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/intermarket.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5963c0ebd74cb422609f7cc0f6b04094893731329144b4d770c32cfd4e6a6e58",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/intermarket_rdr.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1f655a6dd6bef4070be27dc7792d52faf27fa9db7e44519323b90618c10803e3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/intermarket_rdr.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e00e3c07fa8200ee55d1c4265ce0094ceedbf1922af3d426bf91935b8a5d470b",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/kadr_2026_10_12/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f1734f4fbd2d0f2bdf5b7a2c31716ea5e119e5cdb9b02812ac89ac49ca261f18",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/kadr_2026_10_12/kadr_checks.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e3d3a940c1154fca675cf61ba052d3aa37de932008ce840004fca92e0df7289b",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/kadr_2026_10_12/kadr_checks.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "37a6a66c013418d61e2861428c103b1d9119005340d1603c182a256d76311fd4",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens10_2026_09_30/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c9604fb3c0e6820ca7c3a1bf21248aa1b294dead5daa6a84dfb3ed8b336fa218",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens10_2026_09_30/field.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d66564c156dc04973b558d2897bd3e15fc65c37258a6e2b7f49f5fdfd3743376",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens10_2026_09_30/hierarchy.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9d5272110e50c411e90d871ffc01188f181e3b20d3939849bf0d63cb952577ad",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens10_2026_09_30/pasport-polya.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "220ef90f439ffa72f1943a249236d05a904da940d748ab6c5d748649ff8a82e3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens10_2026_09_30/synthetic_field.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "67f707b85eec9741981a702472bd4ec055a5e747cb8cf4a20fd890546177d6e3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens10_2026_09_30/synthetic_field.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "43c8159e33ceceab045f258f925e676811eb4f878df432f8105783aba9f359c1",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens10_2026_09_30/synthetic_hierarchy.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "83b1a5483b89e5fa4c861a5759a8f201770dc9cbbb2f7596845135596e218d9b",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens10_2026_09_30/synthetic_hierarchy.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e95aab0c1fbd8dc333a3af8e5aa23045c06ab83c543d7b0f1b4c6c066fdb9195",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "03b656a8bb97b8063b8c0799092050b780514bb22c9f7230710a70957445a9e9",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/figure.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7bfc38cae0740792224f4e83cd4901b99d732abfc446f47bf09bd4b2bb2f0956",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/log_ES_ADR.txt",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "39d2eec8ef00c1c9c9683968bc3caf216ab1965025272b3bd83434708325a426",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/log_ES_ODR.txt",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6dc62c360271e6f136a79efc71416c3a6b00179852ad353ce7ef7865a8411f8f",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/log_ES_RDR.txt",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d0b192fc66a89c683d627831088e90a26968c1f055431cc6af583c88d21e7648",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/log_NQ_ADR.txt",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0bfb8ce9fde0bced4e60e4afcbd285a698e35e4bcb5ba722552d7930c3c90c51",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/log_NQ_ODR.txt",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2fc0517cf4831aa9d16092ee95d9501ded36c03593fc65dfaabf77b72264ce4d",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/log_NQ_RDR.txt",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "70cb94a849fc56a710825cacc43683d3dfe10f92d7ba6c77f4e1b25f958e8cf4",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/log_YM_ADR.txt",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "376780c558626fd9b028777e3273d2cd8b4773e66ae46c8dc3c95d2794a85c2f",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/log_YM_ODR.txt",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c155bbe97da3d9e89de928efcf2777c55de66d257b71ef3925d346bc9fb1ff4d",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/log_YM_RDR.txt",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "84fc4c6b71a1583c28f024c25866fdd93816157f14fff0dcb94cfe310dc79e79",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/log_power.txt",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2569d4436ce011f35284a91edc220146bd5cb6d42864966e4dadd6c332c2df57",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/power.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8945118d789843abbe5057fbebd723ede5f269267a2b73997b19354ea1e394ce",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/power.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c3452dddf753933aaed3e06c02dd7b4ed3eaef1440178a3210a1465802d05eda",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/report.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7cc623d1c4c4fb5e1a04f34511f7c75757ee562ff1c6435aaf75bf7b9017cc6c",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/results_es.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9b87122c490436978390e7cd4b48b0333edecd165ba63768af3d5cf42844ac1e",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/results_nq.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "089945e4ab71c25037e6f4eb52ae8ce399a3fe387f1a244f75aac2c0d236788a",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/results_ym.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "60e1f6218857c098e4355b90613ab174949a1183e99ee789a97c2d1e0ad7e2ce",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/selector.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "192444c7cd4693b9567e3d97f200fa12211d145132a1c79748a9fb0f8f0d57de",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens15_2026_10_01/tables.txt",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6a8e08d470393a8dab7c004bcba59e70f7f73a73b5276f90ea89d47bad793fac",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7ba4da6dc38131284449171fba6a867d1696905c15b5c1fa16239d3a05d7d3f1",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/c12_stars_fields.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d535100d15718712b5388743e02eacaa335876c07de7b737a0ccadf100ee251b",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/c12_stars_fields.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "cf42dc43494e1912853c1fc6c943f9dc6cf647cadabac31f614a8de43f2d29bb",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/c1_example.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "594d09f4fccb87abccc515f44d7cdf4f4237002722ca358d16dd992c1cf34207",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/c3_frozen_dynamic.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "82c32ddab64cb00ba2ecef6c632e0adec32603009f207f435e440747541225b1",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/c3_frozen_dynamic.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6643f27c0673db7fc58e137f79b11109ff69745514835cd8257b5f4dce3b66db",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/c4_level_event.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f40ea8c1b70c26688bb60b6cfd9cb0222c8255b709b3139109370c00f6292a83",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/c4_level_event.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d9ad84e2ff69a825c3e68a12931b1a3ef358570672e2e8700cea9c0b0ceab1c2",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/c5_minute_alignment.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5476d4a4c5340cc0bbdf6f20f095641c2f69f515e7ebb3570cb3275a9f9a2f13",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/c5_minute_alignment.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "db8d1199465c57d3c48adc506d49af0e34ab1c365e2ec90d0cbfe0993eed1304",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/check_equivalence.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fe391ffeff7fa875211042f1bd0fe21dc58a18987bde314c2a1dde51a7e0d316",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/fields.npz",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "dc97b7be282870516606e568b15d01d80f1d62abce0345c8656f918e2e5adce6",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/lenscommon.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5205aef00ef9e106d0c86ec68c561ad80a098a929c4d104037f745ab55049900",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens4_2026_09_30/plot_fields.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7cd2c7ce0ccc5b8544c8ca7647fc8ed599a1f69da4ff6b0f3e55ee8721261ee7",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens5_2026_09_30/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "673009cefe6a27b2d123728ddb0e92ecf0a46a765c894683491e91d1fc84d6bb",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens5_2026_09_30/episode_rules_synthetic.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ed7591b0a52cf888844132700aab9f59f2d7a408c694cde19fae4b278d6adf65",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens5_2026_09_30/episode_rules_synthetic.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5718af0e6e405d56cb5d6a537d0ed0c1fcab7f358ff2645833a402e5dcf66bae",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens6_2026_09_30/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fffac2b67e9dddf24f89756db9cfdea910a03868aac4b8a2f013a774c5b464e3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens6_2026_09_30/author_key_nq.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "084f7835a47e4383b7726f5e08e3ce516d9758deb97c8b81012581f335c44912",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens6_2026_09_30/author_key_nq.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b7e24e5edb31901f6331a0e47647208973df129e7bc3f60af7644888b541c5c1",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens8_2026_09_30/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "07de38fee00e23d97c950637b592babd3d49bb6f0ba7dd3d675a1c9567837979",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens8_2026_09_30/blind_check.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "538b072f91649c9aa65d8fed21ed0712d99719e3fbcb9c15cf7546f060e5104d",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens8_2026_09_30/compare_blind.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6e8ef97478572d3101142942882ed3784ac29f023a565744ef5d4065b5666470",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens8_2026_09_30/contract.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "37c7254189006f6a0ced361b8cc270e7cd6ee7415b117f4e233cb8528b98c7d3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens8_2026_09_30/dogovor.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "9fe3dd7d1b8a051ea6283272e936828f3b5c369f5408d81c70e151482edfa43b",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens8_2026_09_30/puti.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "23f51b6c0f9eda7b98b172c2cc52edf76b71b6d982b2e5a8f5408535e18b56e3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens8_2026_09_30/screen_vs_event.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bf3d27a091d42b746924a156fbfea1cb938153c0ffd4f2cb53b490ecd8ee15f7",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens8_2026_09_30/synthetic_trace.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fabd0e4e87376fa0b459c0fe86c4ee6dbc85ea86d1573a6afeed38e7ef23adff",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens8_2026_09_30/synthetic_trace.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "77bcf62401f9864d602a0873e01ae1cea885f96a1f81df19d26ca316e0310034",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens8_2026_09_30/tape_diagnostic.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e81929379c4783f345ab170327eff0622d1851e3c075df5421b813befa6d8cea",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/lens8_2026_09_30/tape_diagnostic.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "af0799e362d64a766df4d9db4f4b6ff8320154acdd126d33115083e88d7ec050",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/m7_claims.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "1e075cfdb8862286f6c136dc7d7859993614d7396f31284fa59bacf2781f3153",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/m7_claims.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3d539ffc560fc7979ebc56287d0345c2472bfcb5c508fcad85885378250e4aae",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/m7_claims.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "798da7c27fad7404af49d485008c65ec35de1123acd97253f07710f93ff8e043",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/main_cluster_2026_10_01/check.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8ba23530655cbbc5bf5445363c7bbf15a364d544406b361f4cb8effa5b424b11",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/main_cluster_2026_10_01/check_2018_2025.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3a18355b47d0f23a7a8b869205b524bb85a83a30ddcc7f5eb3cbdce8e328efc0",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/main_cluster_2026_10_01/check_2018_2025_inside.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f46f342db67e543da9b925001a6babaf83de3a26fde7cf36f7a3a5a1df9f3301",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/percent_semantics_2026_09_30/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "262f32c8b61a3d99eafad3703ae0c4e31e0e608405d1a4904b74bc0e441f321a",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/percent_semantics_2026_09_30/compare_objects.log",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "34fb53f2b8ec083ac2615a40c7412880bdf513f9cac216f51c0eae67808bc353",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/percent_semantics_2026_09_30/compare_objects.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "12040bee931caea06b86e7371432cc5b9158ff8235e8047812e65e6725e571a3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/percent_semantics_2026_09_30/odr_n187.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "608411cbea3118b9289996ce87f8ad39513a837aae3f5475933ba28a17c8dbda",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/percent_semantics_2026_09_30/rdr_n25.png",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a5c6e09b8c211ddba189628455655ffe17d3ca14599d63d9e48d0065c2315bd3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/q1_pilot_2026_10_12/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "25dcbefe50202854431e963f30510a6de378a21ba1c01e26ca6fa6c6e082fb88",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/q1_pilot_2026_10_12/recon_summary.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "87c34f547cf4337ed19c0b1c6d418c020c8df5b60ce65bf556f1fba0392188de",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/semantic_paths_2026_10_10/check.mjs",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fc0a5a44d40a58aa4406d74b592231fbb85376d45c214e295ef37ff506d30531",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/semantic_paths_2026_10_10/check_v2.mjs",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6aa71c4ae1bc90e91a27712156e501f19dc1ad542a7122e92fb2d47cd1dca7df",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/semantic_paths_2026_10_10/check_v3.mjs",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8d86322fb172ff5988458a35def6df57d50abb6c1d635a31f1069a838fa6586f",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5a077d521f80084b6ee228699b6a2272551089a5ac87ea6cb4022ce6fb4f075b",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/coverage.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a83df4bb6053d18ce424485f380b8baa95d01e9618a561bc892740f13e25ea60",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/impact/CMP-K-POS-1.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f0195d5e5b82575a36e0f70ed3c4cc3ceca04087d6651ee630b0a9e3f7707075",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/impact/OUT-NEW-R-1.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "b1b98e483e845be0ac4835e93937eabe348a0180c41a6ef5f328a225aaeacf60",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/impact/OUT-REACH-REST-1.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "dd705fb8b0ecf81886f7f2d850397861889cc0be6b4b4b490dbf75f5b01c5b77",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/impact/OUT-ZONE-MEMBERSHIP-1.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ed07ce7e3842e6d358b1503d96f81ae2c2c47fabc4c8e92d3d24b1d4e9f744b1",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/impact/code-lab-now24-py-near.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3a5d12983da6b1ab420ff7354315c774cc98f80ab5572f32961c65e211656006",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/lineage/arrive-few.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "116f76e883bfe89d4d158a57549559b3d637bfd9715bfd3f3f4a0bc491c0adf5",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/lineage/arrive-half.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "6806ce313062fc2d45e2cfeabf21a88a3c6f0b6e770774fbee11990c6fe0c54b",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/lineage/base-zone.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "20be37d21753d9e9048cd9dfa64a2a23b32a8875757b7ab7e712e4c2af06dbdb",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/lineage/now-new.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "272f2e1d567a861fc72a75aa92bba7f4e9a5ee4d4076c1399a6e66c0648c781f",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/run.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "89e79cff140f5dc56ff267b6d2bab20fe00b2cbf8dbb24b8a8e6131143d1f1f2",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/scenes/arrive-few.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8a37bd4c445712774e0a09a729cfb8e5c83a51bbe48f1b4611a202b4e0a9f4f3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/scenes/arrive-half.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7d16c039393f0c578629ff12323bb85881385dbf1c7c2f6315c5bf2810912e0a",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/scenes/base-zone.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bf35f55c7ea7f1201ff4b2628a8b3dac38a0372aa550cec9933029282a5721c6",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/scenes/now-new.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "adf6d3dc2847f78b696c9fd40240aed64a5a4a81dfbde2bc7bd1d62bb262ca9e",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/screens/date-2025-12-17-inst-nq-session-rdr-at-11-10-scope-all.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d31578ceb7e555e158bd9d155a91b32da759d3e7a30975f7545051b08dc7958e",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/trace_2026_10_13/screens/date-2025-12-17-inst-nq-session-rdr-at-11-10.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fe89603f286bd8870476afdaeee6b18d2414cdf3e2b114904481abe02649e6c1",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/zone_map_2_audit_2026_10_01/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ce54d1bc1113002cfcf49cc6eebddd9f36c2715cb0ae6416fc15e43cc84fa8c3",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/zone_map_2_audit_2026_10_01/audit.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "83c0329e925216fc1dd75202d16d25e16c99c4ee2211063b547ac9aecea6a352",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/zone_map_2_audit_2026_10_01/audit_results.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "75e15ca18a49600e32a094d942a76dbb214ed92f025f0ed0827068b2288f4739",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/zone_map_2_audit_2026_10_01/holes.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "0bda8620ad9982d4c1c0b0886dd855675379b2110a94fd87ae4b0ae845af016a",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/zone_map_2_audit_2026_10_01/holes_results.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "27196d3d57a282fc2e134263ad26f597bc9a31897766f9fbc4589551cfcb09f2",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/zone_map_2_audit_2026_10_01/zonemap.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "bdd09b85e1185915e8a9dc0b81a54d06384d6128a15e7edfbb35abf8eccf5de9",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/zone_map_3_2026_10_01/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "92887b5e183edbc4857bc3537e1e08cd960b243f4d7eca40128b245883d442c4",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/zone_map_3_2026_10_01/check.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "5e6573aca25d3f0041bec4d908a016d787d5105d590fbf1798315d29f0961de1",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "studies/zone_map_3_2026_10_01/check_results.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "f6e5bd732df1d1fe3ec9c105c4e67bd6a66d941b8f578aa900d813536f5cf088",
+      "role": "RESEARCH",
+      "protected": false
+    },
+    {
+      "path": "tests/arrive24.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "3b9f81fcc8b776f34c28b071ae9e5a56d0a398162f20600d914f75498b4d268c",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/contract_sc11.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2e06ad12ca800cbefb8ea83d416ba0f3b206e1b2871268064af90483912914cf",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/now24.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ff54ee155423dfcf0e2d8abd29457936390d34b8b8f07f0becab1bf9dd41f689",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/q1_page_check.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "012b72321559db213f0e466ece74fb65489fd189a44179672e7233deee581003",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/q1_pilot.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "05895915d099d04ba0034a4cb44ce589eb5189d331360a1bc9afc1863e5c8508",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/sem24.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "e243a69e3d5080672f92d1a0d9feca2e6e6307be5a0468681ddacd54c0654a5a",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/smoke.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "2d32c86a2e018b6cb19ac4537652da4da7a54197641ebd5d8f5ac1b4481a27c3",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/swpc11.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "4dd1fbf864a8f50bd039004447adf73fb446fde8a78d648763dfd7f496d82a8c",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/swpc11_browser.mjs",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "897a48f8bc8f5b4e746f2ad0daa5b81a9e94aaf03df083dfeecf834275952cc1",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/trace_arch.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "eb794daf422ba5eaa7629dd87fe30b36e84e0ce27169d539992b55968cf77ede",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/trace_page.mjs",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "68c3d06d9c87608af16a232b9f4651152f7f5bc2b8f4c4a9398632dc98dcacb3",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/ui_check.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "a9dc8aa137d9414b047c6cc5baef98aeeeafe458e0b3ee30a9fac98fe35e763c",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/ui_check21.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d92572c66ea574d46b49d30786a9529bc18483457cee8aeeb5b51cd05023caa4",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "tests/ui_check24.js",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "ab32efd2cc9d762f5529d7d5bbaa4b92fe3054ba84c73a54086f6e2633a3a2ae",
+      "role": "TEST",
+      "protected": false
+    },
+    {
+      "path": "trace/README.md",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "79980259cd546e3978e83ccbe53f049ab9803c558914c9df445312ca3ee003e7",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "trace/build/catalog.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "cface503c61f2c99b113c6a67c5751407b881b6da14b545841825afe76c008f6",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "trace/build/dr_lab_trace.schema.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "adb83fcd784cf67b222b0b91bf5ab8da17c4927bfe928afe18ddab42f21f645d",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "trace/build/trace_runtime_spec.json",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d82990fb6608f64e55313ec5bc0e292d1cb0c77bbdcd6b029f7cdb899d5c7d9f",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "trace/catalog/00-standing.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "d85637878ffd1cf72495d95d832e45e166ea88b580f142fc8c1cdf2687e514b0",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "trace/catalog/10-architecture.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "c4b9eca1352b6455db17839629f090f65e6e8e0bde526dc228a06102a393bfd6",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "trace/catalog/20-boundaries.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "516e7f53a14fa7e63f6aa4a1ac7958829740d99626fbb8031b8ac784599b1330",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "trace/catalog/30-scenes.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "53a149da5d6d6174418ff9dee24b3f1352a276843d360ac95dc0ab527d55f0d5",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "trace/schema/dr_lab_trace.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "7b9a526c394c54e1738ddd0f9f2b3731475d3cfdfe2cb6e87a06e03029f09272",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "trace/schema/linkml-lint.yaml",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "fd96f4ac9b5d6872be1bcdfa4f4b579c68c31e1862b222d4fea74d8721dc0dc9",
+      "role": "DOCUMENT",
+      "protected": false
+    },
+    {
+      "path": "trace/tools/build.py",
+      "revision": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+      "sha256_lf": "8e9e8f9b07192269c08410edf3fe170dcc63521044f736ec84be3dc71b75cabb",
+      "role": "DOCUMENT",
+      "protected": false
+    }
+  ]
+}

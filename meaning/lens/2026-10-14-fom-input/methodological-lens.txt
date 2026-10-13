@@ -1,0 +1,294 @@
+Линза рецензента к FOM-1.1: внешние первоисточники, что из них брать и где они ошибочно приписаны
+
+Вывод. Каждое из девяти направлений даёт DR Lab конкретный проверяемый принцип, и ни одно не требует нового стека: всё, что стоит заимствовать, выражается в существующих LinkML/SC-1.1, Semantic Trace и SWPC-1.1. Самый ценный вклад делают не SKOS и PROV-O, а алгебраические принципы корректности визуализации Kindlmann & Scheidegger (2014) вместе с метаморфическим тестированием: они дают машинно проверяемое определение того, что линза называет «интерфейс показывает все числа правильно, но передаёт неправильное отношение». В линзе есть одна фактическая ошибка: «Foundational CQ» у Keet & Khan — это вопросы для выравнивания с фундаментальной онтологией (DOLCE/BFO), а не «фундаментальные вопросы» о предмете. 
+arxiv
+
+TL;DR
+Брать принципы, не стеки. У SKOS — различение exactMatch (транзитивно) и closeMatch (нетранзитивно, против «составных ошибок») и запрет совпадающих меток. У PROV — разделение Entity / Activity / Agent, Plan и Invalidation. У SHACL/ROBOT — проверку запросом, который ищет запрещённое (пустой результат = норма), и уровни серьёзности. Почти всё это выражается в LinkML (rules с pre-/postconditions, mappings, structured_aliases) и в проверках Semantic Trace.
+Перцептивные обязательства становятся проверяемыми через три принципа Kindlmann & Scheidegger — инвариантность представления (галлюцинатор), однозначность (конфузор), соответствие (путаник/обманщик) — и метаморфические тесты визуализации (McNutt et al., 2020). Они ловят ошибку «все числа верны, отношение ложно», которую не ловит проверка «рисование не меняет счёт».
+Для анализа влияния и времени литература даёт готовые различения. Статический анализ влияния — верхняя оценка, динамический — нижняя; данные и управление — разные зависимости; why-, where- и how-происхождение — разные вопросы; valid time и transaction time ортогональны. Отношение, истинное только на срезе, по образцу W3C N-ary (Use Case 1) — овеществлённый экземпляр отношения со срезом в качестве аргумента, а не свойство сущности и не новый класс семьи.
+
+[источник] — прямая опора на первичный текст; [вывод] — моё заключение для DR Lab. Всё сказанное о DR Lab взято из описания задачи, а не из кода; сверку с репозиторием делает куратор.
+
+1. Типы контрольных вопросов (Keet & Khan, 2024; TDD онтологий; ROBOT)
+
+(а) Принципы.
+
+[источник] Keet & Khan, «Discerning and Characterising Types of Competency Questions for Ontologies», arXiv:2412.13688 (18.12.2024): модель QuO с пятью типами — Scoping (SCQ), Validating (VCQ), Foundational (FCQ), Relationship (RCQ), Metaproperty (MpCQ). Оговорка: «We do not exclude the possibility that, in time, more types of CQs for ontologies may be identified». 
+arxiv
+SCQ «contributes to describing the scope»; «the actual answer is not relevant»; SCQ «need not be answerable, or even formalisable». 
+arxiv
+VCQ «should be both formalisable and answerable» и «put testable constraints on the possible worlds». Язык формализации VCQ не выразительнее языка онтологии (Lv ⊆ Lo), иначе вопрос «would never be answerable and thus never be validated». 
+arxiv
+FCQ служит выравниванию доменной сущности с фундаментальной онтологией: «Is each warthog wholly present at different times?» — «да» означает эндурант. 
+arxiv
+RCQ — четыре подтипа: aRCQ (арность), efRCQ (разложимо ли отношение без потери информации), drRCQ (участники, domain/range), rpRCQ (реляционное свойство: транзитивность, симметрия). 
+arxiv
+MpCQ — метасвойства OntoClean: жёсткость, идентичность, единство, зависимость. 
+arxiv
+Авторы фиксируют дефицит FCQ, RCQ и MpCQ в литературе (преобладают SCQ); репозиторий ROCQS — 438 вопросов. 
+arxiv
+[источник] Keet & Ławrynowicz, «Test-Driven Development of Ontologies», ESWC 2016 (LNCS 9678, с. 642–657): 36 обобщённых тестов на аксиомы OWL 2 DL в TBox- и ABox-вариантах и 8-шаговый процесс TDD. 
+springer
+[источник] ROBOT (Jackson et al., BMC Bioinformatics 20, 2019): «Given a SELECT query, verify will succeed (i.e., exit with status code 0) if no results are returned»; report прогоняет QC-запросы с уровнями ERROR / WARN / INFO. 
+obolibrary
+limswiki
+
+Поправка к линзе. RCQ подходят для испытаний отношений, но FCQ — не «фундаментальные вопросы о предмете», а выравнивание с DOLCE/BFO. Для DR Lab они полезны в узком смысле: «является ли откат событием (пердурантом) или состоянием?», «существует ли DR-коробка целиком на каждом срезе?» (см. п. 8).
+
+Полнота против корректности [вывод]. Статья такого разделения не формулирует, но из определений следует: SCQ задают полноту охвата, VCQ — корректность содержимого, RCQ и MpCQ — корректность устройства отношений и сущностей.
+
+(б) Что брать. Тип вопроса как обязательное поле контрольного вопроса FOM; подтипы RCQ как чек-лист для каждого существенного отношения; правило Lv ⊆ Lo — вопрос, не формализуемый средствами LinkML + Semantic Trace, не может быть порогом G1/G2; паттерн ROBOT verify. Не брать: OWL-рассуждатель, SPARQL-OWL, ROCQS как формат.
+
+(в) Соответствие DR Lab. В1–В13 оператора в основном SCQ («насколько глубок откат»); без перевода их нельзя делать порогами. Находка аудита 13.10 («обратный обход от правила не достигает ни одного числа») — drRCQ, который никто не задал. efRCQ для «NOW на срезе t»: если отношение разложимо на «семья» + «срез» без потери, тройка не нужна; если нет — нужен овеществлённый экземпляр (п. 8). rpRCQ для «совпадает-на-срезе»: отношение нетранзитивно, вывод «A совпадает с B, B с C → A с C» запрещён.
+
+(г) Сомнения. Практику закрытых (отложенных) вопросов против подгонки онтологии под свои CQ в первичной литературе по онтологиям я не нашёл — это [вывод] по аналогии с отложенной выборкой в статистике. Эмпирики, что типизация CQ улучшает онтологии, в статье нет: это препринт с иллюстрацией на примере кофе. 
+arxiv
+
+2. W3C SKOS Reference (2009) — словесная плоскость
+
+(а) Принципы.
+
+[источник] SKOS Reference, W3C Recommendation 18.08.2009: пять свойств соответствия — closeMatch, exactMatch, broadMatch, narrowMatch, relatedMatch. S42: exactMatch — подсвойство closeMatch. S43: narrowMatch обратен broadMatch. S44: relatedMatch, closeMatch, exactMatch симметричны. S45: exactMatch транзитивен — единственное транзитивное свойство соответствия. S46 (условие целостности): exactMatch не пересекается с broadMatch и relatedMatch (отсюда и с narrowMatch). 
+w3 + 2
+closeMatch: «sufficiently similar that they can be used interchangeably in some information retrieval applications. In order to avoid the possibility of "compound errors" when combining mappings across more than two concept schemes, skos:closeMatch is not declared to be a transitive property». exactMatch: «a high degree of confidence that the concepts can be used interchangeably across a wide range of information retrieval applications». 
+readthedocs
+S13 — prefLabel, altLabel и hiddenLabel попарно не пересекаются; S14 — «A resource has no more than one value of skos:prefLabel per language tag». 
+arxiv
+[источник] Уникальность prefLabel внутри схемы — рекомендация SKOS Primer, а не условие целостности: «no two concepts have the same preferred lexical label in a given language when they belong to the same concept scheme». Архив рабочей группы (ISSUE-32) показывает, что вопрос обсуждался и намеренно оставлен рекомендацией. 
+arxiv
+w3
+[источник] Свойства соответствия «by convention» связывают понятия из разных схем; обзор Isaac & Baker о решениях SKOS называет это «guidelines», а не аксиомами. 
+sciencedirect
+w3
+
+(б) Что брать. Пять градаций как значения LinkML-перечисления для связей словесной плоскости (у LinkML уже есть exact_mappings / close_mappings / broad_mappings / narrow_mappings / related_mappings); проверку S46; запрет транзитивного вывода по close; S13/S14 как проверку «одна метка ↔ одно понятие внутри схемы»; механизм схем — омоним моделируется как два понятия с одинаковой меткой в разных схемах, а не одно понятие с двумя значениями. Не брать: RDF-сериализацию, SKOS-XL, SKOS как формат.
+
+(в) Соответствие DR Lab. Схемы: предмет (язык автора стратегии), язык трейдера, SC-1.1, машинные идентификаторы, слова интерфейса, архитектурные документы.
+
+«место»: design22:Место (ядро плотности первых приходов) и arrive24:Место (названный уровень, где сегодня ещё не были) — два понятия в двух схемах. Связь не сильнее relatedMatch; exactMatch и closeMatch запрещены, потому что подстановка одного вместо другого меняет ответ.
+«R»: в предмете — окончательный откат, в архитектурном документе R01–R16 — идентификаторы связей. Это даже не relatedMatch: понятийного отношения нет, только совпадение строки. Модель — отсутствие связи плюс страж, запрещающий метку «R» с обоими значениями в одной схеме.
+«откат»: «откат от максимума», «сегодняшний минимум», «окончательный R» — вероятно, узкие (narrowMatch) или соседние понятия, а не синонимы; отношение устанавливает оператор.
+
+Пробел [вывод]. Все пять свойств SKOS утвердительные — отрицательного соответствия нет. А «ложные эквиваленты со стражами» FOM-1.1 — именно отрицательное утверждение. Его придётся выразить своим классом, например FalseEquivalence (метка, понятие A, понятие B, почему не тождественны, страж-проверка).
+
+(г) Сомнения. SKOS создан для информационного поиска: exactMatch означает «взаимозаменяемы в широком круге применений», а не «тождественны по определению». 
+readthedocs
+ Для нормативных определений SC-1.1 нужен более строгий критерий [вывод]: «exact ⇔ эталонный расчёт даёт одинаковое число на всех случаях».
+
+3. W3C PROV-O / PROV-DM (2013) — происхождение и преобразования
+
+(а) Принципы — PROV-DM, W3C Recommendation 30.04.2013:
+
+Entity: «a physical, digital, conceptual, or other kind of thing with some fixed aspects». Activity: «something that occurs over a period of time and acts upon or with entities»; «An activity is not an entity». 
+w3
+Generation: «the completion of production of a new entity by an activity. This entity did not exist before generation». Usage: «the beginning of utilizing an entity by an activity». 
+w3
+Derivation: «a transformation of an entity into another, an update of an entity resulting in a new one, or the construction of a new entity based on a pre-existing entity». Нормативно: «there must be some underpinning activity or activities performing the necessary action(s)». И: «PROV does not attempt to specify the conditions under which derivations exist; rather, derivation is considered to have been determined by unspecified means». 
+w3
+Invalidation: «the start of the destruction, cessation, or expiry of an existing entity by an activity… Any generation or usage of an entity precedes its invalidation». 
+w3
+Plan: «an entity that represents a set of actions or steps intended by one or more agents to achieve some goals»; необязательный элемент Association. Specialization: «shares all aspects of the latter, and additionally presents more specific aspects of the same thing». 
+w3
+PROV-O реализует каждое отношение в неквалифицированной (бинарное свойство) и квалифицированной форме (prov:qualifiedDerivation → prov:Derivation с атрибутами) — готовый образец овеществления отношения (п. 8). 
+w3
+w3
+
+(б) Что брать. Разделение «данные (Entity) / операция (Activity) / результат (Entity)»; правило «у каждого Derivation есть Activity» — DerivationRecord без операции считается дефектом; Plan как отдельную сущность (эталонная процедура, версия правила DR/IDR); Invalidation как событие отзыва; Specialization для уровней детализации версии. Не брать: PROV-O как онтологию хранения; квалифицированные формы для каждого ребра; замену DerivationRecord / SourceReference без найденного разрыва.
+
+(в) Соответствие DR Lab [вывод].
+
+COMPUTE / PRESENT / ISSUE — три Activity с разными порождаемыми Entity: значение величины, ScreenStateRecord, сохранённый выпуск. «Показ не доказывает прочтения»: Usage ScreenStateRecord трейдером — отдельное утверждение, которое система не порождает, поэтому в модели его быть не должно, кроме явного подтверждения.
+«Число отозвано» (W09) — Invalidation выпуска сервером-эталоном. Раз все Usage предшествуют Invalidation, проверяемый инвариант: ни один ScreenStateRecord не использует выпуск после отзыва.
+Производный атрибут «слом DR» — Entity, порождённая Activity «детектор слома», использовавшей будущие OHLC. PROV не проверяет согласованность, но запись атрибута как Derivation через Activity механически выводит, что пересчитывать: при подмене используемой Entity недействительны все Entity, порождённые операциями, которые её использовали. Это урок PR #8 (31835dd → d7cf4c7), обобщённый до правила инвалидации.
+Штамп версии кода грубее вычисления: code@commit — Plan, а фактически исполненная конфигурация (параметры, срез, набор) — его specializationOf. Привязка числа к общему Plan — ошибка уровня детализации.
+
+(г) Сомнения. PROV — язык записи, а не проверки происхождения. Корректность связей обеспечивает только эталонный пересчёт, который у DR Lab уже есть.
+
+4. W3C SHACL Core (2017) и ROBOT против нативного LinkML
+
+(а) Принципы.
+
+[источник] SHACL, W3C Recommendation 20.07.2017: sh:closed — только явно перечисленные свойства; sh:qualifiedValueShape + sh:qualifiedMinCount / MaxCount — «specified number of value nodes conforms to the given shape»; sh:class, кардинальности, SHACL-SPARQL. Степени sh:Violation / sh:Warning / sh:Info: «The specific values of sh:severity have no impact on the validation, but MAY be used by user interface tools to categorize validation results», по умолчанию — Violation. 
+w3 + 2
+[источник] ROBOT verify — запрос ищет плохое, успех при пустом результате; report — каталог проверок с настраиваемыми уровнями. 
+nih
+limswiki
+[источник] LinkML нативно: rules с preconditions / postconditions на уровне класса, флаг bidirectional; any_of / all_of / none_of / exactly_one_of; кардинальности; structured_aliases, *_mappings. 
+linkml
+linkml
+ Трекеры LinkML показывают неполный перевод rules в генераторы. Issue ASCS-eV/linkml#44 (форк linkml, найдено при проверке PR linkml/linkml#3989): правило на родителе P «produces a query for P only. Its subclass C gets none, although the metamodel says rules "apply to all members of this class"». По ASCS-eV/linkml#42 кардинальности (maximum_, minimum_, exact_cardinality) «are dropped inside rule conditions… so JSON Schema enforces nothing» — выпадают только внутри условий rules. По ASCS-eV/linkml#28 генератор SHACL для правил presence-implies-value «actively rejects conforming data, so this is a correctness (false-positive) bug».
+
+(б) Что брать сверх замкнутой LinkML-валидации.
+
+Квалифицированная кардинальность по типу связи: «у каждой величины ≥1 входящей зависимости типа определяющая от RULE:DRIDR-24-1» — прямое лекарство от находки аудита 13.10.
+Каталог анти-паттернов как запросов с severity и пустым результатом как нормой: связь без типа; exact-соответствие при совпадающих метках в разных схемах; Derivation без Activity; ScreenStateRecord, использующий отозванный выпуск.
+Severity как метаданные: отделяет «нарушение контракта» (публикация запрещена) от «предупреждения карты» (G1/G2 информируются).
+
+Не брать: RDF/SHACL в рабочий стек; генерацию SHACL из LinkML как источник истины. Анти-паттерны естественно реализуются Python-проверками над графом Semantic Trace (1808 узлов / 5686 связей).
+
+(в) Соответствие DR Lab. LinkML-валидация проверяет форму объекта, проверки ссылок — существование цели. Идеи SHACL добавляют третий слой — ограничения на множество связей, квалифицированные типом; именно его не хватало, когда «зависимость передаётся значениями перечислений и свободным текстом». Rules с pre-/postconditions подходят для временной применимости: «если phase = AFTER_BREAK, то frame ∈ {…}». 
+github
+github
+
+(г) Сомнения. Без превращения текстовых зависимостей в типизированные ссылки проверять нечего.
+
+5. Ecological Interface Design / Work Domain Analysis / CWA
+
+(а) Принципы.
+
+[источник] Vicente & Rasmussen, «Ecological Interface Design: Theoretical Foundations», IEEE Trans. SMC 22(4):589–606, 1992. Опоры: иерархия абстракций (Rasmussen, 1985) и таксономия SRK (Rasmussen, 1983). 
+sciencedirect + 3
+ Цель: «not to force processing to a higher level than the demands of the task require, and to support each of the three levels of cognitive control». 
+semanticscholar
+Принципы по уровням SRK: SBB — действовать непосредственно на интерфейсе; RBB — согласованное отображение ограничений рабочей области на перцептивные признаки; KBB — «Represent the work domain in the form of an abstraction hierarchy to serve as an externalized mental model that will support knowledge-based problem solving». 
+sciencedirect
+rug
+Мотив: процедура «выбрать события и определить для них информацию» «cannot, by definition, cope with unanticipated events». 
+dtu
+ Поэтому интерфейс отображает ограничения рабочей области, а не сценарии задач.
+Иерархия абстракций обычно имеет пять уровней: функциональная цель, абстрактная функция, обобщённая функция, физическая функция, физическая форма. CWA (Vicente, 1999) — пять фаз, от анализа рабочей области до компетенций работников.
+[источник] Эмпирика. В статье 1992 года — первая оценка на симуляторе DURESS: интерфейс P+F (вся иерархия) дал лучшую диагностику, чем P (только физический уровень). 
+dtu
+ Обзор Vicente (2002, Human Factors 44(1):62–78): эмпирика EID в основном получена на DURESS и со студентами; функционально организованное знание возникает, «but only if subjects actively reflect on the feedback». 
+researchgate
+semanticscholar
+ Duez & Vicente (2005) применили EID к управлению компьютерной сетью. 
+sciencedirect
+Применений к торговым и финансовым экранам найти не удалось — пробел поиска, а не отрицательный результат.
+
+(б) Что брать. Ответ на вопрос IX линзы: EID ставит ограничения рабочей области выше последовательности задач как основание композиции обзорного экрана, потому что последовательность задач не покрывает непредвиденное. Иерархию абстракций — как способ упорядочить смысловые узлы «Сводки». Принцип RBB — как формулировку перцептивного обязательства: ограничение предмета ↔ видимый признак. Не брать: полный CWA (избыточен для одного оператора); аналогию «физическая система ↔ рынок» без оговорок — в DURESS ограничения суть законы сохранения, а у DR/IDR — определения метода и исторические распределения.
+
+(в) Пробная иерархия DR Lab [вывод]: цель — откалиброванное ожидание трейдера; абстрактная функция — инварианты метода (DR/IDR, рамка u = d(p − e)/w, срез знания, неизменность семьи); обобщённая функция — R/X, NOW, ARRIVE и их наборы случаев; физическая функция — оцениватели, эталоны, ValidationRecord; физическая форма — элементы экрана 24 и B01–B19. Сценарий XIII (семья → R/X → цена → NOW → ARRIVE) — проход по уровням иерархии при новой M5.
+
+(г) Сомнения. EID проверен на системах с физическими законами и непрерывным управлением. Трейдер управляет не рынком, а своим ожиданием и позицией; ограничения здесь эпистемические, и перенос EID — гипотеза.
+
+6. Корректность визуализации (Kindlmann & Scheidegger, 2014; метаморфическое тестирование)
+
+(а) Принципы.
+
+[источник] Kindlmann & Scheidegger, «An Algebraic Process for Visualization Design», IEEE TVCG 20(12):2181–2190, 2014. Данные D, представление R, визуализация V; коммутативная диаграмма v∘r₂∘α = ω∘v∘r₁. 
+ucdavis
+Representation Invariance: «visualizations should be invariant with respect to the choice of data representation». Нарушение — hallucinator: «a different impression was created… out of nothing but a different representation of the same data». 
+ucdavis
+Unambiguous Data Depiction: «changing the underlying data should produce a change in the resulting visualization». Нарушение — confuser: «changes in the data that are effectively invisible». 
+ucdavis
+Visual-Data Correspondence: «significant changes in the data should meaningfully correspond with noticeable changes in the visual impression and vice versa». Важное изменение данных без проявления — jumbler; заметное изменение картинки при неважном изменении данных — misleader. 
+ucdavis
+Авторы связывают это с Congruence Principle Тверски: визуальная структура должна соответствовать желаемой ментальной структуре. 
+ucdavis
+[источник] McNutt, Kindlmann & Correll, «Surfacing Visualization Mirages» (CHI 2020), соединяют алгебраический подход с метаморфическим тестированием: изменения данных и спецификации, для которых ожидаемое изменение картинки известно, хотя «правильного ответа» нет. 
+acm
+
+(б) Что брать — три класса машинных тестов:
+
+Инвариантность: перестановка порядка случаев семьи, смена идентификаторов, иной порядок загрузки — экран не меняется.
+Однозначность: значимое изменение данных (сегодняшний минимум ниже окончательного R у части семьи) обязано менять экран; если ScreenStateRecord не изменился — найден конфузор.
+Соответствие: изменение без смены смысла (сдвиг цены внутри зоны) не даёт броского события; изменение отношения («ещё не дошли → дошли») обязано давать заметное.
+
+Не брать: формальную групповую алгебру для каждого элемента — достаточно перечня пар (α, ожидаемое ω).
+
+(в) Ответ на центральный вопрос VIII. Да, интерфейс может показывать все числа правильно и передавать неправильное отношение: это misleader/jumbler на уровне отношения. Пример [вывод]: NOW и ARRIVE опираются на разные условные наборы; если оба процента показаны одним каналом на общей шкале, возникает ложное отношение «ARRIVE ≥ NOW → значит…» между корректными числами. Проверка «изменение рисования не меняет ни одного счёта» работает в направлении экран → данные. Обратного она не проверяет: что значимые α дают заметные ω и что отношения данных отражены отношениями визуальных признаков. Объект, который должна добавить карта, — пара (отношение данных α, обязательный или запрещённый визуальный отклик ω), привязанная к W01–W14 и B01–B19. Это не новый контракт, а поле существующих PresentationBinding.
+
+(г) Сомнения. «Заметность» ω машина проверяет косвенно (различие ScreenStateRecord, канал, размер); остаток — человеческая оценка (H01–H12).
+
+7. Типы зависимостей и анализ влияния
+
+(а) Принципы.
+
+[источник] Weiser, «Program Slicing» (IEEE TSE 10(4), 1984; ICSE 1981): срез — программа, сведённая к минимальной форме, «guaranteed to represent faithfully the original program within the domain of the specified subset of behavior»; задача «is in general unsolvable». Критерий среза — «that limited projection which is of interest» (цитата по ретроспективе IEEE TSE 2025; первичный текст не проверен). 
+acm + 2
+[источник] Ferrante, Ottenstein & Warren, ACM TOPLAS 9(3), 1987: PDG «makes explicit both the data and control dependences for each operation in a program». 
+acm
+mtu
+[источник] Apiwattanapong, Orso & Harrold (ICSE 2005): статические методы «can safely estimate the impact of changes», но «tend to identify most of the software as affected»; статический срез давал множества влияния «more than 90% of the program», так как учитываются все возможные поведения и вдобавок «some impossible behaviors, due to the imprecision of the analysis». Динамические методы (PathImpact — Law & Rothermel, ICSE 2003; CoverageImpact) ограничены «at least one of the considered program executions». 
+dblp
+researchgate
+ Что динамические множества содержат ложноотрицательные, прямо говорит вторичный обзор Li et al. (JSS 2015). 
+sciencedirect
+purdue
+[источник] Buneman, Khanna & Tan (ICDT 2001): why — исходные данные, повлиявшие на существование результата; where — места, откуда значение извлечено. 
+semanticscholar
+[источник] Green, Karvounarakis & Tannen, «Provenance Semirings» (PODS 2007): why-происхождение, bag-семантика, неполные и вероятностные БД — «particular cases of the same general algorithms involving semirings»; полиномы как представление — «how-provenance». 
+acm
+ucdavis
+
+(б) Что брать.
+
+Данные против управления: значение входа течёт в число, или правило решает, выполняется ли расчёт и какие случаи входят. Это основание для различения «вычислительной» зависимости и зависимости «отбора» из линзы: отбор — управляющая зависимость.
+Статический граф Semantic Trace — верхняя оценка, мутационная проверка — нижняя. В статике ложноположительная зависимость — цена надёжности, ложноотрицательная — дефект; в динамике наоборот. Поэтому их нельзя считать одинаково тяжёлыми дефектами, пока не указано, какой анализ их дал [вывод] — ответ на вопрос II линзы.
+Три вопроса о числе экрана: why (какие случаи семьи определили число), where (из какой записи OHLC взят экстремум), how (доля = Σ(индикатор)/|набор|). Команды why / lineage стоит проверить на то, на какой из трёх вопросов они отвечают [вывод].
+
+Не брать: полный PDG или межпроцедурный срез Python-кода, семиринговую аннотацию кортежей.
+
+(в) Соответствие DR Lab [вывод]. Отрицательные инварианты («обязано не зависеть») проверяются возмущением: изменить определение слома DR — окончательный R исторических случаев до слома и состав исходной семьи не меняются; изменить рисование — не меняется ни один счёт. Конструкция «статический граф ⊇ заранее записанное ожидаемое ⊇ результат возмущения» и есть проверяемая форма «практической проверки» из раздела II линзы.
+
+(г) Сомнения. Срез в общем случае неразрешим; 
+acm
+ цель — узкий зазор между верхней и нижней оценками, а не равенство.
+
+8. Временная применимость отношений
+
+(а) Принципы.
+
+[источник] W3C Working Group Note «Defining N-ary Relations on the Semantic Web» (12.04.2006), Pattern 1, Use Case 1 («additional attributes describing a relation»): отношение представляется классом, аргументы — бинарными ссылками; «In most intended interpretations, this instance of a relation cannot be viewed as an instance of a binary relation with additional attributes attached to it.» 
+w3
+[источник] Welty & Fikes, «A Reusable Ontology for Fluents in OWL» (FOIS 2006): флюенты — отношения, истинные на одних интервалах и ложные на других; утверждения делаются о временных частях сущностей. Batsakis, Petrakis, Tachmazidis & Antoniou («Temporal Representation and Reasoning in OWL 2», Semantic Web 8(6):981–1000, 2017) указывают: «The 4D-fluents approach still suffers from proliferation of objects since it introduces two additional objects for each temporal relation (instead of one in the case of N-ary relations)».
+[источник] Jensen & Snodgrass («Valid Time», Encyclopedia of Database Systems, Springer, 2018): «The valid time of a fact is the time when the fact is true in the modeled reality»; transaction time — когда факт был в базе; оси ортогональны, битемпоральная модель хранит обе. Там же: decision time и event time «can be captured as either a valid time or a transaction time of some related fact».
+
+(б) Какой паттерн точнее [вывод]. Случай «та же спецификация, та же семья, но совпавший набор действителен только на срезе t»:
+
+Не свойство с индексом времени: семья не меняется, меняется применимость отношения «случай c совпадает с сегодняшним состоянием».
+Не 4D-срез семьи: «семья-в-11:10» и «семья-в-11:15» противоречат неизменности семьи (W07) и разрастаются.
+Овеществлённый экземпляр отношения (N-ary, Use Case 1) с аргументами (CaseSetSpecification, исходная семья, срез t, условие) и результатом — CaseSetSnapshot. Различение CaseSetSpecification / CaseSetSnapshot в SC-1.1 уже является этим паттерном; нужно лишь, чтобы срез был обязательным аргументом снимка, а «действителен на» — явным полем.
+Битемпоральность отвечает на «три времени» FOM-1.1: фаза рынка и доступность знания на срезе — valid time, версия модели — transaction time. Ответ на вопрос IV: через пять минут изменилась область истинности экземпляра отношения; набор — новый снимок; состояние рынка — новый срез; сущности и спецификация не изменились.
+
+Не брать: OWL-Time как модуль, флюенты на всех сущностях, SQL:2011 temporal tables.
+
+(в) Соответствие DR Lab. Классы применимости из линзы IV — перечисление на экземпляре отношения, а не новые классы: постоянна после подтверждения (исходная семья); определена только на срезе (NOW, набор ARRIVE); известна ретроспективно (окончательный R/X исторических случаев); меняется при сломе DR (рамка); доступна только после окончания исторической сессии.
+
+9. Область отрицательного результата
+
+(а) Принципы.
+
+[источник] Lakens (2017, Social Psychological and Personality Science); Lakens, Scheel & Isager (2018, AMPPS): «Currently, researchers often incorrectly conclude an effect is absent based a nonsignificant result». Рекомендуется проверка эквивалентности (TOST) против наименьшего интересующего эффекта (SESOI): «It is statistically impossible to support the hypothesis that a true effect size is exactly zero. What is possible… is to statistically reject effects large enough to be deemed worthwhile.» 
+sagepub
+sagepub
+Без теоретических границ Lakens предлагает брать границу по наименьшему эффекту, который исследование имело мощность обнаружить. 
+sagepub
+Четыре исхода: значимо и эквивалентно; значимо и не эквивалентно; незначимо и эквивалентно; незначимо и не эквивалентно (неинформативно). 
+github
+
+(б) Что брать — поля записи [вывод на основе источника]: метод отбора и популяция; временная область; SESOI с обоснованием; мощность или наименьший обнаружимый эффект; проверка отличия от нуля; проверка эквивалентности; положительный контроль (заведомо информативный признак, который тот же метод обнаруживает); итоговый класс из четырёх. Правило: без SESOI, мощности и пройденного положительного контроля запись не может иметь класс «нет эффекта», только «неинформативно».
+
+(в) Соответствие DR Lab. ValidationKind = STATISTICAL_TRANSFER и RESEARCH_EXPLORATORY уже разделены. Нужны поля выше и запрет повышения класса: вывод не поднимается с «вычислительно корректно» до «статистически информативно» и далее до «торгово полезно» без своего ValidationRecord на каждом уровне — это совпадает с линзой X.
+
+(г) Сомнения. Минутная история NQ/ES/YM за 20 лет даёт сильно зависимые наблюдения; номинальная мощность будет завышена без учёта автокорреляции и режимов — общий [вывод], а не проверенный расчёт.
+
+Сводная таблица: рекомендации линзы → внешний источник
+Линза	Источник	Что даёт проверяемого	Риск церемонии
+I. Четыре пространства	Иерархия абстракций EID; схемы SKOS	Уровни/схемы с явными связями вместо четырёх онтологий	Средний
+II. Типы зависимостей	PDG; анализ влияния; why/where/how	Данные / управление-отбор; верхняя и нижняя оценки	Низкий при тесте на тип
+III. Смысловые узлы	RCQ (efRCQ, aRCQ); N-ary	«Разложимо ли без потери» решает, нужен ли узел	Средний
+IV. Время отношений	N-ary Use Case 1; Snodgrass; флюенты как антипример	Снимок со срезом; valid/transaction time	Высокий при флюентах; низкий при перечислении
+V. Пределы фасетов	SKOS broad/narrow; кардинальности	Кратность и область как атрибуты фасета	Низкий
+VI. Полнота	Keet & Khan; TDD онтологий; ROBOT verify	Тип вопроса; формализуемость как условие порога	Средний
+VII. Преобразования	PROV; метаморфическое тестирование	Правило инвалидации производных	Низкий
+VIII. Перцептивные обязательства	Kindlmann & Scheidegger; McNutt et al.; RBB	Пары (α, ω); галлюцинатор, конфузор, путаник/обманщик	Низкий, если поля PresentationBinding
+IX. Операторская деятельность	EID/WDA, CWA	Ограничения рабочей области первичнее задач	Высокий при полном CWA
+X. Реестр утверждений	Lakens (TOST, SESOI)	Четыре исхода; запрет «нет эффекта» без SESOI	Низкий
+XI. Заимствование	SKOS, PROV, SHACL, ROBOT	Принципы без стека	Низкий без RDF
+XII. Последовательность	TDD онтологий	Тесты отношений до G1, пары (α, ω) до G2	Средний
+XIII. Сквозной сценарий	Метаморфическое тестирование	M5-переход как метаморфическое отношение	Низкий; лучший единичный тест
+XIV. Критерий завершения	Kindlmann & Scheidegger; оценки влияния	Измеримые критерии вместо числа зелёных проверок	Низкий
+Рекомендации куратору (дельта, а не новая редакция)
+Исправить ссылку линзы на Keet & Khan: FCQ ≠ «фундаментальные вопросы». Ввести поле «тип CQ»; порогами G1/G2 делать только формализуемые вопросы.
+Типизировать связи «основания → числа» минимум по оси «данные / управление-отбор»; квалифицированную кардинальность по типу проверять анти-паттерн-запросом с severity.
+Ввести пары (α → ω) в PresentationBinding и тест на инвариантность представления.
+Правило инвалидации производных по образцу PROV обобщённо закрывает класс ошибок PR #8.
+Для NOW/ARRIVE срез — обязательный аргумент снимка; применимость — перечисление на экземпляре отношения.
+Словесная плоскость: пять градаций SKOS, S13/S14/S46 как проверки, плюс собственный класс отрицательного соответствия.
+Реестр отрицательных результатов: SESOI, мощность, положительный контроль, четыре исхода.
+Ограничения исследования
+Не найдены или не открыты: применения EID к торговым экранам; первичный текст Welty & Fikes; OWL-Time; Orso et al. 2003 целиком; первичное определение критерия среза у Вейсера.
+Эмпирическая база EID невелика и в основном получена на лабораторном симуляторе.

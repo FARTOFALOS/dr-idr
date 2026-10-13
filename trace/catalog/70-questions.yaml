@@ -1,0 +1,776 @@
+{
+  "catalog_part": "fom-questions",
+  "competency_questions": [
+    {
+      "id": "CQ-01",
+      "title_ru": "Что на экране 24 затронет изменение правила слома DR?",
+      "question_kind": "RELATIONSHIP",
+      "query": "impact",
+      "argument": "RULE:DRIDR-24-1#break_rule",
+      "baseline_status": "NO",
+      "answer_kind": "SET",
+      "expected_ids": [
+        "EST:B-CLOCK-PEAK-R",
+        "EST:B-CLOCK-PEAK-X",
+        "EST:B-CLOCK-R",
+        "EST:B-CLOCK-X",
+        "EST:B-CLOSE",
+        "EST:B-CLOSE-MISSING",
+        "EST:B-CLOSE-PREACT",
+        "EST:B-CROSS-FULL",
+        "EST:B-DR",
+        "EST:B-LEVEL-FULL",
+        "EST:B-LEVEL-REST",
+        "EST:B-ORDER",
+        "EST:B-RANGE",
+        "EST:B-RX-BAND-R",
+        "EST:B-RX-BAND-X",
+        "EST:B-RX-DIFF",
+        "EST:B-RX-JOINT-R",
+        "EST:B-RX-JOINT-X",
+        "EST:B-RX-KNOWN-R",
+        "EST:B-RX-KNOWN-X",
+        "EST:B-RX-OUTFRAME-R",
+        "EST:B-RX-OUTFRAME-X",
+        "EST:B-RX-REGION-R",
+        "EST:B-RX-REGION-X",
+        "EST:B-RX-UNDETERMINED-R",
+        "EST:B-RX-UNDETERMINED-X",
+        "EST:B-RX-WINDOW-R",
+        "EST:B-RX-WINDOW-X",
+        "EST:B-VISIT-FULL",
+        "EST:B-VISIT-REST",
+        "EST:B-ZONE-R",
+        "EST:B-ZONE-RESIDUAL-R",
+        "EST:B-ZONE-RESIDUAL-X",
+        "EST:B-ZONE-X",
+        "EST:K-ARRIVE",
+        "EST:N-DELTA-GE-R",
+        "EST:N-DELTA-GE-X",
+        "EST:N-DELTA-Q-R",
+        "EST:N-DELTA-Q-X",
+        "EST:N-IF-NEW-R",
+        "EST:N-IF-NEW-X",
+        "EST:N-NEW-R",
+        "EST:N-NEW-X",
+        "EST:N-NO-NEW-R",
+        "EST:N-NO-NEW-X",
+        "EST:N-TIME-R",
+        "EST:N-TIME-X",
+        "EST:P-DR",
+        "EST:ZD-BOOT-R",
+        "EST:ZD-BOOT-X",
+        "EST:ZD-GRID-R",
+        "EST:ZD-GRID-X",
+        "EST:ZD-NULL-R",
+        "EST:ZD-NULL-X",
+        "EST:ZM3-STUDY"
+      ],
+      "forbidden_ids": [
+        "EST:P-DIR",
+        "EST:P-WHEN",
+        "EST:P-R",
+        "EST:P-X"
+      ],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-02",
+      "title_ru": "Что затронет изменение 15-минутного окна подтверждения?",
+      "question_kind": "VALIDATING",
+      "query": "impact",
+      "argument": "FND:ACTIVATION-WINDOW",
+      "baseline_status": "NO",
+      "answer_kind": "SET",
+      "expected_ids": [
+        "EST:B-CLOCK-PEAK-R",
+        "EST:B-CLOCK-PEAK-X",
+        "EST:B-CLOCK-R",
+        "EST:B-CLOCK-X",
+        "EST:B-CLOSE",
+        "EST:B-CLOSE-MISSING",
+        "EST:B-CLOSE-PREACT",
+        "EST:B-CROSS-FULL",
+        "EST:B-DR",
+        "EST:B-LEVEL-FULL",
+        "EST:B-LEVEL-REST",
+        "EST:B-ORDER",
+        "EST:B-RANGE",
+        "EST:B-RX-BAND-R",
+        "EST:B-RX-BAND-X",
+        "EST:B-RX-DIFF",
+        "EST:B-RX-JOINT-R",
+        "EST:B-RX-JOINT-X",
+        "EST:B-RX-KNOWN-R",
+        "EST:B-RX-KNOWN-X",
+        "EST:B-RX-OUTFRAME-R",
+        "EST:B-RX-OUTFRAME-X",
+        "EST:B-RX-REGION-R",
+        "EST:B-RX-REGION-X",
+        "EST:B-RX-UNDETERMINED-R",
+        "EST:B-RX-UNDETERMINED-X",
+        "EST:B-RX-WINDOW-R",
+        "EST:B-RX-WINDOW-X",
+        "EST:B-VISIT-FULL",
+        "EST:B-VISIT-REST",
+        "EST:B-ZONE-R",
+        "EST:B-ZONE-RESIDUAL-R",
+        "EST:B-ZONE-RESIDUAL-X",
+        "EST:B-ZONE-X",
+        "EST:K-ARRIVE",
+        "EST:N-DELTA-GE-R",
+        "EST:N-DELTA-GE-X",
+        "EST:N-DELTA-Q-R",
+        "EST:N-DELTA-Q-X",
+        "EST:N-IF-NEW-R",
+        "EST:N-IF-NEW-X",
+        "EST:N-NEW-R",
+        "EST:N-NEW-X",
+        "EST:N-NO-NEW-R",
+        "EST:N-NO-NEW-X",
+        "EST:N-TIME-R",
+        "EST:N-TIME-X",
+        "EST:ZD-BOOT-R",
+        "EST:ZD-BOOT-X",
+        "EST:ZD-GRID-R",
+        "EST:ZD-GRID-X",
+        "EST:ZD-NULL-R",
+        "EST:ZD-NULL-X",
+        "EST:ZM3-STUDY"
+      ],
+      "forbidden_ids": [
+        "EST:P-DIR",
+        "EST:P-DR",
+        "EST:P-R",
+        "EST:P-WHEN",
+        "EST:P-X"
+      ],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-03",
+      "title_ru": "Что затронет смена рамки u = d(p − e)/w?",
+      "question_kind": "RELATIONSHIP",
+      "query": "impact",
+      "argument": "FND:COORDINATE",
+      "baseline_status": "NO",
+      "answer_kind": "SET",
+      "expected_ids": [
+        "EST:B-CLOCK-PEAK-R",
+        "EST:B-CLOCK-PEAK-X",
+        "EST:B-CLOCK-R",
+        "EST:B-CLOCK-X",
+        "EST:B-CLOSE",
+        "EST:B-CLOSE-MISSING",
+        "EST:B-CLOSE-PREACT",
+        "EST:B-CROSS-FULL",
+        "EST:B-DR",
+        "EST:B-LEVEL-FULL",
+        "EST:B-LEVEL-REST",
+        "EST:B-ORDER",
+        "EST:B-RANGE",
+        "EST:B-RX-BAND-R",
+        "EST:B-RX-BAND-X",
+        "EST:B-RX-DIFF",
+        "EST:B-RX-JOINT-R",
+        "EST:B-RX-JOINT-X",
+        "EST:B-RX-KNOWN-R",
+        "EST:B-RX-KNOWN-X",
+        "EST:B-RX-OUTFRAME-R",
+        "EST:B-RX-OUTFRAME-X",
+        "EST:B-RX-REGION-R",
+        "EST:B-RX-REGION-X",
+        "EST:B-RX-UNDETERMINED-R",
+        "EST:B-RX-UNDETERMINED-X",
+        "EST:B-RX-WINDOW-R",
+        "EST:B-RX-WINDOW-X",
+        "EST:B-VISIT-FULL",
+        "EST:B-VISIT-REST",
+        "EST:B-ZONE-R",
+        "EST:B-ZONE-RESIDUAL-R",
+        "EST:B-ZONE-RESIDUAL-X",
+        "EST:B-ZONE-X",
+        "EST:K-ARRIVE",
+        "EST:N-DELTA-GE-R",
+        "EST:N-DELTA-GE-X",
+        "EST:N-DELTA-Q-R",
+        "EST:N-DELTA-Q-X",
+        "EST:N-IF-NEW-R",
+        "EST:N-IF-NEW-X",
+        "EST:N-NEW-R",
+        "EST:N-NEW-X",
+        "EST:N-NO-NEW-R",
+        "EST:N-NO-NEW-X",
+        "EST:N-TIME-R",
+        "EST:N-TIME-X",
+        "EST:P-DIR",
+        "EST:P-DR",
+        "EST:P-R",
+        "EST:P-WHEN",
+        "EST:P-X",
+        "EST:ZD-BOOT-R",
+        "EST:ZD-BOOT-X",
+        "EST:ZD-GRID-R",
+        "EST:ZD-GRID-X",
+        "EST:ZD-NULL-R",
+        "EST:ZD-NULL-X",
+        "EST:ZM3-STUDY"
+      ],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-04",
+      "title_ru": "Какие принятые слова задевает изменение X?",
+      "question_kind": "RELATIONSHIP",
+      "query": "accepted_words",
+      "argument": "OUT:FINAL-X-1",
+      "baseline_status": "PARTIAL",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-05",
+      "title_ru": "Чем окончательный R отличается от сегодняшнего дна и первого прихода?",
+      "question_kind": "METAPROPERTY",
+      "query": "term",
+      "argument": "окончательный R",
+      "baseline_status": "PARTIAL",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [
+        "OUT:FINAL-R-1"
+      ],
+      "forbidden_ids": [
+        "EST:K-ARRIVE"
+      ],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-06",
+      "title_ru": "Что отвечает на «насколько глубоким будет этот откат»?",
+      "question_kind": "SCOPING",
+      "query": "term",
+      "argument": "откат от максимума",
+      "baseline_status": "NO",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [
+        "EST:B-LEVEL-REST"
+      ],
+      "forbidden_ids": [
+        "EST:N-NEW-R",
+        "EST:K-ARRIVE"
+      ],
+      "held_out": false,
+      "machine_gate": false,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-07",
+      "title_ru": "Что значит «место» в дизайне 22 и ARRIVE-24?",
+      "question_kind": "RELATIONSHIP",
+      "query": "term",
+      "argument": "место",
+      "baseline_status": "NO",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [
+        "EST:K-ARRIVE"
+      ],
+      "forbidden_ids": [
+        "EST:B-ZONE-R"
+      ],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-08",
+      "title_ru": "Почему у двух процентов разные знаменатели?",
+      "question_kind": "VALIDATING",
+      "query": "denominators",
+      "argument": "",
+      "baseline_status": "YES",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [
+        "EST:B-LEVEL-REST",
+        "EST:N-NEW-R",
+        "EST:K-ARRIVE"
+      ],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-09",
+      "title_ru": "Какие элементы показывают одну и ту же величину?",
+      "question_kind": "RELATIONSHIP",
+      "query": "same_value",
+      "argument": "EST:B-CLOCK-R",
+      "baseline_status": "YES",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-10",
+      "title_ru": "Что про «DR держится около 80 %» установлено, а что нет?",
+      "question_kind": "SCOPING",
+      "query": "research",
+      "argument": "RS:DR-HOLD",
+      "baseline_status": "PARTIAL",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": false,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-11",
+      "title_ru": "Какие гипотезы не подтвердились и где действует отрицательный результат?",
+      "question_kind": "SCOPING",
+      "query": "negative_results",
+      "argument": "",
+      "baseline_status": "NO",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": false,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-12",
+      "title_ru": "Какие числа C1 и почему ни одно не C2?",
+      "question_kind": "VALIDATING",
+      "query": "claims",
+      "argument": "",
+      "baseline_status": "YES",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-13",
+      "title_ru": "Где кончается проверенное происхождение данных?",
+      "question_kind": "SCOPING",
+      "query": "boundary",
+      "argument": "GAP-09",
+      "baseline_status": "YES",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": false,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-14",
+      "title_ru": "Что принято, что реализовано, что только предложено?",
+      "question_kind": "SCOPING",
+      "query": "standing",
+      "argument": "",
+      "baseline_status": "PARTIAL",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": false,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-15",
+      "title_ru": "Что меняется при принятии слоя PR #2?",
+      "question_kind": "SCOPING",
+      "query": "layer",
+      "argument": "2",
+      "baseline_status": "NO",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": false,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-16",
+      "title_ru": "Какие изменения противоречили бы принятому SC-1.1?",
+      "question_kind": "VALIDATING",
+      "query": "protected",
+      "argument": "",
+      "baseline_status": "PARTIAL",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-17",
+      "title_ru": "Откат → после подтверждения → C1 → экран 24: какие объекты?",
+      "question_kind": "VALIDATING",
+      "query": "pullback_facet",
+      "argument": "",
+      "baseline_status": "NO",
+      "answer_kind": "SET",
+      "expected_ids": [
+        "EST:N-NEW-R",
+        "EST:N-NO-NEW-R",
+        "EST:N-DELTA-Q-R",
+        "EST:N-DELTA-GE-R",
+        "EST:N-IF-NEW-R",
+        "EST:N-TIME-R"
+      ],
+      "forbidden_ids": [
+        "EST:P-R",
+        "EST:ZM3-STUDY"
+      ],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-18",
+      "title_ru": "Какие наборы случаев у BASE, NOW, PRE и ARRIVE?",
+      "question_kind": "RELATIONSHIP",
+      "query": "case_sets",
+      "argument": "",
+      "baseline_status": "YES",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-19",
+      "title_ru": "Какие определения влияют на величину и каков тип зависимости?",
+      "question_kind": "RELATIONSHIP",
+      "query": "lineage",
+      "argument": "EST:B-DR",
+      "baseline_status": "NO",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-20",
+      "title_ru": "Какие связи остаются после новой закрытой M5?",
+      "question_kind": "RELATIONSHIP",
+      "query": "obligations",
+      "argument": "MT-02",
+      "baseline_status": "PARTIAL",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-21",
+      "title_ru": "Что неизменно внутри семьи и меняется после её смены?",
+      "question_kind": "METAPROPERTY",
+      "query": "obligations",
+      "argument": "MT-04",
+      "baseline_status": "PARTIAL",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-22",
+      "title_ru": "Какие разные величины отвечают на одну фразу и не тождественны?",
+      "question_kind": "RELATIONSHIP",
+      "query": "term",
+      "argument": "откат",
+      "baseline_status": "NO",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [
+        "OUT:FINAL-R-1",
+        "EST:N-NEW-R",
+        "EST:B-LEVEL-REST"
+      ],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-23",
+      "title_ru": "Какие отношения между правильными числами обязан сохранять экран?",
+      "question_kind": "RELATIONSHIP",
+      "query": "obligations",
+      "argument": "",
+      "baseline_status": "PARTIAL",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-24",
+      "title_ru": "Какие исследовательские выводы нельзя обобщать за исходную популяцию?",
+      "question_kind": "SCOPING",
+      "query": "research",
+      "argument": "",
+      "baseline_status": "NO",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": false,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-25",
+      "title_ru": "Как отличить отсутствие зависимости от отсутствия её в статическом графе?",
+      "question_kind": "RELATIONSHIP",
+      "query": "impact_limits",
+      "argument": "",
+      "baseline_status": "PARTIAL",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-26",
+      "title_ru": "Какие изменения предмета должны проявляться на экране?",
+      "question_kind": "RELATIONSHIP",
+      "query": "obligations",
+      "argument": "",
+      "baseline_status": "PARTIAL",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": false,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-27",
+      "title_ru": "Можно ли узнать длительность пребывания по времени окончательного R?",
+      "question_kind": "RELATIONSHIP",
+      "query": "term",
+      "argument": "длительность",
+      "baseline_status": "NO",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [
+        "EST:B-CLOSE"
+      ],
+      "forbidden_ids": [
+        "EST:B-RX-WINDOW-R"
+      ],
+      "held_out": true,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-28",
+      "title_ru": "Можно ли сравнить проценты NOW и ARRIVE без их наборов и знаменателей?",
+      "question_kind": "VALIDATING",
+      "query": "denominators",
+      "argument": "",
+      "baseline_status": "PARTIAL",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [
+        "EST:N-NEW-R",
+        "EST:K-ARRIVE"
+      ],
+      "forbidden_ids": [],
+      "held_out": true,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    },
+    {
+      "id": "CQ-29",
+      "title_ru": "Доказывает ли сохранённый выпуск показ или человеческое прочтение?",
+      "question_kind": "VALIDATING",
+      "query": "operations",
+      "argument": "",
+      "baseline_status": "YES",
+      "answer_kind": "EXPLANATION",
+      "expected_ids": [],
+      "forbidden_ids": [],
+      "held_out": true,
+      "machine_gate": true,
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+        "meaning/lens/2026-10-14-fom-input/FOM-1.2.md"
+      ],
+      "boundary_ru": "Ответ касается объявленной версии и области. SCOPING не является машинной приёмкой онтологии.",
+      "expected_ru": "Наборы для 01–03 и 17 объявлены до реализации. Остальные ответы требуют источника и явной границы."
+    }
+  ]
+}
