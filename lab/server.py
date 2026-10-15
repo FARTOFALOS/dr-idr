@@ -194,6 +194,8 @@ if __name__ == '__main__':
     parser.add_argument('--data', choices=['market', 'demo'], default='market')
     parser.add_argument('--integration',action='store_true')
     args = parser.parse_args()
+    if args.integration and args.data != 'market':
+        parser.error('--integration requires --data market; synthetic and market scenes stay separate')
     INTEGRATION = args.integration
     engine = importlib.import_module('engine' if args.data == 'demo' else 'engine_market')
     DATA_KIND = 'SYNTHETIC' if args.data == 'demo' else 'MARKET'
