@@ -1,0 +1,40 @@
+{
+ "status": "PASS",
+ "role": "mathematical/discriminating examples over existing reference functions; not empirical predictive validation",
+ "results": [
+  {
+   "id": "REL-1",
+   "status": "PASS",
+   "checks": 343,
+   "relation": "complete own-horizon final-R threshold equals reach; when not yet reached by cut, full/rest reach agree per case",
+   "boundary": "same frame, level and horizon; does not equate family percentages or first times"
+  },
+  {
+   "id": "REL-2",
+   "status": "PASS",
+   "relation": "truth-related projections can have different knowledge: known reach YES while final R UNKNOWN"
+  },
+  {
+   "id": "REL-3",
+   "status": "PASS",
+   "relation": "same final R/X and times do not determine comparability at cut; aggregation cannot reconstruct a conditional set"
+  },
+  {
+   "id": "REL-4",
+   "status": "PASS",
+   "relation": "same close paths do not determine wick arrival or the time of final R"
+  },
+  {
+   "id": "REL-5",
+   "status": "PASS",
+   "relation": "equal R and X marginals do not determine a joint path claim; preserve case identity as the coupling witness"
+  },
+  {
+   "id": "REL-6",
+   "status": "PASS",
+   "relation": "per-case event equivalence does not equate measures under different case sets/denominators"
+  }
+ ],
+ "no_market_data_export": true,
+ "no_semantic_contract_changed": true
+}

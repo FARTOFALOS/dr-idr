@@ -88,7 +88,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
   <div class="seg" id="sess"></div>
   <span class="lbl" id="date"></span>
   <span class="lbl version24">№ 24</span>
-  <div class="seg" id="mode"><button data-m="bounds">Границы хода</button><button data-m="path">Путь семьи</button></div>
+  <div class="seg" id="mode"><button data-m="bounds">Границы хода</button><button data-m="path">Путь семьи</button><button data-m="continuations" hidden>Продолжения</button></div>
   <div class="seg" id="ev"></div>
   <button type="button" id="areab" title="Выбрать область R мышью: цена или цена × время; R/X меняется вместе с текущим фокусом">▭ Область · R</button>
   <div class="sp"></div>
@@ -107,6 +107,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
 <div id="main"><canvas id="cv" role="img" aria-label="Свечной график с событиями семьи, уровнями DR и IDR"></canvas><div id="tip" hidden></div><div id="nav"><button data-z="1" title="Отдалить">−</button><button data-z="-1" title="Приблизить">+</button><button data-z="0" title="Сбросить вид (Alt+R)">↺</button></div><div id="det"><div id="deth"></div><div id="detg"></div></div></div>
 <aside id="panel"></aside>
 <div id="insp" aria-live="polite"></div>
+<script src="/integration-config.js"></script>
 <script src="d24.js"></script>
 </div>
 </body>

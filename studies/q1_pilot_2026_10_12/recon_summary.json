@@ -1,0 +1,123 @@
+{
+ "reference": {
+  "file": "studies\\kadr_2026_10_12\\kadr_checks.json",
+  "sha256_before": "73c69e957a6b598655d39ceefacfc6227a1006db37f20abdd1302b9210cf7c11",
+  "sha256_after": "73c69e957a6b598655d39ceefacfc6227a1006db37f20abdd1302b9210cf7c11",
+  "unchanged": true
+ },
+ "engine": {
+  "model": "52307acc95a25ac11408601fcdb633ada5a790a455d65953361b6c69b7e4d21b",
+  "engine": "q1-engine-1"
+ },
+ "corpus": "lab/.runtime of the main checkout (read only)",
+ "universes": [
+  {
+   "inst": "NQ",
+   "session": "ODR",
+   "sessions": 4660,
+   "ad_targets": 1718,
+   "seconds": 80
+  },
+  {
+   "inst": "NQ",
+   "session": "RDR",
+   "sessions": 4730,
+   "ad_targets": 1624,
+   "seconds": 88
+  },
+  {
+   "inst": "ES",
+   "session": "ODR",
+   "sessions": 4821,
+   "ad_targets": 1652,
+   "seconds": 69
+  },
+  {
+   "inst": "ES",
+   "session": "RDR",
+   "sessions": 4867,
+   "ad_targets": 1758,
+   "seconds": 87
+  },
+  {
+   "inst": "YM",
+   "session": "ODR",
+   "sessions": 4641,
+   "ad_targets": 1681,
+   "seconds": 66
+  },
+  {
+   "inst": "YM",
+   "session": "RDR",
+   "sessions": 4762,
+   "ad_targets": 1603,
+   "seconds": 93
+  }
+ ],
+ "golden_rerun": {
+  "seconds": 237,
+  "A": [],
+  "D": [],
+  "E": [],
+  "identical": true
+ },
+ "adapter_vs_published": {
+  "D": [],
+  "A_rows": [],
+  "A_coverage": [],
+  "identical": true
+ },
+ "engine_vs_adapter": {
+  "rows": 296738,
+  "target_state_mismatch": 0,
+  "by_estimator": {
+   "GEO": {
+    "rows": 296738,
+    "parent_mismatch": 0,
+    "eligible_mismatch": 0,
+    "notyet_mismatch": 0,
+    "near_mismatch": 0,
+    "member_mismatch": 0,
+    "count_mismatch": 0,
+    "member_cells": 969297709
+   },
+   "NODEPOS_all": {
+    "rows": 296738,
+    "parent_mismatch": 0,
+    "eligible_mismatch": 0,
+    "notyet_mismatch": 0,
+    "near_mismatch": 0,
+    "member_mismatch": 0,
+    "count_mismatch": 0,
+    "member_cells": 125524978
+   },
+   "NODEPOS_wd": {
+    "rows": 296738,
+    "parent_mismatch": 0,
+    "eligible_mismatch": 0,
+    "notyet_mismatch": 0,
+    "near_mismatch": 0,
+    "member_mismatch": 0,
+    "count_mismatch": 0,
+    "member_cells": 25377942
+   }
+  },
+  "mismatch_records": 0
+ },
+ "domain": {
+  "targets_all": 28481,
+  "targets_ad": 10036,
+  "rows_5min": 2269491,
+  "rows_15min": 746366,
+  "rows_ad": 296738,
+  "rows_15min_target_unknown": 2392,
+  "rows_15min_small_family": 447236,
+  "rows_5min_only": 1523125
+ },
+ "scalar_sample": {
+  "rows": 120,
+  "parent_members_checked": 449935,
+  "disagreements": 0
+ },
+ "seconds": 757
+}

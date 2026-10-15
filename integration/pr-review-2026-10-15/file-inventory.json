@@ -1,0 +1,5139 @@
+[
+  {
+    "pr": 2,
+    "path": "AGENTS.md",
+    "source_git_blob": "dbf6a861951876abfc6aeeeaa6b10144a6af4f22",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "contract/build/dr_lab_sc.schema.json",
+    "source_git_blob": "62fbdad347044ba86260854b407d351dce92c0a7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "contract/build/page_registry.json",
+    "source_git_blob": "0156e231cda2c3a2dca6e07cbc04a831d5ef006b",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "contract/build/registry.json",
+    "source_git_blob": "c3acc9415c5b5b6c609c099b86b4622d2314cafe",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "contract/build/runtime_spec.json",
+    "source_git_blob": "a33323cd0e710426dbcbf8439b1c3d171a9e33d2",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "contract/registry/00-editions.yaml",
+    "source_git_blob": "cab65fa5a4d925ca12d166780faa40ad7d9243b3",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "contract/registry/10-observation-strategy-measurement.yaml",
+    "source_git_blob": "b74aa0c7d28bdb199983e0078e5dea283a9f1fb9",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "contract/registry/20-cases-outcomes.yaml",
+    "source_git_blob": "4c3ccd82d451ea39fb9c1f237e28534ebc669ffe",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "contract/registry/30-questions-estimands.yaml",
+    "source_git_blob": "c34998a9351877bf56b7357905dd5735ebe4ecdf",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "contract/registry/40-claims.yaml",
+    "source_git_blob": "eb74293d4da6b1ea84e67d7ebaf8dab17614bbd7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "contract/registry/60-surfaces.yaml",
+    "source_git_blob": "71cf3f8150134a105fc19a233fc4395339c09106",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "contract/registry/70-obligations.yaml",
+    "source_git_blob": "32f2ad14d4634ffc2de6fade534161494ea1b774",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "contract/schema/dr_lab_sc.yaml",
+    "source_git_blob": "298457584c957e91e6b61054b48f60503c8333e7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "design/sozvezdiya-24/src/app.js",
+    "source_git_blob": "10a605633c1ae53cedd72921c25eaf087087c982",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "design/sozvezdiya-24/src/panel.css",
+    "source_git_blob": "30cef31ee3bcad6ef24dc6a334d681da0a61c4a0",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "design/sozvezdiya-24/src/panel.js",
+    "source_git_blob": "45ba3291d254d8a1d0e1724bb1d0083e12a07cef",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "docs/ARCHITECTURE.md",
+    "source_git_blob": "17bf8766ea1c90e5bf28bbd8a710c06707299317",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "docs/DECISIONS.md",
+    "source_git_blob": "87c179cba01ea2aa88530b4565333b789021d96a",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "docs/SEMANTICS.md",
+    "source_git_blob": "03f8b6a00be6e09dc246543b191fe04bebae9a20",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "docs/UI_RULES.md",
+    "source_git_blob": "037bc318cafbe1acda27419c05be82662c6e0b71",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "lab/contract.py",
+    "source_git_blob": "0a96307568b99e8fd2b8f8c1b0163c1dca72e013",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "lab/dist/24/d24.js",
+    "source_git_blob": "3fabc85af2e26dc390eb41c2f24025fcd19b58c5",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "lab/dist/24/index.html",
+    "source_git_blob": "4fe5db5b764db42cd4f93dc7748e4187d39a44c1",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "lab/pre24.py",
+    "source_git_blob": "3ae1d51d61876d0696ff5d45578c640a1a636ef7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 2,
+    "path": "lab/server.py",
+    "source_git_blob": "90b7f2870660c28d2b27346b9a9f1ae79b14b2f6",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "meaning/07-cepochka-reshenij.md",
+    "source_git_blob": "67f7c6f46cff3ec4e968f856b57c83f6680b79cf",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "meaning/13-zhurnal-vizualizacii.md",
+    "source_git_blob": "bbd888fe4230b6e16925e29c4d89432ec65bfeb7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "meaning/16-priyomka-swpc.md",
+    "source_git_blob": "ce7545509885f3147b8fb44217abe8c9b19f9132",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "meaning/16a-list-zadanij.md",
+    "source_git_blob": "8409b63bc0bbe8133e45639abde90bd09c85ac6b",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "meaning/17-rabota-treidera.md",
+    "source_git_blob": "f4581ee2d035d2b172740f4a92d44451eb5461c8",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "meaning/README.md",
+    "source_git_blob": "8bf716a6d95bbf7e31aca1e07ae0ad7eb0e1095f",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "meaning/lens/2026-10-08-osc-1.0/DR-LAB-OSC-1.0.md",
+    "source_git_blob": "a782e36e926049b96a30392c6283a4dce15b85d0",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/.gitignore",
+    "source_git_blob": "81f5bcac87946dbbe060476ee6e6312d4b2512b0",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/img/s1-A-hover.png",
+    "source_git_blob": "03447e49fc9140829d3088e286ed3cf1dac9dfe2",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/img/s1-A.png",
+    "source_git_blob": "3ef6913c3211327bd208119a83a977895d3c8132",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/img/s1-B.png",
+    "source_git_blob": "ecce6aee439db87ba4e4e2ac71ea3bd23fc7de5d",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/img/s1-C.png",
+    "source_git_blob": "771a3f3fa55be84e391dcffac409e0a86e6cd507",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/img/s2-A-hover.png",
+    "source_git_blob": "8f8133760eafc0e540e712601d2bb9b0a60bbefd",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/img/s2-A.png",
+    "source_git_blob": "345cacb104eecb8b67868a32d4e5a75b332f466c",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/img/s2-B.png",
+    "source_git_blob": "405d1c94cb0e1f1bb4a21fbf19d80a1e2c491949",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/img/s2-C.png",
+    "source_git_blob": "47e61eb7cb2d024471a5e4b7d05198c9ca50c8d9",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/img/s3-A-hover.png",
+    "source_git_blob": "f4dd31031db375ddc83467b2de36438427908660",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/img/s3-A.png",
+    "source_git_blob": "62a993aa6fa52fabedaf0e0d8c466de129c165c1",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/img/s3-B.png",
+    "source_git_blob": "af73883f18351139e78e0d3ddeb8325868502c02",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/img/s3-C.png",
+    "source_git_blob": "f2a805e8748993fb6dae608bcda67d400e1c4f4c",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/shots.mjs",
+    "source_git_blob": "73af61a3409cf527e86b8868b819dfbfa6d9dfd7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/src/app.js",
+    "source_git_blob": "2bda3838666bbe6d13e0440fd8c61384142fd4c5",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/src/build.py",
+    "source_git_blob": "97b97fb86ae2faf8f4ac63340cc0b0837555afd7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/src/page.html",
+    "source_git_blob": "1fe3918db1d660ab431a02e322280f0b26ba4ab8",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/src/panel.css",
+    "source_git_blob": "cdd06f33f6cd91591308364c0c3d5716f0ba8cb7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/now-1/src/panel.js",
+    "source_git_blob": "d36435e3a2a3b969d85555acf89cc1df3330001b",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/img/brk-okna.png",
+    "source_git_blob": "51266c4af126bea6ce2f4e50055ed9444bd69fa4",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/img/brk.png",
+    "source_git_blob": "ec9d4f20b160aaf1193989dad8b47823b98eb3b9",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/img/late-okna.png",
+    "source_git_blob": "64f4ca819e2e411f8e8a76764412d6adce064e71",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/img/late.png",
+    "source_git_blob": "05e96d2a037522cdb1a9323fd25c31074f048225",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/img/live-2026-10-08-0504.jpg",
+    "source_git_blob": "be7380cfd5da1b4444a462ea774c314bc2199bbd",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/img/pre.png",
+    "source_git_blob": "fd0f1aa9ae81c0a25a4a809c328ff660537a699c",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/img/r1-okna.png",
+    "source_git_blob": "69a35ce14e6dca67a591fbe22671e0f7d0fc9620",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/img/r1.png",
+    "source_git_blob": "775e59cf3c53cc2ab2a8e151debd505be66f2fe9",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/img/r2-okna.png",
+    "source_git_blob": "e4d9c526ea42104c2f150871588b0a15b035239f",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/img/r2.png",
+    "source_git_blob": "f42d4907f15ce41478fbade012aa29ad4d446064",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/now_joint.py",
+    "source_git_blob": "add48f05dcd9bde8a708cbd39c89f24f0fe94377",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/order_by_state.py",
+    "source_git_blob": "bf6d47cef4bbf9f31788aea697072cf28c80f02b",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "research/rabota-1/scenes.mjs",
+    "source_git_blob": "de7153c1ac4c5b2a0e301756039e012e143ba4cf",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/DR-LAB-SWPC-1.1.md",
+    "source_git_blob": "f94690f45188ca486f5f45f3b9cfbb32a6a416f9",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
+    "source_git_blob": "52a3465e3c8dff44e5672f807cedac40ca46d340",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/03-obzor-panel.md",
+    "source_git_blob": "6ad814ef993e2785022daecfa49b6c68ad391fab",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/11-invarianty.md",
+    "source_git_blob": "e61668336d9fe37ec1dbf5a70217d8a2fcd55418",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/12-swpc.md",
+    "source_git_blob": "19e8bffa321a11ca955fb2e09c5ef54ae07f37f0",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/README.md",
+    "source_git_blob": "983ec3cd40b827aed914c75d6d20ee925cd787d3",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/resheniya-08-10/1-do-podtverzhdeniya.png",
+    "source_git_blob": "25f4a8fafda6ce568f1be32025530a70b9306daa",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/resheniya-08-10/2-malo-sessij.png",
+    "source_git_blob": "69748e0b4e5a0125ce19a7faf298bc410443733e",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/resheniya-08-10/3-faza-otkat-ne-sdelan.png",
+    "source_git_blob": "09b122ec13286eee12f4206b234b6daa8878e28a",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/resheniya-08-10/4-faza-otkat-sdelan.png",
+    "source_git_blob": "7a6e8d296c71b52dbce36d8f61c798094f14eb43",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/resheniya-08-10/5-semya-sloma-malo.png",
+    "source_git_blob": "3c50f11b36955413ee9050242610c8e6fe85acda",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/swpc/1-svodka-skryta-baza.png",
+    "source_git_blob": "eb5113fca27313debcb3808aa436543e19c50c3d",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/swpc/1-svodka-skryta-kandidat.png",
+    "source_git_blob": "3ce9fb2a331cd6438715162de87cf9d83bfbf46c",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/swpc/2-zona-snyata-baza.png",
+    "source_git_blob": "045e420ebdca94a8105ffba118bcbb8f50dbb51a",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/swpc/2-zona-snyata-kandidat.png",
+    "source_git_blob": "e929185bbe0c9377e09c3ba9c9dc90e747a06b1f",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/swpc/3-slom-1600-baza.png",
+    "source_git_blob": "a5075d6b722ecd09b20f8338ef423344367463e7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/swpc/3-slom-1600-kandidat.png",
+    "source_git_blob": "3b4cb2ec8b8aa8089c4eceb1eda950ae3b7e904b",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/swpc/4-sejchas-nedostupno-baza.png",
+    "source_git_blob": "cb6c35f28ed13fb16424151efafe4418a0099917",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/img/swpc/4-sejchas-nedostupno-kandidat.png",
+    "source_git_blob": "6203fc5fd56834e2e6628ea0aae4261adb790e0b",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "spec/ekran-24/swpc-kandidat.json",
+    "source_git_blob": "62a2c40280130362c70145d88746585989bb5e54",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 2,
+    "path": "tests/contract_sc11.py",
+    "source_git_blob": "617c0e2098fc628c3930060decbdde6b7773a86d",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "tests/swpc11.py",
+    "source_git_blob": "f237de42a58f031decba9822eccbb1d72067ea82",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 2,
+    "path": "tests/swpc11_browser.mjs",
+    "source_git_blob": "613cd0ccc19e70d24e912686c1fc5fa03e3eebcf",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/07-cepochka-reshenij.md",
+    "source_git_blob": "60756a913a34d25cd7ac594c689c9fed1aa3121a",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-09-smyslovoj-karkas-i-roadmap.md",
+    "source_git_blob": "d007522b91b36f7da3fc6392e8f9611bc6bc67b9",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-10-prihody-i-prodolzheniya.md",
+    "source_git_blob": "1b8c73d6f734a7a6f2dfecabdaa9a1a1fffdcb7a",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/01-esse.md",
+    "source_git_blob": "fa857bcdd4af86d63d26dd5e76835c172061caa0",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/02-semanticheskaya-specifikaciya.md",
+    "source_git_blob": "1abeba35beacd9b7ac4080f800010630eddb2fe8",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/03-smyslovoj-kontur.svg",
+    "source_git_blob": "ec32bc94b3752fcb8313f3bbe0b2e0980702c7f1",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/README.md",
+    "source_git_blob": "8498b0cb71fb7ecc9b2e48d043baabcbaeaf6a5a",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/01-put-mesto-i-reshenie.md",
+    "source_git_blob": "8ff75da915a3fb2439eb89ea480ce75b6c193359",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/02-linejka-a-ne-orakul.md",
+    "source_git_blob": "793f3b0c51033ac8451cb48327770d7547c74725",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/input-schema.svg",
+    "source_git_blob": "04ea1647f5eb12fe82f78fb329ef0c34cda60367",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-12-esse-linejka-a-ne-orakul.md",
+    "source_git_blob": "9987b3edcdc8a6dc4b6ed1711f453c48d0f9059e",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-12-film-i-moment/01-esse.md",
+    "source_git_blob": "a77341b0d4b3591116f0d1fd9b3ab02f86e8521a",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-12-film-i-moment/02-semanticheskaya-specifikaciya.md",
+    "source_git_blob": "8ebefe3e7613ceb1a6e516949783a4e6bb3bd688",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-12-film-i-moment/README.md",
+    "source_git_blob": "d0de388469589ebb2892dc63fa14ab8687bc4881",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-12-otvet-budushchee-mesto-moment.md",
+    "source_git_blob": "ddf8819c32c9012ee23b8f04b4bb3f8145921096",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-12-put-mesto-i-reshenie.md",
+    "source_git_blob": "bbe6b2c4de98ca279edb7482c8aaf0b909a077e9",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "meaning/lens/2026-10-12-samodopros-smysla.md",
+    "source_git_blob": "d73cbbe1e622403ad4b23512d5c9a4c57b8e51d5",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "studies/semantic_paths_2026_10_10/check.mjs",
+    "source_git_blob": "6757a04991e3f32661dda56faaeade9bea328bf6",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "studies/semantic_paths_2026_10_10/check_v2.mjs",
+    "source_git_blob": "196e461f1fa8bcdc3c01b3da7aed48f830cfd917",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 3,
+    "path": "studies/semantic_paths_2026_10_10/check_v3.mjs",
+    "source_git_blob": "95a59362be9a70f9cae065c3d51df36e60a18b32",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 4,
+    "path": "meaning/07-cepochka-reshenij.md",
+    "source_git_blob": "c367ee4ae9aee20c1a998b3551b697ae9005aea4",
+    "semantic_parents": [
+      3
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 4,
+    "path": "meaning/lens/2026-10-12-kurator/01-esse.md",
+    "source_git_blob": "3c2c311470ad7f363761d51cfbe6c8ca9fc1a38b",
+    "semantic_parents": [
+      3
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 4,
+    "path": "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+    "source_git_blob": "539e7bf5c4c85f9c8fffc10cb68632a6b06aebd5",
+    "semantic_parents": [
+      3
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 4,
+    "path": "meaning/lens/2026-10-12-kurator/README.md",
+    "source_git_blob": "b06aedf76d04f3594b2796fc1ab6a7e6d4cfbe61",
+    "semantic_parents": [
+      3
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 4,
+    "path": "studies/kadr_2026_10_12/README.md",
+    "source_git_blob": "932c0624c7e52f5cfd6e7d380527a4e88ae37692",
+    "semantic_parents": [
+      3
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 4,
+    "path": "studies/kadr_2026_10_12/kadr_checks.json",
+    "source_git_blob": "df9b493889241a9df577073812afb433313f7382",
+    "semantic_parents": [
+      3
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 4,
+    "path": "studies/kadr_2026_10_12/kadr_checks.py",
+    "source_git_blob": "25fedc6878a5d632d7a7e03bfee981a5a3513989",
+    "semantic_parents": [
+      3
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 5,
+    "path": "meaning/07-cepochka-reshenij.md",
+    "source_git_blob": "f3eec7f2766fbcf72423d73b80aeb3a844647c45",
+    "semantic_parents": [
+      4
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 5,
+    "path": "meaning/lens/2026-10-12-independent-srs/01-semantic-audit.md",
+    "source_git_blob": "68808eea9174c98162c27a2d563aade86b95b918",
+    "semantic_parents": [
+      4
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 5,
+    "path": "meaning/lens/2026-10-12-independent-srs/02-srs.md",
+    "source_git_blob": "b494d3a8a5a26fd4de9696fc7ce72e748ace57c3",
+    "semantic_parents": [
+      4
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 5,
+    "path": "meaning/lens/2026-10-12-independent-srs/03-q1-historical-pilot.md",
+    "source_git_blob": "c380fbc8bcd68d1ea3947f115067bbd7ee095267",
+    "semantic_parents": [
+      4
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 5,
+    "path": "meaning/lens/2026-10-12-independent-srs/04-engineer-roadmap.md",
+    "source_git_blob": "f72a7082850f6488c08d61528c376fdcd8d94b68",
+    "semantic_parents": [
+      4
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 5,
+    "path": "meaning/lens/2026-10-12-independent-srs/05-self-check.md",
+    "source_git_blob": "3ebe82d7be825ce94e1c4fa6eb6b4279be208678",
+    "semantic_parents": [
+      4
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 5,
+    "path": "meaning/lens/2026-10-12-independent-srs/README.md",
+    "source_git_blob": "f6b4850f58016d4c73e0ca8f4cf06f54fa170ad6",
+    "semantic_parents": [
+      4
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 5,
+    "path": "meaning/lens/2026-10-12-kurator/01-esse.md",
+    "source_git_blob": "f1aeba6eb40e1fb5af2fc38c06a0419d79b971e2",
+    "semantic_parents": [
+      4
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 5,
+    "path": "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+    "source_git_blob": "5e7795b9b72fe1b240b07eb1db022102a46d2f33",
+    "semantic_parents": [
+      4
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 5,
+    "path": "meaning/lens/2026-10-12-kurator/README.md",
+    "source_git_blob": "4cf1095e509a1419ccd76be6b796b8e2de6e1de5",
+    "semantic_parents": [
+      4
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 5,
+    "path": "studies/kadr_2026_10_12/README.md",
+    "source_git_blob": "e4088a7506078ccc5bc3b853729f5a3d16596e07",
+    "semantic_parents": [
+      4
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 6,
+    "path": ".gitignore",
+    "source_git_blob": "81ed4e4a20900337a075dbaa8f41e2264095c8db",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 6,
+    "path": "AGENTS.md",
+    "source_git_blob": "fdab8bdf5db82875be2c4a5740ce4083e5eb5d33",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 6,
+    "path": "lab/q1/README.md",
+    "source_git_blob": "2d2af95b20c33dc021c901fc7f86c7c1237b9efc",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 6,
+    "path": "lab/q1/__init__.py",
+    "source_git_blob": "2521342c271f275ffcca73baa527f4977b0d3a4a",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 6,
+    "path": "lab/q1/demo.py",
+    "source_git_blob": "6bd942cc71bae10b01fdc432f98b2cf812568c43",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 6,
+    "path": "lab/q1/engine.py",
+    "source_git_blob": "5969d456c1cba0a2ba3f4393f59601dc5b5ad0e9",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 6,
+    "path": "lab/q1/passport.py",
+    "source_git_blob": "ef57a5abd325efc5a9cbfafe06a253e211c107dd",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 6,
+    "path": "lab/q1/recon.py",
+    "source_git_blob": "c1b2d9978ad87a939565e406d93c49b1386d2d95",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 6,
+    "path": "lab/q1/server.py",
+    "source_git_blob": "cb71df207e2f00d01f24351dc44f1d61e8d183c0",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 6,
+    "path": "lab/q1/store.py",
+    "source_git_blob": "d93ddb16de3ff6d88d02fc4bb05943889fd1c983",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 6,
+    "path": "lab/q1/web/app.js",
+    "source_git_blob": "0fe24858495706d3fa710daa5ad930a4021aa4ab",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 6,
+    "path": "lab/q1/web/index.html",
+    "source_git_blob": "0a8063ad6ba25bdd4dc7600b3d71880976d2d2eb",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 6,
+    "path": "lab/q1/web/style.css",
+    "source_git_blob": "2650e7501dd3a8b8251b0609d3222b40519850f0",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 6,
+    "path": "meaning/07-cepochka-reshenij.md",
+    "source_git_blob": "efa9d85c230fffc471825be29ef666d1849822c6",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 6,
+    "path": "meaning/README.md",
+    "source_git_blob": "0188cea15513f2fca0fc8ea5a8af952f98a758d7",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 6,
+    "path": "start-q1-pilot.cmd",
+    "source_git_blob": "4207319b8a3d59bce02c0a0d886180ab4e4bd4ef",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 6,
+    "path": "start-q1-pilot.ps1",
+    "source_git_blob": "cb02df8e14f4e466b980b0baf487c240939a582e",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 6,
+    "path": "stop-q1-pilot.cmd",
+    "source_git_blob": "6363ac93ce99794674fbcd4997c1b95f360399fd",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 6,
+    "path": "stop-q1-pilot.ps1",
+    "source_git_blob": "332ee7d6e7ac2112dae9e344d1cd562f9719078c",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 6,
+    "path": "studies/q1_pilot_2026_10_12/README.md",
+    "source_git_blob": "5faa5719ad298a52a2b86082cbff8cf1b84550d4",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 6,
+    "path": "studies/q1_pilot_2026_10_12/reading_check.md",
+    "source_git_blob": "e241825c64f6a7daa31b077e05ca6fdf8eff4b1b",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 6,
+    "path": "studies/q1_pilot_2026_10_12/recon_summary.json",
+    "source_git_blob": "41ce30062cfc985f44fa621e10683b098836ce43",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 6,
+    "path": "tests/q1_page_check.js",
+    "source_git_blob": "bc8747050bbdb41dcc8dd0484ad8817cf1bfd257",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 6,
+    "path": "tests/q1_pilot.py",
+    "source_git_blob": "765da83cfd21a490200a4b542960aaf09cf18ebd",
+    "semantic_parents": [
+      5
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": ".gitignore",
+    "source_git_blob": "81ed4e4a20900337a075dbaa8f41e2264095c8db",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "AGENTS.md",
+    "source_git_blob": "126eb522848a981a6ad72e2fc8f10233ae654799",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "contract/build/dr_lab_sc.schema.json",
+    "source_git_blob": "66fe2fb7407e33e595af658a0615ca7f8d55e7fe",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "contract/build/page_registry.json",
+    "source_git_blob": "9c38f2ee79abd9df83154252578f4ac2ce8f8d42",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "contract/build/registry.json",
+    "source_git_blob": "fef3342b20d6da7b9860699322b79c2f451827b1",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "contract/build/runtime_spec.json",
+    "source_git_blob": "5491ee09b7e3a31b50b974d5ba1a15993d0b5d01",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "contract/registry/00-editions.yaml",
+    "source_git_blob": "47e8f31fc8873514aa838379702e4ea67f70f206",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "contract/registry/20-cases-outcomes.yaml",
+    "source_git_blob": "25faf704aaf9d08fa916c5fc32460e90f5a295c3",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "contract/registry/30-questions-estimands.yaml",
+    "source_git_blob": "029c0a17f57e0062749cd4deaa67e7bb89f3fd16",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "contract/registry/40-claims.yaml",
+    "source_git_blob": "71b36858ba7b528649d86460675c73b526383f68",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "contract/registry/60-surfaces.yaml",
+    "source_git_blob": "f6112e87a070daedb2b614ca9ad353e2a5a05006",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "contract/registry/70-obligations.yaml",
+    "source_git_blob": "8c418359ea18631cc21d4f9083c9cb5ce42a7665",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "contract/schema/dr_lab_sc.yaml",
+    "source_git_blob": "6007bf886f261cd87bd35114987943994cd2f62b",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "design/sozvezdiya-24/src/app.js",
+    "source_git_blob": "5b0e4da67e4fdfcdc0830baad13c927379a534bc",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "design/sozvezdiya-24/src/panel.js",
+    "source_git_blob": "bf8475c837abedf236fc4b3d02bb18728324985d",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "docs/ARCHITECTURE.md",
+    "source_git_blob": "24653980638c09588cfc289f3da6af9367264d67",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "docs/SEMANTICS.md",
+    "source_git_blob": "c541c390bf2e9cfe7907de545e82e169e80029c4",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "lab/arrive24.py",
+    "source_git_blob": "b9b523b4223a477bb0619dee5c86c9369b2e8e0c",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "lab/contract.py",
+    "source_git_blob": "f18197b89069ad4e1ff766ee89efd99022bcbbee",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "lab/dist/24/d24.js",
+    "source_git_blob": "10064fdee0b13dcad7c2f8e6067fc62c11289c77",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "lab/q1/README.md",
+    "source_git_blob": "b5764beb1e32f7598db4c931b60f714f0dc2fffa",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "lab/q1/__init__.py",
+    "source_git_blob": "2521342c271f275ffcca73baa527f4977b0d3a4a",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "lab/q1/demo.py",
+    "source_git_blob": "6bd942cc71bae10b01fdc432f98b2cf812568c43",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "lab/q1/engine.py",
+    "source_git_blob": "5969d456c1cba0a2ba3f4393f59601dc5b5ad0e9",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "lab/q1/passport.py",
+    "source_git_blob": "ef57a5abd325efc5a9cbfafe06a253e211c107dd",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "lab/q1/recon.py",
+    "source_git_blob": "c1b2d9978ad87a939565e406d93c49b1386d2d95",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "lab/q1/server.py",
+    "source_git_blob": "cb71df207e2f00d01f24351dc44f1d61e8d183c0",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "lab/q1/store.py",
+    "source_git_blob": "d93ddb16de3ff6d88d02fc4bb05943889fd1c983",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "lab/q1/web/app.js",
+    "source_git_blob": "0fe24858495706d3fa710daa5ad930a4021aa4ab",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "lab/q1/web/index.html",
+    "source_git_blob": "0a8063ad6ba25bdd4dc7600b3d71880976d2d2eb",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "lab/q1/web/style.css",
+    "source_git_blob": "2650e7501dd3a8b8251b0609d3222b40519850f0",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "lab/server.py",
+    "source_git_blob": "92c59ec4f2cd9216a84f017798cacc21a1f715f1",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/07-cepochka-reshenij.md",
+    "source_git_blob": "f99ed2331db66181dcf1f82747148bf8e50966a2",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/13-zhurnal-vizualizacii.md",
+    "source_git_blob": "c4b51b510b628a54ed3c5ed4db4658529faaf28a",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/18-otsyuda-na-ekrane-24.md",
+    "source_git_blob": "bab3b04cf63f335b2e49872b58b10361eb916132",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/README.md",
+    "source_git_blob": "1a06d0037cc4c65077df4766a473ca47a59a8f61",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-09-smyslovoj-karkas-i-roadmap.md",
+    "source_git_blob": "d007522b91b36f7da3fc6392e8f9611bc6bc67b9",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-10-prihody-i-prodolzheniya.md",
+    "source_git_blob": "1b8c73d6f734a7a6f2dfecabdaa9a1a1fffdcb7a",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/01-esse.md",
+    "source_git_blob": "fa857bcdd4af86d63d26dd5e76835c172061caa0",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/02-semanticheskaya-specifikaciya.md",
+    "source_git_blob": "1abeba35beacd9b7ac4080f800010630eddb2fe8",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/03-smyslovoj-kontur.svg",
+    "source_git_blob": "ec32bc94b3752fcb8313f3bbe0b2e0980702c7f1",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/README.md",
+    "source_git_blob": "8498b0cb71fb7ecc9b2e48d043baabcbaeaf6a5a",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/01-put-mesto-i-reshenie.md",
+    "source_git_blob": "8ff75da915a3fb2439eb89ea480ce75b6c193359",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/02-linejka-a-ne-orakul.md",
+    "source_git_blob": "793f3b0c51033ac8451cb48327770d7547c74725",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-10-rynok-i-veroyatnost/sources/input-schema.svg",
+    "source_git_blob": "04ea1647f5eb12fe82f78fb329ef0c34cda60367",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-esse-linejka-a-ne-orakul.md",
+    "source_git_blob": "9987b3edcdc8a6dc4b6ed1711f453c48d0f9059e",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-film-i-moment/01-esse.md",
+    "source_git_blob": "a77341b0d4b3591116f0d1fd9b3ab02f86e8521a",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-film-i-moment/02-semanticheskaya-specifikaciya.md",
+    "source_git_blob": "8ebefe3e7613ceb1a6e516949783a4e6bb3bd688",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-film-i-moment/README.md",
+    "source_git_blob": "d0de388469589ebb2892dc63fa14ab8687bc4881",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-independent-srs/01-semantic-audit.md",
+    "source_git_blob": "68808eea9174c98162c27a2d563aade86b95b918",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-independent-srs/02-srs.md",
+    "source_git_blob": "b494d3a8a5a26fd4de9696fc7ce72e748ace57c3",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-independent-srs/03-q1-historical-pilot.md",
+    "source_git_blob": "c380fbc8bcd68d1ea3947f115067bbd7ee095267",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-independent-srs/04-engineer-roadmap.md",
+    "source_git_blob": "f72a7082850f6488c08d61528c376fdcd8d94b68",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-independent-srs/05-self-check.md",
+    "source_git_blob": "3ebe82d7be825ce94e1c4fa6eb6b4279be208678",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-independent-srs/README.md",
+    "source_git_blob": "f6b4850f58016d4c73e0ca8f4cf06f54fa170ad6",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-kurator/01-esse.md",
+    "source_git_blob": "f1aeba6eb40e1fb5af2fc38c06a0419d79b971e2",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+    "source_git_blob": "5e7795b9b72fe1b240b07eb1db022102a46d2f33",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-kurator/README.md",
+    "source_git_blob": "4cf1095e509a1419ccd76be6b796b8e2de6e1de5",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-otvet-budushchee-mesto-moment.md",
+    "source_git_blob": "ddf8819c32c9012ee23b8f04b4bb3f8145921096",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-put-mesto-i-reshenie.md",
+    "source_git_blob": "bbe6b2c4de98ca279edb7482c8aaf0b909a077e9",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "meaning/lens/2026-10-12-samodopros-smysla.md",
+    "source_git_blob": "d73cbbe1e622403ad4b23512d5c9a4c57b8e51d5",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "spec/DR-LAB-SWPC-1.1.md",
+    "source_git_blob": "7e8d0daedbe76923f646fe1ce8ba63cfee29fdb4",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
+    "source_git_blob": "7f2b65fa00d29be11fc71f94b0a47853ee2f4446",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "spec/ekran-24/03-obzor-panel.md",
+    "source_git_blob": "971a3a60e2dba063c06c372cd6b4a982777bf50c",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "spec/ekran-24/12-swpc.md",
+    "source_git_blob": "96bfae9f1357083ef570de37f5bb5826762051bb",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "spec/ekran-24/img/otsyuda/1-otsyuda-vse-dni.png",
+    "source_git_blob": "5dbde985b88011768336fa068678f834b5f53c1d",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "spec/ekran-24/img/otsyuda/2-navedenie-seredina.png",
+    "source_git_blob": "89107b7a8545dcd19a3a3524d4876d33cbbba097",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "spec/ekran-24/img/otsyuda/3-den-nedeli-malo-sessij.png",
+    "source_git_blob": "3eed2898f23615392fbff75a6e6ec0ba0a9d0fb0",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "spec/ekran-24/img/otsyuda/4-uzhe-doshli.png",
+    "source_git_blob": "589df95573e29101ecfff50e2ed34906941261b0",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "spec/ekran-24/img/otsyuda/5-navedenie-minus-07.png",
+    "source_git_blob": "b0097a8fd6347874d5123127c42c0d5f68fb5820",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "spec/ekran-24/img/otsyuda/6-dr-sloman.png",
+    "source_git_blob": "a1fd943ae059c9bbe8f240f287801a777894ae4b",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "start-dr-lab-otsyuda.cmd",
+    "source_git_blob": "9f8a064de2a1d285e5369acea958096605ea6fcd",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "start-dr-lab-otsyuda.ps1",
+    "source_git_blob": "555011119ae1e91b47bf480e29e568935d51a94b",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "start-q1-pilot.cmd",
+    "source_git_blob": "4207319b8a3d59bce02c0a0d886180ab4e4bd4ef",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "start-q1-pilot.ps1",
+    "source_git_blob": "cb02df8e14f4e466b980b0baf487c240939a582e",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "stop-dr-lab-otsyuda.cmd",
+    "source_git_blob": "91f00eb50969034a7ace67d563969658a83a4e3b",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "stop-dr-lab-otsyuda.ps1",
+    "source_git_blob": "34a59a04e5ad02a661bb2d52239f764cdaac4bdf",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "stop-q1-pilot.cmd",
+    "source_git_blob": "6363ac93ce99794674fbcd4997c1b95f360399fd",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "stop-q1-pilot.ps1",
+    "source_git_blob": "332ee7d6e7ac2112dae9e344d1cd562f9719078c",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "studies/kadr_2026_10_12/README.md",
+    "source_git_blob": "e4088a7506078ccc5bc3b853729f5a3d16596e07",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "studies/kadr_2026_10_12/kadr_checks.json",
+    "source_git_blob": "df9b493889241a9df577073812afb433313f7382",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "studies/kadr_2026_10_12/kadr_checks.py",
+    "source_git_blob": "25fedc6878a5d632d7a7e03bfee981a5a3513989",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "studies/q1_pilot_2026_10_12/README.md",
+    "source_git_blob": "5faa5719ad298a52a2b86082cbff8cf1b84550d4",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "studies/q1_pilot_2026_10_12/reading_check.md",
+    "source_git_blob": "e241825c64f6a7daa31b077e05ca6fdf8eff4b1b",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "studies/q1_pilot_2026_10_12/recon_summary.json",
+    "source_git_blob": "41ce30062cfc985f44fa621e10683b098836ce43",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "studies/semantic_paths_2026_10_10/check.mjs",
+    "source_git_blob": "6757a04991e3f32661dda56faaeade9bea328bf6",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "studies/semantic_paths_2026_10_10/check_v2.mjs",
+    "source_git_blob": "196e461f1fa8bcdc3c01b3da7aed48f830cfd917",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "studies/semantic_paths_2026_10_10/check_v3.mjs",
+    "source_git_blob": "95a59362be9a70f9cae065c3d51df36e60a18b32",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "tests/arrive24.py",
+    "source_git_blob": "d15ba05ff2a56d9f3905def4b54c3058fedd4454",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "tests/contract_sc11.py",
+    "source_git_blob": "a4fd2aae5f395c177e782b9317610816cad36ec9",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "tests/q1_page_check.js",
+    "source_git_blob": "bc8747050bbdb41dcc8dd0484ad8817cf1bfd257",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 7,
+    "path": "tests/q1_pilot.py",
+    "source_git_blob": "765da83cfd21a490200a4b542960aaf09cf18ebd",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [
+      6
+    ],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 7,
+    "path": "tests/swpc11.py",
+    "source_git_blob": "5aff23ffe173dca15673c5cc03cfaf51048d5de0",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "tests/swpc11_browser.mjs",
+    "source_git_blob": "c2bafe3d1598b748eab7034512b2d01c45f32a63",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 7,
+    "path": "tests/ui_check24.js",
+    "source_git_blob": "8d681bde5eb9d5fb3e349e47c686f8efe8fe9b11",
+    "semantic_parents": [
+      2,
+      6
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 8,
+    "path": "AGENTS.md",
+    "source_git_blob": "36f508d48f228d36c6dc7f22828521f05e22c0cc",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 8,
+    "path": "docs/ARCHITECTURE.md",
+    "source_git_blob": "a0091ab2095f910b27a57e2e9395b3f09a7e0ef3",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 8,
+    "path": "lab/semtrace.py",
+    "source_git_blob": "a15530958edca865bdf3491d5294fc354416d2ba",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "meaning/07-cepochka-reshenij.md",
+    "source_git_blob": "ea488b08414212a48d7c4a965905263e27ea1cc5",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 8,
+    "path": "meaning/lens/2026-10-13-semantic-architecture/01-DR-LAB-SEMANTIC-ARCHITECTURE-0.1.md",
+    "source_git_blob": "e117d6066ec10d58ffa4b7d90d8637b2dddb6c88",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "meaning/lens/2026-10-13-semantic-architecture/02-DR-LAB-SEMANTIC-ARCHITECTURE-0.2-dopolnenie.md",
+    "source_git_blob": "cc17456e67288a1510bedb910c1613779d1c53cf",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "meaning/lens/2026-10-13-semantic-architecture/README.md",
+    "source_git_blob": "0135bb1fa9a563799ae742062300ae6817e6210a",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/q1_pilot_2026_10_12/README.md",
+    "source_git_blob": "0bb7829bc449a4fee4f5fb49c13b3a14df31713c",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/q1_pilot_2026_10_12/reading_check.md",
+    "source_git_blob": null,
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/README.md",
+    "source_git_blob": "8cc666099f527982eb0ce91d1a16e2c9a504356d",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/coverage.md",
+    "source_git_blob": "75e24b9c8e345a89284a11c091e5d7354d8b5d0b",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/impact/CMP-K-POS-1.json",
+    "source_git_blob": "299c14f7c1ca2288547973349afb8878bed78c69",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/impact/OUT-NEW-R-1.json",
+    "source_git_blob": "6eefeaddb34b27a615ef7e638a235222744cc373",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/impact/OUT-REACH-REST-1.json",
+    "source_git_blob": "a3e9adcf8ff97d1b571f326b5c9ab03ca9553269",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/impact/OUT-ZONE-MEMBERSHIP-1.json",
+    "source_git_blob": "8238c3dd82bbe1e1c7e28886fdeb76b2e1d0c173",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/impact/code-lab-now24-py-near.json",
+    "source_git_blob": "687071b99abdf89e057381f9d146a9d31e1824d0",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/lineage/arrive-few.json",
+    "source_git_blob": "e403f83fd71c1fbcf880db935edb31381db8a183",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/lineage/arrive-half.json",
+    "source_git_blob": "c784b86cedc86c447d423c535b1bf1d9f71bd8dc",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/lineage/base-zone.json",
+    "source_git_blob": "5f066d8423ad5577f2024ec959d5dd11b1acd58b",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/lineage/now-new.json",
+    "source_git_blob": "9e833228eac456c8af04219d6971bf66c8a167db",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/run.json",
+    "source_git_blob": "cf3f887222daf3cb62a2dcb8de7f75b71ed41d7e",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/scenes/arrive-few.json",
+    "source_git_blob": "20b7b82dfd271859e65d7390a60e96d0b5510b56",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/scenes/arrive-half.json",
+    "source_git_blob": "737f8049053a0dfc7a2d6d768a585258aac50949",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/scenes/base-zone.json",
+    "source_git_blob": "03160fd7bb84af1f1d70e285c730086e9c9920c2",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/scenes/now-new.json",
+    "source_git_blob": "1ce4f7c327756666160785593cafc514ba0052c9",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/screens/date-2025-12-17-inst-nq-session-rdr-at-11-10-scope-all.json",
+    "source_git_blob": "5180c49abc9e0054ed1b9d64801226fe80277d85",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "studies/trace_2026_10_13/screens/date-2025-12-17-inst-nq-session-rdr-at-11-10.json",
+    "source_git_blob": "01c76554732b789890df71b22e815a63ac768f41",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "tests/trace_arch.py",
+    "source_git_blob": "2fb91e457f3f2869443783b5de9f1d4f6c829594",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "tests/trace_page.mjs",
+    "source_git_blob": "1d1f722deff0b66d2c45719ddfb59fa87d7a09b6",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 8,
+    "path": "trace/README.md",
+    "source_git_blob": "812fdac2c5c5271b20326ecfd3d995374434432f",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "trace/build/catalog.json",
+    "source_git_blob": "e5415d6ab4f5d996aa5f93c54ea7db10b1fc3de2",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "trace/build/dr_lab_trace.schema.json",
+    "source_git_blob": "9dadeb6643237867823978fad97afee1023f1cad",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "trace/build/trace_runtime_spec.json",
+    "source_git_blob": "50888146985ebdca17baefd89e0882f7e0872737",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "trace/catalog/00-standing.yaml",
+    "source_git_blob": "e01874df5e4e7433fd3331c88cc4bd4490545af5",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "trace/catalog/10-architecture.yaml",
+    "source_git_blob": "c1f48e4cb631ad3c84c2fb3252a0740a37b3dfe0",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "trace/catalog/20-boundaries.yaml",
+    "source_git_blob": "40b99b813096be42d1c67e43428851403708e880",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "trace/catalog/30-scenes.yaml",
+    "source_git_blob": "b1733501cf28c330525fa6959d36fb87066ccce3",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "trace/schema/dr_lab_trace.yaml",
+    "source_git_blob": "d693f95e7bdf4a70d833b093a775958138b2f2fe",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "trace/schema/linkml-lint.yaml",
+    "source_git_blob": "262d6f665b86686638173109b52ea9c32ce85e8f",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 8,
+    "path": "trace/tools/build.py",
+    "source_git_blob": "7ef00a7888592df882a7f839dbec5541ec3fb518",
+    "semantic_parents": [
+      7
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "contract/build/page_registry.json",
+    "source_git_blob": "bf29cc8679650fe0cf1060919ea1174d0aa11583",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "contract/build/registry.json",
+    "source_git_blob": "6c316fa0922e631366499aed76080bf561e0b1e6",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "contract/registry/40-claims.yaml",
+    "source_git_blob": "dead7d756e2face4a4c1e1d317073e701ea9d7cb",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "design/sozvezdiya-24/src/app.js",
+    "source_git_blob": "eaf99c25665fec8dd2044c8154a3d793db13451b",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "design/sozvezdiya-24/src/build.py",
+    "source_git_blob": "42e623a3263e8f7e35550f2db3135f3435f9b1bb",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "design/sozvezdiya-24/src/graph.js",
+    "source_git_blob": "60765a4a6ef8f9c08592d073ddcc7483144391d4",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "design/sozvezdiya-24/src/page.html",
+    "source_git_blob": "f329f18c0c541b126337a8f01727416d3328ed55",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "design/sozvezdiya-24/src/panel.css",
+    "source_git_blob": "c240a56145781f7f9bc457b03c313b1e320faefb",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "design/sozvezdiya-24/src/panel.js",
+    "source_git_blob": "7c839d36ab5450886b5bdff3ec7ef858db972e61",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "docs/ARCHITECTURE.md",
+    "source_git_blob": "3de8393b4bd868fa8712b21cf99df40b4b3e98e1",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "docs/DECISIONS.md",
+    "source_git_blob": "1b52b6364621f5aa77475081a381bd8540c9cef8",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "lab/dist/24/d24.js",
+    "source_git_blob": "dd4c4a40586dfd7c5c81ba1491add6a31779879c",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "lab/dist/24/index.html",
+    "source_git_blob": "a9e207946e0a1bf11798c43209c6d3bc265a0376",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "lab/semtrace.py",
+    "source_git_blob": "dbc571b1914a026529166bb3ee4344e126dbba49",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "meaning/07-cepochka-reshenij.md",
+    "source_git_blob": "d4dbe040f19bfc96eb14e3f0f2cd15444ff12cb7",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "meaning/13-zhurnal-vizualizacii.md",
+    "source_git_blob": "b08d7af57201631470cf60081a0fb3311b6dd13c",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "meaning/20-put-semi-kandidat.md",
+    "source_git_blob": "73baecca36c8cf572152f20446912160d10e81bf",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "meaning/README.md",
+    "source_git_blob": "9605ac996610f89867c670f856caae8af2177801",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "spec/DR-LAB-SWPC-1.1.md",
+    "source_git_blob": "08fc3ec3dcfab121678b48ff4aaacfc1ed0f3d48",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/03-obzor-panel.md",
+    "source_git_blob": "eadfae262fe8643190c4e7c951fe2e0e87c42b97",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/09-put-semi.md",
+    "source_git_blob": "2e214485aca43010655bd5f232b056d3096f72dd",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/12-swpc.md",
+    "source_git_blob": "02b2c66900acab4e92151b3fb4bb90b7a42b56e4",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/README.md",
+    "source_git_blob": "06fdf86f8a8b3cf3edaadccccd6a61f7527f156a",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/bounds.png",
+    "source_git_blob": "6a7c57f065e1b03140961575faaee2b88c5177a8",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/middle.png",
+    "source_git_blob": "66840262940e28a44850c72c46198759d9b01363",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/put.png",
+    "source_git_blob": "513373fd37433091aeffaf4551667618704a07f9",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/raw/before.json",
+    "source_git_blob": "ff393716bf38b7c68f21a8f72445911c2e5abf31",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/raw/before.png",
+    "source_git_blob": "4c4d248fee7c5101b0d333a6d6feb2bd419c52c8",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/raw/bounds.json",
+    "source_git_blob": "f3b39dceb0608a51731a91f657cf4900e77ca70f",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/raw/bounds.png",
+    "source_git_blob": "38185ade55a7d8bd62fbe2638f9e0018a5a3d79f",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/raw/middle.json",
+    "source_git_blob": "d5a3c5a88260016b259fb60bb52efd703b1b0854",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/raw/middle.png",
+    "source_git_blob": "1149028db4b7a1d989982fe3dc149959c8565297",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/raw/put.json",
+    "source_git_blob": "23f2d3804d96a7254b24fa0c9448d80af33469be",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/raw/put.png",
+    "source_git_blob": "3d9bdfd6bf1aa31591c758e04c581041c9dfe188",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/raw/r.json",
+    "source_git_blob": "429fc54a3286fca279cb861ccbc7b32911ac448c",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/raw/r.png",
+    "source_git_blob": "db050a3e3d453d5c5af382db7d094840fd233dee",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/raw/resolved.json",
+    "source_git_blob": "07c79bb9333d330be80a43cc111fb09a7834c94e",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/raw/resolved.png",
+    "source_git_blob": "2a0f66c89fb8dfc735ba3616db02fbc46a6d9419",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/img/family-path/resolved.png",
+    "source_git_blob": "422d62aa1705941663a7d4f3ea22a96eff8f353c",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/tools/annotate.py",
+    "source_git_blob": "815ef9418cec4c1ff7bac412d97e29adb28c7e19",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "spec/ekran-24/tools/shots.py",
+    "source_git_blob": "696ed9492ea95a6a80b55d8164fab5d1d70bdded",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "start-dr-lab-path.cmd",
+    "source_git_blob": "6d95e4b076aaf451ab933aa8b9776c8319bbb6ad",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "start-dr-lab-path.ps1",
+    "source_git_blob": "0ca6b0ec57cfe148d7f553d4d87b59c3624d5a93",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "stop-dr-lab-path.cmd",
+    "source_git_blob": "a2eb8ad2b5e028fd081f5080c8ae1ac3666e7773",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "stop-dr-lab-path.ps1",
+    "source_git_blob": "6a8e6bf90d67f2f8c2d93ae24e78d99b615f7589",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "tests/family_path24_check.js",
+    "source_git_blob": "82b58ee0deb1ff345ff1f5f1e524b539f981212e",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "tests/svodka_shots.mjs",
+    "source_git_blob": "f6eebd381e9d60e7916bc1802abf84cdc00ee9cb",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "tests/swpc11.py",
+    "source_git_blob": "4387ce515c2fb1af14c103557acb764b262f9fe5",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "tests/swpc11_browser.mjs",
+    "source_git_blob": "dfd117bf5b9a662e8987097f301d4dbba4d1cf10",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "tests/trace_arch.py",
+    "source_git_blob": "b2ae6ba40dcbe191d9bb17ec571037a9857270a3",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "tests/trace_page.mjs",
+    "source_git_blob": "b3a589f55a0dc0cfd90c295533a15daa1a1f36d7",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "tests/ui_check24.js",
+    "source_git_blob": "9e6054f193adfb7eb133931888a83d707cb01a20",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 9,
+    "path": "trace/build/catalog.json",
+    "source_git_blob": "5ad07008ff4d793c7a0186a28605c2ed1022d9e2",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "trace/catalog/00-standing.yaml",
+    "source_git_blob": "5740d3968f15638b0a41434f53d223cbf0ad773d",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "trace/catalog/10-architecture.yaml",
+    "source_git_blob": "ecaa9d8db94ae84672d3a9301853c124ccf64351",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "trace/catalog/30-scenes.yaml",
+    "source_git_blob": "0bd2b1fd74d2d7c37bc49ba2a9e1114e38531b1a",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 9,
+    "path": "trace/tools/build.py",
+    "source_git_blob": "380efd8d85077a86701bc850bd08e092c0ca825f",
+    "semantic_parents": [
+      13
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "lab/semtrace.py",
+    "source_git_blob": "2912d80c8f9814f17a1eef456974d31f89ecb2df",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "meaning/07-cepochka-reshenij.md",
+    "source_git_blob": "5c40d7091ecf4319f3760a250e6007a6410ff8ea",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 10,
+    "path": "meaning/README.md",
+    "source_git_blob": "c5a0fbf219c91c5838a4585e3041b8cddead321a",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 10,
+    "path": "meaning/lens/2026-10-14-fom-baseline.md",
+    "source_git_blob": "4cbcc012caa68b9a284a5105d2e680d503c007c8",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "meaning/lens/2026-10-14-fom-expectation-amendment.md",
+    "source_git_blob": "1db45a051941709d9d024bc588f79c12e67d54ba",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "meaning/lens/2026-10-14-fom-input/FOM-1.1.md",
+    "source_git_blob": "1e7b3116ba1101b409f2c8879fe11ae03504988a",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "meaning/lens/2026-10-14-fom-input/FOM-1.2.md",
+    "source_git_blob": "8f36b12202384a1648f8b4e58ee1798239d6407e",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "meaning/lens/2026-10-14-fom-input/audit-fom-1.0.md",
+    "source_git_blob": "39f590f28876f78ff0ac15d408c3097cff510e1f",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "meaning/lens/2026-10-14-fom-input/methodological-lens.txt",
+    "source_git_blob": "465772f9fc05282bae2af85ac052c6d1bf2a9e19",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "meaning/lens/2026-10-14-fom-local-research.md",
+    "source_git_blob": "22f85a3ed72d8a900422ea2ea286b38e32ac198f",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "meaning/lens/2026-10-14-karta-smyslovyh-obyazatelstv-ekrana24.md",
+    "source_git_blob": "07b53e2b2f0f34e16890b309a49d468e193593e3",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "meaning/lens/2026-10-14-otvet-fom-1.2.md",
+    "source_git_blob": "336b100d987fb28145bad172b78425e154045778",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "tests/fom_map.py",
+    "source_git_blob": "8b4f97ce0903309c53be8a105d78d84bd630b44f",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "tests/trace_page.mjs",
+    "source_git_blob": "a469e03957f23e8c787f402578e877b49dc97b86",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 10,
+    "path": "trace/README.md",
+    "source_git_blob": "af475137629e96bf90c80016faed44c1b3c54eec",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/build/catalog.json",
+    "source_git_blob": "1b799ea231a457347ca3976bb1e8e8eb2d4522f2",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/build/dr_lab_trace.schema.json",
+    "source_git_blob": "55b1d852ed90c23cf3ebfbd5c234c4c66d2664e5",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/build/fom_acceptance.json",
+    "source_git_blob": "659365f8cb4f3cf897cc3410d8f3ec8be4d504ea",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/build/fom_report.json",
+    "source_git_blob": "1b8e8b570cb30c74198ef9903f6b94dcded3f438",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/build/trace_runtime_spec.json",
+    "source_git_blob": "a29e942f88768337062a6696d22e70756f0878b0",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/catalog/40-manifest.yaml",
+    "source_git_blob": "6984989e8fe4cd1587472f0d93d98ae26955ef5b",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/catalog/50-foundations.yaml",
+    "source_git_blob": "9abef67720d2c5fd5ec45eb9b4708d835f058d2a",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/catalog/55-terms.yaml",
+    "source_git_blob": "8b20b56b8683f574351b5c0174ae9a283ad46ee3",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/catalog/60-facets.yaml",
+    "source_git_blob": "463be1a9d855dd446911910306fe13d3511f9aa4",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/catalog/65-research.yaml",
+    "source_git_blob": "7a1d01656ae0c13d0293944905cf4e0803c5b3cf",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/catalog/70-questions.yaml",
+    "source_git_blob": "fc6dc94561959cdf995afc46465e5e20a0cfc587",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/catalog/75-presentation.yaml",
+    "source_git_blob": "b52dc84165f2c026c0e9fc5ef2c9b9f4dd554d44",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/fom.py",
+    "source_git_blob": "251d2ba33bd425c34d6ef6f50b91dc379353ea5b",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/schema/dr_lab_fom.yaml",
+    "source_git_blob": "6310830a0e8868d11f5e1d72a434253205d6495b",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 10,
+    "path": "trace/tools/build.py",
+    "source_git_blob": "8fd5dfdcca6e1160ab508b85ab2e4a5718bdeb29",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "AGENTS.md",
+    "source_git_blob": "dbf6a861951876abfc6aeeeaa6b10144a6af4f22",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "contract/build/dr_lab_sc.schema.json",
+    "source_git_blob": "62fbdad347044ba86260854b407d351dce92c0a7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "contract/build/page_registry.json",
+    "source_git_blob": "0156e231cda2c3a2dca6e07cbc04a831d5ef006b",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "contract/build/registry.json",
+    "source_git_blob": "c3acc9415c5b5b6c609c099b86b4622d2314cafe",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "contract/build/runtime_spec.json",
+    "source_git_blob": "a33323cd0e710426dbcbf8439b1c3d171a9e33d2",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "contract/registry/00-editions.yaml",
+    "source_git_blob": "cab65fa5a4d925ca12d166780faa40ad7d9243b3",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "contract/registry/10-observation-strategy-measurement.yaml",
+    "source_git_blob": "b74aa0c7d28bdb199983e0078e5dea283a9f1fb9",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "contract/registry/20-cases-outcomes.yaml",
+    "source_git_blob": "4c3ccd82d451ea39fb9c1f237e28534ebc669ffe",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "contract/registry/30-questions-estimands.yaml",
+    "source_git_blob": "c34998a9351877bf56b7357905dd5735ebe4ecdf",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "contract/registry/40-claims.yaml",
+    "source_git_blob": "eb74293d4da6b1ea84e67d7ebaf8dab17614bbd7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "contract/registry/60-surfaces.yaml",
+    "source_git_blob": "71cf3f8150134a105fc19a233fc4395339c09106",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "contract/registry/70-obligations.yaml",
+    "source_git_blob": "32f2ad14d4634ffc2de6fade534161494ea1b774",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "contract/schema/dr_lab_sc.yaml",
+    "source_git_blob": "298457584c957e91e6b61054b48f60503c8333e7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "design/sozvezdiya-24/src/app.js",
+    "source_git_blob": "10a605633c1ae53cedd72921c25eaf087087c982",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "design/sozvezdiya-24/src/panel.css",
+    "source_git_blob": "30cef31ee3bcad6ef24dc6a334d681da0a61c4a0",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "design/sozvezdiya-24/src/panel.js",
+    "source_git_blob": "45ba3291d254d8a1d0e1724bb1d0083e12a07cef",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "docs/ARCHITECTURE.md",
+    "source_git_blob": "17bf8766ea1c90e5bf28bbd8a710c06707299317",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "docs/DECISIONS.md",
+    "source_git_blob": "87c179cba01ea2aa88530b4565333b789021d96a",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "docs/SEMANTICS.md",
+    "source_git_blob": "03f8b6a00be6e09dc246543b191fe04bebae9a20",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "docs/UI_RULES.md",
+    "source_git_blob": "037bc318cafbe1acda27419c05be82662c6e0b71",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "lab/contract.py",
+    "source_git_blob": "0a96307568b99e8fd2b8f8c1b0163c1dca72e013",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "lab/dist/24/d24.js",
+    "source_git_blob": "3fabc85af2e26dc390eb41c2f24025fcd19b58c5",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "lab/dist/24/index.html",
+    "source_git_blob": "4fe5db5b764db42cd4f93dc7748e4187d39a44c1",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "lab/pre24.py",
+    "source_git_blob": "3ae1d51d61876d0696ff5d45578c640a1a636ef7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 11,
+    "path": "lab/server.py",
+    "source_git_blob": "90b7f2870660c28d2b27346b9a9f1ae79b14b2f6",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "meaning/07-cepochka-reshenij.md",
+    "source_git_blob": "67f7c6f46cff3ec4e968f856b57c83f6680b79cf",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "meaning/13-zhurnal-vizualizacii.md",
+    "source_git_blob": "bbd888fe4230b6e16925e29c4d89432ec65bfeb7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "meaning/16-priyomka-swpc.md",
+    "source_git_blob": "ce7545509885f3147b8fb44217abe8c9b19f9132",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "meaning/16a-list-zadanij.md",
+    "source_git_blob": "8409b63bc0bbe8133e45639abde90bd09c85ac6b",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "meaning/17-rabota-treidera.md",
+    "source_git_blob": "f4581ee2d035d2b172740f4a92d44451eb5461c8",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "meaning/README.md",
+    "source_git_blob": "8bf716a6d95bbf7e31aca1e07ae0ad7eb0e1095f",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "meaning/lens/2026-10-08-osc-1.0/DR-LAB-OSC-1.0.md",
+    "source_git_blob": "a782e36e926049b96a30392c6283a4dce15b85d0",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/.gitignore",
+    "source_git_blob": "81f5bcac87946dbbe060476ee6e6312d4b2512b0",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/img/s1-A-hover.png",
+    "source_git_blob": "03447e49fc9140829d3088e286ed3cf1dac9dfe2",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/img/s1-A.png",
+    "source_git_blob": "3ef6913c3211327bd208119a83a977895d3c8132",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/img/s1-B.png",
+    "source_git_blob": "ecce6aee439db87ba4e4e2ac71ea3bd23fc7de5d",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/img/s1-C.png",
+    "source_git_blob": "771a3f3fa55be84e391dcffac409e0a86e6cd507",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/img/s2-A-hover.png",
+    "source_git_blob": "8f8133760eafc0e540e712601d2bb9b0a60bbefd",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/img/s2-A.png",
+    "source_git_blob": "345cacb104eecb8b67868a32d4e5a75b332f466c",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/img/s2-B.png",
+    "source_git_blob": "405d1c94cb0e1f1bb4a21fbf19d80a1e2c491949",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/img/s2-C.png",
+    "source_git_blob": "47e61eb7cb2d024471a5e4b7d05198c9ca50c8d9",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/img/s3-A-hover.png",
+    "source_git_blob": "f4dd31031db375ddc83467b2de36438427908660",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/img/s3-A.png",
+    "source_git_blob": "62a993aa6fa52fabedaf0e0d8c466de129c165c1",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/img/s3-B.png",
+    "source_git_blob": "af73883f18351139e78e0d3ddeb8325868502c02",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/img/s3-C.png",
+    "source_git_blob": "f2a805e8748993fb6dae608bcda67d400e1c4f4c",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/shots.mjs",
+    "source_git_blob": "73af61a3409cf527e86b8868b819dfbfa6d9dfd7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/src/app.js",
+    "source_git_blob": "2bda3838666bbe6d13e0440fd8c61384142fd4c5",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/src/build.py",
+    "source_git_blob": "97b97fb86ae2faf8f4ac63340cc0b0837555afd7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/src/page.html",
+    "source_git_blob": "1fe3918db1d660ab431a02e322280f0b26ba4ab8",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/src/panel.css",
+    "source_git_blob": "cdd06f33f6cd91591308364c0c3d5716f0ba8cb7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/now-1/src/panel.js",
+    "source_git_blob": "d36435e3a2a3b969d85555acf89cc1df3330001b",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/img/brk-okna.png",
+    "source_git_blob": "51266c4af126bea6ce2f4e50055ed9444bd69fa4",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/img/brk.png",
+    "source_git_blob": "ec9d4f20b160aaf1193989dad8b47823b98eb3b9",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/img/late-okna.png",
+    "source_git_blob": "64f4ca819e2e411f8e8a76764412d6adce064e71",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/img/late.png",
+    "source_git_blob": "05e96d2a037522cdb1a9323fd25c31074f048225",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/img/live-2026-10-08-0504.jpg",
+    "source_git_blob": "be7380cfd5da1b4444a462ea774c314bc2199bbd",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/img/pre.png",
+    "source_git_blob": "fd0f1aa9ae81c0a25a4a809c328ff660537a699c",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/img/r1-okna.png",
+    "source_git_blob": "69a35ce14e6dca67a591fbe22671e0f7d0fc9620",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/img/r1.png",
+    "source_git_blob": "775e59cf3c53cc2ab2a8e151debd505be66f2fe9",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/img/r2-okna.png",
+    "source_git_blob": "e4d9c526ea42104c2f150871588b0a15b035239f",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/img/r2.png",
+    "source_git_blob": "f42d4907f15ce41478fbade012aa29ad4d446064",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/now_joint.py",
+    "source_git_blob": "add48f05dcd9bde8a708cbd39c89f24f0fe94377",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/order_by_state.py",
+    "source_git_blob": "bf6d47cef4bbf9f31788aea697072cf28c80f02b",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "research/rabota-1/scenes.mjs",
+    "source_git_blob": "de7153c1ac4c5b2a0e301756039e012e143ba4cf",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/DR-LAB-SWPC-1.1.md",
+    "source_git_blob": "f94690f45188ca486f5f45f3b9cfbb32a6a416f9",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
+    "source_git_blob": "52a3465e3c8dff44e5672f807cedac40ca46d340",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/03-obzor-panel.md",
+    "source_git_blob": "6ad814ef993e2785022daecfa49b6c68ad391fab",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/11-invarianty.md",
+    "source_git_blob": "e61668336d9fe37ec1dbf5a70217d8a2fcd55418",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/12-swpc.md",
+    "source_git_blob": "19e8bffa321a11ca955fb2e09c5ef54ae07f37f0",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/README.md",
+    "source_git_blob": "983ec3cd40b827aed914c75d6d20ee925cd787d3",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/resheniya-08-10/1-do-podtverzhdeniya.png",
+    "source_git_blob": "25f4a8fafda6ce568f1be32025530a70b9306daa",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/resheniya-08-10/2-malo-sessij.png",
+    "source_git_blob": "69748e0b4e5a0125ce19a7faf298bc410443733e",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/resheniya-08-10/3-faza-otkat-ne-sdelan.png",
+    "source_git_blob": "09b122ec13286eee12f4206b234b6daa8878e28a",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/resheniya-08-10/4-faza-otkat-sdelan.png",
+    "source_git_blob": "7a6e8d296c71b52dbce36d8f61c798094f14eb43",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/resheniya-08-10/5-semya-sloma-malo.png",
+    "source_git_blob": "3c50f11b36955413ee9050242610c8e6fe85acda",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/swpc/1-svodka-skryta-baza.png",
+    "source_git_blob": "eb5113fca27313debcb3808aa436543e19c50c3d",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/swpc/1-svodka-skryta-kandidat.png",
+    "source_git_blob": "3ce9fb2a331cd6438715162de87cf9d83bfbf46c",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/swpc/2-zona-snyata-baza.png",
+    "source_git_blob": "045e420ebdca94a8105ffba118bcbb8f50dbb51a",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/swpc/2-zona-snyata-kandidat.png",
+    "source_git_blob": "e929185bbe0c9377e09c3ba9c9dc90e747a06b1f",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/swpc/3-slom-1600-baza.png",
+    "source_git_blob": "a5075d6b722ecd09b20f8338ef423344367463e7",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/swpc/3-slom-1600-kandidat.png",
+    "source_git_blob": "3b4cb2ec8b8aa8089c4eceb1eda950ae3b7e904b",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/swpc/4-sejchas-nedostupno-baza.png",
+    "source_git_blob": "cb6c35f28ed13fb16424151efafe4418a0099917",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/img/swpc/4-sejchas-nedostupno-kandidat.png",
+    "source_git_blob": "6203fc5fd56834e2e6628ea0aae4261adb790e0b",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "spec/ekran-24/swpc-kandidat.json",
+    "source_git_blob": "62a2c40280130362c70145d88746585989bb5e54",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 11,
+    "path": "tests/contract_sc11.py",
+    "source_git_blob": "617c0e2098fc628c3930060decbdde6b7773a86d",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "tests/swpc11.py",
+    "source_git_blob": "f237de42a58f031decba9822eccbb1d72067ea82",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 11,
+    "path": "tests/swpc11_browser.mjs",
+    "source_git_blob": "613cd0ccc19e70d24e912686c1fc5fa03e3eebcf",
+    "semantic_parents": [
+      "main"
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 12,
+    "path": "meaning/07-cepochka-reshenij.md",
+    "source_git_blob": "6614e2dc079179cf5f7314f8204f39c282163cd5",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 12,
+    "path": "meaning/lens/2026-10-13-sabiox/01-razbor-sabiox.md",
+    "source_git_blob": "946472ad6bc65ff11769c14b852fbc3d8581d9d8",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 12,
+    "path": "meaning/lens/2026-10-13-sabiox/02-recenziya-plana.md",
+    "source_git_blob": "bea44681615adaf4eccba18f42acfd6f4326278b",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 12,
+    "path": "meaning/lens/2026-10-13-sabiox/03-utochnenie-napravleniya.md",
+    "source_git_blob": "1506f9ce82b6c768c88675ee72a9bb1184ad5cf9",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 12,
+    "path": "meaning/lens/2026-10-13-sabiox/README.md",
+    "source_git_blob": "10db8010b23202035449af1fc79843d41476bd64",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 12,
+    "path": "studies/q1_sopostavimost_2026_10_13/README.md",
+    "source_git_blob": "76e9de108f6211ccbe37f7ab031f0324077de6c2",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 12,
+    "path": "studies/q1_sopostavimost_2026_10_13/checks.json",
+    "source_git_blob": "2c20c37bae7432db804e53f66cb6fb1c4930df18",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 12,
+    "path": "studies/q1_sopostavimost_2026_10_13/checks.py",
+    "source_git_blob": "d06827766853df4be281930c6bd48f3fb3075557",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "IDENTICAL"
+  },
+  {
+    "pr": 13,
+    "path": "AGENTS.md",
+    "source_git_blob": "9c6ca055ad219c0ef11f8a7bda0e92aecfb142d5",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "contract/build/page_registry.json",
+    "source_git_blob": "4590d499f55ab5f51cd8918e60a98045f0382981",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "contract/build/registry.json",
+    "source_git_blob": "f621101b63449d31430f45d34dd76842790d0b22",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "contract/registry/40-claims.yaml",
+    "source_git_blob": "f7f7b6226c311f5137cb84a38854e1d31594b3cd",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "design/sozvezdiya-24/src/app.js",
+    "source_git_blob": "992ec8cf82a58bf29a66c1dcc984e6d20efafa86",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "design/sozvezdiya-24/src/panel.css",
+    "source_git_blob": "0a16f42eaa98831b3a9ab1012568aae2344cc75d",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "design/sozvezdiya-24/src/panel.js",
+    "source_git_blob": "950ba265d51bfe31146f2badba4b366343f18094",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "lab/dist/24/d24.js",
+    "source_git_blob": "99bba98c75bb0870c03f297b2b4c840c26ab6d12",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "lab/dist/24/index.html",
+    "source_git_blob": "6ff3a31e6d941e12fb012135af32f7f174f9277a",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "meaning/07-cepochka-reshenij.md",
+    "source_git_blob": "304b3ff10f1cd9ce765c7cc99da0cfdf072d0cc4",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "meaning/13-zhurnal-vizualizacii.md",
+    "source_git_blob": "745de21843bfb93a05fb874f15cf6b9a425700dd",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "meaning/19-svodka-kandidat.md",
+    "source_git_blob": "3c326de7801e6ffbfce9c63aa0cd6d431e9e96c8",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 13,
+    "path": "spec/ekran-24/03-obzor-panel.md",
+    "source_git_blob": "75b07525173e44823109583b9e7f2fd1f137194d",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "spec/ekran-24/12-swpc.md",
+    "source_git_blob": "05916843cfa2d0b967938c7d2793fb76bbafda5b",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "start-dr-lab-svodka.cmd",
+    "source_git_blob": "233f64313a7e6a8223c35d03c34c887f352b3622",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 13,
+    "path": "start-dr-lab-svodka.ps1",
+    "source_git_blob": "1b0eff359f522aaf75201c1977416128b4be7e70",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 13,
+    "path": "stop-dr-lab-svodka.cmd",
+    "source_git_blob": "85828eb5aa74e2c7a134308efb084dffd9c961cd",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 13,
+    "path": "stop-dr-lab-svodka.ps1",
+    "source_git_blob": "a2c277269ed86c5b46c86845b51c1b92ee6c5523",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 13,
+    "path": "tests/svodka24.mjs",
+    "source_git_blob": "b6e8d33e04f0b65b14b1eae20b3286bda532c291",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 13,
+    "path": "tests/svodka24_check.js",
+    "source_git_blob": "648fdd333fbd17a61ff009a610840a74e4d93ed9",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 13,
+    "path": "tests/svodka_shots.mjs",
+    "source_git_blob": "0f90fa80a4153513c45eedaa108aa8c791f1b933",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 13,
+    "path": "tests/swpc11.py",
+    "source_git_blob": "ce7681019145022616f20e7529ce9785df70b83f",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "tests/swpc11_browser.mjs",
+    "source_git_blob": "9bfa2f5eea3a4aad0aab7074948ac776c092505f",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "tests/trace_page.mjs",
+    "source_git_blob": "75e9d0971cdd2940c052e629351fec5717ec357b",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "tests/ui_check24.js",
+    "source_git_blob": "28dc4c7871f59277710e506f18a8297c2c923723",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "DIFFERENT_OR_ADAPTED"
+  },
+  {
+    "pr": 13,
+    "path": "trace/build/catalog.json",
+    "source_git_blob": "1e7a6b9b73a08a087e202a3be5f01872ac4ef2fb",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 13,
+    "path": "trace/catalog/10-architecture.yaml",
+    "source_git_blob": "3c76135049793c015c652fae5cd46c3e614e1edf",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  },
+  {
+    "pr": 13,
+    "path": "trace/catalog/30-scenes.yaml",
+    "source_git_blob": "12cf2349a9a1e90e475fc058219832e1f5751141",
+    "semantic_parents": [
+      8
+    ],
+    "inherited_from": [],
+    "current_tree": "ABSENT"
+  }
+]

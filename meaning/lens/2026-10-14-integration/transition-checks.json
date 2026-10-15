@@ -1,0 +1,126 @@
+{
+ "version": "DR-LAB-TRANSITIONS-1",
+ "status": "PASS",
+ "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+ "source_sha256_lf": {
+  "lab/contract.py": "4619d34ffa4602b1877914dedadfb07fcfd29202f34f9a3283a134a50f1e31d1",
+  "lab/scene24.py": "738108a7dbe4182a6444c9cf55eea415999bdaff123d84f4650169ae744e2590",
+  "lab/now24.py": "bd7269f1d27464cc5236924280b49eef6c2fb4dccad51077fc62e22ebe05e64e",
+  "lab/q1/engine.py": "062647f0c9b3b54102598f65bfe92be43f9fec05e1f62b7a7618568f1402fe93",
+  "tests/q1_pilot.py": "05895915d099d04ba0034a4cb44ce589eb5189d331360a1bc9afc1863e5c8508",
+  "meaning/lens/2026-10-14-integration/tools/transitions.py": "636cf37195ff1241555c5400c9e62b52da9e357fa0c279f43ddf75a387d67bcf"
+ },
+ "results": [
+  {
+   "id": "TR-1",
+   "status": "PASS",
+   "checks": {
+    "reach_segment_composition": 7680,
+    "now_as_own_prefix_barrier": 1050,
+    "extreme_segment_composition": 810
+   },
+   "conclusion": "Reach composes with three-valued OR; complete extrema compose with min/max plus ties; NOW new is an inclusive barrier one OWN tick beyond its own prefix extreme.",
+   "boundary": "Aligned M5 cuts, unchanged observation revision and same case/frame; empty reach is NO, empty extreme is NO_PERIOD; does not equate cohorts or forecasts."
+  },
+  {
+   "id": "TR-2",
+   "status": "PASS",
+   "checks": 3844,
+   "conclusion": "For the same physical horizon the opposite IDR-edge frame gives u'=-u-1, R'=-X-1 and X'=-R-1; first times/ties exchange. A break also changes activation and cohort, so whole-horizon reflection cannot produce its answer.",
+   "level_correspondence": {
+    "old_0": "new_-1",
+    "old_-1/2": "new_-1/2",
+    "old_-7/10": "new_-3/10"
+   },
+   "quantisation_witness": {
+    "width_ticks": 20,
+    "old_directed_ticks": [
+     0,
+     1
+    ],
+    "old_cells": [
+     0,
+     0
+    ],
+    "new_cells": [
+     -10,
+     -11
+    ],
+    "conclusion": "Transform exact values first, then quantise. One old cell does not determine a unique reflected cell at half-open boundaries."
+   },
+   "boundary": "Same box and width, opposite IDR edge and orientation; separate break interval and family are still required."
+  },
+  {
+   "id": "TR-3",
+   "status": "PASS",
+   "kind": "SYNTHETIC_COUNTEREXAMPLE",
+   "before": {
+    "n": 20,
+    "yes": 10,
+    "no": 10,
+    "unknown": 0,
+    "point": 0.5
+   },
+   "after": {
+    "n": 20,
+    "yes": 0,
+    "no": 20,
+    "unknown": 0,
+    "point": 0
+   },
+   "retained": 10,
+   "left": 10,
+   "entered": 10,
+   "conclusion": "Same target, unchanged individual labels and applicability; the displayed frequency changes solely because comparison members change. Equal support size hides this change.",
+   "boundary": "Not a market effect estimate or evidence of an incorrect forecast; demonstrates what reading two C1 answers as one fixed-cohort update would lose."
+  },
+  {
+   "id": "TR-4",
+   "status": "PASS",
+   "kind": "REAL_HISTORY_WITNESS",
+   "selector": {
+    "instrument": "NQ",
+    "block": "RDR",
+    "date": "2025-12-17",
+    "cut_before": 665,
+    "cut_after": 670,
+    "level": "-1/2",
+    "estimator": "NODEPOS_ALL"
+   },
+   "retained": 13,
+   "left": 14,
+   "entered": 24,
+   "leaving_reasons": {
+    "FAR": 14
+   },
+   "entering_previous_reasons": {
+    "FAR": 24
+   },
+   "conclusion": "A real pair of adjacent open, published Q1 answers both loses and gains historical members. Retained members keep their labels.",
+   "boundary": "One discriminating witness within 2006-2025, not prevalence, predictive quality, or operator interpretation; case ids stay local."
+  },
+  {
+   "id": "TR-5",
+   "status": "PASS",
+   "kind": "SYNTHETIC_COUNTEREXAMPLE",
+   "question_specific_points": {
+    "0": 0,
+    "-1/2": 0.5,
+    "-7/10": 0.5
+   },
+   "same_group_points": [
+    0.5,
+    0.5,
+    0.5
+   ],
+   "conclusion": "Nested price barriers can have reversed, individually correct C1 frequencies when each question excludes a different already-reached group. Sorting the answers would falsify their meanings.",
+   "prior_source": "PR5 SRS FR24 and Q1 section 5 already warn about this. The contribution here is an executable witness in the existing candidate engine, not a claim of discovering the principle.",
+   "boundary": "Not an observed market frequency or a forecast violation; do not impose common-group probability constraints on differently conditioned descriptive answers."
+  }
+ ],
+ "no_2026": true,
+ "no_product_change": true,
+ "no_ui_change": true,
+ "no_profile_admission": true,
+ "scope": "Relations over existing definitions and one real transition. No full ontology-completeness claim and no independent market law discovery."
+}

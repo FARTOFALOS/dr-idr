@@ -1,0 +1,77 @@
+# Trace catalog · the declared area: the real end-to-end scenes the run traces, and the reasons of absence the screen
+# words instead of a number. A scene is a history day of 2006-2025 opened as today (the same functions the routes of
+# lab/server.py call), one cut, and the one claim to trace. Nothing outside these is reported as traced.
+catalog_part: scenes
+
+scenes:
+  - id: SCENE:BASE-ZONE
+    title_ru: "BASE-24 · доля зоны R1 семьи подтверждения"
+    arch_ref: "13.10 · случай 1 (показатель исторической семьи BASE-24)"
+    profile_key: BASE-24
+    route: API:/api/d24/family
+    instrument: NQ
+    trading_date: "2025-12-17"
+    block: RDR
+    at_clock_et: "11:10"
+    scope: WEEKDAY
+    estimand: EST:B-ZONE-R
+    selector: '{"label": "R1"}'
+    page_fragment: "#date=2025-12-17&inst=NQ&session=RDR&at=11:10"
+  - id: SCENE:NOW-NEW
+    title_ru: "NOW-1.0 · «В истории: R позже углублялся» на 11:10"
+    arch_ref: "13.10 · случай 2 (условный исторический ответ NOW-1.0)"
+    profile_key: NOW-1.0
+    route: API:/api/d24/now
+    instrument: NQ
+    trading_date: "2025-12-17"
+    block: RDR
+    at_clock_et: "11:10"
+    scope: WEEKDAY
+    estimand: EST:N-NEW-R
+    selector: '{"role": "MAIN"}'
+    page_fragment: "#date=2025-12-17&inst=NQ&session=RDR&at=11:10"
+  - id: SCENE:ARRIVE-HALF
+    title_ru: "ARRIVE-24 / Q1 · «отсюда до середины IDR», все дни недели"
+    arch_ref: "13.10 · случай 3 (ответ Q1 / ARRIVE-24 «отсюда до места»)"
+    profile_key: ARRIVE-24
+    route: API:/api/d24/arrive
+    instrument: NQ
+    trading_date: "2025-12-17"
+    block: RDR
+    at_clock_et: "11:10"
+    scope: ALL_WEEKDAYS
+    estimand: EST:K-ARRIVE
+    selector: '{"level": "-1/2"}'
+    page_fragment: "#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all"
+  - id: SCENE:ARRIVE-FEW
+    title_ru: "ARRIVE-24 · то же место, семья дня недели: «мало сессий»"
+    arch_ref: "13.10 · отсутствие ответа с причиной (AbsencePresentationBinding)"
+    profile_key: ARRIVE-24
+    route: API:/api/d24/arrive
+    instrument: NQ
+    trading_date: "2025-12-17"
+    block: RDR
+    at_clock_et: "11:10"
+    scope: WEEKDAY
+    estimand: EST:K-ARRIVE
+    selector: '{"level": "-1/2"}'
+    page_fragment: "#date=2025-12-17&inst=NQ&session=RDR&at=11:10"
+
+# the reasons the screen words instead of a number (0.2 §4: an absence never gets a fictitious estimate). shown_by =
+# the registered label <form>#<key>, or page:<file>::<function> for interface words that are no claim (statusMsg); code anchors = where the page words it. Generated statistical and fact bindings
+# (SWPC-1.1 §9) are added by trace/tools/build.py.
+bindings:
+  - {id: "PB:ABS/FEW-SESSIONS/ARRIVE", binding_class: AbsencePresentationBinding, binding: B18, surfaces: [API:/api/d24/arrive], semantic_source: SRC:SWPC-1.1, absence_reason: FEW_SESSIONS, shown_by: "FF:FEW-SESSIONS#few", applies_to: [EST:K-ARRIVE], code_anchors: ["design/sozvezdiya-24/src/panel.js::arriveHtml"], machine_checks: ["test:tests/swpc11_browser.mjs#m20"], human_checks: [H14]}
+  - {id: "PB:ABS/NO-KNOWN/ARRIVE", binding_class: AbsencePresentationBinding, binding: B18, surfaces: [API:/api/d24/arrive], semantic_source: SRC:SWPC-1.1, absence_reason: NO_KNOWN_OUTCOME, shown_by: "FF:K-TARGET#none_known", applies_to: [EST:K-ARRIVE], code_anchors: ["design/sozvezdiya-24/src/panel.js::arriveHtml"]}
+  - {id: "PB:ABS/RESOLVED/ARRIVE", binding_class: AbsencePresentationBinding, binding: B18, surfaces: [API:/api/d24/arrive], semantic_source: SRC:SWPC-1.1, absence_reason: RESOLVED_TODAY, shown_by: "FF:K-TARGET#RESOLVED", applies_to: [EST:K-ARRIVE], code_anchors: ["design/sozvezdiya-24/src/panel.js::arriveHtml"], machine_checks: ["test:tests/swpc11_browser.mjs#m20"]}
+  - {id: "PB:ABS/PREFIX-UNKNOWN/ARRIVE", binding_class: AbsencePresentationBinding, binding: B18, surfaces: [API:/api/d24/arrive], semantic_source: SRC:SWPC-1.1, absence_reason: PREFIX_UNKNOWN, shown_by: "FF:K-TARGET#PREFIX_UNKNOWN", applies_to: [EST:K-ARRIVE], code_anchors: ["design/sozvezdiya-24/src/panel.js::arriveHtml"]}
+  - {id: "PB:ABS/DR-BROKEN/ARRIVE", binding_class: AbsencePresentationBinding, binding: B18, surfaces: [API:/api/d24/arrive], semantic_source: SRC:SWPC-1.1, absence_reason: DR_BROKEN, shown_by: "FF:K-TARGET#DR_BROKEN", applies_to: [EST:K-ARRIVE], code_anchors: ["design/sozvezdiya-24/src/panel.js::arriveHtml"]}
+  - {id: "PB:ABS/NO-PREFIX/ARRIVE", binding_class: AbsencePresentationBinding, binding: B18, surfaces: [API:/api/d24/arrive], semantic_source: SRC:SWPC-1.1, absence_reason: NO_PREFIX, shown_by: "FF:K-TARGET#NO_PREFIX", applies_to: [EST:K-ARRIVE], code_anchors: ["design/sozvezdiya-24/src/panel.js::arriveHtml"]}
+  - {id: "PB:ABS/BLOCK-OVER/ARRIVE", binding_class: AbsencePresentationBinding, binding: B18, surfaces: [API:/api/d24/arrive], semantic_source: SRC:SWPC-1.1, absence_reason: BLOCK_OVER, shown_by: "FF:K-TARGET#BLOCK_OVER", applies_to: [EST:K-ARRIVE], code_anchors: ["design/sozvezdiya-24/src/panel.js::arriveHtml"]}
+  - {id: "PB:ABS/OUT-OF-SCOPE/ARRIVE", binding_class: AbsencePresentationBinding, binding: B18, surfaces: [API:/api/d24/arrive], semantic_source: SRC:SWPC-1.1, absence_reason: OUT_OF_SCOPE, shown_by: "FF:K-TARGET#OUT_OF_SCOPE", applies_to: [EST:K-ARRIVE], code_anchors: ["design/sozvezdiya-24/src/panel.js::arriveHtml"]}
+  - {id: "PB:ABS/WITHHELD/ARRIVE", binding_class: AbsencePresentationBinding, binding: B15, surfaces: [API:/api/d24/arrive], semantic_source: SRC:SWPC-1.1, absence_reason: CONTRACT_WITHHELD, shown_by: "FF:K-TARGET#withheld", applies_to: [EST:K-ARRIVE], code_anchors: ["design/sozvezdiya-24/src/panel.js::arriveHtml", "design/sozvezdiya-24/src/app.js::arriveBundle"], machine_checks: ["test:tests/swpc11_browser.mjs#m14"]}
+  - {id: "PB:ABS/WITHHELD/NOW", binding_class: AbsencePresentationBinding, binding: B15, surfaces: [API:/api/d24/now], semantic_source: SRC:SWPC-1.1, absence_reason: CONTRACT_WITHHELD, shown_by: "CF:N-NEW-R#row", applies_to: [EST:N-NEW-R, EST:N-NEW-X], code_anchors: ["design/sozvezdiya-24/src/panel.js::nowHtml", "design/sozvezdiya-24/src/app.js::nowBundle"], machine_checks: ["test:tests/swpc11_browser.mjs#m14"], note: "a withheld NOW number is shown as «—» next to its registered row words"}
+  - {id: "PB:ABS/INSUFFICIENT/NOW", binding_class: AbsencePresentationBinding, binding: B10, surfaces: [API:/api/d24/now], semantic_source: SRC:SWPC-1.1, absence_reason: INSUFFICIENT_SUPPORT, shown_by: "page:design/sozvezdiya-24/src/panel.js::nowHtml", applies_to: [EST:N-NEW-R, EST:N-NEW-X], code_anchors: ["design/sozvezdiya-24/src/panel.js::nowHtml"], note: "INSUFFICIENT_SUPPORT: the payload's note is shown, no number"}
+  - {id: "PB:ABS/EMPTY-FAMILY/BASE", binding_class: AbsencePresentationBinding, binding: B01, surfaces: [API:/api/d24/family], semantic_source: SRC:SWPC-1.1, absence_reason: EMPTY_FAMILY, shown_by: "page:design/sozvezdiya-24/src/panel.js::statusMsg", applies_to: [EST:B-ZONE-R, EST:B-ZONE-X, EST:B-DR], code_anchors: ["design/sozvezdiya-24/src/panel.js::panelHtml"], note: "«В семье нет сессий: процентов нет» (N = 0 gives no estimate, never 0 %)"}
+  - {id: "PB:ABS/WITHHELD/BASE", binding_class: AbsencePresentationBinding, binding: B15, surfaces: [API:/api/d24/family], semantic_source: SRC:SWPC-1.1, absence_reason: CONTRACT_WITHHELD, shown_by: "page:design/sozvezdiya-24/src/panel.js::statusMsg", applies_to: [EST:B-ZONE-R, EST:B-ZONE-X, EST:B-DR, EST:B-RX-JOINT-R], code_anchors: ["design/sozvezdiya-24/src/panel.js::statusMsg", "design/sozvezdiya-24/src/app.js::regFault", "design/sozvezdiya-24/src/app.js::ppHeld"], machine_checks: ["test:tests/swpc11_browser.mjs#m14", "test:tests/swpc11_browser.mjs#m15"]}
+  - {id: "PB:ABS/STALE/ALL", binding_class: AbsencePresentationBinding, binding: B15, surfaces: [API:/api/d24/family, API:/api/d24/now, API:/api/d24/arrive], semantic_source: SRC:SWPC-1.1, absence_reason: CONTRACT_STALE, shown_by: "page:design/sozvezdiya-24/src/app.js::regFault", applies_to: [EST:B-ZONE-R, EST:N-NEW-R, EST:K-ARRIVE], code_anchors: ["design/sozvezdiya-24/src/app.js::regFault", "design/sozvezdiya-24/src/panel.js::statusMsg"], note: "CONTRACT_STALE: lab/contract.py::stale_response publishes no statistic"}

@@ -9901,6 +9901,28 @@
   ],
   "surfaces": [
    {
+    "definitions": "SRC:SC-1.1",
+    "id": "API:/api/integration/scene",
+    "marking": "Local integration service, enabled only by --integration. Not a new estimator or a profile acceptance. Nested family/day/NOW retain their accepted SC envelopes; optional PRE/ARRIVE retain a separately PROPOSED candidate edition and explicit review standing. Context records bind the cut, frame, path/prefix revisions.",
+    "route": "/api/integration/scene",
+    "sc_ref": [
+     "§1.3",
+     "§12.3"
+    ],
+    "surface_profile": "SERVICE"
+   },
+   {
+    "definitions": "SRC:SC-1.1",
+    "id": "API:/api/integration/audit",
+    "marking": "Explicit diagnostic operation on an expected scene context. Reuses Semantic Trace recounts and FOM relationship checks, reporting its bounded coverage. Does not certify human reading or a full rebound catalog.",
+    "route": "/api/integration/audit",
+    "sc_ref": [
+     "§1.3",
+     "V3"
+    ],
+    "surface_profile": "SERVICE"
+   },
+   {
     "definitions": "SRC:SEMANTICS-24",
     "estimands": [
      "EST:B-RX-JOINT-R",
@@ -10136,6 +10158,17 @@
      "§0.2"
     ],
     "surface_profile": "LEGACY_SEM_V1"
+   },
+   {
+    "definitions": "SRC:SC-1.1",
+    "id": "API:/api/integration/continuations",
+    "marking": "read-only candidate service; nested separately proposed envelope",
+    "route": "/api/integration/continuations",
+    "sc_ref": [
+     "§1.3",
+     "§12.3"
+    ],
+    "surface_profile": "SERVICE"
    }
   ],
   "temporal_frames": [
@@ -10331,7 +10364,7 @@
   "document_sha256_lf": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b",
   "edition": "DR-LAB-SC-1.1",
   "linkml": "1.11.1",
-  "registry_sha256": "0c75a97d33492681ca84fd010b725255b851dc449604b953f6086538c0977740",
+  "registry_sha256": "c3cd25fab407d665ce90ce9ac180c4ca5e2c6a5e7d2389ee470b521f50f22a20",
   "runtime_spec_sha256": "9795540070e3c2d2e04f06013481334397c5afe792f18fcb11f9417237d533b7",
   "schema_sha256_lf": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
   "sources": {
@@ -10341,7 +10374,7 @@
    "contract/registry/30-questions-estimands.yaml": "93b3821760f1f6964a6d8bc9c0699f8b390fc68c00842f27dfecc64a1750da5c",
    "contract/registry/40-claims.yaml": "199d0c0ac73819fd6f4659297f91f8fb8a7ff80bfb296ebe342fbdda12027b23",
    "contract/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
-   "contract/registry/60-surfaces.yaml": "ba0f088988b262f0f664b260672ea9c94562970f5aca13db924667a6e0ca4fe9",
+   "contract/registry/60-surfaces.yaml": "05c9f35e8230b5306696f6d888b9bbc11341ca9e960157de4a486d550f88bffc",
    "contract/registry/70-obligations.yaml": "c5baded1777e25e259c687bdb72c0fb707ec966bfd53d1439691e8db3dbc5174",
    "contract/schema/dr_lab_sc.yaml": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
    "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"

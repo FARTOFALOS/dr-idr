@@ -41,6 +41,7 @@ REG_DIR = ROOT / "contract" / "registry"
 OUT = ROOT / "contract" / "build"
 DOC = "spec/DR-LAB-Semantic-Contract-1.1-(patched).md"
 EDITION = "DR-LAB-SC-1.1"
+EXTRA_SOURCES = []            # optional imported sources of a separately built candidate module
 
 
 def sha256_lf(p):
@@ -221,6 +222,7 @@ def build(check=False):
     reg_text_body = dumps(merged)
     sources = {rel(SCHEMA): sha256_lf(SCHEMA), DOC: sha256_lf(ROOT / DOC)}
     for f in files: sources[rel(f)] = sha256_lf(f)
+    for p in EXTRA_SOURCES: sources[rel(p)] = sha256_lf(p)
     stamps = dict(edition=EDITION, document=DOC, document_sha256_lf=sources[DOC], schema_sha256_lf=sources[rel(SCHEMA)],
                   sources=dict(sorted(sources.items())), linkml=version("linkml"), runtime_spec_sha256=hashlib.sha256(spec_text.encode()).hexdigest(),
                   registry_sha256=hashlib.sha256(reg_text_body.encode()).hexdigest())

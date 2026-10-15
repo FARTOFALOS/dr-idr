@@ -1,0 +1,136 @@
+{
+ "commit": "f954046",
+ "standing": "FROZEN_REFERENCE_NOT_CURRENT_CATALOG",
+ "files": [
+  {
+   "source": "lab/semtrace.py",
+   "destination": "integration/reference/lab/semtrace.py",
+   "sha256_lf": "78fb3a30777c1d9d2c0d20cadbd5b337246aa001cee2a9edcc96e22c25c07ba7"
+  },
+  {
+   "source": "tests/fom_map.py",
+   "destination": "integration/reference/tests/fom_map.py",
+   "sha256_lf": "45f2b01f0a498eedb28f1fffc574669a4d4c8953247dc575685579568e15027e"
+  },
+  {
+   "source": "tests/trace_arch.py",
+   "destination": "integration/reference/tests/trace_arch.py",
+   "sha256_lf": "eb794daf422ba5eaa7629dd87fe30b36e84e0ce27169d539992b55968cf77ede"
+  },
+  {
+   "source": "tests/trace_page.mjs",
+   "destination": "integration/reference/tests/trace_page.mjs",
+   "sha256_lf": "effaec7dc1cee6e71c36697efc519109457b1dc40a26bbbe4b11e80bdc3d9bc2"
+  },
+  {
+   "source": "trace/README.md",
+   "destination": "integration/reference/trace/README.md",
+   "sha256_lf": "8f6cae77de68c4964c4059379c2d9e9c40fe1cf2c4e86ef3969ad748b0696a21"
+  },
+  {
+   "source": "trace/build/catalog.json",
+   "destination": "integration/reference/trace/build/catalog.json",
+   "sha256_lf": "0ad2115d3ee275e280312c2708e5d811c480af3f6a61b1b28986fbbdddd5c3a0"
+  },
+  {
+   "source": "trace/build/dr_lab_trace.schema.json",
+   "destination": "integration/reference/trace/build/dr_lab_trace.schema.json",
+   "sha256_lf": "a3a2c990b2a43a2f66d8bd9ee914336e644615286b48bd46c7728ccf73884193"
+  },
+  {
+   "source": "trace/build/fom_acceptance.json",
+   "destination": "integration/reference/trace/build/fom_acceptance.json",
+   "sha256_lf": "853ab4a32826887a65ce30704c251f8cf8759719b1529d894901b493ba0134fa"
+  },
+  {
+   "source": "trace/build/fom_report.json",
+   "destination": "integration/reference/trace/build/fom_report.json",
+   "sha256_lf": "5df3b3656a857b5a019b7e25342f55ef421d3b768318acb6989b6e1bbf177909"
+  },
+  {
+   "source": "trace/build/trace_runtime_spec.json",
+   "destination": "integration/reference/trace/build/trace_runtime_spec.json",
+   "sha256_lf": "c790d809635e3062033a0155f04641c646df4e2d77cb61bb1899a8dfd2fc46b7"
+  },
+  {
+   "source": "trace/catalog/00-standing.yaml",
+   "destination": "integration/reference/trace/catalog/00-standing.yaml",
+   "sha256_lf": "d85637878ffd1cf72495d95d832e45e166ea88b580f142fc8c1cdf2687e514b0"
+  },
+  {
+   "source": "trace/catalog/10-architecture.yaml",
+   "destination": "integration/reference/trace/catalog/10-architecture.yaml",
+   "sha256_lf": "c4b9eca1352b6455db17839629f090f65e6e8e0bde526dc228a06102a393bfd6"
+  },
+  {
+   "source": "trace/catalog/20-boundaries.yaml",
+   "destination": "integration/reference/trace/catalog/20-boundaries.yaml",
+   "sha256_lf": "516e7f53a14fa7e63f6aa4a1ac7958829740d99626fbb8031b8ac784599b1330"
+  },
+  {
+   "source": "trace/catalog/30-scenes.yaml",
+   "destination": "integration/reference/trace/catalog/30-scenes.yaml",
+   "sha256_lf": "53a149da5d6d6174418ff9dee24b3f1352a276843d360ac95dc0ab527d55f0d5"
+  },
+  {
+   "source": "trace/catalog/40-manifest.yaml",
+   "destination": "integration/reference/trace/catalog/40-manifest.yaml",
+   "sha256_lf": "07b29b79c88cd900e5e617560068e8833e2255f20597c3a54e4fd97a19938a0d"
+  },
+  {
+   "source": "trace/catalog/50-foundations.yaml",
+   "destination": "integration/reference/trace/catalog/50-foundations.yaml",
+   "sha256_lf": "eb3648e9eaccc4b62e4366064c3383e28c85476cf87ceafc81107bcef3764697"
+  },
+  {
+   "source": "trace/catalog/55-terms.yaml",
+   "destination": "integration/reference/trace/catalog/55-terms.yaml",
+   "sha256_lf": "6e7bb8fe22f249d02e1cdcc2a23e23504b2baa76cd556d1f002342f0a90e0044"
+  },
+  {
+   "source": "trace/catalog/60-facets.yaml",
+   "destination": "integration/reference/trace/catalog/60-facets.yaml",
+   "sha256_lf": "8b3440c683ad9fe98566421f66ecba9466999be5d4325e4ec409ae4802a8e8a5"
+  },
+  {
+   "source": "trace/catalog/65-research.yaml",
+   "destination": "integration/reference/trace/catalog/65-research.yaml",
+   "sha256_lf": "e51afd859b1b0cf867c1089369df5b2be150eb83062aa4464eee0008045c67d7"
+  },
+  {
+   "source": "trace/catalog/70-questions.yaml",
+   "destination": "integration/reference/trace/catalog/70-questions.yaml",
+   "sha256_lf": "d47e2fe3b03779b81994c51ba5f6d0e07d4bf6a1ee4e88cd65800917c1686257"
+  },
+  {
+   "source": "trace/catalog/75-presentation.yaml",
+   "destination": "integration/reference/trace/catalog/75-presentation.yaml",
+   "sha256_lf": "09ddf5b9a16cfbfe72b1fbde3cf5e6fdb186fc0c4ba7f32daab7edb1843e807e"
+  },
+  {
+   "source": "trace/fom.py",
+   "destination": "integration/reference/trace/fom.py",
+   "sha256_lf": "d97e2d4581034c6f4df0b65bed1cac9817ba816b58d50503bf247c5c7bfb6c36"
+  },
+  {
+   "source": "trace/schema/dr_lab_fom.yaml",
+   "destination": "integration/reference/trace/schema/dr_lab_fom.yaml",
+   "sha256_lf": "cfade97f5ccb647d4bfc7b7bac9b29672230c1992ac9b10cdfd33413ed4bf506"
+  },
+  {
+   "source": "trace/schema/dr_lab_trace.yaml",
+   "destination": "integration/reference/trace/schema/dr_lab_trace.yaml",
+   "sha256_lf": "7b9a526c394c54e1738ddd0f9f2b3731475d3cfdfe2cb6e87a06e03029f09272"
+  },
+  {
+   "source": "trace/schema/linkml-lint.yaml",
+   "destination": "integration/reference/trace/schema/linkml-lint.yaml",
+   "sha256_lf": "fd96f4ac9b5d6872be1bcdfa4f4b579c68c31e1862b222d4fea74d8721dc0dc9"
+  },
+  {
+   "source": "trace/tools/build.py",
+   "destination": "integration/reference/trace/tools/build.py",
+   "sha256_lf": "b4b6988ac5a43be89771fe0dd13213f68db64a15c8936e4fed97d5ebc8108950"
+  }
+ ]
+}

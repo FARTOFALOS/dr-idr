@@ -40,6 +40,9 @@ import zonemap24 as Z  # noqa: E402
 DOC = ROOT / "spec" / "DR-LAB-Semantic-Contract-1.1-(patched).md"
 BUILD = ROOT / "contract" / "build"
 VENV = ROOT / ".venv-linkml" / ("Scripts" if os.name == "nt" else "bin") / ("python.exe" if os.name == "nt" else "python")
+if not VENV.is_file():
+    VENV = next((p / ".venv-linkml" / ("Scripts" if os.name == "nt" else "bin") / ("python.exe" if os.name == "nt" else "python")
+                 for p in ROOT.parents if (p / ".venv-linkml").is_dir()), VENV)
 failures = []
 
 
@@ -624,6 +627,9 @@ def test_page_contract():
     app = (ROOT / "design/sozvezdiya-24/src/app.js").read_text(encoding="utf-8")
     pnl = (ROOT / "design/sozvezdiya-24/src/panel.js").read_text(encoding="utf-8")
     both = app + pnl
+    proposed = json.loads((ROOT / "integration/candidates/build/page_registry.json").read_text(encoding="utf-8"))
+    check(proposed["edition"] != PAGE["edition"] and len(PAGE["estimands"]) == 53,
+          "the page keeps the accepted 53-estimand registry distinct from its proposed candidate namespace")
     EV = r"(?:ev|h\.ev|r\.ev|e|I\.ev|g\.ev)"
     calls = re.findall(r"lbl\('((?:EST|FF):[A-Z0-9:-]+)', '([A-Za-z0-9_]+)'(?=\s*[,)])", both)
     dyn = re.findall(r"lbl\('(EST:[A-Z0-9-]+-)' \+ " + EV + r", '([A-Za-z0-9_]+)'(?=\s*[,)])", both)
@@ -641,12 +647,20 @@ def test_page_contract():
     # every estimand id the page writes: literal ('EST:B-CLOSE') or an event's pair ('EST:B-ZONE-' + ev -> -R and -X)
     used = set()
     for name, plus in re.findall(r"'(EST:[A-Z0-9-]+)'(\s*\+\s*" + EV + r")?", both):
-        if plus or name.endswith("-"): used.update({name + "R", name + "X"} if name.endswith("-") else {name})
-        else: used.add(name)
+        if plus: used.update({name + "R", name + "X"} if name.endswith("-") else {name})
+        elif not name.endswith("-"): used.add(name)  # startsWith('EST:C-') is a namespace, not an estimand
     used.discard("EST:B-RX-R"); used.discard("EST:B-RX-X")         # 'EST:B-RX-' + (BAND | WINDOW | REGION) + '-' + ev: expanded below
     used.update(f"EST:B-RX-{k}-{e}" for k in ("BAND", "WINDOW", "REGION") for e in "RX")
-    unreg = sorted(u for u in used if u not in PAGE["estimands"])
-    check(used and not unreg, f"every estimand the page makes a passport of is registered ({len(used)}){': ' + str(unreg) if unreg else ''}")
+    for src in ("integration.js", "continuations.js"):
+        candidate_src = (ROOT / "design/sozvezdiya-24/src" / src).read_text(encoding="utf-8")
+        for name, plus in re.findall(r"'(EST:[A-Z0-9-]+)'(\s*\+\s*" + EV + r")?", candidate_src):
+            if plus: used.update({name + "R", name + "X"} if name.endswith("-") else {name})
+            elif not name.endswith("-"): used.add(name)
+    unreg = sorted(u for u in used if u not in PAGE["estimands"] and u not in proposed["estimands"])
+    candidate_used = used - set(PAGE["estimands"])
+    check(candidate_used <= set(proposed["estimands"]) and candidate_used.isdisjoint(PAGE["estimands"]),
+          "candidate passports are registered only in their own proposed namespace")
+    check(used and not unreg, f"every page estimand has its declared accepted or proposed registry ({len(used)}){': ' + str(unreg) if unreg else ''}")
 
 
 # =====================================================================================================================

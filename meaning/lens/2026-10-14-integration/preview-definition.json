@@ -1,0 +1,15 @@
+{
+ "version": "I24-B-PREVIEW-1",
+ "source": "0f1ae26828db402f203660b6deab14d15262c185",
+ "source_js_sha256_lf": "69fc4526b18ea8cc5f4233481b5e02639a1ce647e00eca90c082b25b93aefc69",
+ "preview_js_sha256_lf": "316917e8119de783238adbe185b9b6ab2392954eb5dfc355677a2737e5fe3fcb",
+ "changes": [
+  "bounds view selected explicitly as baseline; clouds retain primary position",
+  "remove unconditional family N and routine support counts from summary; retain in original inspector",
+  "retain profile-specific low support warning; percentages and their source bundles unchanged",
+  "do not introduce permanent right rail; use existing summary toggle",
+  "unknown-outcome absence keeps its registered reason"
+ ],
+ "standing": "COMPARISON_PROTOTYPE_NOT_ACCEPTED_UI",
+ "implementation_note": "Asset substitution in an isolated stand, like existing SWPC_SERVE tests; production must edit source and rebuild. No repository dist or contract was edited."
+}

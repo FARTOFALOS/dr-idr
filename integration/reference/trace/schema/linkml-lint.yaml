@@ -1,0 +1,10 @@
+# linkml-lint configuration for the trace schema (used by trace/tools/build.py); the same rules as the contract's
+# (contract/schema/linkml-lint.yaml): status tokens are upper case, descriptions are required where they carry meaning
+extends: recommended
+rules:
+  standard_naming:
+    level: error
+    permissible_values_upper_case: true
+    exclude: [R, X, DescriptiveClaim, ConditionalDescriptiveClaim, PredictiveClaim, DecisionClaim]
+  recommended:
+    level: disabled

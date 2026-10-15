@@ -1,0 +1,4693 @@
+{
+ "scope": "Additional diagnostic declared during collection, before viewing its comparative scores.\n\nDoes the higher percentage identify the more often realised event? Same method/prefix/area sizes.\nPairs: opposite sides at equal distance and the same window; the same price band in two different windows.\nRequire a predicted gap >=5 percentage points. Separately report both predictions in 20-40 percent.\nThis does not change the frozen methods/outcomes, primary hypotheses, or any product.\n",
+ "source_hashes": {
+  "studies\\dynamic_field_2026_10_15\\README.md": "dc1ed0587fd8f399565a5022248f7e9081e9537d548af7b046c555ce1a1eb570",
+  "studies\\dynamic_field_2026_10_15\\checks.py": "3aef71fb9d884caf96abd316b60fdd571c49fc152d324e9460f2682f89374798",
+  "lab\\now24.py": "fcf3280900cac292b6ce58d3c6d98057b6bb77c5824abd5b9af33c947a5c385b",
+  "lab\\now24_validate.py": "191d6c5f43971e4547749519c1148d3b6e6f8d826330d8ff5d55767235ea4472",
+  "lab\\scene24.py": "738108a7dbe4182a6444c9cf55eea415999bdaff123d84f4650169ae744e2590"
+ },
+ "ranking_code_sha256": "8feb4f4bc7eadb23b380afe31c3b935b9054340c3f242483b23bbb6de0c82fc2",
+ "results": [
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_WD",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 640765,
+    "coverage": 0.6098655519451471,
+    "unknown_target_rows": 3321,
+    "target_cases": 2235,
+    "weeks": 519,
+    "mean": -0.011471953551646227,
+    "ci95": [
+     -0.018878760809806452,
+     -0.0038073470389344537
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 640765,
+    "coverage": 0.6098655519451471,
+    "unknown_target_rows": 3321,
+    "target_cases": 2235,
+    "weeks": 519,
+    "mean": 0.17333236894231577
+   },
+   "pair_outcomes": {
+    "high_only": 121618,
+    "low_only": 117450,
+    "both": 55220,
+    "neither": 346477
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_WD",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 78996,
+    "coverage": 0.07518659593058118,
+    "unknown_target_rows": 3321,
+    "target_cases": 2171,
+    "weeks": 518,
+    "mean": -0.06627292153230292,
+    "ci95": [
+     -0.0799941039108187,
+     -0.053205987253914705
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 78996,
+    "coverage": 0.07518659593058118,
+    "unknown_target_rows": 3321,
+    "target_cases": 2171,
+    "weeks": 518,
+    "mean": 0.09728736540275522
+   },
+   "pair_outcomes": {
+    "high_only": 21927,
+    "low_only": 20840,
+    "both": 12428,
+    "neither": 23801
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_WD",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 141286,
+    "coverage": 0.13447280106142198,
+    "unknown_target_rows": 3321,
+    "target_cases": 1636,
+    "weeks": 505,
+    "mean": 0.02478650837753501,
+    "ci95": [
+     0.012341434218836152,
+     0.037153515173603366
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 141286,
+    "coverage": 0.13447280106142198,
+    "unknown_target_rows": 3321,
+    "target_cases": 1636,
+    "weeks": 505,
+    "mean": 0.17091333119154242
+   },
+   "pair_outcomes": {
+    "high_only": 36939,
+    "low_only": 26293,
+    "both": 15779,
+    "neither": 62275
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_WD",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 14096,
+    "coverage": 0.013416252167672695,
+    "unknown_target_rows": 3321,
+    "target_cases": 1435,
+    "weeks": 495,
+    "mean": -0.014146057815186172,
+    "ci95": [
+     -0.03581914097280952,
+     0.007865697455995772
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 14096,
+    "coverage": 0.013416252167672695,
+    "unknown_target_rows": 3321,
+    "target_cases": 1435,
+    "weeks": 495,
+    "mean": 0.09930412925605406
+   },
+   "pair_outcomes": {
+    "high_only": 3758,
+    "low_only": 3337,
+    "both": 308,
+    "neither": 6693
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 790926,
+    "coverage": 0.7527853761328529,
+    "unknown_target_rows": 3321,
+    "target_cases": 2985,
+    "weeks": 522,
+    "mean": -0.0048737946932277286,
+    "ci95": [
+     -0.012083854835937874,
+     0.002178425029329707
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 790926,
+    "coverage": 0.7527853761328529,
+    "unknown_target_rows": 3321,
+    "target_cases": 2985,
+    "weeks": 522,
+    "mean": 0.16691702896330224
+   },
+   "pair_outcomes": {
+    "high_only": 150855,
+    "low_only": 143356,
+    "both": 67532,
+    "neither": 429183
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 107438,
+    "coverage": 0.10225704457934301,
+    "unknown_target_rows": 3321,
+    "target_cases": 2873,
+    "weeks": 522,
+    "mean": -0.06401916579757785,
+    "ci95": [
+     -0.07636935889819976,
+     -0.051924807869109454
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 107438,
+    "coverage": 0.10225704457934301,
+    "unknown_target_rows": 3321,
+    "target_cases": 2873,
+    "weeks": 522,
+    "mean": 0.09473003825051446
+   },
+   "pair_outcomes": {
+    "high_only": 30173,
+    "low_only": 28652,
+    "both": 17765,
+    "neither": 30848
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 455004,
+    "coverage": 0.43306245752694006,
+    "unknown_target_rows": 3321,
+    "target_cases": 2707,
+    "weeks": 522,
+    "mean": 0.0477706794549095,
+    "ci95": [
+     0.03946019784055039,
+     0.05568053333406082
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 455004,
+    "coverage": 0.43306245752694006,
+    "unknown_target_rows": 3321,
+    "target_cases": 2707,
+    "weeks": 522,
+    "mean": 0.1594371744925404
+   },
+   "pair_outcomes": {
+    "high_only": 124724,
+    "low_only": 83972,
+    "both": 56990,
+    "neither": 189318
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 59853,
+    "coverage": 0.05696672396365734,
+    "unknown_target_rows": 3321,
+    "target_cases": 2562,
+    "weeks": 522,
+    "mean": 0.006789182621510112,
+    "ci95": [
+     -0.004678914228950977,
+     0.019093705431449937
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 59853,
+    "coverage": 0.05696672396365734,
+    "unknown_target_rows": 3321,
+    "target_cases": 2562,
+    "weeks": 522,
+    "mean": 0.09606829228214525
+   },
+   "pair_outcomes": {
+    "high_only": 16189,
+    "low_only": 13744,
+    "both": 1245,
+    "neither": 28675
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 822002,
+    "coverage": 0.7823628060677703,
+    "unknown_target_rows": 3321,
+    "target_cases": 3097,
+    "weeks": 522,
+    "mean": -0.0026814514134454103,
+    "ci95": [
+     -0.009409509763027187,
+     0.004445857180328058
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 822002,
+    "coverage": 0.7823628060677703,
+    "unknown_target_rows": 3321,
+    "target_cases": 3097,
+    "weeks": 522,
+    "mean": 0.1483154127136971
+   },
+   "pair_outcomes": {
+    "high_only": 158990,
+    "low_only": 152205,
+    "both": 74080,
+    "neither": 436727
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 138528,
+    "coverage": 0.1318477993958118,
+    "unknown_target_rows": 3321,
+    "target_cases": 3039,
+    "weeks": 522,
+    "mean": -0.06329312657900216,
+    "ci95": [
+     -0.07651150315585287,
+     -0.049972036929619545
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 138528,
+    "coverage": 0.1318477993958118,
+    "unknown_target_rows": 3321,
+    "target_cases": 3039,
+    "weeks": 522,
+    "mean": 0.08869560330508705
+   },
+   "pair_outcomes": {
+    "high_only": 39556,
+    "low_only": 37976,
+    "both": 25020,
+    "neither": 35976
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 509437,
+    "coverage": 0.48487054877572894,
+    "unknown_target_rows": 3321,
+    "target_cases": 3093,
+    "weeks": 522,
+    "mean": 0.10472657452154985,
+    "ci95": [
+     0.09641173093097599,
+     0.11243901810828573
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 509437,
+    "coverage": 0.48487054877572894,
+    "unknown_target_rows": 3321,
+    "target_cases": 3093,
+    "weeks": 522,
+    "mean": 0.1366709770285454
+   },
+   "pair_outcomes": {
+    "high_only": 153978,
+    "low_only": 95709,
+    "both": 74507,
+    "neither": 185243
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 91561,
+    "coverage": 0.08714567712289158,
+    "unknown_target_rows": 3321,
+    "target_cases": 3063,
+    "weeks": 522,
+    "mean": 0.04044011129245013,
+    "ci95": [
+     0.028961674769706774,
+     0.05163480066940096
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 91561,
+    "coverage": 0.08714567712289158,
+    "unknown_target_rows": 3321,
+    "target_cases": 3063,
+    "weeks": 522,
+    "mean": 0.09041656120287116
+   },
+   "pair_outcomes": {
+    "high_only": 26066,
+    "low_only": 20600,
+    "both": 1484,
+    "neither": 43411
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 183310,
+    "coverage": 0.17447028836947232,
+    "unknown_target_rows": 3321,
+    "target_cases": 2251,
+    "weeks": 521,
+    "mean": 0.020086354271839607,
+    "ci95": [
+     0.009504234275910461,
+     0.030892132734237347
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 183310,
+    "coverage": 0.17447028836947232,
+    "unknown_target_rows": 3321,
+    "target_cases": 2251,
+    "weeks": 521,
+    "mean": 0.17926175720908621
+   },
+   "pair_outcomes": {
+    "high_only": 50297,
+    "low_only": 35424,
+    "both": 19810,
+    "neither": 77779
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 14397,
+    "coverage": 0.013702737121026091,
+    "unknown_target_rows": 3321,
+    "target_cases": 1919,
+    "weeks": 517,
+    "mean": 0.005529330429169729,
+    "ci95": [
+     -0.01369151114490816,
+     0.02462324251505697
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 14397,
+    "coverage": 0.013702737121026091,
+    "unknown_target_rows": 3321,
+    "target_cases": 1919,
+    "weeks": 517,
+    "mean": 0.09671035308329037
+   },
+   "pair_outcomes": {
+    "high_only": 4064,
+    "low_only": 3578,
+    "both": 235,
+    "neither": 6520
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "PATH_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 100445,
+    "coverage": 0.09560126624445828,
+    "unknown_target_rows": 3321,
+    "target_cases": 1560,
+    "weeks": 502,
+    "mean": -0.0005119774848672852,
+    "ci95": [
+     -0.014371978703048413,
+     0.014145719166453692
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 100445,
+    "coverage": 0.09560126624445828,
+    "unknown_target_rows": 3321,
+    "target_cases": 1560,
+    "weeks": 502,
+    "mean": 0.20389888174167717
+   },
+   "pair_outcomes": {
+    "high_only": 26986,
+    "low_only": 20092,
+    "both": 8965,
+    "neither": 44402
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "PATH_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 4600,
+    "coverage": 0.004378175366862543,
+    "unknown_target_rows": 3321,
+    "target_cases": 1175,
+    "weeks": 470,
+    "mean": -0.005353037384853468,
+    "ci95": [
+     -0.033269398002719,
+     0.02439967306950424
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 4600,
+    "coverage": 0.004378175366862543,
+    "unknown_target_rows": 3321,
+    "target_cases": 1175,
+    "weeks": 470,
+    "mean": 0.09752860404608601
+   },
+   "pair_outcomes": {
+    "high_only": 1209,
+    "low_only": 1101,
+    "both": 89,
+    "neither": 2201
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "GAPS_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 93638,
+    "coverage": 0.08912251847875538,
+    "unknown_target_rows": 3321,
+    "target_cases": 1891,
+    "weeks": 514,
+    "mean": 0.00952787319329205,
+    "ci95": [
+     -0.004627477217868026,
+     0.02428737584380954
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 93638,
+    "coverage": 0.08912251847875538,
+    "unknown_target_rows": 3321,
+    "target_cases": 1891,
+    "weeks": 514,
+    "mean": 0.2266818940615885
+   },
+   "pair_outcomes": {
+    "high_only": 20778,
+    "low_only": 18075,
+    "both": 8740,
+    "neither": 46045
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "GAPS_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 5986,
+    "coverage": 0.0056973386404433,
+    "unknown_target_rows": 3321,
+    "target_cases": 1427,
+    "weeks": 491,
+    "mean": -0.005714671695936046,
+    "ci95": [
+     -0.033712178285541426,
+     0.02350478719465353
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 5986,
+    "coverage": 0.0056973386404433,
+    "unknown_target_rows": 3321,
+    "target_cases": 1427,
+    "weeks": 491,
+    "mean": 0.1029527403601811
+   },
+   "pair_outcomes": {
+    "high_only": 1658,
+    "low_only": 1562,
+    "both": 278,
+    "neither": 2488
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_K50_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 627976,
+    "coverage": 0.5976932726480156,
+    "unknown_target_rows": 3321,
+    "target_cases": 2585,
+    "weeks": 522,
+    "mean": 0.0418983008761265,
+    "ci95": [
+     0.03471175012074718,
+     0.04890070144193275
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 627976,
+    "coverage": 0.5976932726480156,
+    "unknown_target_rows": 3321,
+    "target_cases": 2585,
+    "weeks": 522,
+    "mean": 0.1806351050376945
+   },
+   "pair_outcomes": {
+    "high_only": 158578,
+    "low_only": 120768,
+    "both": 77249,
+    "neither": 271381
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_K50_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 74062,
+    "coverage": 0.07049052696099427,
+    "unknown_target_rows": 3321,
+    "target_cases": 2546,
+    "weeks": 522,
+    "mean": 0.0005118500791338719,
+    "ci95": [
+     -0.00900240429267256,
+     0.009892805174924586
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 74062,
+    "coverage": 0.07049052696099427,
+    "unknown_target_rows": 3321,
+    "target_cases": 2546,
+    "weeks": 522,
+    "mean": 0.09848972170145401
+   },
+   "pair_outcomes": {
+    "high_only": 19047,
+    "low_only": 17287,
+    "both": 4166,
+    "neither": 33562
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_K50_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 671903,
+    "coverage": 0.639501992069792,
+    "unknown_target_rows": 3321,
+    "target_cases": 2585,
+    "weeks": 522,
+    "mean": 0.02233265262744495,
+    "ci95": [
+     0.015548004998415181,
+     0.029207016212528036
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 671903,
+    "coverage": 0.639501992069792,
+    "unknown_target_rows": 3321,
+    "target_cases": 2585,
+    "weeks": 522,
+    "mean": 0.19555598894466306
+   },
+   "pair_outcomes": {
+    "high_only": 159758,
+    "low_only": 135222,
+    "both": 79110,
+    "neither": 297813
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_K50_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 69532,
+    "coverage": 0.06617897600188832,
+    "unknown_target_rows": 3321,
+    "target_cases": 2538,
+    "weeks": 522,
+    "mean": -0.003318580186192034,
+    "ci95": [
+     -0.013436313181897861,
+     0.007505008014800782
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 69532,
+    "coverage": 0.06617897600188832,
+    "unknown_target_rows": 3321,
+    "target_cases": 2538,
+    "weeks": 522,
+    "mean": 0.10005691165708885
+   },
+   "pair_outcomes": {
+    "high_only": 17593,
+    "low_only": 16740,
+    "both": 5108,
+    "neither": 30091
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_WD",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 375307,
+    "coverage": 0.3572086657415392,
+    "unknown_target_rows": 3318,
+    "target_cases": 2235,
+    "weeks": 519,
+    "mean": 0.0010793193277881903,
+    "ci95": [
+     -0.002110164824139424,
+     0.004264789425218255
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 375307,
+    "coverage": 0.3572086657415392,
+    "unknown_target_rows": 3318,
+    "target_cases": 2235,
+    "weeks": 519,
+    "mean": 0.0931678674509312
+   },
+   "pair_outcomes": {
+    "high_only": 30942,
+    "low_only": 29093,
+    "both": 0,
+    "neither": 315272
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_WD",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 54,
+    "coverage": 5.1395971697951585e-05,
+    "unknown_target_rows": 3318,
+    "target_cases": 46,
+    "weeks": 44,
+    "mean": 0.07608695652173914,
+    "ci95": [
+     -0.044444444444444446,
+     0.20212765957446807
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 54,
+    "coverage": 5.1395971697951585e-05,
+    "unknown_target_rows": 3318,
+    "target_cases": 46,
+    "weeks": 44,
+    "mean": 0.08084465649680815
+   },
+   "pair_outcomes": {
+    "high_only": 8,
+    "low_only": 4,
+    "both": 0,
+    "neither": 42
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_WD",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 93409,
+    "coverage": 0.08890456148766591,
+    "unknown_target_rows": 3318,
+    "target_cases": 1634,
+    "weeks": 505,
+    "mean": -0.000995181354300987,
+    "ci95": [
+     -0.00805686679140434,
+     0.006341011505532055
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 93409,
+    "coverage": 0.08890456148766591,
+    "unknown_target_rows": 3318,
+    "target_cases": 1634,
+    "weeks": 505,
+    "mean": 0.12009726400082699
+   },
+   "pair_outcomes": {
+    "high_only": 13132,
+    "low_only": 10258,
+    "both": 0,
+    "neither": 70019
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_WD",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 2959,
+    "coverage": 0.0028163088935970137,
+    "unknown_target_rows": 3318,
+    "target_cases": 924,
+    "weeks": 441,
+    "mean": 0.02881491894222584,
+    "ci95": [
+     -0.005250386958084767,
+     0.06186237964371679
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 2959,
+    "coverage": 0.0028163088935970137,
+    "unknown_target_rows": 3318,
+    "target_cases": 924,
+    "weeks": 441,
+    "mean": 0.09300204411487001
+   },
+   "pair_outcomes": {
+    "high_only": 697,
+    "low_only": 541,
+    "both": 0,
+    "neither": 1721
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 405374,
+    "coverage": 0.3858257524275079,
+    "unknown_target_rows": 3318,
+    "target_cases": 2985,
+    "weeks": 522,
+    "mean": 0.010277390446114068,
+    "ci95": [
+     0.007063984282958672,
+     0.013539720121651931
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 405374,
+    "coverage": 0.3858257524275079,
+    "unknown_target_rows": 3318,
+    "target_cases": 2985,
+    "weeks": 522,
+    "mean": 0.08545626157803739
+   },
+   "pair_outcomes": {
+    "high_only": 30760,
+    "low_only": 27375,
+    "both": 0,
+    "neither": 347239
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 45,
+    "coverage": 4.2829976414959655e-05,
+    "unknown_target_rows": 3318,
+    "target_cases": 37,
+    "weeks": 35,
+    "mean": 0.060810810810810814,
+    "ci95": [
+     -0.12837837837837837,
+     0.25675675675675674
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 45,
+    "coverage": 4.2829976414959655e-05,
+    "unknown_target_rows": 3318,
+    "target_cases": 37,
+    "weeks": 35,
+    "mean": 0.08602372113917325
+   },
+   "pair_outcomes": {
+    "high_only": 10,
+    "low_only": 12,
+    "both": 0,
+    "neither": 23
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 272189,
+    "coverage": 0.2590632988980323,
+    "unknown_target_rows": 3318,
+    "target_cases": 2707,
+    "weeks": 522,
+    "mean": 0.017520474124887248,
+    "ci95": [
+     0.013199171573805357,
+     0.021815848282350357
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 272189,
+    "coverage": 0.2590632988980323,
+    "unknown_target_rows": 3318,
+    "target_cases": 2707,
+    "weeks": 522,
+    "mean": 0.10678376633310215
+   },
+   "pair_outcomes": {
+    "high_only": 39888,
+    "low_only": 30392,
+    "both": 0,
+    "neither": 201909
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 6396,
+    "coverage": 0.006087567314446265,
+    "unknown_target_rows": 3318,
+    "target_cases": 1872,
+    "weeks": 519,
+    "mean": 0.0373710590740191,
+    "ci95": [
+     0.01676235990635342,
+     0.05745568995157606
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 6396,
+    "coverage": 0.006087567314446265,
+    "unknown_target_rows": 3318,
+    "target_cases": 1872,
+    "weeks": 519,
+    "mean": 0.08392316280424521
+   },
+   "pair_outcomes": {
+    "high_only": 1529,
+    "low_only": 1123,
+    "both": 0,
+    "neither": 3744
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 367055,
+    "coverage": 0.34935459984428924,
+    "unknown_target_rows": 3318,
+    "target_cases": 3014,
+    "weeks": 522,
+    "mean": 0.01708804477356246,
+    "ci95": [
+     0.01352444222194541,
+     0.020821922675854473
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 367055,
+    "coverage": 0.34935459984428924,
+    "unknown_target_rows": 3318,
+    "target_cases": 3014,
+    "weeks": 522,
+    "mean": 0.07442962403552571
+   },
+   "pair_outcomes": {
+    "high_only": 22687,
+    "low_only": 20367,
+    "both": 0,
+    "neither": 324001
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 0,
+    "coverage": 0.0,
+    "unknown_target_rows": 3318,
+    "target_cases": 0,
+    "weeks": 0,
+    "mean": null
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 0,
+    "coverage": 0.0,
+    "unknown_target_rows": 3318,
+    "target_cases": 0,
+    "weeks": 0,
+    "mean": null
+   },
+   "pair_outcomes": {
+    "high_only": 0,
+    "low_only": 0,
+    "both": 0,
+    "neither": 0
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 224375,
+    "coverage": 0.21355502129125717,
+    "unknown_target_rows": 3318,
+    "target_cases": 3088,
+    "weeks": 522,
+    "mean": 0.059583795595265485,
+    "ci95": [
+     0.05412325382606564,
+     0.06486364091646296
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 224375,
+    "coverage": 0.21355502129125717,
+    "unknown_target_rows": 3318,
+    "target_cases": 3088,
+    "weeks": 522,
+    "mean": 0.08180369288335537
+   },
+   "pair_outcomes": {
+    "high_only": 38586,
+    "low_only": 26167,
+    "both": 0,
+    "neither": 159622
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 942,
+    "coverage": 0.0008965741729531554,
+    "unknown_target_rows": 3318,
+    "target_cases": 639,
+    "weeks": 412,
+    "mean": 0.06485393844548774,
+    "ci95": [
+     0.021673640801171117,
+     0.11045128733908262
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 942,
+    "coverage": 0.0008965741729531554,
+    "unknown_target_rows": 3318,
+    "target_cases": 639,
+    "weeks": 412,
+    "mean": 0.06270958403233258
+   },
+   "pair_outcomes": {
+    "high_only": 240,
+    "low_only": 163,
+    "both": 0,
+    "neither": 539
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 121303,
+    "coverage": 0.11545343620141892,
+    "unknown_target_rows": 3318,
+    "target_cases": 2252,
+    "weeks": 521,
+    "mean": -0.0010281790694686556,
+    "ci95": [
+     -0.007330139276409605,
+     0.004949768327207119
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 121303,
+    "coverage": 0.11545343620141892,
+    "unknown_target_rows": 3318,
+    "target_cases": 2252,
+    "weeks": 521,
+    "mean": 0.11815790986762181
+   },
+   "pair_outcomes": {
+    "high_only": 18963,
+    "low_only": 14289,
+    "both": 0,
+    "neither": 88051
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 4706,
+    "coverage": 0.004479063755751114,
+    "unknown_target_rows": 3318,
+    "target_cases": 1247,
+    "weeks": 489,
+    "mean": 0.02544239417335899,
+    "ci95": [
+     0.0013525635455792994,
+     0.051517891723774314
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 4706,
+    "coverage": 0.004479063755751114,
+    "unknown_target_rows": 3318,
+    "target_cases": 1247,
+    "weeks": 489,
+    "mean": 0.09172326150011108
+   },
+   "pair_outcomes": {
+    "high_only": 1159,
+    "low_only": 914,
+    "both": 0,
+    "neither": 2633
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "PATH_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 71361,
+    "coverage": 0.06791977659884302,
+    "unknown_target_rows": 3318,
+    "target_cases": 1559,
+    "weeks": 502,
+    "mean": -0.0010545748801059534,
+    "ci95": [
+     -0.009672472399836146,
+     0.008243838433627387
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 71361,
+    "coverage": 0.06791977659884302,
+    "unknown_target_rows": 3318,
+    "target_cases": 1559,
+    "weeks": 502,
+    "mean": 0.13085098833715147
+   },
+   "pair_outcomes": {
+    "high_only": 11224,
+    "low_only": 8526,
+    "both": 0,
+    "neither": 51611
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "PATH_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 2767,
+    "coverage": 0.002633567660893186,
+    "unknown_target_rows": 3318,
+    "target_cases": 813,
+    "weeks": 426,
+    "mean": 0.007675628194223084,
+    "ci95": [
+     -0.02600255191610978,
+     0.03953234265800168
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 2767,
+    "coverage": 0.002633567660893186,
+    "unknown_target_rows": 3318,
+    "target_cases": 813,
+    "weeks": 426,
+    "mean": 0.09296526423018253
+   },
+   "pair_outcomes": {
+    "high_only": 655,
+    "low_only": 539,
+    "both": 0,
+    "neither": 1573
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "GAPS_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 63961,
+    "coverage": 0.06087662492171632,
+    "unknown_target_rows": 3318,
+    "target_cases": 1889,
+    "weeks": 514,
+    "mean": 0.0024109812176948305,
+    "ci95": [
+     -0.0050157649911096395,
+     0.010101878362667531
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 63961,
+    "coverage": 0.06087662492171632,
+    "unknown_target_rows": 3318,
+    "target_cases": 1889,
+    "weeks": 514,
+    "mean": 0.126068697222332
+   },
+   "pair_outcomes": {
+    "high_only": 7725,
+    "low_only": 6853,
+    "both": 0,
+    "neither": 49383
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "GAPS_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 727,
+    "coverage": 0.0006919420634150149,
+    "unknown_target_rows": 3318,
+    "target_cases": 402,
+    "weeks": 285,
+    "mean": -0.039976703782673935,
+    "ci95": [
+     -0.0960416914624875,
+     0.007721443712620168
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 727,
+    "coverage": 0.0006919420634150149,
+    "unknown_target_rows": 3318,
+    "target_cases": 402,
+    "weeks": 285,
+    "mean": 0.09020981401704298
+   },
+   "pair_outcomes": {
+    "high_only": 152,
+    "low_only": 162,
+    "both": 0,
+    "neither": 413
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_K50_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 391027,
+    "coverage": 0.3721706041691651,
+    "unknown_target_rows": 3318,
+    "target_cases": 2585,
+    "weeks": 522,
+    "mean": 0.0198773282420513,
+    "ci95": [
+     0.016471884590587065,
+     0.02315275199635122
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 391027,
+    "coverage": 0.3721706041691651,
+    "unknown_target_rows": 3318,
+    "target_cases": 2585,
+    "weeks": 522,
+    "mean": 0.10703186199712476
+   },
+   "pair_outcomes": {
+    "high_only": 50743,
+    "low_only": 40684,
+    "both": 0,
+    "neither": 299600
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_K50_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 8426,
+    "coverage": 0.00801967513938778,
+    "unknown_target_rows": 3318,
+    "target_cases": 1892,
+    "weeks": 517,
+    "mean": 0.025874087653561598,
+    "ci95": [
+     0.008222442680665397,
+     0.043316089696549175
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 8426,
+    "coverage": 0.00801967513938778,
+    "unknown_target_rows": 3318,
+    "target_cases": 1892,
+    "weeks": 517,
+    "mean": 0.08319146024036088
+   },
+   "pair_outcomes": {
+    "high_only": 1938,
+    "low_only": 1494,
+    "both": 0,
+    "neither": 4994
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_K50_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 428477,
+    "coverage": 0.4078146623189482,
+    "unknown_target_rows": 3318,
+    "target_cases": 2585,
+    "weeks": 522,
+    "mean": 0.01621756219219374,
+    "ci95": [
+     0.012976494775469463,
+     0.019330855405599295
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 428477,
+    "coverage": 0.4078146623189482,
+    "unknown_target_rows": 3318,
+    "target_cases": 2585,
+    "weeks": 522,
+    "mean": 0.1088810685426644
+   },
+   "pair_outcomes": {
+    "high_only": 52007,
+    "low_only": 43423,
+    "both": 0,
+    "neither": 333047
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_K50_ALL",
+   "comparison": "opposite_sides_same_window",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 1050666,
+    "answered_rows": 7082,
+    "coverage": 0.006740486510460984,
+    "unknown_target_rows": 3318,
+    "target_cases": 1529,
+    "weeks": 512,
+    "mean": 2.5053265834251722e-05,
+    "ci95": [
+     -0.020137660350751346,
+     0.02232253568257376
+    ]
+   },
+   "predicted_gap": {
+    "rows": 1050666,
+    "answered_rows": 7082,
+    "coverage": 0.006740486510460984,
+    "unknown_target_rows": 3318,
+    "target_cases": 1529,
+    "weeks": 512,
+    "mean": 0.08365385281769055
+   },
+   "pair_outcomes": {
+    "high_only": 1598,
+    "low_only": 1449,
+    "both": 0,
+    "neither": 4035
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_WD",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 152504,
+    "coverage": 0.2131647070005647,
+    "unknown_target_rows": 1852,
+    "target_cases": 2235,
+    "weeks": 519,
+    "mean": 0.022786606724635596,
+    "ci95": [
+     0.018898352615409734,
+     0.026666411297554378
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 152504,
+    "coverage": 0.2131647070005647,
+    "unknown_target_rows": 1852,
+    "target_cases": 2235,
+    "weeks": 519,
+    "mean": 0.08610015220531683
+   },
+   "pair_outcomes": {
+    "high_only": 16000,
+    "low_only": 13575,
+    "both": 37619,
+    "neither": 85310
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_WD",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 51416,
+    "coverage": 0.0718674695427073,
+    "unknown_target_rows": 1852,
+    "target_cases": 2209,
+    "weeks": 518,
+    "mean": 0.014072492725314438,
+    "ci95": [
+     0.007654646401209892,
+     0.02007023210372699
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 51416,
+    "coverage": 0.0718674695427073,
+    "unknown_target_rows": 1852,
+    "target_cases": 2209,
+    "weeks": 518,
+    "mean": 0.07675002613177612
+   },
+   "pair_outcomes": {
+    "high_only": 5340,
+    "low_only": 4793,
+    "both": 12909,
+    "neither": 28374
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_WD",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 81388,
+    "coverage": 0.11376127297226275,
+    "unknown_target_rows": 1852,
+    "target_cases": 1636,
+    "weeks": 505,
+    "mean": 0.11325455042451125,
+    "ci95": [
+     0.10525967997932516,
+     0.12184595728373895
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 81388,
+    "coverage": 0.11376127297226275,
+    "unknown_target_rows": 1852,
+    "target_cases": 1636,
+    "weeks": 505,
+    "mean": 0.14077992873975967
+   },
+   "pair_outcomes": {
+    "high_only": 12162,
+    "low_only": 4770,
+    "both": 22747,
+    "neither": 41709
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_WD",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 7845,
+    "coverage": 0.010965464029923346,
+    "unknown_target_rows": 1852,
+    "target_cases": 1323,
+    "weeks": 480,
+    "mean": 0.030355946780796655,
+    "ci95": [
+     0.017173750445556985,
+     0.043530700738645796
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 7845,
+    "coverage": 0.010965464029923346,
+    "unknown_target_rows": 1852,
+    "target_cases": 1323,
+    "weeks": 480,
+    "mean": 0.09163927001473055
+   },
+   "pair_outcomes": {
+    "high_only": 892,
+    "low_only": 519,
+    "both": 1179,
+    "neither": 5255
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 92427,
+    "coverage": 0.12919119743705865,
+    "unknown_target_rows": 1852,
+    "target_cases": 2967,
+    "weeks": 522,
+    "mean": 0.04596504081942736,
+    "ci95": [
+     0.04077556422472819,
+     0.051222393206217735
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 92427,
+    "coverage": 0.12919119743705865,
+    "unknown_target_rows": 1852,
+    "target_cases": 2967,
+    "weeks": 522,
+    "mean": 0.0814812324004775
+   },
+   "pair_outcomes": {
+    "high_only": 11320,
+    "low_only": 8111,
+    "both": 25369,
+    "neither": 47627
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 29910,
+    "coverage": 0.04180714201848404,
+    "unknown_target_rows": 1852,
+    "target_cases": 2853,
+    "weeks": 522,
+    "mean": 0.018650119937042225,
+    "ci95": [
+     0.010178863665694517,
+     0.027704095823906396
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 29910,
+    "coverage": 0.04180714201848404,
+    "unknown_target_rows": 1852,
+    "target_cases": 2853,
+    "weeks": 522,
+    "mean": 0.06661596383779139
+   },
+   "pair_outcomes": {
+    "high_only": 3182,
+    "low_only": 2777,
+    "both": 7716,
+    "neither": 16235
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 290445,
+    "coverage": 0.40597376675220986,
+    "unknown_target_rows": 1852,
+    "target_cases": 2704,
+    "weeks": 522,
+    "mean": 0.11415332109303587,
+    "ci95": [
+     0.11005551887526006,
+     0.11838698170849508
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 290445,
+    "coverage": 0.40597376675220986,
+    "unknown_target_rows": 1852,
+    "target_cases": 2704,
+    "weeks": 522,
+    "mean": 0.1277793117657259
+   },
+   "pair_outcomes": {
+    "high_only": 45625,
+    "low_only": 16246,
+    "both": 83280,
+    "neither": 145294
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 31348,
+    "coverage": 0.04381712764946298,
+    "unknown_target_rows": 1852,
+    "target_cases": 2520,
+    "weeks": 522,
+    "mean": 0.05925199505090439,
+    "ci95": [
+     0.050876313217991374,
+     0.06708704127460174
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 31348,
+    "coverage": 0.04381712764946298,
+    "unknown_target_rows": 1852,
+    "target_cases": 2520,
+    "weeks": 522,
+    "mean": 0.08698362062651407
+   },
+   "pair_outcomes": {
+    "high_only": 4005,
+    "low_only": 1894,
+    "both": 4659,
+    "neither": 20790
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 30816,
+    "coverage": 0.04307351683188245,
+    "unknown_target_rows": 1852,
+    "target_cases": 2398,
+    "weeks": 521,
+    "mean": 0.07541177584756452,
+    "ci95": [
+     0.06606226931438626,
+     0.084969972955297
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 30816,
+    "coverage": 0.04307351683188245,
+    "unknown_target_rows": 1852,
+    "target_cases": 2398,
+    "weeks": 521,
+    "mean": 0.07149089963000049
+   },
+   "pair_outcomes": {
+    "high_only": 4840,
+    "low_only": 2862,
+    "both": 10753,
+    "neither": 12361
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 2119,
+    "coverage": 0.002961863388069799,
+    "unknown_target_rows": 1852,
+    "target_cases": 1383,
+    "weeks": 504,
+    "mean": 0.04439624005784526,
+    "ci95": [
+     0.021358950515196193,
+     0.06747027762019228
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 2119,
+    "coverage": 0.002961863388069799,
+    "unknown_target_rows": 1852,
+    "target_cases": 1383,
+    "weeks": 504,
+    "mean": 0.056617852464716935
+   },
+   "pair_outcomes": {
+    "high_only": 289,
+    "low_only": 192,
+    "both": 589,
+    "neither": 1049
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 392327,
+    "coverage": 0.5483808293776592,
+    "unknown_target_rows": 1852,
+    "target_cases": 3072,
+    "weeks": 522,
+    "mean": 0.12305860258919128,
+    "ci95": [
+     0.11993380822525064,
+     0.12622571421934956
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 392327,
+    "coverage": 0.5483808293776592,
+    "unknown_target_rows": 1852,
+    "target_cases": 3072,
+    "weeks": 522,
+    "mean": 0.11127886680589917
+   },
+   "pair_outcomes": {
+    "high_only": 66294,
+    "low_only": 20780,
+    "both": 118475,
+    "neither": 186778
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 49136,
+    "coverage": 0.06868056603879076,
+    "unknown_target_rows": 1852,
+    "target_cases": 3039,
+    "weeks": 522,
+    "mean": 0.09119584553626535,
+    "ci95": [
+     0.08536610679259603,
+     0.09723912128235115
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 49136,
+    "coverage": 0.06868056603879076,
+    "unknown_target_rows": 1852,
+    "target_cases": 3039,
+    "weeks": 522,
+    "mean": 0.07362396468433309
+   },
+   "pair_outcomes": {
+    "high_only": 6968,
+    "low_only": 2290,
+    "both": 6811,
+    "neither": 33067
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 103952,
+    "coverage": 0.14530043554347888,
+    "unknown_target_rows": 1852,
+    "target_cases": 2252,
+    "weeks": 521,
+    "mean": 0.11498092593432967,
+    "ci95": [
+     0.1085741812957105,
+     0.12127519314135617
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 103952,
+    "coverage": 0.14530043554347888,
+    "unknown_target_rows": 1852,
+    "target_cases": 2252,
+    "weeks": 521,
+    "mean": 0.13705203755375633
+   },
+   "pair_outcomes": {
+    "high_only": 15513,
+    "low_only": 5654,
+    "both": 29264,
+    "neither": 53521
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 9167,
+    "coverage": 0.012813308956317057,
+    "unknown_target_rows": 1852,
+    "target_cases": 1870,
+    "weeks": 514,
+    "mean": 0.052248920828476625,
+    "ci95": [
+     0.038973126467857576,
+     0.06535666327305509
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 9167,
+    "coverage": 0.012813308956317057,
+    "unknown_target_rows": 1852,
+    "target_cases": 1870,
+    "weeks": 514,
+    "mean": 0.08867951514032749
+   },
+   "pair_outcomes": {
+    "high_only": 1189,
+    "low_only": 602,
+    "both": 1525,
+    "neither": 5851
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "PATH_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 49713,
+    "coverage": 0.0694870762676328,
+    "unknown_target_rows": 1852,
+    "target_cases": 1557,
+    "weeks": 502,
+    "mean": 0.10126907108583781,
+    "ci95": [
+     0.09271872852395643,
+     0.11012306263287647
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 49713,
+    "coverage": 0.0694870762676328,
+    "unknown_target_rows": 1852,
+    "target_cases": 1557,
+    "weeks": 502,
+    "mean": 0.13252077652234073
+   },
+   "pair_outcomes": {
+    "high_only": 6666,
+    "low_only": 2906,
+    "both": 13620,
+    "neither": 26521
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "PATH_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 4489,
+    "coverage": 0.006274565714509356,
+    "unknown_target_rows": 1852,
+    "target_cases": 1177,
+    "weeks": 475,
+    "mean": 0.048049335937911074,
+    "ci95": [
+     0.032053793328585066,
+     0.06417505428128484
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 4489,
+    "coverage": 0.006274565714509356,
+    "unknown_target_rows": 1852,
+    "target_cases": 1177,
+    "weeks": 475,
+    "mean": 0.08835814090840652
+   },
+   "pair_outcomes": {
+    "high_only": 487,
+    "low_only": 289,
+    "both": 798,
+    "neither": 2915
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "GAPS_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 39381,
+    "coverage": 0.05504537144198997,
+    "unknown_target_rows": 1852,
+    "target_cases": 1889,
+    "weeks": 514,
+    "mean": 0.08341235873968789,
+    "ci95": [
+     0.07407652586230407,
+     0.0921060074942694
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 39381,
+    "coverage": 0.05504537144198997,
+    "unknown_target_rows": 1852,
+    "target_cases": 1889,
+    "weeks": 514,
+    "mean": 0.1307078807701827
+   },
+   "pair_outcomes": {
+    "high_only": 5271,
+    "low_only": 2786,
+    "both": 10933,
+    "neither": 20391
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "GAPS_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 3898,
+    "coverage": 0.005448486779941517,
+    "unknown_target_rows": 1852,
+    "target_cases": 1354,
+    "weeks": 491,
+    "mean": 0.032499770867569985,
+    "ci95": [
+     0.012161956447889062,
+     0.05059899502453723
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 3898,
+    "coverage": 0.005448486779941517,
+    "unknown_target_rows": 1852,
+    "target_cases": 1354,
+    "weeks": 491,
+    "mean": 0.08860374422355967
+   },
+   "pair_outcomes": {
+    "high_only": 468,
+    "low_only": 341,
+    "both": 940,
+    "neither": 2149
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_K50_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 339885,
+    "coverage": 0.4750792532581895,
+    "unknown_target_rows": 1852,
+    "target_cases": 2585,
+    "weeks": 522,
+    "mean": 0.08121472245451378,
+    "ci95": [
+     0.0780535239502598,
+     0.08430529235428007
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 339885,
+    "coverage": 0.4750792532581895,
+    "unknown_target_rows": 1852,
+    "target_cases": 2585,
+    "weeks": 522,
+    "mean": 0.11851672616630278
+   },
+   "pair_outcomes": {
+    "high_only": 50204,
+    "low_only": 21871,
+    "both": 94346,
+    "neither": 173464
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_K50_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 41684,
+    "coverage": 0.05826442353388461,
+    "unknown_target_rows": 1852,
+    "target_cases": 2564,
+    "weeks": 522,
+    "mean": 0.04105454637981221,
+    "ci95": [
+     0.034931269485580806,
+     0.04717331963940765
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 41684,
+    "coverage": 0.05826442353388461,
+    "unknown_target_rows": 1852,
+    "target_cases": 2564,
+    "weeks": 522,
+    "mean": 0.08528732264050094
+   },
+   "pair_outcomes": {
+    "high_only": 5188,
+    "low_only": 3311,
+    "both": 8122,
+    "neither": 25063
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_K50_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 304813,
+    "coverage": 0.42605684988566284,
+    "unknown_target_rows": 1852,
+    "target_cases": 2585,
+    "weeks": 522,
+    "mean": 0.06895077873721082,
+    "ci95": [
+     0.06559888362733152,
+     0.07207890872471988
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 304813,
+    "coverage": 0.42605684988566284,
+    "unknown_target_rows": 1852,
+    "target_cases": 2585,
+    "weeks": 522,
+    "mean": 0.10982918427871736
+   },
+   "pair_outcomes": {
+    "high_only": 43349,
+    "low_only": 21901,
+    "both": 84820,
+    "neither": 154743
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_K50_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 39680,
+    "coverage": 0.05546330308570534,
+    "unknown_target_rows": 1852,
+    "target_cases": 2564,
+    "weeks": 522,
+    "mean": 0.03397051118015893,
+    "ci95": [
+     0.028073574658509348,
+     0.04003299418160697
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 39680,
+    "coverage": 0.05546330308570534,
+    "unknown_target_rows": 1852,
+    "target_cases": 2564,
+    "weeks": 522,
+    "mean": 0.08171333859219372
+   },
+   "pair_outcomes": {
+    "high_only": 4913,
+    "low_only": 3541,
+    "both": 8631,
+    "neither": 22595
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_WD",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 98665,
+    "coverage": 0.13791045360259874,
+    "unknown_target_rows": 1998,
+    "target_cases": 2229,
+    "weeks": 519,
+    "mean": 0.005306130066928158,
+    "ci95": [
+     0.002140480676347459,
+     0.008556262471059138
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 98665,
+    "coverage": 0.13791045360259874,
+    "unknown_target_rows": 1998,
+    "target_cases": 2229,
+    "weeks": 519,
+    "mean": 0.07569590012814588
+   },
+   "pair_outcomes": {
+    "high_only": 7263,
+    "low_only": 7008,
+    "both": 3329,
+    "neither": 81065
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_WD",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 638,
+    "coverage": 0.0008917738752187501,
+    "unknown_target_rows": 1998,
+    "target_cases": 371,
+    "weeks": 282,
+    "mean": 0.007521499165704012,
+    "ci95": [
+     -0.029397933177538436,
+     0.04642315278202263
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 638,
+    "coverage": 0.0008917738752187501,
+    "unknown_target_rows": 1998,
+    "target_cases": 371,
+    "weeks": 282,
+    "mean": 0.08213261779617198
+   },
+   "pair_outcomes": {
+    "high_only": 68,
+    "low_only": 57,
+    "both": 33,
+    "neither": 480
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_WD",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 49283,
+    "coverage": 0.0688860374489117,
+    "unknown_target_rows": 1998,
+    "target_cases": 1624,
+    "weeks": 505,
+    "mean": 0.011246347012395144,
+    "ci95": [
+     0.00479818763218959,
+     0.017960624892257675
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 49283,
+    "coverage": 0.0688860374489117,
+    "unknown_target_rows": 1998,
+    "target_cases": 1624,
+    "weeks": 505,
+    "mean": 0.10531871617276903
+   },
+   "pair_outcomes": {
+    "high_only": 4884,
+    "low_only": 4146,
+    "both": 2292,
+    "neither": 37961
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_WD",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 4797,
+    "coverage": 0.006705077240477029,
+    "unknown_target_rows": 1998,
+    "target_cases": 1134,
+    "weeks": 477,
+    "mean": 0.025937844989456865,
+    "ci95": [
+     0.007095692683672317,
+     0.04476968124480294
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 4797,
+    "coverage": 0.006705077240477029,
+    "unknown_target_rows": 1998,
+    "target_cases": 1134,
+    "weeks": 477,
+    "mean": 0.0924529816326305
+   },
+   "pair_outcomes": {
+    "high_only": 771,
+    "low_only": 618,
+    "both": 444,
+    "neither": 2964
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 39409,
+    "coverage": 0.05508450885344158,
+    "unknown_target_rows": 1998,
+    "target_cases": 2600,
+    "weeks": 522,
+    "mean": 0.012121269376712708,
+    "ci95": [
+     0.0032464414136400945,
+     0.020998149898812067
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 39409,
+    "coverage": 0.05508450885344158,
+    "unknown_target_rows": 1998,
+    "target_cases": 2600,
+    "weeks": 522,
+    "mean": 0.06767492664027687
+   },
+   "pair_outcomes": {
+    "high_only": 3145,
+    "low_only": 2979,
+    "both": 1507,
+    "neither": 31778
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 463,
+    "coverage": 0.000647165053646209,
+    "unknown_target_rows": 1998,
+    "target_cases": 302,
+    "weeks": 235,
+    "mean": 0.04906181015452538,
+    "ci95": [
+     -0.0029221672167216643,
+     0.09756904327556493
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 463,
+    "coverage": 0.000647165053646209,
+    "unknown_target_rows": 1998,
+    "target_cases": 302,
+    "weeks": 235,
+    "mean": 0.07751392954693198
+   },
+   "pair_outcomes": {
+    "high_only": 65,
+    "low_only": 43,
+    "both": 36,
+    "neither": 319
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 132112,
+    "coverage": 0.1846614893462375,
+    "unknown_target_rows": 1998,
+    "target_cases": 2703,
+    "weeks": 522,
+    "mean": 0.015593374166954709,
+    "ci95": [
+     0.012149502519058095,
+     0.019135385457388358
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 132112,
+    "coverage": 0.1846614893462375,
+    "unknown_target_rows": 1998,
+    "target_cases": 2703,
+    "weeks": 522,
+    "mean": 0.09323327650090626
+   },
+   "pair_outcomes": {
+    "high_only": 13567,
+    "low_only": 11588,
+    "both": 6425,
+    "neither": 100532
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 13928,
+    "coverage": 0.01946806666778488,
+    "unknown_target_rows": 1998,
+    "target_cases": 2275,
+    "weeks": 521,
+    "mean": 0.03104879240716093,
+    "ci95": [
+     0.01937209836521814,
+     0.042975269833633485
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 13928,
+    "coverage": 0.01946806666778488,
+    "unknown_target_rows": 1998,
+    "target_cases": 2275,
+    "weeks": 521,
+    "mean": 0.08464364247232976
+   },
+   "pair_outcomes": {
+    "high_only": 2153,
+    "low_only": 1819,
+    "both": 1411,
+    "neither": 8545
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 288,
+    "coverage": 0.0004025562320736678,
+    "unknown_target_rows": 1998,
+    "target_cases": 262,
+    "weeks": 216,
+    "mean": 0.07124681933842239,
+    "ci95": [
+     0.012662109862671663,
+     0.12899625768511092
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 288,
+    "coverage": 0.0004025562320736678,
+    "unknown_target_rows": 1998,
+    "target_cases": 262,
+    "weeks": 216,
+    "mean": 0.05732079275407409
+   },
+   "pair_outcomes": {
+    "high_only": 49,
+    "low_only": 31,
+    "both": 16,
+    "neither": 192
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 3,
+    "coverage": 4.193294084100706e-06,
+    "unknown_target_rows": 1998,
+    "target_cases": 3,
+    "weeks": 3,
+    "mean": 0.0,
+    "ci95": [
+     -1.0,
+     1.0
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 3,
+    "coverage": 4.193294084100706e-06,
+    "unknown_target_rows": 1998,
+    "target_cases": 3,
+    "weeks": 3,
+    "mean": 0.05247803529103597
+   },
+   "pair_outcomes": {
+    "high_only": 1,
+    "low_only": 1,
+    "both": 0,
+    "neither": 1
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 69522,
+    "coverage": 0.09717539710494977,
+    "unknown_target_rows": 1998,
+    "target_cases": 3063,
+    "weeks": 522,
+    "mean": 0.038042207405458515,
+    "ci95": [
+     0.032860950807876786,
+     0.04323573166178083
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 69522,
+    "coverage": 0.09717539710494977,
+    "unknown_target_rows": 1998,
+    "target_cases": 3063,
+    "weeks": 522,
+    "mean": 0.06923282287015292
+   },
+   "pair_outcomes": {
+    "high_only": 9683,
+    "low_only": 7224,
+    "both": 4472,
+    "neither": 48143
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 15374,
+    "coverage": 0.021489234416321418,
+    "unknown_target_rows": 1998,
+    "target_cases": 2243,
+    "weeks": 521,
+    "mean": 0.05490552914817303,
+    "ci95": [
+     0.04271216789417032,
+     0.06756278678656397
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 15374,
+    "coverage": 0.021489234416321418,
+    "unknown_target_rows": 1998,
+    "target_cases": 2243,
+    "weeks": 521,
+    "mean": 0.06608157184642377
+   },
+   "pair_outcomes": {
+    "high_only": 2666,
+    "low_only": 1925,
+    "both": 1725,
+    "neither": 9058
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 57314,
+    "coverage": 0.08011148571204929,
+    "unknown_target_rows": 1998,
+    "target_cases": 2236,
+    "weeks": 521,
+    "mean": 0.005476171135763264,
+    "ci95": [
+     -0.0007165285307535353,
+     0.011683786438852895
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 57314,
+    "coverage": 0.08011148571204929,
+    "unknown_target_rows": 1998,
+    "target_cases": 2236,
+    "weeks": 521,
+    "mean": 0.0996888918633278
+   },
+   "pair_outcomes": {
+    "high_only": 5831,
+    "low_only": 5145,
+    "both": 3136,
+    "neither": 43202
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 7694,
+    "coverage": 0.010754401561023611,
+    "unknown_target_rows": 1998,
+    "target_cases": 1578,
+    "weeks": 507,
+    "mean": 0.003944668438589215,
+    "ci95": [
+     -0.012291151820785665,
+     0.01958324567767701
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 7694,
+    "coverage": 0.010754401561023611,
+    "unknown_target_rows": 1998,
+    "target_cases": 1578,
+    "weeks": 507,
+    "mean": 0.08976532543549691
+   },
+   "pair_outcomes": {
+    "high_only": 1166,
+    "low_only": 1064,
+    "both": 785,
+    "neither": 4679
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "PATH_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 30872,
+    "coverage": 0.043151791654785665,
+    "unknown_target_rows": 1998,
+    "target_cases": 1530,
+    "weeks": 500,
+    "mean": 0.007164914589666081,
+    "ci95": [
+     -0.0014542893118692825,
+     0.015569056256493841
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 30872,
+    "coverage": 0.043151791654785665,
+    "unknown_target_rows": 1998,
+    "target_cases": 1530,
+    "weeks": 500,
+    "mean": 0.10282449882669001
+   },
+   "pair_outcomes": {
+    "high_only": 3013,
+    "low_only": 2656,
+    "both": 1878,
+    "neither": 23325
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "PATH_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 4735,
+    "coverage": 0.006618415829405614,
+    "unknown_target_rows": 1998,
+    "target_cases": 1066,
+    "weeks": 463,
+    "mean": 0.0074726663044634755,
+    "ci95": [
+     -0.013122465158500473,
+     0.027337796306533664
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 4735,
+    "coverage": 0.006618415829405614,
+    "unknown_target_rows": 1998,
+    "target_cases": 1066,
+    "weeks": 463,
+    "mean": 0.09237838396964226
+   },
+   "pair_outcomes": {
+    "high_only": 661,
+    "low_only": 637,
+    "both": 492,
+    "neither": 2945
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "GAPS_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 24958,
+    "coverage": 0.03488541125032847,
+    "unknown_target_rows": 1998,
+    "target_cases": 1860,
+    "weeks": 514,
+    "mean": 0.007027246779708629,
+    "ci95": [
+     -0.001245314254577267,
+     0.015422514015395076
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 24958,
+    "coverage": 0.03488541125032847,
+    "unknown_target_rows": 1998,
+    "target_cases": 1860,
+    "weeks": 514,
+    "mean": 0.10056573794626865
+   },
+   "pair_outcomes": {
+    "high_only": 2260,
+    "low_only": 2079,
+    "both": 1192,
+    "neither": 19427
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "GAPS_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 2303,
+    "coverage": 0.003219052091894642,
+    "unknown_target_rows": 1998,
+    "target_cases": 967,
+    "weeks": 462,
+    "mean": -0.010806380222098937,
+    "ci95": [
+     -0.03661187753630486,
+     0.014516932651101535
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 2303,
+    "coverage": 0.003219052091894642,
+    "unknown_target_rows": 1998,
+    "target_cases": 967,
+    "weeks": 462,
+    "mean": 0.09041077724845513
+   },
+   "pair_outcomes": {
+    "high_only": 289,
+    "low_only": 293,
+    "both": 192,
+    "neither": 1529
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_K50_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 173750,
+    "coverage": 0.2428616157041659,
+    "unknown_target_rows": 1998,
+    "target_cases": 2584,
+    "weeks": 522,
+    "mean": 0.008587714238012594,
+    "ci95": [
+     0.006048616030791359,
+     0.010846997430885876
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 173750,
+    "coverage": 0.2428616157041659,
+    "unknown_target_rows": 1998,
+    "target_cases": 2584,
+    "weeks": 522,
+    "mean": 0.08701134604543154
+   },
+   "pair_outcomes": {
+    "high_only": 16699,
+    "low_only": 14972,
+    "both": 7669,
+    "neither": 134410
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_K50_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 17101,
+    "coverage": 0.023903174044068724,
+    "unknown_target_rows": 1998,
+    "target_cases": 2271,
+    "weeks": 522,
+    "mean": 0.021893829895786567,
+    "ci95": [
+     0.012082138618929901,
+     0.03282233774139303
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 17101,
+    "coverage": 0.023903174044068724,
+    "unknown_target_rows": 1998,
+    "target_cases": 2271,
+    "weeks": 522,
+    "mean": 0.08424248013131815
+   },
+   "pair_outcomes": {
+    "high_only": 2450,
+    "low_only": 2117,
+    "both": 1610,
+    "neither": 10924
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_K50_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 169514,
+    "coverage": 0.2369406844574157,
+    "unknown_target_rows": 1998,
+    "target_cases": 2583,
+    "weeks": 522,
+    "mean": 0.007353657523533223,
+    "ci95": [
+     0.005094633478697225,
+     0.009612277656609144
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 169514,
+    "coverage": 0.2369406844574157,
+    "unknown_target_rows": 1998,
+    "target_cases": 2583,
+    "weeks": 522,
+    "mean": 0.08569710287663505
+   },
+   "pair_outcomes": {
+    "high_only": 15870,
+    "low_only": 14504,
+    "both": 7329,
+    "neither": 131811
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_K50_ALL",
+   "comparison": "same_price_other_time_1",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 715428,
+    "answered_rows": 15153,
+    "coverage": 0.021180328418792665,
+    "unknown_target_rows": 1998,
+    "target_cases": 2101,
+    "weeks": 519,
+    "mean": 0.013900870237668768,
+    "ci95": [
+     0.002525777409790774,
+     0.024620605369875138
+    ]
+   },
+   "predicted_gap": {
+    "rows": 715428,
+    "answered_rows": 15153,
+    "coverage": 0.021180328418792665,
+    "unknown_target_rows": 1998,
+    "target_cases": 2101,
+    "weeks": 519,
+    "mean": 0.08317598167126106
+   },
+   "pair_outcomes": {
+    "high_only": 2067,
+    "low_only": 1905,
+    "both": 1389,
+    "neither": 9792
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_WD",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 216222,
+    "coverage": 0.34521836591978083,
+    "unknown_target_rows": 3620,
+    "target_cases": 2235,
+    "weeks": 519,
+    "mean": 0.050860524443902475,
+    "ci95": [
+     0.045001943501377664,
+     0.05636777521004693
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 216222,
+    "coverage": 0.34521836591978083,
+    "unknown_target_rows": 3620,
+    "target_cases": 2235,
+    "weeks": 519,
+    "mean": 0.10685691535838414
+   },
+   "pair_outcomes": {
+    "high_only": 37908,
+    "low_only": 28495,
+    "both": 35213,
+    "neither": 114606
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_WD",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 64605,
+    "coverage": 0.10314784124764104,
+    "unknown_target_rows": 3620,
+    "target_cases": 2209,
+    "weeks": 519,
+    "mean": 0.050312814006513905,
+    "ci95": [
+     0.042262314478201425,
+     0.05895700357025246
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 64605,
+    "coverage": 0.10314784124764104,
+    "unknown_target_rows": 3620,
+    "target_cases": 2209,
+    "weeks": 519,
+    "mean": 0.08615954246820728
+   },
+   "pair_outcomes": {
+    "high_only": 11536,
+    "low_only": 9067,
+    "both": 11235,
+    "neither": 32767
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_WD",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 104807,
+    "coverage": 0.16733404222028503,
+    "unknown_target_rows": 3620,
+    "target_cases": 1632,
+    "weeks": 505,
+    "mean": 0.17749450295610872,
+    "ci95": [
+     0.16882983242406374,
+     0.18588196365769674
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 104807,
+    "coverage": 0.16733404222028503,
+    "unknown_target_rows": 3620,
+    "target_cases": 1632,
+    "weeks": 505,
+    "mean": 0.18999721572420106
+   },
+   "pair_outcomes": {
+    "high_only": 23854,
+    "low_only": 8213,
+    "both": 17400,
+    "neither": 55340
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_WD",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 8440,
+    "coverage": 0.013475238451050078,
+    "unknown_target_rows": 3620,
+    "target_cases": 1341,
+    "weeks": 490,
+    "mean": 0.036975004084144364,
+    "ci95": [
+     0.019886799073685346,
+     0.05538555477703156
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 8440,
+    "coverage": 0.013475238451050078,
+    "unknown_target_rows": 3620,
+    "target_cases": 1341,
+    "weeks": 490,
+    "mean": 0.09656891861719825
+   },
+   "pair_outcomes": {
+    "high_only": 1481,
+    "low_only": 1097,
+    "both": 864,
+    "neither": 4998
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 176320,
+    "coverage": 0.28151114261719784,
+    "unknown_target_rows": 3620,
+    "target_cases": 2947,
+    "weeks": 522,
+    "mean": 0.07416006681378173,
+    "ci95": [
+     0.06832435331161492,
+     0.08032257290622033
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 176320,
+    "coverage": 0.28151114261719784,
+    "unknown_target_rows": 3620,
+    "target_cases": 2947,
+    "weeks": 522,
+    "mean": 0.10189159259129382
+   },
+   "pair_outcomes": {
+    "high_only": 34309,
+    "low_only": 22314,
+    "both": 30726,
+    "neither": 88971
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 68941,
+    "coverage": 0.11007066517225633,
+    "unknown_target_rows": 3620,
+    "target_cases": 2912,
+    "weeks": 522,
+    "mean": 0.057936271720194416,
+    "ci95": [
+     0.050340838355885896,
+     0.06556256181619147
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 68941,
+    "coverage": 0.11007066517225633,
+    "unknown_target_rows": 3620,
+    "target_cases": 2912,
+    "weeks": 522,
+    "mean": 0.07730772633557328
+   },
+   "pair_outcomes": {
+    "high_only": 13198,
+    "low_only": 9606,
+    "both": 12494,
+    "neither": 33643
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 368469,
+    "coverage": 0.5882947436990488,
+    "unknown_target_rows": 3620,
+    "target_cases": 2702,
+    "weeks": 522,
+    "mean": 0.17176991101384367,
+    "ci95": [
+     0.16678023279828424,
+     0.17693122110004741
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 368469,
+    "coverage": 0.5882947436990488,
+    "unknown_target_rows": 3620,
+    "target_cases": 2702,
+    "weeks": 522,
+    "mean": 0.17415339701267235
+   },
+   "pair_outcomes": {
+    "high_only": 84082,
+    "low_only": 26643,
+    "both": 59551,
+    "neither": 198193
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 32644,
+    "coverage": 0.05211915687157331,
+    "unknown_target_rows": 3620,
+    "target_cases": 2538,
+    "weeks": 522,
+    "mean": 0.06308810497494802,
+    "ci95": [
+     0.05317983636372931,
+     0.07312976571939832
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 32644,
+    "coverage": 0.05211915687157331,
+    "unknown_target_rows": 3620,
+    "target_cases": 2538,
+    "weeks": 522,
+    "mean": 0.09071877468096849
+   },
+   "pair_outcomes": {
+    "high_only": 6213,
+    "low_only": 3958,
+    "both": 3220,
+    "neither": 19253
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 108417,
+    "coverage": 0.17309774018335264,
+    "unknown_target_rows": 3620,
+    "target_cases": 2906,
+    "weeks": 522,
+    "mean": 0.1057582296014234,
+    "ci95": [
+     0.09785680395663165,
+     0.11381244153344888
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 108417,
+    "coverage": 0.17309774018335264,
+    "unknown_target_rows": 3620,
+    "target_cases": 2906,
+    "weeks": 522,
+    "mean": 0.08953920627553565
+   },
+   "pair_outcomes": {
+    "high_only": 24579,
+    "low_only": 13971,
+    "both": 21993,
+    "neither": 47874
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 56063,
+    "coverage": 0.08950975038877021,
+    "unknown_target_rows": 3620,
+    "target_cases": 2892,
+    "weeks": 522,
+    "mean": 0.094462667036833,
+    "ci95": [
+     0.08581969852703,
+     0.10277050632387826
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 56063,
+    "coverage": 0.08950975038877021,
+    "unknown_target_rows": 3620,
+    "target_cases": 2892,
+    "weeks": 522,
+    "mean": 0.06664345745337528
+   },
+   "pair_outcomes": {
+    "high_only": 11745,
+    "low_only": 7421,
+    "both": 10857,
+    "neither": 26040
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 514744,
+    "coverage": 0.8218362726596353,
+    "unknown_target_rows": 3620,
+    "target_cases": 3011,
+    "weeks": 522,
+    "mean": 0.16737646129353212,
+    "ci95": [
+     0.16326651165352096,
+     0.17154290253305657
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 514744,
+    "coverage": 0.8218362726596353,
+    "unknown_target_rows": 3620,
+    "target_cases": 3011,
+    "weeks": 522,
+    "mean": 0.1541750317524574
+   },
+   "pair_outcomes": {
+    "high_only": 116293,
+    "low_only": 34520,
+    "both": 80421,
+    "neither": 283510
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 47389,
+    "coverage": 0.07566090935507254,
+    "unknown_target_rows": 3620,
+    "target_cases": 2975,
+    "weeks": 522,
+    "mean": 0.11078312137757923,
+    "ci95": [
+     0.10164083815045968,
+     0.11955938248693544
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 47389,
+    "coverage": 0.07566090935507254,
+    "unknown_target_rows": 3620,
+    "target_cases": 2975,
+    "weeks": 522,
+    "mean": 0.07902653407785719
+   },
+   "pair_outcomes": {
+    "high_only": 9915,
+    "low_only": 5019,
+    "both": 4555,
+    "neither": 27900
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 142488,
+    "coverage": 0.2274952341721829,
+    "unknown_target_rows": 3620,
+    "target_cases": 2248,
+    "weeks": 521,
+    "mean": 0.16863319277827094,
+    "ci95": [
+     0.16133988949234573,
+     0.17619837957866116
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 142488,
+    "coverage": 0.2274952341721829,
+    "unknown_target_rows": 3620,
+    "target_cases": 2248,
+    "weeks": 521,
+    "mean": 0.1849929603674285
+   },
+   "pair_outcomes": {
+    "high_only": 31802,
+    "low_only": 9944,
+    "both": 22983,
+    "neither": 77759
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 10155,
+    "coverage": 0.016213394131565587,
+    "unknown_target_rows": 3620,
+    "target_cases": 1924,
+    "weeks": 516,
+    "mean": 0.055048284069575605,
+    "ci95": [
+     0.03905312246096213,
+     0.07072817386096242
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 10155,
+    "coverage": 0.016213394131565587,
+    "unknown_target_rows": 3620,
+    "target_cases": 1924,
+    "weeks": 516,
+    "mean": 0.09260092560598168
+   },
+   "pair_outcomes": {
+    "high_only": 1970,
+    "low_only": 1278,
+    "both": 1132,
+    "neither": 5775
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "PATH_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 70136,
+    "coverage": 0.11197859289133275,
+    "unknown_target_rows": 3620,
+    "target_cases": 1554,
+    "weeks": 502,
+    "mean": 0.15404306745901228,
+    "ci95": [
+     0.1442607454583927,
+     0.1627373386392171
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 70136,
+    "coverage": 0.11197859289133275,
+    "unknown_target_rows": 3620,
+    "target_cases": 1554,
+    "weeks": 502,
+    "mean": 0.1766955920512139
+   },
+   "pair_outcomes": {
+    "high_only": 14349,
+    "low_only": 5213,
+    "both": 11131,
+    "neither": 39443
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "PATH_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 5055,
+    "coverage": 0.008070773740528217,
+    "unknown_target_rows": 3620,
+    "target_cases": 1218,
+    "weeks": 478,
+    "mean": 0.02933888673281526,
+    "ci95": [
+     0.008607505539864458,
+     0.04882949131294351
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 5055,
+    "coverage": 0.008070773740528217,
+    "unknown_target_rows": 3620,
+    "target_cases": 1218,
+    "weeks": 478,
+    "mean": 0.0933173441042353
+   },
+   "pair_outcomes": {
+    "high_only": 902,
+    "low_only": 630,
+    "both": 640,
+    "neither": 2883
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "GAPS_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 54142,
+    "coverage": 0.08644269670814614,
+    "unknown_target_rows": 3620,
+    "target_cases": 1887,
+    "weeks": 514,
+    "mean": 0.13786356549390683,
+    "ci95": [
+     0.12734250671425804,
+     0.1482322987479272
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 54142,
+    "coverage": 0.08644269670814614,
+    "unknown_target_rows": 3620,
+    "target_cases": 1887,
+    "weeks": 514,
+    "mean": 0.17726478014058877
+   },
+   "pair_outcomes": {
+    "high_only": 11233,
+    "low_only": 4908,
+    "both": 8957,
+    "neither": 29044
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "GAPS_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 4650,
+    "coverage": 0.007424153885945837,
+    "unknown_target_rows": 3620,
+    "target_cases": 1382,
+    "weeks": 493,
+    "mean": 0.03694190917362119,
+    "ci95": [
+     0.014014004713197628,
+     0.06031268299757874
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 4650,
+    "coverage": 0.007424153885945837,
+    "unknown_target_rows": 3620,
+    "target_cases": 1382,
+    "weeks": 493,
+    "mean": 0.09378569245291886
+   },
+   "pair_outcomes": {
+    "high_only": 808,
+    "low_only": 681,
+    "both": 742,
+    "neither": 2419
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_K50_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 419077,
+    "coverage": 0.669095083453876,
+    "unknown_target_rows": 3620,
+    "target_cases": 2586,
+    "weeks": 522,
+    "mean": 0.13208957682469666,
+    "ci95": [
+     0.1272336218626227,
+     0.13711190434413556
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 419077,
+    "coverage": 0.669095083453876,
+    "unknown_target_rows": 3620,
+    "target_cases": 2586,
+    "weeks": 522,
+    "mean": 0.16243098332101652
+   },
+   "pair_outcomes": {
+    "high_only": 93185,
+    "low_only": 35798,
+    "both": 68559,
+    "neither": 221535
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_K50_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 42149,
+    "coverage": 0.06729476605134002,
+    "unknown_target_rows": 3620,
+    "target_cases": 2567,
+    "weeks": 522,
+    "mean": 0.05338512282652916,
+    "ci95": [
+     0.045070474739382534,
+     0.06117469679830073
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 42149,
+    "coverage": 0.06729476605134002,
+    "unknown_target_rows": 3620,
+    "target_cases": 2567,
+    "weeks": 522,
+    "mean": 0.09103152837382798
+   },
+   "pair_outcomes": {
+    "high_only": 8222,
+    "low_only": 5772,
+    "both": 5663,
+    "neither": 22492
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_K50_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 394366,
+    "coverage": 0.6296416927709497,
+    "unknown_target_rows": 3620,
+    "target_cases": 2586,
+    "weeks": 522,
+    "mean": 0.12276405490442364,
+    "ci95": [
+     0.117263984112128,
+     0.12788149654033235
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 394366,
+    "coverage": 0.6296416927709497,
+    "unknown_target_rows": 3620,
+    "target_cases": 2586,
+    "weeks": 522,
+    "mean": 0.1500715038007466
+   },
+   "pair_outcomes": {
+    "high_only": 86909,
+    "low_only": 36398,
+    "both": 65189,
+    "neither": 205870
+   }
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_K50_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 42694,
+    "coverage": 0.06816490881861755,
+    "unknown_target_rows": 3620,
+    "target_cases": 2571,
+    "weeks": 522,
+    "mean": 0.05545754231888343,
+    "ci95": [
+     0.047265959665310185,
+     0.06379855759924312
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 42694,
+    "coverage": 0.06816490881861755,
+    "unknown_target_rows": 3620,
+    "target_cases": 2571,
+    "weeks": 522,
+    "mean": 0.08876660131320857
+   },
+   "pair_outcomes": {
+    "high_only": 8499,
+    "low_only": 6022,
+    "both": 6368,
+    "neither": 21805
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_WD",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 105127,
+    "coverage": 0.1678449517350168,
+    "unknown_target_rows": 3762,
+    "target_cases": 2232,
+    "weeks": 519,
+    "mean": 0.005823106648990353,
+    "ci95": [
+     0.0028332725974358035,
+     0.008852322442194058
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 105127,
+    "coverage": 0.1678449517350168,
+    "unknown_target_rows": 3762,
+    "target_cases": 2232,
+    "weeks": 519,
+    "mean": 0.07927352527626585
+   },
+   "pair_outcomes": {
+    "high_only": 8731,
+    "low_only": 8258,
+    "both": 2201,
+    "neither": 85937
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_WD",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 322,
+    "coverage": 0.00051410269919883,
+    "unknown_target_rows": 3762,
+    "target_cases": 208,
+    "weeks": 184,
+    "mean": 0.005608974358974358,
+    "ci95": [
+     -0.05964052287581699,
+     0.06886551916678059
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 322,
+    "coverage": 0.00051410269919883,
+    "unknown_target_rows": 3762,
+    "target_cases": 208,
+    "weeks": 184,
+    "mean": 0.08243741068081596
+   },
+   "pair_outcomes": {
+    "high_only": 40,
+    "low_only": 40,
+    "both": 20,
+    "neither": 222
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_WD",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 57455,
+    "coverage": 0.09173220677785335,
+    "unknown_target_rows": 3762,
+    "target_cases": 1622,
+    "weeks": 505,
+    "mean": 0.02559710378540368,
+    "ci95": [
+     0.019513194756391863,
+     0.03157082211654835
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 57455,
+    "coverage": 0.09173220677785335,
+    "unknown_target_rows": 3762,
+    "target_cases": 1622,
+    "weeks": 505,
+    "mean": 0.11203009436112674
+   },
+   "pair_outcomes": {
+    "high_only": 6392,
+    "low_only": 4656,
+    "both": 1566,
+    "neither": 44841
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_WD",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 2862,
+    "coverage": 0.0045694469723821475,
+    "unknown_target_rows": 3762,
+    "target_cases": 898,
+    "weeks": 440,
+    "mean": 0.06912226165461681,
+    "ci95": [
+     0.04334717077973508,
+     0.09536759120369634
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 2862,
+    "coverage": 0.0045694469723821475,
+    "unknown_target_rows": 3762,
+    "target_cases": 898,
+    "weeks": 440,
+    "mean": 0.0965336593348174
+   },
+   "pair_outcomes": {
+    "high_only": 559,
+    "low_only": 395,
+    "both": 197,
+    "neither": 1711
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 49817,
+    "coverage": 0.07953743529809973,
+    "unknown_target_rows": 3762,
+    "target_cases": 2924,
+    "weeks": 522,
+    "mean": 0.02460284917568324,
+    "ci95": [
+     0.0181820274081607,
+     0.031145956502075692
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 49817,
+    "coverage": 0.07953743529809973,
+    "unknown_target_rows": 3762,
+    "target_cases": 2924,
+    "weeks": 522,
+    "mean": 0.07098355930456558
+   },
+   "pair_outcomes": {
+    "high_only": 4799,
+    "low_only": 4114,
+    "both": 1238,
+    "neither": 39666
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 226,
+    "coverage": 0.00036082984477930305,
+    "unknown_target_rows": 3762,
+    "target_cases": 160,
+    "weeks": 140,
+    "mean": 0.0484375,
+    "ci95": [
+     -0.01572939027605167,
+     0.11656962734294606
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 226,
+    "coverage": 0.00036082984477930305,
+    "unknown_target_rows": 3762,
+    "target_cases": 160,
+    "weeks": 140,
+    "mean": 0.07955290897594144
+   },
+   "pair_outcomes": {
+    "high_only": 31,
+    "low_only": 23,
+    "both": 9,
+    "neither": 163
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 163355,
+    "coverage": 0.260811324309394,
+    "unknown_target_rows": 3762,
+    "target_cases": 2699,
+    "weeks": 522,
+    "mean": 0.0399897185794578,
+    "ci95": [
+     0.036406057374771664,
+     0.043454794798291174
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 163355,
+    "coverage": 0.260811324309394,
+    "unknown_target_rows": 3762,
+    "target_cases": 2699,
+    "weeks": 522,
+    "mean": 0.101091637036073
+   },
+   "pair_outcomes": {
+    "high_only": 20209,
+    "low_only": 13049,
+    "both": 4692,
+    "neither": 125405
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 7117,
+    "coverage": 0.011362946926080973,
+    "unknown_target_rows": 3762,
+    "target_cases": 1719,
+    "weeks": 516,
+    "mean": 0.06588616949538953,
+    "ci95": [
+     0.048166571591855445,
+     0.08285005322099924
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 7117,
+    "coverage": 0.011362946926080973,
+    "unknown_target_rows": 3762,
+    "target_cases": 1719,
+    "weeks": 516,
+    "mean": 0.09033681952915533
+   },
+   "pair_outcomes": {
+    "high_only": 1403,
+    "low_only": 895,
+    "both": 456,
+    "neither": 4363
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 4496,
+    "coverage": 0.00717827868198118,
+    "unknown_target_rows": 3762,
+    "target_cases": 1544,
+    "weeks": 509,
+    "mean": 0.04275382432765852,
+    "ci95": [
+     0.02416901440272091,
+     0.061985291726310024
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 4496,
+    "coverage": 0.00717827868198118,
+    "unknown_target_rows": 3762,
+    "target_cases": 1544,
+    "weeks": 509,
+    "mean": 0.06159800017932233
+   },
+   "pair_outcomes": {
+    "high_only": 662,
+    "low_only": 469,
+    "both": 162,
+    "neither": 3203
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 0,
+    "coverage": 0.0,
+    "unknown_target_rows": 3762,
+    "target_cases": 0,
+    "weeks": 0,
+    "mean": null
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 0,
+    "coverage": 0.0,
+    "unknown_target_rows": 3762,
+    "target_cases": 0,
+    "weeks": 0,
+    "mean": null
+   },
+   "pair_outcomes": {
+    "high_only": 0,
+    "low_only": 0,
+    "both": 0,
+    "neither": 0
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 148067,
+    "coverage": 0.23640262224308436,
+    "unknown_target_rows": 3762,
+    "target_cases": 3011,
+    "weeks": 522,
+    "mean": 0.07081522333622242,
+    "ci95": [
+     0.06713359814752143,
+     0.07457003183663985
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 148067,
+    "coverage": 0.23640262224308436,
+    "unknown_target_rows": 3762,
+    "target_cases": 3011,
+    "weeks": 522,
+    "mean": 0.08442272877664438
+   },
+   "pair_outcomes": {
+    "high_only": 24249,
+    "low_only": 13877,
+    "both": 5996,
+    "neither": 103945
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 3313,
+    "coverage": 0.005289510069707217,
+    "unknown_target_rows": 3762,
+    "target_cases": 944,
+    "weeks": 489,
+    "mean": 0.10950745260472329,
+    "ci95": [
+     0.08381316515725458,
+     0.13473789083678642
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 3313,
+    "coverage": 0.005289510069707217,
+    "unknown_target_rows": 3762,
+    "target_cases": 944,
+    "weeks": 489,
+    "mean": 0.09043734738348132
+   },
+   "pair_outcomes": {
+    "high_only": 752,
+    "low_only": 414,
+    "both": 236,
+    "neither": 1911
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 74249,
+    "coverage": 0.11854537674786934,
+    "unknown_target_rows": 3762,
+    "target_cases": 2241,
+    "weeks": 521,
+    "mean": 0.03057881975293661,
+    "ci95": [
+     0.025143435915557056,
+     0.03606357674911053
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 74249,
+    "coverage": 0.11854537674786934,
+    "unknown_target_rows": 3762,
+    "target_cases": 2241,
+    "weeks": 521,
+    "mean": 0.10759667054805959
+   },
+   "pair_outcomes": {
+    "high_only": 9173,
+    "low_only": 6095,
+    "both": 2308,
+    "neither": 56673
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 5355,
+    "coverage": 0.008549751410589237,
+    "unknown_target_rows": 3762,
+    "target_cases": 1295,
+    "weeks": 499,
+    "mean": 0.049413867798384074,
+    "ci95": [
+     0.030766782318206932,
+     0.06843496102391128
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 5355,
+    "coverage": 0.008549751410589237,
+    "unknown_target_rows": 3762,
+    "target_cases": 1295,
+    "weeks": 499,
+    "mean": 0.09580049457463659
+   },
+   "pair_outcomes": {
+    "high_only": 1007,
+    "low_only": 734,
+    "both": 378,
+    "neither": 3236
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "PATH_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 39196,
+    "coverage": 0.06258002918570603,
+    "unknown_target_rows": 3762,
+    "target_cases": 1546,
+    "weeks": 502,
+    "mean": 0.028264768280662995,
+    "ci95": [
+     0.02065280196211983,
+     0.03561466768119848
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 39196,
+    "coverage": 0.06258002918570603,
+    "unknown_target_rows": 3762,
+    "target_cases": 1546,
+    "weeks": 502,
+    "mean": 0.11147323980999653
+   },
+   "pair_outcomes": {
+    "high_only": 4689,
+    "low_only": 3278,
+    "both": 1334,
+    "neither": 29895
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "PATH_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 3739,
+    "coverage": 0.005969658361193867,
+    "unknown_target_rows": 3762,
+    "target_cases": 911,
+    "weeks": 434,
+    "mean": 0.047799405513005704,
+    "ci95": [
+     0.023001808372753417,
+     0.07290966450347292
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 3739,
+    "coverage": 0.005969658361193867,
+    "unknown_target_rows": 3762,
+    "target_cases": 911,
+    "weeks": 434,
+    "mean": 0.09683093199501741
+   },
+   "pair_outcomes": {
+    "high_only": 714,
+    "low_only": 500,
+    "both": 250,
+    "neither": 2275
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "GAPS_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 30597,
+    "coverage": 0.04885093256952361,
+    "unknown_target_rows": 3762,
+    "target_cases": 1869,
+    "weeks": 514,
+    "mean": 0.019410901052595714,
+    "ci95": [
+     0.01102303497922364,
+     0.027985909490459718
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 30597,
+    "coverage": 0.04885093256952361,
+    "unknown_target_rows": 3762,
+    "target_cases": 1869,
+    "weeks": 514,
+    "mean": 0.10676426172851046
+   },
+   "pair_outcomes": {
+    "high_only": 3267,
+    "low_only": 2497,
+    "both": 859,
+    "neither": 23974
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "GAPS_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 1509,
+    "coverage": 0.0024092576804069393,
+    "unknown_target_rows": 3762,
+    "target_cases": 700,
+    "weeks": 397,
+    "mean": 0.02055202080832333,
+    "ci95": [
+     -0.010774974240606265,
+     0.05307682932287817
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 1509,
+    "coverage": 0.0024092576804069393,
+    "unknown_target_rows": 3762,
+    "target_cases": 700,
+    "weeks": 397,
+    "mean": 0.09620838270440839
+   },
+   "pair_outcomes": {
+    "high_only": 247,
+    "low_only": 210,
+    "both": 81,
+    "neither": 971
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_K50_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 200037,
+    "coverage": 0.3193775206199887,
+    "unknown_target_rows": 3762,
+    "target_cases": 2581,
+    "weeks": 522,
+    "mean": 0.030909675005490665,
+    "ci95": [
+     0.028512371238885944,
+     0.03340634390249437
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 200037,
+    "coverage": 0.3193775206199887,
+    "unknown_target_rows": 3762,
+    "target_cases": 2581,
+    "weeks": 522,
+    "mean": 0.09548695133295321
+   },
+   "pair_outcomes": {
+    "high_only": 22579,
+    "low_only": 15560,
+    "both": 5124,
+    "neither": 156774
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_K50_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 9125,
+    "coverage": 0.014568904131022745,
+    "unknown_target_rows": 3762,
+    "target_cases": 1911,
+    "weeks": 519,
+    "mean": 0.06933681823429308,
+    "ci95": [
+     0.055632896425911724,
+     0.08346801888202816
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 9125,
+    "coverage": 0.014568904131022745,
+    "unknown_target_rows": 3762,
+    "target_cases": 1911,
+    "weeks": 519,
+    "mean": 0.08903625622952818
+   },
+   "pair_outcomes": {
+    "high_only": 1741,
+    "low_only": 1106,
+    "both": 572,
+    "neither": 5706
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_K50_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "all_probabilities",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 193755,
+    "coverage": 0.3093477282089109,
+    "unknown_target_rows": 3762,
+    "target_cases": 2581,
+    "weeks": 522,
+    "mean": 0.02749588671133467,
+    "ci95": [
+     0.02481578735453768,
+     0.029959503162032726
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 193755,
+    "coverage": 0.3093477282089109,
+    "unknown_target_rows": 3762,
+    "target_cases": 2581,
+    "weeks": 522,
+    "mean": 0.09349772541061
+   },
+   "pair_outcomes": {
+    "high_only": 21342,
+    "low_only": 15415,
+    "both": 4895,
+    "neither": 152103
+   }
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_K50_ALL",
+   "comparison": "same_price_other_time_2",
+   "probability_scope": "both_20_to_40",
+   "realised_high_minus_low": {
+    "rows": 626334,
+    "answered_rows": 8844,
+    "coverage": 0.014120261713398922,
+    "unknown_target_rows": 3762,
+    "target_cases": 1700,
+    "weeks": 519,
+    "mean": 0.04871252598299129,
+    "ci95": [
+     0.0337054347131499,
+     0.06415607746832147
+    ]
+   },
+   "predicted_gap": {
+    "rows": 626334,
+    "answered_rows": 8844,
+    "coverage": 0.014120261713398922,
+    "unknown_target_rows": 3762,
+    "target_cases": 1700,
+    "weeks": 519,
+    "mean": 0.08870852887827727
+   },
+   "pair_outcomes": {
+    "high_only": 1576,
+    "low_only": 1120,
+    "both": 563,
+    "neither": 5585
+   }
+  }
+ ],
+ "support_diagnostics": [
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_WD",
+   "answered_rows": 1692063,
+   "rows_with_unknown_members": 253699,
+   "member_outcomes": 118405497,
+   "unknown_member_outcomes": 395983,
+   "max_unknown_fraction": 0.19230769230769232
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_WD",
+   "answered_rows": 449783,
+   "rows_with_unknown_members": 42549,
+   "member_outcomes": 14391122,
+   "unknown_member_outcomes": 55708,
+   "max_unknown_fraction": 0.23076923076923078
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_ALL",
+   "answered_rows": 2077220,
+   "rows_with_unknown_members": 704521,
+   "member_outcomes": 613146078,
+   "unknown_member_outcomes": 2045004,
+   "max_unknown_fraction": 0.13043478260869565
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_ALL",
+   "answered_rows": 1552069,
+   "rows_with_unknown_members": 269410,
+   "member_outcomes": 125597862,
+   "unknown_member_outcomes": 450280,
+   "max_unknown_fraction": 0.16666666666666666
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "answered_rows": 2101332,
+   "rows_with_unknown_members": 1679542,
+   "member_outcomes": 5478071334,
+   "unknown_member_outcomes": 16716729,
+   "max_unknown_fraction": 0.03048780487804878
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "answered_rows": 2068869,
+   "rows_with_unknown_members": 905640,
+   "member_outcomes": 1136434872,
+   "unknown_member_outcomes": 3536561,
+   "max_unknown_fraction": 0.11538461538461539
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_ALL",
+   "answered_rows": 620793,
+   "rows_with_unknown_members": 92479,
+   "member_outcomes": 33431156,
+   "unknown_member_outcomes": 132191,
+   "max_unknown_fraction": 0.2
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "PATH_ALL",
+   "answered_rows": 333976,
+   "rows_with_unknown_members": 38788,
+   "member_outcomes": 14249549,
+   "unknown_member_outcomes": 49645,
+   "max_unknown_fraction": 0.16666666666666666
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "GAPS_ALL",
+   "answered_rows": 249584,
+   "rows_with_unknown_members": 31968,
+   "member_outcomes": 10018334,
+   "unknown_member_outcomes": 39571,
+   "max_unknown_fraction": 0.13043478260869565
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_K50_ALL",
+   "answered_rows": 1919208,
+   "rows_with_unknown_members": 230131,
+   "member_outcomes": 95960400,
+   "unknown_member_outcomes": 291745,
+   "max_unknown_fraction": 0.14
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "STATE_K50_ALL",
+   "answered_rows": 1919208,
+   "rows_with_unknown_members": 218682,
+   "member_outcomes": 95960400,
+   "unknown_member_outcomes": 278376,
+   "max_unknown_fraction": 0.12
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_WD",
+   "answered_rows": 1692204,
+   "rows_with_unknown_members": 199830,
+   "member_outcomes": 118408302,
+   "unknown_member_outcomes": 333930,
+   "max_unknown_fraction": 0.19230769230769232
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_WD",
+   "answered_rows": 450036,
+   "rows_with_unknown_members": 34968,
+   "member_outcomes": 14396130,
+   "unknown_member_outcomes": 47820,
+   "max_unknown_fraction": 0.23076923076923078
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_ALL",
+   "answered_rows": 2077236,
+   "rows_with_unknown_members": 584970,
+   "member_outcomes": 613146396,
+   "unknown_member_outcomes": 1729854,
+   "max_unknown_fraction": 0.13043478260869565
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_ALL",
+   "answered_rows": 1552152,
+   "rows_with_unknown_members": 233460,
+   "member_outcomes": 125599512,
+   "unknown_member_outcomes": 392658,
+   "max_unknown_fraction": 0.16666666666666666
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "answered_rows": 2101332,
+   "rows_with_unknown_members": 1524378,
+   "member_outcomes": 5478071334,
+   "unknown_member_outcomes": 14865048,
+   "max_unknown_fraction": 0.024986566362170875
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "answered_rows": 2068872,
+   "rows_with_unknown_members": 801414,
+   "member_outcomes": 1136434932,
+   "unknown_member_outcomes": 3246540,
+   "max_unknown_fraction": 0.11538461538461539
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_ALL",
+   "answered_rows": 621054,
+   "rows_with_unknown_members": 80802,
+   "member_outcomes": 33436380,
+   "unknown_member_outcomes": 112926,
+   "max_unknown_fraction": 0.2
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "PATH_ALL",
+   "answered_rows": 334140,
+   "rows_with_unknown_members": 34788,
+   "member_outcomes": 14252814,
+   "unknown_member_outcomes": 44382,
+   "max_unknown_fraction": 0.13043478260869565
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "GAPS_ALL",
+   "answered_rows": 249720,
+   "rows_with_unknown_members": 26652,
+   "member_outcomes": 10021068,
+   "unknown_member_outcomes": 32454,
+   "max_unknown_fraction": 0.13043478260869565
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_K50_ALL",
+   "answered_rows": 1919208,
+   "rows_with_unknown_members": 198804,
+   "member_outcomes": 95960400,
+   "unknown_member_outcomes": 256674,
+   "max_unknown_fraction": 0.14
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "STATE_K50_ALL",
+   "answered_rows": 1919208,
+   "rows_with_unknown_members": 188220,
+   "member_outcomes": 95960400,
+   "unknown_member_outcomes": 244248,
+   "max_unknown_fraction": 0.12
+  }
+ ]
+}

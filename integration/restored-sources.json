@@ -1,0 +1,69 @@
+[
+  {
+    "source": "47e2fd0",
+    "path": "studies/kadr_2026_10_12/README.md",
+    "sha256_lf": "c64f026d32c3493a2e4c361d1d62e4a09209bfd45b50b504c6a2f77fbc40076b",
+    "standing": "PRESERVED_SOURCE_NOT_NEW_ACCEPTANCE"
+  },
+  {
+    "source": "47e2fd0",
+    "path": "studies/kadr_2026_10_12/kadr_checks.json",
+    "sha256_lf": "e3d3a940c1154fca675cf61ba052d3aa37de932008ce840004fca92e0df7289b",
+    "standing": "PRESERVED_SOURCE_NOT_NEW_ACCEPTANCE"
+  },
+  {
+    "source": "47e2fd0",
+    "path": "studies/kadr_2026_10_12/kadr_checks.py",
+    "sha256_lf": "37a6a66c013418d61e2861428c103b1d9119005340d1603c182a256d76311fd4",
+    "standing": "PRESERVED_SOURCE_NOT_NEW_ACCEPTANCE"
+  },
+  {
+    "source": "e9b5bc6",
+    "path": "studies/q1_pilot_2026_10_12/README.md",
+    "sha256_lf": "4fb0a9cae5909efab1785312cb930bed703e6d63ca880535172ab5023633bb43",
+    "standing": "PRESERVED_SOURCE_NOT_NEW_ACCEPTANCE"
+  },
+  {
+    "source": "e9b5bc6",
+    "path": "studies/q1_pilot_2026_10_12/reading_check.md",
+    "sha256_lf": "26607d00fb34096aa1b08ce5c1f0aa444037bd6dc612f436b5e39be70c305bf4",
+    "standing": "ARCHIVED_PROPOSAL_READING_CHECK_DECLINED_IN_PR8_NOT_REACTIVATED",
+    "destination": "integration/reference/proposals/pr6-reading-check.md"
+  },
+  {
+    "source": "e9b5bc6",
+    "path": "studies/q1_pilot_2026_10_12/recon_summary.json",
+    "sha256_lf": "87c34f547cf4337ed19c0b1c6d418c020c8df5b60ce65bf556f1fba0392188de",
+    "standing": "PRESERVED_SOURCE_NOT_NEW_ACCEPTANCE"
+  },
+  {
+    "source": "3031c95",
+    "path": "meaning/lens/2026-10-13-semantic-architecture/01-DR-LAB-SEMANTIC-ARCHITECTURE-0.1.md",
+    "sha256_lf": "ce986e332f4ad0a036e5d4181809e7ce1578ca5042920d94a2b4930e23c7ccd6",
+    "standing": "PRESERVED_SOURCE_NOT_NEW_ACCEPTANCE"
+  },
+  {
+    "source": "3031c95",
+    "path": "meaning/lens/2026-10-13-semantic-architecture/02-DR-LAB-SEMANTIC-ARCHITECTURE-0.2-dopolnenie.md",
+    "sha256_lf": "a780119df2f6585e4c7f33466c929331d8856f6e55aab5fae45fc64a84207f47",
+    "standing": "PRESERVED_SOURCE_NOT_NEW_ACCEPTANCE"
+  },
+  {
+    "source": "3031c95",
+    "path": "meaning/lens/2026-10-13-semantic-architecture/README.md",
+    "sha256_lf": "7e3d7397075741a6772682ac4af2b18b8b52609066960afd023edda490b68ae0",
+    "standing": "PRESERVED_SOURCE_NOT_NEW_ACCEPTANCE"
+  },
+  {
+    "source": "a2d076a",
+    "path": "meaning/19-svodka-kandidat.md",
+    "sha256_lf": "363ae30d99f96d4249ea82a7652c8b525fe0d92c566865f97c824c6986101b71",
+    "standing": "PRESERVED_SOURCE_NOT_NEW_ACCEPTANCE"
+  },
+  {
+    "source": "0f1ae26",
+    "path": "meaning/20-put-semi-kandidat.md",
+    "sha256_lf": "b5555e19719ce7ebc7b9c952c06db174f44e450af6322fd7b26381e46335991f",
+    "standing": "PRESERVED_SOURCE_NOT_NEW_ACCEPTANCE"
+  }
+]

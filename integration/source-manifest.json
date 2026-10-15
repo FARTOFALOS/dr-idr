@@ -1,0 +1,795 @@
+{
+ "baseline": "2672841",
+ "units": [
+  {
+   "source_commit": "c9e61ec5d84cdcf1d0af8115f4dec98a7f5c7496",
+   "source_path": "design/sozvezdiya-24/src/app.js",
+   "destination": "design/sozvezdiya-24/src/app.js",
+   "role": "SWPC_INTEGRITY_FIXES",
+   "sha256_lf": "c26340a29c58b4fb2a8020f68c80926bc23460fbffc7f65bf9a7d30760923ad1"
+  },
+  {
+   "source_commit": "c9e61ec5d84cdcf1d0af8115f4dec98a7f5c7496",
+   "source_path": "design/sozvezdiya-24/src/panel.js",
+   "destination": "design/sozvezdiya-24/src/panel.js",
+   "role": "SWPC_INTEGRITY_FIXES",
+   "sha256_lf": "df0454708f03b6c6e15e279b5a67570f3c15644587c111bb1b507602dba11642"
+  },
+  {
+   "source_commit": "c9e61ec5d84cdcf1d0af8115f4dec98a7f5c7496",
+   "source_path": "design/sozvezdiya-24/src/panel.css",
+   "destination": "design/sozvezdiya-24/src/panel.css",
+   "role": "SWPC_INTEGRITY_FIXES",
+   "sha256_lf": "afa8af6345b455321bb455e5f461c7521cc1ef11a6aa25ec967d5109c5427826"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "lab/contract.py",
+   "destination": "lab/contract.py",
+   "role": "EXISTING_GATE_WITH_OPTIONAL_CANDIDATE_REFERENCES",
+   "sha256_lf": "4619d34ffa4602b1877914dedadfb07fcfd29202f34f9a3283a134a50f1e31d1"
+  },
+  {
+   "source_commit": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+   "source_path": "lab/q1/README.md",
+   "destination": "lab/q1/README.md",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "c8b9a9972f7c164866aed05526cf1f02553a48ea510587375e4b4bbc4972d877"
+  },
+  {
+   "source_commit": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+   "source_path": "lab/q1/__init__.py",
+   "destination": "lab/q1/__init__.py",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "5aab1e240f7b407669909a3d6e2e07424c4953634e7d7749ccfb8d2794f771ad"
+  },
+  {
+   "source_commit": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+   "source_path": "lab/q1/demo.py",
+   "destination": "lab/q1/demo.py",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "eb9d252ca085d539bd3999ad03fb81f6dd0edca6c4e2f1441099daf7ec3ca715"
+  },
+  {
+   "source_commit": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+   "source_path": "lab/q1/engine.py",
+   "destination": "lab/q1/engine.py",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "062647f0c9b3b54102598f65bfe92be43f9fec05e1f62b7a7618568f1402fe93"
+  },
+  {
+   "source_commit": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+   "source_path": "lab/q1/passport.py",
+   "destination": "lab/q1/passport.py",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "5a374590d4b525d3a556039f91a24dba40151d259a680aac8c45c155e0c889d8"
+  },
+  {
+   "source_commit": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+   "source_path": "lab/q1/recon.py",
+   "destination": "lab/q1/recon.py",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "784f879e57a3d92b244ead0759ed45852b058db538f53e7fd2507b6eca643212"
+  },
+  {
+   "source_commit": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+   "source_path": "lab/q1/server.py",
+   "destination": "lab/q1/server.py",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "0851a0605f42613fdf583e8ce3e98f3ccc714a25a69185e977c07fc457ad9e24"
+  },
+  {
+   "source_commit": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+   "source_path": "lab/q1/store.py",
+   "destination": "lab/q1/store.py",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "ff31db563c4fccd20aafed35430e86e311bfdd555a4d5c578046278fa34fa096"
+  },
+  {
+   "source_commit": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+   "source_path": "lab/q1/web/app.js",
+   "destination": "lab/q1/web/app.js",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "482839bb2be5e1950f91cbb157c900f752e94689915f52190356f923b6b7b781"
+  },
+  {
+   "source_commit": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+   "source_path": "lab/q1/web/index.html",
+   "destination": "lab/q1/web/index.html",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "0f21fad505c707f07e8a4b50e5119d698f22dbf09e551d9ac23efcd5b26ca0bb"
+  },
+  {
+   "source_commit": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+   "source_path": "lab/q1/web/style.css",
+   "destination": "lab/q1/web/style.css",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "5402aa90344def56fbe1729abba79053cf298edd0a21b0cfa9bd269bda816f37"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "lab/pre24.py",
+   "destination": "lab/pre24.py",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "d782e83558b77dbc72719de6fe0228a6bae984dfe8a0edb89782be215daa7bfc"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "lab/arrive24.py",
+   "destination": "lab/arrive24.py",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "f64604e5c616d485e5e1b5ecca41971149f93b918370d9537c992945f22f9ce9"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "tests/q1_pilot.py",
+   "destination": "tests/q1_pilot.py",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "05895915d099d04ba0034a4cb44ce589eb5189d331360a1bc9afc1863e5c8508"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "tests/arrive24.py",
+   "destination": "tests/arrive24.py",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "3b9f81fcc8b776f34c28b071ae9e5a56d0a398162f20600d914f75498b4d268c"
+  },
+  {
+   "source_commit": "c9e61ec5d84cdcf1d0af8115f4dec98a7f5c7496",
+   "source_path": "tests/swpc11.py",
+   "destination": "tests/swpc11.py",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "980d36bf47661164976a1bea8dae6736b61fe821e8c17f2e8978ce27cb8f442f"
+  },
+  {
+   "source_commit": "c9e61ec5d84cdcf1d0af8115f4dec98a7f5c7496",
+   "source_path": "tests/swpc11_browser.mjs",
+   "destination": "tests/swpc11_browser.mjs",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "4c06f5052fcd07dbb5b1151292b6739a0d1c4ded375299f00085050ae0698541"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "contract/registry/00-editions.yaml",
+   "destination": "integration/candidates/registry/00-editions.yaml",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "a96bca15db851f0806b3fc1b1d20e14a3bc942a43b5a2e28c07bc09c143f99e5"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "contract/registry/10-observation-strategy-measurement.yaml",
+   "destination": "integration/candidates/registry/10-observation-strategy-measurement.yaml",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "017dff6cc6ea9ef2340a78aa633fa44306a27d27875f856165a6e6d586a0cb27"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "contract/registry/20-cases-outcomes.yaml",
+   "destination": "integration/candidates/registry/20-cases-outcomes.yaml",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "5f6535e69d557fee9d05c6de7ffbb0b206aeec11362259454d5b4c6bc456afcd"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "contract/registry/30-questions-estimands.yaml",
+   "destination": "integration/candidates/registry/30-questions-estimands.yaml",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "a2325bf90b17d7d742853609a92dc1f29de0099ec5a3e3c3d479a6425929b699"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "contract/registry/40-claims.yaml",
+   "destination": "integration/candidates/registry/40-claims.yaml",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "eef6b05b6f48c6c393616efd2ba8c5c3e1d075a7e37dfa14e688c4a2c6086141"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "contract/registry/50-validation.yaml",
+   "destination": "integration/candidates/registry/50-validation.yaml",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "contract/registry/60-surfaces.yaml",
+   "destination": "integration/candidates/registry/60-surfaces.yaml",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "974b6786f3f0eaead74bb0133667e6ecff7f72127da8bcff9e8e629fc6e5a605"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "contract/registry/70-obligations.yaml",
+   "destination": "integration/candidates/registry/70-obligations.yaml",
+   "role": "IMPLEMENTATION_CANDIDATE",
+   "sha256_lf": "222c8ef1523ddad91d930b98c44ca360679257460f305b56d5bcad86eef2ae90"
+  },
+  {
+   "source_commit": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+   "source_path": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
+   "destination": "integration/candidates/SC11-proposal.md",
+   "role": "PROPOSAL_NOT_ACCEPTED_EDITION",
+   "sha256_lf": "895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb"
+  },
+  {
+   "source_commit": "3dac91357ceb4c66dda3a8554138df360b4be9d9",
+   "source_path": "meaning/lens/2026-10-12-independent-srs/01-semantic-audit.md",
+   "destination": "meaning/lens/2026-10-12-independent-srs/01-semantic-audit.md",
+   "role": "DEFINITION_OR_RESEARCH_SOURCE",
+   "sha256_lf": "576efd4fe8dff076a7ab6a41734252e244f17163ad3f115224653d48e61a1295"
+  },
+  {
+   "source_commit": "3dac91357ceb4c66dda3a8554138df360b4be9d9",
+   "source_path": "meaning/lens/2026-10-12-independent-srs/02-srs.md",
+   "destination": "meaning/lens/2026-10-12-independent-srs/02-srs.md",
+   "role": "DEFINITION_OR_RESEARCH_SOURCE",
+   "sha256_lf": "092b6f53d008390d9c1648b41ce39820093205eed726969be18f81ef063aa140"
+  },
+  {
+   "source_commit": "3dac91357ceb4c66dda3a8554138df360b4be9d9",
+   "source_path": "meaning/lens/2026-10-12-independent-srs/03-q1-historical-pilot.md",
+   "destination": "meaning/lens/2026-10-12-independent-srs/03-q1-historical-pilot.md",
+   "role": "DEFINITION_OR_RESEARCH_SOURCE",
+   "sha256_lf": "ecbdeb480c00b0626616f4afc1ea2f3e3dab8cc53edc86d33905c0c123e542ab"
+  },
+  {
+   "source_commit": "3dac91357ceb4c66dda3a8554138df360b4be9d9",
+   "source_path": "meaning/lens/2026-10-12-independent-srs/04-engineer-roadmap.md",
+   "destination": "meaning/lens/2026-10-12-independent-srs/04-engineer-roadmap.md",
+   "role": "DEFINITION_OR_RESEARCH_SOURCE",
+   "sha256_lf": "f68afd648771a0bb1d54500ee4589132f43c4e569c2505a91845eafbe905ba78"
+  },
+  {
+   "source_commit": "3dac91357ceb4c66dda3a8554138df360b4be9d9",
+   "source_path": "meaning/lens/2026-10-12-independent-srs/05-self-check.md",
+   "destination": "meaning/lens/2026-10-12-independent-srs/05-self-check.md",
+   "role": "DEFINITION_OR_RESEARCH_SOURCE",
+   "sha256_lf": "da76ec4362113381b670b337bffc0ebd5d07bcfd27004ec49d2ac0088420a759"
+  },
+  {
+   "source_commit": "3dac91357ceb4c66dda3a8554138df360b4be9d9",
+   "source_path": "meaning/lens/2026-10-12-independent-srs/README.md",
+   "destination": "meaning/lens/2026-10-12-independent-srs/README.md",
+   "role": "DEFINITION_OR_RESEARCH_SOURCE",
+   "sha256_lf": "9f7aab0ec63b80e24945e1f0a86dd04488e2a69190609da7e5f4201dc0fb763f"
+  },
+  {
+   "source_commit": "47e2fd0c9fd1a6df31380044c638fdc766ca57e6",
+   "source_path": "meaning/lens/2026-10-12-kurator/01-esse.md",
+   "destination": "meaning/lens/2026-10-12-kurator/01-esse.md",
+   "role": "DEFINITION_OR_RESEARCH_SOURCE",
+   "sha256_lf": "5b57c36aee2165baa58109ae287de5edce67ffab6b893350216ef967f2f02495"
+  },
+  {
+   "source_commit": "47e2fd0c9fd1a6df31380044c638fdc766ca57e6",
+   "source_path": "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+   "destination": "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+   "role": "DEFINITION_OR_RESEARCH_SOURCE",
+   "sha256_lf": "71a92527d1a75493bb859ba63ef347fb443a554b4b5b57a86f833540f9fa43fa"
+  },
+  {
+   "source_commit": "47e2fd0c9fd1a6df31380044c638fdc766ca57e6",
+   "source_path": "meaning/lens/2026-10-12-kurator/README.md",
+   "destination": "meaning/lens/2026-10-12-kurator/README.md",
+   "role": "DEFINITION_OR_RESEARCH_SOURCE",
+   "sha256_lf": "2f613240f0ef31cc4481a2f339a6e831867c5aef89a4c3025b813cdabcf0600b"
+  },
+  {
+   "source_commit": "16410177c6678c82f8450e18fbf6ac91e416c84a",
+   "source_path": "meaning/17-rabota-treidera.md",
+   "destination": "meaning/17-rabota-treidera.md",
+   "role": "TRADER_TASK_SOURCE",
+   "sha256_lf": "b7348c34f0dd99f616538bbf030c0447841721f08f7b75d1c2597a3537e5bacf"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/01-ontology-reconstruction.md",
+   "destination": "meaning/lens/2026-10-14-integration/01-ontology-reconstruction.md",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "23e7344b8f33a9b086352eda4aacd91cf1bcc9c18b941d654d8c32c8c6eea011"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/02-integration-map.md",
+   "destination": "meaning/lens/2026-10-14-integration/02-integration-map.md",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "cabe21ae619aa5c6a0b207c462139d0dc7b159a45350bb20346e2a1b5c4eb909"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/03-engineering-and-decisions.md",
+   "destination": "meaning/lens/2026-10-14-integration/03-engineering-and-decisions.md",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "c9dcfcd9132482b204b53555e636277344024212a808b6031a5ba7bdee7af104"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/README.md",
+   "destination": "meaning/lens/2026-10-14-integration/README.md",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "a55208ff0d64f3f17b9f80306a8af775d5c74510ae175d7a6e1569e502cff394"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/README.md",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/README.md",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "698aff7b2e099ec3621bcbec3ae0b955e69244a332310574c7c223f717d2662d"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/gallery-check.json",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/gallery-check.json",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "8ab388b2612fe1d9d9e02634ad20c51d722f0757f639ede2a3c08c32c04690b5"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/break-1600.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/break-1600.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "3101e9f9150332ad8c50c0a5c62b52c1876a6021c78f6ce46d5792ef99703036"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/break-1600.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/break-1600.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "94ad1f69d5b28f902155f9fbd47afef2af600370732b572b86150f8b15e5f2a7"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/break-1920.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/break-1920.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "22e256c05c743023f77f6f8eb7701dedd46c289814c9167ede43e93dc889fbe1"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/break-1920.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/break-1920.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "833a7e6181296413981a088d6fff2f9f31e17349330d52e5c471adb8937043dc"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/conf-1600.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/conf-1600.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "f909527bf2be14373cac5656fbfa06d15f845d3c7489dce1dee5d317c01941a1"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/conf-1600.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/conf-1600.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "a9a7bdaed3fd1a57ff7393fea8ab4b4fec479d8a9bc54d1b015f89124602b3d9"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/conf-1920.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/conf-1920.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "99b2a75f180ffa217511451714df310dc7201055e8408622ea481e936f1dc669"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/conf-1920.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/conf-1920.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "f581b5dc8143a3a22687d689a42779dd9fea45911654f6b57d582882747c0357"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/few-1600.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/few-1600.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "af1f21119d924cbf1ac53a6b231170ae464bbd5022d4ea70d41c81eeb2351542"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/few-1600.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/few-1600.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "37a1b7df947edf99b195c59a10ae0386c3e54743b1fbc359df7daa9ca6454303"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/few-1920.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/few-1920.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "e3b6bc658f1007071b46ac21d8711df737356562fc24bc4aec00f9a9c814b414"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/few-1920.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/few-1920.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "9d451b51d3f06bad45f48856e82c98908fef0a52c3f770fc3fa6fe7736f7a578"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/focus-1600.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/focus-1600.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "819f0d9a688ebb4314b31965ce95faa201e4c01e26ddca128fafa4848bdcbbf5"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/focus-1600.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/focus-1600.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "3a19eaeddc6af4f6a2530ab5d138efed890eb786455d50181fb40a04e171cbcf"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/focus-1920.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/focus-1920.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "636a570b78eb285f23ba547b543ef6857c84ca6799c7cad408ce1b5767785b4a"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/focus-1920.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/focus-1920.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "ce8e1e1427e33baf40c6229bd5cbece4a85aa39963460a4d09dc59a1a1661ae6"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/open-1600.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/open-1600.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "3ee21c8219354366d4a5ec6e947b8fd64342dbd4c3c2cfbbe8cfc1f75b7b9bef"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/open-1600.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/open-1600.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "aad31ded22786e50ca330c383c364414e07611ded3e1551cba2332b4d6ccf9de"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/open-1920.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/open-1920.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "a3fb0d9aa802a072acd47812a61c2af0aff82c4ee0c67c836d577099427e6277"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/open-1920.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/open-1920.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "70d78041b985619a8d312f9eb110b2d6befb73acf3d9eb71236e734bb17c87ee"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/original-1600.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/original-1600.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "776d06eded642fa39b6d7b11d2a8b3e1ce4736ab1704de836d1068693e90b2f0"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/original-1600.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/original-1600.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "58a2c6e7a2eb07a26d2fe0b4daf879e092b40e33033ce7d3016347d6571577a8"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/original-1920.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/original-1920.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "fa5d77b2ec491a9c8e5ea0a6a714eb482040e5e5a78ed81c09da440c2020c00a"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/original-1920.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/original-1920.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "671b7353add2852cd4978875a0315e3418b87d81fb2d95f7faf14318ee65ac3a"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/paths-1600.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/paths-1600.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "904669412fd1fe58481771c7602f22a0a87485d2e1adc38a2e2e51dc95d58337"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/paths-1600.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/paths-1600.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "f379b3ade2d6c02e00e423e63c96ea50e841a6253d7abcefbe34112f227b696f"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/paths-1920.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/paths-1920.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "b7748a9ac8cadb817c0a5f4128d0facf76731f03fbf7d163368083fbcccdcbfb"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/paths-1920.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/paths-1920.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "bfb8e89f57e7c6245aa55057f72e26367000504fb5bbc5a7438d36a9e9b2b319"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/pull-1600.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/pull-1600.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "7c5da6bfbe5250824534bf38e60729745ad92836971c0445a8a0ac0a242cb9b5"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/pull-1600.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/pull-1600.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "4a98a869f9a2989b59a7fc05fd701fb411b1fd23651e2653af8b939fd9c84579"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/pull-1920.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/pull-1920.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "2f17876857ff152b3639d563853f914961042106c2341fab74297d50585fd369"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/pull-1920.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/pull-1920.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "520892488249a11cdfe85dabcfcf6249c101e30393ebaa19f43cc2bb0dd5275d"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/reached-1600.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/reached-1600.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "e740b0cd3bfc484ddd8c7d5b9da746563588c91de37c21dd2a76f61602615508"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/reached-1600.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/reached-1600.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "09231eec3d22a87c4a7985cec2f44448ad02359eea135e6a176c40b863928980"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/reached-1920.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/reached-1920.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "2bae0360770a75513d00f8dc350c0eb839ac825ddccc598b18ebf3dbc253e49b"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/reached-1920.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/reached-1920.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "6b9c7621b6a669f8f9cf3073e96b8482aa349bcd219c9c26788085747ba28057"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/wait-1600.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/wait-1600.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "1f08565ad0742ec27b7251d7f3a541607b68e0290d6dda0fd032cd82150f31b2"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/wait-1600.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/wait-1600.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "875bfbb4a9603cd1b2ac9778f8ec74b9143f3bd325e90d85505351603eb82e4c"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/wait-1920.A.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/wait-1920.A.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "0b62087e7fbd7fbc0d6ec9216d601040336f5f711a1deed13f991d5928005e52"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/img/wait-1920.B.png",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/img/wait-1920.B.png",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "4d4ffb86ed1fcc47f7989ded7a6f10dd592447b032f152a4cb06fdf71b7b6c32"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/index.html",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/index.html",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "be85b54b4fffebfc3eb7f6f2ccd06bdfc245dbebb9125aa3056c45ca6bc1e423"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/comparison/report.json",
+   "destination": "meaning/lens/2026-10-14-integration/comparison/report.json",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "436346ff8bbba1ddb5a845e2857e7447ecfa29516355232aa32124c02945f13e"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/input-deep-research.md",
+   "destination": "meaning/lens/2026-10-14-integration/input-deep-research.md",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "949bfab28fa1f54d20a2c9c299c271865751a6b7192f05bd1740ec0253574bb0"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/ontology-sources.json",
+   "destination": "meaning/lens/2026-10-14-integration/ontology-sources.json",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "c79b53269f902aa1a5b202f1c0026a801f0fc0758853fdbbee10aa08f7a2304a"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/package-check.json",
+   "destination": "meaning/lens/2026-10-14-integration/package-check.json",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "4f2f0f8b5c83b40456e59da05a9543f6893780d03fefe8a90f8758654046205b"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/preview-definition.json",
+   "destination": "meaning/lens/2026-10-14-integration/preview-definition.json",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "c42e39119dbc812d169aa6b14ac1471ffc42eb1b89bbb9029bcf774e57048264"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/reconstruction-checks.json",
+   "destination": "meaning/lens/2026-10-14-integration/reconstruction-checks.json",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "0d038c348bc2764f49c9f12755ec8e1b160b89a0bf21566d5428a10276630382"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/relation-checks.json",
+   "destination": "meaning/lens/2026-10-14-integration/relation-checks.json",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "e8937380fdd89eb3e5a32e85f8d0ffb662544730daf8d974a660e8c28174ab55"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/research-evidence.json",
+   "destination": "meaning/lens/2026-10-14-integration/research-evidence.json",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "442cfa5f6531a94ff9e9a5f3dcc2fcfc988d2bb8ab56504183cc87a4d98250c5"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/sources.json",
+   "destination": "meaning/lens/2026-10-14-integration/sources.json",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "9ce8ded6dfbe0666d90bcdaf1e0b34fcbb654aaafd508bf3e68a97c479c46fa0"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/tools/audit.py",
+   "destination": "meaning/lens/2026-10-14-integration/tools/audit.py",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "ebc75020bcbf536cab647204a73ed3e70dc638d520c9863b21761c131b789153"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/tools/checks.mjs",
+   "destination": "meaning/lens/2026-10-14-integration/tools/checks.mjs",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "62ca0ff610b06095bb498e3832b475791179d305adf93a45f399681d0ddf070c"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/tools/compare.mjs",
+   "destination": "meaning/lens/2026-10-14-integration/tools/compare.mjs",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "fdd3dccf1d7bd9b3bc4b906324c3e4ff8307bd03a07912edae04df9d7263199b"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/tools/gallery.mjs",
+   "destination": "meaning/lens/2026-10-14-integration/tools/gallery.mjs",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "e3ba38ff9363d7f9ad417c9e3ff1ffd3eb1310ade9540c86df5dc58e41be1959"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/tools/prepare.py",
+   "destination": "meaning/lens/2026-10-14-integration/tools/prepare.py",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "945487bfbe2de96d35f4cbd4c37c78f074dac0841683893eb3245daadbafdec9"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/tools/reconstruct.py",
+   "destination": "meaning/lens/2026-10-14-integration/tools/reconstruct.py",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "6af56374d872e820ac1075ba8196c532b3beb406a6bd1abee98ed411a0fcaeef"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/tools/relations.py",
+   "destination": "meaning/lens/2026-10-14-integration/tools/relations.py",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "c0b4394e0b438891472d254b146a301c7780107e8069d628de8769fbbec48322"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/tools/report.py",
+   "destination": "meaning/lens/2026-10-14-integration/tools/report.py",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "be716da1000f46cbca290c24b13b873809dfa9924a291a21f49e2c78ab05dd02"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/tools/run_compare.py",
+   "destination": "meaning/lens/2026-10-14-integration/tools/run_compare.py",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "1d59171cd94e9eba61f29941a64f4329c96516ccabcf9d490dca7be35fa18af9"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/tools/verify.py",
+   "destination": "meaning/lens/2026-10-14-integration/tools/verify.py",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "761edc30cc592867bb248015c58b7dd565dfd6eb4fb04be61ea8a19b969c5c3a"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "meaning/lens/2026-10-14-integration/verification.md",
+   "destination": "meaning/lens/2026-10-14-integration/verification.md",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "17ccb9392ac13777f509625daee1e735499c403926f63930c3ef96ccf1bfa692"
+  },
+  {
+   "source_commit": "bf525e2d762a4f26461cc5e37204c10886fdbd54",
+   "source_path": "spec/DR-LAB-INTEGRATION-1.0.md",
+   "destination": "spec/DR-LAB-INTEGRATION-1.0.md",
+   "role": "INTEGRATION_RECONSTRUCTION_SOURCE",
+   "sha256_lf": "3a6690476da52d9ebacd1d974735181cd6c580bc26ca4d85ebf2a8f77d8e46d5"
+  }
+ ],
+ "current_sources": {
+  "lab/arrive24.py": "8d086c2b207817d2b4e5bf8d23a555e3a7f35d7da766103285dd71c6e6dd2b24",
+  "lab/cluster24.py": "1fe3b782e518f41585096676edead70e8a34b588bea2b8ffae4ea37f23b559d0",
+  "lab/integration24.py": "6d6858a77c9d5d53b1f2aedca2dcd46e2be1f0503b60907d7c048e7d5f1460c8",
+  "lab/now24.py": "fcf3280900cac292b6ce58d3c6d98057b6bb77c5824abd5b9af33c947a5c385b",
+  "lab/pre24.py": "d782e83558b77dbc72719de6fe0228a6bae984dfe8a0edb89782be215daa7bfc",
+  "lab/revisions24.py": "0ef83a22d37607ea3853d75297f1184597ca57ec0ccef518b1359e9a1acabf24",
+  "lab/scene24.py": "738108a7dbe4182a6444c9cf55eea415999bdaff123d84f4650169ae744e2590",
+  "lab/zonemap24.py": "b929c558ec7b31a1b15e71fe26256af50ef5392c06aa51a94688360409b33f1e",
+  "lab/q1/demo.py": "eb9d252ca085d539bd3999ad03fb81f6dd0edca6c4e2f1441099daf7ec3ca715",
+  "lab/q1/engine.py": "062647f0c9b3b54102598f65bfe92be43f9fec05e1f62b7a7618568f1402fe93",
+  "lab/q1/passport.py": "5a374590d4b525d3a556039f91a24dba40151d259a680aac8c45c155e0c889d8",
+  "lab/q1/recon.py": "784f879e57a3d92b244ead0759ed45852b058db538f53e7fd2507b6eca643212",
+  "lab/q1/server.py": "0851a0605f42613fdf583e8ce3e98f3ccc714a25a69185e977c07fc457ad9e24",
+  "lab/q1/store.py": "ff31db563c4fccd20aafed35430e86e311bfdd555a4d5c578046278fa34fa096",
+  "lab/q1/__init__.py": "5aab1e240f7b407669909a3d6e2e07424c4953634e7d7749ccfb8d2794f771ad",
+  "lab/contract.py": "271f190db2e507f376d06b61fbc0a4601306c47890b3ea5c2e3c4d7f4aa95ef5",
+  "lab/server.py": "486a839c1ca68b240ffae1d9a53909e4d3a4d2b9e9d65c5c5c39f1f01d517b69",
+  "lab/integration_audit.py": "9d12a9ea7a0493d2d1b33ac1aca8dec447b03c5dccd643432a8bca71a269d45e",
+  "design/sozvezdiya-24/src/app.js": "9087bf8b152a08b69143ab0a9d3eb4422e7100033a72f3c8e574b2e34487f191",
+  "design/sozvezdiya-24/src/build.py": "3dbae1d4eea82b3af2d312b5a4332f3d22ffb93e980361ef2e55179f4a505417",
+  "design/sozvezdiya-24/src/integration.js": "a0a54e8662a7923c72301bb2c03636314edd547d2207a43e824366f16da7e3c3",
+  "design/sozvezdiya-24/src/page.html": "ecb96e4b489ea5f19a752905fb02c00364edcb6c4e7cf3cb9ca7982291a0233f",
+  "design/sozvezdiya-24/src/panel.css": "35ecb503dee74d691367600d40e4c65e9149004324ee5dd1b0afe49d2e2b5806",
+  "design/sozvezdiya-24/src/panel.js": "f1b51a280383dcdff57f6037b58357996b9a56688cefa5d9a09d01b8c6b7b12e",
+  "contract/build/registry.json": "5bf78d99caa352de42077fd61ea42fdd7d6aa0369dc7a6dca3d8578f251f9ce0",
+  "integration/candidates/build/registry.json": "f218f03d386a130690d3dce301061dc807836b86dda9686f66830f023bc340b6"
+ },
+ "decisions": {
+  "implementation": "current operator request, no acceptance of candidates",
+  "preserved": "main/SC text/BASE/NOW meanings/spatial host/Q1 immutable store/FOM reference",
+  "adapted": "atomic context, path-revision cache, independent target facts, explicit candidate gate, linked existing details",
+  "not_selected": "BASE_D default, GEO default, P9 summary/main-mode replacement, implicit SC amendments"
+ }
+}
