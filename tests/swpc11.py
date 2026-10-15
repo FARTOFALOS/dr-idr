@@ -215,11 +215,15 @@ def main(write):
     EV = r"(?:ev|h\.ev|r\.ev|e|I\.ev|g\.ev)"
     used = set()
     for name, plus in re.findall(r"'(EST:[A-Z0-9-]+)'(\s*\+\s*" + EV + r")?", both):
-        if plus or name.endswith("-"): used.update({name + "R", name + "X"} if name.endswith("-") else {name})
-        else: used.add(name)
+        if plus: used.update({name + "R", name + "X"} if name.endswith("-") else {name})
+        elif not name.endswith("-"): used.add(name)
     used -= {"EST:B-RX-R", "EST:B-RX-X"}
     used |= {f"EST:B-RX-{k}-{e}" for k in ("BAND", "WINDOW", "REGION") for e in "RX"}
-    check(used and used <= est, f"every estimand the page can make a passport of ({len(used)}) is routed{': ' + str(sorted(used - est)) if not used <= est else ''}")
+    proposed = json.loads((ROOT / "integration/candidates/build/page_registry.json").read_text(encoding="utf-8"))
+    accepted_used = used & set(page["estimands"])
+    check(accepted_used and accepted_used <= est, f"every accepted page estimand ({len(accepted_used)}) keeps its SWPC route")
+    check(used <= est | set(proposed["estimands"]) and proposed["edition"] != page["edition"],
+          "additional candidates have a separate registry; their UI passport does not amend accepted SWPC B01-B16")
     print("The engineering record")
     missing = [(b, c) for b, r in REC.items() for c in r["code"] if not re.search(r"(function " + re.escape(c) + r"\(|const " + re.escape(c) + r" = )", both)]
     check(set(REC) == set(B) and not missing, f"every binding has its record and every code anchor exists{': ' + str(missing) if missing else ''}")

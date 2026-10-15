@@ -50,6 +50,11 @@ def main():
     a, b = run(615), run(620)
     check(a["question"]["id"] == b["question"]["id"] and a["context"]["id"] != b["context"]["id"],
           "same future target/question, different dated releases")
+    early_hit = copy.deepcopy(today)
+    early_hit["P"][3] = [40, 60, 50]  # 10:20, before the first target-window close at 10:25
+    early_answer = run(620, today=early_hit)
+    check(early_answer["observed"]["status"] == "OPEN" and early_answer["observed"]["value"] == "NO",
+          "a price visit before the pinned time window does not resolve its future-window event")
     c = run(625)
     check(c["target"] == a["target"] and c["question"]["id"] != b["question"]["id"] and
           c["question"]["conditions"][0]["kind"] == "WINDOW_NO_VISIT", "same target, explicit residual question")
@@ -74,6 +79,12 @@ def main():
     broken = json.loads(json.dumps(b))
     broken["estimate"]["yes"] += 1
     check(A.check_frame(broken, cases, today, grid)["outcome"] == "FAIL", "issued percentage cannot detach from its support")
+    broken = copy.deepcopy(b)
+    broken["observed"]["status"] = "FACT_NO"
+    check(A.check_frame(broken, cases, today, grid)["outcome"] == "FAIL", "no visit so far is not a completed NO fact")
+    broken = copy.deepcopy(c)
+    broken["question"]["first_close"] += 5
+    check(A.check_frame(broken, cases, today, grid)["outcome"] == "FAIL", "a correct count cannot label a different remaining window")
     future = copy.deepcopy(today)
     future["P"][4:] = [400, 500, 450]
     new = run(620, today=future)

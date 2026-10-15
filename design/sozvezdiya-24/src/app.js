@@ -576,7 +576,7 @@
   // the registered words: a claim form (by its estimand, EST:…) or a fact form (FF:…), one key, the view's variant if any
   function lbl(id, key, vars, view) {
     const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : SC11.forms[id];
-    const candidateId=id.startsWith('EST:P-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS'].includes(id);
+    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS'].includes(id);
     const extra = candidateId && REVIEW && (id.startsWith('FF:') ? REVIEW.facts[id] : REVIEW.forms[id]);
     const box = own && own.labels[key] ? own : extra || own;
     const set = box && box.labels[key], t = set && (view && set[view] != null ? set[view] : set.ANY);
@@ -849,7 +849,7 @@
     const bounds = !!(ctx.F && ctx.F.N) && st.mode === 'bounds';
     // the price column holds R and X in one column in «Границы хода» (each its own 100 %; operator 2026-10-06: one
     // column, not two), one M5 column in «Путь семьи»
-    const projW = st.L.proj && ctx.F && ctx.F.N ? (bounds ? 116 : 96) : 0;
+    const projW = !continuationMode() && st.L.proj && ctx.F && ctx.F.N ? (bounds ? 116 : 96) : 0;
     // the time band under the chart (variant «Окна времени»): capsules, hills, columns; operator 2026-10-06: the candles
     // take the height, the band about an eighth of it (84-118 px)
     const bandH = bounds && st.L.strip ? Math.round(clamp((H - handleH - timeH) * cfg.bandH / 100, 60, (H - handleH - timeH) * 0.4)) : 0;
@@ -913,6 +913,7 @@
     const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
     if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
     const ctx = cur();
+    continuationSeed(ctx);
     if (ICFG.enabled && (!scenePacket() || !TRIAL.arrive || hv()?.k !== 'arrive')) { IS.selection = null; IS.pathEvidence = null; }
     if (st.pinLvl && ctx.s.drH != null) { const l = levels(ctx.s).find(z => z.id === st.pinLvl); if (l) st.pin = { k: 'lvl', id: l.id, l }; st.pinLvl = null; }
     if (st.pinZone && ctx.F) { st.pin = { k: 'zone', ev: st.ev, i: st.pinZone - 1 }; st.pinZone = null; }
@@ -929,22 +930,23 @@
     if (st.L.prev) drawPrev(c, ctx);
     if (st.L.vib) drawVib(c, ctx);
     // the corridor of a hovered band first (its prices on the scale), then the link (its time on the axis), then the film
-    if (F) { drawHighlight(c, ctx); linkOf(ctx); }
+    if (F && !continuationMode()) { drawHighlight(c, ctx); linkOf(ctx); }
+    if (continuationMode()) continuationDraw(c,ctx);
     if (F && st.mode === 'path') drawFilm(c, ctx);
     drawLevels(c, ctx);
     drawReference(c, ctx);
     if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, ctx); drawMemberPath(c, ctx); }
-    if (F) drawZones(c, ctx, 'under');
+    if (F && !continuationMode()) drawZones(c, ctx, 'under');
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
-    if (F) drawNowRange(c, ctx);
+    if (F && !continuationMode()) drawNowRange(c, ctx);
     drawPills(c, ctx);
-    drawNow(c, ctx);
-    if (F) drawLink(c, ctx);
+    if (!continuationMode()) drawNow(c, ctx);
+    if (F && !continuationMode()) drawLink(c, ctx);
     if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, ctx);
     if (F && st.mode === 'bounds') drawPair(c, ctx);
-    if (F) drawZones(c, ctx, 'over');
-    if (F) drawArea(c, ctx);
+    if (F && !continuationMode()) drawZones(c, ctx, 'over');
+    if (F && !continuationMode()) drawArea(c, ctx);
     if (F && st.mini) drawMini(c, ctx);
     drawTags(c, ctx);
     drawAlerts(c);
@@ -2678,6 +2680,7 @@
     // R and X are on the chart together (operator 2026-10-01): the toolbar names them, there is no switch
     dom('ev').innerHTML = ['R', 'X'].map(e => '<span class="evc' + (st.mode === 'path' ? ' off' : '') + '" title="' + (F ? esc(F.what[e]) : '') + '"><i style="background:' + cfg[e] + '"></i>' + e + '<span> ' + nm[e].toLowerCase() + '</span></span>').join('');
     dom('areab').classList.toggle('on', st.tool);
+    continuationToolbar(ctx);
     const x = A.day;
     if (A.src === 'live') {
       const et = x && x.fetched_at ? new Date(x.fetched_at).toLocaleTimeString('ru-RU', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '';
@@ -2699,7 +2702,7 @@
     // DR-LAB-SWPC-1.1 §8.4 (W01, A1): the cut is never hidden — when the clock's pill would leave the window (a break
     // day's longer event names at 1600 px) the event names of the toolbar fold, as they already do below 1500 px
     // measured only when what decides it changes (the window, the clock, the event names), so a full render forces no layout
-    const tbar = dom('tb'), pillEl = dom('clock').querySelector('.pill'), fit = [window.innerWidth, dom('clock').textContent, dom('ev').textContent, dom('dayb').textContent].join('|');
+    const tbar = dom('tb'), pillEl = dom('clock').querySelector('.pill'), fit = [window.innerWidth, dom('clock').textContent, dom('ev').textContent, dom('dayb').textContent,TRIAL.continuations,st.mode].join('|');
     if (fit !== P24.fit) {
       P24.fit = fit; tbar.classList.remove('tight');
       if (pillEl && pillEl.getBoundingClientRect().right > window.innerWidth) tbar.classList.add('tight');
@@ -2831,7 +2834,7 @@
     const el = dom('insp');
     if (!el || !V) return;
     const ctx = V.ctx, use = h && h.k !== 'stripBg' ? h : st.pin;
-    let html = use ? tipHtml(use, ctx) : '';
+    let html = continuationMode() ? continuationInspector(ctx) : use ? tipHtml(use, ctx) : '';
     if (!html && ctx.F && ctx.F.N) html = '<div class="ih">Слепок семьи</div><div class="is">' + esc(ctx.F.cond) + '</div>' + ifoot(ctx.F, lbl('FF:SHARE-STEP', 'foot_fixed', { event: lbl('FF:PASSPORT-VIEW', 'at_act', null, VW(ctx.F)), t: clk(ctx.F.act0) }));
     if (el._h !== html) { el.innerHTML = html; el._h = html; }
   }
@@ -2989,7 +2992,7 @@
       if (A.src === 'hist') { A.jump = true; try { history.replaceState(null, '', '#date=' + A.date + '&inst=' + A.inst + '&session=' + st.session); } catch (e) { /* optional */ } }
       loadDay(false);
     }
-    else if (t.closest('#mode button')) { st.mode = t.closest('button').dataset.m; st.hover = null; st.pin = null; render(true); }
+    else if (t.closest('#mode button')) { st.mode = t.closest('button').dataset.m; st.hover = null; st.pin = null; if(continuationMode()&&!CS.target)st.tool=true; render(true); }
     else if (t.closest('#ev button')) { if (st.mode === 'bounds') { st.ev = t.closest('button').dataset.e; st.hover = null; if (st.pin && st.pin.k === 'pt') st.pin = null; render(true); } }
     else if (t.id === 'areab') { st.tool = !st.tool; render(true); }
     else if (t.id === 'refresh21') loadDay(true);
@@ -3078,7 +3081,7 @@
     }
   }
   async function loadDay(refresh) {
-    if (ICFG.enabled && refresh) { IS.key = null; IS.packet = null; IS.error = null; }
+    if (ICFG.enabled && (refresh || !A.day)) { IS.epoch++; IS.key = null; IS.packet = null; IS.error = null; }
     // DR-LAB-SWPC-1.1 M02 (W01): only the answer to the latest request may become the day on screen — a late answer for
     // the day, instrument or minute asked before is dropped, never drawn under the new name
     const seq = A.daySeq = (A.daySeq || 0) + 1;
@@ -3194,6 +3197,7 @@
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
   window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
     preOf, arriveOf, arriveBundle, candidateSelection, integration: () => ({ enabled: ICFG.enabled, trials: {...TRIAL}, ...IS, packet: scenePacket() }), setTrial,
+    continuations:()=>({...CS,packet:continuationPacket(cur())}),pinContinuation,verifyContinuation,
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)
     // violations: those of the scene on screen (SWPC-1.1 M16); all: every one found since the page opened
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),

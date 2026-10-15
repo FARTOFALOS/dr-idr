@@ -30,6 +30,7 @@
   function panelHtml(ctx) {
     const s = ctx.s, F = ctx.F;
     P24.links = [];
+    if(continuationMode()){panel.innerHTML=scNotice(ctx)+continuationPanel(ctx);return;}
     if (!F || !F.N) {
       // no family at this moment: one click opens a history day on which this session had one (spec: the live moment
       // must never block the review)
@@ -262,6 +263,7 @@
   }
   // window 1: the passport of the object (as the details area of design 24 had it), or the family's snapshot
   function detBody(ctx, o) {
+    if(continuationMode())return continuationDetail(ctx);
     const F = ctx.F;
     const trial = candidateDetails(ctx, o); if (trial) return trial;
     if (!o) {
@@ -420,7 +422,7 @@
     if (dh._h !== head) { dh.innerHTML = head; dh._h = head; }
     const g = dom('detg');
     if (!open || !ok) { if (g._k) { g.innerHTML = ''; g._k = ''; } return; }
-    const o = detailObj(ctx), key = [F.r.snapshot_id, F.view, sliceOf(ctx), o ? pinKey(o) + '|' + (o.ev || '') : '', det.clientWidth, cfg.R, cfg.X, cfg.path, cfg.heatA, scenePacket()?.context.id || '', TRIAL.paths].join('|');
+    const o = detailObj(ctx), key = [F.r.snapshot_id, F.view, sliceOf(ctx), o ? pinKey(o) + '|' + (o.ev || '') : '', det.clientWidth, cfg.R, cfg.X, cfg.path, cfg.heatA, scenePacket()?.context.id || '', TRIAL.paths,continuationMode()?CS.packet?.release_id||CS.error||CS.pending:''].join('|');
     if (g._k === key) return;
     g._k = key;
     const B = detBody(ctx, o);

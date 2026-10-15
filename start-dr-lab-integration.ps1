@@ -1,4 +1,4 @@
-﻿param([switch]$NoBrowser, [switch]$HistoryOnly, [string]$Page = '24/#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all&trial=pre,arrive,paths&det=1')
+﻿param([switch]$NoBrowser, [switch]$HistoryOnly, [string]$Page = '24/#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=all&trial=continuations&mode=continuations&cont=17,19,685,700,670')
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
 $lab = Join-Path $root 'lab'
@@ -43,7 +43,19 @@ if ($health) {
     if (-not $health.integration -or [IO.Path]::GetFullPath($health.workspace) -ne [IO.Path]::GetFullPath($root)) {
         throw 'Порт 8773 занят другой сборкой. Рабочий сервер не изменён.'
     }
-} else {
+}
+$taskExpectedRevision = & $python -B (Join-Path $lab 'runtime_identity.py')
+if ($health -and ($health.source_revision -ne $taskExpectedRevision -or $health.data_revision -ne $health.current_data_revision)) {
+    $taskOwners = @(Get-NetTCPConnection -LocalPort 8773 -State Listen | Select-Object -ExpandProperty OwningProcess -Unique)
+    foreach ($taskOwner in $taskOwners) { Stop-Process -Id $taskOwner -ErrorAction Stop }
+    $health = $null
+}
+if (-not $health) {
+    for ($taskWait = 0; $taskWait -lt 30; $taskWait++) {
+        if (-not @(Get-NetTCPConnection -LocalPort 8773 -State Listen -ErrorAction SilentlyContinue).Count) { break }
+        Start-Sleep -Milliseconds 100
+    }
+    if (@(Get-NetTCPConnection -LocalPort 8773 -State Listen -ErrorAction SilentlyContinue).Count) { throw 'Порт 8773 занят, но сервер не ответил. Второй процесс не запущен.' }
     Start-Process -FilePath $python -ArgumentList '-u','-B','server.py','--port','8773','--integration' -WorkingDirectory $lab -WindowStyle Hidden `
       -RedirectStandardOutput (Join-Path $runtime 'integration.out.log') -RedirectStandardError (Join-Path $runtime 'integration.err.log')
     for ($i=0; $i -lt 60; $i++) {

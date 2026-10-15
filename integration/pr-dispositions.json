@@ -1,0 +1,479 @@
+{
+  "version": "PR-DISPOSITIONS-IMPLEMENTATION-1",
+  "source_review": "pr-review-2026-10-15/units.json",
+  "source_heads": "pr-review-2026-10-15/sources.json",
+  "units": [
+    {
+      "id": "U01",
+      "prs": [
+        2,
+        11
+      ],
+      "meaning": "Целостность кадра SWPC: запоздавшие ответы, отказ числа вместе с геометрией",
+      "source_path": "design/sozvezdiya-24/src/app.js",
+      "recommendation": "Сохранить действующие исправления; проверять новый режим теми же отказами.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "ADAPTED_ACTIVE",
+      "pre_main_destination": "design/sozvezdiya-24/src/app.js",
+      "status": "ADAPTED_ACTIVE",
+      "destination": "design/sozvezdiya-24/src/app.js",
+      "implementation_note": "Сохранить действующие исправления; проверять новый режим теми же отказами."
+    },
+    {
+      "id": "U02",
+      "prs": [
+        2,
+        11
+      ],
+      "meaning": "Работа трейдера и различение факта, гипотезы и решения",
+      "source_path": "meaning/17-rabota-treidera.md",
+      "recommendation": "Использовать как постановку задачи; записи намерений не превращают кандидатов в принятый продукт.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_SOURCE",
+      "pre_main_destination": "meaning/17-rabota-treidera.md",
+      "status": "PRESERVED_SOURCE",
+      "destination": "meaning/17-rabota-treidera.md",
+      "implementation_note": "Использовать как постановку задачи; записи намерений не превращают кандидатов в принятый продукт."
+    },
+    {
+      "id": "U03",
+      "prs": [
+        2,
+        11
+      ],
+      "meaning": "NOW R: текущий якорь и отдельная графическая добавка",
+      "source_path": "design/sozvezdiya-24/src/app.js",
+      "recommendation": "Сохранить смысл якоря; переносить отдельным изменением после сопоставления с принятым наведением.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "NOT_ADOPTED_VISUAL_VARIANT",
+      "pre_main_destination": null,
+      "status": "NOT_ADOPTED_VISUAL_VARIANT",
+      "destination": null,
+      "implementation_note": "Сохранить смысл якоря; переносить отдельным изменением после сопоставления с принятым наведением."
+    },
+    {
+      "id": "U04",
+      "prs": [
+        2,
+        11
+      ],
+      "meaning": "Правило «откат сделан»: наблюдённая глубина плюс время семьи",
+      "source_path": "contract/registry/40-claims.yaml",
+      "recommendation": "Сохранить как названное правило; не объявлять окончательным R или фактом завершения отката.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "CANDIDATE_DEFINITION_ONLY",
+      "pre_main_destination": "integration/candidates/registry/40-claims.yaml",
+      "status": "CANDIDATE_DEFINITION_ONLY",
+      "destination": "integration/candidates/registry/40-claims.yaml",
+      "implementation_note": "Сохранить как названное правило; не объявлять окончательным R или фактом завершения отката."
+    },
+    {
+      "id": "U05",
+      "prs": [
+        2,
+        11
+      ],
+      "meaning": "PRE: знание до подтверждения, ненаправленная координата от IDR low",
+      "source_path": "lab/pre24.py",
+      "recommendation": "Оставить отдельный вопрос/набор; не применять направленную шкалу будущей стороны до её знания.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "CANDIDATE_ACTIVE",
+      "pre_main_destination": "lab/pre24.py",
+      "status": "CANDIDATE_ACTIVE",
+      "destination": "lab/pre24.py",
+      "implementation_note": "Оставить отдельный вопрос/набор; не применять направленную шкалу будущей стороны до её знания."
+    },
+    {
+      "id": "U06",
+      "prs": [
+        2,
+        11
+      ],
+      "meaning": "Малая семья слома сохраняет свои доли",
+      "source_path": "meaning/17-rabota-treidera.md",
+      "recommendation": "Не распространять запрет процента условного кандидата на малую BASE-семью.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_BEHAVIOUR",
+      "pre_main_destination": "design/sozvezdiya-24/src/panel.js",
+      "status": "PRESERVED_BEHAVIOUR",
+      "destination": "design/sozvezdiya-24/src/panel.js",
+      "implementation_note": "Не распространять запрет процента условного кандидата на малую BASE-семью."
+    },
+    {
+      "id": "U07",
+      "prs": [
+        3
+      ],
+      "meaning": "Фильм как связанные исторические пути; итоговые точки и кадры — его проекции",
+      "source_path": "meaning/lens/2026-10-12-film-i-moment/01-esse.md",
+      "recommendation": "Использовать целые case paths и проверять достаточность каждой проекции для конкретного вопроса.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_PROPOSAL",
+      "pre_main_destination": "meaning/lens/2026-10-12-film-i-moment/01-esse.md",
+      "status": "PRESERVED_PROPOSAL",
+      "destination": "meaning/lens/2026-10-12-film-i-moment/01-esse.md",
+      "implementation_note": "Использовать целые case paths и проверять достаточность каждой проекции для конкретного вопроса."
+    },
+    {
+      "id": "U08",
+      "prs": [
+        3
+      ],
+      "meaning": "Неподвижные и движущиеся якоря, события M5 и сторона подхода",
+      "source_path": "meaning/lens/2026-10-12-film-i-moment/02-semanticheskaya-specifikaciya.md",
+      "recommendation": "Различать физически закреплённую область и барьер от текущего экстремума; не изобретать внутрисвечный порядок.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_PROPOSAL",
+      "pre_main_destination": "meaning/lens/2026-10-12-film-i-moment/02-semanticheskaya-specifikaciya.md",
+      "status": "PRESERVED_PROPOSAL",
+      "destination": "meaning/lens/2026-10-12-film-i-moment/02-semanticheskaya-specifikaciya.md",
+      "implementation_note": "Различать физически закреплённую область и барьер от текущего экстремума; не изобретать внутрисвечный порядок."
+    },
+    {
+      "id": "U09",
+      "prs": [
+        4
+      ],
+      "meaning": "Кадр на общих часах; пригодность и ещё открытый вопрос",
+      "source_path": "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+      "recommendation": "Взять цепочку условий; поправки u/v и спорный горизонт не переносить как новую норму.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_PROPOSAL",
+      "pre_main_destination": "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+      "status": "PRESERVED_PROPOSAL",
+      "destination": "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+      "implementation_note": "Взять цепочку условий; поправки u/v и спорный горизонт не переносить как новую норму."
+    },
+    {
+      "id": "U10",
+      "prs": [
+        4
+      ],
+      "meaning": "Замеры A–E: сопоставление, опора, предел прочтения отрицательного результата",
+      "source_path": "studies/kadr_2026_10_12/kadr_checks.py",
+      "recommendation": "Перенести исходный воспроизводящий скрипт и агрегаты как исследование; сейчас в интеграционной ветке их нет, поэтому готовность воспроизведения A–E не заявлять.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "SOURCE_NOT_YET_TRANSFERRED",
+      "pre_main_destination": null,
+      "status": "PRESERVED_RESEARCH",
+      "destination": "studies/kadr_2026_10_12/README.md",
+      "implementation_note": "Original A-E evidence restored with source hashes; no new method admission."
+    },
+    {
+      "id": "U11",
+      "prs": [
+        5
+      ],
+      "meaning": "SRS: роли наборов, неизвестность, сотня, совместное время и независимые вопросы",
+      "source_path": "meaning/lens/2026-10-12-independent-srs/02-srs.md",
+      "recommendation": "Взять проверочные различения FR19–FR24; не превращать всю вероятностную программу в обязательный scope первого UI.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_PROPOSAL",
+      "pre_main_destination": "meaning/lens/2026-10-12-independent-srs/02-srs.md",
+      "status": "PRESERVED_PROPOSAL",
+      "destination": "meaning/lens/2026-10-12-independent-srs/02-srs.md",
+      "implementation_note": "Взять проверочные различения FR19–FR24; не превращать всю вероятностную программу в обязательный scope первого UI."
+    },
+    {
+      "id": "U12",
+      "prs": [
+        5
+      ],
+      "meaning": "Q1 handoff: цель, датированный выпуск, исход и воспроизведение",
+      "source_path": "meaning/lens/2026-10-12-independent-srs/03-q1-historical-pilot.md",
+      "recommendation": "Сохранить разделение идентичностей; применять к новому окну по его собственному определению.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_HANDOFF",
+      "pre_main_destination": "meaning/lens/2026-10-12-independent-srs/03-q1-historical-pilot.md",
+      "status": "PRESERVED_HANDOFF",
+      "destination": "meaning/lens/2026-10-12-independent-srs/03-q1-historical-pilot.md",
+      "implementation_note": "Сохранить разделение идентичностей; применять к новому окну по его собственному определению."
+    },
+    {
+      "id": "U13",
+      "prs": [
+        6
+      ],
+      "meaning": "Q1 engine: точные координаты и отбор, отдельный паспорт входов",
+      "source_path": "lab/q1/engine.py",
+      "recommendation": "До нового использования immutable issues устранить зависимость prefix_digest от будущего complete; старые выпуски не переписывать.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "COPIED_WITH_CONFIRMED_DEFECT",
+      "pre_main_destination": "lab/q1/engine.py",
+      "status": "ADAPTED_FIXED_PREFIX_IDENTITY",
+      "destination": "lab/q1/engine.py",
+      "implementation_note": "Future complete/fail metadata removed from prefix identity; known frame changes still change identity; old issues untouched."
+    },
+    {
+      "id": "U14",
+      "prs": [
+        6
+      ],
+      "meaning": "Write-once store и отдельные ревизии исходов",
+      "source_path": "lab/q1/store.py",
+      "recommendation": "Сохранить; вычисление и рендер не должны автоматически записывать выпуск.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_ENGINEERING",
+      "pre_main_destination": "lab/q1/store.py",
+      "status": "PRESERVED_ENGINEERING",
+      "destination": "lab/q1/store.py",
+      "implementation_note": "Сохранить; вычисление и рендер не должны автоматически записывать выпуск."
+    },
+    {
+      "id": "U15",
+      "prs": [
+        6
+      ],
+      "meaning": "Отдельная сцена пилота, раскрытие исхода и свечи основания",
+      "source_path": "lab/q1/server.py",
+      "recommendation": "Проверить revision binding раскрытого пути и поздний ответ; не вводить второй повседневный продукт/ярлык.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "DIAGNOSTIC_SOURCE_WITH_GAPS",
+      "pre_main_destination": "lab/q1/server.py",
+      "status": "ADAPTED_REVEAL_SOURCE_AND_ASYNC_GUARDS",
+      "destination": "lab/q1/server.py",
+      "implementation_note": "Saved outcome basis must match the revealed full source; stale client replies discarded. Standalone pilot remains separate."
+    },
+    {
+      "id": "U16",
+      "prs": [
+        7
+      ],
+      "meaning": "ARRIVE: частота достижения места по семье, не весь динамический фильм",
+      "source_path": "lab/arrive24.py",
+      "recommendation": "Сохранить отдельно от POS_GEO/окна; не переназначать Q1 оцениватель.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "CANDIDATE_ACTIVE",
+      "pre_main_destination": "lab/arrive24.py",
+      "status": "CANDIDATE_ACTIVE",
+      "destination": "lab/arrive24.py",
+      "implementation_note": "Сохранить отдельно от POS_GEO/окна; не переназначать Q1 оцениватель."
+    },
+    {
+      "id": "U17",
+      "prs": [
+        7,
+        9
+      ],
+      "meaning": "Один выбранный вопрос и факт достижения на закрытии M5",
+      "source_path": "design/sozvezdiya-24/src/app.js",
+      "recommendation": "Продолжить в новом режиме: факт отделён от применимости свежего условного расчёта.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "ADAPTED_ACTIVE",
+      "pre_main_destination": "design/sozvezdiya-24/src/integration.js",
+      "status": "ADAPTED_ACTIVE",
+      "destination": "design/sozvezdiya-24/src/integration.js",
+      "implementation_note": "Продолжить в новом режиме: факт отделён от применимости свежего условного расчёта."
+    },
+    {
+      "id": "U18",
+      "prs": [
+        8
+      ],
+      "meaning": "Trace: утверждение -> происхождение, compute/present/persist, мутации будущего",
+      "source_path": "lab/semtrace.py",
+      "recommendation": "Сохранить полный инструмент и явно перепривязать применимые проверки к текущим профилям; старый PASS не наследуется.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "FROZEN_REFERENCE_AND_SCOPED_RUNTIME",
+      "pre_main_destination": "integration/reference/lab/semtrace.py",
+      "status": "FROZEN_REFERENCE_AND_SCOPED_RUNTIME",
+      "destination": "integration/reference/lab/semtrace.py",
+      "implementation_note": "Сохранить полный инструмент и явно перепривязать применимые проверки к текущим профилям; старый PASS не наследуется."
+    },
+    {
+      "id": "U19",
+      "prs": [
+        8,
+        10
+      ],
+      "meaning": "Standing: зарегистрировано/реализовано/проверено/принято/понято — независимые статусы",
+      "source_path": "trace/catalog/00-standing.yaml",
+      "recommendation": "Git merge и закрытие PR не повышают статус продукта или C1 до C2.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_REFERENCE",
+      "pre_main_destination": "integration/reference/trace/catalog/00-standing.yaml",
+      "status": "PRESERVED_REFERENCE",
+      "destination": "integration/reference/trace/catalog/00-standing.yaml",
+      "implementation_note": "Git merge и закрытие PR не повышают статус продукта или C1 до C2."
+    },
+    {
+      "id": "U20",
+      "prs": [
+        9
+      ],
+      "meaning": "Реальные close-пути и диапазоны тех же случаев; один вопрос в двух видах",
+      "source_path": "design/sozvezdiya-24/src/graph.js",
+      "recommendation": "Перенести принцип на главный вид продолжений; для G/M использовать собственные пути, а не поиск только в F.M.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PARTIAL_ADAPTATION",
+      "pre_main_destination": "design/sozvezdiya-24/src/integration.js",
+      "status": "ADAPTED_TO_OWN_CONTINUATION_SUPPORT",
+      "destination": "design/sozvezdiya-24/src/continuations.js",
+      "implementation_note": "Actual per-case paths include M outside F; their revision, outcome and number share one release. No new default family-path layout."
+    },
+    {
+      "id": "U21",
+      "prs": [
+        9
+      ],
+      "meaning": "Окончательная добавка NOW и первое время обновления — разные маргинальные исходы",
+      "source_path": "design/sozvezdiya-24/src/graph.js",
+      "recommendation": "Не собирать из двух медиан координату цели или синтетический маршрут.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_DESIGN_PRINCIPLE",
+      "pre_main_destination": "meaning/lens/2026-10-14-integration/04-transition-synthesis.md",
+      "status": "PRESERVED_DESIGN_PRINCIPLE",
+      "destination": "meaning/lens/2026-10-14-integration/04-transition-synthesis.md",
+      "implementation_note": "Не собирать из двух медиан координату цели или синтетический маршрут."
+    },
+    {
+      "id": "U22",
+      "prs": [
+        9
+      ],
+      "meaning": "Hover временный, pin сохраняет вопрос через M5 и смену представления",
+      "source_path": "meaning/20-put-semi-kandidat.md",
+      "recommendation": "Перенести совместимую механику выбранной цели, не всю сводку и не её предположение M subset F.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "SOURCE_NOT_YET_IN_CURRENT_TREE",
+      "pre_main_destination": null,
+      "status": "ADAPTED_FIXED_TARGET_CONTINUITY",
+      "destination": "design/sozvezdiya-24/src/continuations.js",
+      "implementation_note": "Fixed target survives new cuts and representation changes. Residual question is explicit; historical proposal text restored."
+    },
+    {
+      "id": "U23",
+      "prs": [
+        10
+      ],
+      "meaning": "FOM: основы, фасеты, термины, обратное влияние и представление",
+      "source_path": "trace/fom.py",
+      "recommendation": "Не сокращать. Добавить точные bindings нового вопроса/набора/кадра в существующий контур без ещё одной онтологии.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "FROZEN_REFERENCE_AND_SCOPED_RUNTIME",
+      "pre_main_destination": "integration/reference/trace/fom.py",
+      "status": "FROZEN_REFERENCE_AND_SCOPED_RUNTIME",
+      "destination": "integration/reference/trace/fom.py",
+      "implementation_note": "Не сокращать. Добавить точные bindings нового вопроса/набора/кадра в существующий контур без ещё одной онтологии."
+    },
+    {
+      "id": "U24",
+      "prs": [
+        10
+      ],
+      "meaning": "Полная исследовательская карта отделена от нормы и экранной композиции",
+      "source_path": "trace/catalog/60-facets.yaml",
+      "recommendation": "Фасеты проверяют роли и совместимость; не превращаются в меню обязательных панелей.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_REFERENCE",
+      "pre_main_destination": "integration/reference/trace/catalog/60-facets.yaml",
+      "status": "PRESERVED_REFERENCE",
+      "destination": "integration/reference/trace/catalog/60-facets.yaml",
+      "implementation_note": "Фасеты проверяют роли и совместимость; не превращаются в меню обязательных панелей."
+    },
+    {
+      "id": "U25",
+      "prs": [
+        12
+      ],
+      "meaning": "Q1 comparability: BASE_D как измерительный контроль, не продуктовый метод",
+      "source_path": "studies/q1_sopostavimost_2026_10_13/README.md",
+      "recommendation": "Сохранить протокол, контроль опоры/эпох и bounded result; не переносить вывод на другой вопрос или M5-сетку.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_RESEARCH",
+      "pre_main_destination": "studies/q1_sopostavimost_2026_10_13/README.md",
+      "status": "PRESERVED_RESEARCH",
+      "destination": "studies/q1_sopostavimost_2026_10_13/README.md",
+      "implementation_note": "Сохранить протокол, контроль опоры/эпох и bounded result; не переносить вывод на другой вопрос или M5-сетку."
+    },
+    {
+      "id": "U26",
+      "prs": [
+        13
+      ],
+      "meaning": "Сводка «Сегодня / По цене / Ориентир»: группировка по работе человека",
+      "source_path": "meaning/19-svodka-kandidat.md",
+      "recommendation": "Использовать краткие вопросы/связи, не переносить всю композицию и не скрывать принятые отношения.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PRESERVED_AS_ARCHITECTURE_SOURCE",
+      "pre_main_destination": null,
+      "status": "PRESERVED_DESIGN_SOURCE",
+      "destination": "meaning/19-svodka-kandidat.md",
+      "implementation_note": "Source text retained; proposed permanent summary composition not adopted."
+    },
+    {
+      "id": "U27",
+      "prs": [
+        9,
+        13
+      ],
+      "meaning": "Снятие условной геометрии при отсутствии опоры/загрузке/отзыве",
+      "source_path": "design/sozvezdiya-24/src/app.js",
+      "recommendation": "Обязательное условие нового слоя: отсутствие числа не оставляет убедительную графику.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "ADAPTED_ACTIVE",
+      "pre_main_destination": "design/sozvezdiya-24/src/app.js",
+      "status": "ADAPTED_ACTIVE",
+      "destination": "design/sozvezdiya-24/src/app.js",
+      "implementation_note": "Обязательное условие нового слоя: отсутствие числа не оставляет убедительную графику."
+    },
+    {
+      "id": "U28",
+      "prs": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "meaning": "Холодное чтение решений и происхождения после закрытия исходных PR",
+      "source_path": "meaning/07-cepochka-reshenij.md",
+      "recommendation": "Создать единый текущий вход, сохранив источники и статусы; не копировать чужие AGENTS/DECISIONS как новые решения.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "INCOMPLETE_TRANSFER_INDEX",
+      "pre_main_destination": "meaning/07-cepochka-reshenij.md",
+      "status": "CURRENT_ENTRY_AND_PROVENANCE_INDEX",
+      "destination": "integration/DELIVERY.md",
+      "implementation_note": "Chain, exact source heads, 30 dispositions, sources and tests available from main entry; old proposals retain standing."
+    },
+    {
+      "id": "U29",
+      "prs": [
+        6
+      ],
+      "meaning": "Доказательства пилота и воспроизводимость на чистом checkout",
+      "source_path": "studies/q1_pilot_2026_10_12/README.md",
+      "recommendation": "Сохранить оригинальные результаты с их SHA и добавить текущую проверку; старый PASS не относится автоматически к интеграции.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "SOURCE_NOT_YET_TRANSFERRED",
+      "pre_main_destination": null,
+      "status": "PRESERVED_REPRODUCTION_EVIDENCE",
+      "destination": "studies/q1_pilot_2026_10_12/README.md",
+      "implementation_note": "Research package restored. The declined reading check is archival only, not reactivated."
+    },
+    {
+      "id": "U30",
+      "prs": [
+        7,
+        9
+      ],
+      "meaning": "Операторский запуск должен предъявлять текущую сборку, не просто живой порт",
+      "source_path": "start-dr-lab-otsyuda.ps1",
+      "recommendation": "Сохранить автоматический поиск базы и добавить проверку версии загруженного процесса; рабочий итог имеет один основной вход, временные стенды не заменяют его.",
+      "standing": "IMPLEMENTATION_OR_PRESERVED_SOURCE_NOT_BLANKET_PRODUCT_ACCEPTANCE",
+      "pre_main_status": "PARTIAL_OPERATIONAL_GUARD",
+      "pre_main_destination": "start-dr-lab-integration.ps1",
+      "status": "ADAPTED_LOADED_SOURCE_AND_DATA_GUARD",
+      "destination": "start-dr-lab.ps1",
+      "implementation_note": "Launcher compares loaded source/data versions and workspace; current process and one local port are verified."
+    }
+  ],
+  "completion_rule": "Close old PRs as individually integrated/preserved/deferred only after the tested integrated result reaches main; retain original branches and PR history."
+}

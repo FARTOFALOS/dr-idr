@@ -65,6 +65,8 @@ def check_frame(packet, cases, today, grid):
     if sel["full_path_compared"] or sel["compared"] != "POSITION_AT_COMMON_CLOCK":
         errors.append(("comparison", "position has been presented as whole-path compatibility"))
     q = packet["question"]
+    if digest({k: v for k, v in q.items() if k != "id"}) != q["id"] or packet["context"]["question_id"] != q["id"]:
+        errors.append(("question", "question identity differs from its declared event, remainder or condition"))
     by_id = {c["id"]: c for c in cases}
     expected_risk = []
     # This independent reference covers the ordinary and NO_VISIT residual question.
@@ -100,6 +102,18 @@ def check_frame(packet, cases, today, grid):
         errors.append(("estimate", "open supported phase lost its research result"))
     actual_today = _label(today, grid, t, t["first_close"], min(cut, t["last_close"]))
     state = packet["observed"]
+    expected_state = ("FACT_YES" if actual_today == "YES" else
+                      ("FACT_NO" if actual_today == "NO" else "UNKNOWN_FINAL") if cut >= t["last_close"] else
+                      "OPEN" if actual_today == "NO" else "OBSERVATION_GAP")
+    if state["status"] != expected_state or q["active"] != (expected_state == "OPEN"):
+        errors.append(("applicability", "fact/open/unknown state does not follow from the window and cut"))
+    if q["active"] and (q["first_close"] != max(t["first_close"], cut + 5) or q["last_close"] != t["last_close"]):
+        errors.append(("window", "published residual window differs from the unchanged target"))
+    required_no_visit = t["first_close"] <= cut < t["last_close"] and expected_state == "OPEN"
+    actual_no_visit = [x for x in q["conditions"] if x["kind"] == "WINDOW_NO_VISIT"]
+    expected_no_visit = [dict(kind="WINDOW_NO_VISIT",first_close=t["first_close"],last_close=cut)] if required_no_visit else []
+    if actual_no_visit != expected_no_visit:
+        errors.append(("condition", "residual no-visit condition was silently removed or changed"))
     if state["value"] != actual_today:
         errors.append(("fact", "target knowledge differs from observed closed prefix"))
     if state["status"] == "FACT_YES":

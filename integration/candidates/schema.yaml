@@ -75,7 +75,10 @@
     "LEGACY_SEM_V1": {},
     "LEGACY_CLASSIC": {},
     "LEGACY_RESEARCH_DASHBOARD": {},
-    "SERVICE": {}
+    "SERVICE": {},
+    "SC11_CONTINUATIONS_0_1": {
+     "description": "separate fixed-window continuation candidate, C1 only"
+    }
    }
   }
  }

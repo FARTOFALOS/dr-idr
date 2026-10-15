@@ -1,5 +1,22 @@
 # DR IDR — entry for agents
 
+## Implementation update · 2026-10-15
+
+Start with [the integrated working result](integration/DELIVERY.md) and the latest node of
+`meaning/07-cepochka-reshenij.md`. The dated 2026-10-07 baseline below remains the source of the protected
+BASE/NOW definitions. The current build adds a separate **Continuations** candidate to screen 24: fixed physical
+target/window, closed-M5 POS_GEO releases, real paths including cases outside F, explicit residual question and fact.
+It does not rematch F or replace final R/X. Accepted SC-1.1 still has 53 estimands; the separately proposed registry
+has 60. Implementation in main is not C2/C3 or operator perceptual acceptance. Full FOM/Trace are preserved references
+with explicit scoped runtime checks, not a claim of full catalog rebinding.
+
+The normal launcher starts `server.py --integration` on 8767; the ordinary default view remains the accepted map.
+It checks loaded source/data versions, replaces its own stale server, preserves an already open TradingView without
+9222, and supports `-HistoryOnly`. The historical base stops in 2025. Candidate toggles are independent.
+New checks: `tests/continuity24.py`, `continuations24.py`, `continuations_page.mjs`, `q1_prefix_metadata.py`,
+`q1_reveal.py`. Run them along with the existing required checks below. `integration/pr-dispositions.json` records
+the current fate of every source unit; old PR closure is not blanket adoption. No new ontology stack was added.
+
 You are entering a working trading tool, not a demo. Read this file fully, then the documents it points to, before
 changing anything. It is written so that an agent arriving cold (Claude Code, Codex, a designer agent) can work
 safely on the first try. State of this file: **2026-10-07, after design 24 and the machine contract were merged into

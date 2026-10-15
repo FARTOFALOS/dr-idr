@@ -37,6 +37,7 @@ def main():
     spec=yaml.safe_load((ROOT/'contract/schema/dr_lab_sc.yaml').read_text(encoding='utf-8'))
     proposal_schema=yaml.safe_load(subprocess.check_output(['git','-C',str(ROOT),'show','1412567:contract/schema/dr_lab_sc.yaml']).decode('utf-8'))
     changed_enums={k:v for k,v in proposal_schema['enums'].items() if v!=spec['enums'].get(k)}
+    changed_enums['SurfaceProfile']['permissible_values']['SC11_CONTINUATIONS_0_1']={'description':'separate fixed-window continuation candidate, C1 only'}
     dump(HERE/'schema.yaml',dict(id='https://dr-lab.local/candidates',name='dr_lab_candidates',
         imports=['../../contract/schema/dr_lab_sc'],enums=changed_enums))
     builder.SCHEMA=HERE/'schema.yaml'; builder.REG_DIR=HERE/'registry'; builder.OUT=HERE/'build'

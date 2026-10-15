@@ -8,6 +8,9 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 import importlib
 import contract   # DR-LAB-SC-1.1: the semantic gate (stdlib; reads contract/build, see lab/contract.py)
+import runtime_identity
+START_SOURCE_REVISION=runtime_identity.current()
+START_DATA_REVISION=runtime_identity.data_revision()
 engine = None
 
 ROOT = Path(__file__).resolve().parent
@@ -71,7 +74,9 @@ class Handler(SimpleHTTPRequestHandler):
                     packet=integration_audit.audit(packet,dict(instrument=params.get('instrument','NQ'),session=params.get('session','RDR'),date=date,scope=params.get('scope','weekday'),view=params.get('view','auto')))
                 return self.json(packet)
             if url.path == '/api/health':
-                return self.json({'status':'ok','data_kind':DATA_KIND,'version':engine.VERSION,'integration':INTEGRATION,'workspace':str(ROOT.parent)})
+                return self.json({'status':'ok','data_kind':DATA_KIND,'version':engine.VERSION,'integration':INTEGRATION,'workspace':str(ROOT.parent),
+                                  'source_revision':START_SOURCE_REVISION,'current_source_revision':runtime_identity.current(),
+                                  'data_revision':START_DATA_REVISION,'current_data_revision':runtime_identity.data_revision()})
             if url.path == '/api/query':
                 return self.json(engine.query(params))
             if url.path == '/api/scene':
@@ -165,6 +170,18 @@ class Handler(SimpleHTTPRequestHandler):
         # only POST of this read-only server, it changes nothing
         url = urlparse(self.path)
         try:
+            if url.path == '/api/integration/continuations':
+                if not INTEGRATION: return self.json(dict(status='INTEGRATION_DISABLED'),403)
+                if START_SOURCE_REVISION!=runtime_identity.current() or START_DATA_REVISION!=runtime_identity.data_revision():
+                    return self.json(dict(status='SOURCE_CHANGED',message='Сборка или история обновилась: откройте DR Lab заново'),409)
+                n=int(self.headers.get('Content-Length') or 0)
+                if n>100_000: raise ValueError('body too large')
+                req=json.loads(self.rfile.read(n).decode('utf-8') or '{}')
+                import continuations24
+                value=continuations24.response(req)
+                if START_SOURCE_REVISION!=runtime_identity.current() or START_DATA_REVISION!=runtime_identity.data_revision():
+                    return self.json(dict(status='SOURCE_CHANGED',message='Во время расчёта обновились исходники или история'),409)
+                return self.json(value)
             if url.path != '/api/d24/verify':
                 return self.json({'error': 'Неизвестный запрос'}, 404)
             n = int(self.headers.get('Content-Length') or 0)

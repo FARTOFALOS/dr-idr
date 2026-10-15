@@ -1,4 +1,4 @@
-"""Executable fixed-target candidate; no HTTP/UI publication and no issue-store writes.
+"""Fixed-target calculation core; publication lives in continuations24, no issue-store writes.
 
 F stays immutable. G -> clock-eligible -> POS_GEO is shared across regions. A
 residual question may additionally require WINDOW_NO_VISIT; its risk set is named,
@@ -41,8 +41,8 @@ class Frame:
     def __post_init__(self):
         if self.block not in ("ODR", "RDR") or self.direction not in (-1, 1):
             raise ValueError("candidate supports original ODR/RDR only")
-        if self.date > "2025-12-31" or ratio(self.width) <= 0:
-            raise ValueError("invalid frame / closed 2026 boundary")
+        if ratio(self.width) <= 0:
+            raise ValueError("invalid frame")
 
 
 @dataclass(frozen=True)
@@ -195,13 +195,14 @@ def original_record(family):
 def history_revision(cases, grid, cutoff):
     h = hashlib.sha256(np.asarray(grid, dtype=np.int64).tobytes())
     for c in sorted((c for c in cases if c["date"] < cutoff), key=lambda c: c["id"]):
-        h.update(digest([c["id"], c["date"], c["a"], c["w"], c.get("oppv")]).encode())
+        h.update(digest([c["id"], c["date"], c["a"], c["w"], c.get("oppv"),
+                         c.get("side"), c.get("edge_ticks")]).encode())
         h.update(np.asarray(c["P"], dtype=np.float64).tobytes())
     return h.hexdigest()
 
 
 def release(cases, today, grid, target, cut, original, sequence=None):
-    if cut % 5 or cut < target.created_at or cut < target.frame.activation or cut > target.frame.end:
+    if cut % 5 or cut < target.created_at or cut < target.frame.activation:
         raise ValueError("closed M5 cut outside original block")
     if target.frame.date != today["date"] or (today["a"] >= 0 and grid[today["a"]] != target.frame.activation):
         raise ValueError("target belongs to another scene")

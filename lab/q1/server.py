@@ -170,7 +170,13 @@ def outcome_view(rid, attach):
     if outs:                                     # the target's later candles exist for the page only once an outcome is on record
         i = T.row(pl["target"]["date"])
         cut_min = T.grid[pl["cut"]["index"]]
-        out["after"] = [r for r in T.provider.physical(T.keys[i]) if r[0] + 5 > cut_min]
+        expected=(outs[-1].get('payload',{}).get('basis') or {}).get('target_rows_digest')
+        if expected and T.provider.session_digest(T.keys[i]) == expected:
+            out["after"] = [r for r in T.provider.physical(T.keys[i]) if r[0] + 5 > cut_min]
+            out['reveal_status']='SOURCE_IDENTICAL'
+        else:
+            out['reveal_status']='SOURCE_REVISION_MISMATCH'
+            out['message']='Свечи исхода изменились: сохранённый исход остаётся прежним, текущий путь не раскрыт'
     return out
 
 

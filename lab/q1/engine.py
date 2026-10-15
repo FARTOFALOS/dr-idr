@@ -47,7 +47,7 @@ from q1 import passport      # noqa: E402
 from q1.store import ISSUE_KIND, canonical, issue_id, outcome_id, sha, target_id  # noqa: E402
 
 QUESTION = "Q1-PILOT-0.2/REACH-L"
-ENGINE = "q1-engine-1"
+ENGINE = "q1-engine-2-prefix-only"
 BLOCKS = ("ODR", "RDR")
 INSTRUMENTS = ("NQ", "ES", "YM")
 LEVELS = {"0": (0, 1), "-1/2": (-1, 2), "-7/10": (-7, 10)}
@@ -164,7 +164,9 @@ class BaseProvider:
         than the cut."""
         bars = self.bars(k)
         keep = bars[bars[:, 0] - self.shift <= cut_minute]
-        return sha(canonical(["prefix", self.inst, self._fields(k, drop=("fail",)), int(cut_minute)]) + keep.tobytes())
+        known=("date","weekday","session","dr_high","dr_low","idr_high","idr_low","open","close","box","conf","side")
+        fields={f:self.B['boxes'][k][f] for f in known if f in self.B['boxes'][k]}
+        return sha(canonical(["prefix-v2", self.inst, fields, int(cut_minute)]) + keep.tobytes())
 
     def domain_digest(self, date):
         """Every session of the block, confirmed or not, of a strictly earlier trading date: what a parent may use."""
@@ -218,7 +220,8 @@ class SyntheticProvider:
         return sha(canonical(["session", self._fields(k)]) + np.ascontiguousarray(self.cases[k]["P"]).tobytes())
 
     def prefix_digest(self, k, c, cut_minute):
-        return sha(canonical(["prefix", self._fields(k, drop=("fail",)), int(cut_minute)])
+        fields={f:self.cases[k][f] for f in ("id","date","weekday","side","win","a","w","oppv") if f in self.cases[k]}
+        return sha(canonical(["prefix-v2", fields, int(cut_minute)])
                    + np.ascontiguousarray(self.cases[k]["P"][:c + 1]).tobytes())
 
     def domain_digest(self, date):

@@ -1,5 +1,8 @@
 {
  "case_sets": {
+  "CS:C-G": "HISTORICAL_UNIVERSE",
+  "CS:C-POS": "MATCHED_AT_CUT",
+  "CS:C-RISK": "MATCHED_AT_CUT",
   "CS:F-BREAK-1": "BASE_FAMILY",
   "CS:F-BREAK-ALL-1": "BASE_FAMILY",
   "CS:F-CONF-1": "BASE_FAMILY",
@@ -531,6 +534,18 @@
     "CS:F-BREAK-ALL-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:C-WINDOW": {
+   "measure": "SHARE",
+   "params": [
+    "target",
+    "cut"
+   ],
+   "profile": "PROFILE:CONTINUATIONS-24",
+   "q4": [
+    "CS:C-RISK"
+   ],
+   "unknown": "POINT_AMONG_KNOWN_WITH_BOUNDS"
   },
   "EST:K-ARRIVE": {
    "measure": "SHARE",
@@ -2036,6 +2051,64 @@
    },
    "value_form": "POINT"
   },
+  "EST:C-WINDOW": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:C-WINDOW",
+   "labels": {
+    "absent": {
+     "ANY": "Ответ не опубликован"
+    },
+    "bounds": {
+     "ANY": "{lo}–{hi}"
+    },
+    "comparison": {
+     "ANY": "Близкое положение · общие часы"
+    },
+    "extension": {
+     "ANY": "Закреплённое/остаточное окно: калибровка отдельно"
+    },
+    "fact": {
+     "ANY": "Посещение установлено в {time}"
+    },
+    "head": {
+     "ANY": "Продолжения"
+    },
+    "new_question": {
+     "ANY": "Та же цель · новый остаточный вопрос"
+    },
+    "original": {
+     "ANY": "Исходная F"
+    },
+    "paths": {
+     "ANY": "Действительные пути опоры"
+    },
+    "pending": {
+     "ANY": "Сопоставляю историю…"
+    },
+    "point": {
+     "ANY": "{pct}"
+    },
+    "residual": {
+     "ANY": "Остаток · до этого не посещали"
+    },
+    "resolved": {
+     "ANY": "Вопрос разрешён фактом"
+    },
+    "same_question": {
+     "ANY": "Та же цель и будущее окно"
+    },
+    "selected": {
+     "ANY": "Сопоставлялось положение, не полный путь"
+    },
+    "unknown": {
+     "ANY": "Неизвестно"
+    },
+    "window": {
+     "ANY": "Закреплённое окно"
+    }
+   },
+   "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN"
+  },
   "EST:K-ARRIVE": {
    "claim_class": "ConditionalDescriptiveClaim",
    "id": "CF:K-ARRIVE",
@@ -2451,5 +2524,5 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "d2808fe166caa1fc"
+ "registry_hash": "a06ad75bcd93e033"
 }

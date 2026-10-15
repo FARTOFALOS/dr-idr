@@ -1,0 +1,580 @@
+{
+ "registry_part": "continuations-candidate",
+ "profiles": [
+  {
+   "id": "PROFILE:CONTINUATIONS-24",
+   "version": "1.0",
+   "sc_ref": [
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "title_ru": "Продолжения: закреплённая область и окно",
+   "edition": "DR-LAB-CANDIDATES-1",
+   "profile_status": "ACTIVE",
+   "source_refs": [
+    "SRC:CANDIDATES-1"
+   ],
+   "note": "CANDIDATE FOR LOCAL REVIEW; fixed physical target, common-clock POS_GEO and explicit residual no-visit condition. UI acceptance and predictive admission pending."
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q:C-WINDOW",
+   "version": "1",
+   "sc_ref": [
+    "T0",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "text_ru": "Посещали ли закреплённую область в оставшихся M5 её абсолютного окна?",
+   "scene_ru": "Одна физическая цель, текущий известный префикс, самостоятельный POS_GEO и явное условие остатка; не доля исходной F"
+  }
+ ],
+ "estimands": [
+  {
+   "id": "EST:C-WINDOW",
+   "version": "1.0",
+   "sc_ref": [
+    "T1",
+    "§12.6",
+    "V2.1"
+   ],
+   "grounds": "PROPOSAL",
+   "question": "Q:C-WINDOW",
+   "q1_formalised_part_ru": "доля уникальных случаев POS_GEO, чьи действительные M5-диапазоны посетили фиксированную полосу в оставшихся M5 абсолютного окна; внутри окна — при явном условии известного непосещения его прошедшей части",
+   "q2_target": "FIXED_HISTORICAL_SET",
+   "q3_unit": "SESSION_AT_CUT",
+   "q4_case_set": [
+    "CS:C-RISK"
+   ],
+   "q4_denominator": "N_MATCH_AT_CUT",
+   "q5_outcome": "OUT:C-WINDOW",
+   "q5_region": "REG:C-BAND",
+   "q6_time_ru": "только закрытые M5 после cut и внутри закреплённого абсолютного окна; собственная активация каждого аналога уже наступила",
+   "q6_cut": "CUT:NOW-COMMON-CLOCK-1",
+   "q7_measure": "SHARE",
+   "q8_unknown": "POINT_AMONG_KNOWN_WITH_BOUNDS",
+   "q8_weights": "NONE",
+   "q8_order_ru": "YES/NO/UNKNOWN; n_total и n_known не меньше 20; при UNKNOWN первичны границы по всему набору, иначе точная доля; не прогноз сегодняшнего исхода",
+   "parameters": [
+    {
+     "name": "target",
+     "parameter_kind": "EVENT",
+     "meaning_ru": "неизменная физическая область, исходная рамка и абсолютное окно"
+    },
+    {
+     "name": "cut",
+     "parameter_kind": "CUT",
+     "meaning_ru": "закрытая M5 текущего знания"
+    }
+   ],
+   "profile": "PROFILE:CONTINUATIONS-24"
+  }
+ ],
+ "estimators": [
+  {
+   "id": "ESTR:C-WINDOW",
+   "version": "1.0",
+   "sc_ref": [
+    "V0",
+    "V2.1",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "estimands": [
+    "EST:C-WINDOW"
+   ],
+   "rule": "POINT_AMONG_KNOWN_AND_BOUNDS",
+   "unknown_handling_ru": "точка — дошли / (дошли + не дошли); границы [дошли / n; (дошли + неизвестно) / n]; неизвестное остаётся в n и не превращается в «не дошли»; без известных исходов точки нет",
+   "rounding_ru": "точные счёты; проценты после деления, один знак",
+   "implementations": [
+    "lab/continuity24.py::release"
+   ],
+   "reference_definition": "lab/contract.py::ref_continuation"
+  }
+ ],
+ "case_sets": [
+  {
+   "id": "CS:C-G",
+   "version": "1.0",
+   "sc_ref": [
+    "H1",
+    "H3",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "title_ru": "Подтверждённая история инструмента и блока",
+   "role": "HISTORICAL_UNIVERSE",
+   "key_fields": [
+    "INSTRUMENT",
+    "BLOCK",
+    "DATE_BEFORE_TARGET"
+   ],
+   "activation_kind": "CONFIRMATION",
+   "weekday_scope": "ALL_WEEKDAYS",
+   "history_rule": "G: strictly earlier dates <=2025, same instrument/block, both directions/windows in own directed IDR frame; POS: own complete alive prefix at common cut, close within 1/4 IDR; RISK: explicit question conditions only, no future labels in selection",
+   "condition_ru": "Подтверждённая история инструмента и блока; сравнивалось положение, не полный путь; условие непосещения части окна объявлено отдельно",
+   "condition_availability": "PREFIX_AT_CUT",
+   "live_use": "PERMITTED",
+   "undetermined_rule": "Unknown outcome stays in the support; fewer than 20 total or known outcomes withholds number and conditional geometry",
+   "profile": "PROFILE:CONTINUATIONS-24",
+   "source_refs": [
+    "SRC:CANDIDATES-1"
+   ]
+  },
+  {
+   "id": "CS:C-POS",
+   "version": "1.0",
+   "sc_ref": [
+    "H1",
+    "H3",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "title_ru": "Близкое положение на общих часах",
+   "role": "MATCHED_AT_CUT",
+   "parent": [
+    "CS:C-G"
+   ],
+   "key_fields": [
+    "INSTRUMENT",
+    "BLOCK",
+    "DATE_BEFORE_TARGET"
+   ],
+   "activation_kind": "CONFIRMATION",
+   "weekday_scope": "ALL_WEEKDAYS",
+   "history_rule": "G: strictly earlier dates <=2025, same instrument/block, both directions/windows in own directed IDR frame; POS: own complete alive prefix at common cut, close within 1/4 IDR; RISK: explicit question conditions only, no future labels in selection",
+   "condition_ru": "Близкое положение на общих часах; сравнивалось положение, не полный путь; условие непосещения части окна объявлено отдельно",
+   "condition_availability": "PREFIX_AT_CUT",
+   "live_use": "PERMITTED",
+   "comparison": "CMP:C-POS",
+   "undetermined_rule": "Unknown outcome stays in the support; fewer than 20 total or known outcomes withholds number and conditional geometry",
+   "profile": "PROFILE:CONTINUATIONS-24",
+   "source_refs": [
+    "SRC:CANDIDATES-1"
+   ]
+  },
+  {
+   "id": "CS:C-RISK",
+   "version": "1.0",
+   "sc_ref": [
+    "H1",
+    "H3",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "title_ru": "Опора конкретного остаточного вопроса",
+   "role": "MATCHED_AT_CUT",
+   "parent": [
+    "CS:C-POS"
+   ],
+   "key_fields": [
+    "INSTRUMENT",
+    "BLOCK",
+    "DATE_BEFORE_TARGET"
+   ],
+   "activation_kind": "CONFIRMATION",
+   "weekday_scope": "ALL_WEEKDAYS",
+   "history_rule": "G: strictly earlier dates <=2025, same instrument/block, both directions/windows in own directed IDR frame; POS: own complete alive prefix at common cut, close within 1/4 IDR; RISK: explicit question conditions only, no future labels in selection",
+   "condition_ru": "Опора конкретного остаточного вопроса; сравнивалось положение, не полный путь; условие непосещения части окна объявлено отдельно",
+   "condition_availability": "PREFIX_AT_CUT",
+   "live_use": "PERMITTED",
+   "comparison": "CMP:C-POS",
+   "undetermined_rule": "Unknown outcome stays in the support; fewer than 20 total or known outcomes withholds number and conditional geometry",
+   "profile": "PROFILE:CONTINUATIONS-24",
+   "source_refs": [
+    "SRC:CANDIDATES-1"
+   ]
+  }
+ ],
+ "outcomes": [
+  {
+   "id": "OUT:C-WINDOW",
+   "version": "1",
+   "sc_ref": [
+    "P0.2",
+    "§12.4/B-VISIT",
+    "K18"
+   ],
+   "grounds": "PROPOSAL",
+   "title_ru": "Посещение выбранной области в оставшейся части абсолютного окна",
+   "projection": "BAND_VISIT",
+   "event": "VISIT",
+   "contribution": "ONE_BINARY_VOTE",
+   "horizon_start": "COMMON_CUT_EXCLUSIVE",
+   "horizon_end": "BLOCK_END_CLOSE_INCLUSIVE",
+   "tie_rule": "ONE_VOTE_PER_CASE",
+   "components": [
+    "EXISTENCE"
+   ],
+   "uses_case_future_as_label": true,
+   "reference_definition": "lab/contract.py::ref_continuation",
+   "implementations": [
+    "lab/continuity24.py::visit"
+   ],
+   "statuses": "Within (cut, block end] intersected with REG:C-BAND absolute window: YES if an actual M5 range overlaps; NO if all required M5 known without overlap; UNKNOWN otherwise; first time is not inferred inside M5",
+   "source_refs": [
+    "SRC:CANDIDATES-1"
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "id": "REG:C-BAND",
+   "version": "1",
+   "sc_ref": [
+    "P2",
+    "K17"
+   ],
+   "grounds": "PROPOSAL",
+   "region_kind": "JOINT_PRICE_TIME",
+   "bounds_rule": "Directed [low,high) fixed through the original physical IDR frame; absolute window of complete M5, first_close..last_close inclusive. Moving cut clips the remaining bars, never translates price or window.",
+   "origin": "OPERATOR_SELECTION"
+  }
+ ],
+ "claim_forms": [
+  {
+   "id": "CF:C-WINDOW",
+   "version": "1.0",
+   "sc_ref": [
+    "C1",
+    "§12.6",
+    "K33"
+   ],
+   "grounds": "PROPOSAL",
+   "estimand": "EST:C-WINDOW",
+   "claim_class": "ConditionalDescriptiveClaim",
+   "subject_ru": "сессии семьи, которые в этот же час стояли там же и ещё не были у места",
+   "condition_ru": "Опора конкретного остаточного вопроса; сравнивалось положение, не полный путь; условие непосещения части окна объявлено отдельно",
+   "statement_ru": "На срезе {cut}, среди {n} исторических случаев с близким положением и указанным условием {yes} посетили область в оставшемся окне {window}; {unknown} исходов неизвестны.",
+   "labels": [
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "head",
+     "text_ru": "Продолжения"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "comparison",
+     "text_ru": "Близкое положение · общие часы"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "window",
+     "text_ru": "Закреплённое окно"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "original",
+     "text_ru": "Исходная F"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "residual",
+     "text_ru": "Остаток · до этого не посещали"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "same_question",
+     "text_ru": "Та же цель и будущее окно"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "new_question",
+     "text_ru": "Та же цель · новый остаточный вопрос"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "fact",
+     "text_ru": "Посещение установлено в {time}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "resolved",
+     "text_ru": "Вопрос разрешён фактом"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "unknown",
+     "text_ru": "Неизвестно"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "absent",
+     "text_ru": "Ответ не опубликован"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "pending",
+     "text_ru": "Сопоставляю историю…"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "paths",
+     "text_ru": "Действительные пути опоры"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "selected",
+     "text_ru": "Сопоставлялось положение, не полный путь"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "extension",
+     "text_ru": "Закреплённое/остаточное окно: калибровка отдельно"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "point",
+     "text_ru": "{pct}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "bounds",
+     "text_ru": "{lo}–{hi}"
+    }
+   ],
+   "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN",
+   "price_transfer": "M0_TODAY_EDGE",
+   "forbidden_readings_ru": [
+    "шанс сделки сегодня",
+    "совпадение полного пути",
+    "доля исходной F",
+    "один прогноз с неизменной опорой"
+   ],
+   "acceptance": "PROPOSED_BY_EXECUTOR",
+   "note": "Operator 2026-10-12: integrate the verified Q1 mechanism into screen 24, «не подменяя существующие показатели BASE/NOW». The words follow the curator's trader wording (KADR-1.1 §10: «отсюда до −0,5 доходили 41 из 100», «уже дошли в 11:20», «мало сессий: n=…») and the pilot's passport; they are the executor's, for his acceptance"
+  }
+ ],
+ "surfaces": [
+  {
+   "id": "API:/api/integration/continuations",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "route": "/api/integration/continuations",
+   "surface_profile": "SC11_CONTINUATIONS_0_1",
+   "definitions": "SRC:CANDIDATES-1",
+   "estimands": [
+    "EST:C-WINDOW"
+   ],
+   "marking": "separate proposed ContractEnvelope; no C2/C3"
+  }
+ ],
+ "encodings": [
+  {
+   "id": "FE:C.0",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.context.{cut,today_w,today_close,tick_num,tick_den}",
+   "field_kind": "PREFIX_STATE",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.1",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.context.conditions[*].{first_close,last_close}",
+   "field_kind": "PARAMETER",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.2",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.today_prefix[*][*]",
+   "field_kind": "OBSERVATION",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.3",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.grid[*]",
+   "field_kind": "TIME",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.4",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.target.frame.{activation,end,direction}",
+   "field_kind": "STRATEGY_OBJECT",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.5",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.target.{first_close,last_close,created_at,window_open,window_close}",
+   "field_kind": "TIME",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.6",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.target.{low,high,physical_edges}[*]",
+   "field_kind": "PARAMETER",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.7",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.target.physical_edges[*][*]",
+   "field_kind": "PARAMETER",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.8",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.question.{first_close,last_close}",
+   "field_kind": "TIME",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.9",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.question.conditions[*].{first_close,last_close}",
+   "field_kind": "PARAMETER",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.10",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.observed.available_at",
+   "field_kind": "TIME",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.11",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.observed.witness_bar[*]",
+   "field_kind": "TIME",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.12",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.counts.{G,eligible,position,risk,in_F,outside_F}",
+   "field_kind": "SUPPORT_COUNT",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.13",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.support.{n_total,n_known,yes,no,unknown}",
+   "field_kind": "SUPPORT_COUNT",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.14",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.witnesses[*].{w,activation,direction,edge_ticks}",
+   "field_kind": "CASE_RECORD",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.15",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.witnesses[*].path[*][*]",
+   "field_kind": "CASE_RECORD",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.16",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "comparison.{entered,left}",
+   "field_kind": "SUPPORT_COUNT",
+   "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  }
+ ],
+ "comparisons": [
+  {
+   "id": "CMP:C-POS",
+   "version": "1.0",
+   "sc_ref": [
+    "H3",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "title_ru": "«отсюда» — ещё не были у места и стоят там же",
+   "alignment": "COMMON_SESSION_CLOCK",
+   "features": [
+    "eligible at t by the B0 rule of NOW-1.0 (lab/now24.py::series)",
+    "not yet at the place after the own confirmation: min low_u over (own confirmation, t] > L",
+    "u = the close of the M5 closing at t, in the case's own scale u = d (p - e) / w"
+   ],
+   "feature_availability": "PREFIX_AT_CUT",
+   "tolerance": "|u_hist - u_today| <= 1/4 inclusive, exact in integers: 4 |v_m w_t - v_t w_m| <= w_m w_t (lab/now24.py::_near); written down before the measurements (screens 21-22, PRE-24), never widened",
+   "frozen": true,
+   "weights": "NONE",
+   "source_refs": [
+    "SRC:Q1-PILOT",
+    "SRC:KADR-1.1",
+    "SRC:CODE-NOW24"
+   ]
+  }
+ ]
+}

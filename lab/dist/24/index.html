@@ -221,6 +221,12 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
 /* DR-LAB-SC-1.1: a violation of the machine contract (a withheld number, another registry, a mismatch with the reference) */
 .p24-sc{margin:0 0 8px;padding:5px 8px;border:1px solid rgba(242,54,69,.5);border-radius:5px;background:rgba(242,54,69,.08);color:#F2A0A6;font-size:11.5px;line-height:1.35;overflow-wrap:anywhere}
 .p24-arrblk .p21-sub { display: block; white-space: normal; }
+/* Fixed-target continuation candidate: controls stay in the existing passport window. */
+#mode [data-m="continuations"][hidden]{display:none}
+.c24-tools{display:flex;gap:5px;margin:5px 0 8px;flex-wrap:wrap}
+.c24-tools button{font:inherit;padding:4px 6px;background:var(--raised);border:1px solid var(--line2);border-radius:4px;color:var(--text)}
+.c24-case{display:block;font-size:12px;margin:8px 0}
+.c24-case select{display:block;width:100%;margin-top:4px;background:var(--raised);color:var(--text);border:1px solid var(--line2);padding:4px}
 
 </style>
 </head>
@@ -231,7 +237,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
   <div class="seg" id="sess"></div>
   <span class="lbl" id="date"></span>
   <span class="lbl version24">№ 24</span>
-  <div class="seg" id="mode"><button data-m="bounds">Границы хода</button><button data-m="path">Путь семьи</button></div>
+  <div class="seg" id="mode"><button data-m="bounds">Границы хода</button><button data-m="path">Путь семьи</button><button data-m="continuations" hidden>Продолжения</button></div>
   <div class="seg" id="ev"></div>
   <button type="button" id="areab" title="Выбрать область R мышью: цена или цена × время; R/X меняется вместе с текущим фокусом">▭ Область · R</button>
   <div class="sp"></div>

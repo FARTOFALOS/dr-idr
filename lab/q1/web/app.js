@@ -324,7 +324,9 @@ function outcomeText(o, end) {
 }
 
 async function openIssue(id, msg) {
+  const openedAt = S.seq;
   const r = await api("/api/q1/issue?id=" + id);
+  if(openedAt!==S.seq)return;
   if (r.status !== "OK") return drawer("Выпуск не найден", esc(id));
   const rec = r.record, pl = rec.payload, mt = rec.meta, t = pl.target;
   const same = pl.target.date === S.date && pl.target.instrument === S.inst && pl.target.block === S.block && pl.cut.index === S.cut && pl.target.level.name === S.level;
@@ -357,23 +359,30 @@ async function openIssue(id, msg) {
     $("issueMsg").innerHTML = m;
   };
   $("outc").onclick = async () => {
+    const token=S.seq;
     const x = await api("/api/q1/outcome", { id });
+    if(token!==S.seq||same&&(S.date!==t.date||S.inst!==t.instrument||S.block!==t.block||S.cut!==pl.cut.index||S.level!==t.level.name))return;
     let m = "";
     if (x.status === "REFUSED") m = `<span class="bad">Исход не присоединён: он посчитан на других данных префикса или цель к срезу уже решена (${esc(JSON.stringify(x.check))}).</span>`;
     else if (x.status === "CREATED") m = `<span class="ok">Исход записан отдельной записью; выпуск не изменился.</span>`;
     else if (x.status === "IDEMPOTENT") m = `Исход уже был записан; ничего не переписано.`;
     if (same && x.after) { S.reveal = { id, after: x.after, outcome: x.outcomes[x.outcomes.length - 1] }; drawChart(); }
+    if(x.reveal_status==='SOURCE_REVISION_MISMATCH'){S.reveal=null;drawChart();m=esc(x.message);}
     openIssue(id, m);
   };
   if (!same) $("goto").onclick = async () => {
     S.inst = t.instrument; S.block = t.block; S.date = t.date; S.cut = pl.cut.index; S.level = t.level.name; S.est = pl.estimator.id;
     await loadDates();
+    const token=S.seq;
     const x = await api("/api/q1/outcome?id=" + id);
+    if(token!==S.seq||S.date!==t.date||S.inst!==t.instrument||S.block!==t.block||S.cut!==pl.cut.index||S.level!==t.level.name)return;
     if (x.after) { S.reveal = { id, after: x.after, outcome: x.outcomes[x.outcomes.length - 1] }; drawChart(); }
     openIssue(id);
   };
   if (same && r.outcomes.length) {
     const x = await api("/api/q1/outcome?id=" + id);
+    if(openedAt!==S.seq||S.date!==t.date||S.inst!==t.instrument||S.block!==t.block||S.cut!==pl.cut.index||S.level!==t.level.name)return;
+    if(x.reveal_status==='SOURCE_REVISION_MISMATCH'){S.reveal=null;drawChart();}
     if (x.after) { S.reveal = { id, after: x.after, outcome: x.outcomes[x.outcomes.length - 1] }; drawChart(); }
   }
 }

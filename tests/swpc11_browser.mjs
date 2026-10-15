@@ -151,6 +151,24 @@ const STUBS = function (cfg) {
   // a rule: { match: substring, when?: url => bool, url?: url => url, delay?: ms, fail?: true, tamper?: (body, url, init) => body, once?: true }
   window.fetch = async (input, init) => {
     let url = String(input && input.url ? input.url : input);
+    // The integrated screen transports the same family/NOW children atomically. Inject the same
+    // faults into those real children; do not silently miss a fault because its old URL is unused.
+    if(url.includes('/api/integration/scene')){
+      const children=[];let request=url;
+      for(const [key,route] of [['family','/api/d24/family'],['now','/api/d24/now']]){
+        const alias=url.replace('/api/integration/scene',route);
+        const rule=T.rules.find(r=>alias.includes(r.match)&&(!r.when||r.when(alias))&&!(r.once&&r.used));
+        if(!rule)continue;rule.used=true;T.log.push([rule.name||rule.match,alias]);children.push({key,rule,alias});
+        if(rule.delay)await new Promise(ok=>setTimeout(ok,rule.delay));
+        if(rule.url)request=rule.url(alias).replace(route,'/api/integration/scene');
+      }
+      const response=await realFetch(request,init),body=await response.json();
+      for(const {key,rule,alias} of children){
+        if(rule.fail)body[key]={status:key==='now'?'ERROR':'error',message:'Локальный сервер не ответил'};
+        else if(rule.tamper&&body[key])body[key]=rule.tamper(body[key],alias,init);
+      }
+      return new Response(JSON.stringify(body),{status:response.status,headers:{'Content-Type':'application/json'}});
+    }
     const rule = T.rules.find(r => url.includes(r.match) && (!r.when || r.when(url)) && !(r.once && r.used));
     if (!rule) return realFetch(input, init);
     rule.used = true;
@@ -223,7 +241,7 @@ const HELPERS = function () {
       const t0 = Date.now();
       for (;;) {
         D.render(true);
-        const c = D.cur(), idle = D.A.pending.size === 0 && D.A.nowPending.size === 0 && !D.A.busy;
+        const c = D.cur(), scene=D.integration?.(), idle = D.A.pending.size === 0 && D.A.nowPending.size === 0 && !D.A.busy && (!scene?.enabled || !scene.pending.size);
         if (idle && (c.F || !fam(c)) && Date.now() - t0 > 250) break;
         if (idle && !c.F && fam(c) && Date.now() - t0 > 1500) break;
         if (Date.now() - t0 > maxMs) break;

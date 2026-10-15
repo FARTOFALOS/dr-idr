@@ -1,2 +1,5 @@
 # Frozen source proposal keeps its intentional Markdown hard line breaks and pinned bytes.
 integration/candidates/SC11-proposal.md whitespace=-blank-at-eol
+meaning/lens/2026-10-13-semantic-architecture/01-DR-LAB-SEMANTIC-ARCHITECTURE-0.1.md whitespace=-blank-at-eol
+start-dr-lab.ps1 -text whitespace=cr-at-eol
+start-dr-lab-integration.ps1 -text whitespace=cr-at-eol

@@ -1,14 +1,14 @@
   // One publication scene; accepted SC11 remains the registry of BASE/NOW. Review profiles have their own edition.
   const ICFG = window.DR_INTEGRATION || { enabled: false }, REVIEW = ICFG.registry;
-  const TRIAL = { pre: false, arrive: false, paths: false };
+  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled };
   if (ICFG.enabled) for (const k of (new URLSearchParams(location.hash.slice(1)).get('trial') || '').split(',')) if (k in TRIAL) TRIAL[k] = true;
   if (ICFG.enabled) window.addEventListener('hashchange',()=>location.reload());
-  const IS = { key: null, packet: null, pending: new Set(), cache: new Map(), error: null, discarded: 0, committed: 0, selection: null };
+  const IS = { key: null, packet: null, pending: new Set(), cache: new Map(), error: null, discarded: 0, committed: 0, selection: null, epoch: 0 };
   function sceneRequest() {
     const D = day(), obs = st.rp != null ? st.rp : NOW, s = sess(D, st.session, obs, st.rp == null);
     const cut = Math.floor(obs / 5) * 5, trials = ['pre', 'arrive'].filter(k => TRIAL[k]);
     return { D, s, cut, view: wantView(s), trials,
-      key: [A.inst, A.src, A.src === 'hist' ? A.date : D.iso, st.session, cut, wantView(s), st.scope, trials.join(',')].join('|') };
+      key: [IS.epoch,A.inst, A.src, A.src === 'hist' ? A.date : D.iso, st.session, cut, wantView(s), st.scope, trials.join(',')].join('|') };
   }
   const intentContext = ctx => [A.inst, ctx.D.iso, ctx.s.k, st.scope, ctx.F && ctx.F.r.family_id].join('|');
   function scenePacket() { const q = sceneRequest(); return IS.key === q.key ? IS.packet : null; }
@@ -36,7 +36,7 @@
           child.status!=='ok'||q.s.status==='waiting'&&child.key?.cut===q.cut&&child.key?.scope===st.scope;
         if(!valid)r.candidates[name]={status:'CONTEXT_MISMATCH',message:'Кандидатный ответ относится к другому состоянию'};
       }
-      fam._fk = fk; fam._ctx = 'scene|' + r.context.id;
+      fam._fk = fk; fam._ctx = 'scene|' + r.context.id + '|' + (A.respSeq = (A.respSeq || 0) + 1);
       A.fams.set(fk, fam);
       if (r.now) { r.now._ctx = fam._ctx + '|now'; A.now.set(fk + '|' + q.cut, r.now); }
       for (const k of ['pre', 'arrive']) if (r.candidates[k]) r.candidates[k]._ctx = fam._ctx + '|' + k;
@@ -178,7 +178,7 @@
   function integrationSettings() {
     if (!ICFG.enabled) return '';
     return '<details class="cgd"><summary class="cg">Испытание кандидатов</summary>' +
-      [['pre', 'История до подтверждения'], ['arrive', 'Отсюда до места · Q1'], ['paths', 'Связанные пути в нижнем окне']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
+      [['pre', 'История до подтверждения'], ['arrive', 'Отсюда до места · Q1'], ['paths', 'Связанные пути в нижнем окне'], ['continuations', 'Продолжения · закреплённое окно']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
       '<button type="button" id="auditScene">Проверить происхождение и опору</button><div id="auditResult" class="p21-note"></div></details>';
   }
   async function auditScene() {
@@ -194,6 +194,7 @@
   }
   function setTrial(k, on) {
     TRIAL[k] = !!on; IS.key = null; IS.packet = null; IS.error = null;
+    if(k==='continuations'&&!on){CS.seq++;CS.packet=null;CS.drawing=null;if(st.mode==='continuations')st.mode='bounds';}
     if (!TRIAL.arrive && st.pin?.k === 'arrive') st.pin = st.hover = null;
     dom('detg')._k = ''; render(true);
   }

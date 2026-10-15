@@ -5,6 +5,7 @@ the separately saved API snapshot, not an invented authorization/acceptance reco
 """
 from __future__ import annotations
 
+import ast
 import collections
 import copy
 import hashlib
@@ -22,6 +23,7 @@ sys.path.insert(0, str(ROOT / "lab"))
 import continuity24 as E
 import contract as C
 from q1.engine import BaseProvider
+from q1.store import canonical, sha
 
 
 def git(*args, binary=False):
@@ -71,7 +73,7 @@ def semantic_examples():
     return pairs
 
 
-def metadata_example():
+def metadata_example(method=None):
     p = BaseProvider("NQ", "RDR")
     k = p.B["idx"][("2025-12-17", "RDR")]
     q = copy.copy(p)
@@ -80,7 +82,8 @@ def metadata_example():
     q.B["boxes"][k] = dict(p.B["boxes"][k])
     q.B["boxes"][k]["complete"] = not p.B["boxes"][k]["complete"]
     q._dig = {}
-    old, new = p.prefix_digest(k, 0, 670), q.prefix_digest(k, 0, 670)
+    prefix = method or BaseProvider.prefix_digest
+    old, new = prefix(p, k, 0, 670), prefix(q, k, 0, 670)
     return dict(case="NQ/RDR/2025-12-17", cut="11:10", only_metadata_complete_changed=True,
                 same_closed_prefix=bool(np.array_equal(p.bars(k)[p.bars(k)[:, 0] <= 670], q.bars(k)[q.bars(k)[:, 0] <= 670])),
                 prefix_digest_changed=old != new, old=old, new=new,
@@ -93,6 +96,18 @@ def main():
     prs = {p["number"]: p for p in source["pull_requests"]}
     old = json.loads((ROOT / "meaning/lens/2026-10-14-integration/sources.json").read_text(encoding="utf-8"))["refs"]
     current = git("rev-parse", source["candidate"]).strip()
+    # Reproduce the finding with the actual frozen method, then check today's fix.
+    original_engine = ast.parse(blob(current, "lab/q1/engine.py").decode("utf-8"))
+    provider = next(n for n in original_engine.body if isinstance(n, ast.ClassDef) and n.name == "BaseProvider")
+    method = next(n for n in provider.body if isinstance(n, ast.FunctionDef) and n.name == "prefix_digest")
+    scope = dict(sha=sha, canonical=canonical)
+    exec(compile(ast.Module(body=[method], type_ignores=[]), "frozen-prefix-method", "exec"), scope)
+    original_metadata = metadata_example(scope["prefix_digest"])
+    current_metadata = metadata_example()
+    assert original_metadata["prefix_digest_changed"] and not current_metadata["prefix_digest_changed"]
+    restored = json.loads((ROOT / "integration/restored-sources.json").read_text(encoding="utf-8"))
+    for item in restored:
+        assert h(blob(item["source"], item["path"])) == h((ROOT / item.get("destination", item["path"])).read_bytes()) == item["sha256_lf"]
     assert subprocess.run(["git", "merge-base", "--is-ancestor", current, "HEAD"], cwd=ROOT).returncode == 0
     assert set(prs) == set(range(2, 14))
     assert all(p["state"] == "open" and not p["merged"] for p in prs.values())
@@ -144,23 +159,24 @@ def main():
                   semantic_units=len(units), every_pr_has_disposition=True, every_unit_has_verified_source_path=True,
                   exact_duplicate=[2, 11], source_13_is_ancestor_of_9=absorbed, pr9_adds_to_pr13=True,
                   file_summaries=summaries, unit_content_witnesses=unit_evidence,
-                  semantic_counterexamples=semantic_examples(), metadata_counterexample=metadata_example(),
+                  semantic_counterexamples=semantic_examples(), metadata_counterexample=original_metadata,
+                  current_metadata_check=current_metadata, restored_source_files=len(restored),
                   current_dynamic_witness=dict(origin="EXISTING_CURRENT_RUN_RESULT_RECHECKED_SOURCE_HASHES",
                                               first_M=witness["releases"][0]["M_position"],
                                               in_F=witness["releases"][0]["M_in_F"], outside_F=witness["releases"][0]["M_outside_F"]),
                   ready_for_main=False,
-                  remaining=["operator review requested before main", "UI continuation candidate not yet implemented",
-                             "confirmed Q1 metadata identity defect before new issue use",
-                             "saved-outcome/reveal binding and late-result guards before pilot activation",
-                             "new dynamic case/path binding must handle M outside F",
-                             "current Trace/FOM coverage must remain explicit; frozen is not rebound"])
+                  scope="Frozen pre-main review at candidate_commit; current fixes are separately checked. This is not current merge authority.",
+                  remaining=["current UI/regression/reveal tests and decisions review are a separate final run",
+                             "current Trace/FOM coverage remains scoped; frozen is not rebound",
+                             "operator perception and fixed/residual calibration remain separate"])
     assert result["metadata_counterexample"]["same_closed_prefix"] and result["metadata_counterexample"]["prefix_digest_changed"]
     for stamp in witness["source_hashes"]:
-        assert h((ROOT / stamp["artifact"]).read_bytes()) == stamp["version"], "stale continuity witness"
-    (HERE / "checks.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    (HERE / "file-inventory.json").write_text(json.dumps(inventory, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        assert h(blob(current, stamp["artifact"])) == stamp["version"], "stale frozen continuity witness"
+    (HERE / "current-checks.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: result[k] for k in ("status", "open_prs", "semantic_units", "exact_duplicate", "pr9_adds_to_pr13", "ready_for_main")}, ensure_ascii=False))
     print("confirmed metadata identity defect:", result["metadata_counterexample"]["prefix_digest_changed"])
+    print("current prefix retains its identity:", not current_metadata["prefix_digest_changed"])
+    print("restored source files verified:", len(restored))
     print("counterexamples:", result["semantic_counterexamples"])
 
 

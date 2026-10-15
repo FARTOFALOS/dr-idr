@@ -103,7 +103,7 @@
    "grounds": "PROPOSAL",
    "title_ru": "PRE/ARRIVE: отдельные кандидаты для локального испытания",
    "document_path": "integration/candidates/SC11-proposal.md",
-   "document_sha256_lf": "895948b9926bfaf797473cc7db17b8a4a73ef6e4b0afb8cde0ed1e2ea73304eb",
+   "document_sha256_lf": "783064fc5c1445b149300cf4b2d610ec1b9f4ef7bb58cd5311c89c20c0cb450a",
    "edition_status": "PROPOSED",
    "supersedes": "DR-LAB-SC-1.1",
    "source_refs": [
