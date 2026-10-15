@@ -1,0 +1,613 @@
+{
+  "id": "https://drlab.local/fom",
+  "name": "dr_lab_fom",
+  "title": "DR Lab facet projections over the existing semantic trace",
+  "version": "1.2.0",
+  "imports": [
+    "dr_lab_trace"
+  ],
+  "prefixes": {
+    "linkml": "https://w3id.org/linkml/",
+    "fom": "https://drlab.local/fom/"
+  },
+  "default_prefix": "fom",
+  "default_range": "string",
+  "classes": {
+    "MappedArtifact": {
+      "attributes": {
+        "path": {
+          "range": "string",
+          "required": true,
+          "identifier": true
+        },
+        "revision": {
+          "range": "string",
+          "required": true
+        },
+        "sha256_lf": {
+          "range": "string",
+          "required": true
+        },
+        "role": {
+          "range": "string",
+          "required": true
+        },
+        "protected": {
+          "range": "boolean",
+          "required": true
+        }
+      }
+    },
+    "MappedLine": {
+      "attributes": {
+        "id": {
+          "range": "string",
+          "required": true,
+          "identifier": true
+        },
+        "title_ru": {
+          "range": "string",
+          "required": true
+        },
+        "line": {
+          "range": "LineReference",
+          "required": true,
+          "inlined": true
+        },
+        "line_kind": {
+          "range": "string",
+          "required": true
+        },
+        "evidence": {
+          "range": "string",
+          "multivalued": true,
+          "required": true,
+          "minimum_cardinality": 1
+        },
+        "base_commit": {
+          "range": "string",
+          "required": true
+        },
+        "scope_ru": {
+          "range": "string",
+          "required": true
+        },
+        "human_acceptance": {
+          "range": "HumanAcceptance",
+          "required": true
+        },
+        "layer_commits": {
+          "range": "string",
+          "multivalued": true
+        },
+        "depends_on_lines": {
+          "range": "string",
+          "multivalued": true
+        },
+        "changed_files": {
+          "range": "string",
+          "multivalued": true
+        },
+        "added_estimands": {
+          "range": "string",
+          "multivalued": true
+        },
+        "changed_estimands": {
+          "range": "string",
+          "multivalued": true
+        }
+      }
+    },
+    "FoundationRecord": {
+      "attributes": {
+        "id": {
+          "range": "string",
+          "required": true,
+          "identifier": true
+        },
+        "title_ru": {
+          "range": "string",
+          "required": true
+        },
+        "registry_id": {
+          "range": "string",
+          "required": true
+        },
+        "field": {
+          "range": "string",
+          "required": true
+        },
+        "evidence": {
+          "range": "string",
+          "multivalued": true,
+          "required": true,
+          "minimum_cardinality": 1
+        },
+        "exception_ru": {
+          "range": "string"
+        }
+      }
+    },
+    "FoundationBinding": {
+      "attributes": {
+        "id": {
+          "range": "string",
+          "required": true,
+          "identifier": true
+        },
+        "collection": {
+          "range": "string",
+          "required": true
+        },
+        "field": {
+          "range": "string",
+          "required": true
+        },
+        "match_value": {
+          "range": "string",
+          "required": true
+        },
+        "depends_on": {
+          "range": "string",
+          "multivalued": true,
+          "required": true
+        },
+        "dependency_kind": {
+          "range": "DependencyKind",
+          "required": true
+        },
+        "scope_ru": {
+          "range": "string",
+          "required": true
+        },
+        "availability": {
+          "range": "string",
+          "required": true
+        },
+        "evidence": {
+          "range": "string",
+          "multivalued": true,
+          "required": true,
+          "minimum_cardinality": 1
+        }
+      }
+    },
+    "TermRecord": {
+      "attributes": {
+        "id": {
+          "range": "string",
+          "required": true,
+          "identifier": true
+        },
+        "title_ru": {
+          "range": "string",
+          "required": true
+        },
+        "scheme": {
+          "range": "string",
+          "required": true
+        },
+        "aliases": {
+          "range": "string",
+          "multivalued": true
+        },
+        "denotes": {
+          "range": "string",
+          "multivalued": true
+        },
+        "definition_ru": {
+          "range": "string",
+          "required": true
+        },
+        "evidence": {
+          "range": "string",
+          "multivalued": true,
+          "required": true,
+          "minimum_cardinality": 1
+        },
+        "legacy_reference": {
+          "range": "string"
+        },
+        "boundary_ru": {
+          "range": "string",
+          "required": true
+        }
+      }
+    },
+    "TermRelation": {
+      "attributes": {
+        "id": {
+          "range": "string",
+          "required": true,
+          "identifier": true
+        },
+        "left": {
+          "range": "TermRecord",
+          "required": true
+        },
+        "right": {
+          "range": "TermRecord",
+          "required": true
+        },
+        "mapping": {
+          "range": "TermMapping",
+          "required": true
+        },
+        "scope_ru": {
+          "range": "string",
+          "required": true
+        },
+        "reason_ru": {
+          "range": "string",
+          "required": true
+        },
+        "guards": {
+          "range": "string",
+          "multivalued": true,
+          "required": true
+        },
+        "evidence": {
+          "range": "string",
+          "multivalued": true,
+          "required": true,
+          "minimum_cardinality": 1
+        }
+      }
+    },
+    "FacetDefinition": {
+      "attributes": {
+        "id": {
+          "range": "string",
+          "required": true,
+          "identifier": true
+        },
+        "title_ru": {
+          "range": "string",
+          "required": true
+        },
+        "basis_ru": {
+          "range": "string",
+          "required": true
+        },
+        "projection": {
+          "range": "string",
+          "required": true
+        },
+        "scope_ru": {
+          "range": "string",
+          "required": true
+        },
+        "cardinality": {
+          "range": "string",
+          "required": true
+        },
+        "unknown_rule": {
+          "range": "string",
+          "required": true
+        },
+        "evidence": {
+          "range": "string",
+          "multivalued": true,
+          "required": true,
+          "minimum_cardinality": 1
+        },
+        "used_by": {
+          "range": "string",
+          "multivalued": true,
+          "required": true
+        }
+      }
+    },
+    "ResearchFinding": {
+      "is_a": "ValidationRecord",
+      "attributes": {
+        "claim_level": {
+          "range": "ResearchLevel",
+          "required": true
+        },
+        "conclusion": {
+          "range": "ResearchConclusion",
+          "required": true
+        },
+        "allowed_claim_ru": {
+          "range": "string",
+          "required": true
+        },
+        "negative_scope_ru": {
+          "range": "string",
+          "required": true
+        },
+        "uncertainty_ru": {
+          "range": "string",
+          "required": true
+        },
+        "not_generalised_ru": {
+          "range": "string",
+          "required": true
+        },
+        "evidence": {
+          "range": "string",
+          "multivalued": true,
+          "required": true,
+          "minimum_cardinality": 1
+        },
+        "decision_ref": {
+          "range": "string"
+        },
+        "sesoi": {
+          "range": "string"
+        },
+        "equivalence_method": {
+          "range": "string"
+        },
+        "dependence_control": {
+          "range": "string"
+        },
+        "accepted_basis": {
+          "range": "boolean",
+          "required": true
+        }
+      }
+    },
+    "ResearchCoverage": {
+      "attributes": {
+        "id": {
+          "range": "string",
+          "required": true,
+          "identifier": true
+        },
+        "path": {
+          "range": "string",
+          "required": true
+        },
+        "disposition": {
+          "range": "string",
+          "required": true
+        },
+        "findings": {
+          "range": "ResearchFinding",
+          "multivalued": true
+        },
+        "reason_ru": {
+          "range": "string",
+          "required": true
+        }
+      }
+    },
+    "CompetencyQuestion": {
+      "attributes": {
+        "id": {
+          "range": "string",
+          "required": true,
+          "identifier": true
+        },
+        "title_ru": {
+          "range": "string",
+          "required": true
+        },
+        "question_kind": {
+          "range": "QuestionKind",
+          "required": true
+        },
+        "query": {
+          "range": "string",
+          "required": true
+        },
+        "argument": {
+          "range": "string"
+        },
+        "baseline_status": {
+          "range": "string",
+          "required": true
+        },
+        "answer_kind": {
+          "range": "string",
+          "required": true
+        },
+        "expected_ids": {
+          "range": "string",
+          "multivalued": true
+        },
+        "forbidden_ids": {
+          "range": "string",
+          "multivalued": true
+        },
+        "held_out": {
+          "range": "boolean",
+          "required": true
+        },
+        "machine_gate": {
+          "range": "boolean",
+          "required": true
+        },
+        "evidence": {
+          "range": "string",
+          "multivalued": true,
+          "required": true,
+          "minimum_cardinality": 1
+        },
+        "boundary_ru": {
+          "range": "string",
+          "required": true
+        },
+        "expected_ru": {
+          "range": "string",
+          "required": true
+        }
+      }
+    },
+    "PresentationObligation": {
+      "attributes": {
+        "id": {
+          "range": "string",
+          "required": true,
+          "identifier": true
+        },
+        "title_ru": {
+          "range": "string",
+          "required": true
+        },
+        "semantic_refs": {
+          "range": "string",
+          "multivalued": true,
+          "required": true
+        },
+        "bindings": {
+          "range": "string",
+          "multivalued": true,
+          "required": true
+        },
+        "work_refs": {
+          "range": "string",
+          "multivalued": true,
+          "required": true
+        },
+        "availability": {
+          "range": "string",
+          "required": true
+        },
+        "alpha_ru": {
+          "range": "string",
+          "required": true
+        },
+        "omega_ru": {
+          "range": "string",
+          "required": true
+        },
+        "forbidden_ru": {
+          "range": "string",
+          "required": true
+        },
+        "time_rule": {
+          "range": "string",
+          "required": true
+        },
+        "test_id": {
+          "range": "string",
+          "required": true
+        },
+        "evidence": {
+          "range": "string",
+          "multivalued": true,
+          "required": true,
+          "minimum_cardinality": 1
+        },
+        "human_boundary_ru": {
+          "range": "string",
+          "required": true
+        }
+      }
+    },
+    "FomCatalog": {
+      "is_a": "TraceCatalog",
+      "attributes": {
+        "mapped_artifacts": {
+          "range": "MappedArtifact",
+          "multivalued": true,
+          "inlined_as_list": true
+        },
+        "mapped_lines": {
+          "range": "MappedLine",
+          "multivalued": true,
+          "inlined_as_list": true
+        },
+        "foundations": {
+          "range": "FoundationRecord",
+          "multivalued": true,
+          "inlined_as_list": true
+        },
+        "foundation_bindings": {
+          "range": "FoundationBinding",
+          "multivalued": true,
+          "inlined_as_list": true
+        },
+        "terms": {
+          "range": "TermRecord",
+          "multivalued": true,
+          "inlined_as_list": true
+        },
+        "term_relations": {
+          "range": "TermRelation",
+          "multivalued": true,
+          "inlined_as_list": true
+        },
+        "facet_definitions": {
+          "range": "FacetDefinition",
+          "multivalued": true,
+          "inlined_as_list": true
+        },
+        "research_findings": {
+          "range": "ResearchFinding",
+          "multivalued": true,
+          "inlined_as_list": true
+        },
+        "research_coverage": {
+          "range": "ResearchCoverage",
+          "multivalued": true,
+          "inlined_as_list": true
+        },
+        "competency_questions": {
+          "range": "CompetencyQuestion",
+          "multivalued": true,
+          "inlined_as_list": true
+        },
+        "presentation_obligations": {
+          "range": "PresentationObligation",
+          "multivalued": true,
+          "inlined_as_list": true
+        }
+      }
+    }
+  },
+  "enums": {
+    "DependencyKind": {
+      "permissible_values": {
+        "DEFINING": {},
+        "COMPUTATIONAL": {},
+        "CONTROL_SELECTION": {},
+        "MEASUREMENT": {},
+        "TEMPORAL": {},
+        "EVIDENTIAL": {},
+        "PRESENTATIONAL": {},
+        "NORMATIVE": {}
+      }
+    },
+    "TermMapping": {
+      "permissible_values": {
+        "EXACT": {},
+        "CLOSE": {},
+        "BROAD": {},
+        "NARROW": {},
+        "RELATED": {},
+        "NOT_IDENTICAL": {}
+      }
+    },
+    "QuestionKind": {
+      "permissible_values": {
+        "SCOPING": {},
+        "VALIDATING": {},
+        "FOUNDATIONAL_ALIGNMENT": {},
+        "RELATIONSHIP": {},
+        "METAPROPERTY": {}
+      }
+    },
+    "ResearchLevel": {
+      "permissible_values": {
+        "A_CORRECTNESS": {},
+        "B_INFORMATION": {},
+        "C_TRANSFER": {},
+        "D_POLICY": {}
+      }
+    },
+    "ResearchConclusion": {
+      "permissible_values": {
+        "OBSERVED": {},
+        "NOT_DETECTED": {},
+        "INCONCLUSIVE": {},
+        "EQUIVALENCE": {},
+        "REFUTED_IN_SCOPE": {},
+        "HYPOTHESIS": {}
+      }
+    }
+  }
+}

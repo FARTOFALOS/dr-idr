@@ -1,0 +1,20 @@
+{
+ "version": "DR-LAB-INTEGRATION-1.0",
+ "source": "direct local reconstruction; no new global research",
+ "checks": {
+  "REAL_HORIZON_WITNESS": "PASS: common clock and max(cut,activation) differ on real data",
+  "SHORT_R_PHYSICAL_DIRECTION": "PASS: old registered below-price wording contradicts short retracement geometry",
+  "KADR_UNIT_CONTRADICTION": "PASS: KADR-1.1 section 2 names an unnormalised displacement o_u although u is defined as divided by width; engine keeps v and w separately",
+  "FACT_VS_QUERY_APPLICABILITY": "PASS: controlled Q1 path is RESOLVED before H and BLOCK_OVER at H; an exclusive status cannot preserve both facts",
+  "PATH_REVISION_IDENTITY": "PASS: controlled changed intermediate close preserves snapshot identity and aliases NOW series cache when the same source revision is reused; not an observed live incident",
+  "BASE_D_NOT_PRODUCT_CANDIDATE": "PASS: explicit role in source protocol",
+  "NODEPOS_ALL_PAIRED_ADVANTAGE": "PASS: reported paired difference and equal-support interval favor NODEPOS_ALL",
+  "CADENCE_TRANSFER": "OPEN: study 15-minute grid does not cover every M5 cut",
+  "POINT_VS_BOUNDS": "DISTINCT: scoring point among known agrees with runtime point; UI unknown bounds have another denominator",
+  "HUMAN_UI_SUPERIORITY": "NOT_ESTABLISHED"
+ },
+ "no_formula_changed": true,
+ "no_2026_read": true,
+ "raw_witness": "lab/.runtime/integration-spec/horizon-witness.local.json",
+ "scope": "witness of non-equivalence, not a measurement of its prevalence or a permission to alter accepted semantics"
+}

@@ -8,9 +8,9 @@
   }
   const prow = (text, val) => '<span class="t">' + text + '</span><b>' + val + '</b>';
   const plainTitle = p => (p.phrase + ' · ' + p.horizon + (p.unknown_count ? lbl('FF:PASSPORT-VIEW', 'title_unknown', { pct: pct(100 * p.unknown_count / p.N) }) : '')).replace(/<[^>]+>/g, '');
-  // DR-LAB-SC-1.1: a violation of the contract stands at the top of the panel (all of them in its title) until reload
-  const scNotice = () => !K.violations.length ? '' : '<div class="p24-sc" title="' + esc(K.violations.join('\n')) + '">Контракт SC-1.1: ' + esc(K.violations[K.violations.length - 1]) +
-    (K.violations.length > 1 ? ' · ещё ' + (K.violations.length - 1) : '') + '</div>';
+  // DR-LAB-SC-1.1: a violation of the contract of this scene stands at the top of the panel (all of them in its title);
+  // one found on another day, family or cut does not (DR-LAB-SWPC-1.1 M16)
+  const scNotice = ctx => { const v = kNow(ctx); return !v.length ? '' : '<div class="p24-sc" title="' + esc(v.join('\n')) + '">Контракт SC-1.1: ' + esc(v[v.length - 1]) + (v.length > 1 ? ' · ещё ' + (v.length - 1) : '') + '</div>'; };
   function statusMsg(ctx) {
     const s = ctx.s, x = A.day;
     if (!x || x.status !== 'ok') return (x && x.message) || (A.src === 'hist' ? 'Загружаю день истории…' : 'Загружаю свечи…');
@@ -34,9 +34,9 @@
       // no family at this moment: one click opens a history day on which this session had one (spec: the live moment
       // must never block the review)
       const noFam = !F && ['before', 'forming', 'waiting', 'noconf'].includes(s.status) && A.day && A.day.status === 'ok';
-      panel.innerHTML = scNotice() + '<div class="p21-empty">' + esc(F && !F.N ? 'В семье нет сессий: процентов нет' : statusMsg(ctx)) + '</div>' +
+      panel.innerHTML = scNotice(ctx) + '<div class="p21-empty">' + esc(F && !F.N ? 'В семье нет сессий: процентов нет' : statusMsg(ctx)) + '</div>' +
         (F && !F.N ? '<div class="p21-note">' + esc(F.cond) + '</div>' : '') + (s.failed && s.conf ? viewSwitch(s) : '') +
-        (noFam ? '<button class="p24-btn" data-hist="1">' + (A.src === 'live' ? 'Открыть ' + st.session + ' на истории' : 'Ближайший день с подтверждением ' + st.session) + '</button>' : '');
+        (noFam ? '<button class="p24-btn" data-hist="1">' + (A.src === 'live' ? 'Открыть ' + st.session + ' на истории' : 'Ближайший день с подтверждением ' + st.session) + '</button>' : '') + candidatePanel(ctx);
       return;
     }
     const out = [], sl = sliceOf(ctx), step = 100 / F.N, src = F.r.source || {};
@@ -46,6 +46,7 @@
     if (s.failed) out.push(viewSwitch(s));
     if (F.out) out.push(outcomeHtml(F));
     out.push(nowHtml(F, ctx));
+    out.push(candidatePanel(ctx));
     if (st.mode === 'bounds') {
       out.push(zonesHtml(F, ctx));
       const tf = todayFacts(F, ctx);
@@ -56,7 +57,7 @@
     const h = st.pin;
     if (h && h.k === 'lvl' && h.l) out.push(levelHtml(F, ctx, h.l));
     if (h && h.k === 'pt' && F.M[h.i]) out.push(memberHtml(F, F.M[h.i]));
-    panel.innerHTML = scNotice() + out.join('');
+    panel.innerHTML = scNotice(ctx) + out.join('');
     // a new selection (area, level, history session) stands at the end of the panel, under the inspector's edge: scroll
     // the panel to it once, when it appears (the layout stays; the panel keeps its own scroll otherwise)
     const sk = (st.area ? [st.area.k0, st.area.k1, st.area.b0, st.area.b1, st.area.ev].join(',') : '') + '|' + pinKey(st.pin);
@@ -145,7 +146,8 @@
   function outcomeHtml(F) {
     const D = 'EST:B-DR', cats = [['held', '#6FB59A'], ['broken', '#E5877F'], ['unknown', '#8C95A3'], ['none', '#5F6877']], P = {};
     for (const [k] of cats) P[k] = drPass(F, k);
-    const bar = '<div class="p24-bar">' + cats.filter(([k]) => F.out[k]).map(([k, col]) => '<i style="width:' + (100 * F.out[k] / F.N).toFixed(2) + '%;background:' + col + '"></i>').join('') + '</div>';
+    // a withheld category (its passport «—», DR-LAB-SWPC-1.1 M14) leaves its part of the bar empty
+    const bar = '<div class="p24-bar">' + cats.filter(([k]) => F.out[k]).map(([k, col]) => '<i style="width:' + (100 * F.out[k] / F.N).toFixed(2) + '%;background:' + (P[k].pct == null ? 'transparent' : col) + '"></i>').join('') + '</div>';
     const rows = cats.filter(([k]) => F.out[k] || k === 'held' || k === 'broken').map(([k, col]) => link({ k: 'out', cat: k }, '<span class="t"><i style="color:' + col + '">■</i> ' + lbl(D, k) + '</span><b>' + ppTxt(P[k]) + '</b>', 'in', P[k], plainTitle(P[k]))).join('');
     return '<div class="p21-h second">' + lbl(D, 'head', { end: clk(F.end) }) + '<span>' + lbl(D, 'head_r') + '</span></div>' + bar + '<div class="p24-out big">' + rows + '</div>';
   }
@@ -219,7 +221,7 @@
   // closes per common clock M5 (each column its own 100 %), with today's closes on it.
   function detailObj(ctx) {
     const h = hv();
-    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow', 'zone'].includes(h.k)) return h;
+    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow', 'zone', 'arrive'].includes(h.k)) return h;
     if (st.area) return { k: 'area', part: 'band' };
     return null;
   }
@@ -261,6 +263,7 @@
   // window 1: the passport of the object (as the details area of design 24 had it), or the family's snapshot
   function detBody(ctx, o) {
     const F = ctx.F;
+    const trial = candidateDetails(ctx, o); if (trial) return trial;
     if (!o) {
       const r = F.r, src = r.source || {};
       return { head: 'Слепок семьи', body: dRow('семья', esc(F.cond)) + dRow('ключ', esc(r.key.instrument + ' × ' + r.key.session + ' × ' + WD[r.key.weekday] + ' × ' + (r.key.direction === 'long' ? 'лонг' : 'шорт') + ' × ' + (r.key.event === 'confirmation' ? 'окно подтверждения ' : 'окно слома ') + clk(r.key.window[0]) + '–' + clk(r.key.window[1]))) +
@@ -325,7 +328,7 @@
     const rows = [['X_before_R', cfg.X], ['R_before_X', cfg.R], ['same_M5', '#8C929D'], ['unknown', '#4A505B'], ['no_period', '#353A44']].filter(([k]) => k !== 'no_period' || n[k]);
     const P = rows.map(([k]) => pp(F, { estimand: O, params: { category: k }, event_id: 'order_' + k, region_kind: 'order', exact_price_bounds: null, time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end),
       yes_count: n[k], display_scope: 'details', phrase: lbl(O, 'phrase', { t: lbl(O, k) }), horizon: hzOf(F) }));
-    return '<div class="p24-bar wide">' + rows.map(([k, c]) => n[k] ? '<i style="width:' + (100 * n[k] / F.N).toFixed(2) + '%;background:' + c + '"></i>' : '').join('') + '</div>' +
+    return '<div class="p24-bar wide">' + rows.map(([k, c], j) => n[k] ? '<i style="width:' + (100 * n[k] / F.N).toFixed(2) + '%;background:' + (P[j].pct == null ? 'transparent' : c) + '"></i>' : '').join('') + '</div>' +
       rows.map(([k, c], j) => '<div class="dq" data-ord="' + k + '" title="' + esc(plainTitle(P[j])) + '"><i style="background:' + c + '"></i><span>' + lbl(O, k) + '</span><b>' + ppTxt(P[j]) + '</b></div>').join('');
   }
   // window 5: «на уровне или дальше» on today's levels (spec §5.4): nested shares, the whole horizon (pale) and after the
@@ -365,7 +368,8 @@
     dom(id)._g = { L, T, cw, rh, k0, k1, n: F.nb, ev };
     for (const q of cells) { if (q.k < k0 || q.k >= k1) continue; c.fillStyle = rgba(cfg[ev], 0.18 + 0.82 * Math.pow(q.list.length / mx, 0.7)); c.fillRect(X(q.b) + 0.5, Y(q.k) + 0.25, Math.max(1, cw - 1), Math.max(1, rh - 0.5)); }
     const Zm = F.zones[ev];
-    if (Zm) Zm.zones.forEach(z => {
+    if (Zm) Zm.zones.forEach((z, i) => {
+      if (zoneHeld(F, ev, i)) return;                    // a withheld zone: no outline (DR-LAB-SWPC-1.1 M14)
       const set = new Set(z.cell_mask.map(([k, b]) => k + '|' + b));
       c.strokeStyle = rgba(cfg[ev], 0.95); c.lineWidth = 1; c.beginPath();
       for (const [k, b] of z.cell_mask) {
@@ -416,7 +420,7 @@
     if (dh._h !== head) { dh.innerHTML = head; dh._h = head; }
     const g = dom('detg');
     if (!open || !ok) { if (g._k) { g.innerHTML = ''; g._k = ''; } return; }
-    const o = detailObj(ctx), key = [F.r.snapshot_id, F.view, sliceOf(ctx), o ? pinKey(o) + '|' + (o.ev || '') : '', det.clientWidth, cfg.R, cfg.X, cfg.path, cfg.heatA].join('|');
+    const o = detailObj(ctx), key = [F.r.snapshot_id, F.view, sliceOf(ctx), o ? pinKey(o) + '|' + (o.ev || '') : '', det.clientWidth, cfg.R, cfg.X, cfg.path, cfg.heatA, scenePacket()?.context.id || '', TRIAL.paths].join('|');
     if (g._k === key) return;
     g._k = key;
     const B = detBody(ctx, o);
@@ -428,6 +432,7 @@
       '<div class="dcard"><div class="dt">На уровне или дальше</div>' + ladderHtml(F, ctx) + '</div>' +
       '<div class="dcard"><div class="dt" style="color:' + cfg.path + '">Путь семьи · закрытия M5</div><canvas id="dcF"></canvas></div>';
     drawHeat('dcR', F, ctx, 'R'); drawHeat('dcX', F, ctx, 'X'); drawFilmMini('dcF', F, ctx);
+    candidatePaths(ctx);
   }
   function initPanel24() {
     panel.addEventListener('mouseover', e => { const el = e.target.closest('[data-l21]'); if (!el) return; st.hover = P24.links[+el.dataset.l21]; if (st.hover && st.hover.ev) st.ev = st.hover.ev; showTip(st.hover); redraw(); });

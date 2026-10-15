@@ -1,0 +1,226 @@
+# Trace catalog · what the trace does not close. GAP-01..GAP-11 are the open boundaries of DR-LAB-SEMANTIC-ARCHITECTURE
+# 0.1 §13 (with the corrections of 0.2); BND-01.. are the boundaries this work found or declares. None of them is
+# reported as closed: a trace report that touches one names it, and «reliable» never hides it.
+catalog_part: boundaries
+
+boundaries:
+  - id: GAP-01
+    title_ru: какой родитель основной для ответа «отсюда» (D1)
+    arch_ref: "0.1 §13/GAP-01"
+    boundary_kind: OPEN_DECISION
+    statement_ru: "Основной набор для Q1 не выбран: семья дня недели, ключ без дня недели или все подтверждённые сессии (GEO). На экране 24 родитель — семья экрана (переключатель «день недели / все дни»); GEO остаётся на стенде 8771."
+    owner_ru: "оператор"
+    admissible_now_ru: "три названных набора с честным n и их сравнение; ответ экрана на семье экрана"
+    not_admissible_ru: "скрытый выбор по умолчанию; приоритет GEO по ширине выборки"
+    affects: [ENT-19, PROC-11, T10, CS:K-ARRIVE-1, CS:K-ARRIVE-ALL-1]
+    sources: [SRC:Q1-PILOT, SRC:KADR-1.1]
+  - id: GAP-02
+    title_ru: как встроить «отсюда» в экран 24 (D2)
+    arch_ref: "0.1 §13/GAP-02; 0.2 §1"
+    boundary_kind: OPEN_DECISION
+    statement_ru: "Кандидат существует (блок B18 под «Сейчас», PR #7); принятие места на экране, слов и поправки контракта — решение оператора и его перцептивная проверка (H14)."
+    owner_ru: "оператор"
+    admissible_now_ru: "вариант ARRIVE-24 на отдельном сервере 8772 для приёмки"
+    not_admissible_ru: "называть Q1 частью принятого рабочего экрана; заменять им строку лесенки или созвездие"
+    affects: [T16, A20, STANDING:ARRIVE-24]
+    sources: [SRC:INSTRUCTION-2026-10-12, SRC:M18]
+  - id: GAP-03
+    title_ru: остаток после общего t или после собственной активации в лесенке (N5)
+    arch_ref: "0.1 §13/GAP-03"
+    boundary_kind: OPEN_DECISION
+    statement_ru: "Горизонт строки лесенки EST:B-LEVEL-REST (общий остаток после t для всех членов F) не пересмотрен; в Q1 аналоги уже активированы."
+    owner_ru: "оператор"
+    admissible_now_ru: "лесенка без изменений; Q1 отдельно"
+    not_admissible_ru: "молчаливая правка EST:B-LEVEL-REST"
+    affects: [EST:B-LEVEL-REST, OUT:REACH-REST-1]
+    sources: [SRC:KADR-1.1]
+  - id: GAP-04
+    title_ru: "вариант 08.10 (PR #2) не принят"
+    arch_ref: "0.1 §13/GAP-04"
+    boundary_kind: OPEN_DECISION
+    statement_ru: "PRE-24, правило фазы, «мало сессий», слова строки отката «Сейчас» и поправка §0.5 / §12.5 SC-1.1 ждут приёмки; линия ARRIVE-24 (PR #7) построена поверх них."
+    owner_ru: "оператор"
+    admissible_now_ru: "проверять ветку отдельно"
+    not_admissible_ru: "объявлять PR #2 частью main"
+    affects: [STANDING:PRE-24, STANDING:ARRIVE-24, EDST:SC-1.1]
+    sources: [SRC:DECISIONS-2026-10-08]
+  - id: GAP-05
+    title_ru: SWPC-1.1 — реализация есть, человеческая приёмка нет
+    arch_ref: "0.1 §13/GAP-05; 0.2 §1"
+    boundary_kind: OPEN_EVIDENCE
+    statement_ru: "Кандидатная реализация B01–B18 существует; машинные M01–M20 исполнитель прогонял (tests/swpc11_browser.mjs, сервер нужен); H01–H14 с оператором не проводились (08.10 лист задач оказался непонятен без показанной сцены). Наличие реализации, результаты прогонов и человеческое принятие — три разных факта."
+    owner_ru: "оператор (H-сессия); исполнитель (переписать лист задач словами трейдера)"
+    admissible_now_ru: "машинные проверки M и привязки как задание реализации"
+    not_admissible_ru: "ставить H в «пройдено» по зелёным машинным тестам"
+    affects: [ENT-28, ENT-29, PROC-17, T15, STANDING:BASE-24, STANDING:NOW-1.0]
+    sources: [SRC:SWPC-1.1, SRC:SWPC-H-PROTOCOL]
+  - id: GAP-06
+    title_ru: Q1 под шлюзом SC-1.1 — только кандидатная поправка
+    arch_ref: "0.1 §13/GAP-06; 0.2 §1"
+    boundary_kind: OPEN_DECISION
+    statement_ru: "В PR #7 ответ Q1 проходит шлюз (attach_arrive, EST:K-ARRIVE, CF:K-ARRIVE), но поправка §0.6 / §12.6 текста SC-1.1 не принята; стенд 8771 по-прежнему PILOT_OUTSIDE_SC11_GATE."
+    owner_ru: "оператор"
+    admissible_now_ru: "кандидат шлюза для приёмки; отдельный паспорт пилота"
+    not_admissible_ru: "утверждать единый принятый шлюз Q1 и экрана 24"
+    affects: [T14, EST:K-ARRIVE, CF:K-ARRIVE, EDST:SC-1.1]
+    sources: [SRC:INSTRUCTION-2026-10-12]
+  - id: GAP-07
+    title_ru: перенос на новые дни (C2) не проверен
+    arch_ref: "0.1 §13/GAP-07"
+    boundary_kind: OPEN_EVIDENCE
+    statement_ru: "Нет замороженной до исхода серии выпусков на непредъявленных днях, базового сравнителя, калибровки и решения о допуске; ни одно число не допускает PredictiveClaim."
+    owner_ru: "оператор (протокол и допуск); исследование"
+    admissible_now_ru: "C0 / C1 и исследование; заморозка кандидата"
+    not_admissible_ru: "вероятностный прогноз как доказанный факт"
+    affects: [T18, PROC-19, A19, R16, OB:STATISTICAL-TRANSFER]
+    sources: [SRC:ARCH-0.1]
+  - id: GAP-08
+    title_ru: диагностический API пилота отдаёт полный путь
+    arch_ref: "0.1 §13/GAP-08; 0.2 §1"
+    boundary_kind: KNOWN_LIMIT
+    statement_ru: "/api/q1/case стенда 8771 (lab/q1/server.py::case_path) возвращает путь сессии по произвольному id, включая будущее цели. Это граница утверждения «будущее недоступно через API», а не доказанное использование будущего вычислителем: отбор и выпуск проверяются заменой будущего отдельно."
+    owner_ru: "инженер (ограничить endpoint или сузить утверждение)"
+    admissible_now_ru: "диагностический endpoint на локальном стенде; узкая формулировка"
+    not_admissible_ru: "утверждать, что вся поверхность API скрывает будущее до раскрытия"
+    affects: [PROC-16, ENT-09]
+    sources: [SRC:ARCH-0.2]
+  - id: GAP-09
+    title_ru: происхождение и качество ленты G3 не переаудированы
+    arch_ref: "0.1 §13/GAP-09"
+    boundary_kind: OUT_OF_SCOPE
+    statement_ru: "Трассировка начинается с собранной базы сессий (lab/.runtime/boxes_*); склейки контрактов, корректировки поставщика и качество каждой минуты G3 — предмет отдельного аудита."
+    owner_ru: "исследование G3"
+    admissible_now_ru: "зарегистрированный корпус и объявленное качество"
+    not_admissible_ru: "выдавать надёжность сборки за истинность всех минут"
+    affects: [ENT-01, R01, PROC-01, T01, A01]
+    sources: [SRC:CODE-BUILD-MARKET]
+  - id: GAP-10
+    title_ru: экран → человек
+    arch_ref: "0.1 §13/GAP-10"
+    boundary_kind: OPEN_EVIDENCE
+    statement_ru: "Различение трейдером вопроса, места, срока, события и роли числа не проверено (SWPC H01–H14). Вопросы проверки прочтения ответа Q1 (Ч1–Ч4) оператор 13.10 снял: у него они не запрашиваются. Машинное совпадение показанного с опубликованным прочтение не заменяет."
+    owner_ru: "оператор"
+    admissible_now_ru: "машинная проверка показа (trace:SCREEN) как отдельная ось"
+    not_admissible_ru: "заявлять готовность полезного интерфейса по зелёным тестам"
+    affects: [ENT-30, R14, PROC-18, T17, A16, A18, A20]
+    sources: [SRC:SWPC-H-PROTOCOL, SRC:OPERATOR-2026-10-13-NO-READING-QUESTIONS]
+  - id: GAP-11
+    title_ru: широкая исследовательская программа (SRS 0.2)
+    arch_ref: "0.1 §13/GAP-11"
+    boundary_kind: OUT_OF_SCOPE
+    statement_ru: "Порядок нескольких будущих событий, единый набор траекторий, авторазвитие гипотез — исследовательская программа, не часть заявленной области."
+    owner_ru: "исследование"
+    admissible_now_ru: "отдельные эксперименты с объявленными вопросами"
+    not_admissible_ru: "считать FR SRS 0.2 реализованными"
+    affects: [PROC-19]
+    sources: [SRC:ARCH-0.1]
+
+  # ----------------------------------------------------------------------------------------- found or declared here
+  - id: BND-01
+    title_ru: запись сессии требует коробку и активацию
+    arch_ref: "0.2 §2"
+    boundary_kind: KNOWN_LIMIT
+    statement_ru: "StrategySessionRecord конверта требует коробку и активацию: формирующаяся или неподтверждённая сессия (состояния PRE-24, «коробка формируется») машинной записи сессии в конверте не имеет. Трассировка таких состояний вне заявленной области."
+    owner_ru: "инженер (новый тип записи при расширении области)"
+    admissible_now_ru: "трассировка после подтверждения"
+    not_admissible_ru: "выдавать отсутствие записи за отсутствие сессии"
+    affects: [ENT-03, class:StrategySessionRecord]
+    sources: [SRC:ARCH-0.2]
+  - id: BND-02
+    title_ru: статус профиля в реестре смешивает «действует» и «принято»
+    arch_ref: "0.1 §0; 0.2 §1"
+    boundary_kind: FINDING
+    statement_ru: "В реестре этой линии PROFILE:ARRIVE-24 и PROFILE:PRE-24 имеют profile_status ACTIVE, а редакция DR-LAB-SC-1.1 — ACCEPTED_FOR_PROFILES при закреплённом исправленном тексте (895948b9…), хотя приёмка поправок не состоялась; непринятость записана только в свободном тексте. Машина, читающая только реестр, сочтёт ARRIVE-24 принятым."
+    owner_ru: "оператор (принять или отклонить варианты); инженер (отдельная ось решения в реестре — изменение SC-1.1, только с полномочием)"
+    admissible_now_ru: "брать решение из ProfileStanding и EditionStanding трассировки"
+    not_admissible_ru: "выводить принятость профиля из profile_status или edition_status"
+    affects: [PROFILE:ARRIVE-24, PROFILE:PRE-24, DR-LAB-SC-1.1, STANDING:ARRIVE-24, EDST:SC-1.1]
+    sources: [SRC:ARCH-0.2]
+    detected_by: "trace:STANDING, trace:EDITION-ADDITIVE"
+  - id: BND-03
+    title_ru: версия кода во входах bundle шире, чем вычисление
+    arch_ref: "0.1 §6/INV-12"
+    boundary_kind: FINDING
+    statement_ru: "lab/contract.py::_code_hash штампует bundle BASE и NOW хэшем всех файлов шлюза, включая pre24.py, arrive24.py и q1/engine.py этой линии: правка кода ARRIVE меняет версию кода во входах чисел BASE, которые от него не зависят. Точное происхождение кода по функциям даёт trace:ACCEPTED-CODE-IDENTITY и обратный обход, а не этот штамп."
+    owner_ru: "инженер (по-функциональный штамп — правка шлюза, только с полномочием)"
+    admissible_now_ru: "штамп как грубая версия; сверка функций трассировкой"
+    not_admissible_ru: "читать смену штампа как смену вычисления BASE"
+    affects: [class:InputVersion, PROC-20]
+    detected_by: "trace:ACCEPTED-CODE-IDENTITY"
+  - id: BND-04
+    title_ru: числа страницы без bundle сервера
+    arch_ref: "0.1 §10.3"
+    boundary_kind: KNOWN_LIMIT
+    statement_ru: "Доли полос, окон, областей, уровней и часов (EST:B-RX-BAND …, EST:B-LEVEL-*, EST:B-CLOCK-*) страница считает сама; сервер не публикует их bundle, а пересчитывает паспорт по запросу страницы (POST /api/d24/verify). Их вычисление в трассе проверено, только когда снято состояние экрана с проверенным паспортом."
+    owner_ru: "инженер"
+    admissible_now_ru: "PAGE_PASSPORT как отдельное место вычисления"
+    not_admissible_ru: "считать такое число проверенным без снятого паспорта"
+    affects: [EST:B-RX-BAND-R, EST:B-LEVEL-REST, EST:B-CLOCK-R]
+    detected_by: "trace:SCREEN"
+  - id: BND-05
+    title_ru: показ проверен на безголовом экране заявленных сцен
+    arch_ref: "0.1 §10"
+    boundary_kind: KNOWN_LIMIT
+    statement_ru: "Состояние экрана снимается в одноразовом безголовом Chrome на заявленных сценах (1600 × 900) с сервера этой ветки, не на живом экране оператора и не на всех днях; восприятие человеком не проверяется."
+    owner_ru: "инженер; оператор (H)"
+    admissible_now_ru: "машинная ось показа на заявленных сценах"
+    not_admissible_ru: "распространять её на все сцены и на прочтение"
+    affects: [ENT-29, T15, T16]
+  - id: BND-06
+    title_ru: мутационные проверки будущего — на заявленных сценах
+    arch_ref: "0.1 §6/INV-03"
+    boundary_kind: KNOWN_LIMIT
+    statement_ru: "Замена будущего цели и аналогов выполняется на заявленных сценах и выборке срезов; это не доказательство для всех кодовых путей и всех дней. Широкое доказательство Q1 — сверка A/D и сквозной тест tests/arrive24.py::test_boundary."
+    owner_ru: "инженер"
+    admissible_now_ru: "инвариантность на проверенных сценах"
+    not_admissible_ru: "общая формулировка «будущее нигде не используется»"
+    affects: [INV-03, A07, A08, A09]
+    detected_by: "trace:FUTURE-TARGET, trace:FUTURE-MEMBERS"
+  - id: BND-07
+    title_ru: выпуски Q1 — исторические воспроизведения
+    arch_ref: "0.2 §1, §2"
+    boundary_kind: KNOWN_LIMIT
+    statement_ru: "Все сохранённые выпуски — SIMULATED_ISSUE; показ ответа на экране 24 выпуска не создаёт (три операции раздельны), живого журнала нет. Связь «показанный ответ ↔ выпуск» устанавливается сравнением одинаковой цели, среза, набора и модели, а не фактом показа."
+    owner_ru: "оператор (нужен ли журнал показанных ответов)"
+    admissible_now_ru: "выпуск по отдельному действию на стенде 8771"
+    not_admissible_ru: "журнал выпусков как журнал всех показанных ответов; ACTUALLY_DISPLAYED_ISSUE в историческом пилоте"
+    affects: [ENT-25, PROC-15, T12]
+    sources: [SRC:Q1-STORE]
+  - id: BND-08
+    title_ru: сверка A/D и скалярный пересчёт заявлены исполнителем пилота
+    arch_ref: "0.1 §8.3; §12/A15"
+    boundary_kind: OPEN_EVIDENCE
+    statement_ru: "296 738 строк × 3 оценивателя и 449 935 скалярных проверок — отчёт исполнителя PR #6 (studies/q1_pilot_2026_10_12). Здесь повторяются тождество экрана с движком пилота (tests/arrive24.py) и выпуски заявленной сцены; полная сверка A/D заново не прогонялась."
+    owner_ru: "инженер (lab/q1/recon.py --golden, ~10 минут)"
+    admissible_now_ru: "ссылка на отчёт с пометкой REPORTED_BY_ENGINEER"
+    not_admissible_ru: "выдавать отчёт за прогон этой работы"
+    affects: [A15, ENT-18, PROC-12]
+    sources: [SRC:Q1-EVIDENCE]
+  - id: BND-09
+    title_ru: PRE-24 вне заявленной области
+    arch_ref: "13.10"
+    boundary_kind: OUT_OF_SCOPE
+    statement_ru: "Цель 13.10 называет BASE-24, NOW-1.0 и Q1 / ARRIVE-24; величины PRE-24 проходят только статические проверки связей, сквозная трасса для них не строится."
+    owner_ru: "оператор (расширение области)"
+    admissible_now_ru: "статические проверки"
+    not_admissible_ru: "утверждать трассируемость чисел PRE-24"
+    affects: [STANDING:PRE-24, EST:P-DIR]
+  - id: BND-10
+    title_ru: устаревшие поверхности вне SC-1.1
+    arch_ref: "0.1 §2 S01"
+    boundary_kind: OUT_OF_SCOPE
+    statement_ru: "Дизайн 22 (/22/), классический экран, исследовательская панель и /sem-v1/ остаются вне SC-1.1 (оператор, 07.10) и вне трассировки."
+    owner_ru: "оператор"
+    admissible_now_ru: "их собственные определения в docs/SEMANTICS.md"
+    not_admissible_ru: "брать их числа во входы трассируемых величин"
+    affects: [API:/api/query, API:/api/scene]
+  - id: BND-11
+    title_ru: связи «код → код» статические
+    arch_ref: "13.10"
+    boundary_kind: KNOWN_LIMIT
+    statement_ru: "Обратный обход от функции к зависимым идёт по статическим вызовам Python (ast, по именам) и по ссылкам реестра; динамические вызовы и страница JS по вызовам не разбираются (страница — через привязки SWPC)."
+    owner_ru: "инженер"
+    admissible_now_ru: "область влияния как верхняя оценка по именам"
+    not_admissible_ru: "считать её точным графом исполнения"
+    affects: [PROC-20]
+    detected_by: "trace:IMPACT"

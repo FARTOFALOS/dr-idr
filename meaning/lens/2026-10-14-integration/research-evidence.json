@@ -1,0 +1,410 @@
+{
+ "source_commit": "2a36608e04fbdf896b313b5cde477df13b229e0b",
+ "rows": {
+  "rows": 296738,
+  "base_rate": 0.296615,
+  "rows_by_epoch": {
+   "2009-12": 21042,
+   "2013-19": 118189,
+   "2020-25": 157507
+  },
+  "coverage": {
+   "NODEPOS_WD": {
+    "share_n_ge_20": 0.228771,
+    "median_n": 10.0,
+    "answered": 0.228771
+   },
+   "NODEPOS_ALL": {
+    "share_n_ge_20": 0.787803,
+    "median_n": 49.0,
+    "answered": 0.787803
+   },
+   "GEO": {
+    "share_n_ge_20": 0.960716,
+    "median_n": 354.0,
+    "answered": 0.960716
+   },
+   "BASE_D": {
+    "share_n_ge_20": 0.702162,
+    "median_n": 35.0,
+    "answered": 0.702162
+   },
+   "CLOCK": {
+    "share_n_ge_20": 1.0,
+    "median_n": 1725.0,
+    "answered": 1.0
+   },
+   "BASE_DW": {
+    "share_n_ge_20": 0.311153,
+    "median_n": 12.0,
+    "answered": 0.311153
+   },
+   "BASE_DP": {
+    "share_n_ge_20": 0.278697,
+    "median_n": 10.0,
+    "answered": 0.278697
+   },
+   "BASE_DV": {
+    "share_n_ge_20": 0.450633,
+    "median_n": 16.0,
+    "answered": 0.450633
+   }
+  }
+ },
+ "domain": [
+  {
+   "universe": "NQ ODR",
+   "sessions": 4660,
+   "targets": 1718,
+   "rows_open": 45919,
+   "rows_target_unknown": 60,
+   "seconds": 75
+  },
+  {
+   "universe": "NQ RDR",
+   "sessions": 4730,
+   "targets": 1624,
+   "rows_open": 56119,
+   "rows_target_unknown": 856,
+   "seconds": 87
+  },
+  {
+   "universe": "ES ODR",
+   "sessions": 4821,
+   "targets": 1652,
+   "rows_open": 43301,
+   "rows_target_unknown": 14,
+   "seconds": 80
+  },
+  {
+   "universe": "ES RDR",
+   "sessions": 4867,
+   "targets": 1758,
+   "rows_open": 57143,
+   "rows_target_unknown": 718,
+   "seconds": 98
+  },
+  {
+   "universe": "YM ODR",
+   "sessions": 4641,
+   "targets": 1681,
+   "rows_open": 42893,
+   "rows_target_unknown": 16,
+   "seconds": 76
+  },
+  {
+   "universe": "YM RDR",
+   "sessions": 4762,
+   "targets": 1603,
+   "rows_open": 53755,
+   "rows_target_unknown": 728,
+   "seconds": 86
+  }
+ ],
+ "anchors": {
+  "rows": 296738,
+  "coverage": {
+   "NODEPOS_WD": 0.2288,
+   "NODEPOS_ALL": 0.7878,
+   "GEO": 0.9607
+  },
+  "median_n": {
+   "NODEPOS_WD": 10.0,
+   "NODEPOS_ALL": 49.0,
+   "GEO": 354.0
+  },
+  "geo_vs_nodepos_all_diff": 0.001262,
+  "identical_to_published_A_D": true
+ },
+ "step1": {
+  "P1": {
+   "rows": 66461,
+   "share_of_rows": 0.223972,
+   "base_rate": 0.389085,
+   "brier_X": 0.216088,
+   "brier_ref": 0.21302,
+   "diff": 0.003068,
+   "lo": 0.001021,
+   "hi": 0.005012,
+   "rel_skill": -0.014401,
+   "median_n_X": 28.0,
+   "median_n_ref": 72.0,
+   "epochs": {
+    "2009-12": {
+     "rows": 757,
+     "diff": -0.012123
+    },
+    "2013-19": {
+     "rows": 18680,
+     "diff": 0.002703
+    },
+    "2020-25": {
+     "rows": 47024,
+     "diff": 0.003457
+    }
+   },
+   "verdict": "REFUTED_AS_IMPROVEMENT"
+  },
+  "P2": {
+   "rows": 200487,
+   "share_of_rows": 0.675636,
+   "base_rate": 0.327986,
+   "brier_X": 0.179406,
+   "brier_ref": 0.181658,
+   "diff": -0.002252,
+   "lo": -0.003093,
+   "hi": -0.001423,
+   "rel_skill": 0.012399,
+   "median_n_X": 70.0,
+   "median_n_ref": 51.0,
+   "epochs": {
+    "2009-12": {
+     "rows": 7854,
+     "diff": -0.003233
+    },
+    "2013-19": {
+     "rows": 73174,
+     "diff": -0.002602
+    },
+    "2020-25": {
+     "rows": 119459,
+     "diff": -0.001974
+    }
+   },
+   "verdict": "ESTABLISHED"
+  },
+  "P3": {
+   "rows": 208358,
+   "share_of_rows": 0.702162,
+   "base_rate": 0.327292,
+   "brier_X": 0.17725,
+   "brier_ref": 0.180586,
+   "diff": -0.003336,
+   "lo": -0.003741,
+   "hi": -0.002943,
+   "rel_skill": 0.018471,
+   "median_n_X": 488.0,
+   "median_n_ref": 50.0,
+   "epochs": {
+    "2009-12": {
+     "rows": 8158,
+     "diff": -0.006998
+    },
+    "2013-19": {
+     "rows": 76059,
+     "diff": -0.00362
+    },
+    "2020-25": {
+     "rows": 124141,
+     "diff": -0.002921
+    }
+   },
+   "verdict": "ESTABLISHED"
+  },
+  "context_CLOCK": {
+   "rows": 208358,
+   "share_of_rows": 0.702162,
+   "base_rate": 0.327292,
+   "brier_X": 0.192397,
+   "brier_ref": 0.180586,
+   "diff": 0.011811,
+   "lo": 0.010064,
+   "hi": 0.013462,
+   "rel_skill": -0.065406,
+   "median_n_X": 1907.0,
+   "median_n_ref": 50.0,
+   "epochs": {
+    "2009-12": {
+     "rows": 8158,
+     "diff": 0.001467
+    },
+    "2013-19": {
+     "rows": 76059,
+     "diff": 0.00942
+    },
+    "2020-25": {
+     "rows": 124141,
+     "diff": 0.013957
+    }
+   },
+   "verdict": "REFUTED_AS_IMPROVEMENT"
+  },
+  "support_control": {
+   "P1": {
+    "rows": 66461,
+    "equal_n_median": 28.0,
+    "diff": -0.000868,
+    "lo": -0.002958,
+    "hi": 0.001159,
+    "epochs": {
+     "2009-12": -0.015417,
+     "2013-19": -0.001205,
+     "2020-25": -0.0005
+    }
+   },
+   "P2": {
+    "rows": 200487,
+    "equal_n_median": 46.0,
+    "diff": -0.001139,
+    "lo": -0.00204,
+    "hi": -0.00031,
+    "epochs": {
+     "2009-12": -0.000579,
+     "2013-19": -0.001099,
+     "2020-25": -0.0012
+    }
+   },
+   "P3": {
+    "rows": 208358,
+    "equal_n_median": 50.0,
+    "diff": 0.000388,
+    "lo": -4.6e-05,
+    "hi": 0.000782,
+    "epochs": {
+     "2009-12": -0.000344,
+     "2013-19": 0.000795,
+     "2020-25": 0.000186
+    }
+   }
+  }
+ },
+ "controls": {
+  "null": {
+   "P1": "REFUTED_AS_IMPROVEMENT",
+   "P2": "REFUTED_AS_IMPROVEMENT",
+   "P3": "NOT_ESTABLISHED",
+   "P4": {
+    "information": "NOT_ESTABLISHED",
+    "prediction": "REFUTED_AS_IMPROVEMENT",
+    "pairs": {
+     "narrow-usual": {
+      "diff": -0.004092,
+      "lo": -0.008529,
+      "hi": -0.000527
+     },
+     "wide-usual": {
+      "diff": -0.002143,
+      "lo": -0.006297,
+      "hi": 0.001639
+     }
+    }
+   },
+   "P5": {
+    "information": "NOT_ESTABLISHED",
+    "prediction": "REFUTED_AS_IMPROVEMENT",
+    "pairs": {
+     "1/4-1/2 - 0-1/4": {
+      "diff": 0.000654,
+      "lo": -0.004129,
+      "hi": 0.004669
+     },
+     "1/2-1 - 0-1/4": {
+      "diff": -0.000218,
+      "lo": -0.005525,
+      "hi": 0.004295
+     },
+     ">=1 - 0-1/4": {
+      "diff": 0.003889,
+      "lo": -0.002285,
+      "hi": 0.010224
+     }
+    }
+   },
+   "P6": {
+    "information": "NOT_ESTABLISHED",
+    "prediction": "REFUTED_AS_IMPROVEMENT",
+    "pairs": {
+     "-1/2: v1-v0": {
+      "diff": -0.005749,
+      "lo": -0.011672,
+      "hi": 0.00037
+     },
+     "-7/10: v1-v0": {
+      "diff": -0.001929,
+      "lo": -0.007368,
+      "hi": 0.003604
+     },
+     "-7/10: v2-v0": {
+      "diff": 0.002513,
+      "lo": -0.008117,
+      "hi": 0.012624
+     }
+    }
+   },
+   "passed": true
+  },
+  "positive": {
+   "universes": [
+    {
+     "universe": "NQ ODR (injected)",
+     "sessions": 4660,
+     "targets": 1718,
+     "rows_open": 45919,
+     "rows_target_unknown": 60,
+     "seconds": 60
+    },
+    {
+     "universe": "NQ RDR (injected)",
+     "sessions": 4730,
+     "targets": 1624,
+     "rows_open": 56119,
+     "rows_target_unknown": 646,
+     "seconds": 69
+    }
+   ],
+   "rows": 101332,
+   "information_narrow_usual": {
+    "rows_A": 27930,
+    "rows_B": 41560,
+    "rows_in_shared_strata": 63904,
+    "rate_A": 0.523774,
+    "rate_B": 0.285876,
+    "adjusted_diff": 0.272614,
+    "lo": 0.235686,
+    "hi": 0.308971,
+    "epochs": {
+     "2009-12": 0.292364,
+     "2013-19": 0.246723,
+     "2020-25": 0.289318
+    },
+    "verdict": "ESTABLISHED"
+   },
+   "prediction_BASE_DW_vs_BASE_D": {
+    "rows": 31254,
+    "share_of_rows": 0.308432,
+    "base_rate": 0.292315,
+    "brier_X": 0.172218,
+    "brier_ref": 0.184444,
+    "diff": -0.012226,
+    "lo": -0.01567,
+    "hi": -0.008787,
+    "rel_skill": 0.066288,
+    "median_n_X": 29.0,
+    "median_n_ref": 73.0,
+    "epochs": {
+     "2009-12": {
+      "rows": 220,
+      "diff": 0.009028
+     },
+     "2013-19": {
+      "rows": 8031,
+      "diff": -0.010207
+     },
+     "2020-25": {
+      "rows": 23003,
+      "diff": -0.013135
+     }
+    },
+    "verdict": "NOT_ESTABLISHED"
+   },
+   "passed": false
+  }
+ },
+ "source_role": "REPORTED_EXISTING_EXPLORATION_NOT_RERUN",
+ "product_method": "OPEN",
+ "BASE_D": "MEASUREMENT_REFERENCE_NOT_PRODUCT_CANDIDATE",
+ "evaluate_cadence": "declared 15 minute common-clock grid",
+ "runtime_cadence": "closed M5",
+ "scored_quantity": "yes/(yes+no); targets with unknown outcome excluded from scoring",
+ "published_quantities": "POINT among known separately from BOUNDS [yes/n_match,(yes+unknown)/n_match]"
+}

@@ -196,7 +196,8 @@ def decision(view, ev, inst, session, scope):
 
 # ---------- the live payload ----------
 def _member_series(snap):
-    sid = snap["snapshot_id"]
+    from revisions24 import path_revision
+    sid = (snap["snapshot_id"],path_revision(snap))
     if sid in _SER: return _SER[sid]
     grid = snap["grid"]
     formed = snap["schedule"]["formed"]

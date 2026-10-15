@@ -1,0 +1,82 @@
+{
+ "id": "https://dr-lab.local/candidates",
+ "name": "dr_lab_candidates",
+ "imports": [
+  "../../contract/schema/dr_lab_sc"
+ ],
+ "enums": {
+  "ProjectionKind": {
+   "annotations": {
+    "sc_ref": "P0.2; P0.3; P3"
+   },
+   "permissible_values": {
+    "FINAL_EXTREME": {},
+    "DR_OUTCOME": {},
+    "CLOSE_AT_M5": {},
+    "RANGE_AT_M5": {},
+    "AT_LEVEL_OR_BEYOND": {},
+    "LITERAL_LEVEL_CROSSING": {},
+    "BAND_VISIT": {},
+    "FIRST_QUALIFIED_VISIT": {},
+    "FIRST_ORDER": {},
+    "REACTION_SWING_TARGET": {},
+    "RESIDUAL_NEW_EXTREME": {},
+    "RESIDUAL_DELTA": {},
+    "RESIDUAL_TIME_TO_NEW": {},
+    "FIRST_CONFIRMATION_AFTER_CUT": {
+     "description": "первое подтверждение после общего среза (PRE-24)"
+    },
+    "ALGORITHMIC_REGION_MEMBERSHIP": {},
+    "CLOCK_SPLIT": {},
+    "REGION_STABILITY": {}
+   }
+  },
+  "EventKind": {
+   "annotations": {
+    "sc_ref": "P0.1; P0.2; P0.3"
+   },
+   "permissible_values": {
+    "R": {},
+    "X": {},
+    "DR": {},
+    "ORDER": {},
+    "CLOSE": {},
+    "RANGE": {},
+    "LEVEL": {},
+    "CROSS": {},
+    "VISIT": {},
+    "NEW_R": {},
+    "NEW_X": {},
+    "DELTA_R": {},
+    "DELTA_X": {},
+    "TAU_R": {},
+    "TAU_X": {},
+    "CONFIRMATION": {
+     "description": "подтверждение — первое закрытие M5 за своим DR"
+    }
+   }
+  },
+  "SurfaceProfile": {
+   "annotations": {
+    "sc_ref": "§0.2"
+   },
+   "permissible_values": {
+    "SC11_BASE_24": {},
+    "SC11_NOW_1_0": {},
+    "SC11_PRE_24": {
+     "description": "профиль PRE-24: до подтверждения (решение оператора 08.10.2026)"
+    },
+    "SC11_ARRIVE_24": {
+     "description": "профиль ARRIVE-24: ответ «отсюда до места» (Q1, поручение оператора 12.10.2026)"
+    },
+    "SC11_OBSERVATION": {},
+    "SC11_CONTRACT_SERVICE": {},
+    "LEGACY_SCREEN_22": {},
+    "LEGACY_SEM_V1": {},
+    "LEGACY_CLASSIC": {},
+    "LEGACY_RESEARCH_DASHBOARD": {},
+    "SERVICE": {}
+   }
+  }
+ }
+}

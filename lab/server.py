@@ -12,6 +12,7 @@ engine = None
 
 ROOT = Path(__file__).resolve().parent
 DATA_KIND = 'SYNTHETIC'
+INTEGRATION = False
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -49,8 +50,28 @@ class Handler(SimpleHTTPRequestHandler):
         url = urlparse(self.path)
         params = {k:v[-1] for k,v in parse_qs(url.query).items()}
         try:
+            if url.path == '/integration-config.js':
+                import integration24
+                data=('window.DR_INTEGRATION='+json.dumps(integration24.configuration(INTEGRATION),ensure_ascii=False)+';').encode('utf-8')
+                self.send_response(200); self.send_header('Content-Type','application/javascript; charset=utf-8')
+                self.send_header('Content-Length',str(len(data))); self.end_headers(); self.wfile.write(data); return
+            if url.path in ('/api/integration/scene','/api/integration/audit'):
+                if not INTEGRATION:
+                    return self.json(dict(status='INTEGRATION_DISABLED'),403)
+                import integration24
+                date=params.get('date') or None
+                if date is not None and not re.fullmatch(r'20[0-2]\d-[01]\d-[0-3]\d',date): raise ValueError('date: YYYY-MM-DD')
+                packet=integration24.scene(params.get('instrument','NQ'),params.get('session','RDR'),
+                    int(params['at']),date,params.get('view','auto'),params.get('scope','weekday'),
+                    [k for k in params.get('trials','').split(',') if k])
+                if url.path.endswith('/audit'):
+                    if packet.get('status')!='OK' or params.get('context')!=packet['context']['id']:
+                        return self.json(dict(status='SCENE_CHANGED'))
+                    import integration_audit
+                    packet=integration_audit.audit(packet,dict(instrument=params.get('instrument','NQ'),session=params.get('session','RDR'),date=date,scope=params.get('scope','weekday'),view=params.get('view','auto')))
+                return self.json(packet)
             if url.path == '/api/health':
-                return self.json({'status':'ok','data_kind':DATA_KIND,'version':engine.VERSION})
+                return self.json({'status':'ok','data_kind':DATA_KIND,'version':engine.VERSION,'integration':INTEGRATION,'workspace':str(ROOT.parent)})
             if url.path == '/api/query':
                 return self.json(engine.query(params))
             if url.path == '/api/scene':
@@ -171,7 +192,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=8767)
     parser.add_argument('--data', choices=['market', 'demo'], default='market')
+    parser.add_argument('--integration',action='store_true')
     args = parser.parse_args()
+    INTEGRATION = args.integration
     engine = importlib.import_module('engine' if args.data == 'demo' else 'engine_market')
     DATA_KIND = 'SYNTHETIC' if args.data == 'demo' else 'MARKET'
     engine.initialize()

@@ -1,0 +1,38 @@
+[
+ {
+  "source_commit": "af90505",
+  "path": "meaning/lens/2026-10-12-film-i-moment/01-esse.md",
+  "sha256_lf": "7924c5a3dd849fb7714a4a1360bb5e8cc5977781ca696dd6d1c64c480ddaf23b",
+  "standing": "RESEARCH_OR_PROPOSAL_NOT_PRODUCT_ADMISSION"
+ },
+ {
+  "source_commit": "af90505",
+  "path": "meaning/lens/2026-10-12-film-i-moment/02-semanticheskaya-specifikaciya.md",
+  "sha256_lf": "40942bbbcae21b2381c86d6ff624c6bfbbf039737b1e44f67f7b035884e7518b",
+  "standing": "RESEARCH_OR_PROPOSAL_NOT_PRODUCT_ADMISSION"
+ },
+ {
+  "source_commit": "af90505",
+  "path": "meaning/lens/2026-10-12-film-i-moment/README.md",
+  "sha256_lf": "96d1d807fd05cf24492953420724edb9be128da0e316a09da6d7705b680e14f9",
+  "standing": "RESEARCH_OR_PROPOSAL_NOT_PRODUCT_ADMISSION"
+ },
+ {
+  "source_commit": "2a36608",
+  "path": "studies/q1_sopostavimost_2026_10_13/README.md",
+  "sha256_lf": "d98e5f71c9d0bc5709eb2a20aa01dfcd40a43b2269d903d5ebb6fa189f7b6788",
+  "standing": "RESEARCH_OR_PROPOSAL_NOT_PRODUCT_ADMISSION"
+ },
+ {
+  "source_commit": "2a36608",
+  "path": "studies/q1_sopostavimost_2026_10_13/checks.json",
+  "sha256_lf": "91c190dfb4c0ea0f06a53d6c359af2602fd91cb0f6db632190fd0a8154165e63",
+  "standing": "RESEARCH_OR_PROPOSAL_NOT_PRODUCT_ADMISSION"
+ },
+ {
+  "source_commit": "2a36608",
+  "path": "studies/q1_sopostavimost_2026_10_13/checks.py",
+  "sha256_lf": "851103d964603171f115ea0128f877780ed00c0ef1e1df2f4b5c96d3308022d1",
+  "standing": "RESEARCH_OR_PROPOSAL_NOT_PRODUCT_ADMISSION"
+ }
+]

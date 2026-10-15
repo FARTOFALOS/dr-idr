@@ -9,6 +9,23 @@
 registry_part: surfaces
 
 surfaces:
+  - id: API:/api/integration/scene
+    sc_ref: ["§1.3", "§12.3"]
+    route: /api/integration/scene
+    surface_profile: SERVICE
+    definitions: SRC:SC-1.1
+    marking: >-
+      Local integration service, enabled only by --integration. Not a new estimator or a profile acceptance.
+      Nested family/day/NOW retain their accepted SC envelopes; optional PRE/ARRIVE retain a separately PROPOSED
+      candidate edition and explicit review standing. Context records bind the cut, frame, path/prefix revisions.
+  - id: API:/api/integration/audit
+    sc_ref: ["§1.3", "V3"]
+    route: /api/integration/audit
+    surface_profile: SERVICE
+    definitions: SRC:SC-1.1
+    marking: >-
+      Explicit diagnostic operation on an expected scene context. Reuses Semantic Trace recounts and FOM
+      relationship checks, reporting its bounded coverage. Does not certify human reading or a full rebound catalog.
   - id: API:/api/d24/family
     sc_ref: ["§12.1", "§12.3"]
     route: /api/d24/family

@@ -1,0 +1,232 @@
+{
+  "catalog_part": "fom-presentation",
+  "presentation_obligations": [
+    {
+      "id": "PO:FAMILY",
+      "title_ru": "Семья, направление и собственный N",
+      "semantic_refs": [
+        "CS:F-CONF-1",
+        "CS:F-BREAK-1"
+      ],
+      "bindings": [
+        "B01",
+        "B09"
+      ],
+      "work_refs": [
+        "W01",
+        "W02"
+      ],
+      "availability": "ALWAYS",
+      "alpha_ru": "Смена активирующего события или scope",
+      "omega_ru": "Согласованно сменить семью, направление и знаменатели; исходная доступна явно.",
+      "forbidden_ru": "Новый N выглядит тихим обновлением старой семьи.",
+      "time_rule": "NEW_FAMILY",
+      "test_id": "MT-04",
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/13-zhurnal-vizualizacii.md",
+        "meaning/17-rabota-treidera.md"
+      ],
+      "human_boundary_ru": "Машинная проверка состояния/связей не доказывает заметность и понимание человеком; человеческое прочтение не установлено."
+    },
+    {
+      "id": "PO:BASE",
+      "title_ru": "Историческая карта R/X",
+      "semantic_refs": [
+        "OUT:FINAL-R-1",
+        "OUT:FINAL-X-1"
+      ],
+      "bindings": [
+        "B04",
+        "B05",
+        "B06",
+        "B07"
+      ],
+      "work_refs": [
+        "W04",
+        "W05",
+        "W06"
+      ],
+      "availability": "ALWAYS",
+      "alpha_ru": "Перестановка записей или следующая закрытая M5",
+      "omega_ru": "Состав и фиксированные R/X, зоны и доли неизменны; текущие статусы отдельно.",
+      "forbidden_ru": "Перерисовка внушает новую историческую массу.",
+      "time_rule": "FIXED_WITHIN_FAMILY",
+      "test_id": "MT-01",
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/13-zhurnal-vizualizacii.md",
+        "meaning/17-rabota-treidera.md"
+      ],
+      "human_boundary_ru": "Машинная проверка состояния/связей не доказывает заметность и понимание человеком; человеческое прочтение не установлено."
+    },
+    {
+      "id": "PO:PREFIX",
+      "title_ru": "Сегодняшняя цена и глубина",
+      "semantic_refs": [
+        "FF:TODAY-PREFIX"
+      ],
+      "bindings": [
+        "B02",
+        "B08"
+      ],
+      "work_refs": [
+        "W03",
+        "W04",
+        "W07"
+      ],
+      "availability": "ALWAYS",
+      "alpha_ru": "Новая закрытая M5 обновляет наблюдаемый минимум",
+      "omega_ru": "Обновить сегодняшний факт и достижимость без переписывания R истории.",
+      "forbidden_ru": "Текущий минимум объявлен окончательным.",
+      "time_rule": "CLOSED_M5_ONLY",
+      "test_id": "MT-02",
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/13-zhurnal-vizualizacii.md",
+        "meaning/17-rabota-treidera.md"
+      ],
+      "human_boundary_ru": "Машинная проверка состояния/связей не доказывает заметность и понимание человеком; человеческое прочтение не установлено."
+    },
+    {
+      "id": "PO:NOW",
+      "title_ru": "Продолжение за общим срезом",
+      "semantic_refs": [
+        "EST:N-NEW-R",
+        "EST:N-NEW-X"
+      ],
+      "bindings": [
+        "B10"
+      ],
+      "work_refs": [
+        "W08",
+        "W09",
+        "W13"
+      ],
+      "availability": "AFTER_CONFIRMATION",
+      "alpha_ru": "Продвижение общего среза",
+      "omega_ru": "Новый набор и опора у нового времени; место ответа сохраняется, загрузка отдельно.",
+      "forbidden_ru": "Старый процент под новым срезом либо число из другой семьи.",
+      "time_rule": "RECOMPUTE_AT_CUT",
+      "test_id": "MT-02",
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/13-zhurnal-vizualizacii.md",
+        "meaning/17-rabota-treidera.md"
+      ],
+      "human_boundary_ru": "Машинная проверка состояния/связей не доказывает заметность и понимание человеком; человеческое прочтение не установлено."
+    },
+    {
+      "id": "PO:ARRIVE",
+      "title_ru": "Ещё не дошли / уже дошли",
+      "semantic_refs": [
+        "EST:K-ARRIVE",
+        "FF:K-TARGET"
+      ],
+      "bindings": [
+        "B18"
+      ],
+      "work_refs": [
+        "W04",
+        "W08",
+        "W09",
+        "W13"
+      ],
+      "availability": "AFTER_CONFIRMATION",
+      "alpha_ru": "Уровень достигнут закрытым префиксом",
+      "omega_ru": "Будущий вопрос сменяется фактом достижения; сохранившийся процент не называется шансом.",
+      "forbidden_ru": "Зона R и приход к L отождествлены либо старый ответ остаётся будущим.",
+      "time_rule": "AT_RISK_UNTIL_RESOLVED",
+      "test_id": "MT-03",
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/13-zhurnal-vizualizacii.md",
+        "meaning/17-rabota-treidera.md"
+      ],
+      "human_boundary_ru": "Машинная проверка состояния/связей не доказывает заметность и понимание человеком; человеческое прочтение не установлено."
+    },
+    {
+      "id": "PO:LEVEL",
+      "title_ru": "Оставшаяся глубина отката",
+      "semantic_refs": [
+        "EST:B-LEVEL-REST"
+      ],
+      "bindings": [
+        "B13",
+        "B14"
+      ],
+      "work_refs": [
+        "W05",
+        "W12"
+      ],
+      "availability": "ON_DEMAND",
+      "alpha_ru": "Изменён уровень или срез",
+      "omega_ru": "Сохранить именованный горизонт и знаменатель всей семьи; связь к цене и времени.",
+      "forbidden_ru": "Подмена долей лесенки новым минимумом NOW или условным ARRIVE.",
+      "time_rule": "RECOMPUTE_HORIZON",
+      "test_id": "MT-02",
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/13-zhurnal-vizualizacii.md",
+        "meaning/17-rabota-treidera.md"
+      ],
+      "human_boundary_ru": "Машинная проверка состояния/связей не доказывает заметность и понимание человеком; человеческое прочтение не установлено."
+    },
+    {
+      "id": "PO:ABSENCE",
+      "title_ru": "Ноль, неизвестность и отзыв",
+      "semantic_refs": [
+        "OUT:FINAL-R-1"
+      ],
+      "bindings": [
+        "B11",
+        "B15"
+      ],
+      "work_refs": [
+        "W09",
+        "W10",
+        "W13"
+      ],
+      "availability": "STATE_DEPENDENT",
+      "alpha_ru": "Неизвестные исходы, нет опоры или отзыв проверки",
+      "omega_ru": "Показать причину и собственную опору; снять зависимое число и рисунок.",
+      "forbidden_ru": "Пустота прочитана как нулевая частота или остаётся старый процент.",
+      "time_rule": "WITHDRAW_DEPENDENTS",
+      "test_id": "MT-05",
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/13-zhurnal-vizualizacii.md",
+        "meaning/17-rabota-treidera.md"
+      ],
+      "human_boundary_ru": "Машинная проверка состояния/связей не доказывает заметность и понимание человеком; человеческое прочтение не установлено."
+    },
+    {
+      "id": "PO:CLOCK",
+      "title_ru": "Часы точки и путь цены",
+      "semantic_refs": [
+        "EST:B-RX-WINDOW-R",
+        "EST:B-CLOSE"
+      ],
+      "bindings": [
+        "B07",
+        "B12"
+      ],
+      "work_refs": [
+        "W06",
+        "W12"
+      ],
+      "availability": "ON_DEMAND",
+      "alpha_ru": "Выбран момент, полоса или путь",
+      "omega_ru": "Момент окончательной точки и положения закрытий M5 доступны как разные объекты.",
+      "forbidden_ru": "Время зоны объявлено длительностью; разные колонки сложены в маршрут.",
+      "time_rule": "COMMON_CLOCK_VS_FINAL_TIME",
+      "test_id": "MT-01",
+      "evidence": [
+        "spec/DR-LAB-SWPC-1.1.md",
+        "meaning/13-zhurnal-vizualizacii.md",
+        "meaning/17-rabota-treidera.md"
+      ],
+      "human_boundary_ru": "Машинная проверка состояния/связей не доказывает заметность и понимание человеком; человеческое прочтение не установлено."
+    }
+  ]
+}

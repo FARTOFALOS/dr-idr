@@ -250,3 +250,20 @@ History query 0.05–0.25 s; live state with overlay ~0.2–0.5 s; a passive Tra
 Idempotent steps: Python with numpy/pandas → TradingView on 9222 (start via tradingview-mcp if absent; waits for a
 `tradingview.com/chart` page) → history base (build if missing) → server (hidden, logs) → open the page. Saved as
 UTF-8 with BOM (Windows PowerShell 5.1). `start-dr-lab.cmd -NoBrowser` runs everything except opening the page.
+# Интеграционный вариант 15.10.2026
+
+Отдельная ветка `codex/integration-first` от main267, localhost8773, [описание](../integration/README.md).
+Рабочий main/8767 не изменён. `/api/integration/scene` — служебная композиция уже проверенных `day/family/NOW`
+и отдельно включённых PRE/ARRIVE. У вложенных ответов собственные конверты; служба не новый оцениватель.
+Контекст связывает дату/инструмент/блок/cut/view/scope, family/snapshot, ревизии пути/префикса и реестров/моделей.
+Клиент коммитит только текущий контекст; чужой вложенный ответ снимается независимо от исправных частей.
+
+Принятый контракт остаётся в `contract/`, 53 величины и исходный закреплённый текст. Кандидатное расширение
+импортирует его схему в `integration/candidates`, имеет отдельную редакцию PROPOSED и не меняет допуск продукта.
+`lab/integration24.py` использует существующие `scene24/now24/pre24/arrive24/q1` и тот же gate-код с отдельным
+экземпляром реестра. В `revisions24` добавлен content witness для полного пути, не меняющий BASE identities.
+
+`/api/integration/audit` — явная диагностическая операция для ожидаемого context id. Существующие Trace/FOM
+функции проверяют дополнительные пересчёты/отношения в заявленной области; NOT_COVERED не превращается в PASS.
+Полный исходный каталог сохранён как reference и не объявлен перепривязанным. Вычисление, показ и сохранение
+issue остаются отдельными операциями; новый render не пишет issue/store. Оба сервиса объявлены в реестре как SERVICE.

@@ -1,0 +1,1035 @@
+{
+  "catalog_part": "fom-research",
+  "research_findings": [
+    {
+      "id": "RS:DR-HOLD",
+      "title_ru": "Историческая частота удержания DR",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [
+        "EST:B-DR"
+      ],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "NQ, ES, YM, 2006–2025; сессии с подтверждением, собственный полный горизонт.",
+      "protocol_ru": "m7_claims: инструменты раздельно, эпохи; доля закрытий без противоположного слома.",
+      "result_ru": "Около 80 % в подтверждённых RDR; раннее подтверждение даёт другую частоту.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Около 80 % в подтверждённых RDR; раннее подтверждение даёт другую частоту.",
+      "negative_scope_ru": "Сам процент не устанавливает причинный механизм, прогноз или положительную сделку.",
+      "uncertainty_ru": "В этой карте доверительные границы заново не считались.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "docs/RESEARCH.md",
+        "docs/STRATEGY.md",
+        "studies/m7_claims.py"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:DR-GEOMETRY",
+      "title_ru": "Контроли диапазона воспроизводят описательные частоты",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [
+        "EST:B-DR"
+      ],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "NQ, ES, YM × ADR/ODR/RDR, история аудита 29.09.",
+      "protocol_ru": "Сохранена коробка; P60 и NBR против действительного продолжения.",
+      "result_ru": "Похожие описательные частоты воспроизводятся перестановкой внутри часа и соседним путём.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Похожие описательные частоты воспроизводятся перестановкой внутри часа и соседним путём.",
+      "negative_scope_ru": "Не доказывает отсутствие любых эффектов DR или бесполезность инструмента.",
+      "uncertainty_ru": "Для остаточных часов есть интервалы в исходнике; карта не вычисляет новую причинную оценку.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "docs/RESEARCH.md",
+        "meaning/03-dokazatelstva.md",
+        "studies/audit_2026_09_29/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:NOW-PATH",
+      "title_ru": "Путь NOW не обогнал B0",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [
+        "CMP:M1-1",
+        "CMP:M2-1",
+        "CMP:M3-1",
+        "EST:N-NEW-R"
+      ],
+      "validation_kind": "STATISTICAL_TRANSFER",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "NQ/ES/YM × ADR/ODR/RDR, 2009–2025; 719302 цель×M5; семьи ≥40.",
+      "protocol_ru": "Walk-forward; интервалы по неделям, собственные критерии для бинарного исхода, величины и времени.",
+      "result_ru": "На проверенном корпусе M1–M3 не получили допуска против B0; рабочий режим TIME_BASELINE.",
+      "claim_level": "C_TRANSFER",
+      "conclusion": "NOT_DETECTED",
+      "allowed_claim_ru": "На проверенном корпусе M1–M3 не получили допуска против B0; рабочий режим TIME_BASELINE.",
+      "negative_scope_ru": "Эффект не допущен в этом корпусе. Семьи слома NOT_TESTABLE, все дни NOT_VALIDATED_SCOPE; отсутствие информации во всех путях не доказано.",
+      "uncertainty_ru": "Критерий допуска не проверка эквивалентности; SESOI для отсутствия эффекта не установлен.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "meaning/15-sloj-seichas.md",
+        "contract/registry/50-validation.yaml"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:MECHANICAL",
+      "title_ru": "Механические входы автора",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "POLICY_FITNESS",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "NQ/ES/YM, walk-forward 2011–2025; retirement и time-and-price, выбранные стопы и цели.",
+      "protocol_ru": "Параметры по прошлым годам; эпохи, расходы; выбранная клетка не независимое подтверждение.",
+      "result_ru": "Положительное преимущество retirement/time-and-price на индексах после расходов не установлено.",
+      "claim_level": "D_POLICY",
+      "conclusion": "NOT_DETECTED",
+      "allowed_claim_ru": "Положительное преимущество retirement/time-and-price на индексах после расходов не установлено.",
+      "negative_scope_ru": "Не распространяется на дискреционные отказы и иные входы/стопы/издержки.",
+      "uncertainty_ru": "Для NQ RDR некоторые интервалы включают ноль; объявлять все варианты убыточными сильнее источника.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "docs/RESEARCH.md",
+        "docs/STRATEGY.md",
+        "studies/m7_claims.py"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:INTERMARKET",
+      "title_ru": "Межрыночное расхождение и часы",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "NQ/ES/YM RDR, исследование intermarket.",
+      "protocol_ru": "Контроль времени; один контроль добавлен после первого чтения и помечен.",
+      "result_ru": "Преимущество diverging в основном исчезает внутри 30-минутных страт времени подтверждения.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "NOT_DETECTED",
+      "allowed_claim_ru": "Преимущество diverging в основном исчезает внутри 30-минутных страт времени подтверждения.",
+      "negative_scope_ru": "Не исключает все межрыночные признаки; нет SESOI и эквивалентностного результата.",
+      "uncertainty_ru": "Номинальный z не учитывает все вопросы; ES +4.7 п.п. — намёк, не установлено.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "docs/RESEARCH.md",
+        "studies/intermarket.py"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:ZONE",
+      "title_ru": "Карта зон: исторические испытания",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [
+        "EST:ZM3-STUDY"
+      ],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Цели 2018–2025, семья раньше цели; корпус уже видели при выборе идеи.",
+      "protocol_ru": "Устойчивость сетки, bootstrap/null, семейные результаты; без ленты 2026.",
+      "result_ru": "Исторические результаты zone-map-3 относятся к использованному корпусу; prospective приёмка не закрыта.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Исторические результаты zone-map-3 относятся к использованному корпусу; prospective приёмка не закрыта.",
+      "negative_scope_ru": "Не установлена приёмка на новых сессиях после 2025.",
+      "uncertainty_ru": "Пороговая устойчивость и ретроспектива не C2.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "meaning/12-karta-zon.md",
+        "studies/zone_map_3_2026_10_01/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:Q1",
+      "title_ru": "Вычислительная проверка Q1",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [
+        "EST:K-ARRIVE"
+      ],
+      "validation_kind": "COMPUTATIONAL_INVARIANT",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Объявленные сцены и синтетические контрпримеры Q1 12.10.",
+      "protocol_ru": "Эталонный подсчёт, неизменяемые выпуски, отдельно исход и reproduce.",
+      "result_ru": "Изолированный Q1 и ARRIVE согласованы с эталонным подсчётом; YES/NO/UNKNOWN и идентичности различены.",
+      "claim_level": "A_CORRECTNESS",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Изолированный Q1 и ARRIVE согласованы с эталонным подсчётом; YES/NO/UNKNOWN и идентичности различены.",
+      "negative_scope_ru": "D1/приёмка/прочтение не решены проверкой вычислений.",
+      "uncertainty_ru": "Сценовая корректность не статистическая калибровка на новых днях.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/q1_pilot_2026_10_12/README.md",
+        "lab/q1/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:TRACE",
+      "title_ru": "Проверка Semantic Trace",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "COMPUTATIONAL_INVARIANT",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Четыре сцены NQ RDR 17.12.2025, 11:10.",
+      "protocol_ru": "Отбор префиксом, согласованная подмена будущего, проверка эталоном, независимые оси статуса.",
+      "result_ru": "На 3031c95 четыре объявленные сцены и 14 контрпримеров; все четыре OHLC будущего и fail согласованы.",
+      "claim_level": "A_CORRECTNESS",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "На 3031c95 четыре объявленные сцены и 14 контрпримеров; все четыре OHLC будущего и fail согласованы.",
+      "negative_scope_ru": "Не закрывает весь DR Lab, PRE имеет только статический охват.",
+      "uncertainty_ru": "Полная лента M1→M5 не повторялась; статические вызовы по именам.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "trace/README.md",
+        "studies/trace_2026_10_13/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:READING",
+      "title_ru": "Человеческое чтение экрана",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "STRUCTURE",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Нет завершённой человеческой приёмки.",
+      "protocol_ru": "SWPC H-задачи не проведены; вопросы чтения Q1 отозваны оператором.",
+      "result_ru": "Человеческое различение пока не установлено; машинный показ не доказывает понимание.",
+      "claim_level": "A_CORRECTNESS",
+      "conclusion": "INCONCLUSIVE",
+      "allowed_claim_ru": "Человеческое различение пока не установлено; машинный показ не доказывает понимание.",
+      "negative_scope_ru": "Не объявлять восприятие принятым и не навязывать новый опрос.",
+      "uncertainty_ru": "Нет человеческих ответов или размера эффекта.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "trace/catalog/00-standing.yaml",
+        "spec/DR-LAB-SWPC-1.1.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:BREAK-STD",
+      "title_ru": "Достижение противоположного STD после слома",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "NQ ADR/ODR/RDR, 2006–2025, полный горизонт, отдельно 2021–2025.",
+      "protocol_ru": "Закрытие за DR, касание STD −1 в противоположной шкале; A включает свечу слома, B начинается после её закрытия, C уже достигнуто к закрытию.",
+      "result_ru": "На NQ тезис «больше половины» зависит от сессии и включения свечи слома; A, B и C — разные события.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "На NQ тезис «больше половины» зависит от сессии и включения свечи слома; A, B и C — разные события.",
+      "negative_scope_ru": "Не подменять B числом A; уровень здесь −2 в исходной направленной шкале, не противоположный IDR. Не переносить на ES/YM.",
+      "uncertainty_ru": "Уилсон предполагает независимость сессий; связность внутри дня может расширить интервалы.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/break_to_std_2026_09_30/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:CLUSTER-NULL",
+      "title_ru": "Устойчивое сгущение и геометрический контроль",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "NQ/ES/YM ADR/ODR/RDR, семьи N≥20, 2006–2025; более тысячи R/X испытаний.",
+      "protocol_ru": "M/J/G, временной split, сдвиги сетки, bootstrap, одно-case removal, тот же pipeline на memoryless.",
+      "result_ru": "Критерии M/J подтверждают сгущения и на memoryless; особая структура сверх геометрии почти не получила допуска.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "NOT_DETECTED",
+      "allowed_claim_ru": "Критерии M/J подтверждают сгущения и на memoryless; особая структура сверх геометрии почти не получила допуска.",
+      "negative_scope_ru": "Не утверждает отсутствие всех кластеров: не выделено надёжного добавочного эффекта у этих правил/размеров семьи.",
+      "uncertainty_ru": "Одна G-находка среди множества проверок; чувствительность при слабом внедрённом эффекте недостаточна.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/lens15_2026_10_01/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:CLUSTER-TEMPLATE",
+      "title_ru": "Область против фиксированного шаблона",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Цели 2018–2025, семьи до цели; шаблон 2006–2017, NQ/ES/YM × три блока.",
+      "protocol_ru": "Path-null, равные размеры области, шаблон/первый час/модальная полоса; интервалы пересэмплированием лет.",
+      "result_ru": "Автоматическая область main-cluster-1 не превзошла шаблон того же размера на следующих сессиях.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "NOT_DETECTED",
+      "allowed_claim_ru": "Автоматическая область main-cluster-1 не превзошла шаблон того же размера на следующих сессиях.",
+      "negative_scope_ru": "Не опровергает исходный локальный контраст main-cluster; проверяет добавку к более сильному контролю.",
+      "uncertainty_ru": "Критерий отсутствия практически значимого эффекта с SESOI не установлен.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/cluster_synthesis_audit_2026_10_01/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:MAIN-CLUSTER",
+      "title_ru": "Локальный контраст главного кластера",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Цели 2018–2025, выбор/отладка 2006–2017; NQ/ES/YM ADR/ODR/RDR.",
+      "protocol_ru": "Предъявленные У1–У5; последующие цели, соседи того же размера и годовое пересэмплирование.",
+      "result_ru": "Именованные области main-cluster-1 показали локальный контраст, почти всегда в первом часе; правило архивировано как исследование.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Именованные области main-cluster-1 показали локальный контраст, почти всегда в первом часе; правило архивировано как исследование.",
+      "negative_scope_ru": "Поздние области не получили подтверждения; это ограничение данного правила, не отсутствие рыночной структуры.",
+      "uncertainty_ru": "Допуск против соседей не доказательство преимущества против геометрического null или шаблона.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "meaning/11-glavnyj-klaster.md",
+        "studies/main_cluster_2026_10_01/check.py"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:ZONE2",
+      "title_ru": "Карты V2 и пустые клетки конверта",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Цели 2018–2025, виденная история, семьи≥60, отдельный аудит zone-map-2.",
+      "protocol_ru": "Перенос, holes, статусы на 30/60/120 мин, пути без направления.",
+      "result_ru": "Конверт содержит клетки без исторических событий; null строит сопоставимое число зон; mask и конверт не тождественны.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Конверт содержит клетки без исторических событий; null строит сопоставимое число зон; mask и конверт не тождественны.",
+      "negative_scope_ru": "V2 не действующий продукт; результат не допуск C2 и не отрицание всех зон.",
+      "uncertainty_ru": "Сеточная устойчивость и пересэмплирование не считались; инструменты зависимы внутри дня.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/zone_map_2_audit_2026_10_01/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:WINDOW-LABEL",
+      "title_ru": "Одно окно по метке подтверждающей свечи",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [
+        "FND:ACTIVATION-WINDOW"
+      ],
+      "validation_kind": "STRUCTURE",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Материалы автора 2022–2026; архив 156 субтитров и агрегатная сверка.",
+      "protocol_ru": "Форензический отчёт сопоставляет употребление времён и границы окна; прямое равенство «время=метка» в источниках не найдено.",
+      "result_ru": "Текущая трактовка использует метку открытия подтверждающей M5 и одно окно; знание подтверждения доступно на её закрытии.",
+      "claim_level": "A_CORRECTNESS",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Текущая трактовка использует метку открытия подтверждающей M5 и одно окно; знание подтверждения доступно на её закрытии.",
+      "negative_scope_ru": "Не переносить раннее DRlens высказывание об обеих границах на QuantX; без доказательства paid-engine parity.",
+      "uncertainty_ru": "Автосубтитры; весь корпус первоисточников FOM заново не проверяет.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/forensic_window_2026_09_30/README.md",
+        "docs/DECISIONS.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:LENS4-REPLAY",
+      "title_ru": "Эквивалентность векторного воспроизведения legacy",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "COMPUTATIONAL_INVARIANT",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Подтверждённые состояния legacy, тестовые сессии 2016–2025, история до года цели.",
+      "protocol_ru": "check_equivalence; сравнение с replay_core, ранее сверенным с scene21.cohort.",
+      "result_ru": "Архив сообщает 5213 из 5213 совпадений двух реализаций отбора.",
+      "claim_level": "A_CORRECTNESS",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Архив сообщает 5213 из 5213 совпадений двух реализаций отбора.",
+      "negative_scope_ru": "Не переносить калибровку legacy-мест на окончательные R/X или ARRIVE.",
+      "uncertainty_ru": "Это зафиксированный результат исполнителя, не новый полный прогон FOM.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/lens4_2026_09_30/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:LENS5-REACTION",
+      "title_ru": "Реакция: два разных правила остановки",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "STRUCTURE",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Gaussian/Student-t случайные пути, не торговая лента.",
+      "protocol_ru": "Возврат к старту эпизода против разворота θ от минимума; разные моменты узнавания.",
+      "result_ru": "Определены две синтетические реакции; рыночная информативность этими испытаниями не установлена.",
+      "claim_level": "A_CORRECTNESS",
+      "conclusion": "INCONCLUSIVE",
+      "allowed_claim_ru": "Определены две синтетические реакции; рыночная информативность этими испытаниями не установлена.",
+      "negative_scope_ru": "Нельзя переносить синтетическую определимость на статистическую полезность.",
+      "uncertainty_ru": "Нет рыночной популяции или переноса; FOM не объявляет реакцию истинным рыночным объектом.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/lens5_2026_09_30/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:LENS6-AUTHOR",
+      "title_ru": "Сверка одного публичного ключа автора",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "NQ RDR пятница short, окно 10:30–11:00; собственная лента 2006–2025.",
+      "protocol_ru": "DR true, R/X, временной фильтр и честное префиксное множество из author_key_nq.",
+      "result_ru": "Один ключ автора пересчитан собственными определениями; он не устанавливает тождество наших и платных данных.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "INCONCLUSIVE",
+      "allowed_claim_ru": "Один ключ автора пересчитан собственными определениями; он не устанавливает тождество наших и платных данных.",
+      "negative_scope_ru": "Не заимствовать частоты автора без восстановления их набора/горизонта/шкалы.",
+      "uncertainty_ru": "Разные ленты, окна и отборы; точное paid-engine parity не проверено.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/lens6_2026_09_30/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:LENS8-ANCHOR",
+      "title_ru": "Протокол прихода и остаток после среза",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "COMPUTATIONAL_INVARIANT",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "21 синтетический путь; диагностика NQ RDR 2016–2025, собственные старые правила экрана.",
+      "protocol_ru": "Эталон contract.py, независимое чтение путей, same-M5/unknown/reanchoring/prefix проверки.",
+      "result_ru": "Синтетические пути и отдельно диагностическая лента различают приход, допустимый узел и исход после якоря.",
+      "claim_level": "A_CORRECTNESS",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Синтетические пути и отдельно диагностическая лента различают приход, допустимый узел и исход после якоря.",
+      "negative_scope_ru": "Карточка касаний не ответ от общего среза сегодняшнего дня.",
+      "uncertainty_ru": "Независимый читатель проверял тогдашний текст 1.0/1.1; это не человеческая приёмка текущего UI.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/lens8_2026_09_30/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:LENS10-FIELD",
+      "title_ru": "Поле M5 и неподвижная база",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "STRUCTURE",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Синтетический корпус, проверки T1–T8 и A–I.",
+      "protocol_ru": "Поля range visits, неизвестные колонки, часы, frozen family и dynamic part; не рыночная валидация.",
+      "result_ru": "Синтетическая спецификация отделяет baseline на активации от части семьи на последующем срезе.",
+      "claim_level": "A_CORRECTNESS",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Синтетическая спецификация отделяет baseline на активации от части семьи на последующем срезе.",
+      "negative_scope_ru": "Диапазон M5 не итоговая точка R/X, голос по клеткам не маршрут или длительность.",
+      "uncertainty_ru": "FOM регистрирует архив, новый запуск этих старых синтетических тестов не выполнен.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/lens10_2026_09_30/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:OBJECTS",
+      "title_ru": "Четыре разных объекта на одной семье",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "STRUCTURE",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Две зафиксированные семьи NQ RDR/ODR, исторические члены, без переноса 2026 в базу.",
+      "protocol_ru": "Одна семья и одинаковые оси, четыре определения.",
+      "result_ru": "Закрытия, касания high-low, первые посещения и окончательные R/X имеют разное голосование и знаменатели.",
+      "claim_level": "A_CORRECTNESS",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Закрытия, касания high-low, первые посещения и окончательные R/X имеют разное голосование и знаменатели.",
+      "negative_scope_ru": "Распределение конечных точек делит N; несколько клеток диапазона одной свечи не делят сотню.",
+      "uncertainty_ru": "Сравнение двух семей не универсальная калибровка.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/percent_semantics_2026_09_30/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:KADR-FROM-CUT",
+      "title_ru": "Общий срез и ещё не посещённое место",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [
+        "EST:B-LEVEL-REST",
+        "EST:K-ARRIVE"
+      ],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Строки A, NQ/ES/YM × ODR/RDR, 2006–2025, более ранние аналоги.",
+      "protocol_ru": "Сравнения LADDER/CLOCK/NODE/POS/NODEPOS/GEO, опора≥20, общие строки и недельные интервалы.",
+      "result_ru": "На разведочной истории NODEPOS/GEO оценивали вопрос от среза лучше старой лесенки, но смена отбора и опоры не изолирует информацию ключа.",
+      "claim_level": "C_TRANSFER",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "На разведочной истории NODEPOS/GEO оценивали вопрос от среза лучше старой лесенки, но смена отбора и опоры не изолирует информацию ключа.",
+      "negative_scope_ru": "Не объявлять лесенку неверной для её собственного вопроса или новый отбор допущенным C2.",
+      "uncertainty_ru": "История уже видена; выигрыш GEO смешан с ростом опоры.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/kadr_2026_10_12/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:KADR-MEMORY",
+      "title_ru": "Порядок прожитого после контроля момента",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Строки B/B2, два порядка −0.5/+0.5, целый DR и полный префикс.",
+      "protocol_ru": "Стратификация часы×close×экстремумы; недели, три исхода, более узкие страты.",
+      "result_ru": "Большая сырая разница почти объясняется моментом; для расширения остался слабый намёк, не установленный устойчивый эффект.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "NOT_DETECTED",
+      "allowed_claim_ru": "Большая сырая разница почти объясняется моментом; для расширения остался слабый намёк, не установленный устойчивый эффект.",
+      "negative_scope_ru": "Не доказано отсутствие всей памяти пути; только эти два порядка и контролируемые состояния.",
+      "uncertainty_ru": "Для нового R и слома интервалы включают ноль; для X остаток не выдерживает множественную поправку.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/kadr_2026_10_12/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:KADR-AFTER-CONTACT",
+      "title_ru": "После прихода: опора и качество",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Строки C/E, узел −0.5, цель+1, стоп−0.7, ODR/RDR, виденная история.",
+      "protocol_ru": "FRAME/TOUCH/CLOCK, разные якоря, общие строки, контроль цены, недельные интервалы.",
+      "result_ru": "Ни один проверенный набор не обогнал константу для «цель раньше стопа» после общего среза; опора сама по себе не качество.",
+      "claim_level": "C_TRANSFER",
+      "conclusion": "NOT_DETECTED",
+      "allowed_claim_ru": "Ни один проверенный набор не обогнал константу для «цель раньше стопа» после общего среза; опора сама по себе не качество.",
+      "negative_scope_ru": "Не торговая политика и не опровержение всех после-контактных вопросов; блок не допущен в продукт.",
+      "uncertainty_ru": "M5 не даёт внутрисвечной очередности; низкий охват ограничивает вывод.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "studies/kadr_2026_10_12/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:JOINT",
+      "title_ru": "R/X и геометрия порядка",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [
+        "EST:N-NEW-R",
+        "EST:N-NEW-X"
+      ],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Работа трейдера 08.10: 541 срез, для joint 92 среза с опорой≥20; повторяющиеся случаи.",
+      "protocol_ru": "Совместные исходы против произведения долей; сравнение порядка по положению со случайным блужданием.",
+      "result_ru": "На исследованных срезах совместная частота нового дна и нового максимума ниже произведения; порядок почти описывается положением между экстремумами.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "На исследованных срезах совместная частота нового дна и нового максимума ниже произведения; порядок почти описывается положением между экстремумами.",
+      "negative_scope_ru": "Раздельные распределения не означают статистическую независимость; нельзя получать joint умножением двух долей.",
+      "uncertainty_ru": "Повторяемость случаев и виденный корпус: описание, не новый доверительный вывод.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "meaning/17-rabota-treidera.md",
+        "research/rabota-1/now_joint.py",
+        "research/rabota-1/order_by_state.py"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:ANCHOR-MECHANISM",
+      "title_ru": "Механизм эффекта часов",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Одночасовые окна, NQ/ES/YM, история аудита 29.09.",
+      "protocol_ru": "Ex-ante ожидаемый диапазон по прошлым 20 дням, соседние окна и дневной bootstrap.",
+      "result_ru": "Причина остаточной разницы окон при одинаковой ожидаемой волатильности не установлена.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "INCONCLUSIVE",
+      "allowed_claim_ru": "Причина остаточной разницы окон при одинаковой ожидаемой волатильности не установлена.",
+      "negative_scope_ru": "Не объявлять часы особой причинной силой уровня или доказанным прогнозом.",
+      "uncertainty_ru": "Контроль перестановкой указывает на геометрию/волатильность, но не отделяет все механизмы.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "docs/RESEARCH.md",
+        "studies/audit_2026_09_29/README.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:LOCAL-CALIBRATION",
+      "title_ru": "Сопоставимость около места",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Локальная q1-sopostavimost@2a36608, строки A NQ/ES/YM ODR/RDR, цели 2009–2025, n≥20.",
+      "protocol_ru": "Расстояние×время BASE_D, одинаковая пригодность, контроль опоры, недельные интервалы, эпохи, положительный/отрицательный контроль.",
+      "result_ru": "Около места четверть IDR отбирает систематически более далёкие исторические положения; локальная калибровка смещена.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Около места четверть IDR отбирает систематически более далёкие исторические положения; локальная калибровка смещена.",
+      "negative_scope_ru": "Только близкие классы расстояния в строках A; не универсальное смещение всех процентов.",
+      "uncertainty_ru": "Отчёт исполнителя прочитан; FOM не повторял счёт; источник не доступен из публичного клона без локальной ветки.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-local-research.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:LOCAL-WIDTH",
+      "title_ru": "Ширина коробки сверх расстояния/часов",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Локальная q1-sopostavimost@2a36608, строки A NQ/ES/YM ODR/RDR, цели 2009–2025, n≥20.",
+      "protocol_ru": "Расстояние×время BASE_D, одинаковая пригодность, контроль опоры, недельные интервалы, эпохи, положительный/отрицательный контроль.",
+      "result_ru": "Относительная ширина IDR несёт добавочную информацию в проверенных классах.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Относительная ширина IDR несёт добавочную информацию в проверенных классах.",
+      "negative_scope_ru": "Совместный эффект ширины и глубины не проверен; не новая нормативная шкала.",
+      "uncertainty_ru": "Отчёт исполнителя прочитан; FOM не повторял счёт; источник не доступен из публичного клона без локальной ветки.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-local-research.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:LOCAL-DEPTH",
+      "title_ru": "Прожитая глубина отката",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Локальная q1-sopostavimost@2a36608, строки A NQ/ES/YM ODR/RDR, цели 2009–2025, n≥20.",
+      "protocol_ru": "Расстояние×время BASE_D, одинаковая пригодность, контроль опоры, недельные интервалы, эпохи, положительный/отрицательный контроль.",
+      "result_ru": "Прожитая глубина отката от максимума информативна в объявленных корзинах.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "OBSERVED",
+      "allowed_claim_ru": "Прожитая глубина отката от максимума информативна в объявленных корзинах.",
+      "negative_scope_ru": "Не доказано независимое действие от ширины; нет нового допустимого matcher.",
+      "uncertainty_ru": "Отчёт исполнителя прочитан; FOM не повторял счёт; источник не доступен из публичного клона без локальной ветки.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-local-research.md"
+      ],
+      "accepted_basis": false
+    },
+    {
+      "id": "RS:LOCAL-POWER",
+      "title_ru": "Неполный положительный контроль",
+      "sc_ref": [
+        "IMPLEMENTATION"
+      ],
+      "grounds": "RESEARCH_RESULT",
+      "version": "1",
+      "validates": [],
+      "validation_kind": "RESEARCH_EXPLORATORY",
+      "lifecycle": "NOT_PROMOTED",
+      "corpus_seen_before": true,
+      "corpus_ru": "Локальная q1-sopostavimost@2a36608, строки A NQ/ES/YM ODR/RDR, цели 2009–2025, n≥20.",
+      "protocol_ru": "Расстояние×время BASE_D, одинаковая пригодность, контроль опоры, недельные интервалы, эпохи, положительный/отрицательный контроль.",
+      "result_ru": "Предсказательные отрицательные результаты части сравнений ограничены недостаточной опорой положительного контроля.",
+      "claim_level": "B_INFORMATION",
+      "conclusion": "INCONCLUSIVE",
+      "allowed_claim_ru": "Предсказательные отрицательные результаты части сравнений ограничены недостаточной опорой положительного контроля.",
+      "negative_scope_ru": "Не читать неустановленный эффект как нулевой; проигрыш оценивателя не отсутствие информации в признаке.",
+      "uncertainty_ru": "Отчёт исполнителя прочитан; FOM не повторял счёт; источник не доступен из публичного клона без локальной ветки.",
+      "not_generalised_ru": "Не распространять на неуказанные рынки/эпохи, C2 или торговую полезность без отдельного исследования.",
+      "evidence": [
+        "meaning/lens/2026-10-14-fom-local-research.md"
+      ],
+      "accepted_basis": false
+    }
+  ],
+  "research_coverage": [
+    {
+      "id": "RC:studies/audit_2026_09_29",
+      "path": "studies/audit_2026_09_29",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:DR-GEOMETRY"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/break_to_std_2026_09_30",
+      "path": "studies/break_to_std_2026_09_30",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:BREAK-STD"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/cluster_synthesis_audit_2026_10_01",
+      "path": "studies/cluster_synthesis_audit_2026_10_01",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:CLUSTER-TEMPLATE"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/forensic_window_2026_09_30",
+      "path": "studies/forensic_window_2026_09_30",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:WINDOW-LABEL"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/kadr_2026_10_12",
+      "path": "studies/kadr_2026_10_12",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:KADR-FROM-CUT",
+        "RS:KADR-MEMORY",
+        "RS:KADR-AFTER-CONTACT"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/lens10_2026_09_30",
+      "path": "studies/lens10_2026_09_30",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:LENS10-FIELD"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/lens15_2026_10_01",
+      "path": "studies/lens15_2026_10_01",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:CLUSTER-NULL"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/lens4_2026_09_30",
+      "path": "studies/lens4_2026_09_30",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:LENS4-REPLAY"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/lens5_2026_09_30",
+      "path": "studies/lens5_2026_09_30",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:LENS5-REACTION"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/lens6_2026_09_30",
+      "path": "studies/lens6_2026_09_30",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:LENS6-AUTHOR"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/lens8_2026_09_30",
+      "path": "studies/lens8_2026_09_30",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:LENS8-ANCHOR"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/main_cluster_2026_10_01",
+      "path": "studies/main_cluster_2026_10_01",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:MAIN-CLUSTER"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/percent_semantics_2026_09_30",
+      "path": "studies/percent_semantics_2026_09_30",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:OBJECTS"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/q1_pilot_2026_10_12",
+      "path": "studies/q1_pilot_2026_10_12",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:Q1"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/semantic_paths_2026_10_10",
+      "path": "studies/semantic_paths_2026_10_10",
+      "disposition": "EXCLUDED",
+      "findings": [],
+      "reason_ru": "Макет/браузерные проверки прежней смысловой архитектуры: исключены из реестра рыночных выводов, сохраняются в инвентаре реализации."
+    },
+    {
+      "id": "RC:studies/trace_2026_10_13",
+      "path": "studies/trace_2026_10_13",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:TRACE"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/zone_map_2_audit_2026_10_01",
+      "path": "studies/zone_map_2_audit_2026_10_01",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:ZONE2"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/zone_map_3_2026_10_01",
+      "path": "studies/zone_map_3_2026_10_01",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:ZONE"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:research/now-1",
+      "path": "research/now-1",
+      "disposition": "EXCLUDED",
+      "findings": [],
+      "reason_ru": "Макет/браузерные проверки прежней смысловой архитектуры: исключены из реестра рыночных выводов, сохраняются в инвентаре реализации."
+    },
+    {
+      "id": "RC:research/rabota-1",
+      "path": "research/rabota-1",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:JOINT"
+      ],
+      "reason_ru": "Конкретные утверждения и границы разобраны; это не все гипотезы скриптов."
+    },
+    {
+      "id": "RC:studies/m7_claims.py",
+      "path": "studies/m7_claims.py",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:DR-HOLD",
+        "RS:MECHANICAL"
+      ],
+      "reason_ru": "Область конкретных выводов разобрана, не все гипотезы скрипта."
+    },
+    {
+      "id": "RC:studies/intermarket.py",
+      "path": "studies/intermarket.py",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:INTERMARKET"
+      ],
+      "reason_ru": "Область конкретных выводов разобрана, не все гипотезы скрипта."
+    },
+    {
+      "id": "RC:docs/RESEARCH.md",
+      "path": "docs/RESEARCH.md",
+      "disposition": "MAPPED",
+      "findings": [
+        "RS:DR-HOLD",
+        "RS:DR-GEOMETRY",
+        "RS:MECHANICAL",
+        "RS:INTERMARKET",
+        "RS:READING"
+      ],
+      "reason_ru": "Область конкретных выводов разобрана, не все гипотезы скрипта."
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+ "status": "PASS",
+ "checked_local_links": 34,
+ "failures": [],
+ "pr_sources": 13,
+ "baseline_unchanged": true,
+ "product_sources_unchanged": true,
+ "comparison_image_hashes": "PASS",
+ "scope": "artifact integrity and declared coverage; not independent semantic or human acceptance"
+}

@@ -1,0 +1,2 @@
+# Frozen source proposal keeps its intentional Markdown hard line breaks and pinned bytes.
+integration/candidates/SC11-proposal.md whitespace=-blank-at-eol

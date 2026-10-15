@@ -294,26 +294,31 @@
   const famKey = (D, s, view) => D.d + '|' + s.k + '|' + s.conf + '|' + s.side + '|' + view + '|' + (view === 'brk' ? s.failed : '') + '|' + st.scope;
   const sliceOf = ctx => ctx.live ? Math.floor(NOW / 5) * 5 : ctx.obs;      // the last closed M5 (AGENTS.md rule 6)
   function requestFamily(fk, s, view) {
+    if (ICFG.enabled) { requestScene(); return; }
     if (A.pending.has(fk)) return;
     A.pending.add(fk);
     const at = s.live ? Math.floor(NOW / 5) * 5 : s.obs;
     fetch('/api/d24/family?instrument=' + A.inst + '&session=' + s.k + '&at=' + at + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + view + (st.scope === 'all' ? ':all' : ''))
-      .then(r => r.json()).then(r => { A.fams.set(fk, r); if (A.fams.size > 40) A.fams.delete(A.fams.keys().next().value); })
+      .then(r => r.json()).then(r => { r._fk = fk; r._ctx = 'fam|' + (A.respSeq = (A.respSeq || 0) + 1); A.fams.set(fk, r); if (A.fams.size > 40) A.fams.delete(A.fams.keys().next().value); })
       .catch(() => A.fams.set(fk, { status: 'error', message: 'Локальный сервер не ответил' }))
       .finally(() => { A.pending.delete(fk); redraw(true); });
   }
   // DR-LAB-NOW-1.0: the layer «Сейчас» of the family on screen at the slice (lab/now24.py), one request per closed M5;
   // the base map is never touched by it
+  const nowKey = ctx => famKey(ctx.D, ctx.s, ctx.F.view) + '|' + sliceOf(ctx);
   function nowOf(ctx) {
+    if (ICFG.enabled) { requestScene(); const r = scenePacket(); return r && r.now; }
     const F = ctx.F;
     if (!F) return null;
-    const sl = sliceOf(ctx), key = famKey(ctx.D, ctx.s, F.view) + '|' + sl, r = A.now.get(key);
+    const sl = sliceOf(ctx), key = nowKey(ctx), r = A.now.get(key);
     if (r) return r;
     if (!A.nowPending.has(key)) {
       A.nowPending.add(key);
       fetch('/api/d24/now?instrument=' + A.inst + '&session=' + ctx.s.k + '&at=' + sl + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + F.view + (st.scope === 'all' ? ':all' : ''))
-        .then(x => x.json()).then(x => { A.now.set(key, x); if (A.now.size > 80) A.now.delete(A.now.keys().next().value); })
-        .catch(() => A.now.set(key, { status: 'ERROR' }))
+        .then(x => x.json()).then(x => { x._ctx = 'now|' + (A.respSeq = (A.respSeq || 0) + 1); A.now.set(key, x); if (A.now.size > 80) A.now.delete(A.now.keys().next().value); })
+        // SWPC-1.1 W13: a request that did not arrive says so in the block's place (not «нет данных», which reads as an
+        // answer); the base map stays as it is
+        .catch(() => A.now.set(key, { status: 'ERROR', message: 'Локальный сервер не ответил', _ctx: 'now|' + (A.respSeq = (A.respSeq || 0) + 1) }))
         .finally(() => { A.nowPending.delete(key); redraw(true); });
     }
     return null;
@@ -327,11 +332,17 @@
     // panel); one the server published with a violation (a withheld zone) is shown and the violation surfaced
     if (r._refused === undefined) {
       r._refused = regFault(r.contract) || (!r.contract.bundles ? 'конверт контракта без опубликованных чисел' : null);
-      if (r._refused) kViolate(r._refused);
-      else if (r.contract.status !== 'CONFORMANT') kViolate('сервер: ' + ((r.contract.violations || []).map(v => v.message).join('; ') || r.contract.status));
+      if (r._refused) kViolate(r._refused, null, r._ctx);
+      else if (r.contract.status !== 'CONFORMANT') kViolate('сервер: ' + ((r.contract.violations || []).map(v => v.message).join('; ') || r.contract.status), null, r._ctx);
     }
     if (r._refused) return null;
-    if (!r._F) r._F = buildSnap(r, s, view);
+    if (!r._F) {
+      r._F = buildSnap(r, s, view);
+      // DR-LAB-SWPC-1.1 M14: the page's own measurement of the family (its R / X tables, DR outcome, order) disagrees with
+      // what the server published: the whole family is withheld here, as the server's gate withholds a family it cannot
+      // re-derive (lab/contract.py: withheld=["family"]); the candles and the day's lines stay
+      if (r._F.held.has('family')) { r._refused = 'счёт страницы не совпал с пакетом сервера (' + r._F.mismatch.join(', ') + ')'; return null; }
+    }
     return r._F;
   }
   function buildSnap(r, s, view) {
@@ -365,21 +376,29 @@
       if (Zm) Zm.zones.forEach((z, i) => { for (const [k, b] of z.cell_mask) F.zcell[ev].set(k + '|' + b, i); });
     }
     // the same definitions computed twice: the page's counts must equal the server's (checked by tests/ui_check24.js)
-    F.mismatch = [];
+    // DR-LAB-SWPC-1.1 M14: a disagreement withholds exactly the unit it concerns, in the units of the server's own gate
+    // (lab/contract.py::_apply_withheld): the family's measurements → 'family'; one event's zone map → 'zones.<ev>';
+    // today's zone status and clock → 'today.zones'. What the server itself withheld arrives in its envelope.
+    F.mismatch = []; F.held = new Set();
+    F.miss = (what, unit) => { F.mismatch.push(what); F.held.add(unit); };
+    for (const v of r.contract.violations || []) for (const w of v.withheld || []) F.held.add(w);
     for (const ev of ['R', 'X']) {
       const a = r.counts[ev], b = F.ev[ev];
       const sa = a.cells.map(c => c.join(',')).sort().join(';'), sb = [...b.cells.values()].map(c => [c.k, c.b, c.list.length].join(',')).sort().join(';');
-      if (sa !== sb || a.unknown !== b.unknown || a.none !== b.none) F.mismatch.push(ev);
+      if (sa !== sb || a.unknown !== b.unknown || a.none !== b.none) F.miss(ev, 'family');
       const Zm = F.zones[ev];
       if (Zm) {
         const n = Zm.zones.map(() => 0);
         for (const q of b.pts) { const i = F.zcell[ev].get(q.k + '|' + q.b); if (i != null) n[i]++; }
-        if (Zm.zones.some((z, i) => z.n_zone !== n[i]) || n.reduce((t, x) => t + x, 0) + Zm.n_residual_total + Zm.unknown_count + Zm.no_event_count !== F.N) F.mismatch.push('zones ' + ev);
+        if (Zm.zones.some((z, i) => z.n_zone !== n[i]) || n.reduce((t, x) => t + x, 0) + Zm.n_residual_total + Zm.unknown_count + Zm.no_event_count !== F.N) F.miss('zones ' + ev, 'zones.' + ev);
       }
     }
-    if (F.out && JSON.stringify(F.out) !== JSON.stringify(r.counts.outcome)) F.mismatch.push('outcome');
+    if (F.out && JSON.stringify(F.out) !== JSON.stringify(r.counts.outcome)) F.miss('outcome', 'family');
     envCounts(F);
-    if (F.mismatch.length) { console.error('design 24: the page and the server disagree on', F.mismatch); kViolate('the page and the server disagree on ' + F.mismatch.join(', ')); }
+    if (F.mismatch.length) { console.error('design 24: the page and the server disagree on', F.mismatch); kViolate('the page and the server disagree on ' + F.mismatch.join(', '), null, r._ctx); }
+    // a zone map the page cannot reconcile is withheld for its event only: the other event's zones, the tables, the DR
+    // outcome and «Сейчас» stay (the response itself is never changed)
+    for (const ev of ['R', 'X']) if (F.held.has('zones.' + ev) && F.zones[ev]) { F.zones = Object.assign({}, F.zones); delete F.zones[ev]; F.zcell[ev] = new Map(); }
     return F;
   }
   // one event of the family: its points, its joint table price cell x time cell, and the unknown / no-period mass
@@ -2589,28 +2608,65 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "0c75a97d33492681"
+ "registry_hash": "73bddfebfe22d2ea"
 };
-  const K = { violations: [], seen: new Set() };
-  function kViolate(msg, p) {
+  // A violation belongs to the scene it was found in (DR-LAB-SWPC-1.1 M16): a passport's snapshot, one family response or
+  // one NOW response (each its own number: a new answer to the same request starts clean), or the page itself ('*': a page without its registry,
+  // a word outside the registry, the reference check unreachable). The notice and the «Сводка» button show only those
+  // of the scene on screen, so another day's or cut's prohibition never stands over this one; a withheld number stays
+  // withheld until a new, verified result replaces its object (the cached passport or response keeps its violation).
+  const K = { list: [], seen: new Set() };
+  function kViolate(msg, p, ctx) {
     if (p) { p.violation = msg; p.pct = null; p.pctHi = null; }
-    if (K.seen.has(msg)) return;
-    K.seen.add(msg); K.violations.push(msg);
-    if (K.violations.length > 50) K.violations.splice(0, 25);
+    const c = p ? p.snapshot_id : ctx || '*', key = c + '|' + msg;
+    if (K.seen.has(key)) return;
+    K.seen.add(key); K.list.push({ msg, ctx: c });
+    if (K.list.length > 200) for (const v of K.list.splice(0, 100)) K.seen.delete(v.ctx + '|' + v.msg);
     console.error('DR-LAB-SC-1.1:', msg);
     redraw(true);
+  }
+  // the contexts of the scene on screen: the page, the family response of the chosen session and view, its snapshot,
+  // and the NOW response at this cut
+  function ctxKeys(ctx) {
+    const out = new Set(['*']), s = ctx.s;
+    if (s.conf && ['confirmed', 'broken', 'done'].includes(s.status) && ctx.D.d !== 'none') {
+      const fk = famKey(ctx.D, s, wantView(s)), r = A.fams.get(fk);
+      if (r && r._ctx) out.add(r._ctx);
+      if (r && r.snapshot_id) out.add(r.snapshot_id);
+      const n = ctx.F ? A.now.get(nowKey(ctx)) : null;
+      if (n && n._ctx) out.add(n._ctx);
+    }
+    return out;
+  }
+  const kNow = ctx => { const keys = ctxKeys(ctx); return K.list.filter(v => keys.has(v.ctx)).map(v => v.msg); };
+  // everything that withholds or refuses a number of this scene (SWPC-1.1 §7.2, M15): the page's own violations, the
+  // server's refusal of the family, the server's refusal or withholding of «Сейчас» — the same reasons the panel shows
+  // in their places (the notice, the family's status line, the NOW block)
+  function integrity(ctx) {
+    const out = kNow(ctx).map(m => 'Контракт SC-1.1: ' + m), s = ctx.s;
+    if (s.conf && ['confirmed', 'broken', 'done'].includes(s.status) && ctx.D.d !== 'none') {
+      const r = A.fams.get(famKey(ctx.D, s, wantView(s)));
+      if (r && /^contract_/.test(r.status || '')) out.push(r.message || r.status);
+    }
+    const n = ctx.F ? A.now.get(nowKey(ctx)) : null;
+    if (n && /^CONTRACT_/.test(n.status || '')) out.push(n.note || n.message || n.status);
+    if (n) for (const ev of ['R', 'X']) if (n[ev] && n[ev].mode === 'WITHHELD') out.push('«Сейчас» ' + ev + ': ' + (n[ev].note || n[ev].mode));
+    return out;
   }
   const VW = F => F && F.brk ? 'BRK' : 'CONF';
   // the registered words: a claim form (by its estimand, EST:…) or a fact form (FF:…), one key, the view's variant if any
   function lbl(id, key, vars, view) {
-    const box = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : SC11.forms[id];
+    const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : SC11.forms[id];
+    const candidateId=id.startsWith('EST:P-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS'].includes(id);
+    const extra = candidateId && REVIEW && (id.startsWith('FF:') ? REVIEW.facts[id] : REVIEW.forms[id]);
+    const box = own && own.labels[key] ? own : extra || own;
     const set = box && box.labels[key], t = set && (view && set[view] != null ? set[view] : set.ANY);
     if (t == null) { kViolate('a label outside the registry: ' + id + ' · ' + key + (view ? ' · ' + view : '')); return ''; }
     const out = vars ? t.replace(/\{([A-Za-z0-9_]+)\}/g, (m, k) => vars[k] != null ? String(vars[k]) : m) : t;
     if (/\{[A-Za-z0-9_]+\}/.test(out)) kViolate('a label without its value: ' + id + ' · ' + key);
     return out;
   }
-  const zst = s => lbl('FF:TODAY-Z', s);
+  const zst = s => s === 'WITHHELD' ? '—' : lbl('FF:TODAY-Z', s);       // a withheld status has no word (SWPC-1.1 M14)
   const parOf = b => { try { return JSON.parse(b.parameters || '{}'); } catch (e) { return {}; } };
   // the page's registry against a server envelope (lab/contract.py::Envelope): the same edition, the same registry
   function regFault(c) {
@@ -2632,33 +2688,38 @@
       const b = one('EST:B-RX-JOINT-' + ev), est = b && b.estimates[0];
       const sb = est && est.cells ? est.cells.map(c => [c.price_cell, c.time_cell, c.count].join(',')).sort().join(';') : '';
       const sp = [...F.ev[ev].cells.values()].map(c => [c.k, c.b, c.list.length].join(',')).sort().join(';');
-      if (!b || sb !== sp) F.mismatch.push('the bundle of ' + ev);
+      if (!b || sb !== sp) F.miss('the bundle of ' + ev, 'family');
       const Zm = F.zones[ev];
-      if (Zm) for (const z of Zm.zones) { const zb = one('EST:B-ZONE-' + ev, x => parOf(x).zone_id === z.zone_id); if (!zb || zb.estimates[0].numerator !== z.n_zone) F.mismatch.push('the bundle of zone ' + ev + ' ' + z.label); }
+      if (Zm) for (const z of Zm.zones) { const zb = one('EST:B-ZONE-' + ev, x => parOf(x).zone_id === z.zone_id); if (!zb || zb.estimates[0].numerator !== z.n_zone) F.miss('the bundle of zone ' + ev + ' ' + z.label, 'zones.' + ev); }
     }
-    if (F.out) { const c = cats(one('EST:B-DR')); if (c.HELD !== F.out.held || c.BROKEN !== F.out.broken || c.UNKNOWN !== F.out.unknown || c.NO_PERIOD !== F.out.none) F.mismatch.push('the bundle of the DR outcome'); }
+    if (F.out) { const c = cats(one('EST:B-DR')); if (c.HELD !== F.out.held || c.BROKEN !== F.out.broken || c.UNKNOWN !== F.out.unknown || c.NO_PERIOD !== F.out.none) F.miss('the bundle of the DR outcome', 'family'); }
     const c = cats(one('EST:B-ORDER')), n = orderCounts(F);
-    if (ORDER_CATS.some(k => (c[ORDER_TOK[k]] || 0) !== n[k])) F.mismatch.push('the bundle of the order');
+    if (ORDER_CATS.some(k => (c[ORDER_TOK[k]] || 0) !== n[k])) F.miss('the bundle of the order', 'family');
   }
   // a zone's diagnostic or study figure is shown only when the server published its bundle
   function hasBundle(F, est, pred) {
     const ok = (F.env.bundles || []).some(b => b.estimand === est && (!pred || pred(parOf(b))));
-    if (!ok) kViolate('no published bundle ' + est + ' for a figure on screen');
+    if (!ok) kViolate('no published bundle ' + est + ' for a figure on screen', null, F.r._ctx);
     return ok;
   }
+  // DR-LAB-SWPC-1.1 M14: a carrier drawn from a number follows that number's passport — withheld («—»), it no longer
+  // asserts its share by length, fill or glow. The passport is the one of the same estimand and parameters made on this
+  // snapshot (no passport = the number was never shown alone; its count is then proven by the reconciled table)
+  const ppHeld = (F, est, params) => { const p = P24.byKey.get(F.r.snapshot_id + '|' + est + '|' + JSON.stringify(params)); return !!(p && p.violation); };
+  const zoneHeld = (F, ev, i) => { const z = F.zones[ev] && F.zones[ev].zones[i]; return !!z && ppHeld(F, 'EST:B-ZONE-' + ev, { zone_id: z.zone_id }); };
   // a NOW number (lab/contract.py::attach_now, all C1) is shown only with its bundle on this cut, under the registered
   // claim form admissible there; the shown values must be the bundle's
   function nowBundle(n, est, role, C) {
     const c = n.contract, f = SC11 && SC11.forms[est], fault = regFault(c);
-    if (fault) { kViolate('«Сейчас»: ' + fault); return null; }
+    if (fault) { kViolate('«Сейчас»: ' + fault, null, n._ctx); return null; }
     const b = (c.bundles || []).find(x => x.estimand === est && parOf(x).role === role);
-    if (!b) { kViolate('«Сейчас»: no published bundle ' + est + ' (' + role + ') on this cut'); return null; }
-    if (!f || b.claim_form !== f.id || b.claim.claim_class !== f.claim_class || !(b.admissible_claims || []).includes(f.claim_class)) { kViolate('«Сейчас»: ' + est + ' published under another claim'); return null; }
+    if (!b) { kViolate('«Сейчас»: no published bundle ' + est + ' (' + role + ') on this cut', null, n._ctx); return null; }
+    if (!f || b.claim_form !== f.id || b.claim.claim_class !== f.claim_class || !(b.admissible_claims || []).includes(f.claim_class)) { kViolate('«Сейчас»: ' + est + ' published under another claim', null, n._ctx); return null; }
     if (C) {
       const pt = b.estimates.find(x => x.value_kind === 'POINT'), bd = b.estimates.find(x => x.value_kind === 'BOUNDS'), s0 = b.supports[0] || {};
       const d = (x, y) => x == null ? y != null : y == null || Math.abs(x - y) > 1e-4;
       if (d(pt ? pt.value : null, C.p_new_extreme) || (C.support.N_match_unknown && (!bd || d(bd.lower, C.p_new_bounds[0]) || d(bd.upper, C.p_new_bounds[1]))) || s0.n_eligible !== C.support.N_eligible) {
-        kViolate('«Сейчас» ' + est + ': the shown numbers are not those of its bundle'); return null;
+        kViolate('«Сейчас» ' + est + ': the shown numbers are not those of its bundle', null, n._ctx); return null;
       }
     }
     return b;
@@ -2795,13 +2856,13 @@
         if (r.status !== 'ok') { VQ.fails++; continue; }
         const byId = new Map(list.map(p => [p.id, p]));
         for (const p of list) p.checked = true;
-        if (r.snapshot_id !== sid) { kViolate('the reference recomputed another snapshot (' + r.snapshot_id + ') than the page’s ' + sid); continue; }
+        if (r.snapshot_id !== sid) { kViolate('the reference recomputed another snapshot (' + r.snapshot_id + ') than the page’s ' + sid, null, sid); continue; }
         for (const x of r.mismatches || []) kViolate('the reference recomputes another number: ' + x.estimand + ' ' + JSON.stringify(x.params || (byId.get(x.id) || {}).params || {}) + ' — ' + x.error, byId.get(x.id));
         VQ.fails = 0;
       }
     } catch (e) { VQ.fails++; }
     VQ.busy = false;
-    if (VQ.fails > 2) kViolate('the reference check of the page’s numbers is unavailable (POST /api/d24/verify): ' + ((VQ.last && (VQ.last.status || VQ.last.error)) || 'no answer'));
+    if (VQ.fails > 2) kViolate('the reference check of the page’s numbers is unavailable (POST /api/d24/verify): ' + ((VQ.last && (VQ.last.status || VQ.last.error)) || 'no answer'), null, '*');
     else if (P24.list.some(p => !p.checked && !p.violation && p.req)) verifySoon();
     return VQ.last;
   }
@@ -2933,6 +2994,7 @@
     const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
     if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
     const ctx = cur();
+    if (ICFG.enabled && (!scenePacket() || !TRIAL.arrive || hv()?.k !== 'arrive')) { IS.selection = null; IS.pathEvidence = null; }
     if (st.pinLvl && ctx.s.drH != null) { const l = levels(ctx.s).find(z => z.id === st.pinLvl); if (l) st.pin = { k: 'lvl', id: l.id, l }; st.pinLvl = null; }
     if (st.pinZone && ctx.F) { st.pin = { k: 'zone', ev: st.ev, i: st.pinZone - 1 }; st.pinZone = null; }
     V = geom(ctx);
@@ -3081,6 +3143,7 @@
       if (x1 < 0 || x0 > V.plot.w) continue;
       const past = cd.T <= sl;
       for (const [k, list] of cd.cells) {
+        if (ppHeld(F, 'EST:B-CLOSE', { j: cd.j, k0: k, k1: k + 1 })) continue;     // a withheld close share: no cell (SWPC-1.1 M14)
         const [ya, yb] = cellY(F, k, k + 1), share = list.length / F.N;
         c.fillStyle = rgba(col, Math.min(1, (0.1 + 0.9 * share) * f * (past ? 0.55 : 1)));
         c.fillRect(x0 + 0.5, ya + 0.5, Math.max(1, x1 - x0 - 1), Math.max(1, yb - ya - 1));
@@ -3129,6 +3192,7 @@
   function drawHighlight(c, ctx) {
     const F = ctx.F, h = hv();
     if (!h) return;
+    if (h.k === 'arrive') { candidateHighlight(c, ctx, h); return; }
     if (h.k === 'now') { drawNowLevels(c, ctx, h.ev); return; }
     const col = cfg[h.ev || st.ev];
     if (h.k === 'pcell') {
@@ -3299,6 +3363,7 @@
   // does a point take part in what is hovered / pinned / selected? true = lit, false = dimmed, null = neutral
   function emphOf(q, h, F, ctx) {
     if (h) {
+      if (h.k === 'arrive') return candidateEmphasis(q, h, F, ctx);
       if (h.k === 'pcell') return (!h.ev || h.ev === q.ev) && q.k >= h.k0 && q.k < h.k1;
       if (h.k === 'tcell') return q.b >= h.b0 && q.b < h.b1;
       if (h.k === 'area') return inArea(q, st.area);
@@ -3320,12 +3385,14 @@
   function drawPoints(c, ctx) {
     const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100;
     for (const ev of ['R', 'X']) {
-      const col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent');
+      const col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent'), held = look.map((_, i) => zoneHeld(F, ev, i));
       for (const q of F.ev[ev].pts) {
-        const zi = F.zcell[ev].get(q.k + '|' + q.b), col = zi != null && look[zi] === 'IMPOSSIBLE' ? spent : zi != null && look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
+        // the stars of a withheld zone are drawn as stars outside zones (their own session's point stays; the zone's
+        // emphasis would assert the withheld share)
+        const z0 = F.zcell[ev].get(q.k + '|' + q.b), zi = z0 != null && !held[z0] ? z0 : null, col = zi != null && look[zi] === 'IMPOSSIBLE' ? spent : zi != null && look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
         const x = V.X(q.t + 2.5), y = V.Y(q.p);
         if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
-        const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx), inZone = F.zcell[ev].has(q.k + '|' + q.b);
+        const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx), inZone = zi != null;
         let a = (past ? cfg.pastA : cfg.ptA) / 100 * (inZone ? 1.1 : 0.62), r = R0 * (inZone ? 1 : 0.8);
         if (e === true) { a = Math.min(1, Math.max(a, 0.55) + 0.3); r = R0 * 1.3; } else if (e === false) a *= 0.28;
         a = Math.min(1, a);
@@ -3445,7 +3512,7 @@
     for (const ev of ['R', 'X']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
       CL[ev].forEach((g, i) => {
-        if (!g) return;
+        if (!g || zoneHeld(F, ev, i)) return;        // a withheld zone's share is «—»: its haze and threads do not assert it
         const col = stateCol(col0, S[i]);
         // a spent constellation stays readable as history (operator 2026-10-06: «чуть-чуть ярче»), setting «spentA»
         const k = cloudK(F, ev, i, h, g.z), dim = S[i] === 'IMPOSSIBLE' ? 0.6 * cfg.spentA / 100 : S[i] === 'QUIET' ? 0.7 : S[i] === 'HOLDS' ? 1.15 : 1;
@@ -3508,7 +3575,7 @@
     // (держится / возможна / невозможна) and its window can no longer read as two contradicting answers
     if (h.k === 'zone' && h.ev) {
       const z = F.zones[h.ev] && F.zones[h.ev].zones[h.i];
-      if (z) {
+      if (z && !zoneHeld(F, h.ev, h.i)) {          // a withheld zone draws no window (its inspector says «—»)
         const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = F.f + 15 * Math.min(...bs), t1 = F.f + 15 * (Math.max(...bs) + 1);
         const look = zoneStatus(F, ctx, h.ev)[h.i], spent = look === 'IMPOSSIBLE';
         V.lk = { ev: h.ev, src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS' };
@@ -3552,6 +3619,7 @@
       if (cfg.profVeil) { c.fillStyle = rgba(C.bg, cfg.profVeil / 100); c.fillRect(0, 0, V.plot.w, V.plot.h); }
       c.fillStyle = 'rgba(236,240,246,.04)'; c.fillRect(0, ra, V.plot.w, rb - ra);
       for (const q of row) {
+        if (ppHeld(F, 'EST:B-CLOSE', { j: q.j, k0: lk.k0, k1: lk.k1 })) continue;   // a withheld close share: no bar (SWPC-1.1 M14)
         const xa = V.X(q.t0), xb = V.X(q.t1), w = Math.max(1, xb - xa - 1), col = colOf(q), hh = hOf(q), k = q.past ? 0.45 : 1;
         const yb0 = up ? base - hh - 1 : base + 1, yCap = up ? yb0 : yb0 + hh - 1;
         c.fillStyle = rgba(col, Math.min(1, 1.3 * a * k)); c.fillRect(xa + 0.5, ra, w, Math.max(2, rb - ra));
@@ -3726,7 +3794,7 @@
         const col = stateCol(col0, S[i]);
         const z = g.z, s = S[i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === i);
         if (phase === 'under') { if (inside) zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env); return; }
-        if (on || imp) { c.save(); c.strokeStyle = rgba(col, on ? 0.6 : 0.3); c.lineWidth = 1; c.setLineDash(imp ? [4, 3] : []); loopsPath(c, g.ln); c.stroke(); c.restore(); }
+        if ((on || imp) && !zoneHeld(F, ev, i)) { c.save(); c.strokeStyle = rgba(col, on ? 0.6 : 0.3); c.lineWidth = 1; c.setLineDash(imp ? [4, 3] : []); loopsPath(c, g.ln); c.stroke(); c.restore(); }
         if (on && false) {
           // the zone's exact cells are no longer outlined on hover (operator 2026-10-06: «прямоугольники с точками — не
           // нужно»); membership is still its cells (cell_mask), the time × price cluster is drawn by drawLink
@@ -3923,6 +3991,8 @@
       const lit = (h && h.k === 'tcell' && b >= h.b0 && b < h.b1) || (lk && lk.b === b), zl = h && h.k === 'zone' && F.zones[h.ev] && F.zones[h.ev].zones[h.i] && F.zones[h.ev].zones[h.i].cell_mask.some(([, bb]) => bb === b);
       for (const ev of ['X', 'R']) {
         const n = ev === 'X' ? nX : nR, o = ev === 'X' ? nR : nX;
+        // a withheld window share (its passport «—», SWPC-1.1 M14) draws no column; its place stays empty
+        if (n && ppHeld(F, 'EST:B-RX-WINDOW-' + ev, { b0: b, b1: b + 1 })) { if (lit) labels.push({ x: (x0 + x1) / 2, y: cy + dir[ev] * 9, t: '—', col: cfg[ev] }); continue; }
         // the balance inside the 15 minutes (operator 2026-10-06): the larger side brighter, the smaller dimmer, the more
         // so the stronger the tilt (setting «контраст перевеса»); a drawing of the same two shares, not a new number
         const dom = n + o > 0 ? (n - o) / (n + o) : 0;
@@ -3945,7 +4015,7 @@
     const hmax = { X: Math.max(1e-9, ...H.X.filter(Boolean).map(o => o.pk)), R: Math.max(1e-9, ...H.R.filter(Boolean).map(o => o.pk)) };
     V.hills = [];
     for (const ev of ['X', 'R']) H[ev].forEach(o => {
-      if (!o) return;
+      if (!o || zoneHeld(F, ev, o.i)) return;          // a withheld zone (SWPC-1.1 M14): no hill
       const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
       const scr = o.pts.map(([t, d]) => [V.X(t), cy + dir[ev] * (1 + 0.94 * half * d / hmax[ev])]);
       c.beginPath(); c.moveTo(scr[0][0], cy + dir[ev]);
@@ -3967,6 +4037,7 @@
     V.caps = [];
     const capMax = Math.max(1e-9, ...caps.map(q => q.o.z.p_snapshot));
     for (const { ev, o, ln } of caps) {
+      if (zoneHeld(F, ev, o.i)) continue;               // a withheld zone (SWPC-1.1 M14): no capsule
       const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', hold = s === 'HOLDS', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
       const x0 = V.X(F.f + 15 * o.b0) + 1, x1 = V.X(F.f + 15 * o.b1) - 1, y0 = dir[ev] < 0 ? B.y + 3 + ln * (LH + 2) : B.y + B.h - 3 - (ln + 1) * (LH + 2) + 2, w = x1 - x0;
       const r = Math.pow(o.z.p_snapshot / capMax, 0.7);
@@ -4159,6 +4230,7 @@
     for (const ev of ['R', 'X']) {
       const D = F.ev[ev], Zm = F.zones[ev], hzi = h && h.k === 'zone' && h.ev === ev ? h.i : null, zr = new Map(), peak = new Set();
       if (Zm) Zm.zones.forEach((z, i) => {
+        if (zoneHeld(F, ev, i)) return;                // a withheld zone (SWPC-1.1 M14): its rows are drawn as rows outside zones
         const ks = z.cell_mask.map(q => q[0]), k0 = Math.min(...ks), k1 = Math.max(...ks) + 1;
         let bk = null;
         for (let k = k0; k < k1; k++) { zr.set(k, i); if (bk == null || (D.P.get(k) || 0) > (D.P.get(bk) || 0)) bk = k; }
@@ -4194,6 +4266,8 @@
         if (I.hzi != null) a = z === I.hzi ? Math.max(a, 0.6) : a * 0.4;
         if (on || inA) a = 1;
         const len = Math.max(2, blen * n / mx), g = Rch.okK(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
+        // a withheld band share (its passport «—», SWPC-1.1 M14): no bar; the next segment keeps its place, the label says «—»
+        if (ppHeld(F, 'EST:B-RX-BAND-' + ev, { k0: k, k1: k + 1 })) { labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk: false, on, z, rowH: bot - top, ok: Rch.okK(ev, k) }); x += len; continue; }
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
         if (g) {
           const dead = !Rch.okK(ev, k);
@@ -4266,7 +4340,7 @@
       const len = Math.max(1, W * b.n / mx);
       const on = h && ((h.k === 'pcell' && b.k >= h.k0 && b.k < h.k1) || (h.k === 'fcell' && b.k === h.kk)) || (st.area && isFinite(st.area.k0) && b.k >= st.area.k0 && b.k < st.area.k1 && st.mode === 'bounds');
       c.fillStyle = rgba(d.col, on ? 1 : Math.min(1, (0.18 + 0.72 * b.n / mx) * cfg.projA / 90));
-      c.fillRect(A_.x + 3, top + 0.5, len, Math.max(1, bot - top - 1));
+      if (!ppHeld(F, 'EST:B-CLOSE', { j: d.cd.j, k0: b.k, k1: b.k + 1 })) c.fillRect(A_.x + 3, top + 0.5, len, Math.max(1, bot - top - 1));   // withheld: no bar, the label «—»
       V.projBars.push({ k: b.k, top, bot });
       labels.push({ y: (top + bot) / 2, x: A_.x + 6 + len, n: b.n, k: b.k });
     }
@@ -4407,6 +4481,7 @@
   function tipHtml(h, ctx) {
     const F = ctx.F, s = ctx.s;
     if (!h) return '';
+    if (h.k === 'arrive' || h.k === 'pre') return candidateTip(h, ctx);
     if (h.k === 'pt' && F) {
       const m = F.M[h.i], ev = h.ev || st.ev, e = m[ev], other = ev === 'R' ? 'X' : 'R', o = m[other], M_ = 'FF:MEMBER';
       const lines = ['<b>' + lbl(M_, 'head', { date: memberLine(F, m) }) + '</b>' + (h.same && h.same.length > 1 ? ' <span class="k">' + lbl(M_, 'same', { n: h.same.length - 1 }) + '</span>' : '')];
@@ -4541,8 +4616,9 @@
   // DR-LAB-NOW-1.0 F1 (2026-10-06): the band (and the cell) holding today's extreme stays reachable — the final event may
   // stay exactly where it is, at the band's lower edge too and after the end of the block; only another band needs a
   // strictly further new extreme still in time (the server's zone status, lab/zonemap24.py, already did so)
+  // DR-LAB-SWPC-1.1 M14: with today's zone status withheld ('today.zones'), today's reachability is not asserted either
   function reachOf(F, ctx) {
-    const sl = sliceOf(ctx), rows = todayRows(F, ctx), w = F.w0t, last = F.end - 5, known = rows.length === Math.max(0, (sl - F.act0) / 5);
+    const sl = sliceOf(ctx), rows = todayRows(F, ctx), w = F.w0t, last = F.end - 5, known = !F.held.has('today.zones') && rows.length === Math.max(0, (sl - F.act0) / 5);
     const ext = { R: null, X: null }, cur = { R: null, X: null };
     if (known && rows.length) {
       let jR = 0, jX = 0;
@@ -4565,14 +4641,16 @@
   function zoneClock(F, ctx, ev) {
     const Zm = F.zones[ev];
     if (!Zm) return [];
+    if (F.held.has('today.zones')) return Zm.zones.map(() => null);
     const sl = sliceOf(ctx), last = F.end - 5, ahead = Zm.zones.map(() => 0);
     for (const q of F.ev[ev].pts) { const i = F.zcell[ev].get(q.k + '|' + q.b); if (i != null && q.t + 5 > sl) ahead[i]++; }
     const out = Zm.zones.map((z, i) => ahead[i] ? 'FUTURE_PRESENT' : z.cell_mask.some(([, b]) => F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last) ? 'FUTURE_EMPTY' : 'PAST_ONLY');
     const srv = F.r.today && F.r.today.zones && F.r.today.zones[ev];
     if (srv && srv.clock && F.r.today.slice === sl && JSON.stringify(srv.clock) !== JSON.stringify(out) && !F.mismatch.includes('zone clock ' + ev)) {
-      F.mismatch.push('zone clock ' + ev);
+      F.miss('zone clock ' + ev, 'today.zones');
       console.error('design 24: the page and the server disagree on the zone history clock', ev, srv.clock, out);
-      kViolate('the page and the server disagree on the history clock of the zones ' + ev);
+      kViolate('the page and the server disagree on the history clock of the zones ' + ev, null, F.r._ctx);
+      return Zm.zones.map(() => null);
     }
     return out;
   }
@@ -4580,9 +4658,13 @@
     const S = zoneStatus(F, ctx, ev), K = zoneClock(F, ctx, ev);
     return S.map((st_, i) => st_ === 'POSSIBLE' && K[i] !== 'FUTURE_PRESENT' ? 'QUIET' : st_);
   }
+  // DR-LAB-SWPC-1.1 M14: today's status withheld (by the server's gate, or found here: the page's status at the slice of the
+  // request differs from the server's) is not asserted — no status word («—»), no state look, today's reachability open;
+  // the zones' shares, their n / N and their drawing as history stay
   function zoneStatus(F, ctx, ev) {
     const Zm = F.zones[ev];
     if (!Zm) return [];
+    if (F.held.has('today.zones')) return Zm.zones.map(() => 'WITHHELD');
     const sl = sliceOf(ctx), rows = todayRows(F, ctx), w = F.w0t, last = F.end - 5;
     let out;
     if (rows.length !== Math.max(0, (sl - F.act0) / 5)) out = Zm.zones.map(() => 'STATUS_UNKNOWN');
@@ -4606,9 +4688,10 @@
     }
     const srv = F.r.today && F.r.today.zones && F.r.today.zones[ev];
     if (srv && F.r.today.slice === sl && JSON.stringify(srv.status) !== JSON.stringify(out) && !F.mismatch.includes('zone status ' + ev)) {
-      F.mismatch.push('zone status ' + ev);
+      F.miss('zone status ' + ev, 'today.zones');
       console.error('design 24: the page and the server disagree on the zone status', ev, srv.status, out);
-      kViolate('the page and the server disagree on today\'s status of the zones ' + ev);
+      kViolate('the page and the server disagree on today\'s status of the zones ' + ev, null, F.r._ctx);
+      return Zm.zones.map(() => 'WITHHELD');
     }
     return out;
   }
@@ -4651,10 +4734,12 @@
   // compared only as two measurements (B-RX-DIFF); they are never presented as competing parts of one 100 %.
   function twoBars(F, pX, pR, first, rg) {
     const cX = pX.yes_count, cR = pR.yes_count, mx = Math.max(cX, cR, 1), D = 'EST:B-RX-DIFF';
-    const row = (ev, p) => '<div class="ib"><i style="color:' + cfg[ev] + '">' + lbl(p.estimand, 'two_row', { ev, name: F.names[ev].toLowerCase() }) + '</i><span><em style="width:' + (100 * p.yes_count / mx).toFixed(1) + '%;background:' + cfg[ev] + '"></em></span><b>' + ppTxt(p) + '</b></div>';
+    // a withheld share (SWPC-1.1 M14) keeps its row with «—» and no bar
+    const row = (ev, p) => '<div class="ib"><i style="color:' + cfg[ev] + '">' + lbl(p.estimand, 'two_row', { ev, name: F.names[ev].toLowerCase() }) + '</i><span><em style="width:' + (p.pct == null ? 0 : 100 * p.yes_count / mx).toFixed(1) + '%;background:' + cfg[ev] + '"></em></span><b>' + ppTxt(p) + '</b></div>';
     const rows = first === 'R' ? row('R', pR) + row('X', pX) : row('X', pX) + row('R', pR);
     const d = pp(F, { estimand: D, params: rg, event_id: 'X_minus_R', region_kind: 'difference', start_rule: F.from, end_rule: 'до ' + clk(F.end), yes_count: cX - cR, display_scope: 'inspector' });
-    const gap = d.pct == null ? '—' : num(Math.abs(d.pct), 1);
+    if (pX.pct == null || pR.pct == null || d.pct == null) return rows;       // no comparison drawn from a withheld share
+    const gap = num(Math.abs(d.pct), 1);
     if (cX > cR * 1.15) return rows + '<div class="im" style="color:' + cfg.X + '">' + lbl(D, 'more_X', { gap }) + ' <span class="k">' + lbl(D, 'k_parts') + '</span></div>';
     if (cR > cX * 1.15) return rows + '<div class="im" style="color:' + cfg.R + '">' + lbl(D, 'more_R', { gap }) + ' <span class="k">' + lbl(D, 'k_parts') + '</span></div>';
     return rows + '<div class="im">' + lbl(D, 'close') + ' <span class="k">' + lbl(D, 'k_sum') + '</span></div>';
@@ -4692,6 +4777,23 @@
       : ctx.live ? '<div class="pill"><span class="dot"></span><span id="live">LIVE ' + clk(NOW) + ' ET</span></div>'
         : '<div style="display:flex;gap:6px"><div class="pill rp"><span class="dot"></span>Повтор ' + ctx.s.k + ' · ' + clk(ctx.obs) + '</div><button id="back">К текущему</button></div>';
     dom('menu').innerHTML = LAYERS.map(([k, n, col]) => '<label><input type="checkbox" data-l="' + k + '"' + (st.L[k] ? ' checked' : '') + '><span class="sw" style="background:' + col + '"></span>' + n + '</label>').join('');
+    // DR-LAB-SWPC-1.1 §8.4 (W01, A1): the cut is never hidden — when the clock's pill would leave the window (a break
+    // day's longer event names at 1600 px) the event names of the toolbar fold, as they already do below 1500 px
+    // measured only when what decides it changes (the window, the clock, the event names), so a full render forces no layout
+    const tbar = dom('tb'), pillEl = dom('clock').querySelector('.pill'), fit = [window.innerWidth, dom('clock').textContent, dom('ev').textContent, dom('dayb').textContent].join('|');
+    if (fit !== P24.fit) {
+      P24.fit = fit; tbar.classList.remove('tight');
+      if (pillEl && pillEl.getBoundingClientRect().right > window.innerWidth) tbar.classList.add('tight');
+    }
+    // DR-LAB-SWPC-1.1 §7.2 (NEW_SWPC): with the summary hidden, its own button carries the scene's contract state — a
+    // steady «!» and an outline while a number of this scene is withheld or refused, its name and tooltip giving the reason
+    // in the panel's own words and where it stands; with no violation the name only says why the panel would show no
+    // numbers (W09, W13). Nothing opens, scrolls, sounds or blinks by itself, and no layer setting hides it
+    const tg = dom('panel21toggle'), closed = root.classList.contains('panel21closed'), kv = closed ? integrity(ctx) : [];
+    const why = !closed ? '' : kv.length ? kv[kv.length - 1] + (kv.length > 1 ? ' · ещё ' + (kv.length - 1) : '') + ' · откройте «Сводку»: причина вверху' : !ctx.F || !ctx.F.N ? statusMsg(ctx) : '';
+    tg.classList.toggle('sc-alert', kv.length > 0);
+    tg.title = why ? 'Сводка · ' + why : '';
+    tg.setAttribute('aria-label', why ? 'Сводка · ' + why : 'Сводка');
   }
   function dayPicker() {
     const d = A.date || '2025-12-17';
@@ -4722,6 +4824,206 @@
     loadDay(false);
   }
 
+  // One publication scene; accepted SC11 remains the registry of BASE/NOW. Review profiles have their own edition.
+  const ICFG = window.DR_INTEGRATION || { enabled: false }, REVIEW = ICFG.registry;
+  const TRIAL = { pre: false, arrive: false, paths: false };
+  if (ICFG.enabled) for (const k of (new URLSearchParams(location.hash.slice(1)).get('trial') || '').split(',')) if (k in TRIAL) TRIAL[k] = true;
+  if (ICFG.enabled) window.addEventListener('hashchange',()=>location.reload());
+  const IS = { key: null, packet: null, pending: new Set(), cache: new Map(), error: null, discarded: 0, committed: 0, selection: null };
+  function sceneRequest() {
+    const D = day(), obs = st.rp != null ? st.rp : NOW, s = sess(D, st.session, obs, st.rp == null);
+    const cut = Math.floor(obs / 5) * 5, trials = ['pre', 'arrive'].filter(k => TRIAL[k]);
+    return { D, s, cut, view: wantView(s), trials,
+      key: [A.inst, A.src, A.src === 'hist' ? A.date : D.iso, st.session, cut, wantView(s), st.scope, trials.join(',')].join('|') };
+  }
+  const intentContext = ctx => [A.inst, ctx.D.iso, ctx.s.k, st.scope, ctx.F && ctx.F.r.family_id].join('|');
+  function scenePacket() { const q = sceneRequest(); return IS.key === q.key ? IS.packet : null; }
+  function requestScene() {
+    if (!ICFG.enabled || !A.day || A.day.status !== 'ok') return;
+    const q = sceneRequest();
+    if (IS.key === q.key && IS.error) return;
+    if (IS.key === q.key && IS.packet || IS.pending.has(q.key)) return;
+    if (IS.key !== q.key) { IS.error = null; IS.key = q.key; IS.packet = null; }
+    IS.pending.add(q.key);
+    const query = new URLSearchParams({ instrument: A.inst, session: q.s.k, at: q.cut, view: q.view, scope: st.scope, trials: q.trials.join(',') });
+    if (A.src === 'hist') query.set('date', A.date);
+    fetch('/api/integration/scene?' + query).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(r => {
+      if (q.key !== sceneRequest().key) { IS.discarded++; return; }
+      if (r.status !== 'OK' || !r.context || r.context.instrument !== A.inst || r.context.date !== q.D.iso || r.context.session !== q.s.k || r.context.cut !== q.cut || r.context.scope !== st.scope) throw new Error(r.message || 'Ответ другого состояния');
+      if (r.context.registry_hash !== SC11.registry_hash) throw new Error('Реестр сцены отличается от страницы');
+      const prefix = q.D.bars.filter(b => b.t + 5 <= q.cut).map(b => [b.t, b.o, b.h, b.l, b.c]);
+      const received = r.day.bars.filter(b => b[0] + 5 <= q.cut);
+      if (JSON.stringify(prefix) !== JSON.stringify(received)) throw new Error('Свечи сцены отличаются от видимого префикса');
+      const fam = r.family, fk = famKey(q.D, q.s, fam.view || q.view);
+      if (fam.status === 'ok' && (fam.today.slice !== q.cut || fam.today.c0 !== q.s.conf || fam.today.side !== q.s.side)) throw new Error('Другая активация сцены');
+      if(r.now?.cut){const expected=r.now.status==='FROZEN_AT_BREAK'?q.s.failed-5:q.cut;if(r.now.cut.cut!==expected||r.now.cut.family_id!==fam.family_id||r.now.cut.snapshot_id!==fam.snapshot_id)r.now={status:'ERROR',message:'Ответ «Сейчас» относится к другой семье или срезу'};}
+      for(const [name,child] of Object.entries(r.candidates)){
+        const valid=name==='arrive'?child.status!=='OK'||child.cut?.cut===q.cut&&child.family_id===fam.family_id&&child.snapshot_id===fam.snapshot_id&&child.scope===st.scope:
+          child.status!=='ok'||q.s.status==='waiting'&&child.key?.cut===q.cut&&child.key?.scope===st.scope;
+        if(!valid)r.candidates[name]={status:'CONTEXT_MISMATCH',message:'Кандидатный ответ относится к другому состоянию'};
+      }
+      fam._fk = fk; fam._ctx = 'scene|' + r.context.id;
+      A.fams.set(fk, fam);
+      if (r.now) { r.now._ctx = fam._ctx + '|now'; A.now.set(fk + '|' + q.cut, r.now); }
+      for (const k of ['pre', 'arrive']) if (r.candidates[k]) r.candidates[k]._ctx = fam._ctx + '|' + k;
+      IS.packet = r; IS.key = q.key; IS.error = null; IS.committed++;
+      if (st.pin && st.pin.context && st.pin.context !== intentContext({ D: q.D, s: q.s, F: fam.status === 'ok' ? { r: fam } : null })) { st.pin = null; st.hover = null; }
+      if (st.pin && st.pin.k === 'pre' && q.s.status !== 'waiting') { st.pin = null; st.hover = null; }
+    }).catch(e => { if (q.key === sceneRequest().key) { IS.packet = null; IS.error = e.message; } })
+      .finally(() => { IS.pending.delete(q.key); redraw(true); });
+  }
+  function candidateOf(name) { if (!ICFG.enabled || !TRIAL[name]) return null; requestScene(); return scenePacket()?.candidates[name] || null; }
+  const preOf = ctx => ctx.s.status === 'waiting' ? candidateOf('pre') : null;
+  const arriveOf = ctx => ctx.F && ctx.s.conf ? candidateOf('arrive') : null;
+  function reviewFault(r) {
+    if (!REVIEW || !r || !r.contract) return 'Нет проверенного ответа';
+    if (r.review?.decision !== 'CANDIDATE' || r.contract.edition !== REVIEW.edition || r.contract.registry_hash !== REVIEW.registry_hash) return 'Другая редакция испытания';
+    if (r.contract.status !== 'CONFORMANT') return 'Число не опубликовано: ' + r.contract.status;
+    return null;
+  }
+  function preBundle(r, est, side) {
+    if (reviewFault(r)) return null;
+    const f = REVIEW.forms[est], b = r.contract.bundles.find(x => x.estimand === est && (side == null || parOf(x).side === side));
+    if (!b || !f || b.claim_form !== f.id || b.claim.claim_class !== f.claim_class || !b.admissible_claims.includes(f.claim_class)) return null;
+    if (est === 'EST:P-DIR' && b.estimates[0].denominator !== r.N) return null;
+    return b;
+  }
+  function arriveBundle(r, level, P) {
+    if (reviewFault(r) || !P?.counts) return null;
+    const f = REVIEW.forms['EST:K-ARRIVE'], b = r.contract.bundles.find(x => x.estimand === 'EST:K-ARRIVE' && parOf(x).level === level);
+    if (!b || b.claim_form !== f.id || b.claim.claim_class !== f.claim_class || !b.admissible_claims.includes(f.claim_class)) return null;
+    const k = P.counts, pt = b.estimates.find(x => x.value_kind === 'POINT'), bd = b.estimates.find(x => x.value_kind === 'BOUNDS');
+    const sp = b.supports[0] || {}, cm = (sp.components || [])[0] || {};
+    if ((pt ? pt.numerator !== k.yes || pt.denominator !== k.n_known : k.n_known) || !bd || bd.denominator !== k.n_match ||
+      sp.n_eligible !== k.N_eligible || sp.n_base !== r.N_parent || cm.yes !== k.yes || cm.no !== k.no || cm.unknown !== k.unknown ||
+      b.claim.selected_case_set !== (r.scope === 'all' ? 'CS:K-ARRIVE-ALL-1' : 'CS:K-ARRIVE-1')) return null;
+    if(Math.abs(bd.lower-k.yes/k.n_match)>1e-12||Math.abs(bd.upper-(k.yes+k.unknown)/k.n_match)>1e-12||pt&&Math.abs(pt.value-k.yes/k.n_known)>1e-12)return null;
+    return b;
+  }
+  const arrPlace = (r, level) => r?.places?.find(p => p.level === level) || null;
+  const placeName = level => lbl('EST:K-ARRIVE', level === '0' ? 'p0' : level === '-1/2' ? 'p12' : 'p710');
+  function arrivalValue(r, P) {
+    if (!P || P.state.status !== 'OPEN' || P.publication !== 'PUBLISHED' || !arriveBundle(r, P.level, P)) return '—';
+    const k = P.counts; return k.unknown ? pct(100 * k.yes / k.n_match) + '–' + pct(100 * (k.yes + k.unknown) / k.n_match) : pct(100 * k.yes / k.n_match);
+  }
+  function arrivalFact(level) { return scenePacket()?.target_facts?.[level] || null; }
+  function factText(f) { return f?.reached === 'YES' ? (f.time_known ? lbl('FF:K-TARGET', 'RESOLVED', { time: clk(f.bar_close) }) : lbl('FF:K-TARGET','RESOLVED_TIME_UNKNOWN')) : ''; }
+  function candidatePanel(ctx) {
+    if (!ICFG.enabled) return '';
+    if (TRIAL.pre && ctx.s.status === 'waiting') {
+      const r = preOf(ctx), b = r && preBundle(r, 'EST:P-DIR');
+      let out = '<div class="p24-pre"><div class="p21-h second">' + lbl('EST:P-DIR', 'head') + scopeSwitch() + '</div>';
+      if (!b) return out + '<div class="p21-note">' + esc(IS.error || r?.message || 'Подбираю похожие сессии…') + '</div></div>';
+      if (!r.N) return out + '<div class="p21-note">' + lbl('EST:P-DIR','zero') + '</div></div>';
+      if (r.few) out += '<div class="p21-note">мало сессий</div>';
+      for (const x of b.estimates[0].categories) out += link({ k: 'pre', id: x.category }, prow(lbl('EST:P-DIR', x.category), pct(100 * x.count / r.N)), 'in', null, lbl('EST:P-DIR', 'title', { cut: clk(ctx.obs), n: r.N })).replace('data-l21=','data-bundle="'+b.id+'" data-edition="'+REVIEW.edition+'" data-l21=');
+      return out + '</div>';
+    }
+    if (!TRIAL.arrive || !ctx.F) return '';
+    const r = arriveOf(ctx), out = ['<div class="p24-arrblk"><div class="p21-h second" title="' + esc(lbl('EST:K-ARRIVE', 'head_title')) + '">' + (ctx.s.failed?lbl('FF:K-TARGET','ORIGINAL_PLACES'):lbl('EST:K-ARRIVE', 'head')) + '</div>'];
+    if (!r) return out.join('') + '<div class="p21-note">' + esc(IS.error || 'Сопоставляю историю…') + '</div></div>';
+    if (r.status !== 'OK') out.push('<div class="p21-note">' + esc(REVIEW.facts['FF:K-TARGET'].labels[r.status] ? lbl('FF:K-TARGET', r.status, { time: r.time || (ctx.s.failed ? clk(ctx.s.failed) : '') }) : r.message || r.status) + '</div>');
+    for (const level of ['0', '-1/2', '-7/10']) {
+      const P = arrPlace(r, level), f = arrivalFact(level);
+      if (!P && !factText(f)) continue;
+      const title = factText(f) || (P?.publication === 'WITHHELD_FEW_SESSIONS' ? 'мало сессий' : P?.publication === 'NO_KNOWN_OUTCOME' ? lbl('FF:K-TARGET', 'none_known') : P?.publication==='PUBLISHED'&&!arriveBundle(r,P.level,P)?lbl('FF:K-TARGET','withheld'):'');
+      let row=link({ k: 'arrive', id: level, ev: 'R', context: intentContext(ctx) }, '<span class="t">' + placeName(level) + (title ? '<span class="p21-sub">' + esc(title) + '</span>' : '') + '</span><b>' + (factText(f) ? '✓' : arrivalValue(r, P)) + '</b>', 'in', null, lbl('EST:K-ARRIVE', 'head_title'));
+      const bound=P?.publication==='PUBLISHED'&&arriveBundle(r,level,P);
+      if(bound)row=row.replace('data-l21=','data-bundle="'+bound.id+'" data-edition="'+REVIEW.edition+'" data-l21=');
+      out.push(row);
+    }
+    return out.join('') + '</div>';
+  }
+  function candidateTip(h, ctx) {
+    if (h.k === 'pre') {
+      const r = preOf(ctx), b = r && preBundle(r, 'EST:P-DIR');
+      if (!b) return esc(IS.error || 'Ответ не опубликован');
+      if (!r.N || !b.estimates[0].categories) return lbl('EST:P-DIR','zero');
+      const x = b.estimates[0].categories.find(x => x.category === h.id);
+      let html = '<div class="ih">' + lbl('EST:P-DIR', h.id) + '</div><div class="is">' + lbl('EST:P-DIR', 'title', { cut: clk(ctx.obs), n: r.N }) + '</div><b>' + pct(100 * x.count / r.N) + '</b>';
+      if (h.id==='LONG'||h.id==='SHORT') {
+        const when=preBundle(r,'EST:P-WHEN',h.id),dr=preBundle(r,'EST:P-DR',h.id);
+        if(when){const e=when.estimates[0],top=e.categories.reduce((a,b)=>a.count>=b.count?a:b);html+='<div class="is" title="'+esc(when.claim.statement_ru)+'">'+lbl('EST:P-WHEN','when',{window:top.category,k:top.count,n:e.denominator})+'</div>';}
+        if(dr){const e=dr.estimates[0],held=e.categories.find(x=>x.category==='HELD');html+='<div class="is" title="'+esc(dr.claim.statement_ru)+'">'+lbl('EST:P-DR','dr',{held:held?.count||0,n:e.denominator})+'</div>';}
+        for(const ev of ['R','X']){const b=preBundle(r,'EST:P-'+ev,h.id),q=b?.estimates[0]?.quantiles?.find(x=>x.quantile===.5);if(q)html+='<div class="is" title="'+esc(b.claim.statement_ru)+'">'+lbl('EST:P-'+ev,ev==='R'?'r':'x',{q50:sd(q.value)})+'</div>';}
+      }
+      return html+'<div class="is">' + (r.few ? 'мало сессий · ' : '') + 'кандидат · приёмка не проведена</div>';
+    }
+    const r = arriveOf(ctx), P = arrPlace(r, h.id), k = P?.counts, f = arrivalFact(h.id), name = placeName(h.id);
+    if (!r) return esc(IS.error || 'Сопоставляю историю…');
+    let out = '<div class="ih">' + lbl('EST:K-ARRIVE', 'win_head', { place: name, price: px(ctx.s.price((h.id === '0' ? 0 : h.id === '-1/2' ? -.5 : -.7))) }) + '</div>';
+    if (factText(f)) out += '<div class="is">' + esc(factText(f)) + (f.time_known ? ' · M5 ' + clk(f.bar_open) + '–' + clk(f.bar_close) : '') + '</div>';
+    if (!k) return out + '<div class="is">' + esc(r.status === 'OK' ? 'Вопрос решён фактом' : r.message || r.status) + '</div>';
+    out += '<div class="is">' + lbl('EST:K-ARRIVE', 'win_q_v', { cut: r.cut.cut_clock_et, end: r.cut.horizon_end }) + '</div>';
+    out += '<div class="is">' + lbl('EST:K-ARRIVE', 'win_chain_v', { eligible: k.N_eligible, notyet: k.N_not_yet, n: k.n_match }) + '</div>';
+    out += '<div class="is">' + lbl('EST:K-ARRIVE', 'win_out_v', k) + '</div><b>' + arrivalValue(r, P) + '</b>';
+    if (P.publication === 'PUBLISHED' && !arriveBundle(r,P.level,P)) out += '<div class="is">' + lbl('FF:K-TARGET','withheld') + '</div>';
+    else if (P.publication !== 'PUBLISHED') out += '<div class="is">' + (P.publication === 'WITHHELD_FEW_SESSIONS' ? 'мало сессий: n=' + k.n_match : lbl('FF:K-TARGET', 'none_known')) + '</div>';
+    out += '<div class="is">' + lbl('EST:K-ARRIVE', 'win_ad_' + (r.evidence.ad_target_domain && r.cut.on_ad_15min_grid ? 'in' : 'out')) + '</div>';
+    return out + '<div class="is">кандидат · ' + lbl('EST:K-ARRIVE', r.scope) + ' · приёмка не проведена</div>';
+  }
+  function candidateSelection(ctx, h) {
+    if (!h || h.k !== 'arrive' || !ctx.F || h.context !== intentContext(ctx)) return null;
+    const r = arriveOf(ctx), P = arrPlace(r, h.id), ready = !!(P && P.state.status === 'OPEN' && P.publication === 'PUBLISHED' && arriveBundle(r, h.id, P));
+    return { r, P, ready, members: ready ? P.members : [], ids: ready ? new Set(P.members.map(x => x[0])) : new Set() };
+  }
+  function candidateEmphasis(q, h, F, ctx) {
+    const a = candidateSelection(ctx, h); return a ? a.ready ? q.ev === 'R' && a.ids.has(q.m.id) : null : null;
+  }
+  function candidateHighlight(c, ctx, h) {
+    const a = candidateSelection(ctx, h); IS.selection = null;
+    if (!a?.ready) return;
+    const p = ctx.s.price(a.P.a / a.P.b), y = V.Y(p);
+    c.strokeStyle = rgba(cfg.R, .9); c.lineWidth = 1; c.setLineDash([5, 4]); c.beginPath(); c.moveTo(0, y); c.lineTo(V.plot.w, y); c.stroke(); c.setLineDash([]);
+    V.win = { pA: p, pB: p, t0: null, t1: null, col: cfg.R };
+    IS.selection = { context: scenePacket().context.id, level: h.id, price: p, ids: [...a.ids], bundle: arriveBundle(a.r, h.id, a.P).id };
+  }
+  function candidateDetails(ctx, o) { return o?.k === 'arrive' ? { head: lbl('EST:K-ARRIVE', 'head'), body: candidateTip(o, ctx) } : null; }
+  function candidatePaths(ctx) {
+    const a = candidateSelection(ctx, hv()), cv = dom('dcF'), geom = cv?._g;
+    if (!TRIAL.paths || !a?.ready || !geom) { IS.pathEvidence = null; return; }
+    const c = cv.getContext('2d'), F = ctx.F, cut = sliceOf(ctx);
+    const X = j => geom.L + (j + .5) * geom.cw, Y = u => geom.T + (geom.k1 - 10 * u) * geom.rh;
+    const evidence = [];
+    c.save(); c.beginPath(); c.rect(geom.L, geom.T, cv.clientWidth - geom.L - 4, cv.clientHeight - geom.T - 16); c.clip();
+    for (const [id, label] of a.members) {
+      const m = F.M.find(m => m.id === id); if (!m) continue;
+      c.strokeStyle = rgba(label === 'YES' ? cfg.R : label === 'NO' ? cfg.path : '#A6AFBC', label === 'YES' ? .55 : .28);
+      c.lineWidth = .7; c.setLineDash(label === 'UNKNOWN' ? [3, 3] : []); let last = null;
+      for (let j = 0; j < F.grid.length; j++) {
+        const row = m.path[j], T = F.grid[j];
+        if (!row || T <= cut || T <= m.act) { last = null; continue; }
+        const p = { j, T, u: row[2] / m.w };
+        c.beginPath(); c.moveTo(X(j), Y(row[0] / m.w)); c.lineTo(X(j), Y(row[1] / m.w)); c.stroke();
+        if (last && T - last.T === 5) { c.beginPath(); c.moveTo(X(last.j), Y(last.u)); c.lineTo(X(j), Y(p.u)); c.stroke(); }
+        evidence.push([id, j, p.u]); last = p;
+      }
+    }
+    c.restore(); IS.pathEvidence = { context: scenePacket().context.id, ids: [...a.ids], points: evidence };
+  }
+  function integrationSettings() {
+    if (!ICFG.enabled) return '';
+    return '<details class="cgd"><summary class="cg">Испытание кандидатов</summary>' +
+      [['pre', 'История до подтверждения'], ['arrive', 'Отсюда до места · Q1'], ['paths', 'Связанные пути в нижнем окне']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
+      '<button type="button" id="auditScene">Проверить происхождение и опору</button><div id="auditResult" class="p21-note"></div></details>';
+  }
+  async function auditScene() {
+    const q=sceneRequest(), packet=scenePacket(), el=dom('auditResult');
+    if(!packet){el.textContent='Сцена ещё рассчитывается';return;}
+    el.textContent='Проверяю…';
+    const args=new URLSearchParams({instrument:A.inst,session:q.s.k,at:q.cut,scope:st.scope,view:q.view,trials:q.trials.join(','),context:packet.context.id});
+    if(A.src==='hist')args.set('date',A.date);
+    try{const report=await(await fetch('/api/integration/audit?'+args)).json();
+      if(scenePacket()?.context.id!==report.context){el.textContent='Срез изменился: проверка относится к прежней сцене';return;}
+      IS.audit=report; el.textContent=report.status==='PASS_SCOPED'?'Заявленные проверки сцены прошли. Полная карта и человеческая приёмка отдельно.':report.status==='NO_ADDITIONAL_COVERAGE'?'Для этой сцены проверен шлюз SC; дополнительных пересчётов Trace нет.':'Проверка обнаружила несоответствие';
+    }catch(e){el.textContent='Проверка не завершилась: '+e.message;}
+  }
+  function setTrial(k, on) {
+    TRIAL[k] = !!on; IS.key = null; IS.packet = null; IS.error = null;
+    if (!TRIAL.arrive && st.pin?.k === 'arrive') st.pin = st.hover = null;
+    dom('detg')._k = ''; render(true);
+  }
+  root.addEventListener('click', e => { if(e.target.closest('#auditScene'))auditScene(); });
   // ---------- the right panel: design 22's place and manner (percentages only, every line a link to the chart) ----------
   // What it holds (spec §10.3): the family and its slice; the chosen event and its unknown mass; the DR outcome of the
   // family (one 100 %); the selected area; the pinned level; the pinned history session. In «Путь семьи»: the family's
@@ -4732,9 +5034,9 @@
   }
   const prow = (text, val) => '<span class="t">' + text + '</span><b>' + val + '</b>';
   const plainTitle = p => (p.phrase + ' · ' + p.horizon + (p.unknown_count ? lbl('FF:PASSPORT-VIEW', 'title_unknown', { pct: pct(100 * p.unknown_count / p.N) }) : '')).replace(/<[^>]+>/g, '');
-  // DR-LAB-SC-1.1: a violation of the contract stands at the top of the panel (all of them in its title) until reload
-  const scNotice = () => !K.violations.length ? '' : '<div class="p24-sc" title="' + esc(K.violations.join('\n')) + '">Контракт SC-1.1: ' + esc(K.violations[K.violations.length - 1]) +
-    (K.violations.length > 1 ? ' · ещё ' + (K.violations.length - 1) : '') + '</div>';
+  // DR-LAB-SC-1.1: a violation of the contract of this scene stands at the top of the panel (all of them in its title);
+  // one found on another day, family or cut does not (DR-LAB-SWPC-1.1 M16)
+  const scNotice = ctx => { const v = kNow(ctx); return !v.length ? '' : '<div class="p24-sc" title="' + esc(v.join('\n')) + '">Контракт SC-1.1: ' + esc(v[v.length - 1]) + (v.length > 1 ? ' · ещё ' + (v.length - 1) : '') + '</div>'; };
   function statusMsg(ctx) {
     const s = ctx.s, x = A.day;
     if (!x || x.status !== 'ok') return (x && x.message) || (A.src === 'hist' ? 'Загружаю день истории…' : 'Загружаю свечи…');
@@ -4758,9 +5060,9 @@
       // no family at this moment: one click opens a history day on which this session had one (spec: the live moment
       // must never block the review)
       const noFam = !F && ['before', 'forming', 'waiting', 'noconf'].includes(s.status) && A.day && A.day.status === 'ok';
-      panel.innerHTML = scNotice() + '<div class="p21-empty">' + esc(F && !F.N ? 'В семье нет сессий: процентов нет' : statusMsg(ctx)) + '</div>' +
+      panel.innerHTML = scNotice(ctx) + '<div class="p21-empty">' + esc(F && !F.N ? 'В семье нет сессий: процентов нет' : statusMsg(ctx)) + '</div>' +
         (F && !F.N ? '<div class="p21-note">' + esc(F.cond) + '</div>' : '') + (s.failed && s.conf ? viewSwitch(s) : '') +
-        (noFam ? '<button class="p24-btn" data-hist="1">' + (A.src === 'live' ? 'Открыть ' + st.session + ' на истории' : 'Ближайший день с подтверждением ' + st.session) + '</button>' : '');
+        (noFam ? '<button class="p24-btn" data-hist="1">' + (A.src === 'live' ? 'Открыть ' + st.session + ' на истории' : 'Ближайший день с подтверждением ' + st.session) + '</button>' : '') + candidatePanel(ctx);
       return;
     }
     const out = [], sl = sliceOf(ctx), step = 100 / F.N, src = F.r.source || {};
@@ -4770,6 +5072,7 @@
     if (s.failed) out.push(viewSwitch(s));
     if (F.out) out.push(outcomeHtml(F));
     out.push(nowHtml(F, ctx));
+    out.push(candidatePanel(ctx));
     if (st.mode === 'bounds') {
       out.push(zonesHtml(F, ctx));
       const tf = todayFacts(F, ctx);
@@ -4780,7 +5083,7 @@
     const h = st.pin;
     if (h && h.k === 'lvl' && h.l) out.push(levelHtml(F, ctx, h.l));
     if (h && h.k === 'pt' && F.M[h.i]) out.push(memberHtml(F, F.M[h.i]));
-    panel.innerHTML = scNotice() + out.join('');
+    panel.innerHTML = scNotice(ctx) + out.join('');
     // a new selection (area, level, history session) stands at the end of the panel, under the inspector's edge: scroll
     // the panel to it once, when it appears (the layout stays; the panel keeps its own scroll otherwise)
     const sk = (st.area ? [st.area.k0, st.area.k1, st.area.b0, st.area.b1, st.area.ev].join(',') : '') + '|' + pinKey(st.pin);
@@ -4869,7 +5172,8 @@
   function outcomeHtml(F) {
     const D = 'EST:B-DR', cats = [['held', '#6FB59A'], ['broken', '#E5877F'], ['unknown', '#8C95A3'], ['none', '#5F6877']], P = {};
     for (const [k] of cats) P[k] = drPass(F, k);
-    const bar = '<div class="p24-bar">' + cats.filter(([k]) => F.out[k]).map(([k, col]) => '<i style="width:' + (100 * F.out[k] / F.N).toFixed(2) + '%;background:' + col + '"></i>').join('') + '</div>';
+    // a withheld category (its passport «—», DR-LAB-SWPC-1.1 M14) leaves its part of the bar empty
+    const bar = '<div class="p24-bar">' + cats.filter(([k]) => F.out[k]).map(([k, col]) => '<i style="width:' + (100 * F.out[k] / F.N).toFixed(2) + '%;background:' + (P[k].pct == null ? 'transparent' : col) + '"></i>').join('') + '</div>';
     const rows = cats.filter(([k]) => F.out[k] || k === 'held' || k === 'broken').map(([k, col]) => link({ k: 'out', cat: k }, '<span class="t"><i style="color:' + col + '">■</i> ' + lbl(D, k) + '</span><b>' + ppTxt(P[k]) + '</b>', 'in', P[k], plainTitle(P[k]))).join('');
     return '<div class="p21-h second">' + lbl(D, 'head', { end: clk(F.end) }) + '<span>' + lbl(D, 'head_r') + '</span></div>' + bar + '<div class="p24-out big">' + rows + '</div>';
   }
@@ -4943,7 +5247,7 @@
   // closes per common clock M5 (each column its own 100 %), with today's closes on it.
   function detailObj(ctx) {
     const h = hv();
-    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow', 'zone'].includes(h.k)) return h;
+    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow', 'zone', 'arrive'].includes(h.k)) return h;
     if (st.area) return { k: 'area', part: 'band' };
     return null;
   }
@@ -4985,6 +5289,7 @@
   // window 1: the passport of the object (as the details area of design 24 had it), or the family's snapshot
   function detBody(ctx, o) {
     const F = ctx.F;
+    const trial = candidateDetails(ctx, o); if (trial) return trial;
     if (!o) {
       const r = F.r, src = r.source || {};
       return { head: 'Слепок семьи', body: dRow('семья', esc(F.cond)) + dRow('ключ', esc(r.key.instrument + ' × ' + r.key.session + ' × ' + WD[r.key.weekday] + ' × ' + (r.key.direction === 'long' ? 'лонг' : 'шорт') + ' × ' + (r.key.event === 'confirmation' ? 'окно подтверждения ' : 'окно слома ') + clk(r.key.window[0]) + '–' + clk(r.key.window[1]))) +
@@ -5049,7 +5354,7 @@
     const rows = [['X_before_R', cfg.X], ['R_before_X', cfg.R], ['same_M5', '#8C929D'], ['unknown', '#4A505B'], ['no_period', '#353A44']].filter(([k]) => k !== 'no_period' || n[k]);
     const P = rows.map(([k]) => pp(F, { estimand: O, params: { category: k }, event_id: 'order_' + k, region_kind: 'order', exact_price_bounds: null, time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end),
       yes_count: n[k], display_scope: 'details', phrase: lbl(O, 'phrase', { t: lbl(O, k) }), horizon: hzOf(F) }));
-    return '<div class="p24-bar wide">' + rows.map(([k, c]) => n[k] ? '<i style="width:' + (100 * n[k] / F.N).toFixed(2) + '%;background:' + c + '"></i>' : '').join('') + '</div>' +
+    return '<div class="p24-bar wide">' + rows.map(([k, c], j) => n[k] ? '<i style="width:' + (100 * n[k] / F.N).toFixed(2) + '%;background:' + (P[j].pct == null ? 'transparent' : c) + '"></i>' : '').join('') + '</div>' +
       rows.map(([k, c], j) => '<div class="dq" data-ord="' + k + '" title="' + esc(plainTitle(P[j])) + '"><i style="background:' + c + '"></i><span>' + lbl(O, k) + '</span><b>' + ppTxt(P[j]) + '</b></div>').join('');
   }
   // window 5: «на уровне или дальше» on today's levels (spec §5.4): nested shares, the whole horizon (pale) and after the
@@ -5089,7 +5394,8 @@
     dom(id)._g = { L, T, cw, rh, k0, k1, n: F.nb, ev };
     for (const q of cells) { if (q.k < k0 || q.k >= k1) continue; c.fillStyle = rgba(cfg[ev], 0.18 + 0.82 * Math.pow(q.list.length / mx, 0.7)); c.fillRect(X(q.b) + 0.5, Y(q.k) + 0.25, Math.max(1, cw - 1), Math.max(1, rh - 0.5)); }
     const Zm = F.zones[ev];
-    if (Zm) Zm.zones.forEach(z => {
+    if (Zm) Zm.zones.forEach((z, i) => {
+      if (zoneHeld(F, ev, i)) return;                    // a withheld zone: no outline (DR-LAB-SWPC-1.1 M14)
       const set = new Set(z.cell_mask.map(([k, b]) => k + '|' + b));
       c.strokeStyle = rgba(cfg[ev], 0.95); c.lineWidth = 1; c.beginPath();
       for (const [k, b] of z.cell_mask) {
@@ -5140,7 +5446,7 @@
     if (dh._h !== head) { dh.innerHTML = head; dh._h = head; }
     const g = dom('detg');
     if (!open || !ok) { if (g._k) { g.innerHTML = ''; g._k = ''; } return; }
-    const o = detailObj(ctx), key = [F.r.snapshot_id, F.view, sliceOf(ctx), o ? pinKey(o) + '|' + (o.ev || '') : '', det.clientWidth, cfg.R, cfg.X, cfg.path, cfg.heatA].join('|');
+    const o = detailObj(ctx), key = [F.r.snapshot_id, F.view, sliceOf(ctx), o ? pinKey(o) + '|' + (o.ev || '') : '', det.clientWidth, cfg.R, cfg.X, cfg.path, cfg.heatA, scenePacket()?.context.id || '', TRIAL.paths].join('|');
     if (g._k === key) return;
     g._k = key;
     const B = detBody(ctx, o);
@@ -5152,6 +5458,7 @@
       '<div class="dcard"><div class="dt">На уровне или дальше</div>' + ladderHtml(F, ctx) + '</div>' +
       '<div class="dcard"><div class="dt" style="color:' + cfg.path + '">Путь семьи · закрытия M5</div><canvas id="dcF"></canvas></div>';
     drawHeat('dcR', F, ctx, 'R'); drawHeat('dcX', F, ctx, 'X'); drawFilmMini('dcF', F, ctx);
+    candidatePaths(ctx);
   }
   function initPanel24() {
     panel.addEventListener('mouseover', e => { const el = e.target.closest('[data-l21]'); if (!el) return; st.hover = P24.links[+el.dataset.l21]; if (st.hover && st.hover.ev) st.ev = st.hover.ev; showTip(st.hover); redraw(); });
@@ -5438,7 +5745,7 @@
   function stepReplay(dt) {
     const t0 = st.rp != null ? st.rp : Math.floor(NOW / 5) * 5, t = t0 + dt;
     if (t >= NOW) backLive();
-    else if (sessOf(t)) { st.rp = t; if (sessOf(t) !== st.session) { st.session = sessOf(t); st.area = null; st.col = null; st.view = 'auto'; } st.pin = null; render(true); }
+    else if (sessOf(t)) { const intent = ICFG.enabled && st.pin && st.pin.k === 'arrive' && sessOf(t) === st.session ? st.pin : null; st.rp = t; if (sessOf(t) !== st.session) { st.session = sessOf(t); st.area = null; st.col = null; st.view = 'auto'; } st.pin = intent; render(true); }
   }
   window.addEventListener('keydown', e => {
     if (e.target && /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
@@ -5497,9 +5804,10 @@
     };
     let open = {};
     try { open = JSON.parse(localStorage.getItem('drlab.d24.cfgOpen') || '{}'); } catch (e) { /* optional */ }
-    dom('cfgp').innerHTML = '<div class="ch"><b>Настройки</b><button id="cfgReset">Сбросить</button></div>' + SCHEMA.map(([t, rows]) => '<details class="cgd"' + (open[t] ? ' open' : '') + ' data-g="' + t + '"><summary class="cg">' + t + '</summary>' + rows.map(row).join('') + '</details>').join('');
+    dom('cfgp').innerHTML = '<div class="ch"><b>Настройки</b><button id="cfgReset">Сбросить</button></div>' + SCHEMA.map(([t, rows]) => '<details class="cgd"' + (open[t] ? ' open' : '') + ' data-g="' + t + '"><summary class="cg">' + t + '</summary>' + rows.map(row).join('') + '</details>').join('') + integrationSettings();
   }
   dom('cfgp').addEventListener('input', e => {
+    if (e.target.dataset.trial) { setTrial(e.target.dataset.trial, e.target.checked); return; }
     const k = e.target.dataset.c;
     if (!k) return;
     const d = DEF[k];
@@ -5542,16 +5850,22 @@
     }
   }
   async function loadDay(refresh) {
+    if (ICFG.enabled && refresh) { IS.key = null; IS.packet = null; IS.error = null; }
+    // DR-LAB-SWPC-1.1 M02 (W01): only the answer to the latest request may become the day on screen — a late answer for
+    // the day, instrument or minute asked before is dropped, never drawn under the new name
+    const seq = A.daySeq = (A.daySeq || 0) + 1;
     A.busy = true; A.error = null; toolbar(cur());
     const first = !A.day;
     try {
       const q = '/api/d24/day?instrument=' + A.inst + (A.src === 'hist' ? '&date=' + A.date : '');
       let x = await (await fetch(q)).json();
+      if (seq !== A.daySeq) return;
       if (A.src === 'live') {
         const stale = x.status !== 'ok' || Date.now() - Date.parse(x.fetched_at) > 180000;
         if (refresh || stale) {
           if (x.status === 'ok' && first) { takeDay(x, true); render(true); }      // the saved day at once, the refresh after
           const y = await (await fetch(q + '&refresh=1')).json();
+          if (seq !== A.daySeq) return;
           if (y.status === 'error') A.error = /CDP|9222|TradingView/.test(y.message || '') ? 'TradingView не отвечает: свечи последнего обновления' : (y.message || '').slice(0, 80); else x = y;
         }
         takeDay(x, first && !A.day);
@@ -5568,7 +5882,7 @@
           if (st.session === 'RDR') { st.v0 = 545; st.v1 = rightEdge(); }
         }
       }
-    } catch (e) { A.error = 'Локальный сервер не ответил'; }
+    } catch (e) { if (seq !== A.daySeq) return; A.error = 'Локальный сервер не ответил'; }
     A.busy = false;
     render(true);
     if (A.src === 'live') alCheck();
@@ -5651,8 +5965,10 @@
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
   window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+    preOf, arriveOf, arriveBundle, candidateSelection, integration: () => ({ enabled: ICFG.enabled, trials: {...TRIAL}, ...IS, packet: scenePacket() }), setTrial,
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)
-    contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: K.violations.slice(), unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),
+    // violations: those of the scene on screen (SWPC-1.1 M16); all: every one found since the page opened
+    contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),
     verify: () => verifyNow(), lbl, cfg };
   initPanel24();
   // the address: #date=2025-12-17 (a history day) &inst=NQ &session=RDR &at=11:50 (replay) &ev=X &mode=path
@@ -5666,7 +5982,9 @@
     if (q.get('mode') === 'path') st.mode = 'path';
     if (q.get('view') === 'conf') st.view = 'conf';
     if (q.get('det')) { st.detPin = true; }
-    const at = q.get('at') ? (() => { const [hh, mm] = q.get('at').split(':').map(Number); return hh * 60 + mm - (hh >= 18 ? 1440 : 0); })() : null;
+    // the replay slice is always the close of an M5 (AGENTS.md rule 6, SC-1.1 CUT:LAST-CLOSED-M5-1): «&at=22:31» shows 22:30;
+    // a minute between closes made the page and the reference count the clock of the family differently (SWPC-1.1 M03)
+    const at = q.get('at') ? (() => { const [hh, mm] = q.get('at').split(':').map(Number); return Math.floor((hh * 60 + mm - (hh >= 18 ? 1440 : 0)) / 5) * 5; })() : null;
     if (q.get('area')) { const a = q.get('area').split(':').map(Number); st.area = a.length >= 4 ? { k0: a[0], k1: a[1], b0: a[2], b1: a[3] } : { k0: a[0], k1: a[1] }; }
     if (q.get('pt') != null && q.get('pt') !== '') st.pin = { k: 'pt', i: +q.get('pt') };      // &pt=5: the 6th session of the family pinned
     if (q.get('lvl')) st.pinLvl = q.get('lvl');                                               // &lvl=u2: a level pinned (drH, idrL, mid, u1 … d6)

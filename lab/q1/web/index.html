@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DR Lab · Q1</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="brand">DR Lab · Q1 <span class="tag">исторический ответ · отдельная сцена, рабочий экран не меняется</span></div>
+  <div class="controls">
+    <div class="seg" id="inst"></div>
+    <div class="seg" id="block"></div>
+    <div class="date">
+      <button id="prev" title="предыдущий день с подтверждением">◀</button>
+      <input id="date" list="dates" autocomplete="off" spellcheck="false">
+      <datalist id="dates"></datalist>
+      <button id="next" title="следующий день с подтверждением">▶</button>
+    </div>
+    <div class="cutbox">
+      <span class="muted">срез</span>
+      <input type="range" id="cut" min="0" max="0" step="1">
+      <b id="cutLabel">—</b>
+    </div>
+    <div class="seg" id="level"></div>
+  </div>
+</header>
+<main>
+  <section class="chartbox">
+    <canvas id="chart"></canvas>
+    <div id="legend" class="legend"></div>
+  </section>
+  <aside id="side">
+    <div class="card" id="question"></div>
+    <div class="card" id="today"></div>
+    <div class="card" id="sets"></div>
+    <div class="card" id="answer"></div>
+    <div class="card" id="basis"></div>
+    <div class="card" id="issue"></div>
+    <details class="card" id="compare"><summary>Сравнить наборы</summary><div id="compareBody"></div></details>
+    <details class="card" id="passport"><summary>Паспорт ответа</summary><div id="passportBody"></div></details>
+  </aside>
+</main>
+<div id="drawer" class="drawer hidden">
+  <div class="drawer-head"><b id="drawerTitle"></b><button id="drawerClose" title="закрыть">✕</button></div>
+  <div id="drawerBody"></div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

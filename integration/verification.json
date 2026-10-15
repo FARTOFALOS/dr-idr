@@ -1,0 +1,117 @@
+{
+ "version": "DR-LAB-INTEGRATION-FIRST-1",
+ "date": "2026-10-15",
+ "baseline": "2672841",
+ "checks": {
+  "smoke": {
+   "status": "PASS",
+   "log_sha256": "67e4e1fae26fb09b9f3ce80c5f8c4f7c8b9948105885e51dea441180709611f9"
+  },
+  "sem24": {
+   "status": "PASS",
+   "log_sha256": "47f4c821a872ef4f781f46379a16505903487d790664eba1cd09bdbda35a87ec"
+  },
+  "now24": {
+   "status": "PASS",
+   "log_sha256": "e7375b9cb82a01b91ce1b9413337110dcca45d1ae95dbecf9e913f9031bf275a"
+  },
+  "q1_pilot": {
+   "status": "PASS",
+   "log_sha256": "355f5cd8326ad3ef3cb9e0a930cd16fd23a2806ea7a937266ff9b0177474291e"
+  },
+  "contract_sc11": {
+   "status": "PASS",
+   "log_sha256": "792ebb1f9f3b2d68b1565b821f555a87ce3d81bef91e71c2d881f0475f8b5a08"
+  },
+  "run_candidate_checks": {
+   "status": "PASS",
+   "log_sha256": "7ceac38f3832fdf476e109263cf7216f7c94e5c012bcd36395425f646760cfb0"
+  },
+  "integration24": {
+   "status": "PASS",
+   "log_sha256": "3297d8de715bf8060a2afd245dc6c79ba5671023e55fc8355dc08c8522d32614"
+  },
+  "swpc11": {
+   "status": "PASS",
+   "log_sha256": "4bc691d957db7ded2f970c79b9aee39592a0ce5d63c4f226b64f7e15f57a5b3c"
+  },
+  "flow": {
+   "status": "PASS",
+   "log_sha256": "cb3c05ad533b7c752846daa9a988433fa38eae5e760fa137a2e4f37839f3f35a"
+  },
+  "faults": {
+   "status": "PASS",
+   "log_sha256": "78b4bb951472bfa961562e55124120548d906f893cb81277d67d5c77c23141bd"
+  },
+  "swpc-browser": {
+   "status": "PASS",
+   "log_sha256": "7f53ec9ae57628fd776f663c87273d207076122ab330c4838cb8bad2800911ae"
+  }
+ },
+ "accepted_definitions_unchanged": {
+  "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": true,
+  "contract/schema/dr_lab_sc.yaml": true,
+  "contract/registry/00-editions.yaml": true,
+  "contract/registry/10-observation-strategy-measurement.yaml": true,
+  "contract/registry/20-cases-outcomes.yaml": true,
+  "contract/registry/30-questions-estimands.yaml": true,
+  "contract/registry/40-claims.yaml": true,
+  "contract/registry/50-validation.yaml": true,
+  "contract/registry/70-obligations.yaml": true,
+  "lab/scene24.py": true,
+  "lab/zonemap24.py": true,
+  "start-dr-lab.cmd": true,
+  "start-dr-lab.ps1": true,
+  "start-dr-lab-24.cmd": true
+ },
+ "accepted_executable_comparison": "PASS",
+ "source_sha256_lf": {
+  "lab/arrive24.py": "8d086c2b207817d2b4e5bf8d23a555e3a7f35d7da766103285dd71c6e6dd2b24",
+  "lab/cluster24.py": "1fe3b782e518f41585096676edead70e8a34b588bea2b8ffae4ea37f23b559d0",
+  "lab/integration24.py": "6d6858a77c9d5d53b1f2aedca2dcd46e2be1f0503b60907d7c048e7d5f1460c8",
+  "lab/now24.py": "fcf3280900cac292b6ce58d3c6d98057b6bb77c5824abd5b9af33c947a5c385b",
+  "lab/pre24.py": "d782e83558b77dbc72719de6fe0228a6bae984dfe8a0edb89782be215daa7bfc",
+  "lab/revisions24.py": "0ef83a22d37607ea3853d75297f1184597ca57ec0ccef518b1359e9a1acabf24",
+  "lab/scene24.py": "738108a7dbe4182a6444c9cf55eea415999bdaff123d84f4650169ae744e2590",
+  "lab/zonemap24.py": "b929c558ec7b31a1b15e71fe26256af50ef5392c06aa51a94688360409b33f1e",
+  "lab/q1/demo.py": "eb9d252ca085d539bd3999ad03fb81f6dd0edca6c4e2f1441099daf7ec3ca715",
+  "lab/q1/engine.py": "062647f0c9b3b54102598f65bfe92be43f9fec05e1f62b7a7618568f1402fe93",
+  "lab/q1/passport.py": "5a374590d4b525d3a556039f91a24dba40151d259a680aac8c45c155e0c889d8",
+  "lab/q1/recon.py": "784f879e57a3d92b244ead0759ed45852b058db538f53e7fd2507b6eca643212",
+  "lab/q1/server.py": "0851a0605f42613fdf583e8ce3e98f3ccc714a25a69185e977c07fc457ad9e24",
+  "lab/q1/store.py": "ff31db563c4fccd20aafed35430e86e311bfdd555a4d5c578046278fa34fa096",
+  "lab/q1/__init__.py": "5aab1e240f7b407669909a3d6e2e07424c4953634e7d7749ccfb8d2794f771ad",
+  "lab/contract.py": "271f190db2e507f376d06b61fbc0a4601306c47890b3ea5c2e3c4d7f4aa95ef5",
+  "lab/server.py": "fd1d3542d805210ba81ad7ff98d653d43ee58d9eac3bcef6368784a5a38960c4",
+  "lab/integration_audit.py": "9d12a9ea7a0493d2d1b33ac1aca8dec447b03c5dccd643432a8bca71a269d45e",
+  "design/sozvezdiya-24/src/app.js": "9087bf8b152a08b69143ab0a9d3eb4422e7100033a72f3c8e574b2e34487f191",
+  "design/sozvezdiya-24/src/build.py": "3dbae1d4eea82b3af2d312b5a4332f3d22ffb93e980361ef2e55179f4a505417",
+  "design/sozvezdiya-24/src/integration.js": "a0a54e8662a7923c72301bb2c03636314edd547d2207a43e824366f16da7e3c3",
+  "design/sozvezdiya-24/src/page.html": "ecb96e4b489ea5f19a752905fb02c00364edcb6c4e7cf3cb9ca7982291a0233f",
+  "design/sozvezdiya-24/src/panel.css": "35ecb503dee74d691367600d40e4c65e9149004324ee5dd1b0afe49d2e2b5806",
+  "design/sozvezdiya-24/src/panel.js": "f1b51a280383dcdff57f6037b58357996b9a56688cefa5d9a09d01b8c6b7b12e",
+  "contract/build/registry.json": "5bf78d99caa352de42077fd61ea42fdd7d6aa0369dc7a6dca3d8578f251f9ce0",
+  "integration/candidates/build/registry.json": "f218f03d386a130690d3dce301061dc807836b86dda9686f66830f023bc340b6"
+ },
+ "source_scope": "local code, immutable source units and separate accepted/candidate editions",
+ "human_acceptance": "NOT_PERFORMED",
+ "full_trace_fom_catalog": "NOT_REBOUND; original sources preserved; bounded runtime checks active",
+ "live": "ACTUAL_FEED_NOT_VERIFIED; existing TradingView has no accessible 9222; it was not restarted; unavailable-live withdrawal tested",
+ "main": "UNCHANGED; no merge or publication",
+ "screenshots": {
+  "spec/ekran-24/img/integration-first/break-1600.png": "4655ae3b6228c711325f5590607fae15fc15e94beb9be8718d2947b0f2db08ea",
+  "spec/ekran-24/img/integration-first/break-1920.png": "934f1d080314aca5ee5d0e6bd95fbe1a938c1ba6f86fcac4c65ab08f9e57dbeb",
+  "spec/ekran-24/img/integration-first/few-1600.png": "8408f16524b723b59efc52bacc135fc178b82d133ab4fc067c343d89d185310a",
+  "spec/ekran-24/img/integration-first/few-1920.png": "b5ad3b3caad9447a19ff20a9663725daa60e6be6cdfbad51241aba30cd9b4bf2",
+  "spec/ekran-24/img/integration-first/focus-1600.png": "502efcb961434bbe8f7d1b68a32e03d4ba6c83c2b71d7a4e285f916434d5e720",
+  "spec/ekran-24/img/integration-first/focus-1920.png": "0192868c87c0bf27cb206cd1d278d7977e9c639cc5ca1149115a5a31d676a29a",
+  "spec/ekran-24/img/integration-first/original-1600.png": "6720688b6d7d68e8df5cf1e93c8246fcb1e1784c7d9e14411107dd241e1a7cf4",
+  "spec/ekran-24/img/integration-first/original-1920.png": "82647bd5e1dd1b761e10cdf791cc69601b079b30e2e6743ae719f202dfda2d49",
+  "spec/ekran-24/img/integration-first/pre-1600.png": "dcad55ae4d701023218ff18836e313de38d375ca5672a8cb1dbcf78b123eb84d",
+  "spec/ekran-24/img/integration-first/pre-1920.png": "096720dd8e3133cd6309393f1d0a0bdcceae39a5a97f2ae18240447ed4f0a98f",
+  "spec/ekran-24/img/integration-first/reached-1600.png": "4bf10a3d64bf86b67ebd0b13a8c3671614d3c02310e1cf7e7681c5b25d88bdb2",
+  "spec/ekran-24/img/integration-first/reached-1920.png": "e321a94513aaeb9e9be2839edda18f5eed094e661644a016e1a4103ec78e69ae",
+  "spec/ekran-24/img/integration-first/selected-1600.png": "3623c990a7801fe9f4d07464536ba7292bf1b598598aa0cdb8c6365aa7640bed",
+  "spec/ekran-24/img/integration-first/selected-1920.png": "911574b37a759d8a5c7601e78620a3f0a0789d2b3a3a0891605f8cca0455600e"
+ }
+}
