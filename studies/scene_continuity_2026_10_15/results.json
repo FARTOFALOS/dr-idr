@@ -1,0 +1,510 @@
+{
+  "version": "FIXED-WINDOW-CONTINUITY-1",
+  "status": "PASS",
+  "source_hashes": [
+    {
+      "artifact": "studies/scene_continuity_2026_10_15/README.md",
+      "version": "cdcfd168cfc8b4fe714c62cdccc1d2ab1b94de682f49e7325953a39fd02f5eac"
+    },
+    {
+      "artifact": "studies/scene_continuity_2026_10_15/run.py",
+      "version": "37f8e69ad431f8ff07eac159a7e75e19897b738f35826d53e0a1c5058f6c0157"
+    },
+    {
+      "artifact": "lab/continuity24.py",
+      "version": "473b3d5d0c2f5752ba94e066aa40b1d33e02950aef9bc65861bad398c84e82a1"
+    },
+    {
+      "artifact": "lab/continuity_audit.py",
+      "version": "5663ed8ad6b0f65a5c99453a761dcecdfa2dac526abbfccd02e890bd7408a1f1"
+    },
+    {
+      "artifact": "tests/continuity24.py",
+      "version": "5a2c7c5d647ac8d40224982ed864ab4a5448d9459a043ed70f8a63cde89810e4"
+    },
+    {
+      "artifact": "studies/dynamic_field_2026_10_15/checks.py",
+      "version": "3aef71fb9d884caf96abd316b60fdd571c49fc152d324e9460f2682f89374798"
+    },
+    {
+      "artifact": "lab/scene24.py",
+      "version": "738108a7dbe4182a6444c9cf55eea415999bdaff123d84f4650169ae744e2590"
+    },
+    {
+      "artifact": "lab/now24_validate.py",
+      "version": "191d6c5f43971e4547749519c1148d3b6e6f8d826330d8ff5d55767235ea4472"
+    },
+    {
+      "artifact": "integration/reference/trace/schema/dr_lab_trace.yaml",
+      "version": "7b9a526c394c54e1738ddd0f9f2b3731475d3cfdfe2cb6e87a06e03029f09272"
+    },
+    {
+      "artifact": "integration/reference/trace/fom.py",
+      "version": "d97e2d4581034c6f4df0b65bed1cac9817ba816b58d50503bf247c5c7bfb6c36"
+    }
+  ],
+  "fixture": {
+    "instrument": "NQ",
+    "block": "RDR",
+    "date": "2025-12-17",
+    "scope": "all",
+    "activation": "10:40",
+    "pin_cut": "11:10",
+    "sd_band": [
+      1.7,
+      1.9
+    ],
+    "window_bar_closes": [
+      "11:30",
+      "11:35",
+      "11:40"
+    ],
+    "F_N": 709
+  },
+  "releases": [
+    {
+      "cut": "11:10",
+      "status": "RESEARCH_ONLY",
+      "observed": {
+        "status": "OPEN",
+        "value": "NO",
+        "available_at": null
+      },
+      "target_id": "6191ec930e03a59e9e37721c1e3fd9c929d0423297c54371b03835af3c878b4a",
+      "question_id": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
+      "context_id": "ecb96fe0bdf084e8d2910c7fcb89fbc0c831c47d054c9bad89097ee1fb887b78",
+      "G": 4722,
+      "M_position": 97,
+      "M_in_F": 37,
+      "M_outside_F": 60,
+      "risk_n": 97,
+      "support": {
+        "n_total": 97,
+        "n_known": 96,
+        "yes": 39,
+        "no": 57,
+        "unknown": 1,
+        "point_known": 0.40625,
+        "bounds": [
+          0.4020618556701031,
+          0.41237113402061853
+        ],
+        "primary": "BOUNDS",
+        "point_is_comparison_score": false
+      },
+      "conditions": [],
+      "on_original_empirical_grid": true,
+      "original_unchanged": true
+    },
+    {
+      "cut": "11:15",
+      "status": "RESEARCH_ONLY",
+      "observed": {
+        "status": "OPEN",
+        "value": "NO",
+        "available_at": null
+      },
+      "target_id": "6191ec930e03a59e9e37721c1e3fd9c929d0423297c54371b03835af3c878b4a",
+      "question_id": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
+      "context_id": "43cb5cb0d703420486d6c14c63cfdd0cee78e769c962de509321481d04fff1f0",
+      "G": 4722,
+      "M_position": 22,
+      "M_in_F": 9,
+      "M_outside_F": 13,
+      "risk_n": 22,
+      "support": {
+        "n_total": 22,
+        "n_known": 22,
+        "yes": 13,
+        "no": 9,
+        "unknown": 0,
+        "point_known": 0.5909090909090909,
+        "bounds": [
+          0.5909090909090909,
+          0.5909090909090909
+        ],
+        "primary": "POINT",
+        "point_is_comparison_score": true
+      },
+      "conditions": [],
+      "on_original_empirical_grid": false,
+      "original_unchanged": true
+    },
+    {
+      "cut": "11:20",
+      "status": "RESEARCH_ONLY",
+      "observed": {
+        "status": "OPEN",
+        "value": "NO",
+        "available_at": null
+      },
+      "target_id": "6191ec930e03a59e9e37721c1e3fd9c929d0423297c54371b03835af3c878b4a",
+      "question_id": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
+      "context_id": "9fabd784733760667ec48f792b131a2641c050b057be2de3e7b70a59177509bc",
+      "G": 4722,
+      "M_position": 51,
+      "M_in_F": 16,
+      "M_outside_F": 35,
+      "risk_n": 51,
+      "support": {
+        "n_total": 51,
+        "n_known": 51,
+        "yes": 30,
+        "no": 21,
+        "unknown": 0,
+        "point_known": 0.5882352941176471,
+        "bounds": [
+          0.5882352941176471,
+          0.5882352941176471
+        ],
+        "primary": "POINT",
+        "point_is_comparison_score": true
+      },
+      "conditions": [],
+      "on_original_empirical_grid": false,
+      "original_unchanged": true
+    },
+    {
+      "cut": "11:25",
+      "status": "RESEARCH_ONLY",
+      "observed": {
+        "status": "OPEN",
+        "value": "NO",
+        "available_at": null
+      },
+      "target_id": "6191ec930e03a59e9e37721c1e3fd9c929d0423297c54371b03835af3c878b4a",
+      "question_id": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
+      "context_id": "704bfa122a1ab25657d219e435348a186124552cb7bd9a63ab268094c4ad4029",
+      "G": 4722,
+      "M_position": 61,
+      "M_in_F": 22,
+      "M_outside_F": 39,
+      "risk_n": 61,
+      "support": {
+        "n_total": 61,
+        "n_known": 61,
+        "yes": 46,
+        "no": 15,
+        "unknown": 0,
+        "point_known": 0.7540983606557377,
+        "bounds": [
+          0.7540983606557377,
+          0.7540983606557377
+        ],
+        "primary": "POINT",
+        "point_is_comparison_score": true
+      },
+      "conditions": [],
+      "on_original_empirical_grid": true,
+      "original_unchanged": true
+    },
+    {
+      "cut": "11:30",
+      "status": "RESEARCH_ONLY",
+      "observed": {
+        "status": "OPEN",
+        "value": "NO",
+        "available_at": null
+      },
+      "target_id": "6191ec930e03a59e9e37721c1e3fd9c929d0423297c54371b03835af3c878b4a",
+      "question_id": "deaf8c7c74482468517a95a377323186e6a7364c90c600765771c1500de5440c",
+      "context_id": "766114aec5908d3547b9cb0327b56eae42b0082786dfe77897edfc01f1168343",
+      "G": 4722,
+      "M_position": 81,
+      "M_in_F": 26,
+      "M_outside_F": 55,
+      "risk_n": 39,
+      "support": {
+        "n_total": 39,
+        "n_known": 39,
+        "yes": 20,
+        "no": 19,
+        "unknown": 0,
+        "point_known": 0.5128205128205128,
+        "bounds": [
+          0.5128205128205128,
+          0.5128205128205128
+        ],
+        "primary": "POINT",
+        "point_is_comparison_score": true
+      },
+      "conditions": [
+        {
+          "kind": "WINDOW_NO_VISIT",
+          "first_close": 690,
+          "last_close": 690
+        }
+      ],
+      "on_original_empirical_grid": false,
+      "original_unchanged": true
+    },
+    {
+      "cut": "11:35",
+      "status": "FACT_YES",
+      "observed": {
+        "status": "FACT_YES",
+        "value": "YES",
+        "available_at": 695,
+        "witness_bar": [
+          690,
+          695
+        ],
+        "first_time_known": true
+      },
+      "target_id": "6191ec930e03a59e9e37721c1e3fd9c929d0423297c54371b03835af3c878b4a",
+      "question_id": "23439b488b5b7eea826fae1d0a34037c1fff1400ceceb320aa22e225d30441c2",
+      "context_id": "55f25587cb3170d34645f1afd036aa043c04d9e904f7e63e02da5657298b77a5",
+      "G": 4722,
+      "M_position": 44,
+      "M_in_F": 19,
+      "M_outside_F": 25,
+      "risk_n": 44,
+      "support": null,
+      "conditions": [],
+      "on_original_empirical_grid": false,
+      "original_unchanged": true
+    },
+    {
+      "cut": "11:40",
+      "status": "FACT_YES",
+      "observed": {
+        "status": "FACT_YES",
+        "value": "YES",
+        "available_at": 695,
+        "witness_bar": [
+          690,
+          695
+        ],
+        "first_time_known": true
+      },
+      "target_id": "6191ec930e03a59e9e37721c1e3fd9c929d0423297c54371b03835af3c878b4a",
+      "question_id": "23439b488b5b7eea826fae1d0a34037c1fff1400ceceb320aa22e225d30441c2",
+      "context_id": "5801d631b93621cb580093713d995579314a49ef83bfe7e5b8fbbd78cdd1f58b",
+      "G": 4722,
+      "M_position": 52,
+      "M_in_F": 17,
+      "M_outside_F": 35,
+      "risk_n": 52,
+      "support": null,
+      "conditions": [],
+      "on_original_empirical_grid": false,
+      "original_unchanged": true
+    }
+  ],
+  "transitions": [
+    {
+      "before": "ecb96fe0bdf084e8d2910c7fcb89fbc0c831c47d054c9bad89097ee1fb887b78",
+      "after": "43cb5cb0d703420486d6c14c63cfdd0cee78e769c962de509321481d04fff1f0",
+      "same_target": true,
+      "same_question": true,
+      "same_original": true,
+      "reasons": [
+        "NEW_OBSERVATION",
+        "POSITION_MEMBERSHIP_CHANGED"
+      ],
+      "entered": 15,
+      "left": 90
+    },
+    {
+      "before": "43cb5cb0d703420486d6c14c63cfdd0cee78e769c962de509321481d04fff1f0",
+      "after": "9fabd784733760667ec48f792b131a2641c050b057be2de3e7b70a59177509bc",
+      "same_target": true,
+      "same_question": true,
+      "same_original": true,
+      "reasons": [
+        "NEW_OBSERVATION",
+        "POSITION_MEMBERSHIP_CHANGED"
+      ],
+      "entered": 37,
+      "left": 8
+    },
+    {
+      "before": "9fabd784733760667ec48f792b131a2641c050b057be2de3e7b70a59177509bc",
+      "after": "704bfa122a1ab25657d219e435348a186124552cb7bd9a63ab268094c4ad4029",
+      "same_target": true,
+      "same_question": true,
+      "same_original": true,
+      "reasons": [
+        "NEW_OBSERVATION",
+        "POSITION_MEMBERSHIP_CHANGED"
+      ],
+      "entered": 33,
+      "left": 23
+    },
+    {
+      "before": "704bfa122a1ab25657d219e435348a186124552cb7bd9a63ab268094c4ad4029",
+      "after": "766114aec5908d3547b9cb0327b56eae42b0082786dfe77897edfc01f1168343",
+      "same_target": true,
+      "same_question": false,
+      "same_original": true,
+      "reasons": [
+        "NEW_OBSERVATION",
+        "POSITION_MEMBERSHIP_CHANGED",
+        "QUESTION_REMAINDER_OR_APPLICABILITY_CHANGED",
+        "PREFIX_CONDITION_CHANGED"
+      ],
+      "entered": 42,
+      "left": 22
+    },
+    {
+      "before": "766114aec5908d3547b9cb0327b56eae42b0082786dfe77897edfc01f1168343",
+      "after": "55f25587cb3170d34645f1afd036aa043c04d9e904f7e63e02da5657298b77a5",
+      "same_target": true,
+      "same_question": false,
+      "same_original": true,
+      "reasons": [
+        "NEW_OBSERVATION",
+        "POSITION_MEMBERSHIP_CHANGED",
+        "QUESTION_REMAINDER_OR_APPLICABILITY_CHANGED",
+        "PREFIX_CONDITION_CHANGED",
+        "OBSERVED_FACT"
+      ],
+      "entered": 18,
+      "left": 55
+    },
+    {
+      "before": "55f25587cb3170d34645f1afd036aa043c04d9e904f7e63e02da5657298b77a5",
+      "after": "5801d631b93621cb580093713d995579314a49ef83bfe7e5b8fbbd78cdd1f58b",
+      "same_target": true,
+      "same_question": true,
+      "same_original": true,
+      "reasons": [
+        "NEW_OBSERVATION",
+        "POSITION_MEMBERSHIP_CHANGED",
+        "OBSERVED_FACT"
+      ],
+      "entered": 28,
+      "left": 20
+    }
+  ],
+  "frame_recounts": 7,
+  "transition_checks": 6,
+  "original_research_recount": {
+    "status": "PASS",
+    "n": 97,
+    "support": {
+      "n_total": 97,
+      "n_known": 96,
+      "yes": 39,
+      "no": 57,
+      "unknown": 1,
+      "point_known": 0.40625,
+      "bounds": [
+        0.4020618556701031,
+        0.41237113402061853
+      ],
+      "primary": "BOUNDS",
+      "point_is_comparison_score": false
+    }
+  },
+  "original_restored_identically": true,
+  "restore_cut": "13:05",
+  "accepted_trace_audits": [
+    "PASS_SCOPED",
+    "PASS_SCOPED"
+  ],
+  "return_question": {
+    "new_target": "dc3771207048c322526d19ebae7b905d4a4a5ac13592e9e316673bf043b3f0a3",
+    "parent": "6191ec930e03a59e9e37721c1e3fd9c929d0423297c54371b03835af3c878b4a",
+    "established_departure": {
+      "available_at": 770
+    },
+    "new_question": "af095ce03cb2d81efc58efbc879eb2ec7ec444d863a7e967ae4bacef47352e91",
+    "later_observation": {
+      "status": "FACT_YES",
+      "value": "YES",
+      "available_at": 775,
+      "witness_bar": [
+        770,
+        775
+      ],
+      "first_time_known": true
+    },
+    "estimator_status": "NOT_ISSUED_REQUIRES_OWN_SEQUENCE_RULE"
+  },
+  "unknown_incidence": {
+    "rows": 2068869,
+    "rows_with_unknown": 905640,
+    "member_labels": 1136434872,
+    "unknown_member_labels": 3536561,
+    "rows_with_unknown_fraction": 0.4377464208705336,
+    "unknown_member_fraction": 0.0031119785982772975,
+    "bound_width_quantiles": {
+      "0.5": 0.0,
+      "0.9": 0.01020408163265306,
+      "0.95": 0.015037593984962405,
+      "0.99": 0.025252525252525252,
+      "1.0": 0.11538461538461539
+    },
+    "rows_at_least_width": {
+      "0.05": 1002,
+      "0.1": 14,
+      "0.2": 0
+    },
+    "cells": [
+      {
+        "instrument": "NQ",
+        "block": "ODR",
+        "rows": 296402,
+        "rows_with_unknown": 162631,
+        "member_labels": 148438708,
+        "unknown_member_labels": 427134,
+        "maximum_bound_width": 0.060240963855421686
+      },
+      {
+        "instrument": "NQ",
+        "block": "RDR",
+        "rows": 397094,
+        "rows_with_unknown": 177372,
+        "member_labels": 239788246,
+        "unknown_member_labels": 866836,
+        "maximum_bound_width": 0.11538461538461539
+      },
+      {
+        "instrument": "ES",
+        "block": "ODR",
+        "rows": 303762,
+        "rows_with_unknown": 54831,
+        "member_labels": 157370238,
+        "unknown_member_labels": 62166,
+        "maximum_bound_width": 0.03125
+      },
+      {
+        "instrument": "ES",
+        "block": "RDR",
+        "rows": 392943,
+        "rows_with_unknown": 177756,
+        "member_labels": 226083612,
+        "unknown_member_labels": 907619,
+        "maximum_bound_width": 0.09090909090909091
+      },
+      {
+        "instrument": "YM",
+        "block": "ODR",
+        "rows": 295982,
+        "rows_with_unknown": 167735,
+        "member_labels": 142350010,
+        "unknown_member_labels": 447797,
+        "maximum_bound_width": 0.06060606060606061
+      },
+      {
+        "instrument": "YM",
+        "block": "RDR",
+        "rows": 382686,
+        "rows_with_unknown": 165315,
+        "member_labels": 222404058,
+        "unknown_member_labels": 825009,
+        "maximum_bound_width": 0.09433962264150944
+      }
+    ],
+    "scope": "existing POS_GEO WINDOW_VISIT support-qualified rows; dependent questions, not independent days"
+  },
+  "limits": [
+    "illustrative known scene, not forecast validation",
+    "fixed-window/residual extensions not calibrated",
+    "new UI not implemented or perceptually accepted",
+    "full frozen FOM/Trace catalog not rebound",
+    "no automatic C2/C3, no return percentage",
+    "2026 closed; individual records local only"
+  ]
+}
