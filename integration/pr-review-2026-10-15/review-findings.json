@@ -1,0 +1,125 @@
+{
+  "status": "SOURCE_REVIEW_COMMENTS_NOT_ACCEPTANCE",
+  "findings": [
+    {
+      "pr": 3,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/3#discussion_r4248111525",
+      "path": "meaning/lens/2026-10-09-smyslovoj-karkas-i-roadmap.md",
+      "line": 235,
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Замените ссылки на локальный worktree**\n\nСсылки S10–S14 ведут в `.worktrees/resheniya`, который не входит в репозиторий и отсутствует в обычном чистом checkout; поэтому читатель не может открыть приведённые в обоснование реестр, код NOW и файлы экрана, хотя их актуальные аналоги находятся в корне репозитория. Замените эти пути на репозиторные либо на ссылки, закреплённые за конкретным коммитом, чтобы цепочка решения оставалась проверяемой для агента, пришедшего без локального worktree.\n\nAGENTS.md reference: [AGENTS.md:L37-L41](https://github.com/FARTOFALOS/dr-idr/blob/af90505bb83b07c99b2ce1265b8961f7a07347a4/AGENTS.md#L37-L41)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 4,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/4#discussion_r4249667712",
+      "path": "meaning/lens/2026-10-12-kurator/02-specifikaciya.md",
+      "line": 97,
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Отделите выигрыш широкой выборки от ценности признаков**\n\nВывод, что сторона, окно подтверждения и день недели «ничего не добавляют», не следует из замера D: при переходе от NODEPOS к GEO одновременно удаляются эти признаки и медианная опора растёт с 49 до 354, поэтому улучшение Брайера на 0,7 % может объясняться снижением дисперсии несглаженной частоты, даже если признаки содержат полезную информацию. Поскольку этим выводом обосновывается решение D1, либо сравните наборы при сопоставимой опоре/модели, либо сформулируйте результат уже: широкий оцениватель оказался точнее в данной процедуре.\n\nAGENTS.md reference: [AGENTS.md:L33-L36](https://github.com/FARTOFALOS/dr-idr/blob/47e2fd0c9fd1a6df31380044c638fdc766ca57e6/AGENTS.md#L33-L36)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 4,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/4#discussion_r4249667719",
+      "path": "meaning/lens/2026-10-12-kurator/01-esse.md",
+      "line": 220,
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Добавьте смысловые источники до публикации ссылок**\n\nПри отдельном принятии этого коммита ссылки на `meaning/17-rabota-treidera.md` и ниже на `meaning/lens/2026-10-08-osc-1.0/DR-LAB-OSC-1.0.md` не открываются: поиск по всему дереву коммита не находит ни этих файлов, ни одноимённых артефактов. Поскольку PR #2 предлагается принять или отклонить отдельно, зависимость может так и не появиться, и холодный агент не сможет проследить заявленное основание пакета; включите источники в этот набор либо уберите ссылки до слияния зависимости.\n\nAGENTS.md reference: [AGENTS.md:L37-L41](https://github.com/FARTOFALOS/dr-idr/blob/47e2fd0c9fd1a6df31380044c638fdc766ca57e6/AGENTS.md#L37-L41)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 5,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/5#discussion_r4250563786",
+      "path": "meaning/lens/2026-10-12-independent-srs/README.md",
+      "line": 19,
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Включите фиксированные источники в снимок передачи**\n\nПри автономном checkout этого коммита утверждение, что для чтения не нужны PR #2/#3/#4, не выполняется: `meaning/17` и OSC заменены ссылками на GitHub-коммит `b7a52f1`, но этого объекта нет ни в родительской истории, ни в дереве `261e2fad` (`git cat-file` его не находит). Поэтому инженер без доступа к GitHub либо после удаления ветки PR не сможет прочитать источники, на которых основаны KADR и аудит, хотя пакет заявлен как единый фиксированный снимок; добавьте их содержимое в снимок или иной локально разрешимый артефакт.\n\nAGENTS.md reference: [AGENTS.md:L37-L41](https://github.com/FARTOFALOS/dr-idr/blob/3dac91357ceb4c66dda3a8554138df360b4be9d9/AGENTS.md#L37-L41)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 6,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/6#discussion_r4251155979",
+      "path": "lab/q1/engine.py",
+      "line": 167,
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Исключите признак complete из отпечатка префикса**\n\nПри пересборке базы исправление только хвоста целевой сессии может изменить поле `complete`, которое вычисляется по данным до конца блока, хотя свечи до среза останутся прежними. Поскольку `_fields(..., drop=(\"fail\",))` сохраняет `complete`, изменятся `target_prefix_digest`, `input_digest` и `issue_id`, нарушая ключевой инвариант пилота: будущее цели не должно влиять на выпуск и его идентичность. Из отпечатка префикса нужно исключить все метаданные, определяемые после среза.\n\nAGENTS.md reference: [AGENTS.md:L169-L171](https://github.com/FARTOFALOS/dr-idr/blob/e9b5bc68cbfe11cc529f11502876cfd748bdba57/AGENTS.md#L169-L171)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 6,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/6#discussion_r4251155987",
+      "path": "lab/q1/server.py",
+      "line": 173,
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Привяжите раскрытые свечи к основе сохранённого исхода**\n\nЕсли базу исправили или пересобрали после присоединения исхода, этот GET возвращает старую неизменяемую запись `outcomes`, но берёт `after` из текущего корпуса без сравнения `session_digest` с `outcome.payload.basis.target_rows_digest`. При повторном открытии выпуска экран поэтому может одновременно показать старую метку исхода и новый путь свечей, который ей противоречит; нужно либо хранить снимок пути, либо не раскрывать текущие свечи до создания новой ревизии исхода.\n\nAGENTS.md reference: [AGENTS.md:L174-L176](https://github.com/FARTOFALOS/dr-idr/blob/e9b5bc68cbfe11cc529f11502876cfd748bdba57/AGENTS.md#L174-L176)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 6,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/6#discussion_r4251155995",
+      "path": "lab/q1/web/app.js",
+      "line": 366,
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Отбрасывайте поздний ответ исхода после смены сцены**\n\nЕсли оператор нажмёт «Показать исход» и до завершения POST сменит дату, срез или место, переменная `same` останется истинной для прежней сцены и старые `after` будут записаны в `S.reveal` и нарисованы поверх уже новой сцены. Проверка последовательности применяется только в `loadScene`, поэтому здесь нужен аналогичный token/сверка текущего target перед изменением графика.\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 6,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/6#discussion_r4251156004",
+      "path": "lab/q1/server.py",
+      "line": 15,
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Добавьте API пилота в описание архитектуры**\n\nКоммит вводит отдельный сервер и полный набор новых `/api/q1/*` маршрутов, но `docs/ARCHITECTURE.md` не обновлён. В результате карта процессов и API не описывает порт 8771, его хранилище и гра��ицу со шлюзом SC-1.1, хотя правило репозитория требует обновлять архитектурный документ при изменении API-контракта.\n\nAGENTS.md reference: [AGENTS.md:L186-L188](https://github.com/FARTOFALOS/dr-idr/blob/e9b5bc68cbfe11cc529f11502876cfd748bdba57/AGENTS.md#L186-L188)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 6,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/6#discussion_r4251156009",
+      "path": "start-q1-pilot.ps1",
+      "line": 1,
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Сохраните PowerShell-ярлыки с окончаниями CRLF**\n\nОба новых файла `start-q1-pilot.ps1` и `stop-q1-pilot.ps1` содержат BOM, но в зафиксированных blob нет ни одного CRLF — только LF. Для операторской среды PowerShell 5.1 репозиторий прямо требует сочетание UTF-8 BOM и CRLF для `.ps1` с русским текстом, поэтому перед выпуском ярлыка нужно преобразовать окончания строк в обоих файлах.\n\nAGENTS.md reference: [AGENTS.md:L262-L262](https://github.com/FARTOFALOS/dr-idr/blob/e9b5bc68cbfe11cc529f11502876cfd748bdba57/AGENTS.md#L262-L262)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 7,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/7#discussion_r4251873743",
+      "path": "design/sozvezdiya-24/src/app.js",
+      "line": 342,
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Добавьте торговую дату в ключ live-кэша**\n\nЕсли страница остаётся открытой до следующего торгового дня и у сессии совпадают минуты подтверждения и среза, ключ снова получается тем же (`live|session|conf|slice|scope`), поэтому `arriveOf` возвращает сохранённый ответ прошлого дня и вообще не отправляет новый запрос. Кэш `A.arr` при обновлении live-дня не очищается, а ответ дополнительно не сверяется с текущим `family_id`, так что на экране могут остаться чужие состав семьи и доли; включите в ключ `ctx.D.d`/текущую торговую дату либо очищайте этот кэш при смене дня.\n\nAGENTS.md reference: [AGENTS.md:L182-L187](https://github.com/FARTOFALOS/dr-idr/blob/1412567e30e7de4659b51dcea5f0d7e8f26de494/AGENTS.md#L182-L187)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 7,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/7#discussion_r4251873748",
+      "path": "start-dr-lab-otsyuda.ps1",
+      "line": 23,
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Перезапускайте устаревший сервер варианта**\n\nЕсли сервер на 8772 остался запущенным после обновления этой ветки, наличие ответа `/api/contract` принимается за готовность и ярлык открывает процесс со старыми импортированными `arrive24.py`, `contract.py` и экраном. Это особенно опасно для варианта приёмки: оператор фактически оценивает предыдущую сборку; проверяйте версию/хеш текущего checkout и перезапускайте несовпадающий процесс вместо безусловного раннего выхода.\n\nAGENTS.md reference: [AGENTS.md:L268-L271](https://github.com/FARTOFALOS/dr-idr/blob/1412567e30e7de4659b51dcea5f0d7e8f26de494/AGENTS.md#L268-L271)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 7,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/7#discussion_r4251873754",
+      "path": "start-dr-lab-otsyuda.ps1",
+      "line": 25,
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Находите базу рабочего checkout автоматически**\n\nПри запуске варианта из отдельного Git worktree каталог `lab/.runtime` отсутствует, поскольку он игнорируется Git, и ярлык сразу завершается на этой проверке с просьбой вручную скопировать базу. Именно отдельный worktree нужен, чтобы вариант на 8772 не менять рабочий checkout; добавьте такой же поиск основной рабочей копии, как в `start-q1-pilot.ps1`, либо иной автоматический доступ к её базе, чтобы оператору не требовались файловые операции.\n\nAGENTS.md reference: [AGENTS.md:L26-L28](https://github.com/FARTOFALOS/dr-idr/blob/1412567e30e7de4659b51dcea5f0d7e8f26de494/AGENTS.md#L26-L28)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 8,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/8#discussion_r4256026690",
+      "path": "lab/semtrace.py",
+      "line": null,
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Заменяйте тела будущих свечей аналогов**\n\nВ режиме `wicks` будущие `open` и `close` остаются исходными, поэтому регрессия, при которой отбор NOW/ARRIVE использует, например, закрытие следующей или последней свечи аналога, не изменит `membership` и проверка `FUTURE-MEMBERS` ошибочно пройдёт. Для доказательства отсутствия утечки нужно изменять все поля свечей после среза, сохраняя только уже доступный префикс; сейчас отчёт может объявить результат достоверным при использовании будущих закрытий.\n\nAGENTS.md reference: [AGENTS.md:L197-L201](https://github.com/FARTOFALOS/dr-idr/blob/952d52acf667e9db877ed3be2d6bce87b482f6fb/AGENTS.md#L197-L201)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    },
+    {
+      "pr": 8,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/8#discussion_r4256632091",
+      "path": "lab/semtrace.py",
+      "line": null,
+      "body": "Исправил замечание P1 в коммите [`31835dd`](https://github.com/FARTOFALOS/dr-idr/commit/31835dd44934dacb1f6d46a9f016dd19e79df1d2): FUTURE-MEMBERS теперь подменяет **все OHLC** на свечах после допустимого среза; префикс и часы не трогает. Добавлен синтетический тест `future_ohlc_unit()` и контрпример `CX-4c`, в котором `Q.Table.select` намеренно читает будущий `close` и `FUTURE-MEMBERS` обязан обнаружить зависимость. Код и дифф проверены, изолированная проверка функции подмены пройдена. **Полный прогон на локальной базе G3 пока не выполнен**; старый `studies/trace_2026_10_13/run.json` относится к `b08fb11` и не объявляется новым свидетельством. Оставляю ветку ревью открытой до воспроизведения полного набора.",
+      "author": "FARTOFALOS"
+    },
+    {
+      "pr": 9,
+      "url": "https://github.com/FARTOFALOS/dr-idr/pull/9#discussion_r4261986047",
+      "path": "start-dr-lab-path.ps1",
+      "line": 9,
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Перезапускайте устаревший сервер стенда 8775**\n\nЕсли стенд 8775 уже запущен во время обновления checkout, проверка принимает любой ответ `/api/contract` и оставляет старый процесс с загруженным прежним реестром; при этом статическая страница читается уже из нового checkout и содержит новый hash, поэтому она откажется показывать все семейные числа как собранная с другим реестром. Проверяйте hash/версию запущенного сервера либо останавливайте и запускайте его заново; такая же проверка только по доступности есть у добавленного стенда 8774.\n\nAGENTS.md reference: [AGENTS.md:L300-L303](https://github.com/FARTOFALOS/dr-idr/blob/0f1ae26828db402f203660b6deab14d15262c185/AGENTS.md#L300-L303)\n\nUseful? React with 👍 / 👎.",
+      "author": "chatgpt-codex-connector[bot]"
+    }
+  ]
+}

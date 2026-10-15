@@ -1,0 +1,9 @@
+{
+  "case": "NQ/RDR/2025-12-17",
+  "cut": "11:10",
+  "only_metadata_complete_changed": true,
+  "same_closed_prefix": true,
+  "prefix_digest_changed": true,
+  "old": "3e8dbd4c9cfdb36b9703ae1eee51692055c52b427e78e8633c747c3fcad38a4f",
+  "new": "30d417560d76d62afc62dba8d280c963013fdcf39f56550199436955f9d26c76"
+}
