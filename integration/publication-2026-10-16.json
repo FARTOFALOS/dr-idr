@@ -1,0 +1,234 @@
+{
+  "status": "PUBLISHED_RUNNING_CANDIDATE",
+  "client_verification_date": "2026-10-16",
+  "checked_at_utc": "2026-10-16T03:36:00.542501+00:00",
+  "implementation_commit": "de255aad0308e697ec4ce14925c4280957771607",
+  "github": {
+    "merged_pr": 14,
+    "merge_sha": "5b1feb81b32601391c944d9ac871a96b4ca1580a",
+    "merged_at": "2026-10-15T19:49:06Z",
+    "old_prs": [
+      {
+        "number": 2,
+        "url": "https://github.com/FARTOFALOS/dr-idr/pull/2",
+        "head_sha": "b7a52f17fac3fd3f980f4687ad5f21a0b8f2d57b",
+        "state": "closed",
+        "merged": false,
+        "closed_at": "2026-10-15T19:55:52Z",
+        "units": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "disposition": "INDIVIDUALLY_ADAPTED_PRESERVED_OR_DEFERRED_VIA_PR14"
+      },
+      {
+        "number": 3,
+        "url": "https://github.com/FARTOFALOS/dr-idr/pull/3",
+        "head_sha": "af90505bb83b07c99b2ce1265b8961f7a07347a4",
+        "state": "closed",
+        "merged": false,
+        "closed_at": "2026-10-15T19:56:07Z",
+        "units": [
+          "U07",
+          "U08"
+        ],
+        "disposition": "INDIVIDUALLY_ADAPTED_PRESERVED_OR_DEFERRED_VIA_PR14"
+      },
+      {
+        "number": 4,
+        "url": "https://github.com/FARTOFALOS/dr-idr/pull/4",
+        "head_sha": "47e2fd0c9fd1a6df31380044c638fdc766ca57e6",
+        "state": "closed",
+        "merged": false,
+        "closed_at": "2026-10-15T19:56:18Z",
+        "units": [
+          "U09",
+          "U10"
+        ],
+        "disposition": "INDIVIDUALLY_ADAPTED_PRESERVED_OR_DEFERRED_VIA_PR14"
+      },
+      {
+        "number": 5,
+        "url": "https://github.com/FARTOFALOS/dr-idr/pull/5",
+        "head_sha": "3dac91357ceb4c66dda3a8554138df360b4be9d9",
+        "state": "closed",
+        "merged": false,
+        "closed_at": "2026-10-16T03:20:03Z",
+        "units": [
+          "U11",
+          "U12"
+        ],
+        "disposition": "INDIVIDUALLY_ADAPTED_PRESERVED_OR_DEFERRED_VIA_PR14"
+      },
+      {
+        "number": 6,
+        "url": "https://github.com/FARTOFALOS/dr-idr/pull/6",
+        "head_sha": "e9b5bc68cbfe11cc529f11502876cfd748bdba57",
+        "state": "closed",
+        "merged": false,
+        "closed_at": "2026-10-16T03:20:06Z",
+        "units": [
+          "U13",
+          "U14",
+          "U15",
+          "U29"
+        ],
+        "disposition": "INDIVIDUALLY_ADAPTED_PRESERVED_OR_DEFERRED_VIA_PR14"
+      },
+      {
+        "number": 7,
+        "url": "https://github.com/FARTOFALOS/dr-idr/pull/7",
+        "head_sha": "1412567e30e7de4659b51dcea5f0d7e8f26de494",
+        "state": "closed",
+        "merged": false,
+        "closed_at": "2026-10-16T03:24:00Z",
+        "units": [
+          "U16",
+          "U17",
+          "U30"
+        ],
+        "disposition": "INDIVIDUALLY_ADAPTED_PRESERVED_OR_DEFERRED_VIA_PR14"
+      },
+      {
+        "number": 8,
+        "url": "https://github.com/FARTOFALOS/dr-idr/pull/8",
+        "head_sha": "3031c954cbfb7184df3f606689ad787ed258f8ad",
+        "state": "closed",
+        "merged": false,
+        "closed_at": "2026-10-16T03:25:38Z",
+        "units": [
+          "U18",
+          "U19"
+        ],
+        "disposition": "INDIVIDUALLY_ADAPTED_PRESERVED_OR_DEFERRED_VIA_PR14"
+      },
+      {
+        "number": 9,
+        "url": "https://github.com/FARTOFALOS/dr-idr/pull/9",
+        "head_sha": "0f1ae26828db402f203660b6deab14d15262c185",
+        "state": "closed",
+        "merged": false,
+        "closed_at": "2026-10-16T03:28:42Z",
+        "units": [
+          "U17",
+          "U20",
+          "U21",
+          "U22",
+          "U27",
+          "U30"
+        ],
+        "disposition": "INDIVIDUALLY_ADAPTED_PRESERVED_OR_DEFERRED_VIA_PR14"
+      },
+      {
+        "number": 10,
+        "url": "https://github.com/FARTOFALOS/dr-idr/pull/10",
+        "head_sha": "f95404632faa190fed0568a1621a5db49909bd64",
+        "state": "closed",
+        "merged": false,
+        "closed_at": "2026-10-16T03:28:52Z",
+        "units": [
+          "U19",
+          "U23",
+          "U24"
+        ],
+        "disposition": "INDIVIDUALLY_ADAPTED_PRESERVED_OR_DEFERRED_VIA_PR14"
+      },
+      {
+        "number": 11,
+        "url": "https://github.com/FARTOFALOS/dr-idr/pull/11",
+        "head_sha": "b7a52f17fac3fd3f980f4687ad5f21a0b8f2d57b",
+        "state": "closed",
+        "merged": false,
+        "closed_at": "2026-10-16T03:29:29Z",
+        "units": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "disposition": "INDIVIDUALLY_ADAPTED_PRESERVED_OR_DEFERRED_VIA_PR14"
+      },
+      {
+        "number": 12,
+        "url": "https://github.com/FARTOFALOS/dr-idr/pull/12",
+        "head_sha": "2a36608e04fbdf896b313b5cde477df13b229e0b",
+        "state": "closed",
+        "merged": false,
+        "closed_at": "2026-10-16T03:29:36Z",
+        "units": [
+          "U25"
+        ],
+        "disposition": "INDIVIDUALLY_ADAPTED_PRESERVED_OR_DEFERRED_VIA_PR14"
+      },
+      {
+        "number": 13,
+        "url": "https://github.com/FARTOFALOS/dr-idr/pull/13",
+        "head_sha": "a2d076a552d967a268a1c494b2bbbefa7ca6f3e6",
+        "state": "closed",
+        "merged": false,
+        "closed_at": "2026-10-16T03:29:43Z",
+        "units": [
+          "U26",
+          "U27"
+        ],
+        "disposition": "INDIVIDUALLY_ADAPTED_PRESERVED_OR_DEFERRED_VIA_PR14"
+      }
+    ],
+    "open_pr_count": 0
+  },
+  "primary": {
+    "url": "http://127.0.0.1:8767/24/",
+    "source_revision": "a6c0642b734be3f817cac9383132108dce7314bfcac518dcf4ae0d370216b9eb",
+    "data_revision": "4f1bdc51a6fed1a078b8040fc614d6db708da2311b4d20ca52b0747caca4d94f",
+    "integration": true,
+    "single_listener": true,
+    "normal_launcher_verified": true,
+    "cold_history_launch_verified": true,
+    "integration_shortcut_points_to_main": true,
+    "independent_variant_shortcuts_preserved": true
+  },
+  "machine_checks": {
+    "source_verification": "tested-source-hashes.json",
+    "report": "verification-2026-10-15.md",
+    "swpc_browser": 74,
+    "continuations_browser": 45,
+    "legacy_journey": 27,
+    "deployed_continuations_browser": 45,
+    "deployed_base_problems": [],
+    "viewports": [
+      [
+        1600,
+        900
+      ],
+      [
+        1920,
+        1000
+      ]
+    ]
+  },
+  "live_channel": {
+    "status": "ok",
+    "source": "live",
+    "date": "2026-10-16",
+    "fetched_at": "2026-10-16T03:33:41.451774+00:00",
+    "checked_at_utc": "2026-10-16T03:33:41.485411+00:00",
+    "age_seconds": 0.0,
+    "freshly_read": true
+  },
+  "standing": {
+    "operator_perceptual_acceptance": "PENDING",
+    "fixed_residual_calibration": "NOT_ESTABLISHED",
+    "C2": "NOT_ADMITTED",
+    "C3": "NOT_ADMITTED",
+    "accepted_estimands": 53,
+    "proposed_estimands": 60,
+    "old_pr_closure_is_not_blanket_acceptance": true,
+    "live_is_not_historical_membership": true
+  }
+}
