@@ -2,8 +2,9 @@
 NQ · Friday · RDR · short · confirmation 10:30-11:00 (docs/STRATEGY.md §6.3: DR true 85 %, retracement zones
 +0.09…-0.3 and -0.51…-0.7, target 1.0-1.09) against screen 24's constellations for the same key (our 15-minute windows
 10:30-10:45 and 10:45-11:00, all sessions of 2006-2025, zone-map-3), and the author's own reading on our tape: DR-true
-sessions only, max retracements before 12:00 (his entry window 10:45-12:00), 70th percentile of depth. The same key
-was first recomputed by lens 6 (studies/lens6_2026_09_30/).
+sessions only whose max retracement lies in his entry window 10:45-12:00 (the M5 opening 10:45 … 11:55, the bounds of
+lens 6), the 70th percentile of depth and the extension of that same set. The same key was first recomputed by lens 6
+(studies/lens6_2026_09_30/, 2008-2024).
 
     python -B studies/audit_sozvezdij_2026_10_18/author_key.py > studies/audit_sozvezdij_2026_10_18/author_key.txt
 """
@@ -37,11 +38,14 @@ for win in (0, 1):
         print(f"  {ev} outside zones {len(zm['residual']) / N:.1%}")
 # the author's procedure on our tape for the pooled 30-minute key
 true = [m for m in pooled if m["outcome"] == "held" and m["R"]["s"] == "known"]
-early = sorted(m["R"]["v"] / m["w"] for m in true if m["R"]["t"] < 720)       # max retracement before 12:00
+inwin = [m for m in true if 10 * 60 + 45 <= m["R"]["t"] < 12 * 60]          # max retracement in his window 10:45-12:00
+early = sorted(m["R"]["v"] / m["w"] for m in inwin)
 q = lambda v, p: v[min(len(v) - 1, int(p * (len(v) - 1) + 0.5))]
-print(f"\nauthor's way, pooled 10:30-11:00: N {len(pooled)}, DR true {len(true)}, of them R before 12:00: {len(early)}")
+print(f"\nauthor's way, pooled 10:30-11:00: N {len(pooled)}, DR true {len(true)}, of them max retracement in 10:45-12:00: {len(early)}")
 print(f"  R depth among those: median {q(early, 0.5):+.2f}, 70 % not deeper than {q(early, 0.3):+.2f}")
+xw = sorted(m["X"]["v"] / m["w"] for m in inwin)
+print(f"  X (the same set): reached by 70 % of sessions {q(xw, 0.3):+.2f}, median {q(xw, 0.5):+.2f}")
 xs = sorted(m["X"]["v"] / m["w"] for m in true)
-print(f"  X (DR true): reached by 70 % of sessions {q(xs, 0.3):+.2f}, median {q(xs, 0.5):+.2f}")
+print(f"  X (all DR true, no time filter): reached by 70 % of sessions {q(xs, 0.3):+.2f}, median {q(xs, 0.5):+.2f}")
 allx = sorted(m["X"]["v"] / m["w"] for m in pooled if m["X"]["s"] == "known")
 print(f"  X (all sessions, our family): reached by 70 % {q(allx, 0.3):+.2f}, median {q(allx, 0.5):+.2f}")
