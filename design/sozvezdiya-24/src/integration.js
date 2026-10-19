@@ -1,6 +1,11 @@
   // One publication scene; accepted SC11 remains the registry of BASE/NOW. Review profiles have their own edition.
   const ICFG = window.DR_INTEGRATION || { enabled: false }, REVIEW = ICFG.registry;
-  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled };
+  // phase / nowmarks: the operator's decisions of 2026-10-08 (meaning/17 §7) on the page only, over accepted bundles and the
+  // candidate labels FF:PHASE-RULE, row_mark / title_mark (integration/candidates/registry/40-claims.yaml); no server call
+  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled, phase: false, nowmarks: false };
+  // the viewer's own choice of trials is kept in this browser like every other setting (2026-10-19); the address still adds
+  const TRIAL_KEY = 'drlab.d24.trials';
+  if (ICFG.enabled) try { const kept = JSON.parse(localStorage.getItem(TRIAL_KEY) || '{}'); for (const k in TRIAL) if (typeof kept[k] === 'boolean') TRIAL[k] = kept[k]; } catch (e) { /* defaults */ }
   if (ICFG.enabled) for (const k of (new URLSearchParams(location.hash.slice(1)).get('trial') || '').split(',')) if (k in TRIAL) TRIAL[k] = true;
   if (ICFG.enabled) window.addEventListener('hashchange',()=>location.reload());
   const IS = { key: null, packet: null, pending: new Set(), cache: new Map(), error: null, discarded: 0, committed: 0, selection: null, epoch: 0 };
@@ -153,6 +158,73 @@
     IS.selection = { context: scenePacket().context.id, level: h.id, price: p, ids: [...a.ids], bundle: arriveBundle(a.r, h.id, a.P).id };
   }
   function candidateDetails(ctx, o) { return o?.k === 'arrive' ? { head: lbl('EST:K-ARRIVE', 'head'), body: candidateTip(o, ctx) } : null; }
+  // ---------- the operator's decisions of 2026-10-08 (meaning/17 §7), on screen as trials since 2026-10-19 ----------
+  // They existed only as candidate definitions (integration/pr-dispositions.json U03, U04). Page only: accepted bundles
+  // and passports, candidate words; nothing is computed on the server for them.
+  // The named phase rule (FF:PHASE-RULE): «откат сделан» when today's deepest point after the activation reached the
+  // retirement zone (−0.7) AND at least half of the family's sessions had their final R earlier than the cut by the common
+  // clock (known, of N: EST:B-CLOCK-R over the whole price range, part EARLIER, a passport the server verifies). A rule
+  // of the operator, not a statement about the market; only for the confirmation family (a break is another frame)
+  function phaseOf(F, ctx) {
+    if (!TRIAL.phase || !F || F.brk || !F.N) return null;
+    const rows = todayRows(F, ctx);
+    if (!rows.length) return null;
+    let lo = rows[0];
+    for (const q of rows) if (q.lo < lo.lo) lo = q;
+    const cut = sliceOf(ctx), n = F.ev.R.pts.filter(q => q.t + 5 <= cut).length;
+    const pass = clockPass(F, 'R', { k0: -100000, k1: 100000 }, 'EARLIER', cut, n);
+    const deep = 10 * lo.lo <= -7 * F.w0t, half = 2 * n >= F.N;
+    return { r: lo.lo / F.w0t, deep, half, done: deep && half, pass, cut };
+  }
+  // the zones of the side the rule points at stay as they are; the other side's haze and stars a little quieter
+  // (operator 2026-10-06 «пока откат не сделан, зоны R чуть ярче, после — зоны X»; 2026-10-08 the rule); never a size
+  const phaseK = (ph, ev) => !ph ? 1 : ev === (ph.done ? 'X' : 'R') ? 1 : 0.72;
+  // its one place in the panel: the state and both criteria with today's values
+  function phasePanel(F, ctx) {
+    const ph = phaseOf(F, ctx), P = 'FF:PHASE-RULE';
+    if (!ph) return '';
+    const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true);
+    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
+      '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
+      link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
+  }
+  // the candidate edition's own words for the accepted «Сейчас» forms (row_mark / title_mark, operator 08.10), read only
+  // here and only for the trial «nowmarks»: the general lbl() keeps refusing them (tests/integration_faults.mjs)
+  function reviewLbl(id, key, vars) {
+    const box = REVIEW && REVIEW.forms[id], set = box && box.labels[key], t = set && set.ANY;
+    if (t == null) { kViolate('a candidate label outside its registry: ' + id + ' · ' + key); return ''; }
+    const out = vars ? t.replace(/\{([A-Za-z0-9_]+)\}/g, (m, k) => vars[k] != null ? String(vars[k]) : m) : t;
+    if (/\{[A-Za-z0-9_]+\}/.test(out)) kViolate('a candidate label without its value: ' + id + ' · ' + key);
+    return out;
+  }
+  // «Сейчас», the pullback line as only its number (trial «nowmarks»): its levels are the marks at the price scale, the
+  // historical words, levels, time and support are in its title
+  function nowMarkRow(F, n, E, o) {
+    const { val, bN, bI, bT, q, tm, sp, u0, sgn, lv } = o, NE = 'EST:N-NEW-R';
+    const P = v => Math.round(F.u2p(u0 + sgn * v)), cnt = sp.N_match_unknown ? sp.N_new_yes + '–' + (sp.N_new_yes + sp.N_match_unknown) : String(sp.N_new_yes);
+    const t1 = bN ? reviewLbl(NE, 'title_mark', { ev: 'R', cut: n.cut.cut_clock_et, today: num(P(0), 0), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base }) : '';
+    const t2 = bI ? reviewLbl('EST:N-IF-NEW-R', 'title_mark', { p50: lv(q.q50), lo: num(Math.min(P(q.q25), P(q.q75)), 0), hi: num(Math.max(P(q.q25), P(q.q75)), 0), time: bT ? reviewLbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' }) : '';
+    return link({ k: 'now', ev: 'R' }, '<span class="t"><span>' + reviewLbl(NE, 'row_mark', { ev: '<i style="color:' + cfg.R + '">R</i>' }) + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' '));
+  }
+  // its levels at the price scale, always, no text: today's deepest point after the activation (dashed), and for the
+  // sessions whose pullback went deeper the middle half of where it ended (a narrow bar) with its median (a tick); a thin
+  // line joins them. The same published bundles as the number; the hover picture of the row stays as it was
+  function drawNowMarks(c, ctx) {
+    if (!TRIAL.nowmarks || st.mode !== 'bounds') return;
+    const F = ctx.F, n = nowOf(ctx), E = n && n.R;
+    if (!E || (n.status !== 'OK' && n.status !== 'FROZEN_AT_BREAK') || !E.state || !E.continuation || !nowBundle(n, 'EST:N-NEW-R', 'MAIN', E.continuation)) return;
+    const q = E.continuation.p_new_extreme && nowBundle(n, 'EST:N-IF-NEW-R', 'MAIN') ? E.continuation.delta_if_new || {} : {};
+    const u0 = E.state.r_seen, col = cfg.R, xr = V.plot.w, y0 = Math.round(V.Y(F.u2p(u0))) + 0.5;
+    c.save(); c.lineWidth = 1;
+    c.strokeStyle = rgba(col, 0.9); c.setLineDash([3, 2]); c.beginPath(); c.moveTo(xr - 24, y0); c.lineTo(xr, y0); c.stroke(); c.setLineDash([]);
+    if (q.q25 != null && q.q75 != null && q.q50 != null) {
+      const ya = V.Y(F.u2p(u0 - q.q25)), yb = V.Y(F.u2p(u0 - q.q75)), ym = Math.round(V.Y(F.u2p(u0 - q.q50))) + 0.5;
+      c.strokeStyle = rgba(col, 0.4); c.beginPath(); c.moveTo(xr - 7.5, y0); c.lineTo(xr - 7.5, ya); c.stroke();
+      c.fillStyle = rgba(col, 0.5); c.fillRect(xr - 10, Math.min(ya, yb), 5, Math.max(2, Math.abs(yb - ya)));
+      c.strokeStyle = rgba(col, 1); c.lineWidth = 2; c.beginPath(); c.moveTo(xr - 16, ym); c.lineTo(xr, ym); c.stroke();
+    }
+    c.restore();
+  }
   function candidatePaths(ctx) {
     const a = candidateSelection(ctx, hv()), cv = dom('dcF'), geom = cv?._g;
     if (!TRIAL.paths || !a?.ready || !geom) { IS.pathEvidence = null; return; }
@@ -178,7 +250,8 @@
   function integrationSettings() {
     if (!ICFG.enabled) return '';
     return '<details class="cgd"><summary class="cg">Испытание кандидатов</summary>' +
-      [['pre', 'История до подтверждения'], ['arrive', 'Отсюда до места · Q1'], ['paths', 'Связанные пути в нижнем окне'], ['continuations', 'Продолжения · закреплённое окно']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
+      [['pre', 'История до подтверждения'], ['arrive', 'Отсюда до места · Q1'], ['paths', 'Связанные пути в нижнем окне'], ['continuations', 'Продолжения · закреплённое окно'],
+        ['phase', 'Фаза по вашему правилу · 08.10'], ['nowmarks', '«Сейчас»: откат числом и отметками у шкалы · 08.10']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
       '<button type="button" id="auditScene">Проверить происхождение и опору</button><div id="auditResult" class="p21-note"></div></details>';
   }
   async function auditScene() {
@@ -194,6 +267,7 @@
   }
   function setTrial(k, on) {
     TRIAL[k] = !!on; IS.key = null; IS.packet = null; IS.error = null;
+    try { localStorage.setItem(TRIAL_KEY, JSON.stringify(TRIAL)); } catch (e) { /* not kept */ }
     if(k==='continuations'&&!on){CS.seq++;CS.packet=null;CS.drawing=null;if(st.mode==='continuations')st.mode='bounds';}
     if (!TRIAL.arrive && st.pin?.k === 'arrive') st.pin = st.hover = null;
     dom('detg')._k = ''; render(true);

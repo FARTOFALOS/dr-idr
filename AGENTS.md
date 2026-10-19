@@ -1,5 +1,24 @@
 # DR IDR — entry for agents
 
+## Update · 2026-10-19
+
+Read [`meaning/21-svodnaya-karta-24.md`](meaning/21-svodnaya-karta-24.md) first. It is one map of every lens, the
+external review of 19.10 and PR #15. It covers each layer of screen 24 by object, set, condition, horizon, denominator
+and claim, with its status (accepted or candidate), the gaps, and how to check them on the screen.
+
+What changed on 19.10. No number changed its object, set or denominator.
+- **The launcher restarts again a TradingView opened without port 9222**, as before 2026-10-15 and as
+  `docs/ARCHITECTURE.md` says. Without the port the screen had no live candles. Agents' checks run the launcher with
+  `-HistoryOnly`, which never touches TradingView.
+- **Registry words = executable definitions**, pinned by `tests/semantic_links.py`:
+  - `EST:B-LEVEL-REST` / `EST:B-VISIT-REST` count the common remainder (t, H];
+  - `CMP:C-POS` / `CF:C-WINDOW` describe POS_GEO as computed: earlier visits of the place do not exclude a case, and the
+    set G is not F.
+- **The operator's decisions of 08.10 reach the screen** as two candidate trials in «⚙ → Испытание кандидатов»: the
+  phase rule (`FF:PHASE-RULE`) and the «Сейчас» pullback line as a number with marks at the price scale. The code lives
+  in `integration.js`. The viewer's trial choice is kept in `localStorage`.
+- Run `tests/semantic_links.py` with the other required checks.
+
 ## Implementation update · 2026-10-15
 
 Start with [the integrated working result](integration/DELIVERY.md) and the latest node of
@@ -11,8 +30,9 @@ has 60. Implementation in main is not C2/C3 or operator perceptual acceptance. F
 with explicit scoped runtime checks, not a claim of full catalog rebinding.
 
 The normal launcher starts `server.py --integration` on 8767; the ordinary default view remains the accepted map.
-It checks loaded source/data versions, replaces its own stale server, preserves an already open TradingView without
-9222, and supports `-HistoryOnly`. The historical base stops in 2025. Candidate toggles are independent.
+It checks loaded source/data versions, replaces its own stale server, restarts a TradingView opened without 9222
+(since 2026-10-19 again; from 15.10 to 19.10 it left such a window alone and the screen had no live candles), and
+supports `-HistoryOnly`, which leaves TradingView untouched. The historical base stops in 2025. Candidate toggles are independent.
 New checks: `tests/continuity24.py`, `continuations24.py`, `continuations_page.mjs`, `q1_prefix_metadata.py`,
 `q1_reveal.py`. Run them along with the existing required checks below. `integration/pr-dispositions.json` records
 the current fate of every source unit; old PR closure is not blanket adoption. No new ontology stack was added.

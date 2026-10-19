@@ -576,7 +576,9 @@
   // the registered words: a claim form (by its estimand, EST:…) or a fact form (FF:…), one key, the view's variant if any
   function lbl(id, key, vars, view) {
     const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : SC11.forms[id];
-    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS'].includes(id);
+    // FF:PHASE-RULE exists only in the candidate edition (08.10); the candidate words of the accepted «Сейчас» forms are
+    // never reached from here (tests/integration_faults.mjs), only by reviewLbl for the trial «nowmarks»
+    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE'].includes(id);
     const extra = candidateId && REVIEW && (id.startsWith('FF:') ? REVIEW.facts[id] : REVIEW.forms[id]);
     const box = own && own.labels[key] ? own : extra || own;
     const set = box && box.labels[key], t = set && (view && set[view] != null ? set[view] : set.ANY);
@@ -940,6 +942,7 @@
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);
+    if (F && !continuationMode()) drawNowMarks(c, ctx);
     drawPills(c, ctx);
     if (!continuationMode()) drawNow(c, ctx);
     if (F && !continuationMode()) drawLink(c, ctx);
@@ -1040,10 +1043,10 @@
       if (x1 < 0 || x0 > V.plot.w) continue;
       const on = h && h.k === 'vib' && h.t === v.t;
       // a worked-out VI (touched) stops at the touch and takes the spent shade of the colour catalogue (entry 26)
-      const vf = cfg.vibA / 20, vc = v.fill != null ? stateCol(C.vib, 'spent') : C.vib;
-      c.fillStyle = rgba(vc, Math.min(1, on ? 0.34 * vf : v.fill != null ? 0.16 * vf : 0.2 * vf));
+      const vf = cfg.vibA / 20, done = v.fill != null, vc = done ? SPENT : C.vib;
+      c.fillStyle = rgba(vc, Math.min(1, done ? (on ? 0.08 : 0.04) * vf : (on ? 0.34 : 0.2) * vf));
       c.fillRect(x0, y0 - 1, x1 - x0, Math.max(2, y1 - y0 + 2));
-      c.fillStyle = rgba(vc, Math.min(1, on ? 0.9 : (v.fill != null ? 0.35 : 0.5) * vf));
+      c.fillStyle = rgba(vc, Math.min(1, done ? (on ? 0.25 : 0.12) * vf : on ? 0.9 : 0.5 * vf));
       c.fillRect(x0, y0 - 1, 1.5, Math.max(2, y1 - y0 + 2));
       // its name inside the rectangle at the right end, only when it fits (operator 2026-10-06)
       const hh = y1 - y0 + 2, xr = Math.min(x1, V.plot.w) - 4;
@@ -1264,22 +1267,13 @@
     }
   }
   function drawNow(c, ctx) {
-    const E = SESS[ctx.s.k].end;
-    if (ctx.F) {
-      const xe = Math.round(V.X(E)) + 0.5;
-      c.strokeStyle = 'rgba(255,255,255,.12)'; c.setLineDash([2, 5]); c.lineWidth = 1;
-      c.beginPath(); c.moveTo(xe, 0); c.lineTo(xe, V.plot.h); c.stroke(); c.setLineDash([]);
-      // the text «конец <session> HH:MM» removed (operator 2026-10-06): the dotted line says it
-    }
+    // Operator 2026-10-16: midnight is the only standing time-divider. The cut stays in the clock/axis pill.
     const pNow = ctx.s.priceNow;
     if (pNow != null) {
       const b = ctx.D.bars.filter(q => q.t + 5 <= (ctx.live ? NOW + 5 : ctx.obs)).pop(), y = Math.round(V.Y(pNow)) + 0.5;
       c.strokeStyle = rgba(b && b.c >= b.o ? C.up : C.dn, 0.8); c.lineWidth = 1; c.setLineDash([1, 3]);
       c.beginPath(); c.moveTo(0, y); c.lineTo(V.plot.w, y); c.stroke(); c.setLineDash([]);
     }
-    const x = Math.round(V.X(ctx.obs)) + 0.5;
-    c.strokeStyle = ctx.live && !ctx.D.hist ? 'rgba(255,255,255,.14)' : rgba(ctx.D.hist ? C.hist : C.replay, 0.55); c.setLineDash([3, 4]); c.lineWidth = 1;
-    c.beginPath(); c.moveTo(x, 0); c.lineTo(x, V.plot.h); c.stroke(); c.setLineDash([]);
   }
   // does a point take part in what is hovered / pinned / selected? true = lit, false = dimmed, null = neutral
   function emphOf(q, h, F, ctx) {
@@ -1302,21 +1296,25 @@
   const inArea = (q, a) => !!a && (!a.ev || a.ev === q.ev) && q.k >= a.k0 && q.k < a.k1 && (a.b0 == null || (q.b >= a.b0 && q.b < a.b1));
   // one point = one session's event (spec §7): no jitter; points on the same spot stay on it (their weight adds up in
   // brightness, the tooltip lists every session). A ring = that session broke its DR (the family is never thinned by it).
-  // R and X together; the stars of a zone are brighter and a little larger than the residual ones
+  // Only stars belonging to a published constellation are drawn; residual events retain their counts.
+  function pointZone(F, q) {
+    const i = F.zcell[q.ev].get(q.k + '|' + q.b);
+    return i != null && !zoneHeld(F, q.ev, i) ? i : null;
+  }
   function drawPoints(c, ctx) {
-    const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100;
+    const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100, ph = phaseOf(F, ctx);
     for (const ev of ['R', 'X']) {
-      const col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent'), held = look.map((_, i) => zoneHeld(F, ev, i));
+      const pk = phaseK(ph, ev), col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent');
       for (const q of F.ev[ev].pts) {
-        // the stars of a withheld zone are drawn as stars outside zones (their own session's point stays; the zone's
-        // emphasis would assert the withheld share)
-        const z0 = F.zcell[ev].get(q.k + '|' + q.b), zi = z0 != null && !held[z0] ? z0 : null, col = zi != null && look[zi] === 'IMPOSSIBLE' ? spent : zi != null && look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
+        const zi = pointZone(F, q);
+        if (zi == null) continue;
+        const col = look[zi] === 'IMPOSSIBLE' ? spent : look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
         const x = V.X(q.t + 2.5), y = V.Y(q.p);
         if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
-        const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx), inZone = zi != null;
-        let a = (past ? cfg.pastA : cfg.ptA) / 100 * (inZone ? 1.1 : 0.62), r = R0 * (inZone ? 1 : 0.8);
+        const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx);
+        let a = (past ? cfg.pastA : cfg.ptA) / 100 * 1.1, r = R0;
         if (e === true) { a = Math.min(1, Math.max(a, 0.55) + 0.3); r = R0 * 1.3; } else if (e === false) a *= 0.28;
-        a = Math.min(1, a);
+        a = Math.min(1, e === true ? a : a * pk);
         if (!F.brk && q.m.outcome === 'broken') { c.strokeStyle = rgba(col, a); c.lineWidth = 1; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.stroke(); }
         else { c.fillStyle = rgba(col, a); c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill(); }
       }
@@ -1429,17 +1427,17 @@
     return 0.8;
   }
   function drawClouds(c, ctx) {
-    const F = ctx.F, CL = cloudsOf(F), h = hv(), fa = cfg.cloudA / 100, ta = cfg.threadA / 100;
+    const F = ctx.F, CL = cloudsOf(F), h = hv(), ph = phaseOf(F, ctx);
     for (const ev of ['R', 'X']) {
-      const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
+      const S = zoneLook(F, ctx, ev), col0 = cfg[ev], fa = cfg.cloudA / 100 * phaseK(ph, ev), ta = cfg.threadA / 100 * phaseK(ph, ev);
       CL[ev].forEach((g, i) => {
         if (!g || zoneHeld(F, ev, i)) return;        // a withheld zone's share is «—»: its haze and threads do not assert it
         const col = stateCol(col0, S[i]);
         // a spent constellation stays readable as history (operator 2026-10-06: «чуть-чуть ярче»), setting «spentA»
         const k = cloudK(F, ev, i, h, g.z), dim = S[i] === 'IMPOSSIBLE' ? 0.6 * cfg.spentA / 100 : S[i] === 'QUIET' ? 0.7 : S[i] === 'HOLDS' ? 1.15 : 1;
         c.save();
-        c.filter = 'blur(14px)'; c.fillStyle = rgba(col, Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
-        c.filter = 'blur(7px)'; c.fillStyle = rgba(col, Math.min(0.45, 0.13 * k * dim * fa)); loopsPath(c, g.g2); c.fill();
+        c.filter = 'blur(14px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
+        c.filter = 'blur(7px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.45, 0.13 * k * dim * fa)); loopsPath(c, g.g2); c.fill();
         c.filter = 'none';
         c.strokeStyle = rgba(col, Math.min(0.35, 0.13 * k * dim * ta)); c.lineWidth = 0.5;
         c.beginPath(); for (const s of g.mst) { c.moveTo(s[0], s[1]); c.lineTo(s[2], s[3]); } c.stroke();
@@ -2360,9 +2358,9 @@
     if (st.mode === 'bounds' && st.L.pts) {
       // a star of R or of X: the nearest within 5 px
       let best = null, bd = 5;
-      for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) { const d = Math.hypot(V.X(q.t + 2.5) - x, V.Y(q.p) - y); if (d < bd) { bd = d; best = q; } }
+      for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) { if (pointZone(F,q) == null) continue; const d = Math.hypot(V.X(q.t + 2.5) - x, V.Y(q.p) - y); if (d < bd) { bd = d; best = q; } }
       if (best) {
-        const all = F.ev[best.ev].pts.filter(q => Math.hypot(V.X(q.t + 2.5) - V.X(best.t + 2.5), V.Y(q.p) - V.Y(best.p)) < 2.5);
+        const all = F.ev[best.ev].pts.filter(q => pointZone(F,q) != null && Math.hypot(V.X(q.t + 2.5) - V.X(best.t + 2.5), V.Y(q.p) - V.Y(best.p)) < 2.5);
         return { k: 'pt', ev: best.ev, i: best.i, q: best, same: all.map(q => q.i) };
       }
     }
@@ -2790,8 +2788,8 @@
     }
     if (s.conf) { const b = ctx.D.bars.find(q => q.t === s.conf - 5); if (b) C2.pill = P(V.X(b.t + 2.5), s.side === 1 ? V.Y(b.h) - 15 : V.Y(b.l) + 15); }
     if (s.failed) { const b = ctx.D.bars.find(q => q.t === s.failed - 5); if (b) C2.brkPill = P(V.X(b.t + 2.5), s.side === 1 ? V.Y(b.l) + 15 : V.Y(b.h) - 15); }
-    C2.slice = P(V.X(sliceOf(ctx)), V.plot.h * 0.42);
-    C2.end = P(V.X(SESS[ctx.s.k].end), 70);
+    C2.slice = P(V.X(sliceOf(ctx)), V.taxisY + 14);
+    C2.end = null;
     const lastBar = ctx.D.bars.filter(b => b.t + 5 <= (ctx.live ? NOW : ctx.obs)).pop();
     if (lastBar) C2.candle = P(V.X(lastBar.t + 2.5), V.Y(lastBar.h) - 4);
     if (F && st.mode === 'bounds') {
@@ -2801,8 +2799,8 @@
       C2.hills = (V.hills || []).map(q => { const t = q.scr.reduce((a, p) => (q.ev === 'X' ? p[1] < a[1] : p[1] > a[1]) ? p : a, q.scr[0]); return { ev: q.ev, i: q.i, top: P(t[0], t[1] + (q.ev === 'X' ? 6 : -6)) }; });
       if (V.bandCols && V.bandCols.length) { const T = F.ev.X.T, R = F.ev.R.T; let best = null; for (const c of V.bandCols) { const n = (T.get(c.b) || 0) + (R.get(c.b) || 0); if (!best || n > best.n) best = { c, n }; } C2.column = P((best.c.x0 + best.c.x1) / 2, V.bandCy - 10); }
       if (V.stripUnk) C2.unk = P(V.stripUnk[0] + 7, V.stripUnk[1] + V.stripUnk[3] / 2);
-      const star = (ev, inZone, broken) => { const q = F.ev[ev].pts.find(p => !!F.zcell[ev].has(p.k + '|' + p.b) === inZone && (broken == null || (p.m.outcome === 'broken') === broken) && V.X(p.t + 2.5) > V.X(sliceOf(ctx)) + 20 && V.X(p.t + 2.5) < V.plot.w - 80 && V.Y(p.p) > 60 && V.Y(p.p) < V.plot.h - 20); return q ? P(V.X(q.t + 2.5), V.Y(q.p)) : null; };
-      C2.stars = { Rzone: star('R', true), Xzone: star('X', true), Rres: star('R', false, false), Xres: star('X', false, false), ring: star('R', false, true) || star('X', false, true) };
+      const star = (ev, inZone, broken) => { if(!inZone)return null; const q = F.ev[ev].pts.find(p => pointZone(F,p) != null && (broken == null || (p.m.outcome === 'broken') === broken) && V.X(p.t + 2.5) > V.X(sliceOf(ctx)) + 20 && V.X(p.t + 2.5) < V.plot.w - 80 && V.Y(p.p) > 60 && V.Y(p.p) < V.plot.h - 20); return q ? P(V.X(q.t + 2.5), V.Y(q.p)) : null; };
+      C2.stars = { Rzone: star('R', true), Xzone: star('X', true), Rres: null, Xres: null, ring: star('R', true, true) || star('X', true, true) };
       if (V.lk) { const t0 = F.f + 15 * V.lk.b; C2.link = { spot: P(V.lk.x, V.lk.y), line: P((V.X(t0) + V.X(t0 + 15)) / 2, (V.lk.y + V.plot.h) / 2), pill: P(V.X(t0), V.taxisY + 14) }; }
       if (V.win && V.win.pA != null) C2.pricePill = P(V.plot.w + 40, V.Y(V.win.pA));
       const h = hv();
@@ -3195,7 +3193,7 @@
   }
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
-  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
     preOf, arriveOf, arriveBundle, candidateSelection, integration: () => ({ enabled: ICFG.enabled, trials: {...TRIAL}, ...IS, packet: scenePacket() }), setTrial,
     continuations:()=>({...CS,packet:continuationPacket(cur())}),pinContinuation,verifyContinuation,
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)

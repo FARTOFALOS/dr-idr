@@ -2608,7 +2608,7 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "c3cd25fab407d665"
+ "registry_hash": "bac3ef40568efc42"
 };
   // A violation belongs to the scene it was found in (DR-LAB-SWPC-1.1 M16): a passport's snapshot, one family response or
   // one NOW response (each its own number: a new answer to the same request starts clean), or the page itself ('*': a page without its registry,
@@ -2657,7 +2657,9 @@
   // the registered words: a claim form (by its estimand, EST:…) or a fact form (FF:…), one key, the view's variant if any
   function lbl(id, key, vars, view) {
     const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : SC11.forms[id];
-    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS'].includes(id);
+    // FF:PHASE-RULE exists only in the candidate edition (08.10); the candidate words of the accepted «Сейчас» forms are
+    // never reached from here (tests/integration_faults.mjs), only by reviewLbl for the trial «nowmarks»
+    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE'].includes(id);
     const extra = candidateId && REVIEW && (id.startsWith('FF:') ? REVIEW.facts[id] : REVIEW.forms[id]);
     const box = own && own.labels[key] ? own : extra || own;
     const set = box && box.labels[key], t = set && (view && set[view] != null ? set[view] : set.ANY);
@@ -3021,6 +3023,7 @@
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);
+    if (F && !continuationMode()) drawNowMarks(c, ctx);
     drawPills(c, ctx);
     if (!continuationMode()) drawNow(c, ctx);
     if (F && !continuationMode()) drawLink(c, ctx);
@@ -3121,10 +3124,10 @@
       if (x1 < 0 || x0 > V.plot.w) continue;
       const on = h && h.k === 'vib' && h.t === v.t;
       // a worked-out VI (touched) stops at the touch and takes the spent shade of the colour catalogue (entry 26)
-      const vf = cfg.vibA / 20, vc = v.fill != null ? stateCol(C.vib, 'spent') : C.vib;
-      c.fillStyle = rgba(vc, Math.min(1, on ? 0.34 * vf : v.fill != null ? 0.16 * vf : 0.2 * vf));
+      const vf = cfg.vibA / 20, done = v.fill != null, vc = done ? SPENT : C.vib;
+      c.fillStyle = rgba(vc, Math.min(1, done ? (on ? 0.08 : 0.04) * vf : (on ? 0.34 : 0.2) * vf));
       c.fillRect(x0, y0 - 1, x1 - x0, Math.max(2, y1 - y0 + 2));
-      c.fillStyle = rgba(vc, Math.min(1, on ? 0.9 : (v.fill != null ? 0.35 : 0.5) * vf));
+      c.fillStyle = rgba(vc, Math.min(1, done ? (on ? 0.25 : 0.12) * vf : on ? 0.9 : 0.5 * vf));
       c.fillRect(x0, y0 - 1, 1.5, Math.max(2, y1 - y0 + 2));
       // its name inside the rectangle at the right end, only when it fits (operator 2026-10-06)
       const hh = y1 - y0 + 2, xr = Math.min(x1, V.plot.w) - 4;
@@ -3345,22 +3348,13 @@
     }
   }
   function drawNow(c, ctx) {
-    const E = SESS[ctx.s.k].end;
-    if (ctx.F) {
-      const xe = Math.round(V.X(E)) + 0.5;
-      c.strokeStyle = 'rgba(255,255,255,.12)'; c.setLineDash([2, 5]); c.lineWidth = 1;
-      c.beginPath(); c.moveTo(xe, 0); c.lineTo(xe, V.plot.h); c.stroke(); c.setLineDash([]);
-      // the text «конец <session> HH:MM» removed (operator 2026-10-06): the dotted line says it
-    }
+    // Operator 2026-10-16: midnight is the only standing time-divider. The cut stays in the clock/axis pill.
     const pNow = ctx.s.priceNow;
     if (pNow != null) {
       const b = ctx.D.bars.filter(q => q.t + 5 <= (ctx.live ? NOW + 5 : ctx.obs)).pop(), y = Math.round(V.Y(pNow)) + 0.5;
       c.strokeStyle = rgba(b && b.c >= b.o ? C.up : C.dn, 0.8); c.lineWidth = 1; c.setLineDash([1, 3]);
       c.beginPath(); c.moveTo(0, y); c.lineTo(V.plot.w, y); c.stroke(); c.setLineDash([]);
     }
-    const x = Math.round(V.X(ctx.obs)) + 0.5;
-    c.strokeStyle = ctx.live && !ctx.D.hist ? 'rgba(255,255,255,.14)' : rgba(ctx.D.hist ? C.hist : C.replay, 0.55); c.setLineDash([3, 4]); c.lineWidth = 1;
-    c.beginPath(); c.moveTo(x, 0); c.lineTo(x, V.plot.h); c.stroke(); c.setLineDash([]);
   }
   // does a point take part in what is hovered / pinned / selected? true = lit, false = dimmed, null = neutral
   function emphOf(q, h, F, ctx) {
@@ -3383,21 +3377,25 @@
   const inArea = (q, a) => !!a && (!a.ev || a.ev === q.ev) && q.k >= a.k0 && q.k < a.k1 && (a.b0 == null || (q.b >= a.b0 && q.b < a.b1));
   // one point = one session's event (spec §7): no jitter; points on the same spot stay on it (their weight adds up in
   // brightness, the tooltip lists every session). A ring = that session broke its DR (the family is never thinned by it).
-  // R and X together; the stars of a zone are brighter and a little larger than the residual ones
+  // Only stars belonging to a published constellation are drawn; residual events retain their counts.
+  function pointZone(F, q) {
+    const i = F.zcell[q.ev].get(q.k + '|' + q.b);
+    return i != null && !zoneHeld(F, q.ev, i) ? i : null;
+  }
   function drawPoints(c, ctx) {
-    const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100;
+    const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100, ph = phaseOf(F, ctx);
     for (const ev of ['R', 'X']) {
-      const col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent'), held = look.map((_, i) => zoneHeld(F, ev, i));
+      const pk = phaseK(ph, ev), col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent');
       for (const q of F.ev[ev].pts) {
-        // the stars of a withheld zone are drawn as stars outside zones (their own session's point stays; the zone's
-        // emphasis would assert the withheld share)
-        const z0 = F.zcell[ev].get(q.k + '|' + q.b), zi = z0 != null && !held[z0] ? z0 : null, col = zi != null && look[zi] === 'IMPOSSIBLE' ? spent : zi != null && look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
+        const zi = pointZone(F, q);
+        if (zi == null) continue;
+        const col = look[zi] === 'IMPOSSIBLE' ? spent : look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
         const x = V.X(q.t + 2.5), y = V.Y(q.p);
         if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
-        const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx), inZone = zi != null;
-        let a = (past ? cfg.pastA : cfg.ptA) / 100 * (inZone ? 1.1 : 0.62), r = R0 * (inZone ? 1 : 0.8);
+        const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx);
+        let a = (past ? cfg.pastA : cfg.ptA) / 100 * 1.1, r = R0;
         if (e === true) { a = Math.min(1, Math.max(a, 0.55) + 0.3); r = R0 * 1.3; } else if (e === false) a *= 0.28;
-        a = Math.min(1, a);
+        a = Math.min(1, e === true ? a : a * pk);
         if (!F.brk && q.m.outcome === 'broken') { c.strokeStyle = rgba(col, a); c.lineWidth = 1; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.stroke(); }
         else { c.fillStyle = rgba(col, a); c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill(); }
       }
@@ -3510,17 +3508,17 @@
     return 0.8;
   }
   function drawClouds(c, ctx) {
-    const F = ctx.F, CL = cloudsOf(F), h = hv(), fa = cfg.cloudA / 100, ta = cfg.threadA / 100;
+    const F = ctx.F, CL = cloudsOf(F), h = hv(), ph = phaseOf(F, ctx);
     for (const ev of ['R', 'X']) {
-      const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
+      const S = zoneLook(F, ctx, ev), col0 = cfg[ev], fa = cfg.cloudA / 100 * phaseK(ph, ev), ta = cfg.threadA / 100 * phaseK(ph, ev);
       CL[ev].forEach((g, i) => {
         if (!g || zoneHeld(F, ev, i)) return;        // a withheld zone's share is «—»: its haze and threads do not assert it
         const col = stateCol(col0, S[i]);
         // a spent constellation stays readable as history (operator 2026-10-06: «чуть-чуть ярче»), setting «spentA»
         const k = cloudK(F, ev, i, h, g.z), dim = S[i] === 'IMPOSSIBLE' ? 0.6 * cfg.spentA / 100 : S[i] === 'QUIET' ? 0.7 : S[i] === 'HOLDS' ? 1.15 : 1;
         c.save();
-        c.filter = 'blur(14px)'; c.fillStyle = rgba(col, Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
-        c.filter = 'blur(7px)'; c.fillStyle = rgba(col, Math.min(0.45, 0.13 * k * dim * fa)); loopsPath(c, g.g2); c.fill();
+        c.filter = 'blur(14px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
+        c.filter = 'blur(7px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.45, 0.13 * k * dim * fa)); loopsPath(c, g.g2); c.fill();
         c.filter = 'none';
         c.strokeStyle = rgba(col, Math.min(0.35, 0.13 * k * dim * ta)); c.lineWidth = 0.5;
         c.beginPath(); for (const s of g.mst) { c.moveTo(s[0], s[1]); c.lineTo(s[2], s[3]); } c.stroke();
@@ -4441,9 +4439,9 @@
     if (st.mode === 'bounds' && st.L.pts) {
       // a star of R or of X: the nearest within 5 px
       let best = null, bd = 5;
-      for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) { const d = Math.hypot(V.X(q.t + 2.5) - x, V.Y(q.p) - y); if (d < bd) { bd = d; best = q; } }
+      for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) { if (pointZone(F,q) == null) continue; const d = Math.hypot(V.X(q.t + 2.5) - x, V.Y(q.p) - y); if (d < bd) { bd = d; best = q; } }
       if (best) {
-        const all = F.ev[best.ev].pts.filter(q => Math.hypot(V.X(q.t + 2.5) - V.X(best.t + 2.5), V.Y(q.p) - V.Y(best.p)) < 2.5);
+        const all = F.ev[best.ev].pts.filter(q => pointZone(F,q) != null && Math.hypot(V.X(q.t + 2.5) - V.X(best.t + 2.5), V.Y(q.p) - V.Y(best.p)) < 2.5);
         return { k: 'pt', ev: best.ev, i: best.i, q: best, same: all.map(q => q.i) };
       }
     }
@@ -4829,7 +4827,12 @@
 
   // One publication scene; accepted SC11 remains the registry of BASE/NOW. Review profiles have their own edition.
   const ICFG = window.DR_INTEGRATION || { enabled: false }, REVIEW = ICFG.registry;
-  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled };
+  // phase / nowmarks: the operator's decisions of 2026-10-08 (meaning/17 §7) on the page only, over accepted bundles and the
+  // candidate labels FF:PHASE-RULE, row_mark / title_mark (integration/candidates/registry/40-claims.yaml); no server call
+  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled, phase: false, nowmarks: false };
+  // the viewer's own choice of trials is kept in this browser like every other setting (2026-10-19); the address still adds
+  const TRIAL_KEY = 'drlab.d24.trials';
+  if (ICFG.enabled) try { const kept = JSON.parse(localStorage.getItem(TRIAL_KEY) || '{}'); for (const k in TRIAL) if (typeof kept[k] === 'boolean') TRIAL[k] = kept[k]; } catch (e) { /* defaults */ }
   if (ICFG.enabled) for (const k of (new URLSearchParams(location.hash.slice(1)).get('trial') || '').split(',')) if (k in TRIAL) TRIAL[k] = true;
   if (ICFG.enabled) window.addEventListener('hashchange',()=>location.reload());
   const IS = { key: null, packet: null, pending: new Set(), cache: new Map(), error: null, discarded: 0, committed: 0, selection: null, epoch: 0 };
@@ -4982,6 +4985,73 @@
     IS.selection = { context: scenePacket().context.id, level: h.id, price: p, ids: [...a.ids], bundle: arriveBundle(a.r, h.id, a.P).id };
   }
   function candidateDetails(ctx, o) { return o?.k === 'arrive' ? { head: lbl('EST:K-ARRIVE', 'head'), body: candidateTip(o, ctx) } : null; }
+  // ---------- the operator's decisions of 2026-10-08 (meaning/17 §7), on screen as trials since 2026-10-19 ----------
+  // They existed only as candidate definitions (integration/pr-dispositions.json U03, U04). Page only: accepted bundles
+  // and passports, candidate words; nothing is computed on the server for them.
+  // The named phase rule (FF:PHASE-RULE): «откат сделан» when today's deepest point after the activation reached the
+  // retirement zone (−0.7) AND at least half of the family's sessions had their final R earlier than the cut by the common
+  // clock (known, of N: EST:B-CLOCK-R over the whole price range, part EARLIER, a passport the server verifies). A rule
+  // of the operator, not a statement about the market; only for the confirmation family (a break is another frame)
+  function phaseOf(F, ctx) {
+    if (!TRIAL.phase || !F || F.brk || !F.N) return null;
+    const rows = todayRows(F, ctx);
+    if (!rows.length) return null;
+    let lo = rows[0];
+    for (const q of rows) if (q.lo < lo.lo) lo = q;
+    const cut = sliceOf(ctx), n = F.ev.R.pts.filter(q => q.t + 5 <= cut).length;
+    const pass = clockPass(F, 'R', { k0: -100000, k1: 100000 }, 'EARLIER', cut, n);
+    const deep = 10 * lo.lo <= -7 * F.w0t, half = 2 * n >= F.N;
+    return { r: lo.lo / F.w0t, deep, half, done: deep && half, pass, cut };
+  }
+  // the zones of the side the rule points at stay as they are; the other side's haze and stars a little quieter
+  // (operator 2026-10-06 «пока откат не сделан, зоны R чуть ярче, после — зоны X»; 2026-10-08 the rule); never a size
+  const phaseK = (ph, ev) => !ph ? 1 : ev === (ph.done ? 'X' : 'R') ? 1 : 0.72;
+  // its one place in the panel: the state and both criteria with today's values
+  function phasePanel(F, ctx) {
+    const ph = phaseOf(F, ctx), P = 'FF:PHASE-RULE';
+    if (!ph) return '';
+    const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true);
+    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
+      '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
+      link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
+  }
+  // the candidate edition's own words for the accepted «Сейчас» forms (row_mark / title_mark, operator 08.10), read only
+  // here and only for the trial «nowmarks»: the general lbl() keeps refusing them (tests/integration_faults.mjs)
+  function reviewLbl(id, key, vars) {
+    const box = REVIEW && REVIEW.forms[id], set = box && box.labels[key], t = set && set.ANY;
+    if (t == null) { kViolate('a candidate label outside its registry: ' + id + ' · ' + key); return ''; }
+    const out = vars ? t.replace(/\{([A-Za-z0-9_]+)\}/g, (m, k) => vars[k] != null ? String(vars[k]) : m) : t;
+    if (/\{[A-Za-z0-9_]+\}/.test(out)) kViolate('a candidate label without its value: ' + id + ' · ' + key);
+    return out;
+  }
+  // «Сейчас», the pullback line as only its number (trial «nowmarks»): its levels are the marks at the price scale, the
+  // historical words, levels, time and support are in its title
+  function nowMarkRow(F, n, E, o) {
+    const { val, bN, bI, bT, q, tm, sp, u0, sgn, lv } = o, NE = 'EST:N-NEW-R';
+    const P = v => Math.round(F.u2p(u0 + sgn * v)), cnt = sp.N_match_unknown ? sp.N_new_yes + '–' + (sp.N_new_yes + sp.N_match_unknown) : String(sp.N_new_yes);
+    const t1 = bN ? reviewLbl(NE, 'title_mark', { ev: 'R', cut: n.cut.cut_clock_et, today: num(P(0), 0), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base }) : '';
+    const t2 = bI ? reviewLbl('EST:N-IF-NEW-R', 'title_mark', { p50: lv(q.q50), lo: num(Math.min(P(q.q25), P(q.q75)), 0), hi: num(Math.max(P(q.q25), P(q.q75)), 0), time: bT ? reviewLbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' }) : '';
+    return link({ k: 'now', ev: 'R' }, '<span class="t"><span>' + reviewLbl(NE, 'row_mark', { ev: '<i style="color:' + cfg.R + '">R</i>' }) + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' '));
+  }
+  // its levels at the price scale, always, no text: today's deepest point after the activation (dashed), and for the
+  // sessions whose pullback went deeper the middle half of where it ended (a narrow bar) with its median (a tick); a thin
+  // line joins them. The same published bundles as the number; the hover picture of the row stays as it was
+  function drawNowMarks(c, ctx) {
+    if (!TRIAL.nowmarks || st.mode !== 'bounds') return;
+    const F = ctx.F, n = nowOf(ctx), E = n && n.R;
+    if (!E || (n.status !== 'OK' && n.status !== 'FROZEN_AT_BREAK') || !E.state || !E.continuation || !nowBundle(n, 'EST:N-NEW-R', 'MAIN', E.continuation)) return;
+    const q = E.continuation.p_new_extreme && nowBundle(n, 'EST:N-IF-NEW-R', 'MAIN') ? E.continuation.delta_if_new || {} : {};
+    const u0 = E.state.r_seen, col = cfg.R, xr = V.plot.w, y0 = Math.round(V.Y(F.u2p(u0))) + 0.5;
+    c.save(); c.lineWidth = 1;
+    c.strokeStyle = rgba(col, 0.9); c.setLineDash([3, 2]); c.beginPath(); c.moveTo(xr - 24, y0); c.lineTo(xr, y0); c.stroke(); c.setLineDash([]);
+    if (q.q25 != null && q.q75 != null && q.q50 != null) {
+      const ya = V.Y(F.u2p(u0 - q.q25)), yb = V.Y(F.u2p(u0 - q.q75)), ym = Math.round(V.Y(F.u2p(u0 - q.q50))) + 0.5;
+      c.strokeStyle = rgba(col, 0.4); c.beginPath(); c.moveTo(xr - 7.5, y0); c.lineTo(xr - 7.5, ya); c.stroke();
+      c.fillStyle = rgba(col, 0.5); c.fillRect(xr - 10, Math.min(ya, yb), 5, Math.max(2, Math.abs(yb - ya)));
+      c.strokeStyle = rgba(col, 1); c.lineWidth = 2; c.beginPath(); c.moveTo(xr - 16, ym); c.lineTo(xr, ym); c.stroke();
+    }
+    c.restore();
+  }
   function candidatePaths(ctx) {
     const a = candidateSelection(ctx, hv()), cv = dom('dcF'), geom = cv?._g;
     if (!TRIAL.paths || !a?.ready || !geom) { IS.pathEvidence = null; return; }
@@ -5007,7 +5077,8 @@
   function integrationSettings() {
     if (!ICFG.enabled) return '';
     return '<details class="cgd"><summary class="cg">Испытание кандидатов</summary>' +
-      [['pre', 'История до подтверждения'], ['arrive', 'Отсюда до места · Q1'], ['paths', 'Связанные пути в нижнем окне'], ['continuations', 'Продолжения · закреплённое окно']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
+      [['pre', 'История до подтверждения'], ['arrive', 'Отсюда до места · Q1'], ['paths', 'Связанные пути в нижнем окне'], ['continuations', 'Продолжения · закреплённое окно'],
+        ['phase', 'Фаза по вашему правилу · 08.10'], ['nowmarks', '«Сейчас»: откат числом и отметками у шкалы · 08.10']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
       '<button type="button" id="auditScene">Проверить происхождение и опору</button><div id="auditResult" class="p21-note"></div></details>';
   }
   async function auditScene() {
@@ -5023,6 +5094,7 @@
   }
   function setTrial(k, on) {
     TRIAL[k] = !!on; IS.key = null; IS.packet = null; IS.error = null;
+    try { localStorage.setItem(TRIAL_KEY, JSON.stringify(TRIAL)); } catch (e) { /* not kept */ }
     if(k==='continuations'&&!on){CS.seq++;CS.packet=null;CS.drawing=null;if(st.mode==='continuations')st.mode='bounds';}
     if (!TRIAL.arrive && st.pin?.k === 'arrive') st.pin = st.hover = null;
     dom('detg')._k = ''; render(true);
@@ -5275,6 +5347,7 @@
     out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F.cond) + '</span><span>' + (sl >= F.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
     if (s.failed) out.push(viewSwitch(s));
     if (F.out) out.push(outcomeHtml(F));
+    out.push(phasePanel(F, ctx));
     out.push(nowHtml(F, ctx));
     out.push(candidatePanel(ctx));
     if (st.mode === 'bounds') {
@@ -5364,6 +5437,8 @@
       const bI = bN && q.q50 != null && p ? nowBundle(n, 'EST:N-IF-NEW-' + ev, 'MAIN') : null, bT = bI && tm.q50_min != null ? nowBundle(n, 'EST:N-TIME-' + ev, 'MAIN') : null;
       const sub = bI ? lbl('EST:N-IF-NEW-' + ev, 'sub', { p50: lv(q.q50), p25: lv(q.q25), p75: lv(q.q75) }) + (bT ? lbl('EST:N-TIME-' + ev, 'sub', { min: Math.round(tm.q50_min) }) : '') : '';
       const support = E.mode === 'PATH_CONDITIONED' ? lbl(NE, 'support_path', { m: sp.N_match_total, n: sp.N_eligible, matcher: E.matcher }) : lbl(NE, 'support_b0', { n: sp.N_eligible, N: n.base.N_base });
+      // the trial «nowmarks» (operator 2026-10-08): the pullback line as only its number, the words in its title (integration.js)
+      if (ev === 'R' && TRIAL.nowmarks && st.mode === 'bounds') { out.push(nowMarkRow(F, n, E, { val, bN, bI, bT, q, tm, sp, u0, sgn, lv })); continue; }
       out.push(link({ k: 'now', ev }, '<span class="t"><span>' + name + '</span>' + (sub ? '<span class="p21-sub">' + sub + '</span>' : '') +
         '<span class="p21-sub">' + support + (E.note ? ' · ' + esc(E.note) : '') + '</span></span><b>' + val + '</b>', 'mc', null, lbl(NE, 'title', { cut: n.cut.cut_clock_et })));
     }
@@ -5764,8 +5839,8 @@
     }
     if (s.conf) { const b = ctx.D.bars.find(q => q.t === s.conf - 5); if (b) C2.pill = P(V.X(b.t + 2.5), s.side === 1 ? V.Y(b.h) - 15 : V.Y(b.l) + 15); }
     if (s.failed) { const b = ctx.D.bars.find(q => q.t === s.failed - 5); if (b) C2.brkPill = P(V.X(b.t + 2.5), s.side === 1 ? V.Y(b.l) + 15 : V.Y(b.h) - 15); }
-    C2.slice = P(V.X(sliceOf(ctx)), V.plot.h * 0.42);
-    C2.end = P(V.X(SESS[ctx.s.k].end), 70);
+    C2.slice = P(V.X(sliceOf(ctx)), V.taxisY + 14);
+    C2.end = null;
     const lastBar = ctx.D.bars.filter(b => b.t + 5 <= (ctx.live ? NOW : ctx.obs)).pop();
     if (lastBar) C2.candle = P(V.X(lastBar.t + 2.5), V.Y(lastBar.h) - 4);
     if (F && st.mode === 'bounds') {
@@ -5775,8 +5850,8 @@
       C2.hills = (V.hills || []).map(q => { const t = q.scr.reduce((a, p) => (q.ev === 'X' ? p[1] < a[1] : p[1] > a[1]) ? p : a, q.scr[0]); return { ev: q.ev, i: q.i, top: P(t[0], t[1] + (q.ev === 'X' ? 6 : -6)) }; });
       if (V.bandCols && V.bandCols.length) { const T = F.ev.X.T, R = F.ev.R.T; let best = null; for (const c of V.bandCols) { const n = (T.get(c.b) || 0) + (R.get(c.b) || 0); if (!best || n > best.n) best = { c, n }; } C2.column = P((best.c.x0 + best.c.x1) / 2, V.bandCy - 10); }
       if (V.stripUnk) C2.unk = P(V.stripUnk[0] + 7, V.stripUnk[1] + V.stripUnk[3] / 2);
-      const star = (ev, inZone, broken) => { const q = F.ev[ev].pts.find(p => !!F.zcell[ev].has(p.k + '|' + p.b) === inZone && (broken == null || (p.m.outcome === 'broken') === broken) && V.X(p.t + 2.5) > V.X(sliceOf(ctx)) + 20 && V.X(p.t + 2.5) < V.plot.w - 80 && V.Y(p.p) > 60 && V.Y(p.p) < V.plot.h - 20); return q ? P(V.X(q.t + 2.5), V.Y(q.p)) : null; };
-      C2.stars = { Rzone: star('R', true), Xzone: star('X', true), Rres: star('R', false, false), Xres: star('X', false, false), ring: star('R', false, true) || star('X', false, true) };
+      const star = (ev, inZone, broken) => { if(!inZone)return null; const q = F.ev[ev].pts.find(p => pointZone(F,p) != null && (broken == null || (p.m.outcome === 'broken') === broken) && V.X(p.t + 2.5) > V.X(sliceOf(ctx)) + 20 && V.X(p.t + 2.5) < V.plot.w - 80 && V.Y(p.p) > 60 && V.Y(p.p) < V.plot.h - 20); return q ? P(V.X(q.t + 2.5), V.Y(q.p)) : null; };
+      C2.stars = { Rzone: star('R', true), Xzone: star('X', true), Rres: null, Xres: null, ring: star('R', true, true) || star('X', true, true) };
       if (V.lk) { const t0 = F.f + 15 * V.lk.b; C2.link = { spot: P(V.lk.x, V.lk.y), line: P((V.X(t0) + V.X(t0 + 15)) / 2, (V.lk.y + V.plot.h) / 2), pill: P(V.X(t0), V.taxisY + 14) }; }
       if (V.win && V.win.pA != null) C2.pricePill = P(V.plot.w + 40, V.Y(V.win.pA));
       const h = hv();
@@ -6169,7 +6244,7 @@
   }
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
-  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
     preOf, arriveOf, arriveBundle, candidateSelection, integration: () => ({ enabled: ICFG.enabled, trials: {...TRIAL}, ...IS, packet: scenePacket() }), setTrial,
     continuations:()=>({...CS,packet:continuationPacket(cur())}),pinContinuation,verifyContinuation,
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)

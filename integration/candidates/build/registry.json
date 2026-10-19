@@ -2743,11 +2743,11 @@
      {
       "key": "title_mark",
       "surface": "PANEL",
-      "text_ru": "{ev}: после {cut} новый, более глубокий откат — ниже сегодняшнего дна {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка.",
+      "text_ru": "{ev}: после {cut} новый, более глубокий откат — глубже сегодняшней точки отката {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка.",
       "view": "ANY"
      }
     ],
-    "note": "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark); the title_mark words are the executor's, for his acceptance",
+    "note": "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark); the title_mark words are the executor's, for his acceptance. 2026-10-19: title_mark made side-neutral («глубже сегодняшней точки отката» instead of «ниже сегодняшнего дна»: in a short the pullback goes up)",
     "price_transfer": "NONE",
     "sc_ref": [
      "C1",
@@ -2964,7 +2964,7 @@
      {
       "key": "title_mark",
       "surface": "PANEL",
-      "text_ru": "У тех, у кого откат углублялся, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшнее дно, полоса — у половины, черта — обычно.",
+      "text_ru": "У тех, у кого откат углублялся, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшняя точка отката, полоса — у половины, черта — обычно.",
       "view": "ANY"
      }
     ],
@@ -3623,7 +3623,7 @@
      "K33"
     ],
     "statement_ru": "На срезе {cut}, среди {n} исторических случаев с близким положением и указанным условием {yes} посетили область в оставшемся окне {window}; {unknown} исходов неизвестны.",
-    "subject_ru": "сессии семьи, которые в этот же час стояли там же и ещё не были у места",
+    "subject_ru": "исторические случаи POS_GEO того же инструмента и блока (не только семья F), которые в этот же час по общим часам стояли там же; внутри окна — ещё и не посещавшие область в его прошедшей части",
     "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN",
     "version": "1.0"
    }
@@ -3770,9 +3770,10 @@
     "alignment": "COMMON_SESSION_CLOCK",
     "feature_availability": "PREFIX_AT_CUT",
     "features": [
-     "eligible at t by the B0 rule of NOW-1.0 (lab/now24.py::series)",
-     "not yet at the place after the own confirmation: min low_u over (own confirmation, t] > L",
-     "u = the close of the M5 closing at t, in the case's own scale u = d (p - e) / w"
+     "eligible at t by the B0 rule of NOW-1.0 applied to G (lab/continuity24.py::prefix): own activation before t, at least one later M5, a complete prefix, no close beyond the own opposite DR",
+     "u = the close of the M5 closing at t, in the case's own directed scale u = d (p - e) / w",
+     "earlier visits of the place do not exclude a case: a visit before the pinned window is not a visit inside it (lab/continuity24.py::select reads no target geometry); inside the window the residual question adds its own condition, no visit in the elapsed part of the window (CS:C-RISK)",
+     "G is not the family F: same instrument and block, all weekdays, both directions and activation windows, strictly earlier dates up to 2025-12-31 (CS:C-G)"
     ],
     "frozen": true,
     "grounds": "PROPOSAL",
@@ -3784,9 +3785,10 @@
     "source_refs": [
      "SRC:Q1-PILOT",
      "SRC:KADR-1.1",
-     "SRC:CODE-NOW24"
+     "SRC:CODE-NOW24",
+     "SRC:CANDIDATES-1"
     ],
-    "title_ru": "«отсюда» — ещё не были у места и стоят там же",
+    "title_ru": "«стоят там же» — близкое положение close на общих часах; прежние посещения места не исключают",
     "tolerance": "|u_hist - u_today| <= 1/4 inclusive, exact in integers: 4 |v_m w_t - v_t w_m| <= w_m w_t (lab/now24.py::_near); written down before the measurements (screens 21-22, PRE-24), never widened",
     "version": "1.0",
     "weights": "NONE"
@@ -12764,7 +12766,7 @@
   "document_sha256_lf": "783064fc5c1445b149300cf4b2d610ec1b9f4ef7bb58cd5311c89c20c0cb450a",
   "edition": "DR-LAB-CANDIDATES-1",
   "linkml": "1.11.1",
-  "registry_sha256": "a06ad75bcd93e033894c52763b011068b148f4eba89ca43628983d0c10d5707a",
+  "registry_sha256": "4ad9bb309b918a444264bec125b1323aae9982a4179b920b35f5e9515f47bf4f",
   "runtime_spec_sha256": "e593528adaa23b6b6be118034e081bba48f3e8759e8fe93071b5bc980ac5484a",
   "schema_sha256_lf": "03a955e90c4f0d0fa9253597a62ca4ac2726b993a58c9fdcef27566f5fafe597",
   "sources": {
@@ -12774,11 +12776,11 @@
    "integration/candidates/registry/10-observation-strategy-measurement.yaml": "017dff6cc6ea9ef2340a78aa633fa44306a27d27875f856165a6e6d586a0cb27",
    "integration/candidates/registry/20-cases-outcomes.yaml": "5f6535e69d557fee9d05c6de7ffbb0b206aeec11362259454d5b4c6bc456afcd",
    "integration/candidates/registry/30-questions-estimands.yaml": "a2325bf90b17d7d742853609a92dc1f29de0099ec5a3e3c3d479a6425929b699",
-   "integration/candidates/registry/40-claims.yaml": "768661a6edabbab69bc1e02fa04b1dfb655718a21fbc13f6418effb80c91afef",
+   "integration/candidates/registry/40-claims.yaml": "836035ee223fccc6b51984363e024e94e2b14ded619e60e875096f8dc9216eb2",
    "integration/candidates/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
    "integration/candidates/registry/60-surfaces.yaml": "974b6786f3f0eaead74bb0133667e6ecff7f72127da8bcff9e8e629fc6e5a605",
    "integration/candidates/registry/70-obligations.yaml": "222c8ef1523ddad91d930b98c44ca360679257460f305b56d5bcad86eef2ae90",
-   "integration/candidates/registry/80-continuations.yaml": "11548ae52f9eb5c2f7d179c17f97c71775f6eef91413de2835de7279fe8a17f0",
+   "integration/candidates/registry/80-continuations.yaml": "b78dc5323fa3a60237054c4e7c681b82c3a16da6cdf65f619199fb51f6076cb8",
    "integration/candidates/schema.yaml": "03a955e90c4f0d0fa9253597a62ca4ac2726b993a58c9fdcef27566f5fafe597",
    "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"
   }

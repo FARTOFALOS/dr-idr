@@ -66,14 +66,13 @@ MARKS = {
         (7, C('mid'), (40, 22)),
         (8, C('std'), (0, -22)),
         (9, C('pill'), (-34, -22)),
-        (10, C('slice'), (24, 130)),
-        (11, lambda G: add(G['chart']['end'], (0, 14)), (26, 22)),
+        (10, C('slice'), (24, -30)),
+        # 11 «конец RDR 16:00»: the standing end-of-block vertical was removed on 2026-10-16 (meaning/13 entry 52)
         (12, lambda G: ctr(zone(G, 'X2')['bb']), (0, 0)),
         (13, lambda G: ctr(zone(G, 'X2')['labelBox']), (-70, -12)),
         (14, lambda G: ctr(zone(G, 'R2')['bb']), (0, 0)),
         (15, lambda G: ctr(zone(G, 'R1')['labelBox']), (24, 22)),
         (16, lambda G: tuple(G['chart']['stars']['Xzone']), (24, -24)),
-        (17, lambda G: tuple(G['chart']['stars']['Rres']), (24, -24)),
         (18, lambda G: tuple(G['chart']['stars']['ring']), (24, -24)),
         (19, C('axisDR'), (-64, 30)),
         (20, C('priceNow'), (-64, -18)),
@@ -121,8 +120,11 @@ MARKS = {
     'zona': ('zona', [
         (1, lambda G: ctr(zone(G, 'R2')['bb']), (-90, -40)),
         (2, C('zoneCells'), (-30, 26)),
-        (3, lambda G: tuple(G['chart']['link']['spot']), (30, -26)),
-        (4, lambda G: tuple(G['chart']['link']['line']), (30, 0)),
+        # 3-4: since 2026-10-06 (meaning/13 entry 42) a hovered or pinned zone shows its whole time window over its prices
+        # and names it on the time axis; the ring at the densest spot and the line to the peak 15 minutes are gone
+        (3, lambda G: (ctr(zone(G, 'R2')['bb'])[0], zone(G, 'R2')['bb'][1] + 6), (40, -30)),
+        # the open windows of the family cover the time axis here: 4 points at the window line of the inspector
+        (4, lambda G: (G['dom']['insp'][0] + 8, G['dom']['insp'][1] + 99), (-22, 0)),
         (5, lambda G: left(block(G, 'R2')), (-24, 0)),
         (6, lambda G: left(G['dom']['insp'], 20), (-34, 0)),
         (7, lambda G: left(G['dom']['deth'], 220), (0, -24)),

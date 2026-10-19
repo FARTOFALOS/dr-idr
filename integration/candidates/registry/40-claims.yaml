@@ -689,12 +689,12 @@ claim_forms:
       - {surface: PANEL, view: ANY, key: support_b0, text_ru: "опора {n} из {N}"}
       - {surface: PANEL, view: ANY, key: support_path, text_ru: "похожих {m} из {n} · {matcher}"}
       - {surface: PANEL, view: ANY, key: row_mark, text_ru: "{ev}"}
-      - {surface: PANEL, view: ANY, key: title_mark, text_ru: "{ev}: после {cut} новый, более глубокий откат — ниже сегодняшнего дна {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка."}
+      - {surface: PANEL, view: ANY, key: title_mark, text_ru: "{ev}: после {cut} новый, более глубокий откат — глубже сегодняшней точки отката {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка."}
     value_form: POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN
     price_transfer: NONE
     forbidden_readings_ru: ["вероятность того, что сегодня откат углубится", "разворот", "вход или сделка", "новая семья вместо N_base"]
     acceptance: ACCEPTED_BY_OPERATOR
-    note: "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark); the title_mark words are the executor's, for his acceptance"
+    note: "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark); the title_mark words are the executor's, for his acceptance. 2026-10-19: title_mark made side-neutral («глубже сегодняшней точки отката» instead of «ниже сегодняшнего дна»: in a short the pullback goes up)"
   - id: CF:N-NEW-X
     version: "1.1"
     sc_ref: ["C1", "§12.4/N-NEW", "K33"]
@@ -804,7 +804,7 @@ claim_forms:
     statement_ru: "У тех {n} исторических случаев, у которых после {cut} откат углублялся, он уходил ещё на {q50} SD (медиана; квартили {q25}…{q75}); от сегодняшнего экстремума это {p50} ({p25}…{p75}). Неизвестна величина у {unknown}."
     labels:
       - {surface: PANEL, view: ANY, key: sub, text_ru: "Если углублялся: до {p50} · {p25}…{p75}"}
-      - {surface: PANEL, view: ANY, key: title_mark, text_ru: "У тех, у кого откат углублялся, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшнее дно, полоса — у половины, черта — обычно."}
+      - {surface: PANEL, view: ANY, key: title_mark, text_ru: "У тех, у кого откат углублялся, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшняя точка отката, полоса — у половины, черта — обычно."}
     value_form: QUANTILES
     price_transfer: M0_TODAY_EXTREME
     forbidden_readings_ru: ["сегодняшняя цель", "средний остаток всех сопоставимых", "откат дойдёт сюда"]
