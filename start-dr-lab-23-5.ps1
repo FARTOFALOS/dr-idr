@@ -2,8 +2,9 @@
 # contour on a copy, «не 24, а 23.5», on its own port). The desktop shortcut «DR Lab 23.5» points to start-dr-lab-23-5.cmd.
 # Screen 24 on 127.0.0.1:8767 (main) is never touched. This branch's own server runs on 127.0.0.1:8735 (hidden, logs in
 # this working copy's lab/.runtime) with the candidate trials (--integration). The history files are copied once from
-# the main working copy's lab/.runtime (git-ignored, never published). TradingView is started with the candle channel
-# only when it is not running; an open TradingView is not restarted here (DR Lab 24's launcher does that). Idempotent.
+# the main working copy's lab/.runtime (git-ignored, never published). TradingView as in DR Lab 24's launcher (the
+# operator's rule of 19.10, AGENTS.md): one opened without the candle channel (port 9222) is restarted with it, the window
+# opens again; -HistoryOnly never touches it. Idempotent.
 param([switch]$NoBrowser, [switch]$HistoryOnly, [string]$Page = '')
 
 $ErrorActionPreference = 'Stop'
@@ -38,24 +39,34 @@ foreach ($inst in @('nq', 'es', 'ym')) {
     }
 }
 
-# 2. TradingView (today's candles): started with the channel only when it is not running
-if (-not $HistoryOnly) {
-    $cdpReady = $false
-    try { Invoke-RestMethod 'http://127.0.0.1:9222/json/version' -TimeoutSec 2 | Out-Null; $cdpReady = $true } catch {}
-    if (-not $cdpReady) {
-        $tvRoot = if ($env:TV_MCP_DIR) { $env:TV_MCP_DIR } else { Join-Path $env:USERPROFILE 'Claude\tradingview-mcp' }
-        $tvCli = Join-Path $tvRoot 'src\cli\index.js'
-        if (Get-Process TradingView -ErrorAction SilentlyContinue) {
-            Write-Host '  [..] TradingView открыт без канала для свечей: свечи дня появятся после запуска «DR Lab 24»; история доступна'
-        } elseif (Test-Path -LiteralPath $tvCli) {
-            Write-Host '  [..] Запускаю TradingView с каналом для свечей'
-            & node $tvCli launch
-            for ($i = 0; $i -lt 60; $i++) {
-                Start-Sleep -Milliseconds 500
-                try { Invoke-RestMethod 'http://127.0.0.1:9222/json/version' -TimeoutSec 2 | Out-Null; break } catch {}
-            }
-        }
+# 2. TradingView Desktop with the candle channel (port 9222), the same step as DR Lab 24's launcher: without the port
+#    the screen has no live candles, so a TradingView opened without it is restarted with it
+$tvRoot = if ($env:TV_MCP_DIR) { $env:TV_MCP_DIR } else { Join-Path $env:USERPROFILE 'Claude\tradingview-mcp' }
+$tvCli = Join-Path $tvRoot 'src\cli\index.js'
+$cdpReady = $false
+try { Invoke-RestMethod 'http://127.0.0.1:9222/json/version' -TimeoutSec 2 | Out-Null; $cdpReady = $true } catch {}
+if ($HistoryOnly) {
+    Write-Host '  [ok] Исторический запуск без изменения TradingView'
+} elseif ($cdpReady) {
+    Write-Host '  [ok] TradingView уже запущен с каналом для свечей'
+} elseif (-not (Test-Path -LiteralPath $tvCli)) {
+    Write-Host "  [!] Не найден tradingview-mcp ($tvRoot): живое окно работать не будет, история работает" -ForegroundColor Yellow
+} else {
+    if (Get-Process TradingView -ErrorAction SilentlyContinue) {
+        Write-Host '  [..] TradingView открыт без канала для свечей: перезапускаю его с каналом (окно откроется заново)'
+    } else {
+        Write-Host '  [..] Запускаю TradingView с каналом для свечей'
     }
+    & node $tvCli launch | Out-Null
+    $ready = $false
+    for ($i = 0; $i -lt 60; $i++) {
+        Start-Sleep -Seconds 1
+        try {
+            $pages = Invoke-RestMethod -Uri 'http://127.0.0.1:9222/json/list' -TimeoutSec 3
+            if ($pages | Where-Object { $_.url -like '*tradingview.com/chart*' }) { $ready = $true; break }
+        } catch { }
+    }
+    if ($ready) { Write-Host '  [ok] TradingView запущен' } else { Write-Host '  [!] TradingView не ответил за минуту: живое окно покажет ошибку, история работает' -ForegroundColor Yellow }
 }
 
 # 3. This branch's server on its own port: an alive old process of this working copy is not the current build
