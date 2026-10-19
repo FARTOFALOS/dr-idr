@@ -1,0 +1,3648 @@
+{
+ "version": "POS-GEO-VS-DISTANCE-1",
+ "protocol_sha256_lf": "fc98acfe3c5e5a3dc88f10e344329487ce27ab7ba1a91b48b649db45c124cd06",
+ "source_hashes": {
+  "studies/pos_geo_vs_distance_2026_10_19/README.md": "fc98acfe3c5e5a3dc88f10e344329487ce27ab7ba1a91b48b649db45c124cd06",
+  "studies/pos_geo_vs_distance_2026_10_19/run.py": "4a50adbec4b7da16c9cf25a85db547a3cb925915df008ba54da1eefdfc848695",
+  "studies/dynamic_field_2026_10_15/checks.py": "3aef71fb9d884caf96abd316b60fdd571c49fc152d324e9460f2682f89374798",
+  "studies/dynamic_field_2026_10_15/README.md": "dc1ed0587fd8f399565a5022248f7e9081e9537d548af7b046c555ce1a1eb570",
+  "lab/now24.py": "fcf3280900cac292b6ce58d3c6d98057b6bb77c5824abd5b9af33c947a5c385b",
+  "lab/now24_validate.py": "191d6c5f43971e4547749519c1148d3b6e6f8d826330d8ff5d55767235ea4472"
+ },
+ "primary": [
+  "WINDOW_VISIT",
+  "POS_GEO - DIST_GEO"
+ ],
+ "scope": "seen-history exploration 2016-2025 (analogs 2006-2025); weekly targets; all closed M5; NQ/ES/YM ODR/RDR; no 2026",
+ "cells": [
+  {
+   "version": "POS-GEO-VS-DISTANCE-1",
+   "source_hashes": {
+    "studies/pos_geo_vs_distance_2026_10_19/README.md": "fc98acfe3c5e5a3dc88f10e344329487ce27ab7ba1a91b48b649db45c124cd06",
+    "studies/pos_geo_vs_distance_2026_10_19/run.py": "4a50adbec4b7da16c9cf25a85db547a3cb925915df008ba54da1eefdfc848695",
+    "studies/dynamic_field_2026_10_15/checks.py": "3aef71fb9d884caf96abd316b60fdd571c49fc152d324e9460f2682f89374798",
+    "studies/dynamic_field_2026_10_15/README.md": "dc1ed0587fd8f399565a5022248f7e9081e9537d548af7b046c555ce1a1eb570",
+    "lab/now24.py": "fcf3280900cac292b6ce58d3c6d98057b6bb77c5824abd5b9af33c947a5c385b",
+    "lab/now24_validate.py": "191d6c5f43971e4547749519c1148d3b6e6f8d826330d8ff5d55767235ea4472"
+   },
+   "instrument": "NQ",
+   "block": "ODR",
+   "methods": [
+    "POS_GEO",
+    "DIST_GEO",
+    "CLOCK_GEO"
+   ],
+   "source_cases": 4660,
+   "target_weeks": 521,
+   "target_cuts": 18439,
+   "rows": 606168,
+   "input_digest": "63441cd47fb6688dc2ddb8df17c2510b5071e6b956df35944067afd5309f3667",
+   "maximum_source_date": "2025-12-31",
+   "dry": false,
+   "elapsed_seconds": 70.7
+  },
+  {
+   "version": "POS-GEO-VS-DISTANCE-1",
+   "source_hashes": {
+    "studies/pos_geo_vs_distance_2026_10_19/README.md": "fc98acfe3c5e5a3dc88f10e344329487ce27ab7ba1a91b48b649db45c124cd06",
+    "studies/pos_geo_vs_distance_2026_10_19/run.py": "4a50adbec4b7da16c9cf25a85db547a3cb925915df008ba54da1eefdfc848695",
+    "studies/dynamic_field_2026_10_15/checks.py": "3aef71fb9d884caf96abd316b60fdd571c49fc152d324e9460f2682f89374798",
+    "studies/dynamic_field_2026_10_15/README.md": "dc1ed0587fd8f399565a5022248f7e9081e9537d548af7b046c555ce1a1eb570",
+    "lab/now24.py": "fcf3280900cac292b6ce58d3c6d98057b6bb77c5824abd5b9af33c947a5c385b",
+    "lab/now24_validate.py": "191d6c5f43971e4547749519c1148d3b6e6f8d826330d8ff5d55767235ea4472"
+   },
+   "instrument": "NQ",
+   "block": "RDR",
+   "methods": [
+    "POS_GEO",
+    "DIST_GEO",
+    "CLOCK_GEO"
+   ],
+   "source_cases": 4730,
+   "target_weeks": 521,
+   "target_cuts": 24140,
+   "rows": 807948,
+   "input_digest": "3af4fb6b5d7a70bcb25d7fcd0d51fe7c1f133825b5ab054517fb5b25fa2e828c",
+   "maximum_source_date": "2025-12-31",
+   "dry": false,
+   "elapsed_seconds": 87.7
+  },
+  {
+   "version": "POS-GEO-VS-DISTANCE-1",
+   "source_hashes": {
+    "studies/pos_geo_vs_distance_2026_10_19/README.md": "fc98acfe3c5e5a3dc88f10e344329487ce27ab7ba1a91b48b649db45c124cd06",
+    "studies/pos_geo_vs_distance_2026_10_19/run.py": "4a50adbec4b7da16c9cf25a85db547a3cb925915df008ba54da1eefdfc848695",
+    "studies/dynamic_field_2026_10_15/checks.py": "3aef71fb9d884caf96abd316b60fdd571c49fc152d324e9460f2682f89374798",
+    "studies/dynamic_field_2026_10_15/README.md": "dc1ed0587fd8f399565a5022248f7e9081e9537d548af7b046c555ce1a1eb570",
+    "lab/now24.py": "fcf3280900cac292b6ce58d3c6d98057b6bb77c5824abd5b9af33c947a5c385b",
+    "lab/now24_validate.py": "191d6c5f43971e4547749519c1148d3b6e6f8d826330d8ff5d55767235ea4472"
+   },
+   "instrument": "ES",
+   "block": "ODR",
+   "methods": [
+    "POS_GEO",
+    "DIST_GEO",
+    "CLOCK_GEO"
+   ],
+   "source_cases": 4821,
+   "target_weeks": 522,
+   "target_cuts": 18825,
+   "rows": 616872,
+   "input_digest": "d33162822628722f762ef2193f1484fe7849400280b45fe92b61709db3df9c9f",
+   "maximum_source_date": "2025-12-31",
+   "dry": false,
+   "elapsed_seconds": 70.3
+  },
+  {
+   "version": "POS-GEO-VS-DISTANCE-1",
+   "source_hashes": {
+    "studies/pos_geo_vs_distance_2026_10_19/README.md": "fc98acfe3c5e5a3dc88f10e344329487ce27ab7ba1a91b48b649db45c124cd06",
+    "studies/pos_geo_vs_distance_2026_10_19/run.py": "4a50adbec4b7da16c9cf25a85db547a3cb925915df008ba54da1eefdfc848695",
+    "studies/dynamic_field_2026_10_15/checks.py": "3aef71fb9d884caf96abd316b60fdd571c49fc152d324e9460f2682f89374798",
+    "studies/dynamic_field_2026_10_15/README.md": "dc1ed0587fd8f399565a5022248f7e9081e9537d548af7b046c555ce1a1eb570",
+    "lab/now24.py": "fcf3280900cac292b6ce58d3c6d98057b6bb77c5824abd5b9af33c947a5c385b",
+    "lab/now24_validate.py": "191d6c5f43971e4547749519c1148d3b6e6f8d826330d8ff5d55767235ea4472"
+   },
+   "instrument": "ES",
+   "block": "RDR",
+   "methods": [
+    "POS_GEO",
+    "DIST_GEO",
+    "CLOCK_GEO"
+   ],
+   "source_cases": 4867,
+   "target_weeks": 522,
+   "target_cuts": 23671,
+   "rows": 794880,
+   "input_digest": "2bcfdc0bf6b828a1bca04f1db229400a51fd3621e3024d21eb4759a5c1e54fbe",
+   "maximum_source_date": "2025-12-31",
+   "dry": false,
+   "elapsed_seconds": 87.1
+  },
+  {
+   "version": "POS-GEO-VS-DISTANCE-1",
+   "source_hashes": {
+    "studies/pos_geo_vs_distance_2026_10_19/README.md": "fc98acfe3c5e5a3dc88f10e344329487ce27ab7ba1a91b48b649db45c124cd06",
+    "studies/pos_geo_vs_distance_2026_10_19/run.py": "4a50adbec4b7da16c9cf25a85db547a3cb925915df008ba54da1eefdfc848695",
+    "studies/dynamic_field_2026_10_15/checks.py": "3aef71fb9d884caf96abd316b60fdd571c49fc152d324e9460f2682f89374798",
+    "studies/dynamic_field_2026_10_15/README.md": "dc1ed0587fd8f399565a5022248f7e9081e9537d548af7b046c555ce1a1eb570",
+    "lab/now24.py": "fcf3280900cac292b6ce58d3c6d98057b6bb77c5824abd5b9af33c947a5c385b",
+    "lab/now24_validate.py": "191d6c5f43971e4547749519c1148d3b6e6f8d826330d8ff5d55767235ea4472"
+   },
+   "instrument": "YM",
+   "block": "ODR",
+   "methods": [
+    "POS_GEO",
+    "DIST_GEO",
+    "CLOCK_GEO"
+   ],
+   "source_cases": 4641,
+   "target_weeks": 521,
+   "target_cuts": 18365,
+   "rows": 601980,
+   "input_digest": "ae3564207c70495464bcdaa1cac62b703bf95dbf12c97455dbe5fc9f9f7b0371",
+   "maximum_source_date": "2025-12-31",
+   "dry": false,
+   "elapsed_seconds": 67.6
+  },
+  {
+   "version": "POS-GEO-VS-DISTANCE-1",
+   "source_hashes": {
+    "studies/pos_geo_vs_distance_2026_10_19/README.md": "fc98acfe3c5e5a3dc88f10e344329487ce27ab7ba1a91b48b649db45c124cd06",
+    "studies/pos_geo_vs_distance_2026_10_19/run.py": "4a50adbec4b7da16c9cf25a85db547a3cb925915df008ba54da1eefdfc848695",
+    "studies/dynamic_field_2026_10_15/checks.py": "3aef71fb9d884caf96abd316b60fdd571c49fc152d324e9460f2682f89374798",
+    "studies/dynamic_field_2026_10_15/README.md": "dc1ed0587fd8f399565a5022248f7e9081e9537d548af7b046c555ce1a1eb570",
+    "lab/now24.py": "fcf3280900cac292b6ce58d3c6d98057b6bb77c5824abd5b9af33c947a5c385b",
+    "lab/now24_validate.py": "191d6c5f43971e4547749519c1148d3b6e6f8d826330d8ff5d55767235ea4472"
+   },
+   "instrument": "YM",
+   "block": "RDR",
+   "methods": [
+    "POS_GEO",
+    "DIST_GEO",
+    "CLOCK_GEO"
+   ],
+   "source_cases": 4762,
+   "target_weeks": 521,
+   "target_cuts": 23155,
+   "rows": 774816,
+   "input_digest": "2d1227458e7538fb3b3c60e72e95a2c2a01044d8d34c39d6553ae7a793db0ff6",
+   "maximum_source_date": "2025-12-31",
+   "dry": false,
+   "elapsed_seconds": 82.9
+  }
+ ],
+ "semantic_checks": {
+  "status": "PASS",
+  "inherited": [
+   "range union is not min/max envelope",
+   "visit is not close",
+   "UNKNOWN retained; observed YES dominates gap",
+   "SD units and reflected frame",
+   "strict earlier dates and target-future invariance",
+   "member-future invariance of selection",
+   "positive control: observed position adds information",
+   "same 14/22 marginals allow 0 or 100 percent conditional",
+   "overlapping 60/70 shares valid on one pool of 100"
+  ],
+  "checks": [
+   "DIST places the band at the same offset from each analog's own cell",
+   "POS and DIST agree when the analogs stand where the target stands",
+   "CLOCK misses an absolute band the moved analogs reached elsewhere",
+   "target future changes neither sets nor analog labels",
+   "analog future changes its label only"
+  ]
+ },
+ "methods": [
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "overall",
+   "rows": 2101332,
+   "answered_rows": 2062943,
+   "coverage": 0.9817311115045124,
+   "unknown_target_rows": 6190,
+   "target_cases": 3094,
+   "weeks": 522,
+   "mean": 0.15840438577061608,
+   "ci95": [
+    0.15687602662191388,
+    0.16011541363313686
+   ],
+   "support_median": 545.0,
+   "support_p10": 156.0
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "overall",
+   "rows": 2101332,
+   "answered_rows": 2095142,
+   "coverage": 0.9970542493999044,
+   "unknown_target_rows": 6190,
+   "target_cases": 3099,
+   "weeks": 522,
+   "mean": 0.15853508730022986,
+   "ci95": [
+    0.15686123117941295,
+    0.16023677404169287
+   ],
+   "support_median": 2606.0,
+   "support_p10": 1791.0
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "overall",
+   "rows": 2101332,
+   "answered_rows": 2095142,
+   "coverage": 0.9970542493999044,
+   "unknown_target_rows": 6190,
+   "target_cases": 3099,
+   "weeks": 522,
+   "mean": 0.21972520690125033,
+   "ci95": [
+    0.2171899363512825,
+    0.2224636041239251
+   ],
+   "support_median": 2606.0,
+   "support_p10": 1791.0
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "cell:NQ/ODR",
+   "rows": 303084,
+   "answered_rows": 296235,
+   "coverage": 0.977402304311676,
+   "unknown_target_rows": 175,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": 0.16792318093461014
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "cell:NQ/ODR",
+   "rows": 303084,
+   "answered_rows": 302909,
+   "coverage": 0.9994226023148698,
+   "unknown_target_rows": 175,
+   "target_cases": 516,
+   "weeks": 516,
+   "mean": 0.16941166390850446
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "cell:NQ/ODR",
+   "rows": 303084,
+   "answered_rows": 302909,
+   "coverage": 0.9994226023148698,
+   "unknown_target_rows": 175,
+   "target_cases": 516,
+   "weeks": 516,
+   "mean": 0.23091767050964299
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "epoch:2016-19",
+   "rows": 839118,
+   "answered_rows": 820515,
+   "coverage": 0.9778302932364697,
+   "unknown_target_rows": 2862,
+   "target_cases": 1239,
+   "weeks": 209,
+   "mean": 0.16058232409166906
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "epoch:2016-19",
+   "rows": 839118,
+   "answered_rows": 836256,
+   "coverage": 0.9965892758825338,
+   "unknown_target_rows": 2862,
+   "target_cases": 1241,
+   "weeks": 209,
+   "mean": 0.1608922293314665
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "epoch:2016-19",
+   "rows": 839118,
+   "answered_rows": 836256,
+   "coverage": 0.9965892758825338,
+   "unknown_target_rows": 2862,
+   "target_cases": 1241,
+   "weeks": 209,
+   "mean": 0.22275853566500584
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "epoch:2020-25",
+   "rows": 1262214,
+   "answered_rows": 1242428,
+   "coverage": 0.9843243697186056,
+   "unknown_target_rows": 3328,
+   "target_cases": 1855,
+   "weeks": 314,
+   "mean": 0.15694968734485618
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "epoch:2020-25",
+   "rows": 1262214,
+   "answered_rows": 1258886,
+   "coverage": 0.9973633631064146,
+   "unknown_target_rows": 3328,
+   "target_cases": 1858,
+   "weeks": 314,
+   "mean": 0.15696069910821445
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "epoch:2020-25",
+   "rows": 1262214,
+   "answered_rows": 1258886,
+   "coverage": 0.9973633631064146,
+   "unknown_target_rows": 3328,
+   "target_cases": 1858,
+   "weeks": 314,
+   "mean": 0.21769917837820382
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "window:0",
+   "rows": 759570,
+   "answered_rows": 746860,
+   "coverage": 0.9832668483484076,
+   "unknown_target_rows": 825,
+   "target_cases": 3094,
+   "weeks": 522,
+   "mean": 0.12956178447720806
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "window:0",
+   "rows": 759570,
+   "answered_rows": 758745,
+   "coverage": 0.9989138591571547,
+   "unknown_target_rows": 825,
+   "target_cases": 3099,
+   "weeks": 522,
+   "mean": 0.1295112459543993
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "window:0",
+   "rows": 759570,
+   "answered_rows": 758745,
+   "coverage": 0.9989138591571547,
+   "unknown_target_rows": 825,
+   "target_cases": 3099,
+   "weeks": 522,
+   "mean": 0.22804967452937572
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "window:1",
+   "rows": 715428,
+   "answered_rows": 702706,
+   "coverage": 0.9822176375540236,
+   "unknown_target_rows": 1777,
+   "target_cases": 3073,
+   "weeks": 522,
+   "mean": 0.1714243636195071
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "window:1",
+   "rows": 715428,
+   "answered_rows": 713651,
+   "coverage": 0.9975161721375176,
+   "unknown_target_rows": 1777,
+   "target_cases": 3078,
+   "weeks": 522,
+   "mean": 0.17143793092629114
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "window:1",
+   "rows": 715428,
+   "answered_rows": 713651,
+   "coverage": 0.9975161721375176,
+   "unknown_target_rows": 1777,
+   "target_cases": 3078,
+   "weeks": 522,
+   "mean": 0.22282644128805998
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "window:2",
+   "rows": 626334,
+   "answered_rows": 613377,
+   "coverage": 0.9793129544300645,
+   "unknown_target_rows": 3588,
+   "target_cases": 3011,
+   "weeks": 522,
+   "mean": 0.18254512371204865
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "window:2",
+   "rows": 626334,
+   "answered_rows": 622746,
+   "coverage": 0.9942714270660702,
+   "unknown_target_rows": 3588,
+   "target_cases": 3016,
+   "weeks": 522,
+   "mean": 0.1826405350189377
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "window:2",
+   "rows": 626334,
+   "answered_rows": 622746,
+   "coverage": 0.9942714270660702,
+   "unknown_target_rows": 3588,
+   "target_cases": 3016,
+   "weeks": 522,
+   "mean": 0.20731687488518422
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "distance:2",
+   "rows": 700444,
+   "answered_rows": 687842,
+   "coverage": 0.982008554573956,
+   "unknown_target_rows": 1867,
+   "target_cases": 3094,
+   "weeks": 522,
+   "mean": 0.22508036441404095
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "distance:2",
+   "rows": 700444,
+   "answered_rows": 698577,
+   "coverage": 0.997334547801109,
+   "unknown_target_rows": 1867,
+   "target_cases": 3099,
+   "weeks": 522,
+   "mean": 0.22342316083306166
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "distance:2",
+   "rows": 700444,
+   "answered_rows": 698577,
+   "coverage": 0.997334547801109,
+   "unknown_target_rows": 1867,
+   "target_cases": 3099,
+   "weeks": 522,
+   "mean": 0.3644301119670157
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "distance:5",
+   "rows": 700444,
+   "answered_rows": 687647,
+   "coverage": 0.9817301597272587,
+   "unknown_target_rows": 2064,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.18477161556481944
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "distance:5",
+   "rows": 700444,
+   "answered_rows": 698380,
+   "coverage": 0.9970532976226508,
+   "unknown_target_rows": 2064,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.18535015076288439
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "distance:5",
+   "rows": 700444,
+   "answered_rows": 698380,
+   "coverage": 0.9970532976226508,
+   "unknown_target_rows": 2064,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.20709114607323145
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "distance:10",
+   "rows": 700444,
+   "answered_rows": 687454,
+   "coverage": 0.9814546202123224,
+   "unknown_target_rows": 2259,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.06525991368665511
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "distance:10",
+   "rows": 700444,
+   "answered_rows": 698185,
+   "coverage": 0.9967749027759535,
+   "unknown_target_rows": 2259,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.06673780573648234
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "distance:10",
+   "rows": 700444,
+   "answered_rows": 698185,
+   "coverage": 0.9967749027759535,
+   "unknown_target_rows": 2259,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.08712515236260295
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "side:below",
+   "rows": 1050666,
+   "answered_rows": 1031499,
+   "coverage": 0.9817572853789882,
+   "unknown_target_rows": 3074,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.16155061280323688
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "side:below",
+   "rows": 1050666,
+   "answered_rows": 1047592,
+   "coverage": 0.9970742367222314,
+   "unknown_target_rows": 3074,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.16307437519414833
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "side:below",
+   "rows": 1050666,
+   "answered_rows": 1047592,
+   "coverage": 0.9970742367222314,
+   "unknown_target_rows": 3074,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.20748613854575143
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "side:above",
+   "rows": 1050666,
+   "answered_rows": 1031444,
+   "coverage": 0.9817049376300365,
+   "unknown_target_rows": 3116,
+   "target_cases": 3094,
+   "weeks": 522,
+   "mean": 0.15527055140946827
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "side:above",
+   "rows": 1050666,
+   "answered_rows": 1047550,
+   "coverage": 0.9970342620775775,
+   "unknown_target_rows": 3116,
+   "target_cases": 3099,
+   "weeks": 522,
+   "mean": 0.15400265903812763
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "side:above",
+   "rows": 1050666,
+   "answered_rows": 1047550,
+   "coverage": 0.9970342620775775,
+   "unknown_target_rows": 3116,
+   "target_cases": 3099,
+   "weeks": 522,
+   "mean": 0.231834908690681
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "overall",
+   "rows": 2101332,
+   "answered_rows": 2062518,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 6636,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.07296984465122196,
+   "ci95": [
+    0.07252456021879404,
+    0.07338571431953318
+   ],
+   "support_median": 545.0,
+   "support_p10": 156.0
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "overall",
+   "rows": 2101332,
+   "answered_rows": 2094696,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 6636,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.07282363752027181,
+   "ci95": [
+    0.07241271924480858,
+    0.0732204561996296
+   ],
+   "support_median": 2606.0,
+   "support_p10": 1791.0
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "overall",
+   "rows": 2101332,
+   "answered_rows": 2094696,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 6636,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.07762465083853211,
+   "ci95": [
+    0.07713844973953055,
+    0.07811774637868676
+   ],
+   "support_median": 2606.0,
+   "support_p10": 1791.0
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "cell:NQ/ODR",
+   "rows": 303084,
+   "answered_rows": 296286,
+   "coverage": 0.9775705744941996,
+   "unknown_target_rows": 120,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": 0.07286539386466755
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "cell:NQ/ODR",
+   "rows": 303084,
+   "answered_rows": 302964,
+   "coverage": 0.9996040701587678,
+   "unknown_target_rows": 120,
+   "target_cases": 516,
+   "weeks": 516,
+   "mean": 0.0725809297300182
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "cell:NQ/ODR",
+   "rows": 303084,
+   "answered_rows": 302964,
+   "coverage": 0.9996040701587678,
+   "unknown_target_rows": 120,
+   "target_cases": 516,
+   "weeks": 516,
+   "mean": 0.07643376656676854
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "epoch:2016-19",
+   "rows": 839118,
+   "answered_rows": 820206,
+   "coverage": 0.9774620494376238,
+   "unknown_target_rows": 3192,
+   "target_cases": 1238,
+   "weeks": 209,
+   "mean": 0.07272669426933673
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "epoch:2016-19",
+   "rows": 839118,
+   "answered_rows": 835926,
+   "coverage": 0.9961960058060964,
+   "unknown_target_rows": 3192,
+   "target_cases": 1240,
+   "weeks": 209,
+   "mean": 0.07259316320701895
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "epoch:2016-19",
+   "rows": 839118,
+   "answered_rows": 835926,
+   "coverage": 0.9961960058060964,
+   "unknown_target_rows": 3192,
+   "target_cases": 1240,
+   "weeks": 209,
+   "mean": 0.07715984587325359
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "epoch:2020-25",
+   "rows": 1262214,
+   "answered_rows": 1242312,
+   "coverage": 0.9842324677114974,
+   "unknown_target_rows": 3444,
+   "target_cases": 1855,
+   "weeks": 314,
+   "mean": 0.07313211967697604
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "epoch:2020-25",
+   "rows": 1262214,
+   "answered_rows": 1258770,
+   "coverage": 0.9972714610993064,
+   "unknown_target_rows": 3444,
+   "target_cases": 1858,
+   "weeks": 314,
+   "mean": 0.07297745245484315
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "epoch:2020-25",
+   "rows": 1262214,
+   "answered_rows": 1258770,
+   "coverage": 0.9972714610993064,
+   "unknown_target_rows": 3444,
+   "target_cases": 1858,
+   "weeks": 314,
+   "mean": 0.07793485436756621
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "window:0",
+   "rows": 759570,
+   "answered_rows": 746700,
+   "coverage": 0.9830562028516134,
+   "unknown_target_rows": 990,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.07276503949101125
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "window:0",
+   "rows": 759570,
+   "answered_rows": 758580,
+   "coverage": 0.9986966309885856,
+   "unknown_target_rows": 990,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.07245714469684338
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "window:0",
+   "rows": 759570,
+   "answered_rows": 758580,
+   "coverage": 0.9986966309885856,
+   "unknown_target_rows": 990,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.07955744044810936
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "window:1",
+   "rows": 715428,
+   "answered_rows": 702570,
+   "coverage": 0.9820275415555444,
+   "unknown_target_rows": 1914,
+   "target_cases": 3072,
+   "weeks": 522,
+   "mean": 0.07466742576361558
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "window:1",
+   "rows": 715428,
+   "answered_rows": 713514,
+   "coverage": 0.9973246783743438,
+   "unknown_target_rows": 1914,
+   "target_cases": 3077,
+   "weeks": 522,
+   "mean": 0.07452336580583033
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "window:1",
+   "rows": 715428,
+   "answered_rows": 713514,
+   "coverage": 0.9973246783743438,
+   "unknown_target_rows": 1914,
+   "target_cases": 3077,
+   "weeks": 522,
+   "mean": 0.07895967899637414
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "window:2",
+   "rows": 626334,
+   "answered_rows": 613248,
+   "coverage": 0.9791069940319382,
+   "unknown_target_rows": 3732,
+   "target_cases": 3011,
+   "weeks": 522,
+   "mean": 0.07197750419361516
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "window:2",
+   "rows": 626334,
+   "answered_rows": 622602,
+   "coverage": 0.9940415177844409,
+   "unknown_target_rows": 3732,
+   "target_cases": 3016,
+   "weeks": 522,
+   "mean": 0.07196268070830537
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "window:2",
+   "rows": 626334,
+   "answered_rows": 622602,
+   "coverage": 0.9940415177844409,
+   "unknown_target_rows": 3732,
+   "target_cases": 3016,
+   "weeks": 522,
+   "mean": 0.0742407572344957
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "distance:2",
+   "rows": 700444,
+   "answered_rows": 687506,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 2212,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.1400710210427793
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "distance:2",
+   "rows": 700444,
+   "answered_rows": 698232,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 2212,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.1398515348828582
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "distance:2",
+   "rows": 700444,
+   "answered_rows": 698232,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 2212,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.15050009801775385
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "distance:5",
+   "rows": 700444,
+   "answered_rows": 687506,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 2212,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.06312575697985218
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "distance:5",
+   "rows": 700444,
+   "answered_rows": 698232,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 2212,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.06289578808590895
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "distance:5",
+   "rows": 700444,
+   "answered_rows": 698232,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 2212,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.06464508578991653
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "distance:10",
+   "rows": 700444,
+   "answered_rows": 687506,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 2212,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.01571275593103436
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "distance:10",
+   "rows": 700444,
+   "answered_rows": 698232,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 2212,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.01572358959204827
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "distance:10",
+   "rows": 700444,
+   "answered_rows": 698232,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 2212,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.017728768707925942
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "side:below",
+   "rows": 1050666,
+   "answered_rows": 1031259,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 3318,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.06802803371736647
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "side:below",
+   "rows": 1050666,
+   "answered_rows": 1047348,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 3318,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.06803220443821213
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "side:below",
+   "rows": 1050666,
+   "answered_rows": 1047348,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 3318,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.07157509587992435
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "side:above",
+   "rows": 1050666,
+   "answered_rows": 1031259,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 3318,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.07791165558507741
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "side:above",
+   "rows": 1050666,
+   "answered_rows": 1047348,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 3318,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.0776150706023315
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "side:above",
+   "rows": 1050666,
+   "answered_rows": 1047348,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 3318,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": 0.08367420579713986
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "cell:NQ/RDR",
+   "rows": 403974,
+   "answered_rows": 395438,
+   "coverage": 0.9788699272725473,
+   "unknown_target_rows": 1768,
+   "target_cases": 516,
+   "weeks": 516,
+   "mean": 0.1399460769506097
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "cell:NQ/RDR",
+   "rows": 403974,
+   "answered_rows": 402206,
+   "coverage": 0.9956234807190562,
+   "unknown_target_rows": 1768,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.13970380744589272
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "cell:NQ/RDR",
+   "rows": 403974,
+   "answered_rows": 402206,
+   "coverage": 0.9956234807190562,
+   "unknown_target_rows": 1768,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.19815823845500555
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "cell:NQ/RDR",
+   "rows": 403974,
+   "answered_rows": 395274,
+   "coverage": 0.9784639605519168,
+   "unknown_target_rows": 1944,
+   "target_cases": 515,
+   "weeks": 515,
+   "mean": 0.07223414248074685
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "cell:NQ/RDR",
+   "rows": 403974,
+   "answered_rows": 402030,
+   "coverage": 0.9951878091164282,
+   "unknown_target_rows": 1944,
+   "target_cases": 516,
+   "weeks": 516,
+   "mean": 0.07195584967391473
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "cell:NQ/RDR",
+   "rows": 403974,
+   "answered_rows": 402030,
+   "coverage": 0.9951878091164282,
+   "unknown_target_rows": 1944,
+   "target_cases": 516,
+   "weeks": 516,
+   "mean": 0.07824497478741718
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "cell:ES/ODR",
+   "rows": 308436,
+   "answered_rows": 303706,
+   "coverage": 0.9846645657445953,
+   "unknown_target_rows": 60,
+   "target_cases": 518,
+   "weeks": 518,
+   "mean": 0.17010837695517345
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "cell:ES/ODR",
+   "rows": 308436,
+   "answered_rows": 308376,
+   "coverage": 0.9998054701785783,
+   "unknown_target_rows": 60,
+   "target_cases": 519,
+   "weeks": 519,
+   "mean": 0.17084068694602164
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "cell:ES/ODR",
+   "rows": 308436,
+   "answered_rows": 308376,
+   "coverage": 0.9998054701785783,
+   "unknown_target_rows": 60,
+   "target_cases": 519,
+   "weeks": 519,
+   "mean": 0.23565265161040966
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "cell:ES/ODR",
+   "rows": 308436,
+   "answered_rows": 303708,
+   "coverage": 0.9846710500719761,
+   "unknown_target_rows": 60,
+   "target_cases": 518,
+   "weeks": 518,
+   "mean": 0.07338732992160703
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "cell:ES/ODR",
+   "rows": 308436,
+   "answered_rows": 308376,
+   "coverage": 0.9998054701785783,
+   "unknown_target_rows": 60,
+   "target_cases": 519,
+   "weeks": 519,
+   "mean": 0.07338013947504751
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "cell:ES/ODR",
+   "rows": 308436,
+   "answered_rows": 308376,
+   "coverage": 0.9998054701785783,
+   "unknown_target_rows": 60,
+   "target_cases": 519,
+   "weeks": 519,
+   "mean": 0.0771939485821182
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "cell:ES/RDR",
+   "rows": 397440,
+   "answered_rows": 390810,
+   "coverage": 0.9833182367149759,
+   "unknown_target_rows": 2175,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.15345049720577786
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "cell:ES/RDR",
+   "rows": 397440,
+   "answered_rows": 395265,
+   "coverage": 0.9945274758454107,
+   "unknown_target_rows": 2175,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.1530874764069314
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "cell:ES/RDR",
+   "rows": 397440,
+   "answered_rows": 395265,
+   "coverage": 0.9945274758454107,
+   "unknown_target_rows": 2175,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.21591662246992652
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "cell:ES/RDR",
+   "rows": 397440,
+   "answered_rows": 390594,
+   "coverage": 0.9827747584541063,
+   "unknown_target_rows": 2394,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.07380765858014626
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "cell:ES/RDR",
+   "rows": 397440,
+   "answered_rows": 395046,
+   "coverage": 0.9939764492753623,
+   "unknown_target_rows": 2394,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.07359871651135795
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "cell:ES/RDR",
+   "rows": 397440,
+   "answered_rows": 395046,
+   "coverage": 0.9939764492753623,
+   "unknown_target_rows": 2394,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.07902170507532719
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "cell:YM/ODR",
+   "rows": 300990,
+   "answered_rows": 295797,
+   "coverage": 0.9827469351141234,
+   "unknown_target_rows": 185,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.16986789098799995
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "cell:YM/ODR",
+   "rows": 300990,
+   "answered_rows": 300805,
+   "coverage": 0.9993853616399216,
+   "unknown_target_rows": 185,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.1690654890127877
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "cell:YM/ODR",
+   "rows": 300990,
+   "answered_rows": 300805,
+   "coverage": 0.9993853616399216,
+   "unknown_target_rows": 185,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.23238324078441777
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "cell:YM/ODR",
+   "rows": 300990,
+   "answered_rows": 295848,
+   "coverage": 0.9829163759593342,
+   "unknown_target_rows": 138,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.07246555029123844
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "cell:YM/ODR",
+   "rows": 300990,
+   "answered_rows": 300852,
+   "coverage": 0.9995415130070766,
+   "unknown_target_rows": 138,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.07237056383305265
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "cell:YM/ODR",
+   "rows": 300990,
+   "answered_rows": 300852,
+   "coverage": 0.9995415130070766,
+   "unknown_target_rows": 138,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.07631896436865478
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "group": "cell:YM/RDR",
+   "rows": 387408,
+   "answered_rows": 380957,
+   "coverage": 0.9833483046297443,
+   "unknown_target_rows": 1827,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": 0.14907340368295038
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "group": "cell:YM/RDR",
+   "rows": 387408,
+   "answered_rows": 385581,
+   "coverage": 0.9952840416305291,
+   "unknown_target_rows": 1827,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": 0.14900106992225629
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "group": "cell:YM/RDR",
+   "rows": 387408,
+   "answered_rows": 385581,
+   "coverage": 0.9952840416305291,
+   "unknown_target_rows": 1827,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": 0.20517024061298741
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "group": "cell:YM/RDR",
+   "rows": 387408,
+   "answered_rows": 380808,
+   "coverage": 0.9829636971874612,
+   "unknown_target_rows": 1980,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": 0.07305519140384416
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "group": "cell:YM/RDR",
+   "rows": 387408,
+   "answered_rows": 385428,
+   "coverage": 0.9948891091562384,
+   "unknown_target_rows": 1980,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": 0.07305310046737376
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "group": "cell:YM/RDR",
+   "rows": 387408,
+   "answered_rows": 385428,
+   "coverage": 0.9948891091562384,
+   "unknown_target_rows": 1980,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": 0.07854220729503822
+  }
+ ],
+ "comparisons": [
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "overall",
+   "negative_is_better_for_first": true,
+   "rows": 2101332,
+   "answered_rows": 2062943,
+   "coverage": 0.9817311115045124,
+   "unknown_target_rows": 6190,
+   "target_cases": 3094,
+   "weeks": 522,
+   "mean": 0.0005090579131108432,
+   "ci95": [
+    0.00016947724669025838,
+    0.0008468849694912719
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "overall",
+   "negative_is_better_for_first": true,
+   "rows": 2101332,
+   "answered_rows": 2062943,
+   "coverage": 0.9817311115045124,
+   "unknown_target_rows": 6190,
+   "target_cases": 3094,
+   "weeks": 522,
+   "mean": -0.059301413429635824,
+   "ci95": [
+    -0.06061148552546078,
+    -0.058055366397806354
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "overall",
+   "negative_is_better_for_first": true,
+   "rows": 2101332,
+   "answered_rows": 2095142,
+   "coverage": 0.9970542493999044,
+   "unknown_target_rows": 6190,
+   "target_cases": 3099,
+   "weeks": 522,
+   "mean": -0.061190119601020485,
+   "ci95": [
+    -0.06261938429345866,
+    -0.059790314453961074
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "cell:NQ/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 303084,
+   "answered_rows": 296235,
+   "coverage": 0.977402304311676,
+   "unknown_target_rows": 175,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": -0.00015427410637299592,
+   "ci95": [
+    -0.0009380272440710712,
+    0.0006238549636937236
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "cell:NQ/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 303084,
+   "answered_rows": 296235,
+   "coverage": 0.977402304311676,
+   "unknown_target_rows": 175,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": -0.05990607118788597,
+   "ci95": [
+    -0.0630698215381706,
+    -0.05706364259855354
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "cell:NQ/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 303084,
+   "answered_rows": 302909,
+   "coverage": 0.9994226023148698,
+   "unknown_target_rows": 175,
+   "target_cases": 516,
+   "weeks": 516,
+   "mean": -0.06150600660113853,
+   "ci95": [
+    -0.06486585490895423,
+    -0.058313252514763686
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "epoch:2016-19",
+   "negative_is_better_for_first": true,
+   "rows": 839118,
+   "answered_rows": 820515,
+   "coverage": 0.9778302932364697,
+   "unknown_target_rows": 2862,
+   "target_cases": 1239,
+   "weeks": 209,
+   "mean": 0.0005353639370872364,
+   "ci95": [
+    -5.2768043747389846e-05,
+    0.0011307168281354189
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "epoch:2016-19",
+   "negative_is_better_for_first": true,
+   "rows": 839118,
+   "answered_rows": 820515,
+   "coverage": 0.9778302932364697,
+   "unknown_target_rows": 2862,
+   "target_cases": 1239,
+   "weeks": 209,
+   "mean": -0.05966190928243951,
+   "ci95": [
+    -0.0618858889930857,
+    -0.057582681806587
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "epoch:2016-19",
+   "negative_is_better_for_first": true,
+   "rows": 839118,
+   "answered_rows": 836256,
+   "coverage": 0.9965892758825338,
+   "unknown_target_rows": 2862,
+   "target_cases": 1241,
+   "weeks": 209,
+   "mean": -0.06186630633353931,
+   "ci95": [
+    -0.06419636786686933,
+    -0.05942946317575791
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "epoch:2020-25",
+   "negative_is_better_for_first": true,
+   "rows": 1262214,
+   "answered_rows": 1242428,
+   "coverage": 0.9843243697186056,
+   "unknown_target_rows": 3328,
+   "target_cases": 1855,
+   "weeks": 314,
+   "mean": 0.0004914874744549125,
+   "ci95": [
+    6.055871125035351e-05,
+    0.0009028763188353349
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "epoch:2020-25",
+   "negative_is_better_for_first": true,
+   "rows": 1262214,
+   "answered_rows": 1242428,
+   "coverage": 0.9843243697186056,
+   "unknown_target_rows": 3328,
+   "target_cases": 1855,
+   "weeks": 314,
+   "mean": -0.05906062940719713,
+   "ci95": [
+    -0.060774537291699605,
+    -0.057457962699233596
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "epoch:2020-25",
+   "negative_is_better_for_first": true,
+   "rows": 1262214,
+   "answered_rows": 1258886,
+   "coverage": 0.9973633631064146,
+   "unknown_target_rows": 3328,
+   "target_cases": 1858,
+   "weeks": 314,
+   "mean": -0.06073847926998934,
+   "ci95": [
+    -0.0626182573853292,
+    -0.05896199110191046
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "window:0",
+   "negative_is_better_for_first": true,
+   "rows": 759570,
+   "answered_rows": 746860,
+   "coverage": 0.9832668483484076,
+   "unknown_target_rows": 825,
+   "target_cases": 3094,
+   "weeks": 522,
+   "mean": 0.0006472689059038359
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "window:0",
+   "negative_is_better_for_first": true,
+   "rows": 759570,
+   "answered_rows": 746860,
+   "coverage": 0.9832668483484076,
+   "unknown_target_rows": 825,
+   "target_cases": 3094,
+   "weeks": 522,
+   "mean": -0.09629677907747375
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "window:0",
+   "negative_is_better_for_first": true,
+   "rows": 759570,
+   "answered_rows": 758745,
+   "coverage": 0.9989138591571547,
+   "unknown_target_rows": 825,
+   "target_cases": 3099,
+   "weeks": 522,
+   "mean": -0.09853842857497638
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "window:1",
+   "negative_is_better_for_first": true,
+   "rows": 715428,
+   "answered_rows": 702706,
+   "coverage": 0.9822176375540236,
+   "unknown_target_rows": 1777,
+   "target_cases": 3073,
+   "weeks": 522,
+   "mean": 0.0005449673779244357
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "window:1",
+   "negative_is_better_for_first": true,
+   "rows": 715428,
+   "answered_rows": 702706,
+   "coverage": 0.9822176375540236,
+   "unknown_target_rows": 1777,
+   "target_cases": 3073,
+   "weeks": 522,
+   "mean": -0.049387667743879815
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "window:1",
+   "negative_is_better_for_first": true,
+   "rows": 715428,
+   "answered_rows": 713651,
+   "coverage": 0.9975161721375176,
+   "unknown_target_rows": 1777,
+   "target_cases": 3078,
+   "weeks": 522,
+   "mean": -0.05138851036176883
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "window:2",
+   "negative_is_better_for_first": true,
+   "rows": 626334,
+   "answered_rows": 613377,
+   "coverage": 0.9793129544300645,
+   "unknown_target_rows": 3588,
+   "target_cases": 3011,
+   "weeks": 522,
+   "mean": 0.0005752186349321678
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "window:2",
+   "negative_is_better_for_first": true,
+   "rows": 626334,
+   "answered_rows": 613377,
+   "coverage": 0.9793129544300645,
+   "unknown_target_rows": 3588,
+   "target_cases": 3011,
+   "weeks": 522,
+   "mean": -0.02322495074330269
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "window:2",
+   "negative_is_better_for_first": true,
+   "rows": 626334,
+   "answered_rows": 622746,
+   "coverage": 0.9942714270660702,
+   "unknown_target_rows": 3588,
+   "target_cases": 3016,
+   "weeks": 522,
+   "mean": -0.02467633986624654
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "distance:2",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 687842,
+   "coverage": 0.982008554573956,
+   "unknown_target_rows": 1867,
+   "target_cases": 3094,
+   "weeks": 522,
+   "mean": 0.0016307027907367909
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "distance:2",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 687842,
+   "coverage": 0.982008554573956,
+   "unknown_target_rows": 1867,
+   "target_cases": 3094,
+   "weeks": 522,
+   "mean": -0.13637764542872352
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "distance:2",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 698577,
+   "coverage": 0.997334547801109,
+   "unknown_target_rows": 1867,
+   "target_cases": 3099,
+   "weeks": 522,
+   "mean": -0.141006951133954
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "distance:5",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 687647,
+   "coverage": 0.9817301597272587,
+   "unknown_target_rows": 2064,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.0004505556778063279
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "distance:5",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 687647,
+   "coverage": 0.9817301597272587,
+   "unknown_target_rows": 2064,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": -0.020150017738682198
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "distance:5",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 698380,
+   "coverage": 0.9970532976226508,
+   "unknown_target_rows": 2064,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": -0.02174099531034706
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "distance:10",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 687454,
+   "coverage": 0.9814546202123224,
+   "unknown_target_rows": 2259,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": -0.0005752390358765944
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "distance:10",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 687454,
+   "coverage": 0.9814546202123224,
+   "unknown_target_rows": 2259,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": -0.020945529839936573
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "distance:10",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 698185,
+   "coverage": 0.9967749027759535,
+   "unknown_target_rows": 2259,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": -0.020387346626120597
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "side:below",
+   "negative_is_better_for_first": true,
+   "rows": 1050666,
+   "answered_rows": 1031499,
+   "coverage": 0.9817572853789882,
+   "unknown_target_rows": 3074,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": -0.00014368123625410143
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "side:below",
+   "negative_is_better_for_first": true,
+   "rows": 1050666,
+   "answered_rows": 1031499,
+   "coverage": 0.9817572853789882,
+   "unknown_target_rows": 3074,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": -0.04274408593682605
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "side:below",
+   "negative_is_better_for_first": true,
+   "rows": 1050666,
+   "answered_rows": 1047592,
+   "coverage": 0.9970742367222314,
+   "unknown_target_rows": 3074,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": -0.04441176335160315
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "side:above",
+   "negative_is_better_for_first": true,
+   "rows": 1050666,
+   "answered_rows": 1031444,
+   "coverage": 0.9817049376300365,
+   "unknown_target_rows": 3116,
+   "target_cases": 3094,
+   "weeks": 522,
+   "mean": 0.0011574817096200233
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "side:above",
+   "negative_is_better_for_first": true,
+   "rows": 1050666,
+   "answered_rows": 1031444,
+   "coverage": 0.9817049376300365,
+   "unknown_target_rows": 3116,
+   "target_cases": 3094,
+   "weeks": 522,
+   "mean": -0.07573622008930965
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "side:above",
+   "negative_is_better_for_first": true,
+   "rows": 1050666,
+   "answered_rows": 1047550,
+   "coverage": 0.9970342620775775,
+   "unknown_target_rows": 3116,
+   "target_cases": 3099,
+   "weeks": 522,
+   "mean": -0.07783224965255338
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "overall",
+   "negative_is_better_for_first": true,
+   "rows": 2101332,
+   "answered_rows": 2062518,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 6636,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.00026938056560987887,
+   "ci95": [
+    0.00020598036021701524,
+    0.0003336931762013638
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "overall",
+   "negative_is_better_for_first": true,
+   "rows": 2101332,
+   "answered_rows": 2062518,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 6636,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": -0.004519285924030501,
+   "ci95": [
+    -0.004674482558946439,
+    -0.00435702983966227
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "overall",
+   "negative_is_better_for_first": true,
+   "rows": 2101332,
+   "answered_rows": 2094696,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 6636,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": -0.004801013318260296,
+   "ci95": [
+    -0.004976985802735643,
+    -0.004630153109320755
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "cell:NQ/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 303084,
+   "answered_rows": 296286,
+   "coverage": 0.9775705744941996,
+   "unknown_target_rows": 120,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": 0.00015557414609724442,
+   "ci95": [
+    1.5547838574055876e-05,
+    0.000295904460067546
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "cell:NQ/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 303084,
+   "answered_rows": 296286,
+   "coverage": 0.9775705744941996,
+   "unknown_target_rows": 120,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": -0.003693990994937092,
+   "ci95": [
+    -0.004037054093225418,
+    -0.0033546203664601877
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "cell:NQ/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 303084,
+   "answered_rows": 302964,
+   "coverage": 0.9996040701587678,
+   "unknown_target_rows": 120,
+   "target_cases": 516,
+   "weeks": 516,
+   "mean": -0.003852836836750339,
+   "ci95": [
+    -0.004195927290858262,
+    -0.003495513602173306
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "epoch:2016-19",
+   "negative_is_better_for_first": true,
+   "rows": 839118,
+   "answered_rows": 820206,
+   "coverage": 0.9774620494376238,
+   "unknown_target_rows": 3192,
+   "target_cases": 1238,
+   "weeks": 209,
+   "mean": 0.00025801052059393556,
+   "ci95": [
+    0.00015754585335854158,
+    0.00036534517537265216
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "epoch:2016-19",
+   "negative_is_better_for_first": true,
+   "rows": 839118,
+   "answered_rows": 820206,
+   "coverage": 0.9774620494376238,
+   "unknown_target_rows": 3192,
+   "target_cases": 1238,
+   "weeks": 209,
+   "mean": -0.004304063323775387,
+   "ci95": [
+    -0.004548813462289717,
+    -0.004061560166429466
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "epoch:2016-19",
+   "negative_is_better_for_first": true,
+   "rows": 839118,
+   "answered_rows": 835926,
+   "coverage": 0.9961960058060964,
+   "unknown_target_rows": 3192,
+   "target_cases": 1240,
+   "weeks": 209,
+   "mean": -0.004566682666234612,
+   "ci95": [
+    -0.004828823214124755,
+    -0.0043172999049880464
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "epoch:2020-25",
+   "negative_is_better_for_first": true,
+   "rows": 1262214,
+   "answered_rows": 1242312,
+   "coverage": 0.9842324677114974,
+   "unknown_target_rows": 3444,
+   "target_cases": 1855,
+   "weeks": 314,
+   "mean": 0.00027696876815960265,
+   "ci95": [
+    0.0001957415714358532,
+    0.00035558973388071603
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "epoch:2020-25",
+   "negative_is_better_for_first": true,
+   "rows": 1262214,
+   "answered_rows": 1242312,
+   "coverage": 0.9842324677114974,
+   "unknown_target_rows": 3444,
+   "target_cases": 1855,
+   "weeks": 314,
+   "mean": -0.0046629223548207074,
+   "ci95": [
+    -0.004883528489769858,
+    -0.004442003565166363
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "epoch:2020-25",
+   "negative_is_better_for_first": true,
+   "rows": 1262214,
+   "answered_rows": 1258770,
+   "coverage": 0.9972714610993064,
+   "unknown_target_rows": 3444,
+   "target_cases": 1858,
+   "weeks": 314,
+   "mean": -0.004957401912723078,
+   "ci95": [
+    -0.005174442800855044,
+    -0.004729881696700781
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "window:0",
+   "negative_is_better_for_first": true,
+   "rows": 759570,
+   "answered_rows": 746700,
+   "coverage": 0.9830562028516134,
+   "unknown_target_rows": 990,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.0003858384311237136
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "window:0",
+   "negative_is_better_for_first": true,
+   "rows": 759570,
+   "answered_rows": 746700,
+   "coverage": 0.9830562028516134,
+   "unknown_target_rows": 990,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": -0.0067071155162038865
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "window:0",
+   "negative_is_better_for_first": true,
+   "rows": 759570,
+   "answered_rows": 758580,
+   "coverage": 0.9986966309885856,
+   "unknown_target_rows": 990,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": -0.0071002957512659925
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "window:1",
+   "negative_is_better_for_first": true,
+   "rows": 715428,
+   "answered_rows": 702570,
+   "coverage": 0.9820275415555444,
+   "unknown_target_rows": 1914,
+   "target_cases": 3072,
+   "weeks": 522,
+   "mean": 0.0002554059842724929
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "window:1",
+   "negative_is_better_for_first": true,
+   "rows": 715428,
+   "answered_rows": 702570,
+   "coverage": 0.9820275415555444,
+   "unknown_target_rows": 1914,
+   "target_cases": 3072,
+   "weeks": 522,
+   "mean": -0.004171477820913184
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "window:1",
+   "negative_is_better_for_first": true,
+   "rows": 715428,
+   "answered_rows": 713514,
+   "coverage": 0.9973246783743438,
+   "unknown_target_rows": 1914,
+   "target_cases": 3077,
+   "weeks": 522,
+   "mean": -0.004436313190543796
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "window:2",
+   "negative_is_better_for_first": true,
+   "rows": 626334,
+   "answered_rows": 613248,
+   "coverage": 0.9791069940319382,
+   "unknown_target_rows": 3732,
+   "target_cases": 3011,
+   "weeks": 522,
+   "mean": 0.00016349767241773857
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "window:2",
+   "negative_is_better_for_first": true,
+   "rows": 626334,
+   "answered_rows": 613248,
+   "coverage": 0.9791069940319382,
+   "unknown_target_rows": 3732,
+   "target_cases": 3011,
+   "weeks": 522,
+   "mean": -0.0020929820577906895
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "window:2",
+   "negative_is_better_for_first": true,
+   "rows": 626334,
+   "answered_rows": 622602,
+   "coverage": 0.9940415177844409,
+   "unknown_target_rows": 3732,
+   "target_cases": 3016,
+   "weeks": 522,
+   "mean": -0.0022780765261903348
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "distance:2",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 687506,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 2212,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.00026371156313334364
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "distance:2",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 687506,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 2212,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": -0.010353238892160969
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "distance:2",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 698232,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 2212,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": -0.010648563134895652
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "distance:5",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 687506,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 2212,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.00048117107310536764
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "distance:5",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 687506,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 2212,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": -0.0012491945585119066
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "distance:5",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 698232,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 2212,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": -0.0017492977040075638
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "distance:10",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 687506,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 2212,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 6.325906059092526e-05
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "distance:10",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 687506,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 2212,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": -0.001955424321418629
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "distance:10",
+   "negative_is_better_for_first": true,
+   "rows": 700444,
+   "answered_rows": 698232,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 2212,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": -0.0020051791158776726
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "side:below",
+   "negative_is_better_for_first": true,
+   "rows": 1050666,
+   "answered_rows": 1031259,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 3318,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.0002809038393449487
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "side:below",
+   "negative_is_better_for_first": true,
+   "rows": 1050666,
+   "answered_rows": 1031259,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 3318,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": -0.003236490610426073
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "side:below",
+   "negative_is_better_for_first": true,
+   "rows": 1050666,
+   "answered_rows": 1047348,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 3318,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": -0.0035428914417122326
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "side:above",
+   "negative_is_better_for_first": true,
+   "rows": 1050666,
+   "answered_rows": 1031259,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 3318,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": 0.00025785729187480894
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "side:above",
+   "negative_is_better_for_first": true,
+   "rows": 1050666,
+   "answered_rows": 1031259,
+   "coverage": 0.9815288588381084,
+   "unknown_target_rows": 3318,
+   "target_cases": 3093,
+   "weeks": 522,
+   "mean": -0.00580208123763493
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "side:above",
+   "negative_is_better_for_first": true,
+   "rows": 1050666,
+   "answered_rows": 1047348,
+   "coverage": 0.996842003072337,
+   "unknown_target_rows": 3318,
+   "target_cases": 3098,
+   "weeks": 522,
+   "mean": -0.006059135194808359
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "cell:NQ/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 403974,
+   "answered_rows": 395438,
+   "coverage": 0.9788699272725473,
+   "unknown_target_rows": 1768,
+   "target_cases": 516,
+   "weeks": 516,
+   "mean": 0.0009451683390658932,
+   "ci95": [
+    0.00016726841914817695,
+    0.001637184346290126
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "cell:NQ/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 403974,
+   "answered_rows": 395438,
+   "coverage": 0.9788699272725473,
+   "unknown_target_rows": 1768,
+   "target_cases": 516,
+   "weeks": 516,
+   "mean": -0.05632208843350611,
+   "ci95": [
+    -0.05934596572531759,
+    -0.05358078220407623
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "cell:NQ/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 403974,
+   "answered_rows": 402206,
+   "coverage": 0.9956234807190562,
+   "unknown_target_rows": 1768,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": -0.058454431009112816,
+   "ci95": [
+    -0.06168156896161881,
+    -0.055464667401072754
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "cell:NQ/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 403974,
+   "answered_rows": 395274,
+   "coverage": 0.9784639605519168,
+   "unknown_target_rows": 1944,
+   "target_cases": 515,
+   "weeks": 515,
+   "mean": 0.00039446014457887536,
+   "ci95": [
+    0.0002408065250112767,
+    0.0005436976369773417
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "cell:NQ/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 403974,
+   "answered_rows": 395274,
+   "coverage": 0.9784639605519168,
+   "unknown_target_rows": 1944,
+   "target_cases": 515,
+   "weeks": 515,
+   "mean": -0.005912712978162063,
+   "ci95": [
+    -0.006308800618766963,
+    -0.005523229242039552
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "cell:NQ/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 403974,
+   "answered_rows": 402030,
+   "coverage": 0.9951878091164282,
+   "unknown_target_rows": 1944,
+   "target_cases": 516,
+   "weeks": 516,
+   "mean": -0.006289125113502467,
+   "ci95": [
+    -0.006725905706576058,
+    -0.005845168635365987
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "cell:ES/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 308436,
+   "answered_rows": 303706,
+   "coverage": 0.9846645657445953,
+   "unknown_target_rows": 60,
+   "target_cases": 518,
+   "weeks": 518,
+   "mean": -0.00012447286956747544,
+   "ci95": [
+    -0.0010270754790480396,
+    0.0008452156732647785
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "cell:ES/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 308436,
+   "answered_rows": 303706,
+   "coverage": 0.9846645657445953,
+   "unknown_target_rows": 60,
+   "target_cases": 518,
+   "weeks": 518,
+   "mean": -0.06288653539113002,
+   "ci95": [
+    -0.06593732418472201,
+    -0.06003709083410281
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "cell:ES/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 308436,
+   "answered_rows": 308376,
+   "coverage": 0.9998054701785783,
+   "unknown_target_rows": 60,
+   "target_cases": 519,
+   "weeks": 519,
+   "mean": -0.06481196466438802,
+   "ci95": [
+    -0.06848769179215845,
+    -0.061512495961195096
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "cell:ES/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 308436,
+   "answered_rows": 303708,
+   "coverage": 0.9846710500719761,
+   "unknown_target_rows": 60,
+   "target_cases": 518,
+   "weeks": 518,
+   "mean": 0.00018082424347011522,
+   "ci95": [
+    2.123317117389119e-05,
+    0.00034270185626079973
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "cell:ES/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 308436,
+   "answered_rows": 303708,
+   "coverage": 0.9846710500719761,
+   "unknown_target_rows": 60,
+   "target_cases": 518,
+   "weeks": 518,
+   "mean": -0.0035959874729464703,
+   "ci95": [
+    -0.003952783051303434,
+    -0.0032368123312956384
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "cell:ES/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 308436,
+   "answered_rows": 308376,
+   "coverage": 0.9998054701785783,
+   "unknown_target_rows": 60,
+   "target_cases": 519,
+   "weeks": 519,
+   "mean": -0.003813809107070674,
+   "ci95": [
+    -0.004163709184248376,
+    -0.0034597508005345143
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "cell:ES/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 397440,
+   "answered_rows": 390810,
+   "coverage": 0.9833182367149759,
+   "unknown_target_rows": 2175,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.0006377501794301162,
+   "ci95": [
+    -9.410380765658838e-05,
+    0.0013604536942567282
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "cell:ES/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 397440,
+   "answered_rows": 390810,
+   "coverage": 0.9833182367149759,
+   "unknown_target_rows": 2175,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": -0.06120230876715901,
+   "ci95": [
+    -0.06403834510498806,
+    -0.058422978969165484
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "cell:ES/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 397440,
+   "answered_rows": 395265,
+   "coverage": 0.9945274758454107,
+   "unknown_target_rows": 2175,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": -0.0628291460629951,
+   "ci95": [
+    -0.06587375427032889,
+    -0.059781639857949896
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "cell:ES/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 397440,
+   "answered_rows": 390594,
+   "coverage": 0.9827747584541063,
+   "unknown_target_rows": 2394,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.00029083662135355036,
+   "ci95": [
+    0.00014784112425452739,
+    0.0004336429211503194
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "cell:ES/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 397440,
+   "answered_rows": 390594,
+   "coverage": 0.9827747584541063,
+   "unknown_target_rows": 2394,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": -0.005115051024942007,
+   "ci95": [
+    -0.00549982587095837,
+    -0.004723884133403333
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "cell:ES/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 397440,
+   "answered_rows": 395046,
+   "coverage": 0.9939764492753623,
+   "unknown_target_rows": 2394,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": -0.005422988563969247,
+   "ci95": [
+    -0.005848286090370076,
+    -0.004977800977729199
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "cell:YM/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 300990,
+   "answered_rows": 295797,
+   "coverage": 0.9827469351141234,
+   "unknown_target_rows": 185,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.0012430106210544775,
+   "ci95": [
+    0.0004075640333040486,
+    0.0021620897811764966
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "cell:YM/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 300990,
+   "answered_rows": 295797,
+   "coverage": 0.9827469351141234,
+   "unknown_target_rows": 185,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": -0.0605196858112161,
+   "ci95": [
+    -0.06359434271252315,
+    -0.057472658887797644
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "cell:YM/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 300990,
+   "answered_rows": 300805,
+   "coverage": 0.9993853616399216,
+   "unknown_target_rows": 185,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": -0.06331775177163004,
+   "ci95": [
+    -0.06673473614626184,
+    -0.05989247995859761
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "cell:YM/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 300990,
+   "answered_rows": 295848,
+   "coverage": 0.9829163759593342,
+   "unknown_target_rows": 138,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": 0.000327929967354154,
+   "ci95": [
+    0.00019622720378122322,
+    0.00046755889418465056
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "cell:YM/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 300990,
+   "answered_rows": 295848,
+   "coverage": 0.9829163759593342,
+   "unknown_target_rows": 138,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": -0.003613535642508096,
+   "ci95": [
+    -0.003932373469989715,
+    -0.003272073272008734
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "cell:YM/ODR",
+   "negative_is_better_for_first": true,
+   "rows": 300990,
+   "answered_rows": 300852,
+   "coverage": 0.9995415130070766,
+   "unknown_target_rows": 138,
+   "target_cases": 517,
+   "weeks": 517,
+   "mean": -0.003948400535602131,
+   "ci95": [
+    -0.004287868368955181,
+    -0.003597753413532711
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "cell:YM/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 387408,
+   "answered_rows": 380957,
+   "coverage": 0.9833483046297443,
+   "unknown_target_rows": 1827,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": 0.0005040634490481714,
+   "ci95": [
+    -0.00022081695653959878,
+    0.0012429739214361323
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "cell:YM/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 387408,
+   "answered_rows": 380957,
+   "coverage": 0.9833483046297443,
+   "unknown_target_rows": 1827,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": -0.05492995023507463,
+   "ci95": [
+    -0.05761619205456706,
+    -0.05232779740202114
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "cell:YM/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 387408,
+   "answered_rows": 385581,
+   "coverage": 0.9952840416305291,
+   "unknown_target_rows": 1827,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": -0.05616917069073114,
+   "ci95": [
+    -0.05900074325497655,
+    -0.05338295641697593
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - DIST_GEO",
+   "group": "cell:YM/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 387408,
+   "answered_rows": 380808,
+   "coverage": 0.9829636971874612,
+   "unknown_target_rows": 1980,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": 0.00026640992893946425,
+   "ci95": [
+    0.00010580752459856775,
+    0.00042740932668292194
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "POS_GEO - CLOCK_GEO",
+   "group": "cell:YM/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 387408,
+   "answered_rows": 380808,
+   "coverage": 0.9829636971874612,
+   "unknown_target_rows": 1980,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": -0.00519042101522841,
+   "ci95": [
+    -0.005554550486971735,
+    -0.004822572874856687
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "pair": "DIST_GEO - CLOCK_GEO",
+   "group": "cell:YM/RDR",
+   "negative_is_better_for_first": true,
+   "rows": 387408,
+   "answered_rows": 385428,
+   "coverage": 0.9948891091562384,
+   "unknown_target_rows": 1980,
+   "target_cases": 513,
+   "weeks": 513,
+   "mean": -0.005489106827664458,
+   "ci95": [
+    -0.005887702623711447,
+    -0.005099843256808065
+   ]
+  }
+ ],
+ "calibration": [
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "bin": [
+    0.0,
+    0.1
+   ],
+   "n": 536001,
+   "predicted": 0.0471437522999277,
+   "observed": 0.04108014723853127,
+   "ci95": [
+    0.03879624842394959,
+    0.04351542603572198
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "bin": [
+    0.1,
+    0.2
+   ],
+   "n": 280157,
+   "predicted": 0.14513562064985275,
+   "observed": 0.12804249046070595,
+   "ci95": [
+    0.1233738720878391,
+    0.1327522856518949
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "bin": [
+    0.2,
+    0.3
+   ],
+   "n": 315133,
+   "predicted": 0.252682878108821,
+   "observed": 0.22975695975984742,
+   "ci95": [
+    0.2247161291220599,
+    0.23534478642438456
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "bin": [
+    0.3,
+    0.4
+   ],
+   "n": 262463,
+   "predicted": 0.3472075956307442,
+   "observed": 0.3322715963773942,
+   "ci95": [
+    0.3274959439027714,
+    0.33719685473631034
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "bin": [
+    0.4,
+    0.5
+   ],
+   "n": 253962,
+   "predicted": 0.44662901211559997,
+   "observed": 0.44878761389499217,
+   "ci95": [
+    0.4450358817643994,
+    0.45258766726456334
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "bin": [
+    0.5,
+    0.6
+   ],
+   "n": 181158,
+   "predicted": 0.548748835898871,
+   "observed": 0.5556420362335641,
+   "ci95": [
+    0.5518603183332035,
+    0.5594597021118486
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "bin": [
+    0.6,
+    0.7
+   ],
+   "n": 115880,
+   "predicted": 0.6442126635355686,
+   "observed": 0.65358129099068,
+   "ci95": [
+    0.649257739811278,
+    0.6582426682280917
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "bin": [
+    0.7,
+    0.8
+   ],
+   "n": 80812,
+   "predicted": 0.7467813098811324,
+   "observed": 0.8039152601098847,
+   "ci95": [
+    0.7994648792663296,
+    0.8083114425704891
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "bin": [
+    0.8,
+    0.9
+   ],
+   "n": 33868,
+   "predicted": 0.8358827884245977,
+   "observed": 0.8723869139010275,
+   "ci95": [
+    0.8677434366258467,
+    0.8770040273871224
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "bin": [
+    0.9,
+    1.0
+   ],
+   "n": 3509,
+   "predicted": 0.928120616221581,
+   "observed": 0.8956967797093189,
+   "ci95": [
+    0.8845540480193914,
+    0.9067321522351061
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "bin": [
+    0.0,
+    0.1
+   ],
+   "n": 554375,
+   "predicted": 0.05192430712243804,
+   "observed": 0.04894520856820744,
+   "ci95": [
+    0.046075188462929656,
+    0.052030252214004126
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "bin": [
+    0.1,
+    0.2
+   ],
+   "n": 303253,
+   "predicted": 0.14457153568246164,
+   "observed": 0.13772328715626886,
+   "ci95": [
+    0.1326176809244571,
+    0.14279425349997674
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "bin": [
+    0.2,
+    0.3
+   ],
+   "n": 355958,
+   "predicted": 0.2576274379894273,
+   "observed": 0.2475938172481023,
+   "ci95": [
+    0.241829850379927,
+    0.2537098972073692
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "bin": [
+    0.3,
+    0.4
+   ],
+   "n": 190965,
+   "predicted": 0.3270139912493242,
+   "observed": 0.3268557065430838,
+   "ci95": [
+    0.320146196526876,
+    0.33369969102285907
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "bin": [
+    0.4,
+    0.5
+   ],
+   "n": 244370,
+   "predicted": 0.44893678338151244,
+   "observed": 0.4472766706224168,
+   "ci95": [
+    0.4431759721331118,
+    0.45136123050721444
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "bin": [
+    0.5,
+    0.6
+   ],
+   "n": 196271,
+   "predicted": 0.551270836733627,
+   "observed": 0.5471720223568434,
+   "ci95": [
+    0.5423270158098653,
+    0.5522077397907167
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "bin": [
+    0.6,
+    0.7
+   ],
+   "n": 123036,
+   "predicted": 0.6297576422398745,
+   "observed": 0.6322783575538866,
+   "ci95": [
+    0.6270733757468572,
+    0.6376052346800521
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "bin": [
+    0.7,
+    0.8
+   ],
+   "n": 9323,
+   "predicted": 0.7903099580672287,
+   "observed": 0.8015660195216132,
+   "ci95": [
+    0.791750138844673,
+    0.811558940113152
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "bin": [
+    0.8,
+    0.9
+   ],
+   "n": 117496,
+   "predicted": 0.8305159170750832,
+   "observed": 0.8366667801457071,
+   "ci95": [
+    0.8327404946789173,
+    0.8405576030142371
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "bin": [
+    0.0,
+    0.1
+   ],
+   "n": 457852,
+   "predicted": 0.05276885115622018,
+   "observed": 0.21817748966915074,
+   "ci95": [
+    0.20884035072570073,
+    0.22805288493794013
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "bin": [
+    0.1,
+    0.2
+   ],
+   "n": 552244,
+   "predicted": 0.15113022234284726,
+   "observed": 0.2576958735631351,
+   "ci95": [
+    0.24913483447451995,
+    0.2661324289378403
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "bin": [
+    0.2,
+    0.3
+   ],
+   "n": 652764,
+   "predicted": 0.25324191254197503,
+   "observed": 0.3154264021912973,
+   "ci95": [
+    0.31063576818322,
+    0.32040528019864994
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "bin": [
+    0.3,
+    0.4
+   ],
+   "n": 358779,
+   "predicted": 0.3341327118458987,
+   "observed": 0.37967383821238143,
+   "ci95": [
+    0.37177374392374885,
+    0.3875197467813175
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "bin": [
+    0.4,
+    0.5
+   ],
+   "n": 55953,
+   "predicted": 0.4385827197249438,
+   "observed": 0.45720515432595216,
+   "ci95": [
+    0.4452693472651445,
+    0.46835144501420983
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "bin": [
+    0.5,
+    0.6
+   ],
+   "n": 14325,
+   "predicted": 0.5372681426571171,
+   "observed": 0.5463874345549738,
+   "ci95": [
+    0.5293951321165132,
+    0.5622149447459875
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "bin": [
+    0.6,
+    0.7
+   ],
+   "n": 2809,
+   "predicted": 0.6381207157874534,
+   "observed": 0.6322534709861161,
+   "ci95": [
+    0.6066895716953464,
+    0.6568410071819046
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "bin": [
+    0.7,
+    0.8
+   ],
+   "n": 416,
+   "predicted": 0.7365287293412782,
+   "observed": 0.7091346153846154,
+   "ci95": [
+    0.6580781063585347,
+    0.7582938388625592
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "bin": [
+    0.0,
+    0.1
+   ],
+   "n": 1296444,
+   "predicted": 0.04041211741978103,
+   "observed": 0.03870973215966135,
+   "ci95": [
+    0.03786597048256576,
+    0.03957333229301306
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "bin": [
+    0.1,
+    0.2
+   ],
+   "n": 593183,
+   "predicted": 0.14669069009834484,
+   "observed": 0.14668491848215476,
+   "ci95": [
+    0.1449952816629106,
+    0.14825323845219707
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "bin": [
+    0.2,
+    0.3
+   ],
+   "n": 165671,
+   "predicted": 0.2320876033813538,
+   "observed": 0.2296358445352536,
+   "ci95": [
+    0.22577517200667802,
+    0.23345654501088653
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "bin": [
+    0.3,
+    0.4
+   ],
+   "n": 7198,
+   "predicted": 0.31755452782442045,
+   "observed": 0.2945262572936927,
+   "ci95": [
+    0.2816888040843486,
+    0.3075005234822413
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "bin": [
+    0.0,
+    0.1
+   ],
+   "n": 1394787,
+   "predicted": 0.04170630113665307,
+   "observed": 0.040791891521787915,
+   "ci95": [
+    0.039915255888453134,
+    0.04166941591940113
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "bin": [
+    0.1,
+    0.2
+   ],
+   "n": 547527,
+   "predicted": 0.15589347216050883,
+   "observed": 0.1568324484454648,
+   "ci95": [
+    0.15468805477072733,
+    0.15898512407624665
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "bin": [
+    0.2,
+    0.3
+   ],
+   "n": 152382,
+   "predicted": 0.23186181303962838,
+   "observed": 0.2415049021537977,
+   "ci95": [
+    0.23742967698444017,
+    0.246066788442646
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "bin": [
+    0.0,
+    0.1
+   ],
+   "n": 1739125,
+   "predicted": 0.048754081543506925,
+   "observed": 0.07723194134981672,
+   "ci95": [
+    0.07641407835647315,
+    0.07804954217971019
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "bin": [
+    0.1,
+    0.2
+   ],
+   "n": 354735,
+   "predicted": 0.1202367031300093,
+   "observed": 0.12709487363806785,
+   "ci95": [
+    0.12338593193721202,
+    0.13068015595990606
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "bin": [
+    0.2,
+    0.3
+   ],
+   "n": 836,
+   "predicted": 0.2156583847672273,
+   "observed": 0.19856459330143542,
+   "ci95": [
+    0.1682791863058488,
+    0.22832818223443221
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "bin": [
+    0.4,
+    0.5
+   ],
+   "n": 20,
+   "predicted": 0.41001574985614403,
+   "observed": 0.25,
+   "ci95": [
+    0.0908102766798419,
+    0.47368421052631576
+   ]
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "bin": [
+    0.5,
+    0.6
+   ],
+   "n": 2,
+   "predicted": 0.5125,
+   "observed": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "bin": [
+    0.9,
+    1.0
+   ],
+   "n": 95,
+   "predicted": 0.9017287568537992,
+   "observed": 0.9052631578947369,
+   "ci95": [
+    0.84375,
+    0.9578947368421052
+   ]
+  }
+ ],
+ "unknown": [
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "POS_GEO",
+   "answered_rows": 2062943,
+   "rows_with_unknown_in_support": 0.43641438469216065,
+   "mean_unknown_share_of_support": 0.0030385653297351784
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "DIST_GEO",
+   "answered_rows": 2095142,
+   "rows_with_unknown_in_support": 0.7894200011264153,
+   "mean_unknown_share_of_support": 0.003090147091225315
+  },
+  {
+   "kind": "WINDOW_VISIT",
+   "method": "CLOCK_GEO",
+   "answered_rows": 2095142,
+   "rows_with_unknown_in_support": 0.7987019495575957,
+   "mean_unknown_share_of_support": 0.0031989589233046333
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "POS_GEO",
+   "answered_rows": 2062518,
+   "rows_with_unknown_in_support": 0.3857711787242584,
+   "mean_unknown_share_of_support": 0.002724599527356842
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "DIST_GEO",
+   "answered_rows": 2094696,
+   "rows_with_unknown_in_support": 0.7245929719634735,
+   "mean_unknown_share_of_support": 0.0027773058948906497
+  },
+  {
+   "kind": "END_CLOSE",
+   "method": "CLOCK_GEO",
+   "answered_rows": 2094696,
+   "rows_with_unknown_in_support": 0.7245929719634735,
+   "mean_unknown_share_of_support": 0.0027773058948906497
+  }
+ ]
+}
