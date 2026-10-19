@@ -103,7 +103,7 @@ def pos_geo():
     inside = E.release(cases, today, grid, target, 630, original)
     check(inside['question']['conditions'][0]['kind'] == 'WINDOW_NO_VISIT'
           and '1' in inside['risk_set']['ids']
-          and inside['risk_set']['exclusions'].get('2') == 'WINDOW_ALREADY_VISITED_OR_UNKNOWN',
+          and inside['risk_set']['exclusions'].get('2') == 'WINDOW_ALREADY_VISITED',
           'residual: only a visit inside the elapsed part of the window excludes a case')
     reg = registry('integration/candidates/build/registry.json')
     cmp_ = by_id(reg, 'comparisons', 'CMP:C-POS')

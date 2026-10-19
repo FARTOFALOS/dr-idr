@@ -70,7 +70,7 @@ def main():
         if key in region: region[key]='Directed half-open band [low,high), fixed through the original physical frame; fixed absolute M5 window'
     form = old(forms['claim_forms'], 'CF:K-ARRIVE')
     form.update(id='CF:C-WINDOW', grounds='PROPOSAL', estimand=est['id'], acceptance='PROPOSED_BY_EXECUTOR',
-                statement_ru='На срезе {cut}, среди {n} исторических случаев с близким положением и указанным условием {yes} посетили область в оставшемся окне {window}; {unknown} исходов неизвестны.',
+                statement_ru='На срезе {cut}, среди {n} исторических случаев с близким положением и указанным условием {yes} посетили область в оставшемся окне {window}; исход неизвестен у {unknown}.',
                 condition_ru=sets[-1]['condition_ru'],
                 forbidden_readings_ru=['шанс сделки сегодня','совпадение полного пути','доля исходной F','один прогноз с неизменной опорой'])
     form['labels']=[dict(surface='PANEL',view='ANY',key=k,text_ru=v) for k,v in {

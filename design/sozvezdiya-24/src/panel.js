@@ -425,7 +425,7 @@
     if (dh._h !== head) { dh.innerHTML = head; dh._h = head; }
     const g = dom('detg');
     if (!open || !ok) { if (g._k) { g.innerHTML = ''; g._k = ''; } return; }
-    const o = detailObj(ctx), key = [F.r.snapshot_id, F.view, sliceOf(ctx), o ? pinKey(o) + '|' + (o.ev || '') : '', det.clientWidth, cfg.R, cfg.X, cfg.path, cfg.heatA, scenePacket()?.context.id || '', TRIAL.paths,continuationMode()?CS.packet?.release_id||CS.error||CS.pending:''].join('|');
+    const o = detailObj(ctx), key = [F.r.snapshot_id, F.view, sliceOf(ctx), o ? pinKey(o) + '|' + (o.ev || '') : '', det.clientWidth, cfg.R, cfg.X, cfg.path, cfg.heatA, scenePacket()?.context.id || '', TRIAL.paths,continuationMode()?CS.packet?.release_id||CS.error||CS.pending:'',continuationMode()?CS.detail:''].join('|');
     if (g._k === key) return;
     g._k = key;
     const B = detBody(ctx, o);

@@ -11,12 +11,15 @@ releases on the closed M5 11:10 … 11:40. Each relation is recomputed here from
 Needs the local history base (lab/.runtime); writes nothing.   python -B tests/continuations_transfer.py
 """
 from fractions import Fraction as Q
+import copy
+import math
 from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'lab'))
 import continuations24 as W  # noqa: E402
+import scene24 as S  # noqa: E402
 
 
 def check(ok, name):
@@ -31,7 +34,7 @@ def visit(path, grid, lo, hi, w, first, last):
     for T, p in zip(grid, path):
         if not first <= T <= last:
             continue
-        if p is None or any(v is None for v in p):
+        if p is None or any(v is None or not math.isfinite(v) for v in p):
             gap = True
             continue
         if Q(p[0]) < hi * w and Q(p[1]) >= lo * w:
@@ -91,8 +94,29 @@ def main():
           'H: its risk set is a named part of the position set, and the transition says the question changed')
     raw = W._releases[rel[690]['release_id']]
     reasons = raw['risk_set']['exclusions']
-    check(set(reasons) == pos - risk and set(reasons.values()) <= {'WINDOW_ALREADY_VISITED_OR_UNKNOWN', 'NOT_ACTIVE_AT_WINDOW_START'},
-          'H: every case left out of the risk set is left out for a named elapsed-window reason')
+    cases, source_grid = W.corpus('NQ', 'RDR')
+    expected = {}
+    for case in cases:
+        if case['id'] not in pos:
+            continue
+        elapsed = visit(case['P'], source_grid, lo, hi, int(case['w']), 690, 690)
+        if case['a'] >= 0 and source_grid[case['a']] >= 690:
+            expected[case['id']] = 'NOT_ACTIVE_AT_WINDOW_START'
+        elif elapsed != 'NO':
+            expected[case['id']] = 'WINDOW_ALREADY_VISITED' if elapsed == 'YES' else 'WINDOW_VISIT_UNKNOWN'
+    check(reasons == expected and set(expected) == pos - risk and p690['risk_exclusions'] == expected,
+          'H: every exclusion and its cause independently follow from source activation and actual elapsed M5 ranges')
+    check(sum(p690['exclusion_counts'].values()) == len(pos) - len(risk),
+          'H: displayed reasons partition exactly the cases excluded from the residual support')
+    fam, _, day = S._family('NQ', 'RDR', 690, '2025-12-17', 'conf:all')
+    today = W.rows_today(fam, day, source_grid, 690)
+    bad = copy.deepcopy(raw)
+    for cid in bad['risk_set']['exclusions']:
+        bad['risk_set']['exclusions'][cid] = ('NOT_ACTIVE_AT_WINDOW_START'
+            if expected[cid] == 'WINDOW_ALREADY_VISITED' else 'WINDOW_ALREADY_VISITED')
+    rejected = W.publish(bad, p690['witnesses'], cases, today, source_grid, dict(day, _F_ids=fam['ids']))
+    check(rejected['status'] == 'WITNESS_MISMATCH' and not rejected['contract'].get('bundles'),
+          'H counterexample: correct membership/count with false exclusion causes cannot publish')
     s = p690['support']
     check(s['n_total'] == len(risk) and s['yes'] + s['no'] + s['unknown'] == s['n_total'],
           'H: the residual share is counted on the risk set only (yes + no + unknown = its n)')

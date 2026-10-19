@@ -1197,6 +1197,20 @@ fact_forms:
     forbidden_readings_ru: ["доли надёжны", "набор расширен"]
     acceptance: PROPOSED_BY_EXECUTOR
     note: "Operator 2026-10-08 (meaning/17 §7): before the confirmation «честно писать «мало»» for n < 20 (his option «показать «мало сессий: n=…»»); after a DR break the same answer, where the threshold 20 is applied by the executor (to be confirmed at acceptance); the title is the executor's"
+  - id: FF:CANDIDATE-STATUS
+    version: "1"
+    sc_ref: ["§14.1", "§14.3", "K33"]
+    grounds: OPERATOR_REQUIREMENT
+    record_class: PublicationStanding
+    statement_ru: "Функция экрана на испытании (редакция DR-LAB-CANDIDATES-1): приёмка оператором не проведена. Её числа — описание истории или условный ответ по сопоставимым случаям, не прогноз; принятые функции экрана (DR до 16:00, «Сейчас», зоны) от неё не зависят."
+    labels:
+      - {surface: PANEL, view: ANY, key: tag, text_ru: "кандидат"}
+      - {surface: INSPECTOR, view: ANY, key: foot, text_ru: "кандидат · приёмка не проведена"}
+      - {surface: TOOLTIP, view: ANY, key: title, text_ru: "Кандидат на испытании: ваша приёмка не проведена. Не принятая часть экрана и не прогноз; «DR до 16:00», «Сейчас» и зоны от него не зависят. Выключается в ⚙ → Испытание кандидатов."}
+      - {surface: TOOLTIP, view: ANY, key: mode_title, text_ru: "Продолжения — кандидат на испытании, приёмка не проведена: условный ответ по сопоставимым случаям, не прогноз. Выключается в ⚙ → Испытание кандидатов."}
+    forbidden_readings_ru: ["принятая функция экрана", "прогноз", "сигнал"]
+    acceptance: PROPOSED_BY_EXECUTOR
+    note: "Operator 2026-10-19 (finalisation of screen 24 for his acceptance): «проверь, что кандидаты не подменяют принятую семантику и не получают статус прогноза» and «понятные статусы принятых функций и кандидатов». Every candidate block, the trial form of a «Сейчас» row and the «Продолжения» mode carry this standing where they are shown; the words are the executor's"
   - id: FF:K-TARGET
     version: "1"
     sc_ref: ["E1", "§12.6"]
