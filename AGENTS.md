@@ -33,6 +33,14 @@ The normal launcher starts `server.py --integration` on 8767; the ordinary defau
 It checks loaded source/data versions, replaces its own stale server, restarts a TradingView opened without 9222
 (since 2026-10-19 again; from 15.10 to 19.10 it left such a window alone and the screen had no live candles), and
 supports `-HistoryOnly`, which leaves TradingView untouched. The historical base stops in 2025. Candidate toggles are independent.
+
+**Screen 23.5 (branch `ekran-23-5`, 2026-10-19 night).** The operator keeps screen 24 on main exactly as it works and
+had the new semantic contour put on a copy, «не 24, а 23.5», on its own port. 23.5 is screen 24's code
+(`design/sozvezdiya-24`, built to its own `lab/dist/24`) with Codex's 19.10 continuation edits and the finalisation for
+the operator's acceptance; its toolbar says «№23.5». It runs from its own working copy (`.worktrees/ekran-23-5`) on
+**127.0.0.1:8735**: `start-dr-lab-23-5.cmd` / `.ps1` (the desktop shortcut «DR Lab 23.5»), `stop-dr-lab-23-5.cmd`. Its
+history files are copied once from the main working copy's `lab/.runtime`; it never touches 8767. Run its checks
+against 8735. The acceptance walk is `spec/ekran-24/15-priemka-23-5.md`. Whether 23.5 replaces 24 is the operator's call.
 New checks: `tests/continuity24.py`, `continuations24.py`, `continuations_page.mjs`, `q1_prefix_metadata.py`,
 `q1_reveal.py`. Run them along with the existing required checks below. `integration/pr-dispositions.json` records
 the current fate of every source unit; old PR closure is not blanket adoption. No new ontology stack was added.
@@ -141,6 +149,7 @@ shown. Any date of 2006–2025 opens as if it were today («История»); c
 ```
 start-dr-lab.cmd / .ps1   the operator's shortcut target: TradingView (port 9222) -> history -> server -> page
 start-dr-lab-24.cmd       the shortcut «DR Lab 24»: the same start, then the page /24/ (the root / opens it too)
+start-dr-lab-23-5.cmd/.ps1  branch ekran-23-5 only: the shortcut «DR Lab 23.5», its own server on 8735 (stop: stop-dr-lab-23-5)
 stop-dr-lab.cmd / .ps1    stop the local server
 contract/                 the machine contract of DR-LAB-SC-1.1: LinkML schema, registry, build tool, products;
                           start at contract/README.md (.venv-linkml/ = its LinkML environment, git-ignored)
