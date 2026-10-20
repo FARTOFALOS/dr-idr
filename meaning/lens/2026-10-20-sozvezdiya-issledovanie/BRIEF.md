@@ -53,7 +53,7 @@
 |---|---|
 | код и документы (`main`) | `f35faaeb54d445d4d17de6264d096b6005ac9e6d` |
 | аудит созвездий 18.10 (ветка PR #15, в `main` не слит) | `8e25f0cf63acf1db2db04da3ff7ceb6e6d0e4a3f` |
-| случай YM 20.10 и снимок экрана (ветка этого брифа) | `a2a1f2e6f4b1d1d006ec5498716c66d114b3578a` |
+| случай YM 20.10 и снимок экрана (ветка этого брифа) | `6e915450009a833a365b991f358346491a08e52b` |
 
 - Любой файл: `https://github.com/FARTOFALOS/dr-idr/blob/<коммит>/<путь>`.
 - Raw: `https://raw.githubusercontent.com/FARTOFALOS/dr-idr/<коммит>/<путь>`.
@@ -74,8 +74,19 @@
 | `tests/` | проверки |
 | `integration/` | кандидаты и справочники соседних линий; к созвездиям относится мало |
 
-Рабочий экран — **экран 24**. Дизайны 21–23 и классический экран — прошлые поколения с другим смыслом звёзд (там
-звезда — первый приход цены).
+Рабочий экран — **экран 24**. У прежних экранов смысл точки свой. Определения — в
+[`docs/SEMANTICS.md`](https://github.com/FARTOFALOS/dr-idr/blob/f35faaeb54d445d4d17de6264d096b6005ac9e6d/docs/SEMANTICS.md)
+и README дизайнов.
+- **Классический экран и панель исследования** (до 28.09, `/classic.html`): одна точка на сессию — окончательный откат
+  и время, когда его достигли; плотные клетки названы кластерами. Это ближе всего к Time & Price автора.
+- **Дизайн 21 «Созвездия»** (28.09): звёзды — экстремумы похожих сессий после текущей минуты до конца сессии. Агенты
+  подставили их без вопроса оператора, и все сгущения собрались у 16:00.
+- **Дизайн 22** (29.09–01.10, `/22/`): звезда — первый приход цены похожей сессии в место впереди. Созвездие —
+  плотность первых приходов с контуром 38 % внутри трёх мест.
+- **Дизайн 23** (01.10, `/sem-v1/`,
+  [README](https://github.com/FARTOFALOS/dr-idr/blob/f35faaeb54d445d4d17de6264d096b6005ac9e6d/design/sozvezdiya-23/README.md)):
+  первая проба SEM-1.0 — один окончательный R или X на сессию, без автоматического кластеризатора. Прямой предок
+  объекта экрана 24.
 
 ### 0.3. Ключевые файлы по темам
 
@@ -125,7 +136,7 @@
 - [`studies/lens15_2026_10_01/`](https://github.com/FARTOFALOS/dr-idr/tree/f35faaeb54d445d4d17de6264d096b6005ac9e6d/studies/lens15_2026_10_01), [`studies/zone_map_2_audit_2026_10_01/`](https://github.com/FARTOFALOS/dr-idr/tree/f35faaeb54d445d4d17de6264d096b6005ac9e6d/studies/zone_map_2_audit_2026_10_01), [`studies/cluster_synthesis_audit_2026_10_01/`](https://github.com/FARTOFALOS/dr-idr/tree/f35faaeb54d445d4d17de6264d096b6005ac9e6d/studies/cluster_synthesis_audit_2026_10_01), [`studies/main_cluster_2026_10_01/`](https://github.com/FARTOFALOS/dr-idr/tree/f35faaeb54d445d4d17de6264d096b6005ac9e6d/studies/main_cluster_2026_10_01) — прежние проверки.
 - [`meaning/03-dokazatelstva.md`](https://github.com/FARTOFALOS/dr-idr/blob/f35faaeb54d445d4d17de6264d096b6005ac9e6d/meaning/03-dokazatelstva.md) — что из описательного метода объясняет геометрия диапазона.
 - Аудит 18.10, ветка PR #15: [`meaning/lens/2026-10-18-audit-sozvezdij/README.md`](https://github.com/FARTOFALOS/dr-idr/blob/8e25f0cf63acf1db2db04da3ff7ceb6e6d0e4a3f/meaning/lens/2026-10-18-audit-sozvezdij/README.md) ([raw](https://raw.githubusercontent.com/FARTOFALOS/dr-idr/8e25f0cf63acf1db2db04da3ff7ceb6e6d0e4a3f/meaning/lens/2026-10-18-audit-sozvezdij/README.md)), [`studies/audit_sozvezdij_2026_10_18/`](https://github.com/FARTOFALOS/dr-idr/tree/8e25f0cf63acf1db2db04da3ff7ceb6e6d0e4a3f/studies/audit_sozvezdij_2026_10_18) (`README.md`, `author_key.txt`, `anatomy.json`, `share_vs_status.json`).
-- Случай YM 20.10, ветка этого брифа: [`studies/ym_rdr_2026_10_20/README.md`](https://github.com/FARTOFALOS/dr-idr/blob/a2a1f2e6f4b1d1d006ec5498716c66d114b3578a/studies/ym_rdr_2026_10_20/README.md) ([raw](https://raw.githubusercontent.com/FARTOFALOS/dr-idr/a2a1f2e6f4b1d1d006ec5498716c66d114b3578a/studies/ym_rdr_2026_10_20/README.md)); рядом `results.json`, `check.py`, `img/density-rx.png`.
+- Случай YM 20.10, ветка этого брифа: [`studies/ym_rdr_2026_10_20/README.md`](https://github.com/FARTOFALOS/dr-idr/blob/6e915450009a833a365b991f358346491a08e52b/studies/ym_rdr_2026_10_20/README.md) ([raw](https://raw.githubusercontent.com/FARTOFALOS/dr-idr/6e915450009a833a365b991f358346491a08e52b/studies/ym_rdr_2026_10_20/README.md)); рядом `results.json`, `check.py`, `img/density-rx.png`.
 
 **Проверки**
 - [`tests/sem24.py`](https://github.com/FARTOFALOS/dr-idr/blob/f35faaeb54d445d4d17de6264d096b6005ac9e6d/tests/sem24.py), [`tests/ui_check24.js`](https://github.com/FARTOFALOS/dr-idr/blob/f35faaeb54d445d4d17de6264d096b6005ac9e6d/tests/ui_check24.js), [`tests/contract_sc11.py`](https://github.com/FARTOFALOS/dr-idr/blob/f35faaeb54d445d4d17de6264d096b6005ac9e6d/tests/contract_sc11.py) — что именно проверяется.
@@ -133,7 +144,8 @@
 ### 0.4. Что, по нашему мнению, периферийно
 
 Мы считаем эти части далёкими от созвездий. Решать вам: если увидите связь, идите туда.
-- Прошлые экраны: `design/sozvezdiya-21`, `-22`, `-23`, классический экран. Там звезда означает первый приход.
+- Код прежних экранов (`design/sozvezdiya-21`, `-22`, `-23`, классический). Рабочий вид — только экран 24. Смысл
+  точки на них разный (§0.2). Дизайн 23 полезен для истории объекта: откуда взялись окончательные R/X.
 - Условные слои с другими наборами сессий: «Сейчас» (`lab/now24.py`, `meaning/15-sloj-seichas.md`), «Продолжения»,
   ARRIVE, PRE, справочники Trace и FOM в `integration/`.
 - Линзы 12–19.10 в `meaning/lens/` — про «отсюда», архитектуру и продолжения.
@@ -460,7 +472,7 @@ V2 прямо пишет, что эти значения «не объявляю
 Живой экран, 12:10 ET. Это стенд 23.5 — кандидат, который оператор сейчас оценивает. Функции рисования созвездий на
 нём построчно те же, что на принятом экране 24 (сверено).
 
-![YM RDR 20.10, 12:10 ET](https://raw.githubusercontent.com/FARTOFALOS/dr-idr/a2a1f2e6f4b1d1d006ec5498716c66d114b3578a/meaning/lens/2026-10-20-sozvezdiya-issledovanie/img/ym-rdr-2026-10-20-1210-ekran-23-5.png)
+![YM RDR 20.10, 12:10 ET](https://raw.githubusercontent.com/FARTOFALOS/dr-idr/6e915450009a833a365b991f358346491a08e52b/meaning/lens/2026-10-20-sozvezdiya-issledovanie/img/ym-rdr-2026-10-20-1210-ekran-23-5.png)
 
 - Созвездие R одно: R1 16,6 % у края коробки, 10:30–11:45. По местному факту 23.5 цена побывала в нём в 10:50.
 - Ниже цены созвездий нет.
@@ -473,11 +485,13 @@ V2 прямо пишет, что эти значения «не объявляю
 
 ### 7.2. Что посчитало правило (`studies/ym_rdr_2026_10_20`)
 
-Семья: YM · RDR · вторник · лонг · подтверждение 10:30–10:45, N = 157 (2006–2025). Порог поддержки 8. Пересчитано
-функциями продукта из сохранённого слепка; совпадает с опубликованным. Другой агент до этого независимо сверил отбор
-семьи и окончательные R с M5 базы: 157 из 157, расхождений нет.
+Семья: YM · RDR · вторник · лонг · подтверждение 10:30–10:45, N = 157 (2006–2025). Порог поддержки 8.
+- Зоны и диагностики пересчитаны функцией продукта `zonemap24.evaluate` из сохранённого слепка. Они совпадают с
+  опубликованным снимком по всем полям: маски, составы, границы, остаток, диагностики.
+- Маски, составы и остаток совпадают и с независимым эталоном контракта `ref_zone_map`.
+- Другой агент до этого независимо сверил отбор семьи и окончательные R с M5 базы: 157 из 157, расхождений нет.
 
-![Плотность D окончательных R и X и области правила](https://raw.githubusercontent.com/FARTOFALOS/dr-idr/a2a1f2e6f4b1d1d006ec5498716c66d114b3578a/studies/ym_rdr_2026_10_20/img/density-rx.png)
+![Плотность D окончательных R и X и области правила](https://raw.githubusercontent.com/FARTOFALOS/dr-idr/6e915450009a833a365b991f358346491a08e52b/studies/ym_rdr_2026_10_20/img/density-rx.png)
 
 **R.**
 
@@ -521,7 +535,8 @@ V2 прямо пишет, что эти значения «не объявляю
 
 ### 7.4. Что из этого следует и что нет
 
-- **Реализация верна:** правило сделало ровно то, что объявлено.
+- **Реализация соответствует объявленному правилу.** Это показывают сверка с опубликованным снимком и независимый
+  эталон (§7.2). О качестве самого правила это ничего не говорит.
 - **Отсутствие второго созвездия R — свойство правила, а не истории.** Его определяют одноуровневый критерий, правило
   собственной вершины, порог поддержки и фаза сетки.
 - **Не доказано,** что глубокое сгущение — «настоящее» созвездие и полезный ориентир. Оно позднее и, вероятно,
