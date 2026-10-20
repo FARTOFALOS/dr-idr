@@ -38,6 +38,11 @@ foreach ($inst in @('nq', 'es', 'ym')) {
         }
     }
 }
+# the walk-forward passport of «Сейчас» (lab/now24_validate.py): without it 23.5 said «проверка на истории не прогнана»
+# where 24 says «путь не добавил к базе по времени»; kept current with the main working copy's
+$validation = Join-Path (Join-Path $sourceRoot 'lab\.runtime') 'now24_validation.json'
+if (Test-Path -LiteralPath $validation) { Copy-Item -LiteralPath $validation -Destination (Join-Path $runtime 'now24_validation.json') -Force }
+else { Write-Host '  [!] Нет проверки «Сейчас» на истории (now24_validation.json): строка проверки будет «не прогнана»' -ForegroundColor Yellow }
 
 # 2. TradingView Desktop with the candle channel (port 9222), the same step as DR Lab 24's launcher: without the port
 #    the screen has no live candles, so a TradingView opened without it is restarted with it
