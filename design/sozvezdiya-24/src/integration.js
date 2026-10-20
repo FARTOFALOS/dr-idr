@@ -79,6 +79,9 @@
     if(Math.abs(bd.lower-k.yes/k.n_match)>1e-12||Math.abs(bd.upper-(k.yes+k.unknown)/k.n_match)>1e-12||pt&&Math.abs(pt.value-k.yes/k.n_known)>1e-12)return null;
     return b;
   }
+  // the standing of a candidate where it is shown (FF:CANDIDATE-STATUS, operator 2026-10-19): a candidate block or a trial
+  // form is never read as an accepted function of the screen; panel only, nothing over the chart
+  function candTag() { return ' <i class="p24-cand" title="' + esc(lbl('FF:CANDIDATE-STATUS', 'title')) + '">' + lbl('FF:CANDIDATE-STATUS', 'tag') + '</i>'; }
   const arrPlace = (r, level) => r?.places?.find(p => p.level === level) || null;
   const placeName = level => lbl('EST:K-ARRIVE', level === '0' ? 'p0' : level === '-1/2' ? 'p12' : 'p710');
   function arrivalValue(r, P) {
@@ -91,7 +94,7 @@
     if (!ICFG.enabled) return '';
     if (TRIAL.pre && ctx.s.status === 'waiting') {
       const r = preOf(ctx), b = r && preBundle(r, 'EST:P-DIR');
-      let out = '<div class="p24-pre"><div class="p21-h second">' + lbl('EST:P-DIR', 'head') + scopeSwitch() + '</div>';
+      let out = '<div class="p24-pre"><div class="p21-h second"><span class="p24-ht">' + lbl('EST:P-DIR', 'head') + candTag() + '</span>' + scopeSwitch() + '</div>';
       if (!b) return out + '<div class="p21-note">' + esc(IS.error || r?.message || 'Подбираю похожие сессии…') + '</div></div>';
       if (!r.N) return out + '<div class="p21-note">' + lbl('EST:P-DIR','zero') + '</div></div>';
       if (r.few) out += '<div class="p21-note">мало сессий</div>';
@@ -99,7 +102,7 @@
       return out + '</div>';
     }
     if (!TRIAL.arrive || !ctx.F) return '';
-    const r = arriveOf(ctx), out = ['<div class="p24-arrblk"><div class="p21-h second" title="' + esc(lbl('EST:K-ARRIVE', 'head_title')) + '">' + (ctx.s.failed?lbl('FF:K-TARGET','ORIGINAL_PLACES'):lbl('EST:K-ARRIVE', 'head')) + '</div>'];
+    const r = arriveOf(ctx), out = ['<div class="p24-arrblk"><div class="p21-h second" title="' + esc(lbl('EST:K-ARRIVE', 'head_title')) + '"><span class="p24-ht">' + (ctx.s.failed?lbl('FF:K-TARGET','ORIGINAL_PLACES'):lbl('EST:K-ARRIVE', 'head')) + candTag() + '</span></div>'];
     if (!r) return out.join('') + '<div class="p21-note">' + esc(IS.error || 'Сопоставляю историю…') + '</div></div>';
     if (r.status !== 'OK') out.push('<div class="p21-note">' + esc(REVIEW.facts['FF:K-TARGET'].labels[r.status] ? lbl('FF:K-TARGET', r.status, { time: r.time || (ctx.s.failed ? clk(ctx.s.failed) : '') }) : r.message || r.status) + '</div>');
     for (const level of ['0', '-1/2', '-7/10']) {
@@ -184,7 +187,7 @@
     const ph = phaseOf(F, ctx), P = 'FF:PHASE-RULE';
     if (!ph) return '';
     const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true);
-    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
+    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + candTag() + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
       '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
       link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
   }
@@ -204,7 +207,7 @@
     const P = v => Math.round(F.u2p(u0 + sgn * v)), cnt = sp.N_match_unknown ? sp.N_new_yes + '–' + (sp.N_new_yes + sp.N_match_unknown) : String(sp.N_new_yes);
     const t1 = bN ? reviewLbl(NE, 'title_mark', { ev: 'R', cut: n.cut.cut_clock_et, today: num(P(0), 0), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base }) : '';
     const t2 = bI ? reviewLbl('EST:N-IF-NEW-R', 'title_mark', { p50: lv(q.q50), lo: num(Math.min(P(q.q25), P(q.q75)), 0), hi: num(Math.max(P(q.q25), P(q.q75)), 0), time: bT ? reviewLbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' }) : '';
-    return link({ k: 'now', ev: 'R' }, '<span class="t"><span>' + reviewLbl(NE, 'row_mark', { ev: '<i style="color:' + cfg.R + '">R</i>' }) + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' '));
+    return link({ k: 'now', ev: 'R' }, '<span class="t"><span>' + reviewLbl(NE, 'row_mark', { ev: '<i style="color:' + cfg.R + '">R</i>' }) + candTag() + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' '));
   }
   // its levels at the price scale, always, no text: today's deepest point after the activation (dashed), and for the
   // sessions whose pullback went deeper the middle half of where it ended (a narrow bar) with its median (a tick); a thin

@@ -14,10 +14,16 @@
     "physical area and absolute window remain pinned at 690 / 1600",
     "residual question explicitly has 39 cases of 81 position matches / 1600",
     "visible residual meaning at 11:30 / 1600",
+    "all 42 exclusions are shown with the independently verified elapsed-visit cause / 1600",
+    "81 → 39 is followed by its own cause, the membership change of the position set comes last / 1600",
+    "fixed rectangle separates elapsed and remaining clock parts without moving its target / 1600",
     "physical area and absolute window remain pinned at 695 / 1600",
     "fact replaces percentage and conditional drawing / 1600",
+    "the fact is a mark, not a number; the candidate standing is on the panel, the inspector and the mode / 1600",
     "physical area and absolute window remain pinned at 700 / 1600",
     "fact replaces percentage and conditional drawing / 1600",
+    "history contains the seven actually viewed cuts, each with its own answer/support / 1600",
+    "replay through a receipt cannot show answers from later knowledge cuts / 1600",
     "original historical R/X snapshot restored identically / 1600",
     "target survives switching representations / 1600",
     "all 97 witnesses, including 60 outside F, 1920",
@@ -33,16 +39,23 @@
     "physical area and absolute window remain pinned at 690 / 1920",
     "residual question explicitly has 39 cases of 81 position matches / 1920",
     "visible residual meaning at 11:30 / 1920",
+    "all 42 exclusions are shown with the independently verified elapsed-visit cause / 1920",
+    "81 → 39 is followed by its own cause, the membership change of the position set comes last / 1920",
+    "fixed rectangle separates elapsed and remaining clock parts without moving its target / 1920",
     "physical area and absolute window remain pinned at 695 / 1920",
     "fact replaces percentage and conditional drawing / 1920",
+    "the fact is a mark, not a number; the candidate standing is on the panel, the inspector and the mode / 1920",
     "physical area and absolute window remain pinned at 700 / 1920",
     "fact replaces percentage and conditional drawing / 1920",
+    "history contains the seven actually viewed cuts, each with its own answer/support / 1920",
+    "replay through a receipt cannot show answers from later knowledge cuts / 1920",
     "original historical R/X snapshot restored identically / 1920",
     "target survives switching representations / 1920",
     "mouse brush creates the same physical target and exact window",
     "correct number cannot keep a missing_path drawing",
     "correct number cannot keep a foreign_path drawing",
     "correct number cannot keep a foreign_bundle drawing",
+    "correct number cannot keep a foreign_exclusions drawing",
     "a late prior release cannot replace the new M5 answer or drawing",
     "reopening the same day restores a current scene and the identical pinned release",
     "no browser exceptions: "
@@ -69,7 +82,7 @@
         "no": 57,
         "unknown": 1
       },
-      "release": "d83699308302eb2e8fe8495fa72fc115349509f5418d494bed7ebfacff7df08c"
+      "release": "0814e400024a9c27e9759fa582d885d6960af6d815d25ecce92a4e68cef375f5"
     },
     {
       "viewport": [
@@ -94,7 +107,7 @@
         "outside_F": 13
       },
       "question": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
-      "release": "a57b891bb8bdbac98e33e31c5cf5c50ba989e68f252a5fe663f91ac81568b7ea"
+      "release": "ffbb54a8ae7fee6f3f18b5b030a07bedc9a4970806103a009fac96b2dd3d1c79"
     },
     {
       "viewport": [
@@ -119,7 +132,7 @@
         "outside_F": 35
       },
       "question": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
-      "release": "88b4037d5e1630641762e4ff5c490f7d4098269b0a99782c0d43cad69004678c"
+      "release": "a81e8297de9d86b553cc7bdc514bb062edbe554063a2f617574707229b523ce5"
     },
     {
       "viewport": [
@@ -144,7 +157,7 @@
         "outside_F": 39
       },
       "question": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
-      "release": "ef615c625e6dd82c9ea297374320e8270f3e44eb38dfe2173b0a5ce25c12dfe4"
+      "release": "2e50ee85702333db4b73f15858bfe08d7b6f7832e0d466611adeaf080850303f"
     },
     {
       "viewport": [
@@ -169,7 +182,7 @@
         "outside_F": 31
       },
       "question": "deaf8c7c74482468517a95a377323186e6a7364c90c600765771c1500de5440c",
-      "release": "f728798abb30c467df4c14ff61e824be72dd3300599424db02186777e69c8bb3"
+      "release": "fa877ad7d6b8f811495cc9e2bce79e8c4049391fe83897f73ec88c8324e7d490"
     },
     {
       "viewport": [
@@ -194,7 +207,7 @@
         "outside_F": 25
       },
       "question": "23439b488b5b7eea826fae1d0a34037c1fff1400ceceb320aa22e225d30441c2",
-      "release": "5db820008c0bb38797547da7c18fe3f63174493cfb571f6edd7ae25976fc53f2"
+      "release": "c7eda96ce8dcd8ac63b5f26eed372479cf6b53824d21743cbece87f718e850fd"
     },
     {
       "viewport": [
@@ -219,7 +232,7 @@
         "outside_F": 35
       },
       "question": "23439b488b5b7eea826fae1d0a34037c1fff1400ceceb320aa22e225d30441c2",
-      "release": "d2712951dc823eff96a6fb04ea3d41870141c3168701be586af4667008f1c27c"
+      "release": "11c485cbf1a5cd3a4a2e0841d90a6476af925add56f5b45ad0670ea2d1a34fb5"
     },
     {
       "viewport": [
@@ -242,7 +255,7 @@
         "no": 57,
         "unknown": 1
       },
-      "release": "d83699308302eb2e8fe8495fa72fc115349509f5418d494bed7ebfacff7df08c"
+      "release": "0814e400024a9c27e9759fa582d885d6960af6d815d25ecce92a4e68cef375f5"
     },
     {
       "viewport": [
@@ -267,7 +280,7 @@
         "outside_F": 13
       },
       "question": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
-      "release": "a57b891bb8bdbac98e33e31c5cf5c50ba989e68f252a5fe663f91ac81568b7ea"
+      "release": "ffbb54a8ae7fee6f3f18b5b030a07bedc9a4970806103a009fac96b2dd3d1c79"
     },
     {
       "viewport": [
@@ -292,7 +305,7 @@
         "outside_F": 35
       },
       "question": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
-      "release": "88b4037d5e1630641762e4ff5c490f7d4098269b0a99782c0d43cad69004678c"
+      "release": "a81e8297de9d86b553cc7bdc514bb062edbe554063a2f617574707229b523ce5"
     },
     {
       "viewport": [
@@ -317,7 +330,7 @@
         "outside_F": 39
       },
       "question": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
-      "release": "ef615c625e6dd82c9ea297374320e8270f3e44eb38dfe2173b0a5ce25c12dfe4"
+      "release": "2e50ee85702333db4b73f15858bfe08d7b6f7832e0d466611adeaf080850303f"
     },
     {
       "viewport": [
@@ -342,7 +355,7 @@
         "outside_F": 31
       },
       "question": "deaf8c7c74482468517a95a377323186e6a7364c90c600765771c1500de5440c",
-      "release": "f728798abb30c467df4c14ff61e824be72dd3300599424db02186777e69c8bb3"
+      "release": "fa877ad7d6b8f811495cc9e2bce79e8c4049391fe83897f73ec88c8324e7d490"
     },
     {
       "viewport": [
@@ -367,7 +380,7 @@
         "outside_F": 25
       },
       "question": "23439b488b5b7eea826fae1d0a34037c1fff1400ceceb320aa22e225d30441c2",
-      "release": "5db820008c0bb38797547da7c18fe3f63174493cfb571f6edd7ae25976fc53f2"
+      "release": "c7eda96ce8dcd8ac63b5f26eed372479cf6b53824d21743cbece87f718e850fd"
     },
     {
       "viewport": [
@@ -392,7 +405,7 @@
         "outside_F": 35
       },
       "question": "23439b488b5b7eea826fae1d0a34037c1fff1400ceceb320aa22e225d30441c2",
-      "release": "d2712951dc823eff96a6fb04ea3d41870141c3168701be586af4667008f1c27c"
+      "release": "11c485cbf1a5cd3a4a2e0841d90a6476af925add56f5b45ad0670ea2d1a34fb5"
     }
   ],
   "limits": [

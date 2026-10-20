@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DR Lab · 24</title>
+<title>DR Lab · 23.5</title>
 <style>
 :root{--bg:#08090C;--panel:#0E1014;--raised:#161A21;--hover:#1C212A;--line:#1C2027;--line2:#2A2F38;--text:#D1D4DC;--text2:#A3A8B3;--text3:#6F7582;--replay:#F7C948;--hist:#8FB4FF;color-scheme:dark}
 *{box-sizing:border-box}
@@ -221,22 +221,32 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
 /* DR-LAB-SC-1.1: a violation of the machine contract (a withheld number, another registry, a mismatch with the reference) */
 .p24-sc{margin:0 0 8px;padding:5px 8px;border:1px solid rgba(242,54,69,.5);border-radius:5px;background:rgba(242,54,69,.08);color:#F2A0A6;font-size:11.5px;line-height:1.35;overflow-wrap:anywhere}
 .p24-arrblk .p21-sub { display: block; white-space: normal; }
+/* FF:CANDIDATE-STATUS (2026-10-19): the standing of a candidate block, a trial row and the «Продолжения» mode, in the panel
+   and the toolbar only; the header keeps its own type, the tag is a quiet dashed outline */
+.p21-h .p24-ht{font-weight:600;color:#A6AFBC;font-size:12px}
+.p24-cand{display:inline-block;padding:0 4px;border:1px dashed #5E6673;border-radius:3px;font-style:normal;font-weight:500;font-size:10.5px;line-height:14px;color:#9AA3B0;vertical-align:1px;white-space:nowrap;cursor:help;letter-spacing:.1px}
+#mode [data-m="continuations"].cand{text-decoration:underline dashed #6B7480;text-underline-offset:5px;text-decoration-thickness:1px}
 /* Fixed-target continuation candidate: controls stay in the existing passport window. */
 #mode [data-m="continuations"][hidden]{display:none}
 .c24-tools{display:flex;gap:5px;margin:5px 0 8px;flex-wrap:wrap}
 .c24-tools button{font:inherit;padding:4px 6px;background:var(--raised);border:1px solid var(--line2);border-radius:4px;color:var(--text)}
 .c24-case{display:block;font-size:12px;margin:8px 0}
 .c24-case select{display:block;width:100%;margin-top:4px;background:var(--raised);color:var(--text);border:1px solid var(--line2);padding:4px}
+.c24-history{display:grid;gap:3px}
+.c24-history button{display:grid;grid-template-columns:42px 1fr;gap:1px 6px;padding:5px 6px;text-align:left;color:var(--text);background:var(--raised);border:1px solid var(--line2);border-radius:4px;font:inherit}
+.c24-history button[aria-current="true"]{border-color:#8F98A6}
+.c24-history button b{text-align:right;font-size:12px}
+.c24-history button small{grid-column:1 / -1;color:#A3A8B3;font-size:11px}
 
 </style>
 </head>
 <body>
-<div id="dr21-root" aria-label="DR Lab — вариант 24">
+<div id="dr21-root" aria-label="DR Lab — вариант 23.5">
 <div id="tb">
   <div class="seg" id="inst"></div>
   <div class="seg" id="sess"></div>
   <span class="lbl" id="date"></span>
-  <span class="lbl version24">№ 24</span>
+  <span class="lbl version24" title="23.5 — кандидат на смену экрана 24: тот же экран с новым смысловым контуром; экран 24 (main) не меняется">№23.5</span>
   <div class="seg" id="mode"><button data-m="bounds">Границы хода</button><button data-m="path">Путь семьи</button><button data-m="continuations" hidden>Продолжения</button></div>
   <div class="seg" id="ev"></div>
   <button type="button" id="areab" title="Выбрать область R мышью: цена или цена × время; R/X меняется вместе с текущим фокусом">▭ Область · R</button>

@@ -3613,6 +3613,84 @@
       "surface": "PANEL",
       "text_ru": "{lo}–{hi}",
       "view": "ANY"
+     },
+     {
+      "key": "history_head",
+      "surface": "PANEL",
+      "text_ru": "Ход вопроса",
+      "view": "ANY"
+     },
+     {
+      "key": "history_seen",
+      "surface": "PANEL",
+      "text_ru": "Просмотренные M5 · новые сверху",
+      "view": "ANY"
+     },
+     {
+      "key": "history_whole",
+      "surface": "PANEL",
+      "text_ru": "Всё окно",
+      "view": "ANY"
+     },
+     {
+      "key": "history_rest",
+      "surface": "PANEL",
+      "text_ru": "Остаток {from}–{to}",
+      "view": "ANY"
+     },
+     {
+      "key": "history_yes",
+      "surface": "PANEL",
+      "text_ru": "Посещение установлено",
+      "view": "ANY"
+     },
+     {
+      "key": "history_no",
+      "surface": "PANEL",
+      "text_ru": "Без посещения",
+      "view": "ANY"
+     },
+     {
+      "key": "no_visit_yet",
+      "surface": "PANEL",
+      "text_ru": "В окне до {time} не заходили",
+      "view": "ANY"
+     },
+     {
+      "key": "support_n",
+      "surface": "PANEL",
+      "text_ru": "опора {n}",
+      "view": "ANY"
+     },
+     {
+      "key": "membership_change",
+      "surface": "PANEL",
+      "text_ru": "В набор по положению с {time}: вошли {entered}, вышли {left}",
+      "view": "ANY"
+     },
+     {
+      "key": "support_chain",
+      "surface": "PANEL",
+      "text_ru": "По положению {position} → опора остатка {risk}",
+      "view": "ANY"
+     },
+     {
+      "key": "exclude_WINDOW_ALREADY_VISITED",
+      "surface": "PANEL",
+      "text_ru": "Уже заходили в окно",
+      "view": "ANY"
+     },
+     {
+      "key": "exclude_WINDOW_VISIT_UNKNOWN",
+      "surface": "PANEL",
+      "text_ru": "Посещение неизвестно",
+      "view": "ANY"
+     },
+     {
+      "key": "exclude_NOT_ACTIVE_AT_WINDOW_START",
+      "surface": "PANEL",
+      "text_ru": "Подтвердились позднее начала окна",
+      "view": "ANY"
      }
     ],
     "note": "Operator 2026-10-12: integrate the verified Q1 mechanism into screen 24, «не подменяя существующие показатели BASE/NOW». The words follow the curator's trader wording (KADR-1.1 §10: «отсюда до −0,5 доходили 41 из 100», «уже дошли в 11:20», «мало сессий: n=…») and the pilot's passport; they are the executor's, for his acceptance",
@@ -3622,10 +3700,10 @@
      "§12.6",
      "K33"
     ],
-    "statement_ru": "На срезе {cut}, среди {n} исторических случаев с близким положением и указанным условием {yes} посетили область в оставшемся окне {window}; {unknown} исходов неизвестны.",
+    "statement_ru": "На срезе {cut}, среди {n} исторических случаев с близким положением и указанным условием {yes} посетили область в оставшемся окне {window}; исход неизвестен у {unknown}.",
     "subject_ru": "исторические случаи POS_GEO того же инструмента и блока (не только семья F), которые в этот же час по общим часам стояли там же; внутри окна — ещё и не посещавшие область в его прошедшей части",
     "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN",
-    "version": "1.0"
+    "version": "1.1"
    }
   ],
   "comparisons": [
@@ -5545,6 +5623,17 @@
     ],
     "surface": "API:/api/integration/continuations",
     "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:C.17",
+    "path": "proof.exclusion_counts.{*}",
+    "sc_ref": [
+     "H2",
+     "V2.1"
+    ],
+    "surface": "API:/api/integration/continuations",
+    "target": "CS:C-POS minus CS:C-RISK, counted by independently checked elapsed-window exclusion reason; not outcomes in the remaining window"
    }
   ],
   "estimands": [
@@ -9840,6 +9929,51 @@
    {
     "acceptance": "PROPOSED_BY_EXECUTOR",
     "forbidden_readings_ru": [
+     "принятая функция экрана",
+     "прогноз",
+     "сигнал"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "FF:CANDIDATE-STATUS",
+    "labels": [
+     {
+      "key": "tag",
+      "surface": "PANEL",
+      "text_ru": "кандидат",
+      "view": "ANY"
+     },
+     {
+      "key": "foot",
+      "surface": "INSPECTOR",
+      "text_ru": "кандидат · приёмка не проведена",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "TOOLTIP",
+      "text_ru": "Кандидат на испытании: ваша приёмка не проведена. Не принятая часть экрана и не прогноз; «DR до 16:00», «Сейчас» и зоны от него не зависят. Выключается в ⚙ → Испытание кандидатов.",
+      "view": "ANY"
+     },
+     {
+      "key": "mode_title",
+      "surface": "TOOLTIP",
+      "text_ru": "Продолжения — кандидат на испытании, приёмка не проведена: условный ответ по сопоставимым случаям, не прогноз. Выключается в ⚙ → Испытание кандидатов.",
+      "view": "ANY"
+     }
+    ],
+    "note": "Operator 2026-10-19 (finalisation of screen 24 for his acceptance): «проверь, что кандидаты не подменяют принятую семантику и не получают статус прогноза» and «понятные статусы принятых функций и кандидатов». Every candidate block, the trial form of a «Сейчас» row and the «Продолжения» mode carry this standing where they are shown; the words are the executor's",
+    "record_class": "PublicationStanding",
+    "sc_ref": [
+     "§14.1",
+     "§14.3",
+     "K33"
+    ],
+    "statement_ru": "Функция экрана на испытании (редакция DR-LAB-CANDIDATES-1): приёмка оператором не проведена. Её числа — описание истории или условный ответ по сопоставимым случаям, не прогноз; принятые функции экрана (DR до 16:00, «Сейчас», зоны) от неё не зависят.",
+    "version": "1"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "forbidden_readings_ru": [
      "процент",
      "сигнал",
      "прогноз"
@@ -12766,7 +12900,7 @@
   "document_sha256_lf": "783064fc5c1445b149300cf4b2d610ec1b9f4ef7bb58cd5311c89c20c0cb450a",
   "edition": "DR-LAB-CANDIDATES-1",
   "linkml": "1.11.1",
-  "registry_sha256": "4ad9bb309b918a444264bec125b1323aae9982a4179b920b35f5e9515f47bf4f",
+  "registry_sha256": "c10cd587f296bd54dc04d83583ba22ec8041af8eb4c8cb5d88a4c1439c25309d",
   "runtime_spec_sha256": "e593528adaa23b6b6be118034e081bba48f3e8759e8fe93071b5bc980ac5484a",
   "schema_sha256_lf": "03a955e90c4f0d0fa9253597a62ca4ac2726b993a58c9fdcef27566f5fafe597",
   "sources": {
@@ -12776,11 +12910,11 @@
    "integration/candidates/registry/10-observation-strategy-measurement.yaml": "017dff6cc6ea9ef2340a78aa633fa44306a27d27875f856165a6e6d586a0cb27",
    "integration/candidates/registry/20-cases-outcomes.yaml": "5f6535e69d557fee9d05c6de7ffbb0b206aeec11362259454d5b4c6bc456afcd",
    "integration/candidates/registry/30-questions-estimands.yaml": "a2325bf90b17d7d742853609a92dc1f29de0099ec5a3e3c3d479a6425929b699",
-   "integration/candidates/registry/40-claims.yaml": "836035ee223fccc6b51984363e024e94e2b14ded619e60e875096f8dc9216eb2",
+   "integration/candidates/registry/40-claims.yaml": "155793499db2c0b351f4e53a1145940df1c353b7191b036562dc9d205e06cc83",
    "integration/candidates/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
    "integration/candidates/registry/60-surfaces.yaml": "974b6786f3f0eaead74bb0133667e6ecff7f72127da8bcff9e8e629fc6e5a605",
    "integration/candidates/registry/70-obligations.yaml": "222c8ef1523ddad91d930b98c44ca360679257460f305b56d5bcad86eef2ae90",
-   "integration/candidates/registry/80-continuations.yaml": "b78dc5323fa3a60237054c4e7c681b82c3a16da6cdf65f619199fb51f6076cb8",
+   "integration/candidates/registry/80-continuations.yaml": "0adc669ab07b78921ba7e9911d5e80e26de85063f5ca93ae61bd79f60b95e1ed",
    "integration/candidates/schema.yaml": "03a955e90c4f0d0fa9253597a62ca4ac2726b993a58c9fdcef27566f5fafe597",
    "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"
   }

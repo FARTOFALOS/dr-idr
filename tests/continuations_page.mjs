@@ -29,6 +29,8 @@ async function state(){return evaluate(B.cdp,()=>{
  return {cut:p.context.cut,status:c.packet.status,target:JSON.stringify(p.target),question:p.question.id,release:c.packet.release_id,
          source:p.context.history_revision,counts:p.counts,support:p.support,ids:p.witnesses.map(w=>w.id),draw_ids:c.drawing.ids,
          draw_release:c.drawing.release,inspector:document.querySelector('#insp').innerText,
+         exclusions:p.exclusion_counts,elapsed:c.drawing.elapsed,remaining:c.drawing.remaining,
+         history:c.history.map(x=>({cut:x.cut,release:x.release,status:x.status})),
          family:JSON.stringify([d.cur().F.r.family_id,d.cur().F.r.snapshot_id,d.cur().F.r.members,d.cur().F.r.counts,d.cur().F.r.zones]),
          overflow:document.documentElement.scrollWidth>innerWidth+12};
  });}
@@ -57,11 +59,36 @@ try{
    if(cut===690){
     check(next.question!==first.question&&next.support.n_total===39&&next.support.yes===20,'residual question explicitly has 39 cases of 81 position matches / '+width);
     check(/новый остаточный вопрос/.test(next.inspector)&&/остаток 11:30/.test(next.inspector),'visible residual meaning at 11:30 / '+width);
+    check(next.exclusions.WINDOW_ALREADY_VISITED===42&&/Уже заходили в окно 42/.test(next.inspector)&&/По положению 81 → опора остатка 39/.test(next.inspector),
+          'all 42 exclusions are shown with the independently verified elapsed-visit cause / '+width);
+    // the residual support and its cause stand together; the change of the position set is another operation, after them
+    const iChain=next.inspector.indexOf('По положению 81'),iCause=next.inspector.indexOf('Уже заходили в окно'),iSet=next.inspector.indexOf('В набор по положению');
+    check(iChain>=0&&iCause>iChain&&iSet>iCause&&!/вошли/.test(next.inspector.slice(iChain,iCause)),
+          '81 → 39 is followed by its own cause, the membership change of the position set comes last / '+width);
+    check(JSON.stringify(next.elapsed)==='[685,690]'&&JSON.stringify(next.remaining)==='[690,700]',
+          'fixed rectangle separates elapsed and remaining clock parts without moving its target / '+width);
     await snap(width+'-residual');
    }
    if(cut>=695)check(next.status==='FACT_YES'&&!next.ids.length&&!next.draw_ids.length&&/11:35/.test(next.inspector),'fact replaces percentage and conditional drawing / '+width);
-   if(cut===695)await snap(width+'-fact');
+   if(cut===695){
+    // the established visit is a mark like a reached place of «Отсюда», never a dash read as «no answer»; the candidate
+    // standing (FF:CANDIDATE-STATUS) stands on the panel head, the inspector and the mode itself (finalisation 19.10)
+    const look=await evaluate(B.cdp,()=>({value:document.querySelector('#panel .c24-answer b')?.innerText,tag:document.querySelector('#panel .p21-h .p24-cand')?.innerText,
+      tab:document.querySelector('#mode [data-m="continuations"]').title}));
+    check(look.value==='✓'&&look.tag==='кандидат'&&/кандидат/.test(look.tab)&&/кандидат · приёмка не проведена/.test(next.inspector),
+          'the fact is a mark, not a number; the candidate standing is on the panel, the inspector and the mode / '+width);
+    await snap(width+'-fact');
+   }
   }
+  await evaluate(B.cdp,()=>document.querySelector('#panel [data-c24="history"]').click());
+  check(await evaluate(B.cdp,()=>document.querySelectorAll('[data-c24-cut]').length===7),
+        'history contains the seven actually viewed cuts, each with its own answer/support / '+width);
+  await snap(width+'-history');
+  await evaluate(B.cdp,()=>document.querySelector('[data-c24-cut="675"]').click());await ready(675);
+  check(await evaluate(B.cdp,()=>[...document.querySelectorAll('[data-c24-cut]')].every(x=>+x.dataset.c24Cut<=675)),
+        'replay through a receipt cannot show answers from later knowledge cuts / '+width);
+  await evaluate(B.cdp,()=>{window.__d24.st.rp=700;window.__d24.render(true);});await ready(700);
+  await evaluate(B.cdp,()=>document.querySelector('#deth').click());
   await evaluate(B.cdp,()=>document.querySelector('#mode [data-m="bounds"]').click());await sleep(250);
   const restored=await evaluate(B.cdp,()=>{const f=window.__d24.cur().F;return JSON.stringify([f.r.family_id,f.r.snapshot_id,f.r.members,f.r.counts,f.r.zones]);});
   check(restored===first.family,'original historical R/X snapshot restored identically / '+width);await snap(width+'-bounds');
@@ -78,13 +105,14 @@ try{
  await B.cdp.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:rect.x1,y:rect.y1,button:'left',clickCount:1});await ready(670);
  check((await state()).support.n_total===97,'mouse brush creates the same physical target and exact window');
  // Corrupt a path while leaving the correct percentage untouched: no dependent drawing survives.
- for(const fault of ['missing_path','foreign_path','foreign_bundle']){
+ for(const fault of ['missing_path','foreign_path','foreign_bundle','foreign_exclusions']){
   await evaluate(B.cdp,fault=>{
    const original=window.fetch.bind(window);window.fetch=async(...args)=>{const r=await original(...args);if(!String(args[0]).includes('/api/integration/continuations'))return r;
     const x=await r.json();if(!x.proof?.witnesses.length)return new Response(JSON.stringify(x),{status:200});
     if(fault==='missing_path')x.proof.witnesses.pop();
     if(fault==='foreign_path')x.proof.witnesses[0].path[x.proof.witnesses[0].path.length-1]=[999,1000,999];
     if(fault==='foreign_bundle'){const p=JSON.parse(x.contract.bundles[0].parameters);p.release='foreign-release';x.contract.bundles[0].parameters=JSON.stringify(p);}
+    if(fault==='foreign_exclusions')x.proof.exclusion_counts.WINDOW_ALREADY_VISITED=42;
     return new Response(JSON.stringify(x),{status:200,headers:{'Content-Type':'application/json'}});
    };window.__d24.st.rp=675;window.__d24.render(true);
   },fault);

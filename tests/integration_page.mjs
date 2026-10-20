@@ -25,6 +25,23 @@ try {
  fs.writeFileSync('lab/.runtime/integration-checks/page.local.json',JSON.stringify({state,errors},null,1));
  const png=await B.cdp.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
  fs.writeFileSync('lab/.runtime/integration-checks/first.png',Buffer.from(png.data,'base64'));
- console.log(JSON.stringify({rows:state.rows,arrive:state.arrive,selected:!!state.selection,pathIds:state.pathIds,error:state.error,errors}));
- if(errors.length||state.rows!==3||!state.selection)process.exitCode=1;
+ // FF:CANDIDATE-STATUS (operator 19.10): every candidate surface carries its standing where it is shown, an accepted
+ // block never does; the accepted view at the same cut has no tag at all
+ const tags=async(hash,wait)=>{
+  await B.cdp.send('Page.navigate',{url:'about:blank'});await sleep(80);
+  await B.cdp.send('Page.navigate',{url:base+'/24/'+hash});
+  for(let i=0;i<240;i++){const s=await evaluate(B.cdp,w=>{const D=window.__d24;if(!D?.V?.ctx)return false;D.render(true);return !!document.querySelector(w);},wait).catch(()=>false);if(s)break;await sleep(250);}
+  await sleep(300);
+  return evaluate(B.cdp,()=>({pre:document.querySelectorAll('#panel .p24-pre .p21-h .p24-cand').length,arrive:document.querySelectorAll('#panel .p24-arrblk .p21-h .p24-cand').length,
+   phase:document.querySelectorAll('#panel .p24-phase .p21-h .p24-cand').length,now:document.querySelectorAll('#panel .p24-nowblk .p24-cand').length,
+   all:document.querySelectorAll('#panel .p24-cand').length,tab:document.querySelector('#mode [data-m="continuations"]').title}));
+ };
+ const day='#date=2025-12-17&inst=NQ&session=RDR';
+ const tPre=await tags(day+'&at=10:30&trial=pre','.p24-pre .p21-link');
+ const t0810=await tags(day+'&at=11:00&trial=phase,nowmarks','.p24-phase');
+ const tArr=await tags(day+'&at=11:00&trial=arrive','.p24-arrblk');
+ const tBase=await tags(day+'&at=11:00','.p24-nowblk .p21-link');
+ const standing=tPre.pre===1&&t0810.phase===1&&t0810.now===1&&tArr.arrive===1&&tBase.all===0&&/кандидат/.test(tBase.tab);
+ console.log(JSON.stringify({rows:state.rows,arrive:state.arrive,selected:!!state.selection,pathIds:state.pathIds,error:state.error,errors,standing:{pre:tPre,phase_nowmarks:t0810,arrive:tArr,accepted:tBase}}));
+ if(errors.length||state.rows!==3||!state.selection||!standing)process.exitCode=1;
 }finally{await B.close();}

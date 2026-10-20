@@ -68,21 +68,28 @@ def check_frame(packet, cases, today, grid):
     if digest({k: v for k, v in q.items() if k != "id"}) != q["id"] or packet["context"]["question_id"] != q["id"]:
         errors.append(("question", "question identity differs from its declared event, remainder or condition"))
     by_id = {c["id"]: c for c in cases}
-    expected_risk = []
+    expected_risk, expected_exclusions = [], {}
     # This independent reference covers the ordinary and NO_VISIT residual question.
     sequence = any(c["kind"] == "A_THEN_B" for c in q["conditions"])
     if not sequence:
         for cid in actual:
             c = by_id[cid]
-            keep = True
+            reason = None
             for cond in q["conditions"]:
                 if cond["kind"] == "WINDOW_NO_VISIT":
-                    keep &= (c["a"] < 0 or grid[c["a"]] < t["first_close"])
-                    keep &= _label(c, grid, t, t["first_close"], cut) == "NO"
-            if keep:
+                    elapsed = _label(c, grid, t, t["first_close"], cut)
+                    if c["a"] >= 0 and grid[c["a"]] >= t["first_close"]:
+                        reason = "NOT_ACTIVE_AT_WINDOW_START"
+                    elif elapsed != "NO":
+                        reason = "WINDOW_ALREADY_VISITED" if elapsed == "YES" else "WINDOW_VISIT_UNKNOWN"
+            if reason is None:
                 expected_risk.append(cid)
+            else:
+                expected_exclusions[cid] = reason
         if set(expected_risk) != set(packet["risk_set"]["ids"]):
             errors.append(("risk", "no-visit prefix condition was dropped or misapplied"))
+        if expected_exclusions != packet["risk_set"]["exclusions"]:
+            errors.append(("risk reasons", "exclusion reasons do not follow from activation and the elapsed window"))
     labels = {cid: _label(by_id[cid], grid, t, max(t["first_close"], cut + 5), t["last_close"])
               for cid in packet["risk_set"]["ids"]} if q["active"] and cut < t["last_close"] else {}
     if labels != packet["labels"]:

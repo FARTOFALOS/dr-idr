@@ -2659,7 +2659,7 @@
     const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : SC11.forms[id];
     // FF:PHASE-RULE exists only in the candidate edition (08.10); the candidate words of the accepted «Сейчас» forms are
     // never reached from here (tests/integration_faults.mjs), only by reviewLbl for the trial «nowmarks»
-    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE'].includes(id);
+    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:CANDIDATE-STATUS'].includes(id);
     const extra = candidateId && REVIEW && (id.startsWith('FF:') ? REVIEW.facts[id] : REVIEW.forms[id]);
     const box = own && own.labels[key] ? own : extra || own;
     const set = box && box.labels[key], t = set && (view && set[view] != null ? set[view] : set.ANY);
@@ -4906,6 +4906,9 @@
     if(Math.abs(bd.lower-k.yes/k.n_match)>1e-12||Math.abs(bd.upper-(k.yes+k.unknown)/k.n_match)>1e-12||pt&&Math.abs(pt.value-k.yes/k.n_known)>1e-12)return null;
     return b;
   }
+  // the standing of a candidate where it is shown (FF:CANDIDATE-STATUS, operator 2026-10-19): a candidate block or a trial
+  // form is never read as an accepted function of the screen; panel only, nothing over the chart
+  function candTag() { return ' <i class="p24-cand" title="' + esc(lbl('FF:CANDIDATE-STATUS', 'title')) + '">' + lbl('FF:CANDIDATE-STATUS', 'tag') + '</i>'; }
   const arrPlace = (r, level) => r?.places?.find(p => p.level === level) || null;
   const placeName = level => lbl('EST:K-ARRIVE', level === '0' ? 'p0' : level === '-1/2' ? 'p12' : 'p710');
   function arrivalValue(r, P) {
@@ -4918,7 +4921,7 @@
     if (!ICFG.enabled) return '';
     if (TRIAL.pre && ctx.s.status === 'waiting') {
       const r = preOf(ctx), b = r && preBundle(r, 'EST:P-DIR');
-      let out = '<div class="p24-pre"><div class="p21-h second">' + lbl('EST:P-DIR', 'head') + scopeSwitch() + '</div>';
+      let out = '<div class="p24-pre"><div class="p21-h second"><span class="p24-ht">' + lbl('EST:P-DIR', 'head') + candTag() + '</span>' + scopeSwitch() + '</div>';
       if (!b) return out + '<div class="p21-note">' + esc(IS.error || r?.message || 'Подбираю похожие сессии…') + '</div></div>';
       if (!r.N) return out + '<div class="p21-note">' + lbl('EST:P-DIR','zero') + '</div></div>';
       if (r.few) out += '<div class="p21-note">мало сессий</div>';
@@ -4926,7 +4929,7 @@
       return out + '</div>';
     }
     if (!TRIAL.arrive || !ctx.F) return '';
-    const r = arriveOf(ctx), out = ['<div class="p24-arrblk"><div class="p21-h second" title="' + esc(lbl('EST:K-ARRIVE', 'head_title')) + '">' + (ctx.s.failed?lbl('FF:K-TARGET','ORIGINAL_PLACES'):lbl('EST:K-ARRIVE', 'head')) + '</div>'];
+    const r = arriveOf(ctx), out = ['<div class="p24-arrblk"><div class="p21-h second" title="' + esc(lbl('EST:K-ARRIVE', 'head_title')) + '"><span class="p24-ht">' + (ctx.s.failed?lbl('FF:K-TARGET','ORIGINAL_PLACES'):lbl('EST:K-ARRIVE', 'head')) + candTag() + '</span></div>'];
     if (!r) return out.join('') + '<div class="p21-note">' + esc(IS.error || 'Сопоставляю историю…') + '</div></div>';
     if (r.status !== 'OK') out.push('<div class="p21-note">' + esc(REVIEW.facts['FF:K-TARGET'].labels[r.status] ? lbl('FF:K-TARGET', r.status, { time: r.time || (ctx.s.failed ? clk(ctx.s.failed) : '') }) : r.message || r.status) + '</div>');
     for (const level of ['0', '-1/2', '-7/10']) {
@@ -5011,7 +5014,7 @@
     const ph = phaseOf(F, ctx), P = 'FF:PHASE-RULE';
     if (!ph) return '';
     const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true);
-    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
+    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + candTag() + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
       '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
       link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
   }
@@ -5031,7 +5034,7 @@
     const P = v => Math.round(F.u2p(u0 + sgn * v)), cnt = sp.N_match_unknown ? sp.N_new_yes + '–' + (sp.N_new_yes + sp.N_match_unknown) : String(sp.N_new_yes);
     const t1 = bN ? reviewLbl(NE, 'title_mark', { ev: 'R', cut: n.cut.cut_clock_et, today: num(P(0), 0), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base }) : '';
     const t2 = bI ? reviewLbl('EST:N-IF-NEW-R', 'title_mark', { p50: lv(q.q50), lo: num(Math.min(P(q.q25), P(q.q75)), 0), hi: num(Math.max(P(q.q25), P(q.q75)), 0), time: bT ? reviewLbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' }) : '';
-    return link({ k: 'now', ev: 'R' }, '<span class="t"><span>' + reviewLbl(NE, 'row_mark', { ev: '<i style="color:' + cfg.R + '">R</i>' }) + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' '));
+    return link({ k: 'now', ev: 'R' }, '<span class="t"><span>' + reviewLbl(NE, 'row_mark', { ev: '<i style="color:' + cfg.R + '">R</i>' }) + candTag() + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' '));
   }
   // its levels at the price scale, always, no text: today's deepest point after the activation (dashed), and for the
   // sessions whose pullback went deeper the middle half of where it ended (a narrow bar) with its median (a tick); a thin
@@ -5103,7 +5106,8 @@
 
   // One source-bound publication, never a join against F.M. The target survives view/cut changes.
   const CS = { target: null, scene: null, key: null, packet: null, previous: null, pending: null, error: null, seq: 0,
-    selected: null, drag: null, drawing: null, discarded: 0, verified: 0, last: null, comparison: null };
+    selected: null, drag: null, drawing: null, discarded: 0, verified: 0, last: null, comparison: null,
+    history: [], detail: 'question' };
   const continuationMode = () => ICFG.enabled && TRIAL.continuations && st.mode === 'continuations';
   const continuationScene = ctx => [A.inst, ctx.D.iso, ctx.s.k].join('|');
   const cRat = q => q[0] / q[1];
@@ -5135,6 +5139,14 @@
     for(const k of ['low','high','first_close','last_close','created_at'])if(JSON.stringify(t[k])!==JSON.stringify(CS.target[k]))throw Error('Закреплённая цель изменилась');
     if(p.full_path_compared || p.source_kind!=='POSITION_AT_COMMON_CLOCK')throw Error('Положение подменено полным путём');
     if(await cHash(p)!==r.release_id)throw Error('Данные выпуска или пути подменены');
+    const risk=new Set(p.risk_ids),pos=new Set(p.position_ids),excluded=p.risk_exclusions,totals={};
+    if(!excluded||risk.size!==p.risk_ids.length||pos.size!==p.position_ids.length||
+       [...risk].some(id=>!pos.has(id))||Object.keys(excluded).length!==pos.size-risk.size)throw Error('Опора и исключения не составляют набор сопоставимых дней');
+    for(const [id,reason] of Object.entries(excluded)){
+      if(!pos.has(id)||risk.has(id)||!['WINDOW_ALREADY_VISITED','WINDOW_VISIT_UNKNOWN','NOT_ACTIVE_AT_WINDOW_START'].includes(reason))throw Error('Неизвестная причина исключения');
+      totals[reason]=(totals[reason]||0)+1;
+    }
+    if(cCanonical(totals)!==cCanonical(p.exclusion_counts)||p.counts.position!==pos.size||p.counts.risk!==risk.size)throw Error('Причины исключений не связаны с опорой');
     const active=r.status==='RESEARCH_ONLY', ids=p.witnesses.map(w=>w.id);
     if(new Set(ids).size!==ids.length || active && JSON.stringify(ids)!==JSON.stringify(p.risk_ids) || !active && ids.length)throw Error('Рисунок не содержит точную опору выпуска');
     const counts={YES:0,NO:0,UNKNOWN:0};
@@ -5158,7 +5170,19 @@
     const a=before.proof,b=after.proof,A=new Set(a.position_ids),B=new Set(b.position_ids);
     return {same_question:a.question.id===b.question.id,entered:[...B].filter(x=>!A.has(x)).length,left:[...A].filter(x=>!B.has(x)).length,
             revision_changed:a.context.history_revision!==b.context.history_revision,backward:b.context.cut<a.context.cut,
-            before:before.release_id,after:after.release_id};
+            before_cut:a.context.cut,after_cut:b.context.cut,before:before.release_id,after:after.release_id};
+  }
+  function rememberContinuation(r){
+    const p=r.proof,c=p.context;
+    // Receipts of actually viewed answers, not a manufactured retrospective forecast series.
+    CS.history=CS.history.filter(x=>x.target===p.target.id&&x.history_revision===c.history_revision&&
+      x.registry===c.registry_hash&&x.code===c.code_revision&&x.cut!==c.cut);
+    CS.history.push({cut:c.cut,target:p.target.id,question:p.question.id,release:r.release_id,
+      history_revision:c.history_revision,registry:c.registry_hash,code:c.code_revision,
+      value:r.status==='RESEARCH_ONLY'?cValue(r):null,status:r.status,observed:p.observed,
+      support:p.support.n_total,first:p.question.first_close,last:p.question.last_close,
+      residual:p.question.conditions.length>0});
+    CS.history.sort((a,b)=>a.cut-b.cut);
   }
   function requestContinuations(ctx) {
     if(!continuationMode()||!CS.target)return;
@@ -5174,6 +5198,7 @@
       await verifyContinuation(r,q,ctx);
       if(token!==CS.seq||cRequest(cur())?.key!==q.key){CS.discarded++;return;}
       CS.comparison=compareContinuations(CS.last,r);CS.last=r;CS.packet=r;CS.previous=r.release_id;CS.verified++;CS.target={...CS.target,frame:r.proof.target.frame};
+      rememberContinuation(r);
       // Equivalent numeric frame strings returned by the server do not create another request.
       CS.key=cRequest(cur()).key;CS.selected=CS.selected&&r.proof.witnesses.some(w=>w.id===CS.selected)?CS.selected:null;
     }).catch(e=>{if(token===CS.seq){CS.error=e.message;CS.packet=null;CS.drawing=null;}})
@@ -5183,9 +5208,11 @@
     if(!ctx.s.conf||ctx.s.failed)throw Error('Для новой цели нужен подтверждённый целый DR');
     const cut=Math.floor(ctx.obs/5)*5;if(open<cut||end<=open||end>SESS[ctx.s.k].end)throw Error('Выберите будущее окно внутри блока');
     CS.target={low,high,first_close:open+5,last_close:end,created_at:cut};CS.scene=continuationScene(ctx);
-    CS.key=CS.packet=CS.previous=CS.error=CS.pending=CS.selected=CS.last=CS.comparison=null;CS.seq++;st.tool=false;st.pin=st.hover=null;render(true);
+    CS.key=CS.packet=CS.previous=CS.error=CS.pending=CS.selected=CS.last=CS.comparison=null;CS.history=[];CS.detail='question';CS.seq++;st.tool=false;st.pin=st.hover=null;render(true);
   }
   function cValue(r) {
+    // an established visit is a fact, marked as «Отсюда» marks a reached place; no number stands for it (handoff 19.10 §1)
+    if(r?.proof?.observed.status==='FACT_YES')return '✓';
     if(!r||r.status!=='RESEARCH_ONLY')return '—';
     const s=r.proof.support;
     return s.unknown?lbl('EST:C-WINDOW','bounds',{lo:pct(100*s.yes/s.n_total),hi:pct(100*(s.yes+s.unknown)/s.n_total)}):pct(100*s.yes/s.n_total);
@@ -5206,19 +5233,36 @@
     if(CS.comparison?.revision_changed)return 'Изменились исходные исторические данные';
     return CS.comparison?(CS.comparison.same_question?lbl('EST:C-WINDOW','same_question'):lbl('EST:C-WINDOW','new_question')):lbl('EST:C-WINDOW','selected');
   }
+  function cCondition(p){
+    const condition=p?.question.conditions.find(x=>x.kind==='WINDOW_NO_VISIT');
+    return condition?lbl('EST:C-WINDOW','no_visit_yet',{time:clk(condition.last_close)}):'';
+  }
+  function cHistory(p){
+    const rows=CS.history.filter(x=>x.cut<=p.context.cut).reverse();
+    return '<div class="p21-note">'+lbl('EST:C-WINDOW','history_seen')+'</div><div class="c24-history">'+rows.map(x=>{
+      const value=x.value??(x.observed.status==='FACT_YES'?lbl('EST:C-WINDOW','history_yes'):x.observed.status==='FACT_NO'?lbl('EST:C-WINDOW','history_no'):lbl('EST:C-WINDOW','absent'));
+      const what=x.value?(x.residual?lbl('EST:C-WINDOW','history_rest',{from:clk(x.first-5),to:clk(x.last)}):lbl('EST:C-WINDOW','history_whole')):'';
+      return '<button type="button" data-c24-cut="'+x.cut+'" data-c24-release="'+x.release+'"'+(x.cut===p.context.cut?' aria-current="true"':'')+'><span>'+clk(x.cut)+'</span><b>'+value+'</b><small>'+what+(x.value?' · '+lbl('EST:C-WINDOW','support_n',{n:x.support}):'')+'</small></button>';
+    }).join('')+'</div>';
+  }
   function continuationPanel(ctx) {
     requestContinuations(ctx);const r=continuationPacket(ctx),p=r?.proof;
     const b=r?.contract.bundles.find(b=>b.estimand==='EST:C-WINDOW');
-    return '<div class="p21-h">'+lbl('EST:C-WINDOW','head')+'</div><div class="p21-note">'+lbl('EST:C-WINDOW','comparison')+'</div>'+
-      (p?'<div class="p21-note">'+band(cRat(p.target.low)*10,cRat(p.target.high)*10)+' SD · '+clk(p.target.window_open)+'–'+clk(p.target.window_close)+'</div>':'')+
-      '<div class="p21-link c24-answer"'+(b?' data-bundle="'+b.id+'" data-edition="'+REVIEW.edition+'"':'')+'>'+prow(p?.question.conditions.length?lbl('EST:C-WINDOW','residual'):lbl('EST:C-WINDOW','window'),cValue(r))+'</div>'+
-      '<div class="p21-note">'+esc(cStatus(r))+'</div>'+(p?'<div class="p21-note">'+esc(cChange(r))+'</div>':'');
+    return '<div class="p21-h"><span class="p24-ht">'+lbl('EST:C-WINDOW','head')+candTag()+'</span></div><div class="p21-note">'+lbl('EST:C-WINDOW','comparison')+'</div>'+
+      (p?'<div class="p21-note">'+[cPrice(p.target,cRat(p.target.low)),cPrice(p.target,cRat(p.target.high))].sort((a,b)=>a-b).map(px).join('…')+' · '+clk(p.target.window_open)+'–'+clk(p.target.window_close)+'</div>':'')+
+      // the number's own sentence is the published claim of its bundle (CF:C-WINDOW, with its counts) and what it applies to
+      '<div class="p21-link c24-answer"'+(b?' data-bundle="'+b.id+'" data-edition="'+REVIEW.edition+'" title="'+esc(b.claim.statement_ru+'\n'+b.claim.applies_to_ru)+'"':'')+'>'+prow(p?.question.conditions.length?lbl('EST:C-WINDOW','residual'):lbl('EST:C-WINDOW','window'),cValue(r))+'</div>'+
+      '<div class="p21-note">'+esc(cStatus(r))+'</div>'+(p?'<div class="p21-note">'+esc(cChange(r))+'</div>'+
+      (p.question.active&&p.question.conditions.length?'<div class="p21-note">'+cCondition(p)+' · '+lbl('EST:C-WINDOW','history_rest',{from:clk(p.question.first_close-5),to:clk(p.question.last_close)})+'</div>':'')+
+      '<button class="p24-btn" type="button" data-c24="history">'+lbl('EST:C-WINDOW','history_head')+'</button>':'');
   }
   function continuationDetail(ctx) {
     const r=continuationPacket(ctx),p=r?.proof,t=p?.target,s=p?.support;
-    let body='<div class="c24-tools"><button type="button" data-c24="draw">▭ Область и окно</button><button type="button" data-c24="reset">Снять цель</button></div>';
+    let body='<div class="c24-tools"><button type="button" data-c24="question">Вопрос</button><button type="button" data-c24="history">'+lbl('EST:C-WINDOW','history_head')+'</button></div>';
+    if(!p||CS.detail!=='history')body+='<div class="c24-tools"><button type="button" data-c24="draw">▭ Новая цель</button><button type="button" data-c24="reset">Снять цель</button></div>';
     if(!p)return {head:lbl('EST:C-WINDOW','head'),body:body+'<div class="p21-note">'+esc(cStatus(r))+'</div>'};
-    body+=dRow('Срез знания',clk(p.context.cut))+dRow('Физическая область',px(cPrice(t,cRat(t.low)))+'–'+px(cPrice(t,cRat(t.high))))+
+    if(CS.detail==='history')return {head:lbl('EST:C-WINDOW','history_head'),body:body+cHistory(p)+'<div class="p21-note">'+lbl('FF:CANDIDATE-STATUS','foot')+'</div>'};
+    body+=dRow('Срез знания',clk(p.context.cut))+dRow('Физическая область',[cPrice(t,cRat(t.low)),cPrice(t,cRat(t.high))].sort((a,b)=>a-b).map(px).join('–'))+
       dRow('Цель',clk(t.window_open)+'–'+clk(t.window_close))+dRow('Остаток',p.question.active?clk(p.question.first_close-5)+'–'+clk(p.question.last_close):'вопрос разрешён/недоступен')+
       dRow('Сопоставление','положение ±¼ SD · общие часы');
     if(p.question.active)body+=dRow('История / пригодны',p.counts.G+' / '+p.counts.eligible)+
@@ -5226,22 +5270,33 @@
       dRow('YES / NO / UNKNOWN',s.yes+' / '+s.no+' / '+s.unknown)+dRow('Известны / всего',s.n_known+' / '+s.n_total)+
       dRow('Ответ',r.status==='RESEARCH_ONLY'?cValue(r):esc(cStatus(r)));
     else body+=dRow('Факт',esc(cStatus(r)));
+    if(p.question.active&&p.question.conditions.length){
+      body+=dRow('Условие',cCondition(p));
+      for(const [reason,n] of Object.entries(p.exclusion_counts))body+=dRow(lbl('EST:C-WINDOW','exclude_'+reason),String(n));
+    }
     if(CS.comparison)body+=dRow('Новые / вышедшие аналоги',CS.comparison.entered+' / '+CS.comparison.left)+
       dRow('Изменение',CS.comparison.backward?'обратный просмотр':CS.comparison.revision_changed?'исходные данные изменились':CS.comparison.same_question?'новый выпуск прежнего вопроса':'та же цель; изменился остаток/применимость');
     if(p.witnesses.length)body+='<label class="c24-case">Путь случая <select id="c24case"><option value="">Все случаи опоры</option>'+p.witnesses.map(w=>'<option value="'+esc(w.id)+'"'+(CS.selected===w.id?' selected':'')+'>'+esc(w.date+' · '+w.outcome)+'</option>').join('')+'</select></label>';
-    body+='<div class="p21-note">'+lbl('EST:C-WINDOW','selected')+' · '+lbl('EST:C-WINDOW','extension')+'</div>';
+    body+='<div class="p21-note">'+lbl('EST:C-WINDOW','selected')+' · '+lbl('EST:C-WINDOW','extension')+'</div><div class="p21-note">'+lbl('FF:CANDIDATE-STATUS','foot')+'</div>';
     body+=dRow('Выпуск',r.release_id.slice(0,12))+dRow('Данные',p.context.history_revision.slice(0,12));
     return {head:lbl('EST:C-WINDOW','head'),body};
   }
   function continuationInspector(ctx){
     const r=continuationPacket(ctx),p=r?.proof;
-    if(!p)return '<div class="ih">'+lbl('EST:C-WINDOW','head')+'</div><div class="is">'+esc(cStatus(r))+'</div>';
+    if(!p)return '<div class="ih">'+lbl('EST:C-WINDOW','head')+'</div><div class="is">'+esc(cStatus(r))+'</div><div class="is">'+lbl('FF:CANDIDATE-STATUS','foot')+'</div>';
     const t=p.target,s=p.support;
     return '<div class="ih">'+(r.status==='RESEARCH_ONLY'?cValue(r):esc(cStatus(r)))+'</div>'+
       '<div class="is">'+sd(cRat(t.low))+'…'+sd(cRat(t.high))+' SD · '+clk(t.window_open)+'–'+clk(t.window_close)+' · срез '+clk(p.context.cut)+'</div>'+
       (r.status==='RESEARCH_ONLY'?'<div class="is">Опора '+s.n_total+' · YES '+s.yes+' / NO '+s.no+' / UNKNOWN '+s.unknown+'</div>':'')+
       '<div class="is">'+esc(cChange(r))+
-      (p.question.active&&p.question.conditions.length?' · остаток '+clk(p.question.first_close-5)+'–'+clk(p.question.last_close):'')+'</div>';
+      (p.question.active&&p.question.conditions.length?' · остаток '+clk(p.question.first_close-5)+'–'+clk(p.question.last_close)+'</div><div class="is">'+cCondition(p):'')+'</div>'+
+      // the residual support and the reasons that make it (81 → 39: 42 already in the window) stand together; the change
+      // of the position set since the previous M5 is another operation and comes last, so two different counts are never
+      // read as one cause (handoff 19.10 §3; meaning/13 entry 55)
+      (p.question.active&&p.question.conditions.length?'<div class="is">'+lbl('EST:C-WINDOW','support_chain',{position:p.counts.position,risk:p.counts.risk})+'</div>':'')+
+      (p.question.active&&p.question.conditions.length?'<div class="is">'+Object.entries(p.exclusion_counts).map(([reason,n])=>lbl('EST:C-WINDOW','exclude_'+reason)+' '+n).join(' · ')+'</div>':'')+
+      (p.question.active&&CS.comparison&&!CS.comparison.backward&&!CS.comparison.revision_changed?'<div class="is">'+lbl('EST:C-WINDOW','membership_change',{time:clk(CS.comparison.before_cut),entered:CS.comparison.entered,left:CS.comparison.left})+'</div>':'')+
+      '<div class="is">'+lbl('FF:CANDIDATE-STATUS','foot')+'</div>';
   }
   function continuationDraw(c,ctx) {
     CS.drawing=null;requestContinuations(ctx);const r=continuationPacket(ctx),p=r?.proof;
@@ -5261,21 +5316,31 @@
       }
       c.setLineDash([]);
       const pa=pp(cRat(t.low)),pb=pp(cRat(t.high)),x0=V.X(t.window_open),x1=V.X(t.window_close),ya=V.Y(pa),yb=V.Y(pb);
-      c.fillStyle=rgba(cfg.path,.09);c.fillRect(x0,Math.min(ya,yb),x1-x0,Math.abs(ya-yb));c.strokeStyle=rgba(cfg.path,.9);c.lineWidth=1.4;c.strokeRect(x0,Math.min(ya,yb),x1-x0,Math.abs(ya-yb));
+      const split=clamp(V.X(cut),x0,x1),top=Math.min(ya,yb),height=Math.abs(ya-yb);
+      c.fillStyle=rgba('#8F98A6',.055);c.fillRect(x0,top,split-x0,height);
+      if(p.question.active){c.fillStyle=rgba(cfg.path,.12);c.fillRect(split,top,x1-split,height);}
+      c.strokeStyle=rgba(cfg.path,.9);c.lineWidth=1.4;c.strokeRect(x0,top,x1-x0,height);
+      if(p.question.active&&split>x0&&split<x1){c.setLineDash([3,3]);c.strokeStyle=rgba(cfg.path,.6);c.beginPath();c.moveTo(split,top);c.lineTo(split,top+height);c.stroke();c.setLineDash([]);}
       V.win={pA:pa,pB:pb,t0:t.window_open,t1:t.window_close,col:cfg.path};
       if(p.observed.witness_bar){const b=ctx.D.bars.find(b=>b.t===p.observed.witness_bar[0]);if(b){c.strokeStyle='#DDE9ED';c.lineWidth=1.5;c.strokeRect(V.X(b.t),V.Y(b.h)-3,V.bs,V.Y(b.l)-V.Y(b.h)+6);}}
-      CS.drawing={release:r.release_id,history_revision:p.context.history_revision,ids:r.status==='RESEARCH_ONLY'?p.witnesses.map(w=>w.id):[],points,target:t.id,question:p.question.id};
+      CS.drawing={release:r.release_id,history_revision:p.context.history_revision,ids:r.status==='RESEARCH_ONLY'?p.witnesses.map(w=>w.id):[],points,target:t.id,question:p.question.id,
+        elapsed:[t.window_open,Math.min(t.window_close,Math.max(t.window_open,cut))],remaining:p.question.active?[p.question.first_close-5,p.question.last_close]:null};
     }
     if(CS.drag){const d=CS.drag;c.setLineDash([4,3]);c.strokeStyle=cfg.path;c.strokeRect(d.x,d.y,d.x1-d.x,d.y1-d.y);c.setLineDash([]);}
   }
   function continuationToolbar(ctx) {
-    const b=dom('mode').querySelector('[data-m="continuations"]');if(b)b.hidden=!ICFG.enabled||!TRIAL.continuations;
+    const b=dom('mode').querySelector('[data-m="continuations"]');if(b){b.hidden=!ICFG.enabled||!TRIAL.continuations;if(!b.hidden&&!b.title){b.title=lbl('FF:CANDIDATE-STATUS','mode_title');b.classList.add('cand');}}
     if(!continuationMode())return;
     const ab=dom('areab');ab.textContent='▭ Область · окно';ab.title='Закрепить физическую область и абсолютное будущее окно';
     dom('ev').innerHTML='';
   }
-  root.addEventListener('click',e=>{const b=e.target.closest('[data-c24]');if(!b)return;
-    if(b.dataset.c24==='draw')st.tool=true;else{CS.target=null;CS.packet=null;CS.key=null;CS.error=null;CS.drawing=null;CS.seq++;}
+  root.addEventListener('click',e=>{
+    const entry=e.target.closest('[data-c24-cut]');
+    if(entry){const cut=Number(entry.dataset.c24Cut);if(CS.history.some(x=>x.cut===cut&&x.release===entry.dataset.c24Release)){st.rp=cut;st.pin=st.hover=null;render(true);}return;}
+    const b=e.target.closest('[data-c24]');if(!b)return;
+    if(b.dataset.c24==='draw')st.tool=true;
+    else if(['question','history'].includes(b.dataset.c24)){CS.detail=b.dataset.c24;st.detPin=true;dom('detg')._k='';}
+    else{CS.target=null;CS.packet=null;CS.key=null;CS.error=null;CS.drawing=null;CS.last=null;CS.comparison=null;CS.history=[];CS.selected=null;CS.previous=null;CS.seq++;}
     render(true);
   });
   root.addEventListener('change',e=>{if(e.target.id==='c24case'){CS.selected=e.target.value||null;redraw();}});
@@ -5726,7 +5791,7 @@
     if (dh._h !== head) { dh.innerHTML = head; dh._h = head; }
     const g = dom('detg');
     if (!open || !ok) { if (g._k) { g.innerHTML = ''; g._k = ''; } return; }
-    const o = detailObj(ctx), key = [F.r.snapshot_id, F.view, sliceOf(ctx), o ? pinKey(o) + '|' + (o.ev || '') : '', det.clientWidth, cfg.R, cfg.X, cfg.path, cfg.heatA, scenePacket()?.context.id || '', TRIAL.paths,continuationMode()?CS.packet?.release_id||CS.error||CS.pending:''].join('|');
+    const o = detailObj(ctx), key = [F.r.snapshot_id, F.view, sliceOf(ctx), o ? pinKey(o) + '|' + (o.ev || '') : '', det.clientWidth, cfg.R, cfg.X, cfg.path, cfg.heatA, scenePacket()?.context.id || '', TRIAL.paths,continuationMode()?CS.packet?.release_id||CS.error||CS.pending:'',continuationMode()?CS.detail:''].join('|');
     if (g._k === key) return;
     g._k = key;
     const B = detBody(ctx, o);
