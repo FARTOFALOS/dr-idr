@@ -28,6 +28,7 @@ ap.add_argument("--out", default=str(Path(__file__).resolve().parent))
 args = ap.parse_args()
 sys.path.insert(0, args.lab)
 import zonemap24 as zm  # noqa: E402  the production rule, unchanged
+import contract  # noqa: E402  ref_zone_map: the contract's own pure-Python reference written from the rule's text
 
 S = json.loads(Path(args.snapshot).read_text(encoding="utf-8"))
 N, formed, end = S["N"], S["schedule"]["formed"], S["schedule"]["end"]
@@ -101,25 +102,71 @@ def quantiles(ev):
                 time_et={f"q{int(p * 100)}": hm(q(tms, p)) for p in (.1, .3, .5, .7, .9)})
 
 
+STRUCT = ("label", "zone_id", "n_zone", "p_snapshot", "price_low", "price_high", "time_start", "time_end",
+          "peak_anchor", "min_support", "N_family", "unknown_count", "no_event_count")
+DIAG = ("grid_member_jaccard", "bootstrap_recovery", "null_status", "null_excess", "null_interval", "p_real_mask",
+        "p_null_mask", "minimum_detectable_excess", "null_frozen_overlap", "null_validation_n")
+
+
+def same_map(mine, pub):
+    """The recomputed map against the published one, field by field: masks, members, bounds, residual, diagnostics."""
+    rows = []
+    for a, b in zip(mine["zones"], pub["zones"]):
+        rows.append(dict(
+            mask=sorted(map(tuple, a["cell_mask"])) == sorted(map(tuple, b["cell_mask"])),
+            members=sorted(a["member_session_ids"]) == sorted(b["member_session_ids"]),
+            fields=all(a.get(f) == b.get(f) for f in STRUCT),
+            diagnostics=all(a.get(f) == b.get(f) for f in DIAG)))
+    structure = (len(mine["zones"]) == len(pub["zones"])
+                 and sorted(mine["residual_ids"]) == sorted(pub["residual_ids"])
+                 and all(r["mask"] and r["members"] and r["fields"] for r in rows))
+    return dict(zones=len(rows), structure_equal=structure,
+                diagnostics_equal=all(r["diagnostics"] for r in rows),
+                compared=["cell_mask", "member_session_ids", "residual_ids", *STRUCT, *DIAG])
+
+
 res = dict(study="ym_rdr_2026_10_20", algorithm=zm.VERSION, family_id=S["family_id"], snapshot_id=S["snapshot_id"],
            family=dict(instrument="YM", session="RDR", weekday="Tue", direction=key["direction"],
                        window=[hm(key["window"][0]), hm(key["window"][1])], years="2006-2025", N=N),
            min_support=need, grid=dict(price_sd=0.1, time_min=15, smoothing="3x3 cells (0.3 SD x 45 min)"),
            events={})
+def same_as_reference(ev, mine):
+    """The rule's text, implemented independently in lab/contract.py (no scipy, no zonemap24 code), on the same events."""
+    pts = []
+    for m in S["members"]:
+        x = m[ev]
+        if x["s"] == "known":
+            k, b = zm.cell_of(x["v"], m["w"], x["t"], formed)
+            pts.append((k, b, m["id"]))
+    ref = contract.ref_zone_map(pts, N, b_lo, b_hi)
+    norm = lambda cells, members: (sorted(map(tuple, cells)), sorted(members))
+    return (len(ref["zones"]) == len(mine["zones"])
+            and all(norm(r["cells"], r["members"]) == norm(z["cell_mask"], z["member_session_ids"])
+                    for r, z in zip(ref["zones"], mine["zones"]))
+            and sorted(ref["residual"]) == sorted(mine["residual_ids"]))
+
+
+MAPS = {}
 for ev in ("R", "X"):
     published = S["zones"][ev]
-    base = zm.map_of(S["members"], ev, formed, end, win, ids)
-    assert [z["n"] for z in base["zones"]] == [z["n_zone"] for z in published["zones"]], "recomputed != published"
+    mine = MAPS[ev] = zm.evaluate(S, ev)            # zones and diagnostics recomputed by the production function
+    check = same_map(mine, published)
+    check["independent_reference_equal"] = same_as_reference(ev, mine)
+    assert check["structure_equal"], (ev, "recomputed zones differ from the published snapshot", check)
+    assert check["independent_reference_equal"], (ev, "the contract's reference implementation disagrees", check)
+    if not check["diagnostics_equal"]:
+        print(f"WARNING {ev}: recomputed diagnostics differ from the published ones", file=sys.stderr)
     comps = components(ev)
     res["events"][ev] = dict(
-        known=sum(m[ev]["s"] == "known" for m in S["members"]), unknown=published["unknown_count"],
-        no_event=published["no_event_count"], residual_share=round(published["residual_share"], 4),
+        verification=check,
+        known=sum(m[ev]["s"] == "known" for m in S["members"]), unknown=mine["unknown_count"],
+        no_event=mine["no_event_count"], residual_share=round(mine["residual_share"], 4),
         zones=[dict(label=z["label"], n=z["n_zone"], share=round(z["p_snapshot"], 4),
                     price_sd=[z["price_low"] / 10, z["price_high"] / 10],
                     time_et=[hm(z["time_start"]), hm(z["time_end"])],
                     grid_jaccard=z["grid_member_jaccard"], bootstrap=z["bootstrap_recovery"],
                     null=dict(status=z["null_status"], excess=z.get("null_excess"), interval=z.get("null_interval")))
-               for z in published["zones"]],
+               for z in mine["zones"]],
         shifted_grids=[dict(price_shift_sd=dk * 0.05, time_shift_min=dt, zones=zone_rows(
             zm.map_of(S["members"], ev, formed, end, win, ids, dk, dt), dk, dt)) for dk, dt in zm.SHIFTS],
         components=[{k: v for k, v in c.items() if k != "cells"} for c in comps],
@@ -162,7 +209,7 @@ def panel(ax, ev, cmap_name, ylim):
     for y in ((0, -0.5, -1.0) if ev == "R" else (0, 0.5, 1.0, 1.5)):
         ax.axhline(y, color=GRID, lw=0.8, zorder=0.5)
     comps = components(ev)
-    for z in S["zones"][ev]["zones"]:
+    for z in MAPS[ev]["zones"]:
         outline(ax, z["cell_mask"], color=INK, lw=2.0, zorder=4)
         ax.text(z["time_end"] + 3, z["price_high"] / 10 + 0.02, f"{z['label']} · зона · {z['n_zone']} сесс.",
                 color=INK, fontsize=8.5, fontweight="bold", va="bottom", zorder=5,
@@ -214,5 +261,8 @@ fig.suptitle("YM · RDR · вторник · лонг · подтвержден�
 fig.tight_layout(rect=(0, 0, 1, 0.95))
 (out / "img").mkdir(exist_ok=True)
 fig.savefig(out / "img" / "density-rx.png", dpi=130, facecolor=SURF)
-print(json.dumps({ev: dict(zones=[(z["label"], z["n"]) for z in r["zones"]], residual=r["residual_share"])
+print(json.dumps({ev: dict(zones=[(z["label"], z["n"]) for z in r["zones"]], residual=r["residual_share"],
+                           structure_equal=r["verification"]["structure_equal"],
+                           diagnostics_equal=r["verification"]["diagnostics_equal"],
+                           reference_equal=r["verification"]["independent_reference_equal"])
                   for ev, r in res["events"].items()}, ensure_ascii=False))
