@@ -2,7 +2,7 @@
   const ICFG = window.DR_INTEGRATION || { enabled: false }, REVIEW = ICFG.registry;
   // phase / nowmarks: the operator's decisions of 2026-10-08 (meaning/17 §7) on the page only, over accepted bundles and the
   // candidate labels FF:PHASE-RULE, row_mark / title_mark (integration/candidates/registry/40-claims.yaml); no server call
-  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled, phase: false, nowmarks: false };
+  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled, phase: false, nowmarks: false, pullbacks: false };
   // the viewer's own choice of trials is kept in this browser like every other setting (2026-10-19); the address still adds
   const TRIAL_KEY = 'drlab.d24.trials';
   if (ICFG.enabled) try { const kept = JSON.parse(localStorage.getItem(TRIAL_KEY) || '{}'); for (const k in TRIAL) if (typeof kept[k] === 'boolean') TRIAL[k] = kept[k]; } catch (e) { /* defaults */ }
@@ -89,6 +89,9 @@
   function factText(f) { return f?.reached === 'YES' ? (f.time_known ? lbl('FF:K-TARGET', 'RESOLVED', { time: clk(f.bar_close) }) : lbl('FF:K-TARGET','RESOLVED_TIME_UNKNOWN')) : ''; }
   function candidatePanel(ctx) {
     if (!ICFG.enabled) return '';
+    return pbEntry() + candidateRows(ctx);
+  }
+  function candidateRows(ctx) {
     if (TRIAL.pre && ctx.s.status === 'waiting') {
       const r = preOf(ctx), b = r && preBundle(r, 'EST:P-DIR');
       let out = '<div class="p24-pre"><div class="p21-h second">' + lbl('EST:P-DIR', 'head') + scopeSwitch() + '</div>';
@@ -251,7 +254,7 @@
     if (!ICFG.enabled) return '';
     return '<details class="cgd"><summary class="cg">Испытание кандидатов</summary>' +
       [['pre', 'История до подтверждения'], ['arrive', 'Отсюда до места · Q1'], ['paths', 'Связанные пути в нижнем окне'], ['continuations', 'Продолжения · закреплённое окно'],
-        ['phase', 'Фаза по вашему правилу · 08.10'], ['nowmarks', '«Сейчас»: откат числом и отметками у шкалы · 08.10']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
+        ['phase', 'Фаза по вашему правилу · 08.10'], ['nowmarks', '«Сейчас»: откат числом и отметками у шкалы · 08.10'], ['pullbacks', 'Откаты до обновления · кандидат 21.10']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
       '<button type="button" id="auditScene">Проверить происхождение и опору</button><div id="auditResult" class="p21-note"></div></details>';
   }
   async function auditScene() {
@@ -269,6 +272,7 @@
     TRIAL[k] = !!on; IS.key = null; IS.packet = null; IS.error = null;
     try { localStorage.setItem(TRIAL_KEY, JSON.stringify(TRIAL)); } catch (e) { /* not kept */ }
     if(k==='continuations'&&!on){CS.seq++;CS.packet=null;CS.drawing=null;if(st.mode==='continuations')st.mode='bounds';}
+    if(k==='pullbacks'){PB.seq++;PB.key=PB.packet=PB.error=PB.pending=PB.cl=null;if(!on&&st.mode==='pullbacks'){st.mode='bounds';st.pin=st.hover=null;}if(on)st.mode='pullbacks';}
     if (!TRIAL.arrive && st.pin?.k === 'arrive') st.pin = st.hover = null;
     dom('detg')._k = ''; render(true);
   }

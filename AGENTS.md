@@ -19,6 +19,21 @@ What changed on 19.10. No number changed its object, set or denominator.
   in `integration.js`. The viewer's trial choice is kept in `localStorage`.
 - Run `tests/semantic_links.py` with the other required checks.
 
+## Implementation update · 2026-10-21
+
+Screen 24 has one more separate candidate, **«Откаты до обновления»** (DR-LAB-PB-0.1): for the family F on screen,
+every historical episode vertex H → pullback bottom L → first exceedance B, at scales of locality 1 / 2 / 3 / 6, and
+their constellations (zone-map-3 geometry, one vote per session). Definition with the provenance of every rule:
+`meaning/lens/2026-10-21-otkaty-do-obnovleniya/03-opredelenie-PB-0.1.md`; screen passport `spec/ekran-24/15-otkaty.md`.
+Code `lab/pullbacks24.py` (route `GET /api/integration/pullbacks`, `--integration` only), independent reference
+`lab/pullbacks_ref.py`, page `design/sozvezdiya-24/src/pullbacks.js`, registry part
+`integration/candidates/registry/90-pullbacks.yaml` (the proposed registry now has 62 estimands; accepted SC-1.1 still
+53, plus one SERVICE entry for the route). It reads the accepted family snapshot and never changes BASE/NOW or R/X.
+Check: `tests/pullbacks24.py`. The rule «exceedance by one tick, wick and gap included; a touch is not an update» is
+the operator's (chat 21.10); M1 candles are not used for the order inside an M5 (operator, 21.10). The candidate is
+off by default and not accepted. Audit of this work, the full check run on Windows and the verdict:
+`meaning/lens/2026-10-21-otkaty-do-obnovleniya/05-audit-i-resheniya.md`.
+
 ## Implementation update · 2026-10-15
 
 Start with [the integrated working result](integration/DELIVERY.md) and the latest node of

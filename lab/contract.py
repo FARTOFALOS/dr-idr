@@ -1839,11 +1839,18 @@ def ref_continuation(packet, cases, today, grid):
     return check_frame(packet, cases, today, grid)
 
 
+def ref_pullbacks(proof, fam, B, day):
+    """Candidate-only reference of DR-LAB-PB-0.1 (episodes, points, constellations, today's relations re-derived in
+    another way); accepted BASE/NOW definitions are unchanged."""
+    from pullbacks_ref import check
+    return check(proof, fam, B, day)
+
+
 def finalize(route, body):
     """The last gate before a response leaves: undeclared numbers make the response a violation (fail closed for
     statistical routes); the envelope must be structurally valid."""
     s = surface_of(route)
-    if s is None or s["surface_profile"] not in ("SC11_BASE_24", "SC11_NOW_1_0", "SC11_PRE_24", "SC11_ARRIVE_24", "SC11_CONTINUATIONS_0_1", "SC11_OBSERVATION"): return body
+    if s is None or s["surface_profile"] not in ("SC11_BASE_24", "SC11_NOW_1_0", "SC11_PRE_24", "SC11_ARRIVE_24", "SC11_CONTINUATIONS_0_1", "SC11_PULLBACKS_0_1", "SC11_OBSERVATION"): return body
     bad = undeclared_numbers(route, body)
     if bad:
         if STRICT["on"]: raise ContractViolation(f"undeclared numbers in {route}: {bad}")

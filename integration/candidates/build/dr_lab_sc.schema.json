@@ -2275,7 +2275,8 @@
                 "DELTA_X",
                 "TAU_R",
                 "TAU_X",
-                "CONFIRMATION"
+                "CONFIRMATION",
+                "PB_L"
             ],
             "title": "EventKind",
             "type": "string"
@@ -3805,7 +3806,8 @@
                 "FIRST_CONFIRMATION_AFTER_CUT",
                 "ALGORITHMIC_REGION_MEMBERSHIP",
                 "CLOCK_SPLIT",
-                "REGION_STABILITY"
+                "REGION_STABILITY",
+                "PULLBACK_BEFORE_UPDATE"
             ],
             "title": "ProjectionKind",
             "type": "string"
@@ -4903,7 +4905,8 @@
                 "LEGACY_CLASSIC",
                 "LEGACY_RESEARCH_DASHBOARD",
                 "SERVICE",
-                "SC11_CONTINUATIONS_0_1"
+                "SC11_CONTINUATIONS_0_1",
+                "SC11_PULLBACKS_0_1"
             ],
             "title": "SurfaceProfile",
             "type": "string"
