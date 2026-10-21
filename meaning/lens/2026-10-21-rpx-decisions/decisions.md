@@ -1,0 +1,3 @@
+- I am not confident which object deserves primary visual emphasis: final R, pre-X R, or a view chosen by the question.
+- I am not confident the study's guarded pre-X value is the best measurement to expose. The exact minimum of preceding M5 bars is a strong alternative; it has different evidence.
+- I am not confident whether the current joint display or linked price/time summaries better supports the operator's reading. A3 does not decide this.

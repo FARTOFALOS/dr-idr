@@ -1,0 +1,33 @@
+{
+  "scope": "synthetic mathematical examples, not market observations",
+  "ccpb_new_high_branch": {
+    "theta": "1/5 SD",
+    "initial_anchor": "1 SD",
+    "bars": [
+      {
+        "high": "11/10",
+        "low": "7/10",
+        "close": "3/4"
+      },
+      {
+        "high": "6/5",
+        "low": "37/50",
+        "close": "23/20"
+      }
+    ],
+    "literal_lens19_result": "KNOWN_NO_STRUCTURAL_PULLBACK",
+    "high_then_threshold_lower_close_then_higher_close_is_observed": true,
+    "post_anchor_trough_bounds": [
+      "7/10",
+      "37/50"
+    ],
+    "conclusion": "The pseudocode misses this witnessed correction and close-confirmed return. No detection is not proof of no structural event; trough precision is a separate issue."
+  },
+  "uniform_hdr": {
+    "density": "Uniform[0,1]",
+    "requested_mass": "7/10",
+    "finding": "Every measurable subset of length 7/10 has the same density and mass; the complete density level set is either all support or empty. A selection/tie rule is necessary; coverage alone does not identify a local mode.",
+    "conclusion": "HDR coverage and existence of a separated concentration are different questions."
+  },
+  "outcome": "COUNTEREXAMPLES_CONFIRMED"
+}
