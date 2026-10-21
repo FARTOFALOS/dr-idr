@@ -104,6 +104,20 @@ def possible_cells(bars, a, h, jb, act, w, formed, grid):
     return {((10 * x) // w, (grid[j] - 5 - formed) // 15) for j, x in possible_values(bars, a, h, jb) if j > act}
 
 
+def seen_cells(bars, a, h, gap, act, w, formed, grid):
+    """An episode cut by a missing M5: the cells of the observed part (vertex after its high, then whole M5 up to the
+    gap) where its first deepest point could lie, tick by tick, after the own activation. From the gap on the session's
+    missing-M5 columns hold every cell, so nothing earlier than the gap is opened by it."""
+    o, hh, l, c = bars[a]
+    parts = [(a, l, l if (o == h or c == l) else c)] + [(j, bars[j][2], bars[j][2]) for j in range(a + 1, gap)]
+    out = set()
+    for i, (j, lo, hi) in enumerate(parts):
+        if j <= act: continue
+        for x in range(lo, hi + 1):
+            if all(x < p[2] for p in parts[:i]) and all(x <= p[2] for p in parts[i + 1:]): out.add(((10 * x) // w, (grid[j] - 5 - formed) // 15))
+    return out
+
+
 def episodes_of(bars, first, act, oppv, kmax):
     out = []
     for a, b, h in plateaus(bars, first):
@@ -228,6 +242,11 @@ def check_history(proof, fam, B):
                 cells = possible_cells(bars, r["a"], r["h"], r["jb"], act, w, formed, grid)
                 pc = {((10 * x) // w, (grid[j] - 5 - formed) // 15) for j, lo, hi in g["cand"] for x in range(lo, hi + 1)}
                 if cells != pc: errs.append(f"{cid} episode at {r['a']}: possible cells differ")
+            if r["status"] == "UNKNOWN_GAP":
+                bars, act, w = unc_src[cid]
+                cells = seen_cells(bars, r["a"], r["h"], r["gap"], act, w, formed, grid)
+                pc = {((10 * x) // w, (grid[j] - 5 - formed) // 15) for j, lo, hi in g["cand"] for x in range(lo, hi + 1)}
+                if g.get("gap") != r["gap"] or cells != pc: errs.append(f"{cid} episode at {r['a']}: cells before the missing M5 differ")
     # points
     pp = {(p["case"], p["i"], p["v"]): p for p in proof["points"]}
     if set(pp) != set(ref_pts): errs.append(f"points: {len(pp)} published, {len(ref_pts)} by the reference")
@@ -285,11 +304,7 @@ def possible_by_case(ref_eps, unc_src, ref_pts, members, s, grid, formed):
             elif e["status"] == "KNOWN" and e["kt"] < s:
                 c = ((10 * e["L"]) // w, (grid[e["jl"]] - 5 - formed) // 15)
                 if c not in known: cs.add(c)
-            elif e["status"] == "UNKNOWN_GAP":
-                j0 = max(e["a"], act + 1)
-                cap = min([bars[e["a"]][2] if (bars[e["a"]][0] == e["h"] or bars[e["a"]][3] == bars[e["a"]][2]) else bars[e["a"]][3]] + [bars[x][2] for x in range(e["a"] + 1, e["gap"])])
-                last = next((x for x in range(e["gap"] + 1, len(bars)) if bars[x] is not None and bars[x][1] > e["h"]), len(bars) - 1)
-                cs |= {("≤", (10 * cap) // w, b) for b in range((grid[j0] - 5 - formed) // 15, (grid[last] - 5 - formed) // 15 + 1)}
+            elif e["status"] == "UNKNOWN_GAP": cs |= seen_cells(bars, e["a"], e["h"], e["gap"], act, w, formed, grid)
         g = next((j for j in range(first, len(bars)) if bars[j] is None), None)
         if g is not None:
             j0 = max(g, act + 1)

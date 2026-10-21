@@ -168,9 +168,14 @@ def episode(bars, v, act):
         q = bars[j]
         if q is None:
             # a whole M5 missing before any observed exceedance: the update and the bottom may lie in it
+            # before the gap the M5 are observed: there the bottom can only be the first deepest point of the observed
+            # part (cand, after the own activation); at or after the gap it is anywhere, which the session's own
+            # missing-M5 columns already cover (uncertainty)
             cap = min([_after_high(bars[a], h)[1]] + [bars[x][2] for x in range(a + 1, j)])
             last = next((x for x in range(j + 1, n) if bars[x] is not None and bars[x][1] > h), n - 1)
-            return dict(status="UNKNOWN_GAP", gap=j, cap=int(cap), span=[a, last])
+            _, _, seen = first_bottom([(a,) + _after_high(bars[a], h)] + [(x, bars[x][2], bars[x][2]) for x in range(a + 1, j)])
+            return dict(status="UNKNOWN_GAP", gap=j, cap=int(cap), span=[a, last],
+                        cand=[[s[0], int(s[1]), int(s[2])] for s in seen if s[0] > act])
         if q[1] > h: jb = j; break
     if jb is None: return dict(status="NO_UPDATE")
     segs = [(a,) + _after_high(bars[a], h)] + [(j, bars[j][2], bars[j][2]) for j in range(a + 1, jb)]
@@ -283,7 +288,7 @@ def history(fam, B):
             elif e["status"] == "UNKNOWN_INTRABAR":
                 rec.update(lo=e["lo"], hi=e["hi"], mixed=e["mixed"], cand=e["cand"])
             elif e["status"] == "UNKNOWN_GAP":
-                rec.update(gap=e["gap"], cap=e["cap"], span=e["span"])
+                rec.update(gap=e["gap"], cap=e["cap"], span=e["span"], cand=e["cand"])
             elif e.get("ambiguous"): rec["ambiguous"] = True
             ids.append(rec["id"]); episodes.append(rec)
         for p in pts:
@@ -321,8 +326,11 @@ def uncertainty(H, fam, scale):
                 b = tcell(grid[j] - 5, formed)
                 R.append((b, b, cell(lo, w), cell(hi, w)))
         elif e["status"] == "UNKNOWN_GAP":
-            j0 = max(e["span"][0], w_of[e["case"]]["act_i"] + 1)
-            R.append((tcell(grid[j0] - 5, formed), tcell(grid[e["span"][1]] - 5, formed), None, cell(e["cap"], w)))
+            # the observed part before the gap: only its possible first deepest points; from the gap on, the session's
+            # missing-M5 columns below (a later gap cannot move a bottom into earlier, observed time)
+            for j, lo, hi in e["cand"]:
+                b = tcell(grid[j] - 5, formed)
+                R.append((b, b, cell(lo, w), cell(hi, w)))
         elif e["status"] == "KNOWN" and e["kt"] < scale:
             k, b = cell(e["L"], w), tcell(e["l_open"], formed)
             if (e["case"], k, b) not in known: R.append((b, b, k, k))

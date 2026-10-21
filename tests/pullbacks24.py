@@ -79,6 +79,14 @@ def stories():
     check(known(eps) == [(1, 110, 2, 103, 3)], "9a: a missing M5 after B does not cancel the established episode")
     eps, pts = run([BOX, (104, 110, 104, 109), (109, 109, 103, 104), None, (104, 112, 104, 111)])
     check(eps[0]["status"] == "UNKNOWN_GAP" and not pts, "9b: a missing M5 between H and B: the episode is unknown, not absent")
+    # review of PR #19 (Codex, 21.10): a gap after the observed bottom opens before it only that bottom, not every
+    # earlier cell at or below it; from the gap on the session's missing-M5 columns hold the rest
+    bars = [BOX, (104, 110, 104, 109), (109, 109, 103, 104), (104, 108, 105, 107), None, (107, 112, 106, 111)]
+    eps, pts = run(bars)
+    w, grid = 40, list(range(5, 5 * len(bars) + 1, 5))
+    check(eps[0]["status"] == "UNKNOWN_GAP" and eps[0]["cand"] == [[2, 103, 103]]
+          and R.seen_cells([list(b) if b else None for b in bars], 1, 110, 4, 0, w, 0, grid) == {((10 * 103) // w, 0)},
+          "9c: before a missing M5 only the observed first deepest point is possible (implementation = reference)")
     # the bottom must lie after the own activation; a deeper point at or before it is never trimmed away
     bars = [BOX, (104, 110, 104, 109), (109, 109, 100, 101), (101, 106, 102, 105), (105, 112, 105, 111)]
     eps, _ = run(bars, act=2)
