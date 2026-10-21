@@ -49,7 +49,7 @@
    "members": 23673,
    "onset_share": 0.170320618426055,
    "dr_broken_if_onset": 0.6589781746031746,
-   "dr_broken_if_later": 0.19026526144290007
+   "dr_broken_if_later": 0.15503283946845883
   },
   "zone-map-3 R": {
    "members": 7804,
@@ -59,7 +59,7 @@
    "members": 7775,
    "onset_share": 0.36205787781350485,
    "dr_broken_if_onset": 0.6632326820603908,
-   "dr_broken_if_later": 0.24254032258064517
+   "dr_broken_if_later": 0.20181451612903226
   },
   "CN-1 R": {
    "members": 7006,
@@ -69,7 +69,7 @@
    "members": 6833,
    "onset_share": 0.4844138738475048,
    "dr_broken_if_onset": 0.6646525679758308,
-   "dr_broken_if_later": 0.36020437127448196
+   "dr_broken_if_later": 0.34459267669599775
   }
  },
  "G_ym_rdr_R": {

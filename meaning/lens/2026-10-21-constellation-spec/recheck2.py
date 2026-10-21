@@ -12,7 +12,7 @@ F. Does CN-1 actually remove arbitrariness, or replace one arbitrary choice by a
 
 G. What a drawn zone contains for action: the share of zone members whose own event (final R or X) lies on the
    first two M5 of its horizon (offset from activation 0 or 5 minutes, i.e. within 10 minutes after the
-   confirming M5 closed), against the family. For X, also how often such sessions later broke DR (a label that is
+   confirming M5 closed), against the family. For X, also how often such sessions broke DR on an M5 strictly after the one holding final X (a label that is
    not a function of the X coordinate). Descriptive; no claim about the market's mechanism.
 
     %LOCALAPPDATA%\\Python\\bin\\python.exe -B -X utf8 meaning/lens/2026-10-21-constellation-spec/recheck2.py
@@ -85,7 +85,8 @@ for inst in ("NQ", "ES", "YM"):
                                     g["onset"] += onset
                                     if e == "X" and m["outcome"] in ("held", "broken"):
                                         g["outcome_known_onset" if onset else "outcome_known_later"] += 1
-                                        if m["outcome"] == "broken":
+                                        # a break counts only on an M5 strictly after the one holding final X
+                                        if m["outcome"] == "broken" and m["brk"] is not None and m["brk"] > m["X"]["t"]:
                                             g["broken_onset" if onset else "broken_later"] += 1
 
 out = dict(author="Claude (Opus 5.5)", scope="540 confirmation-family maps (270 families x R/X), history < 2026-01-01; aggregates only",
