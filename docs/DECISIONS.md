@@ -69,3 +69,25 @@ and the operator disagree, the operator wins.
 | 2026-10-15 | **Integrate the working continuation chain into screen 24, then main after checks.** Fixed F/RX, a fixed physical target and absolute window, successive closed M5, own POS_GEO support with real paths, residual question and observed fact. Review all 12 open PRs as sources before main, preserve provenance and proposal status. The operator explicitly answered «После проверок разрешаю объединить в main», then required build, semantic checks and the decisions skill before final replacement/push. This is authority for this implementation/publication sequence, not perceptual acceptance, blanket PR adoption or C2/C3. | operator, direct authenticated messages and clarification reply in this Codex conversation; implementation choices by executor; details in meaning/07 and integration/DELIVERY.md |
 | 2026-10-19 | **Aggregate every lens, the external review and PR #15 into one map, and make screen 24 a fully working interface on real data.** Executor's decisions within that request: the launcher restarts a TradingView opened without port 9222 again (the change of 15.10 had left the screen without live candles); the registry words of `B-LEVEL-REST` / `B-VISIT-REST` (common remainder) and of `CMP:C-POS` / `CF:C-WINDOW` (POS_GEO as computed) aligned with the executable definitions, pinned by `tests/semantic_links.py`, no number changed; the operator's decisions of 08.10 (phase rule, «Сейчас» pullback marks) on screen as candidate trials, not accepted view; the third edition of the 18.10 audit kept local on its PR branch. Map: `meaning/21-svodnaya-karta-24.md`. The operator then decided to publish: «закоммить в main и запушь всю работу 19.10 вместе с правкой 16.10, и запушь третью редакцию аудита в PR #15» — this also publishes his local visual edit of 16.10; it is not acceptance of the candidates and not a merge of PR #15. | operator, chat 19.10 (request, publication); executor (decisions, `meaning/07`) |
 | 2026-10-21 | **Candidate «Откаты до обновления» (DR-LAB-PB-0.1): rule of the update and data.** An update of a vertex is an exceedance by at least one tick, a wick and a gap included; a touch or equality is not («если на тик, то это уже исполняется… Тик — это не одно и то же»). The order inside an M5 is not resolved with M1 candles («М1 я тоже против»): the unknown stays unknown and widens the share's upper bound (the M5 atom of 01.10). The default scale and a filter «only before the break» were not decided: the operator did not find the scale question understandable and wants the accepted constellation picture kept; the candidate stays an optional trial, off by default, and the accepted R/X constellations are untouched. He ordered a full audit of the previous executor's work, all checks, and publication as a PR with the executor's verdict. | operator, live chat 21.10 (voice) |
+
+
+## 22.10.2026 · Рабочая 23.5 в main, отдельно от 24
+
+**Прямое поручение оператора в текущем аутентифицированном чате:** сохранить прежний UI, восстановить затемнение
+и отбор выраженных кластеров как в 24, исправить проекции новых откатов; применить decisions, перепроверить фасеты,
+«всё это запушь в Main с описанием». Новые видимые сущности — сначала обсуждать. Это разрешение текущей
+публикации, не бессрочное разрешение на публикации и не принятие прогноза.
+
+**Реализация:** отдельная `/23-5/` и namespace настроек, не замена файлов 24. PB-L в прежней янтарной роли R;
+FINAL-X, BASE/NOW, порядок окончательных R/X и условные Продолжения сохранены как отдельные вопросы.
+Счётчики цены/времени — объединения сессий; неизвестное и отсутствие различаются. Исправлены унаследованные ячейки
+FINAL-R, доставка выбранной области, Infinity/null, смешанная подсказка «?» и исходные данные временного холма.
+Слабые строки не удаляются из истории при скрытии, N не перенормируется. Затемнение взято из 24 вместо плоской
+контрастной темы; PAST относится к концу окна, не к запрету более высокого локального отката.
+
+**Смысл и проверка:** [решения и 10 фасетов](DR-LAB-23-5-SEMANTIC-DECISIONS.md),
+[12 статистических и 5 фактических/визуальных носителей](../integration/profile235-bindings.json),
+[источники](../integration/23-5-source-dispositions.json), [результаты](../integration/23-5-release-checks.json).
+Принятых величин 53, предложенных 63. У неоптимизированного масштаба, clock многократных событий и порога внимания
+названы альтернативы и ограничения. Основной 24 сохраняется для сравнения; человеческая приёмка вида не выводится
+из машинного PASS.

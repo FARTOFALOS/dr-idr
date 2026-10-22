@@ -192,7 +192,7 @@ def unique_density_zones(by_case, b_lo, b_hi, n_family):
 def check(proof, fam, B, day):
     h = check_history(proof, fam, B)
     t = check_today(proof, fam, day)
-    errs = h["errors"] + t
+    errs = h["errors"] + t + check_marginals(proof, fam)
     return dict(outcome="FAIL" if errs else "PASS", errors=errs, checked=h["checked"])
 
 
@@ -309,17 +309,19 @@ def possible_by_case(ref_eps, unc_src, ref_pts, members, s, grid, formed):
         if g is not None:
             j0 = max(g, act + 1)
             if j0 < len(bars): cs |= {("*", None, b) for b in range((grid[j0] - 5 - formed) // 15, (grid[-1] - 5 - formed) // 15 + 1)}
-    return {c: _Cells(cs) for c, cs in out.items() if cs}
+    return {c: _Cells(cs, members[c]["w"]) for c, cs in out.items() if cs}
 
 
 class _Cells:
     """A set of exact cells plus half-planes ('≤', k, b: any cell of time b at or below k) and columns ('*', None, b)."""
-    def __init__(self, items):
+    def __init__(self, items, width=10):
         self.items = items
+        self.width = width
 
     def __and__(self, cells):
         hit = set()
         for c in cells:
+            if ((c[0]+1)*self.width-1)//10 < -((-c[0]*self.width)//10): continue
             if c in self.items: hit.add(c)
             elif ("*", None, c[1]) in self.items: hit.add(c)
             elif any(t[0] == "≤" and t[2] == c[1] and c[0] <= t[1] for t in self.items if isinstance(t[0], str)): hit.add(c)
@@ -327,6 +329,39 @@ class _Cells:
 
     def __bool__(self):
         return bool(self.items)
+
+
+def check_marginals(proof, fam):
+    """Independent union of case IDs, including unknown half-planes and missing-M5 columns."""
+    errors = []
+    if set(proof.get("marginals",{})) != {str(s) for s in proof["definition"]["scales"]}:
+        return ["marginals: every declared scale must be published"]
+    formed = SESS[proof["context"]["session"]][1]
+    members = {w["id"]: w for w in proof["sessions"]}
+    src = {cid: (w["bars"], w["act_i"], w["w"]) for cid, w in members.items()}
+    eps = {cid: episodes_of(w["bars"], proof["first_i"], w["act_i"], w["oppv"], max(proof["definition"]["scales"])) for cid, w in members.items()}
+    pts = {(p["case"], p["i"], p["v"]): {"kt": p["kt"]} for p in proof["points"]}
+    for scale, regions in proof.get("marginals", {}).items():
+        s = int(scale)
+        possible = possible_by_case(eps, src, pts, members, s, proof["grid"], formed)
+        for r in regions:
+            k0, k1, b0, b1 = (r[k] for k in ("k0", "k1", "b0", "b1"))
+            in_time = lambda b: (b0 is None or b >= b0) and (b1 is None or b < b1)
+            in_price = lambda k: (k0 is None or k >= k0) and (k1 is None or k < k1)
+            use = [p for p in proof["points"] if p["kt"] >= s and in_time(p["b"]) and in_price(p["k"])]
+            yes = sorted({p["case"] for p in use})
+            later = {p["case"] for p in use if p["open"] + 5 > proof["context"]["cut"]}
+            def hit(items, width):
+                # Integer arithmetic: the half-open SD band must contain an actual exchange tick.
+                if k0 is not None and k1 is not None and (k1*width-1)//10 < -((-k0*width)//10): return False
+                for item in items:
+                    if len(item) == 2 and in_time(item[1]) and in_price(item[0]): return True
+                    if len(item) == 3 and in_time(item[2]) and (item[0] == "*" or (item[0] == "≤" and (k0 is None or k0 <= item[1]))): return True
+                return False
+            unknown = sorted(c for c, cells in possible.items() if c not in yes and hit(cells.items, members[c]["w"]))
+            if (r["members"], r["possible"], r["n_known"], r["n_possible"], r["earlier"], r["later"]) != (yes, unknown, len(yes), len(unknown), len(yes)-len(later), len(later)):
+                errors.append(f"marginal {s} {k0,k1,b0,b1}: membership or clock counts differ; extra possible={set(r['possible'])-set(unknown)}, missing possible={set(unknown)-set(r['possible'])}; clock={r['earlier'],r['later']} expected={len(yes)-len(later),len(later)}")
+    return errors
 
 
 def check_today(proof, fam, day):

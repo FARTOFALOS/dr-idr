@@ -3613,6 +3613,84 @@
       "surface": "PANEL",
       "text_ru": "{lo}–{hi}",
       "view": "ANY"
+     },
+     {
+      "key": "history_head",
+      "surface": "PANEL",
+      "text_ru": "Ход вопроса",
+      "view": "ANY"
+     },
+     {
+      "key": "history_seen",
+      "surface": "PANEL",
+      "text_ru": "Просмотренные M5 · новые сверху",
+      "view": "ANY"
+     },
+     {
+      "key": "history_whole",
+      "surface": "PANEL",
+      "text_ru": "Всё окно",
+      "view": "ANY"
+     },
+     {
+      "key": "history_rest",
+      "surface": "PANEL",
+      "text_ru": "Остаток {from}–{to}",
+      "view": "ANY"
+     },
+     {
+      "key": "history_yes",
+      "surface": "PANEL",
+      "text_ru": "Посещение установлено",
+      "view": "ANY"
+     },
+     {
+      "key": "history_no",
+      "surface": "PANEL",
+      "text_ru": "Без посещения",
+      "view": "ANY"
+     },
+     {
+      "key": "no_visit_yet",
+      "surface": "PANEL",
+      "text_ru": "В окне до {time} не заходили",
+      "view": "ANY"
+     },
+     {
+      "key": "support_n",
+      "surface": "PANEL",
+      "text_ru": "опора {n}",
+      "view": "ANY"
+     },
+     {
+      "key": "membership_change",
+      "surface": "PANEL",
+      "text_ru": "В набор по положению с {time}: вошли {entered}, вышли {left}",
+      "view": "ANY"
+     },
+     {
+      "key": "support_chain",
+      "surface": "PANEL",
+      "text_ru": "По положению {position} → опора остатка {risk}",
+      "view": "ANY"
+     },
+     {
+      "key": "exclude_WINDOW_ALREADY_VISITED",
+      "surface": "PANEL",
+      "text_ru": "Уже заходили в окно",
+      "view": "ANY"
+     },
+     {
+      "key": "exclude_WINDOW_VISIT_UNKNOWN",
+      "surface": "PANEL",
+      "text_ru": "Посещение неизвестно",
+      "view": "ANY"
+     },
+     {
+      "key": "exclude_NOT_ACTIVE_AT_WINDOW_START",
+      "surface": "PANEL",
+      "text_ru": "Подтвердились позднее начала окна",
+      "view": "ANY"
      }
     ],
     "note": "Operator 2026-10-12: integrate the verified Q1 mechanism into screen 24, «не подменяя существующие показатели BASE/NOW». The words follow the curator's trader wording (KADR-1.1 §10: «отсюда до −0,5 доходили 41 из 100», «уже дошли в 11:20», «мало сессий: n=…») and the pilot's passport; they are the executor's, for his acceptance",
@@ -3622,10 +3700,10 @@
      "§12.6",
      "K33"
     ],
-    "statement_ru": "На срезе {cut}, среди {n} исторических случаев с близким положением и указанным условием {yes} посетили область в оставшемся окне {window}; {unknown} исходов неизвестны.",
+    "statement_ru": "На срезе {cut}, среди {n} исторических случаев с близким положением и указанным условием {yes} посетили область в оставшемся окне {window}; исход неизвестен у {unknown}.",
     "subject_ru": "исторические случаи POS_GEO того же инструмента и блока (не только семья F), которые в этот же час по общим часам стояли там же; внутри окна — ещё и не посещавшие область в его прошедшей части",
     "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN",
-    "version": "1.0"
+    "version": "1.1"
    },
    {
     "acceptance": "PROPOSED_BY_EXECUTOR",
@@ -3806,13 +3884,13 @@
      {
       "key": "OUTSIDE",
       "surface": "PANEL",
-      "text_ru": "откаты только вне созвездий",
+      "text_ru": "установленные откаты только вне созвездий",
       "view": "ANY"
      },
      {
       "key": "UNKNOWN",
       "surface": "PANEL",
-      "text_ru": "не установлено по M5",
+      "text_ru": "без установленных откатов · есть неизвестное",
       "view": "ANY"
      },
      {
@@ -3845,9 +3923,35 @@
      "C0",
      "§12.6"
     ],
-    "statement_ru": "Из {N} сессий семьи на масштабе {scale}: откаты в созвездиях у {in_zones}, только вне созвездий у {outside}, не установлены по M5 у {unknown}, без завершённых откатов {none}.",
+    "statement_ru": "Из {N} сессий семьи на масштабе {scale}: установленные откаты в созвездиях у {in_zones}, установленные откаты только вне созвездий у {outside}, без установленных откатов с неизвестным исходом {unknown}, без завершённых откатов {none}.",
     "subject_ru": "сессии этой семьи (F, один N)",
     "value_form": "CATEGORY_SHARES",
+    "version": "0.1"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "DescriptiveClaim",
+    "estimand": "EST:PB-REGION",
+    "forbidden_readings_ru": [
+     "шанс разворота или продолжения сегодня",
+     "здесь закончится сегодняшний откат",
+     "доли созвездий делят 100 %",
+     "посещение области — завершённый откат",
+     "площадь свечения — членство"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "CF:PB-REGION",
+    "labels": [],
+    "note": "Words of the executor (2026-10-21) for the operator's acceptance; the construction's name «Откаты перед обновлением экстремума»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C0",
+     "§12.6",
+     "K33"
+    ],
+    "statement_ru": "У {yes} из {N} сессий семьи хотя бы одно дно отката перед обновлением было в выбранной области (масштаб {scale}); ещё у {unknown} это возможно по M5.",
+    "subject_ru": "сессии этой семьи (F, один N), каждая со своими откатами перед обновлением своих вершин",
+    "value_form": "BOUNDS_IF_UNKNOWN",
     "version": "0.1"
    }
   ],
@@ -5796,6 +5900,17 @@
     "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
    },
    {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:C.17",
+    "path": "proof.exclusion_counts.{*}",
+    "sc_ref": [
+     "H2",
+     "V2.1"
+    ],
+    "surface": "API:/api/integration/continuations",
+    "target": "CS:C-POS minus CS:C-RISK, counted by independently checked elapsed-window exclusion reason; not outcomes in the remaining window"
+   },
+   {
     "field_kind": "PARAMETER",
     "id": "FE:PB.0",
     "path": "proof.definition.{default_scale,min_abs,min_frac_num,min_frac_den}",
@@ -6114,6 +6229,26 @@
     ],
     "surface": "API:/api/integration/pullbacks",
     "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:PB.33",
+    "path": "proof.marginals.{*}[*].{k0,k1,b0,b1}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/pullbacks",
+    "target": "EST:PB-REGION"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:PB.34",
+    "path": "proof.marginals.{*}[*].{n_known,n_possible,earlier,later}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/pullbacks",
+    "target": "EST:PB-REGION"
    }
   ],
   "estimands": [
@@ -8780,6 +8915,69 @@
      "SRC:CODE-PB24"
     ],
     "version": "0.1"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "EST:PB-REGION",
+    "parameters": [
+     {
+      "meaning_ru": "Масштаб локальности",
+      "name": "scale",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "Нижняя включённая граница цены или null",
+      "name": "k0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "Верхняя исключённая граница цены или null",
+      "name": "k1",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "Начало времени или null",
+      "name": "b0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "Конец времени или null",
+      "name": "b1",
+      "parameter_kind": "THRESHOLD"
+     }
+    ],
+    "profile": "PROFILE:PB-24",
+    "q1_formalised_part_ru": "Доля сессий семьи с хотя бы одним дном локального отката в выбранной полосе цены, окне времени или их пересечении. Одна сессия голосует один раз в области; разные области могут делить сессии.",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION",
+    "q4_case_set": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1",
+     "CS:F-BREAK-1",
+     "CS:F-BREAK-ALL-1"
+    ],
+    "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+    "q5_outcome": "OUT:PB-L-1",
+    "q5_region": "REG:JOINT-1",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "у каждой сессии: дно после закрытия её собственной активации, вершина может быть раньше; до конца блока; время дна — открытие первой M5 с этой ценой; срез сегодняшнего дня карту не меняет",
+    "q7_measure": "SHARE",
+    "q8_order_ru": "точка — установленные / N; при неустановленных — границы [установленные / N; (установленные + возможные) / N]; созвездия могут делить сессии: доли не складываются в 100 %",
+    "q8_unknown": "BINARY_BOUNDS_OVER_D",
+    "q8_weights": "NONE",
+    "question": "Q:PB-ZONE",
+    "sc_ref": [
+     "T1",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:PB-0.1",
+     "SRC:PB-CONSTRUCTION",
+     "SRC:PB-REVIEW",
+     "SRC:INSTRUCTION-2026-10-21",
+     "SRC:CODE-PB24"
+    ],
+    "version": "0.1"
    }
   ],
   "estimators": [
@@ -9187,6 +9385,25 @@
      "V2.1"
     ],
     "unknown_handling_ru": "категории вместе = N_base",
+    "version": "0.1"
+   },
+   {
+    "estimands": [
+     "EST:PB-REGION"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "ESTR:PB-REGION",
+    "implementations": [
+     "lab/pullbacks24.py::marginal_regions"
+    ],
+    "reference_definition": "lab/contract.py::ref_pullbacks",
+    "rounding_ru": "точные счёты; проценты после деления, один знак",
+    "rule": "ALGORITHMIC_REGION_SHARE",
+    "sc_ref": [
+     "V0",
+     "P3"
+    ],
+    "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
     "version": "0.1"
    }
   ],
@@ -10538,6 +10755,184 @@
    {
     "acceptance": "PROPOSED_BY_EXECUTOR",
     "forbidden_readings_ru": [
+     "шанс повторного прихода",
+     "зелёные сессии исключены из семьи",
+     "посещение доказывает окончательный экстремум",
+     "прогноз",
+     "сигнал"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "FF:TODAY-VISIT",
+    "labels": [
+     {
+      "key": "VISITED",
+      "surface": "PANEL",
+      "text_ru": "✓ посещена в {time}",
+      "view": "ANY"
+     },
+     {
+      "key": "PENDING",
+      "surface": "PANEL",
+      "text_ru": "ещё не посещена",
+      "view": "ANY"
+     },
+     {
+      "key": "FUTURE",
+      "surface": "PANEL",
+      "text_ru": "○ окно впереди",
+      "view": "ANY"
+     },
+     {
+      "key": "OPEN",
+      "surface": "PANEL",
+      "text_ru": "● окно действует · не посещена",
+      "view": "ANY"
+     },
+     {
+      "key": "MISSED",
+      "surface": "PANEL",
+      "text_ru": "× окно прошло · не посетили",
+      "view": "ANY"
+     },
+     {
+      "key": "UNKNOWN",
+      "surface": "PANEL",
+      "text_ru": "посещение неизвестно",
+      "view": "ANY"
+     },
+     {
+      "key": "NO_PERIOD",
+      "surface": "PANEL",
+      "text_ru": "окно закончилось к активации",
+      "view": "ANY"
+     },
+     {
+      "key": "zone_scope",
+      "surface": "INSPECTOR",
+      "text_ru": "Приход сегодня — в клетки зоны и в её окно. Исходная доля семьи сохранена.",
+      "view": "ANY"
+     },
+     {
+      "key": "column_scope",
+      "surface": "INSPECTOR",
+      "text_ru": "Сегодня: эта полоса внутри {zone}, окно {window}. Процент — исходная доля полосы за весь горизонт.",
+      "view": "ANY"
+     },
+     {
+      "key": "peak_scope",
+      "surface": "INSPECTOR",
+      "text_ru": "Приход сегодня — в выбранную полосу именно в {window}. Кружок и отметка относятся к этому окну; процент полосы — за весь горизонт.",
+      "view": "ANY"
+     },
+     {
+      "key": "band_scope",
+      "surface": "INSPECTOR",
+      "text_ru": "Приход сегодня — в полосу после активации. Повторный приход — отдельный вопрос.",
+      "view": "ANY"
+     },
+     {
+      "key": "clock",
+      "surface": "INSPECTOR",
+      "text_ru": "Часть «раньше среза»: экстремумы истории раньше {time}. Эти сессии остаются в семье и её знаменателе. ✓ — посещение сегодня в нужные цену и время.",
+      "view": "ANY"
+     },
+     {
+      "key": "final",
+      "surface": "INSPECTOR",
+      "text_ru": "Зона для окончательного {ev}: {status}. Посещение — отдельный факт.",
+      "view": "ANY"
+     }
+    ],
+    "note": "Local 23.5 presentation under the operator's 2026-10-20 request, including his later instruction to implement the color specification now: check facets and mappings, use matching green checks/circles for a confirmed visit and red for known nonvisit of a finished window. PB235 in spec/ekran-24/16-cveta-i-fasety-23-5.md replaces the defective first color composition. A full-horizon band's role/clock colors never inherit a narrower zone's visit outcome; the selected band marker and its separate visit note share exactly its selected 15-minute target, while a zone marker shares the zone's exact cell mask. These remain observed visits, not finality, forecasts or a strategy amendment.",
+    "record_class": "PrefixState",
+    "sc_ref": [
+     "E1",
+     "P0.2",
+     "K33"
+    ],
+    "statement_ru": "Посещение сегодняшней закрытой M5 после активации: для зоны проверяются её собственные клетки цены и времени; для кружка при выборе полосы — эта полоса в выделенных пиковых 15 минутах. Цвет кружка и отметка посещения относятся к одной точной области и окну. Статус узкой области не перекрашивает долю полосы за весь горизонт. Посещение, непосещение завершённого окна и неизвестность различаются; исходная доля окончательных R/X и полный N семьи сохраняются.",
+    "version": "1"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "forbidden_readings_ru": [
+     "процент",
+     "прогноз",
+     "сигнал"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "FF:TODAY-Z-PASSED",
+    "labels": [
+     {
+      "key": "passed",
+      "surface": "PANEL",
+      "text_ru": "пройдена в {time}",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "TOOLTIP",
+      "text_ru": "Сегодня цена прошла эту зону в её окне: закрытая M5 {time} вошла в её клетки. Окончательный экстремум дня здесь уже не будет — сегодняшний ушёл дальше. Зона отработана, следить за ней не нужно. Кандидат 23.5 · приёмка не проведена.",
+      "view": "ANY"
+     }
+    ],
+    "note": "Operator 2026-10-20 on the live NQ ODR: X1 «полностью отработал… почему этот кластер ещё светится как первоначальный?… чтобы я понимал, что это тоже уже реализовано… на него не обращать внимания». A refinement of the word for the accepted status IMPOSSIBLE (FF:TODAY-Z), which stays as it is and is still checked against the server; only the zones today's price traded through inside their window say «пройдена», those it never reached keep «невозможна»",
+    "record_class": "PrefixState",
+    "sc_ref": [
+     "E1",
+     "§12.4/TODAY-Z"
+    ],
+    "statement_ru": "Сегодня закрытая M5 {time} после активации прошла через собственную клетку зоны (цена × 15 минут) внутри её окна; окончательный экстремум дня сюда уже не ляжет — сегодняшний уже дальше. Факт сегодняшнего дня, не доля и не прогноз.",
+    "version": "1"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "forbidden_readings_ru": [
+     "принятая функция экрана",
+     "прогноз",
+     "сигнал"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "FF:CANDIDATE-STATUS",
+    "labels": [
+     {
+      "key": "tag",
+      "surface": "PANEL",
+      "text_ru": "кандидат",
+      "view": "ANY"
+     },
+     {
+      "key": "foot",
+      "surface": "INSPECTOR",
+      "text_ru": "кандидат · приёмка не проведена",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "TOOLTIP",
+      "text_ru": "Кандидат на испытании: ваша приёмка не проведена. Не принятая часть экрана и не прогноз; «DR до 16:00», «Сейчас» и зоны от него не зависят. Выключается в ⚙ → Испытание кандидатов.",
+      "view": "ANY"
+     },
+     {
+      "key": "mode_title",
+      "surface": "TOOLTIP",
+      "text_ru": "Продолжения — кандидат на испытании, приёмка не проведена: условный ответ по сопоставимым случаям, не прогноз. Выключается в ⚙ → Испытание кандидатов.",
+      "view": "ANY"
+     }
+    ],
+    "note": "Operator 2026-10-19 (finalisation of screen 24 for his acceptance): «проверь, что кандидаты не подменяют принятую семантику и не получают статус прогноза» and «понятные статусы принятых функций и кандидатов». Every candidate block, the trial form of a «Сейчас» row and the «Продолжения» mode carry this standing where they are shown; the words are the executor's",
+    "record_class": "PublicationStanding",
+    "sc_ref": [
+     "§14.1",
+     "§14.3",
+     "K33"
+    ],
+    "statement_ru": "Функция экрана на испытании (редакция DR-LAB-CANDIDATES-1): приёмка оператором не проведена. Её числа — описание истории или условный ответ по сопоставимым случаям, не прогноз; принятые функции экрана (DR до 16:00, «Сейчас», зоны) от неё не зависят.",
+    "version": "1"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "forbidden_readings_ru": [
      "процент",
      "сигнал",
      "прогноз"
@@ -10691,19 +11086,19 @@
      {
       "key": "COMPLETED",
       "surface": "PANEL",
-      "text_ru": "откат здесь завершён: {top} {h} обновлена в {t}",
+      "text_ru": "откат здесь завершён: {top} на M5 {h} обновлена в {t}",
       "view": "ANY"
      },
      {
       "key": "IN_ZONE_NOT_UPDATED",
       "surface": "PANEL",
-      "text_ru": "откат сейчас здесь, {top} {h} ещё не обновлена",
+      "text_ru": "откат сейчас здесь, {top} на M5 {h} ещё не обновлена",
       "view": "ANY"
      },
      {
       "key": "NONE",
       "surface": "PANEL",
-      "text_ru": "завершённого отката здесь нет",
+      "text_ru": "завершение отката здесь не установлено",
       "view": "ANY"
      },
      {
@@ -10739,7 +11134,7 @@
      {
       "key": "today_none",
       "surface": "PANEL",
-      "text_ru": "откатов с обновлением пока нет",
+      "text_ru": "откаты с обновлением пока не установлены",
       "view": "ANY"
      }
     ],
@@ -10794,7 +11189,7 @@
      {
       "key": "gap",
       "surface": "INSPECTOR",
-      "text_ru": "от L до обновления {m} мин",
+      "text_ru": "между M5 дна и обновления {m} мин",
       "view": "ANY"
      },
      {
@@ -13751,7 +14146,8 @@
     "definitions": "SRC:PB-0.1",
     "estimands": [
      "EST:PB-ZONE",
-     "EST:PB-SESSIONS"
+     "EST:PB-SESSIONS",
+     "EST:PB-REGION"
     ],
     "id": "API:/api/integration/pullbacks",
     "marking": "separate proposed ContractEnvelope; release_id binds the proof; no C2/C3",
@@ -13955,7 +14351,7 @@
   "document_sha256_lf": "783064fc5c1445b149300cf4b2d610ec1b9f4ef7bb58cd5311c89c20c0cb450a",
   "edition": "DR-LAB-CANDIDATES-1",
   "linkml": "1.11.1",
-  "registry_sha256": "f62e747e117ec9fd2348ad8747f5dac7b90af7603c332e39e640cb2327af8f94",
+  "registry_sha256": "5d7ef25cb102f4777bc6d0b3e31f218ee1f6e0ca9296cda913d0105f333f8655",
   "runtime_spec_sha256": "f8cb696d267dba532308c85e61fcfd150a22913b17c0464db413229e9fb0e46d",
   "schema_sha256_lf": "99116af6c85f8c965111d7352d5ad0ae63b1c122bc9e15850d8df76a46446e35",
   "sources": {
@@ -13965,12 +14361,12 @@
    "integration/candidates/registry/10-observation-strategy-measurement.yaml": "017dff6cc6ea9ef2340a78aa633fa44306a27d27875f856165a6e6d586a0cb27",
    "integration/candidates/registry/20-cases-outcomes.yaml": "5f6535e69d557fee9d05c6de7ffbb0b206aeec11362259454d5b4c6bc456afcd",
    "integration/candidates/registry/30-questions-estimands.yaml": "a2325bf90b17d7d742853609a92dc1f29de0099ec5a3e3c3d479a6425929b699",
-   "integration/candidates/registry/40-claims.yaml": "836035ee223fccc6b51984363e024e94e2b14ded619e60e875096f8dc9216eb2",
+   "integration/candidates/registry/40-claims.yaml": "7faf6d266b6fd94e75961f4d253279105931196179c8c5227b369a4822d31627",
    "integration/candidates/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
    "integration/candidates/registry/60-surfaces.yaml": "974b6786f3f0eaead74bb0133667e6ecff7f72127da8bcff9e8e629fc6e5a605",
    "integration/candidates/registry/70-obligations.yaml": "222c8ef1523ddad91d930b98c44ca360679257460f305b56d5bcad86eef2ae90",
-   "integration/candidates/registry/80-continuations.yaml": "b78dc5323fa3a60237054c4e7c681b82c3a16da6cdf65f619199fb51f6076cb8",
-   "integration/candidates/registry/90-pullbacks.yaml": "8247a62de2c19e2f0292cc3691eb39513e809a4a1e182a4727765c6888e94102",
+   "integration/candidates/registry/80-continuations.yaml": "0adc669ab07b78921ba7e9911d5e80e26de85063f5ca93ae61bd79f60b95e1ed",
+   "integration/candidates/registry/90-pullbacks.yaml": "0bcc119aef1355b385d8378e66fcd2866ccbb97f042dd576069052d64bb44536",
    "integration/candidates/schema.yaml": "99116af6c85f8c965111d7352d5ad0ae63b1c122bc9e15850d8df76a46446e35",
    "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"
   }

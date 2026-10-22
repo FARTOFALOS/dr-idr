@@ -67,6 +67,12 @@ def stories():
                     (104, 116, 104, 115), (115, 115, 112, 113)])
     check(known(eps) == [(1, 115, 5, 103, 6), (4, 111, 5, 103, 6)] and len(pts) == 1 and len(pts[0]["links"]) == 2,
           "5: 115 -> 107 -> 111 -> 103 -> 116: one point 103 with two links (not two stars)")
+    eps, pts = run([BOX, (110, 115, 110, 114), (114, 114, 108, 109), (109, 109, 107, 108),
+                    (108, 111, 108, 110), (110, 110, 94, 96), (96, 112, 96, 111),
+                    (111, 111, 94, 94), (96, 116, 96, 115), (115, 115, 112, 113)], oppv=95)
+    links = [eps[i] for p in pts if (p["i"], p["v"]) == (5, 94) for i in p["links"]]
+    check({(e["h"], e["jb"], e["dr"]) for e in links} == {(111, 6, "INTACT_AT_B"), (115, 8, "BETWEEN_L_B")},
+          "5b: one bottom, two updates with a DR break between them: the order belongs to each episode, not the merged star")
     # 7. the order inside the vertex M5 decides whether its low comes after its high: no point is invented
     eps, pts = run([BOX, (104, 110, 100, 108), (108, 109, 103, 104), (104, 112, 104, 111)])
     check([e["status"] for e in eps][:1] == ["UNKNOWN_INTRABAR"] and not pts, "7a: the vertex M5 may hold the deepest point after its high: unknown, no point")
@@ -111,6 +117,17 @@ def density():
     zones, need = R.unique_density_zones(by_case, 0, 6, 10)
     z = [x for x in zones if (0, 0) in x["cells"]][0]
     check(z["members"] == ["A", "B", "C", "D"] and need == 4, "6b: the share of the region counts each session once")
+    # A 0.1-IDR region can lie between every reachable tick of a narrow-range session.
+    # A missing candle allows unknown ticks, never fractional ticks that cannot occur.
+    H=dict(grid=P.block_grid("RDR"),episodes=[],
+           sessions=[dict(id=c,w=100,gap=None,act_i=12) for c in "ABCD"]+[dict(id="U",w=1,gap=20,act_i=12)],
+           points=[dict(case=c,kt=1,k=5,b=3,episodes=[]) for c in "ABCD"])
+    fam=dict(N=5,snapshot_id="synthetic-tick-grid",key=dict(session="RDR",window=[630,645]))
+    z=P.zone_map(H,fam,1)["zones"][0]
+    check(z["n_known"]==4 and z["n_possible"]==0,
+          "6c: a missing M5 cannot put a one-tick-IDR session in a zone between its reachable ticks")
+    hit=R._Cells({("*",None,3)},width=1)&{(-10,3),(-1,3),(0,3),(1,3),(10,3)}
+    check(hit=={(-10,3),(0,3),(10,3)},"6d: independent unknown-cell membership respects positive and negative integer ticks")
 
 
 def review():
@@ -210,22 +227,34 @@ def faults():
     gate = I.review_gate()
     check(not gate.undeclared_numbers(P.ROUTE, good), "publication: every number of the answer is declared by the candidate registry")
     kinds = {b["estimand"] for b in good["contract"]["bundles"]}
-    check(kinds == {"EST:PB-ZONE", "EST:PB-SESSIONS"} and all(b["claim"]["claim_class"] == "DescriptiveClaim" for b in good["contract"]["bundles"]),
-          "publication: only C0 descriptive claims of the two registered estimands")
-    for fault in ("bar", "point", "member", "status"):
+    check(kinds == {"EST:PB-ZONE", "EST:PB-SESSIONS", "EST:PB-REGION"} and all(b["claim"]["claim_class"] == "DescriptiveClaim" for b in good["contract"]["bundles"]),
+          "publication: only C0 descriptive claims of the three registered estimands")
+    for fault in ("bar", "point", "member", "status", "marginal", "clock", "missing-marginals"):
+
         bad = copy.deepcopy(proof)
         if fault == "bar":
             s = next(s for s in bad["sessions"] if any(p["case"] == s["id"] for p in bad["points"]))
             j = next(j for j in range(len(s["bars"])) if s["bars"][j]); s["bars"][j][2] -= 1
         elif fault == "point": bad["points"][0]["v"] -= 1
         elif fault == "member": bad["maps"]["1"]["zones"][0]["members"].pop()
-        else: next(e for e in bad["episodes"] if e["status"] == "KNOWN")["status"] = "UNKNOWN_INTRABAR"
+        elif fault == "status": next(e for e in bad["episodes"] if e["status"] == "KNOWN")["status"] = "UNKNOWN_INTRABAR"
+        elif fault == "marginal": bad["marginals"]["1"][0]["n_known"] += 1
+        elif fault == "clock": bad["marginals"]["1"][0]["later"] += 1
+        else: bad.pop("marginals")
         out = P.publish(bad, fam, R.check(bad, fam, B, day))
         check(out["status"] == "REFERENCE_MISMATCH" and "proof" not in out and not out["contract"].get("bundles"),
               f"fault «{fault}»: the reference refuses, the number and the drawing are withdrawn together")
     check(P.response(dict(instrument="NQ", session="RDR", at=670, date="2026-01-02"))["status"] == "OUT_OF_SCOPE", "the closed 2026 tape cannot be opened through the candidate")
-    check(len(C.registry()["estimands"]) == 53 and len(gate.registry()["estimands"]) == 62,
-          "the accepted 53 estimands are untouched; the candidate edition holds 60 + 2 (EST:PB-ZONE, EST:PB-SESSIONS)")
+    check(len(C.registry()["estimands"]) == 53 and len(gate.registry()["estimands"]) == 63,
+          "the accepted 53 estimands are untouched; the candidate edition holds 60 + 3 (zones, sessions, regional membership)")
+    for region in ("[true,2,0,3]", "[2,1,0,3]"):
+        try:
+            P.response(dict(instrument="NQ",session="RDR",at=670,date="2025-12-17",region=region))
+        except ValueError:
+            rejected = True
+        else:
+            rejected = False
+        check(rejected, "a malformed region is rejected before publication: " + region)
 
 
 if __name__ == "__main__":

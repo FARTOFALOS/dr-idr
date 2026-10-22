@@ -1,5 +1,29 @@
 # DR IDR — entry for agents
 
+## Working 23.5 alongside 24 · 2026-10-22
+
+The operator explicitly authorized the 22.10 integration and push to main in the current chat. Start with
+[`docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md`](docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md): definitions, all existing facets,
+source dispositions, rejected substitutions and the genuinely uncertain decisions are recorded there.
+
+- Screen 24 remains `/24/`, source `design/sozvezdiya-24/src`, normal launcher/port 8767.
+- Working 23.5 is `/23-5/`, source `design/sozvezdiya-23-5/src`, `start-dr-lab-23-5.cmd`, port 8735.
+  Do not copy its source/build over 24. Browser settings use separate namespaces.
+- On 23.5 only, amber R is the display alias of candidate PB-L (local H→L→B); X stays FINAL-X. Accepted BASE/NOW,
+  final-R/X order, PRE/ARRIVE and fixed-target Continuations retain their own objects and supports.
+- Price/time projections count unique sessions per region. The time hill uses the full zone's witnesses, not compact
+  display nodes. A past PB window is dimmed by its clock, never by FINAL-R's monotone price constraint.
+- The operator requested the shading of 24 and no noise from small rows: visibility uses the existing support floor
+  and peaks; hidden rows remain inspectable, with unchanged N. New visible entities require discussion.
+- Accepted SC-1.1 stays at 53 estimands; the separate proposal now has 63. Publication does not grant C2/C3 or H acceptance.
+
+Machine map: `integration/profile235-bindings.json`; evidence: `integration/23-5-release-checks.json`.
+Besides the required checks below, the addressed checks are `tests/profile235_bindings.py`, `pullbacks24.py`,
+`profile235_page.mjs`, `pullbacks235_page.mjs`, `shading235_page.mjs`, `visit_states_page.mjs`,
+`continuations235_page.mjs`. Build both pages independently after a shared contract build. Use `-HistoryOnly`
+for launcher checks; `-Port` permits an isolated test port without disturbing the operator's two screens.
+
+
 ## Update · 2026-10-19
 
 Read [`meaning/21-svodnaya-karta-24.md`](meaning/21-svodnaya-karta-24.md) first. It is one map of every lens, the

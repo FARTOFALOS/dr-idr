@@ -317,20 +317,24 @@ def uncertainty(H, fam, scale):
     grid, out = H["grid"], {}
     known = {(p["case"], p["k"], p["b"]) for p in H["points"] if p["kt"] >= scale}
     w_of = {s["id"]: s for s in H["sessions"]}
+    def add_candidates(R, cand, w):
+        for j, lo, hi in cand:
+            b = tcell(grid[j] - 5, formed)
+            if lo is None or hi is None or w >= 10:
+                R.append((b, b, cell(lo, w), cell(hi, w)))
+            else:
+                # A 0.1-IDR cell can be narrower than one tick (notably YM). The intervening cells then have no price.
+                for k in sorted({cell(t, w) for t in range(lo, hi + 1)}): R.append((b, b, k, k))
     for e in H["episodes"]:
         if e["kn"] < scale: continue
         w = w_of[e["case"]]["w"]
         R = out.setdefault(e["case"], [])
         if e["status"] == "UNKNOWN_INTRABAR":
-            for j, lo, hi in e["cand"]:
-                b = tcell(grid[j] - 5, formed)
-                R.append((b, b, cell(lo, w), cell(hi, w)))
+            add_candidates(R, e["cand"], w)
         elif e["status"] == "UNKNOWN_GAP":
             # the observed part before the gap: only its possible first deepest points; from the gap on, the session's
             # missing-M5 columns below (a later gap cannot move a bottom into earlier, observed time)
-            for j, lo, hi in e["cand"]:
-                b = tcell(grid[j] - 5, formed)
-                R.append((b, b, cell(lo, w), cell(hi, w)))
+            add_candidates(R, e["cand"], w)
         elif e["status"] == "KNOWN" and e["kt"] < scale:
             k, b = cell(e["L"], w), tcell(e["l_open"], formed)
             if (e["case"], k, b) not in known: R.append((b, b, k, k))
@@ -392,6 +396,7 @@ def zone_map(H, fam, scale):
     by_case = OrderedDict()
     for p in pts: by_case.setdefault(p["case"], set()).add((p["k"], p["b"]))
     unc = uncertainty(H, fam, scale)
+    widths = {s["id"]: s["w"] for s in H["sessions"]}
     eps_known = {e["id"] for e in H["episodes"] if e["status"] == "KNOWN" and e["kt"] >= scale}
     regs, _ = regions(by_case, b_lo, b_hi)
     zones = []
@@ -399,7 +404,9 @@ def zone_map(H, fam, scale):
         cs = set(cells)
         members = sorted(c for c, s in by_case.items() if s & cs)
         if len(members) < need: continue
-        possible = sorted(c for c, R in unc.items() if c not in set(members) and _hits(R, cs))
+        possible = sorted(c for c, R in unc.items() if c not in set(members) and _hits(R, {
+            (k,b) for k,b in cs if math.ceil(k*widths[c]/10) < math.ceil((k+1)*widths[c]/10)
+        }))
         inside = [p for p in pts if (p["k"], p["b"]) in cs]
         anchor = min(apex, key=lambda c: (c[1], abs(2 * c[0] + 1), c[0]))
         kk, bb = [c[0] for c in cells], [c[1] for c in cells]
@@ -509,7 +516,43 @@ def today_part(fam, day, H, maps, cut):
 # the publication: one proof (definition, context, witnesses, episodes, points, maps, today), its independent check,
 # its envelope from the candidate registry
 # ---------------------------------------------------------------------------------------------------------------------
-def build(inst, session, cut, date=None, view="auto", scope="weekday"):
+def marginal_regions(H, fam, scale, cut, extra=None):
+    """Membership of sessions, not episode counts. Bins can share the same session.
+    Earlier = all its established bottoms in the region closed by cut; later = at least one did not.
+    Unknown membership remains a separate upper bound and never becomes an absence."""
+    pts = [p for p in H["points"] if p["kt"] >= scale]
+    unc = uncertainty(H, fam, scale)
+    ks = sorted({p["k"] for p in pts})
+    nb = (S.SESS[fam["key"]["session"]][2] - S.SESS[fam["key"]["session"]][1]) // 15
+    regions_ = [(k, k + 1, None, None) for k in ks]
+    regions_ += [(None, k + 1, None, None) for k in ks] + [(k, None, None, None) for k in ks]
+    regions_ += [(None, None, b, b + 1) for b in range(nb)]
+    formed = S.SESS[fam["key"]["session"]][1]
+    regions_ += [(None, None, (z["time_start"] - formed) // 15, (z["time_end"] - formed) // 15) for z in H["maps"][scale]["zones"] + fam.get("zones", {}).get("X", {}).get("zones", [])]
+    if extra:
+        regions_ += [tuple(extra), (extra[0], extra[1], None, None), (None, None, extra[2], extra[3])]
+    out, seen = [], set()
+    for k0, k1, b0, b1 in regions_:
+        key = (k0, k1, b0, b1)
+        if key in seen: continue
+        seen.add(key)
+        inside = lambda p: (k0 is None or p["k"] >= k0) and (k1 is None or p["k"] < k1) and (b0 is None or p["b"] >= b0) and (b1 is None or p["b"] < b1)
+        use = [p for p in pts if inside(p)]
+        members = sorted({p["case"] for p in use})
+        later = {p["case"] for p in use if p["open"] + 5 > cut}
+        def overlaps(R, w):
+            if k0 is not None and k1 is not None and math.ceil(k0*w/10) >= math.ceil(k1*w/10): return False
+            return any((b0 is None or rb1 >= b0) and (b1 is None or rb0 < b1) and
+                       (k0 is None or rk1 is None or rk1 >= k0) and (k1 is None or rk0 is None or rk0 < k1)
+                       for rb0, rb1, rk0, rk1 in R)
+        weights = {w["id"]: w["w"] for w in H["sessions"]}
+        possible = sorted(c for c, R in unc.items() if c not in members and overlaps(R, weights[c]))
+        out.append(dict(k0=k0, k1=k1, b0=b0, b1=b1, members=members, possible=possible,
+                        n_known=len(members), n_possible=len(possible), earlier=len(members) - len(later), later=len(later)))
+    return out
+
+
+def build(inst, session, cut, date=None, view="auto", scope="weekday", region=None):
     """The proof of one scene, before its gate. Returns (status, fam, B, day, proof)."""
     view_arg = view + (":all" if scope == "all" else "")
     raw, B, day = S._family(inst, session, cut, date, view_arg)
@@ -534,7 +577,8 @@ def build(inst, session, cut, date=None, view="auto", scope="weekday"):
                       grid="GRID:K10-J15-1", density="ONE_VOTE_PER_SESSION_IN_3X3", exceed="STRICT_ONE_TICK_WICK_AND_GAP",
                       bottom="ALL_OHLC_COMPATIBLE_PATHS_SAME_PRICE_AND_M5", activation="BOTTOM_AFTER_OWN_ACTIVATION_CLOSE_NO_TRIM")
     proof = dict(definition=definition, context=context, grid=H["grid"], first_i=H["first"], sessions=H["sessions"],
-                 episodes=H["episodes"], points=H["points"], maps={str(s): maps[s] for s in SCALES}, today=today)
+                 episodes=H["episodes"], points=H["points"], maps={str(s): maps[s] for s in SCALES}, today=today,
+                 marginals={str(s): marginal_regions(H, fam, s, cut, region) for s in SCALES})
     return "OK", fam, B, day, proof
 
 
@@ -544,13 +588,21 @@ def publish(proof, fam, check):
     env = gate.Envelope(ROUTE, PROFILE, dict(instrument=ctx["instrument"], session=ctx["session"], cut=ctx["cut"], date=ctx["date"], view=ctx["view"], scope=ctx["scope"]))
     env.check("independent re-derivation of every episode, point, zone and today's relations (lab/pullbacks_ref.py)", check["outcome"] == "PASS", check.get("checked"))
     if check["outcome"] != "PASS":
-        env.violate("PULLBACK_REFERENCE_MISMATCH", ["E1", "P1", "V2"], "; ".join(check["errors"][:5]), withheld=["EST:PB-ZONE", "EST:PB-SESSIONS"])
+        env.violate("PULLBACK_REFERENCE_MISMATCH", ["E1", "P1", "V2"], "; ".join(check["errors"][:5]), withheld=["EST:PB-ZONE", "EST:PB-SESSIONS", "EST:PB-REGION"])
         return dict(status="REFERENCE_MISMATCH", contract=env.finish(), message="Эпизоды или созвездия не подтвердились независимым пересчётом: слой снят")
     release_id = revision(proof)
     N, cs_id, sid = ctx["N"], ctx["case_set"], ctx["snapshot_id"]
     inputs = gate._inputs(fam, [dict(input_kind="CODE", ref=VERSION, version=CODE_REVISION), dict(input_kind="PARAMETERS", ref="release", version=release_id)])
     for s in SCALES:
         zm = proof["maps"][str(s)]
+        for v in proof["marginals"][str(s)]:
+            yes, unknown = v["n_known"], v["n_possible"]
+            est = [dict(estimator="ESTR:PB-REGION", value_kind="POINT", value=yes / N, numerator=yes, denominator=N, unit="share of N_base")]
+            if unknown: est.append(dict(estimator="ESTR:PB-REGION", value_kind="BOUNDS", lower=yes / N, upper=(yes + unknown) / N, denominator=N, unit="share of N_base"))
+            env.bundle("EST:PB-REGION", cs_id, sid, "lab/pullbacks24.py::marginal_regions", inputs, est,
+                       [dict(case_set=sid, n_base=N, components=[dict(component="MEMBERSHIP", of=N, yes=yes, unknown=unknown, no=N-yes-unknown)])],
+                       dict(yes=yes, unknown=unknown, N=N, scale=s),
+                       parameters=dict(scale=s, **{k:v[k] for k in ("k0", "k1", "b0", "b1")}, release=release_id))
         for z in zm["zones"]:
             est = [dict(estimator="ESTR:PB-ZONE", value_kind="POINT", value=z["n_known"] / N, numerator=z["n_known"], denominator=N, unit="share of N_base")]
             if z["n_possible"]: est.append(dict(estimator="ESTR:PB-ZONE", value_kind="BOUNDS", lower=z["n_known"] / N, upper=(z["n_known"] + z["n_possible"]) / N, denominator=N, unit="share of N_base"))
@@ -580,14 +632,19 @@ def response(params):
     if view not in ("auto", "conf") or scope not in S.SCOPES: raise ValueError("view: auto | conf; scope: weekday | all")
     if date and date > "2025-12-31": return dict(status="OUT_OF_SCOPE", message="История после 2025 закрыта")
     cut = int(params["at"])
+    region = json.loads(params["region"]) if params.get("region") else None
+    if region is not None and (not isinstance(region, list) or len(region) != 4 or any(x is not None and (type(x) is not int or abs(x) > 100000) for x in region)):
+        raise ValueError("region: four integer or null bounds")
+    if region is not None and any(region[i] is not None and region[i+1] is not None and region[i] >= region[i+1] for i in (0,2)):
+        raise ValueError("region: lower bound must precede upper bound")
     if cut % 5: raise ValueError("только закрытые M5")
     gate = I.review_gate()
     if C.stale() or gate.stale(): return dict(status="CONTRACT_STALE", message="Реестр изменился: слой снят")
     with _lock:
-        status, fam, B, day, proof = build(inst, session, cut, date, view, scope)
+        status, fam, B, day, proof = build(inst, session, cut, date, view, scope, region)
         if status != "OK": return dict(status=status, message={"NO_FAMILY": "Нужно подтверждение и семья", "FAMILY_NOT_PUBLISHED": "Семья не опубликована шлюзом SC-1.1",
                                                                "EMPTY_FAMILY": "В семье нет сессий"}.get(status, "Семьи нет: " + str(status)))
-        key = revision([proof["context"], proof["today"]["bars"]])
+        key = revision([proof["context"], proof["today"]["bars"], region])
         if key in _OUT: return _OUT[key]
         import pullbacks_ref as R
         # the historical part is re-derived once per snapshot (it never moves with the slice); today's part every time
@@ -596,7 +653,8 @@ def response(params):
             _REF[hkey] = R.check_history(proof, fam, B)
             while len(_REF) > 12: _REF.popitem(last=False)
         h, t = _REF[hkey], R.check_today(proof, fam, day)
-        check = dict(outcome="FAIL" if h["errors"] or t else "PASS", errors=h["errors"] + t, checked=h["checked"])
+        m = R.check_marginals(proof, fam)
+        check = dict(outcome="FAIL" if h["errors"] or t or m else "PASS", errors=h["errors"] + t + m, checked=h["checked"])
         out = publish(proof, fam, check)
         _OUT[key] = out
         while len(_OUT) > 6: _OUT.popitem(last=False)

@@ -272,6 +272,69 @@
     "SRC:INSTRUCTION-2026-10-21",
     "SRC:CODE-PB24"
    ]
+  },
+  {
+   "id": "EST:PB-REGION",
+   "version": "0.1",
+   "sc_ref": [
+    "T1",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "question": "Q:PB-ZONE",
+   "profile": "PROFILE:PB-24",
+   "q1_formalised_part_ru": "Доля сессий семьи с хотя бы одним дном локального отката в выбранной полосе цены, окне времени или их пересечении. Одна сессия голосует один раз в области; разные области могут делить сессии.",
+   "q2_target": "FIXED_HISTORICAL_SET",
+   "q3_unit": "SESSION",
+   "q4_case_set": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+   "q5_outcome": "OUT:PB-L-1",
+   "q5_region": "REG:JOINT-1",
+   "q6_cut": "CUT:LAST-CLOSED-M5-1",
+   "q6_time_ru": "у каждой сессии: дно после закрытия её собственной активации, вершина может быть раньше; до конца блока; время дна — открытие первой M5 с этой ценой; срез сегодняшнего дня карту не меняет",
+   "q7_measure": "SHARE",
+   "q8_unknown": "BINARY_BOUNDS_OVER_D",
+   "q8_weights": "NONE",
+   "q8_order_ru": "точка — установленные / N; при неустановленных — границы [установленные / N; (установленные + возможные) / N]; созвездия могут делить сессии: доли не складываются в 100 %",
+   "parameters": [
+    {
+     "name": "scale",
+     "parameter_kind": "THRESHOLD",
+     "meaning_ru": "Масштаб локальности"
+    },
+    {
+     "name": "k0",
+     "parameter_kind": "THRESHOLD",
+     "meaning_ru": "Нижняя включённая граница цены или null"
+    },
+    {
+     "name": "k1",
+     "parameter_kind": "THRESHOLD",
+     "meaning_ru": "Верхняя исключённая граница цены или null"
+    },
+    {
+     "name": "b0",
+     "parameter_kind": "THRESHOLD",
+     "meaning_ru": "Начало времени или null"
+    },
+    {
+     "name": "b1",
+     "parameter_kind": "THRESHOLD",
+     "meaning_ru": "Конец времени или null"
+    }
+   ],
+   "source_refs": [
+    "SRC:PB-0.1",
+    "SRC:PB-CONSTRUCTION",
+    "SRC:PB-REVIEW",
+    "SRC:INSTRUCTION-2026-10-21",
+    "SRC:CODE-PB24"
+   ]
   }
  ],
  "estimators": [
@@ -312,6 +375,25 @@
    ],
    "reference_definition": "lab/contract.py::ref_pullbacks",
    "unknown_handling_ru": "категории вместе = N_base",
+   "rounding_ru": "точные счёты; проценты после деления, один знак"
+  },
+  {
+   "id": "ESTR:PB-REGION",
+   "version": "0.1",
+   "sc_ref": [
+    "V0",
+    "P3"
+   ],
+   "grounds": "PROPOSAL",
+   "estimands": [
+    "EST:PB-REGION"
+   ],
+   "rule": "ALGORITHMIC_REGION_SHARE",
+   "implementations": [
+    "lab/pullbacks24.py::marginal_regions"
+   ],
+   "reference_definition": "lab/contract.py::ref_pullbacks",
+   "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
    "rounding_ru": "точные счёты; проценты после деления, один знак"
   }
  ],
@@ -486,7 +568,7 @@
    "estimand": "EST:PB-SESSIONS",
    "claim_class": "DescriptiveClaim",
    "subject_ru": "сессии этой семьи (F, один N)",
-   "statement_ru": "Из {N} сессий семьи на масштабе {scale}: откаты в созвездиях у {in_zones}, только вне созвездий у {outside}, не установлены по M5 у {unknown}, без завершённых откатов {none}.",
+   "statement_ru": "Из {N} сессий семьи на масштабе {scale}: установленные откаты в созвездиях у {in_zones}, установленные откаты только вне созвездий у {outside}, без установленных откатов с неизвестным исходом {unknown}, без завершённых откатов {none}.",
    "value_form": "CATEGORY_SHARES",
    "price_transfer": "NONE",
    "acceptance": "PROPOSED_BY_EXECUTOR",
@@ -505,13 +587,13 @@
      "surface": "PANEL",
      "view": "ANY",
      "key": "OUTSIDE",
-     "text_ru": "откаты только вне созвездий"
+     "text_ru": "установленные откаты только вне созвездий"
     },
     {
      "surface": "PANEL",
      "view": "ANY",
      "key": "UNKNOWN",
-     "text_ru": "не установлено по M5"
+     "text_ru": "без установленных откатов · есть неизвестное"
     },
     {
      "surface": "PANEL",
@@ -538,6 +620,32 @@
      "text_ru": "масштаб {k}"
     }
    ]
+  },
+  {
+   "id": "CF:PB-REGION",
+   "version": "0.1",
+   "sc_ref": [
+    "C0",
+    "§12.6",
+    "K33"
+   ],
+   "grounds": "PROPOSAL",
+   "estimand": "EST:PB-REGION",
+   "claim_class": "DescriptiveClaim",
+   "subject_ru": "сессии этой семьи (F, один N), каждая со своими откатами перед обновлением своих вершин",
+   "statement_ru": "У {yes} из {N} сессий семьи хотя бы одно дно отката перед обновлением было в выбранной области (масштаб {scale}); ещё у {unknown} это возможно по M5.",
+   "value_form": "BOUNDS_IF_UNKNOWN",
+   "price_transfer": "M0_TODAY_EDGE",
+   "acceptance": "PROPOSED_BY_EXECUTOR",
+   "forbidden_readings_ru": [
+    "шанс разворота или продолжения сегодня",
+    "здесь закончится сегодняшний откат",
+    "доли созвездий делят 100 %",
+    "посещение области — завершённый откат",
+    "площадь свечения — членство"
+   ],
+   "note": "Words of the executor (2026-10-21) for the operator's acceptance; the construction's name «Откаты перед обновлением экстремума»",
+   "labels": []
   }
  ],
  "fact_forms": [
@@ -599,19 +707,19 @@
      "surface": "PANEL",
      "view": "ANY",
      "key": "COMPLETED",
-     "text_ru": "откат здесь завершён: {top} {h} обновлена в {t}"
+     "text_ru": "откат здесь завершён: {top} на M5 {h} обновлена в {t}"
     },
     {
      "surface": "PANEL",
      "view": "ANY",
      "key": "IN_ZONE_NOT_UPDATED",
-     "text_ru": "откат сейчас здесь, {top} {h} ещё не обновлена"
+     "text_ru": "откат сейчас здесь, {top} на M5 {h} ещё не обновлена"
     },
     {
      "surface": "PANEL",
      "view": "ANY",
      "key": "NONE",
-     "text_ru": "завершённого отката здесь нет"
+     "text_ru": "завершение отката здесь не установлено"
     },
     {
      "surface": "PANEL",
@@ -647,7 +755,7 @@
      "surface": "PANEL",
      "view": "ANY",
      "key": "today_none",
-     "text_ru": "откатов с обновлением пока нет"
+     "text_ru": "откаты с обновлением пока не установлены"
     }
    ]
   },
@@ -702,7 +810,7 @@
      "surface": "INSPECTOR",
      "view": "ANY",
      "key": "gap",
-     "text_ru": "от L до обновления {m} мин"
+     "text_ru": "между M5 дна и обновления {m} мин"
     },
     {
      "surface": "INSPECTOR",
@@ -886,7 +994,8 @@
    "definitions": "SRC:PB-0.1",
    "estimands": [
     "EST:PB-ZONE",
-    "EST:PB-SESSIONS"
+    "EST:PB-SESSIONS",
+    "EST:PB-REGION"
    ],
    "marking": "separate proposed ContractEnvelope; release_id binds the proof; no C2/C3"
   }
@@ -1211,6 +1320,26 @@
    "path": "proof.today.zones.{*}[*].completion.{b_close,h_open}",
    "field_kind": "TIME",
    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.33",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.marginals.{*}[*].{k0,k1,b0,b1}",
+   "field_kind": "PARAMETER",
+   "target": "EST:PB-REGION"
+  },
+  {
+   "id": "FE:PB.34",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.marginals.{*}[*].{n_known,n_possible,earlier,later}",
+   "field_kind": "SUPPORT_COUNT",
+   "target": "EST:PB-REGION"
   }
  ]
 }

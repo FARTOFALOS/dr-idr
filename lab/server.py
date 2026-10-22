@@ -83,7 +83,7 @@ class Handler(SimpleHTTPRequestHandler):
                 if date is not None and not re.fullmatch(r'20[0-2]\d-[01]\d-[0-3]\d',date): raise ValueError('date: YYYY-MM-DD')
                 import pullbacks24
                 value=pullbacks24.response(dict(instrument=params.get('instrument','NQ'),session=params.get('session','RDR'),at=params.get('at','0'),
-                                                date=date,view=params.get('view','auto'),scope=params.get('scope','weekday')))
+                                                date=date,view=params.get('view','auto'),scope=params.get('scope','weekday'),region=params.get('region')))
                 if START_SOURCE_REVISION!=runtime_identity.current() or START_DATA_REVISION!=runtime_identity.data_revision():
                     return self.json(dict(status='SOURCE_CHANGED',message='Во время расчёта обновились исходники или история'),409)
                 return self.json(value)
