@@ -129,6 +129,8 @@ def publish(raw,paths,cases,today,grid,day,previous=None):
                            position=len(raw['selection']['M']),risk=len(raw['risk_set']['ids']),
                            in_F=len(set(raw['risk_set']['ids'])&f_ids),outside_F=len(set(raw['risk_set']['ids'])-f_ids)),
                position_ids=raw['selection']['M'],risk_ids=raw['risk_set']['ids'],
+               risk_exclusions=raw['risk_set']['exclusions'],
+               exclusion_counts=dict(Counter(raw['risk_set']['exclusions'].values())),
                support={k:s[k] for k in ('n_total','n_known','yes','no','unknown')},witnesses=paths,
                source_kind='POSITION_AT_COMMON_CLOCK',full_path_compared=False,
                empirical_scope='FIXED_WINDOW_EXTENSION_NOT_PREDICTIVELY_ADMITTED',

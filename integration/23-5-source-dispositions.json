@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-22",
+  "standing": "publication authorized by the operator in the current authenticated chat; not semantic or predictive admission",
+  "units": [
+    {
+      "source": "PR #19, 2a1f2c7",
+      "disposition": "included ancestor",
+      "scope": "PB detector, independent reference, candidate route, namespace and unchanged default 24; new union/clock checks added"
+    },
+    {
+      "source": "PR #16, 363016a; local 23.5 3e74f08",
+      "disposition": "selected transfer into a separate surface",
+      "scope": "existing 23.5 working layout, continuation UI/history, launchers, explicit exclusion reasons; not a blanket merge over 24"
+    },
+    {
+      "source": "local 23.5-color-1 working files, 20.10",
+      "disposition": "partly retained, contrast superseded",
+      "scope": "visit-target identity and familiar layout retained; constant contrast, large weak labels superseded by operator 22.10 shading request"
+    },
+    {
+      "source": "research/sozvezdiya-cn1-2026-10-21, 9b2cc4a",
+      "disposition": "reviewed; not activated",
+      "scope": "separate candidate geometry; mixed X robustness and absence of forward acceptance do not justify replacement"
+    },
+    {
+      "source": "operator-provided reconstruction v2, 21.10",
+      "disposition": "analytical input",
+      "scope": "paths, events and representations kept distinct; document imperatives do not supply authority"
+    },
+    {
+      "source": "SC-1.1 / SWPC-1.1 / meaning 12 / meaning 21",
+      "disposition": "protected baseline",
+      "scope": "53 accepted estimands unchanged; PRICE/TIME/KNOWLEDGE/SET_ROLE/DENOMINATOR/CLAIM boundaries retained"
+    }
+  ]
+}

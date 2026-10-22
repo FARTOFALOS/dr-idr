@@ -1,0 +1,514 @@
+{
+  "kind": "implementation mapping; not a normative registry",
+  "date": "2026-10-22",
+  "surface": "/23-5/",
+  "source": "docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md",
+  "facets": [
+    "FACET:CATEGORY",
+    "FACET:PHASE",
+    "FACET:KNOWLEDGE",
+    "FACET:PRICE",
+    "FACET:TIME",
+    "FACET:SET_ROLE",
+    "FACET:DENOMINATOR",
+    "FACET:CLAIM",
+    "FACET:GROUNDS",
+    "FACET:SURFACE"
+  ],
+  "bindings": [
+    {
+      "carrier": "PB constellation",
+      "event": "PB_L",
+      "estimands": [
+        "EST:PB-ZONE"
+      ],
+      "profile": "PROFILE:PB-24",
+      "set_role": "F",
+      "horizon": "own activation -> block end",
+      "claim_class": "DescriptiveClaim",
+      "note": "R display alias; exact mask; all unknown mass retained",
+      "outcomes": [
+        "OUT:PB-L-1"
+      ],
+      "denominators": {
+        "EST:PB-ZONE": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:PB-ZONE": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1",
+          "CS:F-BREAK-1",
+          "CS:F-BREAK-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "PB price / time / joint",
+      "event": "PB_L",
+      "estimands": [
+        "EST:PB-REGION"
+      ],
+      "profile": "PROFILE:PB-24",
+      "set_role": "F",
+      "horizon": "own activation -> block end",
+      "claim_class": "DescriptiveClaim",
+      "note": "unique-case union, not sum of episodes or cells",
+      "outcomes": [
+        "OUT:PB-L-1"
+      ],
+      "denominators": {
+        "EST:PB-REGION": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:PB-REGION": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1",
+          "CS:F-BREAK-1",
+          "CS:F-BREAK-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "PB residual categories",
+      "event": "PB_L",
+      "estimands": [
+        "EST:PB-SESSIONS"
+      ],
+      "profile": "PROFILE:PB-24",
+      "set_role": "F",
+      "horizon": "own activation -> block end",
+      "claim_class": "DescriptiveClaim",
+      "note": "four disjoint categories of N; unknown is not absence",
+      "outcomes": [
+        "OUT:PB-L-1"
+      ],
+      "denominators": {
+        "EST:PB-SESSIONS": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:PB-SESSIONS": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1",
+          "CS:F-BREAK-1",
+          "CS:F-BREAK-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "Final-X constellations",
+      "event": "FINAL_X",
+      "estimands": [
+        "EST:B-ZONE-X"
+      ],
+      "profile": "PROFILE:BASE-24",
+      "set_role": "F",
+      "horizon": "own activation -> block end",
+      "claim_class": "DescriptiveClaim",
+      "note": "unchanged final-X outcome",
+      "outcomes": [
+        "OUT:ZONE-MEMBERSHIP-1"
+      ],
+      "denominators": {
+        "EST:B-ZONE-X": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:B-ZONE-X": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1",
+          "CS:F-BREAK-1",
+          "CS:F-BREAK-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "Final-X projections",
+      "event": "FINAL_X",
+      "estimands": [
+        "EST:B-RX-BAND-X",
+        "EST:B-RX-WINDOW-X"
+      ],
+      "profile": "PROFILE:BASE-24",
+      "set_role": "F",
+      "horizon": "own activation -> block end",
+      "claim_class": "DescriptiveClaim",
+      "note": "full-band share, not a zone-window visit",
+      "outcomes": [
+        "OUT:FINAL-X-1"
+      ],
+      "denominators": {
+        "EST:B-RX-BAND-X": "N_BASE_UNIQUE_MEMBERS",
+        "EST:B-RX-WINDOW-X": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:B-RX-BAND-X": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1",
+          "CS:F-BREAK-1",
+          "CS:F-BREAK-ALL-1"
+        ],
+        "EST:B-RX-WINDOW-X": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1",
+          "CS:F-BREAK-1",
+          "CS:F-BREAK-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "DR outcome",
+      "event": "DR_OUTCOME",
+      "estimands": [
+        "EST:B-DR"
+      ],
+      "profile": "PROFILE:BASE-24",
+      "set_role": "F",
+      "horizon": "own activation -> block end",
+      "claim_class": "DescriptiveClaim",
+      "note": "outcomes remain one partition of F",
+      "outcomes": [
+        "OUT:DR-OUTCOME-1"
+      ],
+      "denominators": {
+        "EST:B-DR": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:B-DR": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "Family path",
+      "event": "M5_CLOSE",
+      "estimands": [
+        "EST:B-CLOSE"
+      ],
+      "profile": "PROFILE:BASE-24",
+      "set_role": "F",
+      "horizon": "one common-clock M5",
+      "claim_class": "DescriptiveClaim",
+      "note": "one M5; not any touch or final extreme",
+      "outcomes": [
+        "OUT:CLOSE-AT-M5-1"
+      ],
+      "denominators": {
+        "EST:B-CLOSE": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:B-CLOSE": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1",
+          "CS:F-BREAK-1",
+          "CS:F-BREAK-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "Final-R/X order",
+      "event": "FINAL_ORDER",
+      "estimands": [
+        "EST:B-ORDER"
+      ],
+      "profile": "PROFILE:BASE-24",
+      "set_role": "F",
+      "horizon": "own activation -> block end",
+      "claim_class": "DescriptiveClaim",
+      "note": "not the order of all local PB cycles",
+      "outcomes": [
+        "OUT:FIRST-ORDER-1"
+      ],
+      "denominators": {
+        "EST:B-ORDER": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:B-ORDER": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1",
+          "CS:F-BREAK-1",
+          "CS:F-BREAK-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "NOW",
+      "event": "NEW_EXTREME",
+      "estimands": [
+        "EST:N-NEW-R",
+        "EST:N-NEW-X",
+        "EST:N-NO-NEW-R",
+        "EST:N-NO-NEW-X",
+        "EST:N-DELTA-Q-R",
+        "EST:N-DELTA-Q-X",
+        "EST:N-DELTA-GE-R",
+        "EST:N-DELTA-GE-X",
+        "EST:N-IF-NEW-R",
+        "EST:N-IF-NEW-X",
+        "EST:N-TIME-R",
+        "EST:N-TIME-X"
+      ],
+      "profile": "PROFILE:NOW-1.0",
+      "set_role": "B0(F)",
+      "horizon": "common cut -> block end",
+      "claim_class": "ConditionalDescriptiveClaim",
+      "note": "prefix-selected historical set; final R/X continuation question",
+      "outcomes": [
+        "OUT:DELTA-R-1",
+        "OUT:DELTA-X-1",
+        "OUT:NEW-R-1",
+        "OUT:NEW-X-1",
+        "OUT:TAU-R-1",
+        "OUT:TAU-X-1"
+      ],
+      "denominators": {
+        "EST:N-NEW-R": "N_MATCH_AT_CUT",
+        "EST:N-NEW-X": "N_MATCH_AT_CUT",
+        "EST:N-NO-NEW-R": "N_MATCH_AT_CUT",
+        "EST:N-NO-NEW-X": "N_MATCH_AT_CUT",
+        "EST:N-DELTA-Q-R": "KNOWN_COMPONENT_SUPPORT",
+        "EST:N-DELTA-Q-X": "KNOWN_COMPONENT_SUPPORT",
+        "EST:N-DELTA-GE-R": "KNOWN_COMPONENT_SUPPORT",
+        "EST:N-DELTA-GE-X": "KNOWN_COMPONENT_SUPPORT",
+        "EST:N-IF-NEW-R": "KNOWN_COMPONENT_SUPPORT",
+        "EST:N-IF-NEW-X": "KNOWN_COMPONENT_SUPPORT",
+        "EST:N-TIME-R": "KNOWN_COMPONENT_SUPPORT",
+        "EST:N-TIME-X": "KNOWN_COMPONENT_SUPPORT"
+      },
+      "case_sets": {
+        "EST:N-NEW-R": [
+          "CS:NOW-ELIGIBLE-1",
+          "CS:NOW-MATCH-M1-1",
+          "CS:NOW-MATCH-M2-1",
+          "CS:NOW-MATCH-M3-1"
+        ],
+        "EST:N-NEW-X": [
+          "CS:NOW-ELIGIBLE-1",
+          "CS:NOW-MATCH-M1-1",
+          "CS:NOW-MATCH-M2-1",
+          "CS:NOW-MATCH-M3-1"
+        ],
+        "EST:N-NO-NEW-R": [
+          "CS:NOW-ELIGIBLE-1",
+          "CS:NOW-MATCH-M1-1",
+          "CS:NOW-MATCH-M2-1",
+          "CS:NOW-MATCH-M3-1"
+        ],
+        "EST:N-NO-NEW-X": [
+          "CS:NOW-ELIGIBLE-1",
+          "CS:NOW-MATCH-M1-1",
+          "CS:NOW-MATCH-M2-1",
+          "CS:NOW-MATCH-M3-1"
+        ],
+        "EST:N-DELTA-Q-R": [
+          "CS:NOW-DELTA-KNOWN-1"
+        ],
+        "EST:N-DELTA-Q-X": [
+          "CS:NOW-DELTA-KNOWN-1"
+        ],
+        "EST:N-DELTA-GE-R": [
+          "CS:NOW-DELTA-KNOWN-1"
+        ],
+        "EST:N-DELTA-GE-X": [
+          "CS:NOW-DELTA-KNOWN-1"
+        ],
+        "EST:N-IF-NEW-R": [
+          "CS:NOW-NEW-YES-DELTA-1"
+        ],
+        "EST:N-IF-NEW-X": [
+          "CS:NOW-NEW-YES-DELTA-1"
+        ],
+        "EST:N-TIME-R": [
+          "CS:NOW-NEW-YES-TAU-1"
+        ],
+        "EST:N-TIME-X": [
+          "CS:NOW-NEW-YES-TAU-1"
+        ]
+      }
+    },
+    {
+      "carrier": "ARRIVE",
+      "event": "FIRST_VISIT",
+      "estimands": [
+        "EST:K-ARRIVE"
+      ],
+      "profile": "PROFILE:ARRIVE-24",
+      "set_role": "M(F)",
+      "horizon": "common cut -> block end",
+      "claim_class": "ConditionalDescriptiveClaim",
+      "note": "still-at-risk prefix members, explicit own support",
+      "outcomes": [
+        "OUT:REACH-REST-1"
+      ],
+      "denominators": {
+        "EST:K-ARRIVE": "N_MATCH_AT_CUT"
+      },
+      "case_sets": {
+        "EST:K-ARRIVE": [
+          "CS:K-ARRIVE-1",
+          "CS:K-ARRIVE-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "Fixed target continuations",
+      "event": "WINDOW_VISIT",
+      "estimands": [
+        "EST:C-WINDOW"
+      ],
+      "profile": "PROFILE:CONTINUATIONS-24",
+      "set_role": "RISK(POS_GEO(G))",
+      "horizon": "remaining fixed physical window",
+      "claim_class": "ConditionalDescriptiveClaim",
+      "note": "not F; prior visits allowed in POS_GEO but no-visit applies to residual risk",
+      "outcomes": [
+        "OUT:C-WINDOW"
+      ],
+      "denominators": {
+        "EST:C-WINDOW": "N_MATCH_AT_CUT"
+      },
+      "case_sets": {
+        "EST:C-WINDOW": [
+          "CS:C-RISK"
+        ]
+      }
+    },
+    {
+      "carrier": "PRE before confirmation",
+      "event": "PREFIX_MATCHED_CONFIRMATION",
+      "estimands": [
+        "EST:P-DIR",
+        "EST:P-WHEN",
+        "EST:P-DR",
+        "EST:P-R",
+        "EST:P-X"
+      ],
+      "profile": "PROFILE:PRE-24",
+      "set_role": "prefix-matched historical block; not F",
+      "horizon": "prefix before own confirmation and its labelled remainder",
+      "claim_class": "ConditionalDescriptiveClaim",
+      "note": "not a rematch of the accepted family; explicit support gate",
+      "outcomes": [
+        "OUT:DR-OUTCOME-1",
+        "OUT:FINAL-R-1",
+        "OUT:FINAL-X-1",
+        "OUT:P-FIRST-CONF-1"
+      ],
+      "denominators": {
+        "EST:P-DIR": "N_MATCH_AT_CUT",
+        "EST:P-WHEN": "KNOWN_COMPONENT_SUPPORT",
+        "EST:P-DR": "KNOWN_COMPONENT_SUPPORT",
+        "EST:P-R": "KNOWN_COMPONENT_SUPPORT",
+        "EST:P-X": "KNOWN_COMPONENT_SUPPORT"
+      },
+      "case_sets": {
+        "EST:P-DIR": [
+          "CS:P-SIMILAR-1",
+          "CS:P-SIMILAR-ALL-1"
+        ],
+        "EST:P-WHEN": [
+          "CS:P-SIDE-1"
+        ],
+        "EST:P-DR": [
+          "CS:P-SIDE-1"
+        ],
+        "EST:P-R": [
+          "CS:P-SIDE-KNOWN-1"
+        ],
+        "EST:P-X": [
+          "CS:P-SIDE-KNOWN-1"
+        ]
+      }
+    }
+  ],
+  "accepted_estimands": 53,
+  "proposed_estimands": 63,
+  "claim_ceiling": "C1; no C2/C3",
+  "perceptual_acceptance": "NOT_INFERRED_FROM_TESTS",
+  "fact_bindings": [
+    {
+      "carrier": "PB today and episode witness",
+      "facts": [
+        "FF:PB-TODAY",
+        "FF:PB-EPISODE"
+      ],
+      "object": "today closed prefix / own historical witness",
+      "denominator": null,
+      "note": "a visit is not completion; H/L/B and DR order belong to the episode"
+    },
+    {
+      "carrier": "today visits",
+      "facts": [
+        "FF:TODAY-VISIT"
+      ],
+      "object": "exact selected price × own time window",
+      "denominator": null,
+      "note": "YES / NO / UNKNOWN; forming M5 and replay-future bars excluded"
+    },
+    {
+      "carrier": "accepted today / phase",
+      "facts": [
+        "FF:TODAY-Z",
+        "FF:TODAY-PREFIX",
+        "FF:PHASE-RULE"
+      ],
+      "object": "accepted final-extreme reachability and separate phase rule",
+      "denominator": null,
+      "note": "not PB price monotonicity; no period is separate"
+    },
+    {
+      "carrier": "PB clock and display salience",
+      "facts": [],
+      "object": "known historical coordinates and presentation policy",
+      "denominator": "N of F for shares only",
+      "note": "PAST is clock expiration, not price impossibility; glyph averaging / shading does not define membership"
+    },
+    {
+      "carrier": "PRE/ARRIVE state and few-session gate",
+      "facts": [
+        "FF:PRE-STATE",
+        "FF:FEW-SESSIONS",
+        "FF:K-TARGET"
+      ],
+      "object": "closed prefix, explicit support and target observation",
+      "denominator": null,
+      "note": "own conditional populations, never an implicit replacement of F"
+    }
+  ],
+  "accepted_inherited": [
+    "EST:B-RX-JOINT-R",
+    "EST:B-RX-JOINT-X",
+    "EST:B-RX-BAND-R",
+    "EST:B-RX-WINDOW-R",
+    "EST:B-RX-REGION-R",
+    "EST:B-RX-REGION-X",
+    "EST:B-RX-UNDETERMINED-R",
+    "EST:B-RX-UNDETERMINED-X",
+    "EST:B-RX-KNOWN-R",
+    "EST:B-RX-KNOWN-X",
+    "EST:B-RX-OUTFRAME-R",
+    "EST:B-RX-OUTFRAME-X",
+    "EST:B-RX-DIFF",
+    "EST:B-ZONE-R",
+    "EST:B-ZONE-RESIDUAL-R",
+    "EST:B-ZONE-RESIDUAL-X",
+    "EST:B-CLOSE-MISSING",
+    "EST:B-CLOSE-PREACT",
+    "EST:B-RANGE",
+    "EST:B-LEVEL-FULL",
+    "EST:B-LEVEL-REST",
+    "EST:B-CROSS-FULL",
+    "EST:B-VISIT-FULL",
+    "EST:B-VISIT-REST",
+    "EST:B-CLOCK-R",
+    "EST:B-CLOCK-X",
+    "EST:B-CLOCK-PEAK-R",
+    "EST:B-CLOCK-PEAK-X",
+    "EST:ZD-GRID-R",
+    "EST:ZD-GRID-X",
+    "EST:ZD-BOOT-R",
+    "EST:ZD-BOOT-X",
+    "EST:ZD-NULL-R",
+    "EST:ZD-NULL-X",
+    "EST:ZM3-STUDY"
+  ]
+}

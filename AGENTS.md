@@ -1,5 +1,29 @@
 # DR IDR — entry for agents
 
+## Working 23.5 alongside 24 · 2026-10-22
+
+The operator explicitly authorized the 22.10 integration and push to main in the current chat. Start with
+[`docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md`](docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md): definitions, all existing facets,
+source dispositions, rejected substitutions and the genuinely uncertain decisions are recorded there.
+
+- Screen 24 remains `/24/`, source `design/sozvezdiya-24/src`, normal launcher/port 8767.
+- Working 23.5 is `/23-5/`, source `design/sozvezdiya-23-5/src`, `start-dr-lab-23-5.cmd`, port 8735.
+  Do not copy its source/build over 24. Browser settings use separate namespaces.
+- On 23.5 only, amber R is the display alias of candidate PB-L (local H→L→B); X stays FINAL-X. Accepted BASE/NOW,
+  final-R/X order, PRE/ARRIVE and fixed-target Continuations retain their own objects and supports.
+- Price/time projections count unique sessions per region. The time hill uses the full zone's witnesses, not compact
+  display nodes. A past PB window is dimmed by its clock, never by FINAL-R's monotone price constraint.
+- The operator requested the shading of 24 and no noise from small rows: visibility uses the existing support floor
+  and peaks; hidden rows remain inspectable, with unchanged N. New visible entities require discussion.
+- Accepted SC-1.1 stays at 53 estimands; the separate proposal now has 63. Publication does not grant C2/C3 or H acceptance.
+
+Machine map: `integration/profile235-bindings.json`; evidence: `integration/23-5-release-checks.json`.
+Besides the required checks below, the addressed checks are `tests/profile235_bindings.py`, `pullbacks24.py`,
+`profile235_page.mjs`, `pullbacks235_page.mjs`, `shading235_page.mjs`, `visit_states_page.mjs`,
+`continuations235_page.mjs`. Build both pages independently after a shared contract build. Use `-HistoryOnly`
+for launcher checks; `-Port` permits an isolated test port without disturbing the operator's two screens.
+
+
 ## Update · 2026-10-19
 
 Read [`meaning/21-svodnaya-karta-24.md`](meaning/21-svodnaya-karta-24.md) first. It is one map of every lens, the
@@ -18,6 +42,21 @@ What changed on 19.10. No number changed its object, set or denominator.
   phase rule (`FF:PHASE-RULE`) and the «Сейчас» pullback line as a number with marks at the price scale. The code lives
   in `integration.js`. The viewer's trial choice is kept in `localStorage`.
 - Run `tests/semantic_links.py` with the other required checks.
+
+## Implementation update · 2026-10-21
+
+Screen 24 has one more separate candidate, **«Откаты до обновления»** (DR-LAB-PB-0.1): for the family F on screen,
+every historical episode vertex H → pullback bottom L → first exceedance B, at scales of locality 1 / 2 / 3 / 6, and
+their constellations (zone-map-3 geometry, one vote per session). Definition with the provenance of every rule:
+`meaning/lens/2026-10-21-otkaty-do-obnovleniya/03-opredelenie-PB-0.1.md`; screen passport `spec/ekran-24/15-otkaty.md`.
+Code `lab/pullbacks24.py` (route `GET /api/integration/pullbacks`, `--integration` only), independent reference
+`lab/pullbacks_ref.py`, page `design/sozvezdiya-24/src/pullbacks.js`, registry part
+`integration/candidates/registry/90-pullbacks.yaml` (the proposed registry now has 62 estimands; accepted SC-1.1 still
+53, plus one SERVICE entry for the route). It reads the accepted family snapshot and never changes BASE/NOW or R/X.
+Check: `tests/pullbacks24.py`. The rule «exceedance by one tick, wick and gap included; a touch is not an update» is
+the operator's (chat 21.10); M1 candles are not used for the order inside an M5 (operator, 21.10). The candidate is
+off by default and not accepted. Audit of this work, the full check run on Windows and the verdict:
+`meaning/lens/2026-10-21-otkaty-do-obnovleniya/05-audit-i-resheniya.md`.
 
 ## Implementation update · 2026-10-15
 

@@ -789,6 +789,53 @@
    ],
    "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
   },
+  "EST:PB-REGION": {
+   "measure": "SHARE",
+   "params": [
+    "scale",
+    "k0",
+    "k1",
+    "b0",
+    "b1"
+   ],
+   "profile": "PROFILE:PB-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "BINARY_BOUNDS_OVER_D"
+  },
+  "EST:PB-SESSIONS": {
+   "measure": "CATEGORY_SHARES",
+   "params": [
+    "scale"
+   ],
+   "profile": "PROFILE:PB-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:PB-ZONE": {
+   "measure": "SHARE",
+   "params": [
+    "zone_id",
+    "scale"
+   ],
+   "profile": "PROFILE:PB-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "unknown": "BINARY_BOUNDS_OVER_D"
+  },
   "EST:ZD-BOOT-R": {
    "measure": "STABILITY_INDEX",
    "params": [
@@ -892,6 +939,23 @@
   }
  },
  "facts": {
+  "FF:CANDIDATE-STATUS": {
+   "labels": {
+    "foot": {
+     "ANY": "кандидат · приёмка не проведена"
+    },
+    "mode_title": {
+     "ANY": "Продолжения — кандидат на испытании, приёмка не проведена: условный ответ по сопоставимым случаям, не прогноз. Выключается в ⚙ → Испытание кандидатов."
+    },
+    "tag": {
+     "ANY": "кандидат"
+    },
+    "title": {
+     "ANY": "Кандидат на испытании: ваша приёмка не проведена. Не принятая часть экрана и не прогноз; «DR до 16:00», «Сейчас» и зоны от него не зависят. Выключается в ⚙ → Испытание кандидатов."
+    }
+   },
+   "record": "PublicationStanding"
+  },
   "FF:FEW-SESSIONS": {
    "labels": {
     "few": {
@@ -1129,6 +1193,163 @@
    },
    "record": "StatisticalResultBundle"
   },
+  "FF:PB-EPISODE": {
+   "labels": {
+    "B": {
+     "ANY": "обновление {topg} на M5 {t}, установлено в {c}"
+    },
+    "H": {
+     "ANY": "{top} H {sd} SD · M5 {t}"
+    },
+    "KNOWN": {
+     "ANY": "на карте"
+    },
+    "L": {
+     "ANY": "{bot} L {sd} SD · M5 {t}"
+    },
+    "NO_UPDATE": {
+     "ANY": "обновления до конца блока не было"
+    },
+    "PRE_ACTIVATION": {
+     "ANY": "дно до активации"
+    },
+    "UNKNOWN_GAP": {
+     "ANY": "не установлено: нет свечи M5"
+    },
+    "UNKNOWN_INTRABAR": {
+     "ANY": "не установлено: порядок внутри M5"
+    },
+    "bot_down": {
+     "ANY": "верх отката"
+    },
+    "bot_up": {
+     "ANY": "дно"
+    },
+    "dr_BEFORE_L": {
+     "ANY": "слом DR в {t} — раньше L"
+    },
+    "dr_BETWEEN_L_B": {
+     "ANY": "L, затем слом DR в {t}, затем обновление"
+    },
+    "dr_INTACT_AT_B": {
+     "ANY": "обновление раньше слома DR"
+    },
+    "dr_NA": {
+     "ANY": "рамка слома: своего слома DR в ней нет"
+    },
+    "dr_UNKNOWN": {
+     "ANY": "порядок L, слома DR и обновления не установлен: нет свечи M5"
+    },
+    "dr_broken": {
+     "ANY": "сломан в {t}"
+    },
+    "dr_held": {
+     "ANY": "не сломан до {end}"
+    },
+    "dr_unknown": {
+     "ANY": "исход неизвестен"
+    },
+    "gap": {
+     "ANY": "между M5 дна и обновления {m} мин"
+    },
+    "head": {
+     "ANY": "{date} · откат перед обновлением"
+    },
+    "links": {
+     "ANY": "эта точка L — перед обновлением {n} {topgp}"
+    },
+    "now": {
+     "ANY": "сейчас {t} — это путь той исторической сессии, не сегодняшний"
+    },
+    "same": {
+     "ANY": "+{n} в этой точке"
+    },
+    "scale": {
+     "ANY": "{top} локальна до масштаба {k}"
+    },
+    "top_down": {
+     "ANY": "впадина"
+    },
+    "top_up": {
+     "ANY": "вершина"
+    },
+    "topg_down": {
+     "ANY": "впадины"
+    },
+    "topg_up": {
+     "ANY": "вершины"
+    },
+    "topgp_down": {
+     "ANY": "впадин"
+    },
+    "topgp_up": {
+     "ANY": "вершин"
+    },
+    "win_act": {
+     "ANY": "активация {t} · DR {dr}"
+    },
+    "win_cols": {
+     "ANY": "H → L → B · статус · масштаб вершины"
+    },
+    "win_head": {
+     "ANY": "Сессия {date}"
+    },
+    "win_scale": {
+     "ANY": "до {k}"
+    }
+   },
+   "record": "OutcomeRecord"
+  },
+  "FF:PB-TODAY": {
+   "labels": {
+    "AHEAD": {
+     "ANY": "окно впереди"
+    },
+    "COMPLETED": {
+     "ANY": "откат здесь завершён: {top} на M5 {h} обновлена в {t}"
+    },
+    "CURRENT": {
+     "ANY": "окно идёт"
+    },
+    "IN_ZONE_NOT_UPDATED": {
+     "ANY": "откат сейчас здесь, {top} на M5 {h} ещё не обновлена"
+    },
+    "NONE": {
+     "ANY": "завершение отката здесь не установлено"
+    },
+    "NOT_YET": {
+     "ANY": "цена здесь ещё не была"
+    },
+    "PAST": {
+     "ANY": "окно прошло"
+    },
+    "VISITED": {
+     "ANY": "цена была здесь в {t}"
+    },
+    "VISIT_UNKNOWN": {
+     "ANY": "посещение неизвестно: нет свечи M5"
+    },
+    "k": {
+     "ANY": "по закрытым M5 после {act}; не процент и не вероятность"
+    },
+    "row": {
+     "ANY": "сегодня"
+    },
+    "today_done": {
+     "ANY": "откатов с обновлением: {n}; последний — {bot} {l} в {lt}, {top} {h} обновлена в {bt}"
+    },
+    "today_head": {
+     "ANY": "Сегодня · масштаб {scale}"
+    },
+    "today_none": {
+     "ANY": "откаты с обновлением пока не установлены"
+    },
+    "today_wait": {
+     "ANY": "идёт откат: {top} {h} ({ht}) ещё не обновлена, {bot} пока {l} в {lt}"
+    }
+   },
+   "record": "PrefixState"
+  },
   "FF:PHASE-RULE": {
    "labels": {
     "clock": {
@@ -1258,6 +1479,50 @@
    },
    "record": "PrefixState"
   },
+  "FF:TODAY-VISIT": {
+   "labels": {
+    "FUTURE": {
+     "ANY": "○ окно впереди"
+    },
+    "MISSED": {
+     "ANY": "× окно прошло · не посетили"
+    },
+    "NO_PERIOD": {
+     "ANY": "окно закончилось к активации"
+    },
+    "OPEN": {
+     "ANY": "● окно действует · не посещена"
+    },
+    "PENDING": {
+     "ANY": "ещё не посещена"
+    },
+    "UNKNOWN": {
+     "ANY": "посещение неизвестно"
+    },
+    "VISITED": {
+     "ANY": "✓ посещена в {time}"
+    },
+    "band_scope": {
+     "ANY": "Приход сегодня — в полосу после активации. Повторный приход — отдельный вопрос."
+    },
+    "clock": {
+     "ANY": "Часть «раньше среза»: экстремумы истории раньше {time}. Эти сессии остаются в семье и её знаменателе. ✓ — посещение сегодня в нужные цену и время."
+    },
+    "column_scope": {
+     "ANY": "Сегодня: эта полоса внутри {zone}, окно {window}. Процент — исходная доля полосы за весь горизонт."
+    },
+    "final": {
+     "ANY": "Зона для окончательного {ev}: {status}. Посещение — отдельный факт."
+    },
+    "peak_scope": {
+     "ANY": "Приход сегодня — в выбранную полосу именно в {window}. Кружок и отметка относятся к этому окну; процент полосы — за весь горизонт."
+    },
+    "zone_scope": {
+     "ANY": "Приход сегодня — в клетки зоны и в её окно. Исходная доля семьи сохранена."
+    }
+   },
+   "record": "PrefixState"
+  },
   "FF:TODAY-Z": {
    "labels": {
     "HOLDS": {
@@ -1310,6 +1575,17 @@
     }
    },
    "record": "ReachabilityAssessment"
+  },
+  "FF:TODAY-Z-PASSED": {
+   "labels": {
+    "passed": {
+     "ANY": "пройдена в {time}"
+    },
+    "title": {
+     "ANY": "Сегодня цена прошла эту зону в её окне: закрытая M5 {time} вошла в её клетки. Окончательный экстремум дня здесь уже не будет — сегодняшний ушёл дальше. Зона отработана, следить за ней не нужно. Кандидат 23.5 · приёмка не проведена."
+    }
+   },
+   "record": "PrefixState"
   }
  },
  "forms": {
@@ -2064,6 +2340,15 @@
     "comparison": {
      "ANY": "Близкое положение · общие часы"
     },
+    "exclude_NOT_ACTIVE_AT_WINDOW_START": {
+     "ANY": "Подтвердились позднее начала окна"
+    },
+    "exclude_WINDOW_ALREADY_VISITED": {
+     "ANY": "Уже заходили в окно"
+    },
+    "exclude_WINDOW_VISIT_UNKNOWN": {
+     "ANY": "Посещение неизвестно"
+    },
     "extension": {
      "ANY": "Закреплённое/остаточное окно: калибровка отдельно"
     },
@@ -2073,8 +2358,32 @@
     "head": {
      "ANY": "Продолжения"
     },
+    "history_head": {
+     "ANY": "Ход вопроса"
+    },
+    "history_no": {
+     "ANY": "Без посещения"
+    },
+    "history_rest": {
+     "ANY": "Остаток {from}–{to}"
+    },
+    "history_seen": {
+     "ANY": "Просмотренные M5 · новые сверху"
+    },
+    "history_whole": {
+     "ANY": "Всё окно"
+    },
+    "history_yes": {
+     "ANY": "Посещение установлено"
+    },
+    "membership_change": {
+     "ANY": "В набор по положению с {time}: вошли {entered}, вышли {left}"
+    },
     "new_question": {
      "ANY": "Та же цель · новый остаточный вопрос"
+    },
+    "no_visit_yet": {
+     "ANY": "В окне до {time} не заходили"
     },
     "original": {
      "ANY": "Исходная F"
@@ -2099,6 +2408,12 @@
     },
     "selected": {
      "ANY": "Сопоставлялось положение, не полный путь"
+    },
+    "support_chain": {
+     "ANY": "По положению {position} → опора остатка {risk}"
+    },
+    "support_n": {
+     "ANY": "опора {n}"
     },
     "unknown": {
      "ANY": "Неизвестно"
@@ -2417,6 +2732,111 @@
    },
    "value_form": "QUANTILES"
   },
+  "EST:PB-REGION": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:PB-REGION",
+   "labels": {},
+   "value_form": "BOUNDS_IF_UNKNOWN"
+  },
+  "EST:PB-SESSIONS": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:PB-SESSIONS",
+   "labels": {
+    "IN_ZONES": {
+     "ANY": "откаты в созвездиях"
+    },
+    "NONE": {
+     "ANY": "без завершённых откатов"
+    },
+    "OUTSIDE": {
+     "ANY": "установленные откаты только вне созвездий"
+    },
+    "UNKNOWN": {
+     "ANY": "без установленных откатов · есть неизвестное"
+    },
+    "scale_note": {
+     "ANY": "созвездий {n} · в созвездиях {in} · не установлено {unk} · эпизодов {e}"
+    },
+    "scale_row": {
+     "ANY": "масштаб {k}"
+    },
+    "scales_head": {
+     "ANY": "Масштабы · те же эпизоды"
+    }
+   },
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:PB-ZONE": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:PB-ZONE",
+   "labels": {
+    "frame": {
+     "BRK": "рамка слома",
+     "CONF": "рамка подтверждения"
+    },
+    "head": {
+     "ANY": "Откаты до обновления"
+    },
+    "head_title": {
+     "ANY": "Где у сессий этой семьи заканчивался откат, после которого цена обновила прежнюю вершину (в шорте — впадину). Одна сессия — один голос в созвездии; доли от N семьи и не складываются в 100 %. Это история похожих сессий, не сегодняшний шанс."
+    },
+    "none": {
+     "ANY": "созвездий нет: ни одна область не набрала {need} сессий"
+    },
+    "note": {
+     "ANY": "одна сессия — один голос; доли не складываются в 100 %"
+    },
+    "phrase": {
+     "ANY": "откат перед обновлением вершины закончился в созвездии {label}"
+    },
+    "scale": {
+     "ANY": "масштаб"
+    },
+    "scale_title": {
+     "ANY": "Вершина — выше {k} соседних M5 с каждой стороны. 1 — как в конструкции; 2, 3, 6 — те же эпизоды на более крупных вершинах"
+    },
+    "sub": {
+     "ANY": "{band} SD · {clock}"
+    },
+    "win_apex": {
+     "ANY": "вершина плотности: {d} сессий в окрестности 3 × 3"
+    },
+    "win_cells": {
+     "ANY": "клеток 0,1 SD × 15 мин: {n}"
+    },
+    "win_head": {
+     "ANY": "Созвездие {label}"
+    },
+    "win_members": {
+     "ANY": "сессии · L · B"
+    },
+    "win_possible": {
+     "ANY": "не установлено по M5"
+    },
+    "win_share": {
+     "ANY": "доля семьи"
+    },
+    "win_window": {
+     "ANY": "окно и цена"
+    },
+    "zone_click": {
+     "ANY": "клик — сессии созвездия в нижнем окне"
+    },
+    "zone_head": {
+     "ANY": "{label} · {window} · {band} SD"
+    },
+    "zone_more": {
+     "ANY": "эпизодов {episodes} · точек {points} · масштаб {scale}"
+    },
+    "zone_share": {
+     "ANY": "у {yes} из {N} сессий семьи откат перед обновлением {topg} закончился здесь"
+    },
+    "zone_unknown": {
+     "ANY": "ещё у {unknown}: дно здесь возможно, но не установлено по M5"
+    }
+   },
+   "value_form": "BOUNDS_IF_UNKNOWN"
+  },
   "EST:ZD-BOOT-R": {
    "claim_class": "DescriptiveClaim",
    "id": "CF:ZD-BOOT-R",
@@ -2524,5 +2944,5 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "4ad9bb309b918a44"
+ "registry_hash": "5d7ef25cb102f477"
 }

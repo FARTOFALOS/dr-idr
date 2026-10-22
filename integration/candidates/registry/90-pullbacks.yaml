@@ -1,0 +1,1345 @@
+{
+ "registry_part": "pullbacks-candidate",
+ "source_references": [
+  {
+   "id": "SRC:INSTRUCTION-2026-10-21",
+   "sc_ref": [
+    "§12.6",
+    "§14.3"
+   ],
+   "grounds": "OPERATOR_REQUIREMENT",
+   "role": "DECISION",
+   "document": "meaning/07-cepochka-reshenij.md",
+   "locator": "node «21.10.2026 · Откаты перед обновлением экстремума»: the operator's goal of 2026-10-21 to implement the proposed construction as a working candidate screen, keeping the accepted meaning of screen 24, and his review of it with three refinements"
+  },
+  {
+   "id": "SRC:PB-CONSTRUCTION",
+   "sc_ref": [
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "role": "ANALYTICAL_INPUT",
+   "document": "meaning/lens/2026-10-21-otkaty-do-obnovleniya/01-konstrukciya.md",
+   "note": "The semantic construction passed by the operator (author not named in the file), kept verbatim"
+  },
+  {
+   "id": "SRC:PB-REVIEW",
+   "sc_ref": [
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "role": "ANALYTICAL_INPUT",
+   "document": "meaning/lens/2026-10-21-otkaty-do-obnovleniya/02-recenziya.md",
+   "note": "The review of the construction passed by the operator: the scale of locality, three times, the order L / DR break / B; kept verbatim"
+  },
+  {
+   "id": "SRC:PB-0.1",
+   "sc_ref": [
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "role": "DEFINITION",
+   "document": "meaning/lens/2026-10-21-otkaty-do-obnovleniya/03-opredelenie-PB-0.1.md",
+   "note": "The definition DR-LAB-PB-0.1 the code implements: construction + review, with the provenance of every rule"
+  },
+  {
+   "id": "SRC:CODE-PB24",
+   "sc_ref": [
+    "§12.6"
+   ],
+   "grounds": "IMPLEMENTATION_FACT",
+   "role": "IMPLEMENTATION",
+   "document": "lab/pullbacks24.py",
+   "note": "implementation; independent reference lab/pullbacks_ref.py; page design/sozvezdiya-24/src/pullbacks.js"
+  }
+ ],
+ "profiles": [
+  {
+   "id": "PROFILE:PB-24",
+   "version": "0.1",
+   "sc_ref": [
+    "§12.6"
+   ],
+   "grounds": "OPERATOR_REQUIREMENT",
+   "edition": "DR-LAB-CANDIDATES-1",
+   "profile_status": "ACTIVE",
+   "title_ru": "Откаты перед обновлением экстремума",
+   "source_refs": [
+    "SRC:PB-0.1",
+    "SRC:PB-CONSTRUCTION",
+    "SRC:PB-REVIEW",
+    "SRC:INSTRUCTION-2026-10-21",
+    "SRC:CODE-PB24"
+   ],
+   "note": "CANDIDATE FOR LOCAL REVIEW; NOT PRODUCT ACCEPTED. For the family on screen (the accepted F, its N and frame): every local pullback of every member before the first update of its vertex (H -> L -> B), its bottoms as points, constellations by zone-map-3 geometry with one vote per session, shares of N with bounds, and today's facts against each constellation. All numbers C0; no R/X status, no forecast, no trade."
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q:PB-ZONE",
+   "version": "1",
+   "sc_ref": [
+    "T0",
+    "§12.6"
+   ],
+   "grounds": "OPERATOR_REQUIREMENT",
+   "text_ru": "Где у похожих сессий заканчивались откаты, после которых цена обновляла прежнюю вершину?",
+   "scene_ru": "после сегодняшней активации — где и когда у сессий семьи лежали дна откатов перед обновлением их локальных вершин (в шорте — впадин); одна сессия — один голос в каждом созвездии"
+  },
+  {
+   "id": "Q:PB-SESSIONS",
+   "version": "1",
+   "sc_ref": [
+    "T0",
+    "§12.6"
+   ],
+   "grounds": "OPERATOR_REQUIREMENT",
+   "text_ru": "У скольких сессий семьи такие откаты были, и сколько из них в созвездиях?",
+   "scene_ru": "вся семья N: сессии с установленными откатами в созвездиях, только вне созвездий, не установленными по M5 и без таких откатов"
+  }
+ ],
+ "outcomes": [
+  {
+   "id": "OUT:PB-L-1",
+   "version": "0.1",
+   "sc_ref": [
+    "P0.1",
+    "P0.2",
+    "P1"
+   ],
+   "grounds": "PROPOSAL",
+   "title_ru": "дно отката перед первым обновлением локальной вершины",
+   "projection": "PULLBACK_BEFORE_UPDATE",
+   "event": "PB_L",
+   "contribution": "ONE_MEMBERSHIP",
+   "horizon_start": "OWN_ACTIVATION_CLOSE_EXCLUSIVE",
+   "horizon_end": "BLOCK_END_CLOSE_INCLUSIVE",
+   "tie_rule": "REPEATS_KEPT_NO_EXTRA_VOTE",
+   "components": [
+    "EXISTENCE",
+    "FIRST_TIME",
+    "MEMBERSHIP"
+   ],
+   "uses_case_future_as_label": true,
+   "reference_definition": "lab/contract.py::ref_pullbacks",
+   "implementations": [
+    "lab/pullbacks24.py::analyse",
+    "lab/pullbacks24.py::zone_map",
+    "design/sozvezdiya-24/src/pullbacks.js::pbWitness"
+   ],
+   "statuses": "vertex H: a run of equal directed highs, k M5 on each side strictly lower (k = scale 1, 2, 3, 6), starting in the trading window, the box as left context; update B: the first later M5 with a directed high above h by at least one tick (a wick and a gap count, equality does not); bottom L: the deepest directed price between the first achievement of h and the exceedance, the first M5 reaching it; inside the vertex M5 only after its high, inside the B M5 only before the exceedance; KNOWN only when every OHLC-compatible path gives the same price and M5 and that M5 closes after the own activation; PRE_ACTIVATION: the deepest point at or before the activation (no trimming); UNKNOWN_INTRABAR / UNKNOWN_GAP: not established (a missing M5 between H and B, or the order inside an M5), kept in N and in the upper bound only; NO_UPDATE: the vertex not exceeded by the block end; episodes with the same bottom M5 and price are one point; a session votes once per constellation",
+   "source_refs": [
+    "SRC:PB-0.1",
+    "SRC:PB-CONSTRUCTION",
+    "SRC:PB-REVIEW",
+    "SRC:INSTRUCTION-2026-10-21",
+    "SRC:CODE-PB24"
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "id": "REG:PB-ZONE-1",
+   "version": "0.1",
+   "sc_ref": [
+    "P2",
+    "P3"
+   ],
+   "grounds": "PROPOSAL",
+   "region_kind": "ZONE_MASK",
+   "origin": "ALGORITHM",
+   "grid": "GRID:K10-J15-1",
+   "density_algorithm": "ALG:PB-ZONE-MAP-3S",
+   "bounds_rule": "the constellation's exact cell mask; its haze and bounding box are a drawing, not membership",
+   "title_ru": "созвездие откатов перед обновлением"
+  }
+ ],
+ "density_algorithms": [
+  {
+   "id": "ALG:PB-ZONE-MAP-3S",
+   "version": "0.1",
+   "sc_ref": [
+    "P3"
+   ],
+   "grounds": "PROPOSAL",
+   "title_ru": "zone-map-3 над точками откатов, один голос сессии",
+   "grid": "GRID:K10-J15-1",
+   "frozen": true,
+   "density_rule": "D(cell) = the number of the family's sessions with at least one established bottom (at the chosen scale) in the 3 x 3 cells around the cell; a session is counted once in a neighbourhood however many points it has there",
+   "region_rule": "a constellation is a connected (8-neighbourhood) region whose D is at least half of the region's own maximum and which holds no cell above it (zone-map-3)",
+   "min_support_rule": "sessions with an established bottom in the mask >= max(4, ceil(0.05 N)); share = those sessions / N of the family; sessions whose unknown episodes or missing M5 could place a bottom in the mask form the upper bound",
+   "order_rule": "by start time, then sessions, then nearness to u = 0; label L1, L2 … in that order, separately at every scale",
+   "seed_rule": "no random procedure",
+   "diagnostics": [
+    "none published in this candidate edition (no grid shifts, resampling or null map)"
+   ],
+   "source_refs": [
+    "SRC:PB-0.1",
+    "SRC:PB-CONSTRUCTION",
+    "SRC:PB-REVIEW",
+    "SRC:INSTRUCTION-2026-10-21",
+    "SRC:CODE-PB24"
+   ]
+  }
+ ],
+ "estimands": [
+  {
+   "id": "EST:PB-ZONE",
+   "version": "0.1",
+   "sc_ref": [
+    "T1",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "question": "Q:PB-ZONE",
+   "profile": "PROFILE:PB-24",
+   "q1_formalised_part_ru": "доля семьи, у которой хотя бы одно установленное дно отката перед обновлением прежней вершины лежит в точной маске созвездия (n / N_base; повторные эпизоды одной сессии голоса не добавляют)",
+   "q2_target": "FIXED_HISTORICAL_SET",
+   "q3_unit": "SESSION",
+   "q4_case_set": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+   "q5_outcome": "OUT:PB-L-1",
+   "q5_region": "REG:PB-ZONE-1",
+   "q6_cut": "CUT:LAST-CLOSED-M5-1",
+   "q6_time_ru": "у каждой сессии: дно после закрытия её собственной активации, вершина может быть раньше; до конца блока; время дна — открытие первой M5 с этой ценой; срез сегодняшнего дня карту не меняет",
+   "q7_measure": "SHARE",
+   "q8_unknown": "BINARY_BOUNDS_OVER_D",
+   "q8_weights": "NONE",
+   "q8_order_ru": "точка — установленные / N; при неустановленных — границы [установленные / N; (установленные + возможные) / N]; созвездия могут делить сессии: доли не складываются в 100 %",
+   "parameters": [
+    {
+     "name": "zone_id",
+     "parameter_kind": "ZONE_ID",
+     "meaning_ru": "созвездие (слепок семьи + версия + масштаб + вершина плотности)"
+    },
+    {
+     "name": "scale",
+     "parameter_kind": "THRESHOLD",
+     "meaning_ru": "масштаб локальности вершины: число соседних M5 с каждой стороны"
+    }
+   ],
+   "source_refs": [
+    "SRC:PB-0.1",
+    "SRC:PB-CONSTRUCTION",
+    "SRC:PB-REVIEW",
+    "SRC:INSTRUCTION-2026-10-21",
+    "SRC:CODE-PB24"
+   ]
+  },
+  {
+   "id": "EST:PB-SESSIONS",
+   "version": "0.1",
+   "sc_ref": [
+    "T1",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "question": "Q:PB-SESSIONS",
+   "profile": "PROFILE:PB-24",
+   "q1_formalised_part_ru": "сессии семьи по четырём категориям одного масштаба: установленные откаты в созвездиях, только вне созвездий, не установлены по M5, без завершённых откатов",
+   "q2_target": "FIXED_HISTORICAL_SET",
+   "q3_unit": "SESSION",
+   "q4_case_set": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+   "q5_outcome": "OUT:PB-L-1",
+   "q6_cut": "CUT:LAST-CLOSED-M5-1",
+   "q6_time_ru": "как EST:PB-ZONE",
+   "q7_measure": "CATEGORY_SHARES",
+   "q8_unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE",
+   "q8_weights": "NONE",
+   "q8_order_ru": "четыре категории вместе = N; неустановленные — своя категория",
+   "parameters": [
+    {
+     "name": "scale",
+     "parameter_kind": "THRESHOLD",
+     "meaning_ru": "масштаб локальности вершины"
+    }
+   ],
+   "source_refs": [
+    "SRC:PB-0.1",
+    "SRC:PB-CONSTRUCTION",
+    "SRC:PB-REVIEW",
+    "SRC:INSTRUCTION-2026-10-21",
+    "SRC:CODE-PB24"
+   ]
+  },
+  {
+   "id": "EST:PB-REGION",
+   "version": "0.1",
+   "sc_ref": [
+    "T1",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "question": "Q:PB-ZONE",
+   "profile": "PROFILE:PB-24",
+   "q1_formalised_part_ru": "Доля сессий семьи с хотя бы одним дном локального отката в выбранной полосе цены, окне времени или их пересечении. Одна сессия голосует один раз в области; разные области могут делить сессии.",
+   "q2_target": "FIXED_HISTORICAL_SET",
+   "q3_unit": "SESSION",
+   "q4_case_set": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1",
+    "CS:F-BREAK-1",
+    "CS:F-BREAK-ALL-1"
+   ],
+   "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+   "q5_outcome": "OUT:PB-L-1",
+   "q5_region": "REG:JOINT-1",
+   "q6_cut": "CUT:LAST-CLOSED-M5-1",
+   "q6_time_ru": "у каждой сессии: дно после закрытия её собственной активации, вершина может быть раньше; до конца блока; время дна — открытие первой M5 с этой ценой; срез сегодняшнего дня карту не меняет",
+   "q7_measure": "SHARE",
+   "q8_unknown": "BINARY_BOUNDS_OVER_D",
+   "q8_weights": "NONE",
+   "q8_order_ru": "точка — установленные / N; при неустановленных — границы [установленные / N; (установленные + возможные) / N]; созвездия могут делить сессии: доли не складываются в 100 %",
+   "parameters": [
+    {
+     "name": "scale",
+     "parameter_kind": "THRESHOLD",
+     "meaning_ru": "Масштаб локальности"
+    },
+    {
+     "name": "k0",
+     "parameter_kind": "THRESHOLD",
+     "meaning_ru": "Нижняя включённая граница цены или null"
+    },
+    {
+     "name": "k1",
+     "parameter_kind": "THRESHOLD",
+     "meaning_ru": "Верхняя исключённая граница цены или null"
+    },
+    {
+     "name": "b0",
+     "parameter_kind": "THRESHOLD",
+     "meaning_ru": "Начало времени или null"
+    },
+    {
+     "name": "b1",
+     "parameter_kind": "THRESHOLD",
+     "meaning_ru": "Конец времени или null"
+    }
+   ],
+   "source_refs": [
+    "SRC:PB-0.1",
+    "SRC:PB-CONSTRUCTION",
+    "SRC:PB-REVIEW",
+    "SRC:INSTRUCTION-2026-10-21",
+    "SRC:CODE-PB24"
+   ]
+  }
+ ],
+ "estimators": [
+  {
+   "id": "ESTR:PB-ZONE",
+   "version": "0.1",
+   "sc_ref": [
+    "V0",
+    "P3"
+   ],
+   "grounds": "PROPOSAL",
+   "estimands": [
+    "EST:PB-ZONE"
+   ],
+   "rule": "ALGORITHMIC_REGION_SHARE",
+   "implementations": [
+    "lab/pullbacks24.py::zone_map",
+    "design/sozvezdiya-24/src/pullbacks.js::pbZoneCheck"
+   ],
+   "reference_definition": "lab/contract.py::ref_pullbacks",
+   "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
+   "rounding_ru": "точные счёты; проценты после деления, один знак"
+  },
+  {
+   "id": "ESTR:PB-SESSIONS",
+   "version": "0.1",
+   "sc_ref": [
+    "V0",
+    "V2.1"
+   ],
+   "grounds": "PROPOSAL",
+   "estimands": [
+    "EST:PB-SESSIONS"
+   ],
+   "rule": "CATEGORY_COUNTS_OVER_N",
+   "implementations": [
+    "lab/pullbacks24.py::zone_map"
+   ],
+   "reference_definition": "lab/contract.py::ref_pullbacks",
+   "unknown_handling_ru": "категории вместе = N_base",
+   "rounding_ru": "точные счёты; проценты после деления, один знак"
+  },
+  {
+   "id": "ESTR:PB-REGION",
+   "version": "0.1",
+   "sc_ref": [
+    "V0",
+    "P3"
+   ],
+   "grounds": "PROPOSAL",
+   "estimands": [
+    "EST:PB-REGION"
+   ],
+   "rule": "ALGORITHMIC_REGION_SHARE",
+   "implementations": [
+    "lab/pullbacks24.py::marginal_regions"
+   ],
+   "reference_definition": "lab/contract.py::ref_pullbacks",
+   "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
+   "rounding_ru": "точные счёты; проценты после деления, один знак"
+  }
+ ],
+ "claim_forms": [
+  {
+   "id": "CF:PB-ZONE",
+   "version": "0.1",
+   "sc_ref": [
+    "C0",
+    "§12.6",
+    "K33"
+   ],
+   "grounds": "PROPOSAL",
+   "estimand": "EST:PB-ZONE",
+   "claim_class": "DescriptiveClaim",
+   "subject_ru": "сессии этой семьи (F, один N), каждая со своими откатами перед обновлением своих вершин",
+   "statement_ru": "У {yes} из {N} сессий этой семьи откат перед обновлением прежней вершины закончился в созвездии {label} (масштаб {scale}, эпизодов {episodes}); ещё у {unknown} это возможно, но не установлено по M5.",
+   "value_form": "BOUNDS_IF_UNKNOWN",
+   "price_transfer": "M0_TODAY_EDGE",
+   "acceptance": "PROPOSED_BY_EXECUTOR",
+   "forbidden_readings_ru": [
+    "шанс разворота или продолжения сегодня",
+    "здесь закончится сегодняшний откат",
+    "доли созвездий делят 100 %",
+    "посещение области — завершённый откат",
+    "площадь свечения — членство"
+   ],
+   "note": "Words of the executor (2026-10-21) for the operator's acceptance; the construction's name «Откаты перед обновлением экстремума»",
+   "labels": [
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "head",
+     "text_ru": "Откаты до обновления"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "head_title",
+     "text_ru": "Где у сессий этой семьи заканчивался откат, после которого цена обновила прежнюю вершину (в шорте — впадину). Одна сессия — один голос в созвездии; доли от N семьи и не складываются в 100 %. Это история похожих сессий, не сегодняшний шанс."
+    },
+    {
+     "surface": "PANEL",
+     "view": "CONF",
+     "key": "frame",
+     "text_ru": "рамка подтверждения"
+    },
+    {
+     "surface": "PANEL",
+     "view": "BRK",
+     "key": "frame",
+     "text_ru": "рамка слома"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "scale",
+     "text_ru": "масштаб"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "scale_title",
+     "text_ru": "Вершина — выше {k} соседних M5 с каждой стороны. 1 — как в конструкции; 2, 3, 6 — те же эпизоды на более крупных вершинах"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "sub",
+     "text_ru": "{band} SD · {clock}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "none",
+     "text_ru": "созвездий нет: ни одна область не набрала {need} сессий"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "note",
+     "text_ru": "одна сессия — один голос; доли не складываются в 100 %"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "zone_head",
+     "text_ru": "{label} · {window} · {band} SD"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "zone_share",
+     "text_ru": "у {yes} из {N} сессий семьи откат перед обновлением {topg} закончился здесь"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "zone_more",
+     "text_ru": "эпизодов {episodes} · точек {points} · масштаб {scale}"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "zone_unknown",
+     "text_ru": "ещё у {unknown}: дно здесь возможно, но не установлено по M5"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "zone_click",
+     "text_ru": "клик — сессии созвездия в нижнем окне"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "win_head",
+     "text_ru": "Созвездие {label}"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "win_share",
+     "text_ru": "доля семьи"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "win_window",
+     "text_ru": "окно и цена"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "win_cells",
+     "text_ru": "клеток 0,1 SD × 15 мин: {n}"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "win_apex",
+     "text_ru": "вершина плотности: {d} сессий в окрестности 3 × 3"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "win_members",
+     "text_ru": "сессии · L · B"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "win_possible",
+     "text_ru": "не установлено по M5"
+    },
+    {
+     "surface": "PASSPORT",
+     "view": "ANY",
+     "key": "phrase",
+     "text_ru": "откат перед обновлением вершины закончился в созвездии {label}"
+    }
+   ]
+  },
+  {
+   "id": "CF:PB-SESSIONS",
+   "version": "0.1",
+   "sc_ref": [
+    "C0",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "estimand": "EST:PB-SESSIONS",
+   "claim_class": "DescriptiveClaim",
+   "subject_ru": "сессии этой семьи (F, один N)",
+   "statement_ru": "Из {N} сессий семьи на масштабе {scale}: установленные откаты в созвездиях у {in_zones}, установленные откаты только вне созвездий у {outside}, без установленных откатов с неизвестным исходом {unknown}, без завершённых откатов {none}.",
+   "value_form": "CATEGORY_SHARES",
+   "price_transfer": "NONE",
+   "acceptance": "PROPOSED_BY_EXECUTOR",
+   "forbidden_readings_ru": [
+    "сессии без откатов — ошибка данных",
+    "вне созвездий — нет откатов"
+   ],
+   "labels": [
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "IN_ZONES",
+     "text_ru": "откаты в созвездиях"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "OUTSIDE",
+     "text_ru": "установленные откаты только вне созвездий"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "UNKNOWN",
+     "text_ru": "без установленных откатов · есть неизвестное"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "NONE",
+     "text_ru": "без завершённых откатов"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "scales_head",
+     "text_ru": "Масштабы · те же эпизоды"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "scale_note",
+     "text_ru": "созвездий {n} · в созвездиях {in} · не установлено {unk} · эпизодов {e}"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "scale_row",
+     "text_ru": "масштаб {k}"
+    }
+   ]
+  },
+  {
+   "id": "CF:PB-REGION",
+   "version": "0.1",
+   "sc_ref": [
+    "C0",
+    "§12.6",
+    "K33"
+   ],
+   "grounds": "PROPOSAL",
+   "estimand": "EST:PB-REGION",
+   "claim_class": "DescriptiveClaim",
+   "subject_ru": "сессии этой семьи (F, один N), каждая со своими откатами перед обновлением своих вершин",
+   "statement_ru": "У {yes} из {N} сессий семьи хотя бы одно дно отката перед обновлением было в выбранной области (масштаб {scale}); ещё у {unknown} это возможно по M5.",
+   "value_form": "BOUNDS_IF_UNKNOWN",
+   "price_transfer": "M0_TODAY_EDGE",
+   "acceptance": "PROPOSED_BY_EXECUTOR",
+   "forbidden_readings_ru": [
+    "шанс разворота или продолжения сегодня",
+    "здесь закончится сегодняшний откат",
+    "доли созвездий делят 100 %",
+    "посещение области — завершённый откат",
+    "площадь свечения — членство"
+   ],
+   "note": "Words of the executor (2026-10-21) for the operator's acceptance; the construction's name «Откаты перед обновлением экстремума»",
+   "labels": []
+  }
+ ],
+ "fact_forms": [
+  {
+   "id": "FF:PB-TODAY",
+   "version": "0.1",
+   "sc_ref": [
+    "E0",
+    "E1",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "record_class": "PrefixState",
+   "acceptance": "PROPOSED_BY_EXECUTOR",
+   "statement_ru": "Сегодня к срезу {cut} по закрытым M5: окно созвездия {label} — {clock}; цена — {visit}; откат — {completion}. Это факт сегодняшнего пути, не процент и не прогноз.",
+   "forbidden_readings_ru": [
+    "цена была в области — откат завершён",
+    "окно прошло — созвездие невозможно",
+    "сегодняшний более глубокий минимум запрещает откат"
+   ],
+   "labels": [
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "AHEAD",
+     "text_ru": "окно впереди"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "CURRENT",
+     "text_ru": "окно идёт"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "PAST",
+     "text_ru": "окно прошло"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "VISITED",
+     "text_ru": "цена была здесь в {t}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "NOT_YET",
+     "text_ru": "цена здесь ещё не была"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "VISIT_UNKNOWN",
+     "text_ru": "посещение неизвестно: нет свечи M5"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "COMPLETED",
+     "text_ru": "откат здесь завершён: {top} на M5 {h} обновлена в {t}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "IN_ZONE_NOT_UPDATED",
+     "text_ru": "откат сейчас здесь, {top} на M5 {h} ещё не обновлена"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "NONE",
+     "text_ru": "завершение отката здесь не установлено"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "row",
+     "text_ru": "сегодня"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "k",
+     "text_ru": "по закрытым M5 после {act}; не процент и не вероятность"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "today_head",
+     "text_ru": "Сегодня · масштаб {scale}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "today_done",
+     "text_ru": "откатов с обновлением: {n}; последний — {bot} {l} в {lt}, {top} {h} обновлена в {bt}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "today_wait",
+     "text_ru": "идёт откат: {top} {h} ({ht}) ещё не обновлена, {bot} пока {l} в {lt}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "today_none",
+     "text_ru": "откаты с обновлением пока не установлены"
+    }
+   ]
+  },
+  {
+   "id": "FF:PB-EPISODE",
+   "version": "0.1",
+   "sc_ref": [
+    "P0.1",
+    "P1",
+    "§12.6"
+   ],
+   "grounds": "PROPOSAL",
+   "record_class": "OutcomeRecord",
+   "acceptance": "PROPOSED_BY_EXECUTOR",
+   "statement_ru": "Сессия {date}: вершина H {h} в {ht}, дно L {l} в {lt}, обновление вершины установлено на закрытии M5 {bt}; слом DR: {dr}.",
+   "forbidden_readings_ru": [
+    "путь исторической сессии — маршрут сегодняшней цены",
+    "время обновления той сессии — время сегодняшнего обновления"
+   ],
+   "labels": [
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "head",
+     "text_ru": "{date} · откат перед обновлением"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "same",
+     "text_ru": "+{n} в этой точке"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "H",
+     "text_ru": "{top} H {sd} SD · M5 {t}"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "L",
+     "text_ru": "{bot} L {sd} SD · M5 {t}"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "B",
+     "text_ru": "обновление {topg} на M5 {t}, установлено в {c}"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "gap",
+     "text_ru": "между M5 дна и обновления {m} мин"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "links",
+     "text_ru": "эта точка L — перед обновлением {n} {topgp}"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "scale",
+     "text_ru": "{top} локальна до масштаба {k}"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "dr_INTACT_AT_B",
+     "text_ru": "обновление раньше слома DR"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "dr_BETWEEN_L_B",
+     "text_ru": "L, затем слом DR в {t}, затем обновление"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "dr_BEFORE_L",
+     "text_ru": "слом DR в {t} — раньше L"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "dr_UNKNOWN",
+     "text_ru": "порядок L, слома DR и обновления не установлен: нет свечи M5"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "dr_NA",
+     "text_ru": "рамка слома: своего слома DR в ней нет"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "now",
+     "text_ru": "сейчас {t} — это путь той исторической сессии, не сегодняшний"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "win_head",
+     "text_ru": "Сессия {date}"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "win_act",
+     "text_ru": "активация {t} · DR {dr}"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "win_cols",
+     "text_ru": "H → L → B · статус · масштаб вершины"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "win_scale",
+     "text_ru": "до {k}"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "top_up",
+     "text_ru": "вершина"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "top_down",
+     "text_ru": "впадина"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "topg_up",
+     "text_ru": "вершины"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "topg_down",
+     "text_ru": "впадины"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "topgp_up",
+     "text_ru": "вершин"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "topgp_down",
+     "text_ru": "впадин"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "bot_up",
+     "text_ru": "дно"
+    },
+    {
+     "surface": "INSPECTOR",
+     "view": "ANY",
+     "key": "bot_down",
+     "text_ru": "верх отката"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "KNOWN",
+     "text_ru": "на карте"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "PRE_ACTIVATION",
+     "text_ru": "дно до активации"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "UNKNOWN_INTRABAR",
+     "text_ru": "не установлено: порядок внутри M5"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "UNKNOWN_GAP",
+     "text_ru": "не установлено: нет свечи M5"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "NO_UPDATE",
+     "text_ru": "обновления до конца блока не было"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "dr_held",
+     "text_ru": "не сломан до {end}"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "dr_broken",
+     "text_ru": "сломан в {t}"
+    },
+    {
+     "surface": "WINDOW",
+     "view": "ANY",
+     "key": "dr_unknown",
+     "text_ru": "исход неизвестен"
+    }
+   ]
+  }
+ ],
+ "surfaces": [
+  {
+   "id": "API:/api/integration/pullbacks",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "route": "/api/integration/pullbacks",
+   "surface_profile": "SC11_PULLBACKS_0_1",
+   "definitions": "SRC:PB-0.1",
+   "estimands": [
+    "EST:PB-ZONE",
+    "EST:PB-SESSIONS",
+    "EST:PB-REGION"
+   ],
+   "marking": "separate proposed ContractEnvelope; release_id binds the proof; no C2/C3"
+  }
+ ],
+ "encodings": [
+  {
+   "id": "FE:PB.0",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.definition.{default_scale,min_abs,min_frac_num,min_frac_den}",
+   "field_kind": "PARAMETER",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.1",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.definition.scales[*]",
+   "field_kind": "PARAMETER",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.2",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.context.{cut,formed,end}",
+   "field_kind": "TIME",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.3",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.context.N",
+   "field_kind": "DENOMINATOR",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.4",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.grid[*]",
+   "field_kind": "TIME",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.5",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.first_i",
+   "field_kind": "IDENTIFIER",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.6",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.sessions[*].{w,direction,edge_ticks,oppv,act_i,first_i,gap}",
+   "field_kind": "CASE_RECORD",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.7",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.sessions[*].{act,brk}",
+   "field_kind": "TIME",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.8",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.sessions[*].bars[*][*]",
+   "field_kind": "CASE_RECORD",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.9",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.episodes[*].{a,b,h,kt,kn,jb,jl,L,lo,hi,gap,cap}",
+   "field_kind": "MEASUREMENT",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.10",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.episodes[*].{h_open,b_close,l_open}",
+   "field_kind": "TIME",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.11",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.episodes[*].cand[*][*]",
+   "field_kind": "MEASUREMENT",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.12",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.episodes[*].span[*]",
+   "field_kind": "MEASUREMENT",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.13",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.points[*].{i,v,k,b,kt,kn}",
+   "field_kind": "MEASUREMENT",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.14",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.points[*].open",
+   "field_kind": "TIME",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.15",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.maps.{*}.{scale,need}",
+   "field_kind": "PARAMETER",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.16",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.maps.{*}.{points,episodes}",
+   "field_kind": "SUPPORT_COUNT",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.17",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.maps.{*}.sessions.{IN_ZONES,OUTSIDE,UNKNOWN,NONE}",
+   "field_kind": "SUPPORT_COUNT",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.18",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.maps.{*}.zones[*].{apex_D,n_known,n_possible,n_points,n_episodes}",
+   "field_kind": "SUPPORT_COUNT",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.19",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.maps.{*}.zones[*].{price_low,price_high}",
+   "field_kind": "PARAMETER",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.20",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.maps.{*}.zones[*].{time_start,time_end}",
+   "field_kind": "TIME",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.21",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.maps.{*}.zones[*].cell_mask[*][*]",
+   "field_kind": "PARAMETER",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.22",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.maps.{*}.zones[*].anchor[*]",
+   "field_kind": "PARAMETER",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.23",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.today.{cut,act}",
+   "field_kind": "TIME",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.24",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.today.{direction,w,edge_ticks,oppv}",
+   "field_kind": "PREFIX_STATE",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.25",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.today.bars[*][*]",
+   "field_kind": "OBSERVATION",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.26",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.today.episodes[*].{a,b,h,kt,kn,jb,jl,L,k,cb,lo,hi,gap,cap}",
+   "field_kind": "PREFIX_STATE",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.27",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.today.episodes[*].{h_open,b_close,l_open}",
+   "field_kind": "TIME",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.28",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.today.episodes[*].cand[*][*]",
+   "field_kind": "PREFIX_STATE",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.29",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.today.episodes[*].span[*]",
+   "field_kind": "PREFIX_STATE",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.30",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.today.zones.{*}[*].visit.close",
+   "field_kind": "TIME",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.31",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.today.zones.{*}[*].completion.{b_close,h_open}",
+   "field_kind": "TIME",
+   "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+  },
+  {
+   "id": "FE:PB.33",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.marginals.{*}[*].{k0,k1,b0,b1}",
+   "field_kind": "PARAMETER",
+   "target": "EST:PB-REGION"
+  },
+  {
+   "id": "FE:PB.34",
+   "sc_ref": [
+    "§12.3"
+   ],
+   "surface": "API:/api/integration/pullbacks",
+   "path": "proof.marginals.{*}[*].{n_known,n_possible,earlier,later}",
+   "field_kind": "SUPPORT_COUNT",
+   "target": "EST:PB-REGION"
+  }
+ ]
+}
