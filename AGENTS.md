@@ -13,6 +13,11 @@ source dispositions, rejected substitutions and the genuinely uncertain decision
   final-R/X order, PRE/ARRIVE and fixed-target Continuations retain their own objects and supports.
 - Price/time projections count unique sessions per region. The time hill uses the full zone's witnesses, not compact
   display nodes. A past PB window is dimmed by its clock, never by FINAL-R's monotone price constraint.
+- Correction after the operator's comparison on 22.10: stars remain on; compact M5/SD representatives cover the FULL
+  zone, not its anchor neighbourhood. Every nonempty time bin of both colours is drawn, including X outside zones.
+  PB-L (several local events) and FINAL-X (one final event) are not competing outcomes: their counts are unchanged,
+  but the time band's winner/loser contrast and outline are disabled for this mixed pair. See the correction in the
+  semantic decisions document and `tests/constellations235_page.mjs` (actual canvas, not just data availability).
 - The operator requested the shading of 24 and no noise from small rows: visibility uses the existing support floor
   and peaks; hidden rows remain inspectable, with unchanged N. New visible entities require discussion.
 - Accepted SC-1.1 stays at 53 estimands; the separate proposal now has 63. Publication does not grant C2/C3 or H acceptance.

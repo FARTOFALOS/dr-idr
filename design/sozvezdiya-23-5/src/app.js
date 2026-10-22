@@ -1028,7 +1028,7 @@
     drawPills(c, ctx);
     if (!continuationMode()) drawNow(c, ctx);
     if (F && !continuationMode()) drawLink(c, mapCtx);
-    if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, mapCtx);
+    if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, cloudCtx);
     if (F && st.mode === 'bounds') drawPair(c, mapCtx);
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
     if (F && !continuationMode()) drawArea(c, mapCtx);
@@ -1386,6 +1386,7 @@
   }
   function drawPoints(c, ctx) {
     const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100, ph = phaseOf(F, ctx);
+    V.stars = [];
     for (const ev of ['R', 'X']) {
       const pk = phaseK(ph, ev), col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent');
       for (const q of F.ev[ev].pts) {
@@ -1394,6 +1395,7 @@
         const col = expiredLook(look[zi]) ? spent : look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
         const x = V.X(q.t + 2.5), y = V.Y(q.p);
         if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
+        V.stars.push({ev,zi,x,y,q});
         const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx);
         let a = (past ? cfg.pastA : cfg.ptA) / 100 * 1.1, r = R0;
         if (e === true) { a = Math.min(1, Math.max(a, 0.55) + 0.3); r = R0 * 1.3; } else if (e === false) a *= 0.28;
@@ -1924,7 +1926,8 @@
   }
   // ---------- the time band (variant «Окна времени», operator 2026-10-01) ----------
   const expiredLook = s => s === 'IMPOSSIBLE' || s === 'PAST';
-  // Presentation support uses the existing zone-map-3 support floor. It never removes a case or changes n/N.
+  // PRICE-column attention uses the existing zone-map-3 support floor. Time columns keep every nonempty bin, as on 24.
+  // Presentation never removes a case or changes n/N.
   // A supported zone keeps its strongest projected row even when its mass is distributed over several cells.
   function projectionFocus(F,ev,axis) {
     const D=F.ev[ev][axis],need=Math.max(4,Math.ceil(F.N/20)),peaks=new Set(),zoneKeys=new Set();
@@ -1947,8 +1950,9 @@
   // - the hills: the shape of each zone's sessions in time (a Gaussian of 7 minutes); one height scale per event, its
   //   tallest hill filling the half: where in its window the zone is densest, a drawing without a number (X and R hills
   //   are not compared by height; the capsules and the columns carry the numbers);
-  // - the columns: R and X of the family by 15 minutes on one square-root scale, each its own 100 % (with «?» at the
-  //   right), both shares of the same N, so the taller of the two is the event more of the family set in that window.
+  // - the columns: shares of the same family N by 15 minutes on one linear scale (with «?» at the right).
+  //   PB-L may occur in several windows of one session; FINAL-X is one point. Their heights are frequencies of
+  //   DIFFERENT named events, never probabilities of two opposite next moves. Do not apply a winner/loser contrast.
   // Passed windows are dimmer.
   function bandHills(F, ctx, ev) {
     if (F._pb?.proof && ev === 'R') return pbBandHills(F);
@@ -2015,7 +2019,9 @@
     c.fillStyle = C.grid; c.fillRect(B0.x, B0.y, B0.w, 1);
     drawMidnight(c, B0.y, B0.y + B0.h);
     const T = { R: F.ev.R.T, X: F.ev.X.T }, mx = Math.max(1, ...T.R.values(), ...T.X.values());
-    const focus={R:projectionFocus(F,'R','T'),X:projectionFocus(F,'X','T')};
+    // PB-L allows several local events per session; FINAL-X has one. This pair is not a two-outcome balance.
+    // Keep the common n/N height scale, but never suppress one colour or amplify it as the other colour's loser.
+    const comparable = !F._pb;
     // operator 2026-10-06: the height is LINEAR in the share (the square root hid the difference: 4,8 against 3,2 looked
     // like 1,22 instead of 1,5); the counts are unchanged
     const yOf = (ev, n) => cy + dir[ev] * (1 + half * Math.min(1, Math.max(0, n) / mx));
@@ -2034,19 +2040,20 @@
         if (n && ppHeld(F, 'EST:B-RX-WINDOW-' + ev, { b0: b, b1: b + 1 })) { if (lit) labels.push({ x: (x0 + x1) / 2, y: cy + dir[ev] * 9, t: '—', col: cfg[ev] }); continue; }
         // the balance inside the 15 minutes (operator 2026-10-06): the larger side brighter, the smaller dimmer, the more
         // so the stronger the tilt (setting «контраст перевеса»); a drawing of the same two shares, not a new number
-        const dom = n + o > 0 ? (n - o) / (n + o) : 0;
+        const dom = comparable && n + o > 0 ? (n - o) / (n + o) : 0;
         let a = (0.12 + 0.26 * Math.pow(n / mx, 0.7)) * Math.max(0.15, 1 + cfg.domK / 100 * dom);
         if (past) a *= 0.5;
         if (lit || zl) a = Math.max(a, 0.5);
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, n);
-        const visible=focus[ev].shown.has(b)||lit||zl;
-        V.bandBars.push({ev,b,n,visible,alpha:Math.min(1,a*cfg.stripA/80)});
-        if(!visible)continue; // residual / small rows stay available through the existing time-band hover
+        // As on 24, every published window remains visible, including FINAL-X outside the constellation windows.
+        const visible=n>0;
+        V.bandBars.push({ev,b,n,visible,comparable,dom,alpha:Math.min(1,a*cfg.stripA/80),x0,x1,y,cy});
+        if(!visible)continue;
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
         // a thin outline on the side that outweighs, even for a small tilt (3,8 against 3,2), stronger with the tilt but
         // always quiet (operator 2026-10-06: an outline takes the eye, so only the winner and only lightly)
-        if (n > o && cfg.domLine > 0 && Math.abs(y - cy) > 3) {
+        if (comparable && n > o && cfg.domLine > 0 && Math.abs(y - cy) > 3) {
           c.strokeStyle = rgba(cfg[ev], Math.min(0.9, (0.12 + 0.18 * Math.min(1, 3 * dom)) * (past ? 0.6 : 1) * cfg.domLine / 100)); c.lineWidth = 1;   // barely visible (operator 2026-10-06)
           c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir[ev], y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1));
         }
@@ -2487,7 +2494,7 @@
     if (st.mode === 'bounds' && st.L.pts) {
       // a star of R or of X: the nearest within 5 px
       let best = null, bd = 5;
-      for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) { if (pointZone(F,q) == null) continue; const d = Math.hypot(V.X(q.t + 2.5) - x, V.Y(q.p) - y); if (d < bd) { bd = d; best = q; } }
+      for (const star of V.stars || []) { const d = Math.hypot(star.x - x, star.y - y); if (d < bd) { bd = d; best = star.q; } }
       if (best) {
         const all = F.ev[best.ev].pts.filter(q => pointZone(F,q) != null && Math.hypot(V.X(q.t + 2.5) - V.X(best.t + 2.5), V.Y(q.p) - V.Y(best.p)) < 2.5);
         return { k: 'pt', ev: best.ev, i: best.i, q: best, same: all.map(q => q.i) };
