@@ -28,7 +28,10 @@
     },
     "ALGORITHMIC_REGION_MEMBERSHIP": {},
     "CLOCK_SPLIT": {},
-    "REGION_STABILITY": {}
+    "REGION_STABILITY": {},
+    "PULLBACK_BEFORE_UPDATE": {
+     "description": "bottom of a local pullback before the first update of its vertex (DR-LAB-PB-0.1)"
+    }
    }
   },
   "EventKind": {
@@ -53,6 +56,9 @@
     "TAU_X": {},
     "CONFIRMATION": {
      "description": "подтверждение — первое закрытие M5 за своим DR"
+    },
+    "PB_L": {
+     "description": "the bottom L of an episode H -> L -> B (DR-LAB-PB-0.1)"
     }
    }
   },
@@ -78,6 +84,9 @@
     "SERVICE": {},
     "SC11_CONTINUATIONS_0_1": {
      "description": "separate fixed-window continuation candidate, C1 only"
+    },
+    "SC11_PULLBACKS_0_1": {
+     "description": "separate pullback-before-update candidate DR-LAB-PB-0.1, C0 only"
     }
    }
   }

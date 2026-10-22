@@ -73,6 +73,20 @@ class Handler(SimpleHTTPRequestHandler):
                     import integration_audit
                     packet=integration_audit.audit(packet,dict(instrument=params.get('instrument','NQ'),session=params.get('session','RDR'),date=date,scope=params.get('scope','weekday'),view=params.get('view','auto')))
                 return self.json(packet)
+            if url.path == '/api/integration/pullbacks':
+                # DR-LAB-PB-0.1 (lab/pullbacks24.py): the candidate «Откаты перед обновлением экстремума» over the family on
+                # screen; its own envelope from the candidate registry, never the accepted map
+                if not INTEGRATION: return self.json(dict(status='INTEGRATION_DISABLED'),403)
+                if START_SOURCE_REVISION!=runtime_identity.current() or START_DATA_REVISION!=runtime_identity.data_revision():
+                    return self.json(dict(status='SOURCE_CHANGED',message='Сборка или история обновилась: откройте DR Lab заново'),409)
+                date=params.get('date') or None
+                if date is not None and not re.fullmatch(r'20[0-2]\d-[01]\d-[0-3]\d',date): raise ValueError('date: YYYY-MM-DD')
+                import pullbacks24
+                value=pullbacks24.response(dict(instrument=params.get('instrument','NQ'),session=params.get('session','RDR'),at=params.get('at','0'),
+                                                date=date,view=params.get('view','auto'),scope=params.get('scope','weekday'),region=params.get('region')))
+                if START_SOURCE_REVISION!=runtime_identity.current() or START_DATA_REVISION!=runtime_identity.data_revision():
+                    return self.json(dict(status='SOURCE_CHANGED',message='Во время расчёта обновились исходники или история'),409)
+                return self.json(value)
             if url.path == '/api/health':
                 return self.json({'status':'ok','data_kind':DATA_KIND,'version':engine.VERSION,'integration':INTEGRATION,'workspace':str(ROOT.parent),
                                   'source_revision':START_SOURCE_REVISION,'current_source_revision':runtime_identity.current(),

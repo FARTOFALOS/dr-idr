@@ -227,6 +227,21 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
 .c24-tools button{font:inherit;padding:4px 6px;background:var(--raised);border:1px solid var(--line2);border-radius:4px;color:var(--text)}
 .c24-case{display:block;font-size:12px;margin:8px 0}
 .c24-case select{display:block;width:100%;margin-top:4px;background:var(--raised);color:var(--text);border:1px solid var(--line2);padding:4px}
+/* the candidate «Откаты до обновления» (DR-LAB-PB-0.1, 2026-10-21) */
+/* the scale and the family's scope share one row; they wrap rather than run under the panel's edge */
+.p21-h.pbctl{flex-wrap:wrap;row-gap:6px}
+.p21-h .p24-seg.sm.pbseg button{padding:0 6px}
+.p21-h .p24-seg.sm .pbsl{padding:0 5px 0 3px;font-size:11px;color:#6F7582;align-self:center}
+.dcard .pblist{max-height:150px;overflow-y:auto;padding-right:2px}
+.pbep{display:grid;grid-template-columns:1fr auto;gap:6px;font-size:11px;line-height:1.35;padding:1px 0;color:#C9CFD8;font-variant-numeric:tabular-nums}
+.pbep b{font-weight:500;color:#8E95A3;white-space:nowrap}
+.pbep.k span{color:#6F7582}
+.pbep.on span{color:#E6E0F7}
+.pbep.on b{color:#C3A6F2}
+.pbep.pbrow{cursor:pointer}
+.pbep.pbrow:hover span{color:#EEF1F5}
+.pbsc{padding:2px 0 4px;border-bottom:1px solid #1A1D24;cursor:pointer}
+.pbsc.on .p24-dr span{color:#C3A6F2}
 
 </style>
 </head>
@@ -237,7 +252,7 @@ button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer
   <div class="seg" id="sess"></div>
   <span class="lbl" id="date"></span>
   <span class="lbl version24">№ 24</span>
-  <div class="seg" id="mode"><button data-m="bounds">Границы хода</button><button data-m="path">Путь семьи</button><button data-m="continuations" hidden>Продолжения</button></div>
+  <div class="seg" id="mode"><button data-m="bounds">Границы хода</button><button data-m="path">Путь семьи</button><button data-m="continuations" hidden>Продолжения</button><button data-m="pullbacks" hidden title="Откаты до обновления · кандидат DR-LAB-PB-0.1: где у похожих сессий заканчивались откаты перед обновлением прежней вершины">Откаты</button></div>
   <div class="seg" id="ev"></div>
   <button type="button" id="areab" title="Выбрать область R мышью: цена или цена × время; R/X меняется вместе с текущим фокусом">▭ Область · R</button>
   <div class="sp"></div>

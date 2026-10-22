@@ -4724,6 +4724,7 @@
    "NEW_R",
    "NEW_X",
    "ORDER",
+   "PB_L",
    "R",
    "RANGE",
    "TAU_R",
@@ -4896,6 +4897,7 @@
    "FIRST_ORDER",
    "FIRST_QUALIFIED_VISIT",
    "LITERAL_LEVEL_CROSSING",
+   "PULLBACK_BEFORE_UPDATE",
    "RANGE_AT_M5",
    "REACTION_SWING_TARGET",
    "REGION_STABILITY",
@@ -4982,6 +4984,7 @@
    "SC11_NOW_1_0",
    "SC11_OBSERVATION",
    "SC11_PRE_24",
+   "SC11_PULLBACKS_0_1",
    "SERVICE"
   ],
   "TargetKind": [

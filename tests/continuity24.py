@@ -115,6 +115,13 @@ def main():
     conditioned = run(625, cases=seen)
     check(conditioned["selection"]["M"] == c["selection"]["M"] and
           len(conditioned["risk_set"]["ids"]) == 24, "shared POS pool differs from explicit residual risk set")
+    check(conditioned['risk_set']['exclusions'] == {'0': 'WINDOW_ALREADY_VISITED'} and
+          A.check_frame(conditioned, seen, today, grid)['outcome'] == 'PASS',
+          'elapsed visit is an independently checked exclusion cause')
+    forged = copy.deepcopy(conditioned)
+    forged['risk_set']['exclusions']['0'] = 'NOT_ACTIVE_AT_WINDOW_START'
+    check(A.check_frame(forged, seen, today, grid)['outcome'] == 'FAIL',
+          'a plausible but false exclusion cause fails even when membership and numbers are correct')
     hole = copy.deepcopy(today)
     hole["P"][4] = np.nan
     gap = run(625, today=hole)

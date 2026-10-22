@@ -21,7 +21,7 @@ def main():
     check(C.EDITION=='DR-LAB-SC-1.1' and len(C.registry()['estimands'])==53,'normal contract is the accepted 53-estimand edition')
     g=I.review_gate()
     ed=next(e for e in g.registry()['editions'] if e['id']==g.EDITION)
-    check(g is not C and ed['edition_status']=='PROPOSED' and not ed.get('acceptances') and len(g.registry()['estimands'])==60,'candidate gate includes the separately proposed continuation estimand, not an acceptance')
+    check(g is not C and ed['edition_status']=='PROPOSED' and not ed.get('acceptances') and len([e for e in g.registry()['estimands'] if not e['id'].startswith('EST:PB-')])==60,'candidate gate includes the separately proposed continuation estimand, not an acceptance')
     p=scene(635,'2025-12-17'); check(p['candidates']['pre']['status']=='ok' and not p['family'].get('N'),'preconfirmation uses PRE without inventing BASE family')
     check(p['candidates']['pre']['contract']['status']=='CONFORMANT','PRE rederived by its own reference gate')
     start=scene(660); check(start['candidates']['arrive']['status']=='NO_PREFIX','activating M5 is excluded from ARRIVE prefix')

@@ -235,7 +235,7 @@
  "claim_forms": [
   {
    "id": "CF:C-WINDOW",
-   "version": "1.0",
+   "version": "1.1",
    "sc_ref": [
     "C1",
     "§12.6",
@@ -246,7 +246,7 @@
    "claim_class": "ConditionalDescriptiveClaim",
    "subject_ru": "исторические случаи POS_GEO того же инструмента и блока (не только семья F), которые в этот же час по общим часам стояли там же; внутри окна — ещё и не посещавшие область в его прошедшей части",
    "condition_ru": "Опора конкретного остаточного вопроса; сравнивалось положение, не полный путь; условие непосещения части окна объявлено отдельно",
-   "statement_ru": "На срезе {cut}, среди {n} исторических случаев с близким положением и указанным условием {yes} посетили область в оставшемся окне {window}; {unknown} исходов неизвестны.",
+   "statement_ru": "На срезе {cut}, среди {n} исторических случаев с близким положением и указанным условием {yes} посетили область в оставшемся окне {window}; исход неизвестен у {unknown}.",
    "labels": [
     {
      "surface": "PANEL",
@@ -349,6 +349,84 @@
      "view": "ANY",
      "key": "bounds",
      "text_ru": "{lo}–{hi}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "history_head",
+     "text_ru": "Ход вопроса"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "history_seen",
+     "text_ru": "Просмотренные M5 · новые сверху"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "history_whole",
+     "text_ru": "Всё окно"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "history_rest",
+     "text_ru": "Остаток {from}–{to}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "history_yes",
+     "text_ru": "Посещение установлено"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "history_no",
+     "text_ru": "Без посещения"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "no_visit_yet",
+     "text_ru": "В окне до {time} не заходили"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "support_n",
+     "text_ru": "опора {n}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "membership_change",
+     "text_ru": "В набор по положению с {time}: вошли {entered}, вышли {left}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "support_chain",
+     "text_ru": "По положению {position} → опора остатка {risk}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "exclude_WINDOW_ALREADY_VISITED",
+     "text_ru": "Уже заходили в окно"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "exclude_WINDOW_VISIT_UNKNOWN",
+     "text_ru": "Посещение неизвестно"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "exclude_NOT_ACTIVE_AT_WINDOW_START",
+     "text_ru": "Подтвердились позднее начала окна"
     }
    ],
    "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN",
@@ -548,6 +626,17 @@
    "path": "comparison.{entered,left}",
    "field_kind": "SUPPORT_COUNT",
    "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.17",
+   "sc_ref": [
+    "H2",
+    "V2.1"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.exclusion_counts.{*}",
+   "field_kind": "SUPPORT_COUNT",
+   "target": "CS:C-POS minus CS:C-RISK, counted by independently checked elapsed-window exclusion reason; not outcomes in the remaining window"
   }
  ],
  "comparisons": [

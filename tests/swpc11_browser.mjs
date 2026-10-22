@@ -280,11 +280,14 @@ async function open(B, hash, size = [1600, 900]) {
   await B.cdp.send('Emulation.setDeviceMetricsOverride', { width: size[0], height: size[1], deviceScaleFactor: 1, mobile: false });
   await B.cdp.send('Page.navigate', { url: 'about:blank' });
   await sleep(80);
-  await B.cdp.send('Page.navigate', { url: BASE + hash });
-  for (let i = 0; i < 100; i++) {
-    if (await evaluate(B.cdp, () => !!(window.__d24 && document.readyState === 'complete')).catch(() => false)) break;
+  const wanted = new URL(BASE + hash), navigation = await B.cdp.send('Page.navigate', { url: wanted.href });
+  let loaded = false;
+  for (let i = 0; i < 200; i++) {
+    const frame = (await B.cdp.send('Page.getFrameTree')).frameTree.frame;
+    if ((!navigation.loaderId || frame.loaderId === navigation.loaderId) && await evaluate(B.cdp, url => !!(location.href === url && window.__d24 && document.readyState === 'complete'), wanted.href).catch(() => false)) { loaded = true; break; }
     await sleep(100);
   }
+  if (!loaded) throw new Error('SWPC bootstrap did not reach the new document: ' + wanted.href);
   await evaluate(B.cdp, HELPERS);
   return evaluate(B.cdp, () => window.__h.settle());
 }

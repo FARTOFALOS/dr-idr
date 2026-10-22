@@ -147,3 +147,18 @@
 .c24-tools button{font:inherit;padding:4px 6px;background:var(--raised);border:1px solid var(--line2);border-radius:4px;color:var(--text)}
 .c24-case{display:block;font-size:12px;margin:8px 0}
 .c24-case select{display:block;width:100%;margin-top:4px;background:var(--raised);color:var(--text);border:1px solid var(--line2);padding:4px}
+/* the candidate «Откаты до обновления» (DR-LAB-PB-0.1, 2026-10-21) */
+/* the scale and the family's scope share one row; they wrap rather than run under the panel's edge */
+.p21-h.pbctl{flex-wrap:wrap;row-gap:6px}
+.p21-h .p24-seg.sm.pbseg button{padding:0 6px}
+.p21-h .p24-seg.sm .pbsl{padding:0 5px 0 3px;font-size:11px;color:#6F7582;align-self:center}
+.dcard .pblist{max-height:150px;overflow-y:auto;padding-right:2px}
+.pbep{display:grid;grid-template-columns:1fr auto;gap:6px;font-size:11px;line-height:1.35;padding:1px 0;color:#C9CFD8;font-variant-numeric:tabular-nums}
+.pbep b{font-weight:500;color:#8E95A3;white-space:nowrap}
+.pbep.k span{color:#6F7582}
+.pbep.on span{color:#E6E0F7}
+.pbep.on b{color:#C3A6F2}
+.pbep.pbrow{cursor:pointer}
+.pbep.pbrow:hover span{color:#EEF1F5}
+.pbsc{padding:2px 0 4px;border-bottom:1px solid #1A1D24;cursor:pointer}
+.pbsc.on .p24-dr span{color:#C3A6F2}

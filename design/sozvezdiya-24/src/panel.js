@@ -31,6 +31,7 @@
     const s = ctx.s, F = ctx.F;
     P24.links = [];
     if(continuationMode()){panel.innerHTML=scNotice(ctx)+continuationPanel(ctx);return;}
+    if(pullbackMode()){panel.innerHTML=scNotice(ctx)+pbPanel(ctx);return;}
     if (!F || !F.N) {
       // no family at this moment: one click opens a history day on which this session had one (spec: the live moment
       // must never block the review)
@@ -225,7 +226,7 @@
   // closes per common clock M5 (each column its own 100 %), with today's closes on it.
   function detailObj(ctx) {
     const h = hv();
-    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow', 'zone', 'arrive'].includes(h.k)) return h;
+    if (h && ['pt', 'lvl', 'pcell', 'tcell', 'fcell', 'col', 'area', 'out', 'evrow', 'zone', 'arrive', 'pbpt', 'pbzone'].includes(h.k)) return h;
     if (st.area) return { k: 'area', part: 'band' };
     return null;
   }
@@ -267,6 +268,7 @@
   // window 1: the passport of the object (as the details area of design 24 had it), or the family's snapshot
   function detBody(ctx, o) {
     if(continuationMode())return continuationDetail(ctx);
+    if(pullbackMode())return pbDetail(ctx, o);
     const F = ctx.F;
     const trial = candidateDetails(ctx, o); if (trial) return trial;
     if (!o) {
@@ -425,7 +427,7 @@
     if (dh._h !== head) { dh.innerHTML = head; dh._h = head; }
     const g = dom('detg');
     if (!open || !ok) { if (g._k) { g.innerHTML = ''; g._k = ''; } return; }
-    const o = detailObj(ctx), key = [F.r.snapshot_id, F.view, sliceOf(ctx), o ? pinKey(o) + '|' + (o.ev || '') : '', det.clientWidth, cfg.R, cfg.X, cfg.path, cfg.heatA, scenePacket()?.context.id || '', TRIAL.paths,continuationMode()?CS.packet?.release_id||CS.error||CS.pending:''].join('|');
+    const o = detailObj(ctx), key = [F.r.snapshot_id, F.view, sliceOf(ctx), o ? pinKey(o) + '|' + (o.ev || '') : '', det.clientWidth, cfg.R, cfg.X, cfg.path, cfg.heatA, scenePacket()?.context.id || '', TRIAL.paths,continuationMode()?CS.packet?.release_id||CS.error||CS.pending:'',pullbackMode()?[PB.scale,pbPacket(ctx)?.release_id||PB.error||PB.pending].join(':'):''].join('|');
     if (g._k === key) return;
     g._k = key;
     const B = detBody(ctx, o);
@@ -436,7 +438,9 @@
       '<div class="dcard"><div class="dt">Что было раньше: R или X</div>' + orderHtml(F) + '</div>' +
       '<div class="dcard"><div class="dt">На уровне или дальше</div>' + ladderHtml(F, ctx) + '</div>' +
       '<div class="dcard"><div class="dt" style="color:' + cfg.path + '">Путь семьи · закрытия M5</div><canvas id="dcF"></canvas></div>';
-    drawHeat('dcR', F, ctx, 'R'); drawHeat('dcX', F, ctx, 'X'); drawFilmMini('dcF', F, ctx);
+    // the candidate «Откаты до обновления» draws its own windows 2 and 3 (pullbacks.js); the family's order, levels and path stay
+    if (!pbCards(g, ctx)) { drawHeat('dcR', F, ctx, 'R'); drawHeat('dcX', F, ctx, 'X'); }
+    drawFilmMini('dcF', F, ctx);
     candidatePaths(ctx);
   }
   function initPanel24() {
