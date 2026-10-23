@@ -60,10 +60,356 @@
     "reopening the same day restores a current scene and the identical pinned release",
     "no browser exceptions: "
   ],
+  "frames": [
+    {
+      "viewport": [
+        1600,
+        900
+      ],
+      "cut": 670,
+      "counts": {
+        "G": 4722,
+        "eligible": 2492,
+        "position": 97,
+        "risk": 97,
+        "in_F": 37,
+        "outside_F": 60
+      },
+      "support": {
+        "n_total": 97,
+        "n_known": 96,
+        "yes": 39,
+        "no": 57,
+        "unknown": 1
+      },
+      "release": "72a0894dcd082ed2ee55056408cf3b46a0f33e4ed3b99a3d5640dad96b961ba9"
+    },
+    {
+      "viewport": [
+        1600,
+        900
+      ],
+      "cut": 675,
+      "status": "RESEARCH_ONLY",
+      "support": {
+        "n_total": 22,
+        "n_known": 22,
+        "yes": 13,
+        "no": 9,
+        "unknown": 0
+      },
+      "counts": {
+        "G": 4722,
+        "eligible": 2643,
+        "position": 22,
+        "risk": 22,
+        "in_F": 9,
+        "outside_F": 13
+      },
+      "question": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
+      "release": "03a1e7009f4aa2e6a7b89e49384469b04457fbc09facf4a145f339228d38a26c"
+    },
+    {
+      "viewport": [
+        1600,
+        900
+      ],
+      "cut": 680,
+      "status": "RESEARCH_ONLY",
+      "support": {
+        "n_total": 51,
+        "n_known": 51,
+        "yes": 30,
+        "no": 21,
+        "unknown": 0
+      },
+      "counts": {
+        "G": 4722,
+        "eligible": 2789,
+        "position": 51,
+        "risk": 51,
+        "in_F": 16,
+        "outside_F": 35
+      },
+      "question": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
+      "release": "88dc5b28a8770261bd13cddcb2c5d798dfee0a6a13c9cc4a392a932b109f3a63"
+    },
+    {
+      "viewport": [
+        1600,
+        900
+      ],
+      "cut": 685,
+      "status": "RESEARCH_ONLY",
+      "support": {
+        "n_total": 61,
+        "n_known": 61,
+        "yes": 46,
+        "no": 15,
+        "unknown": 0
+      },
+      "counts": {
+        "G": 4722,
+        "eligible": 2909,
+        "position": 61,
+        "risk": 61,
+        "in_F": 22,
+        "outside_F": 39
+      },
+      "question": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
+      "release": "d07a02a01445bc1f91af4117a4c557a8866bc059e33834eb2814f7a96a80c058"
+    },
+    {
+      "viewport": [
+        1600,
+        900
+      ],
+      "cut": 690,
+      "status": "RESEARCH_ONLY",
+      "support": {
+        "n_total": 39,
+        "n_known": 39,
+        "yes": 20,
+        "no": 19,
+        "unknown": 0
+      },
+      "counts": {
+        "G": 4722,
+        "eligible": 3019,
+        "position": 81,
+        "risk": 39,
+        "in_F": 8,
+        "outside_F": 31
+      },
+      "question": "deaf8c7c74482468517a95a377323186e6a7364c90c600765771c1500de5440c",
+      "release": "65bdfafc422811e07456e35d78ce1a461f9eed8c3f47828ea0cd0322fb720fff"
+    },
+    {
+      "viewport": [
+        1600,
+        900
+      ],
+      "cut": 695,
+      "status": "FACT_YES",
+      "support": {
+        "n_total": 0,
+        "n_known": 0,
+        "yes": 0,
+        "no": 0,
+        "unknown": 0
+      },
+      "counts": {
+        "G": 4722,
+        "eligible": 3082,
+        "position": 44,
+        "risk": 44,
+        "in_F": 19,
+        "outside_F": 25
+      },
+      "question": "23439b488b5b7eea826fae1d0a34037c1fff1400ceceb320aa22e225d30441c2",
+      "release": "370e5a89bcedb4491d2d56304ce5e859449bad95014dc8b94c25324cb383538b"
+    },
+    {
+      "viewport": [
+        1600,
+        900
+      ],
+      "cut": 700,
+      "status": "FACT_YES",
+      "support": {
+        "n_total": 0,
+        "n_known": 0,
+        "yes": 0,
+        "no": 0,
+        "unknown": 0
+      },
+      "counts": {
+        "G": 4722,
+        "eligible": 3180,
+        "position": 52,
+        "risk": 52,
+        "in_F": 17,
+        "outside_F": 35
+      },
+      "question": "23439b488b5b7eea826fae1d0a34037c1fff1400ceceb320aa22e225d30441c2",
+      "release": "7ff00e4fa3f87e44fe1671e6f1216485c3f8cf736a57f780deafa9ed158ea195"
+    },
+    {
+      "viewport": [
+        1920,
+        1000
+      ],
+      "cut": 670,
+      "counts": {
+        "G": 4722,
+        "eligible": 2492,
+        "position": 97,
+        "risk": 97,
+        "in_F": 37,
+        "outside_F": 60
+      },
+      "support": {
+        "n_total": 97,
+        "n_known": 96,
+        "yes": 39,
+        "no": 57,
+        "unknown": 1
+      },
+      "release": "72a0894dcd082ed2ee55056408cf3b46a0f33e4ed3b99a3d5640dad96b961ba9"
+    },
+    {
+      "viewport": [
+        1920,
+        1000
+      ],
+      "cut": 675,
+      "status": "RESEARCH_ONLY",
+      "support": {
+        "n_total": 22,
+        "n_known": 22,
+        "yes": 13,
+        "no": 9,
+        "unknown": 0
+      },
+      "counts": {
+        "G": 4722,
+        "eligible": 2643,
+        "position": 22,
+        "risk": 22,
+        "in_F": 9,
+        "outside_F": 13
+      },
+      "question": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
+      "release": "03a1e7009f4aa2e6a7b89e49384469b04457fbc09facf4a145f339228d38a26c"
+    },
+    {
+      "viewport": [
+        1920,
+        1000
+      ],
+      "cut": 680,
+      "status": "RESEARCH_ONLY",
+      "support": {
+        "n_total": 51,
+        "n_known": 51,
+        "yes": 30,
+        "no": 21,
+        "unknown": 0
+      },
+      "counts": {
+        "G": 4722,
+        "eligible": 2789,
+        "position": 51,
+        "risk": 51,
+        "in_F": 16,
+        "outside_F": 35
+      },
+      "question": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
+      "release": "88dc5b28a8770261bd13cddcb2c5d798dfee0a6a13c9cc4a392a932b109f3a63"
+    },
+    {
+      "viewport": [
+        1920,
+        1000
+      ],
+      "cut": 685,
+      "status": "RESEARCH_ONLY",
+      "support": {
+        "n_total": 61,
+        "n_known": 61,
+        "yes": 46,
+        "no": 15,
+        "unknown": 0
+      },
+      "counts": {
+        "G": 4722,
+        "eligible": 2909,
+        "position": 61,
+        "risk": 61,
+        "in_F": 22,
+        "outside_F": 39
+      },
+      "question": "eb8d6a39813d98e1e5256a680e6c1855fff933827eae32ee14454f934eaed2fd",
+      "release": "d07a02a01445bc1f91af4117a4c557a8866bc059e33834eb2814f7a96a80c058"
+    },
+    {
+      "viewport": [
+        1920,
+        1000
+      ],
+      "cut": 690,
+      "status": "RESEARCH_ONLY",
+      "support": {
+        "n_total": 39,
+        "n_known": 39,
+        "yes": 20,
+        "no": 19,
+        "unknown": 0
+      },
+      "counts": {
+        "G": 4722,
+        "eligible": 3019,
+        "position": 81,
+        "risk": 39,
+        "in_F": 8,
+        "outside_F": 31
+      },
+      "question": "deaf8c7c74482468517a95a377323186e6a7364c90c600765771c1500de5440c",
+      "release": "65bdfafc422811e07456e35d78ce1a461f9eed8c3f47828ea0cd0322fb720fff"
+    },
+    {
+      "viewport": [
+        1920,
+        1000
+      ],
+      "cut": 695,
+      "status": "FACT_YES",
+      "support": {
+        "n_total": 0,
+        "n_known": 0,
+        "yes": 0,
+        "no": 0,
+        "unknown": 0
+      },
+      "counts": {
+        "G": 4722,
+        "eligible": 3082,
+        "position": 44,
+        "risk": 44,
+        "in_F": 19,
+        "outside_F": 25
+      },
+      "question": "23439b488b5b7eea826fae1d0a34037c1fff1400ceceb320aa22e225d30441c2",
+      "release": "370e5a89bcedb4491d2d56304ce5e859449bad95014dc8b94c25324cb383538b"
+    },
+    {
+      "viewport": [
+        1920,
+        1000
+      ],
+      "cut": 700,
+      "status": "FACT_YES",
+      "support": {
+        "n_total": 0,
+        "n_known": 0,
+        "yes": 0,
+        "no": 0,
+        "unknown": 0
+      },
+      "counts": {
+        "G": 4722,
+        "eligible": 3180,
+        "position": 52,
+        "risk": 52,
+        "in_F": 17,
+        "outside_F": 35
+      },
+      "question": "23439b488b5b7eea826fae1d0a34037c1fff1400ceceb320aa22e225d30441c2",
+      "release": "7ff00e4fa3f87e44fe1671e6f1216485c3f8cf736a57f780deafa9ed158ea195"
+    }
+  ],
   "limits": [
     "machine checks, not operator perceptual acceptance",
     "fixed/residual window calibration remains separate"
-  ],
-  "surface": "/23-5/",
-  "scope": "58 browser checks; screenshots kept separately; no raw witnesses in this receipt"
+  ]
 }

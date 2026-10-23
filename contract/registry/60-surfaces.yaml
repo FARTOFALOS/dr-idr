@@ -150,6 +150,7 @@ surfaces:
 
   - {"id": "API:/api/integration/continuations", "sc_ref": ["§1.3", "§12.3"], "route": "/api/integration/continuations", "surface_profile": "SERVICE", "definitions": "SRC:SC-1.1", "marking": "read-only candidate service; nested separately proposed envelope"}
   - {"id": "API:/api/integration/pullbacks", "sc_ref": ["§1.3", "§12.3"], "route": "/api/integration/pullbacks", "surface_profile": "SERVICE", "definitions": "SRC:SC-1.1", "marking": "read-only candidate service (DR-LAB-PB-0.1); nested separately proposed envelope"}
+  - {"id": "API:/api/integration/time-sd", "sc_ref": ["§1.3", "§12.3"], "route": "/api/integration/time-sd", "surface_profile": "SERVICE", "definitions": "SRC:SC-1.1", "marking": "separate 23.5 time x SD candidate envelope; accepted estimands unchanged"}
 
 encodings:
   # ------------------------------------------------------------------ /api/d24/family

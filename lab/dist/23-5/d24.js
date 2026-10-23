@@ -1,7 +1,7 @@
 // Built from design/sozvezdiya-23-5/src (app.js + panel.js) by its build.py: edit there.
-// DR Lab 23.5: R on this surface is the display alias of PB_L (local H -> L -> B), not OUT:FINAL-R-1.
-// X and accepted BASE/NOW remain FINAL-X / their own estimands. Do not replace design/sozvezdiya-24 with this source.
-// Semantic bindings, decisions and uncertainty: docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md.
+// DR Lab 23.5: approved time x SD plan, finite local cores and peak projections.
+// R=PB-L, X=FINAL-X context; EST:TS-* passports and same-episode post-L witnesses. Screen 24 keeps its own profile.
+// Semantic bindings, decisions and uncertainty: docs/DR-LAB-23-5-TIME-SD.md.
 // ================= DR Lab · design 24 «Границы хода» =================
 // Design 22's working screen (candles of the day, the three sessions' DR / IDR, replay, the right panel, hover / pin,
 // layers, settings) with its statistical layer replaced by the semantic specification DR-LAB-SEM-1.0
@@ -2686,7 +2686,7 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "3d2764bd7c2ab797"
+ "registry_hash": "c49e2cf5e06206ad"
 };
   // A violation belongs to the scene it was found in (DR-LAB-SWPC-1.1 M16): a passport's snapshot, one family response or
   // one NOW response (each its own number: a new answer to the same request starts clean), or the page itself ('*': a page without its registry,
@@ -2737,7 +2737,7 @@
     const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : SC11.forms[id];
     // FF:PHASE-RULE exists only in the candidate edition (08.10); the candidate words of the accepted «Сейчас» forms are
     // never reached from here (tests/integration_faults.mjs), only by reviewLbl for the trial «nowmarks»
-    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id.startsWith('EST:PB-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:CANDIDATE-STATUS','FF:TODAY-Z-PASSED','FF:TODAY-VISIT','FF:PB-TODAY','FF:PB-EPISODE'].includes(id);
+    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id.startsWith('EST:PB-')||id.startsWith('EST:TS-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:CANDIDATE-STATUS','FF:TODAY-Z-PASSED','FF:TODAY-VISIT','FF:PB-TODAY','FF:PB-EPISODE'].includes(id);
     const extra = candidateId && REVIEW && (id.startsWith('FF:') ? REVIEW.facts[id] : REVIEW.forms[id]);
     const box = own && own.labels[key] ? own : extra || own;
     const set = box && box.labels[key], t = set && (view && set[view] != null ? set[view] : set.ANY);
@@ -2785,8 +2785,8 @@
   // DR-LAB-SWPC-1.1 M14: a carrier drawn from a number follows that number's passport — withheld («—»), it no longer
   // asserts its share by length, fill or glow. The passport is the one of the same estimand and parameters made on this
   // snapshot (no passport = the number was never shown alone; its count is then proven by the reconciled table)
-  const ppHeld = (F, est, params) => { if (F._pb && /^EST:B-RX-(BAND|WINDOW)-R$/.test(est)) return pbRegionPass(F, 'k0' in params ? [params.k0, params.k1] : null, 'b0' in params ? [F.f + 15 * params.b0, F.f + 15 * params.b1] : null).pct == null; const p = P24.byKey.get(F.r.snapshot_id + '|' + est + '|' + JSON.stringify(params)); return !!(p && p.violation); };
-  const zoneHeld = (F, ev, i) => { if (F._pb && ev === 'R') return !pbBundle(F._pb, 'EST:PB-ZONE', p => p.scale === PB.scale && p.zone_id === F.zones.R.zones[i]?.zone_id); const z = F.zones[ev] && F.zones[ev].zones[i]; return !!z && ppHeld(F, 'EST:B-ZONE-' + ev, { zone_id: z.zone_id }); };
+  const ppHeld = (F, est, params) => { if(F._ts && /^EST:B-RX-(BAND|WINDOW)-[RX]$/.test(est))return tsProjectionHeld(F,est,params); if (F._pb && /^EST:B-RX-(BAND|WINDOW)-R$/.test(est)) return pbRegionPass(F, 'k0' in params ? [params.k0, params.k1] : null, 'b0' in params ? [F.f + 15 * params.b0, F.f + 15 * params.b1] : null).pct == null; const p = P24.byKey.get(F.r.snapshot_id + '|' + est + '|' + JSON.stringify(params)); return !!(p && p.violation); };
+  const zoneHeld = (F, ev, i) => { if(F._ts)return tsZoneHeld(F,ev,i); if (F._pb && ev === 'R') return !pbBundle(F._pb, 'EST:PB-ZONE', p => p.scale === PB.scale && p.zone_id === F.zones.R.zones[i]?.zone_id); const z = F.zones[ev] && F.zones[ev].zones[i]; return !!z && ppHeld(F, 'EST:B-ZONE-' + ev, { zone_id: z.zone_id }); };
   // a NOW number (lab/contract.py::attach_now, all C1) is shown only with its bundle on this cut, under the registered
   // claim form admissible there; the shown values must be the bundle's
   function nowBundle(n, est, role, C) {
@@ -2847,6 +2847,7 @@
   const hzOf = F => lbl('FF:PASSPORT-VIEW', 'horizon', { from: F.from, end: clk(F.end) });
   // a share of R or X in an area: a price band (B-RX-BAND), a time window (B-RX-WINDOW) or both (B-RX-REGION)
   function evPass(F, ev, region, bounds, time, yes) {
+    if(F._ts)return tsRegionPass(F,ev,region,bounds,time);
     if (F._pb && ev === 'R') return pbRegionPass(F, bounds, time);
     const D = F.ev[ev], est = 'EST:B-RX-' + (bounds && time ? 'REGION' : bounds ? 'BAND' : 'WINDOW') + '-' + ev, params = {};
     if (bounds) Object.assign(params, { k0: bounds[0], k1: bounds[1] });
@@ -2870,6 +2871,7 @@
   }
   // the share of the family beyond the frame of the price column (B-RX-OUTFRAME): the cells [k0, k1) out of view
   function outPass(F, ev, i, kr, n) {
+    if(F._ts)return tsRegionPass(F,ev,'region',[kr[0],kr[1]+1],null,true);
     if (F._pb && ev === 'R') return pbRegionPass(F, [kr[0], kr[1] + 1], null, true);
     const D = F.ev[ev];
     return pp(F, { estimand: 'EST:B-RX-OUTFRAME-' + ev, params: { side: i ? 'BELOW' : 'ABOVE', k0: kr[0], k1: kr[1] + 1 }, event_id: ev, region_kind: 'out_of_frame', start_rule: F.from, end_rule: 'до ' + clk(F.end),
@@ -3012,7 +3014,7 @@
     const bounds = !!(ctx.F && ctx.F.N) && st.mode === 'bounds';
     // the price column holds R and X in one column in «Границы хода» (each its own 100 %; operator 2026-10-06: one
     // column, not two), one M5 column in «Путь семьи»
-    const projW = !continuationMode() && st.L.proj && ctx.F && ctx.F.N ? (bounds ? 176 : 96) : 0;
+    const projW = !continuationMode() && st.L.proj && ctx.F && ctx.F.N ? (bounds ? 116 : 96) : 0;
     // the time band under the chart (variant «Окна времени»): capsules, hills, columns; operator 2026-10-06: the candles
     // take the height, the band about an eighth of it (84-118 px)
     const bandH = bounds && st.L.strip ? Math.round(clamp((H - handleH - timeH) * cfg.bandH / 100, 60, (H - handleH - timeH) * 0.4)) : 0;
@@ -3044,7 +3046,7 @@
     // R and X: the constellations the trader looks at next); scattered points and impossible zones do not widen it,
     // the points beyond the frame are named by ▲ / ▼ in the price column
     if (pullbackMode() && isFinite(lo)) [lo, hi] = pbRange(ctx, lo, hi);       // the candidate's own constellations (DR-LAB-PB-0.1)
-    if (ctx.F && isFinite(lo)) for (const ev of (pullbackMode() ? ['X'] : ['R', 'X'])) {
+    if (ctx.F && isFinite(lo)) for (const ev of (pullbackMode() ? [] : ['R', 'X'])) {
       const Zm = ctx.F.zones[ev], S = Zm ? zoneStatus(ctx.F, ctx, ev) : [];
       if (Zm) Zm.zones.forEach((z, i) => {
         if (S[i] === 'IMPOSSIBLE') return;
@@ -3443,10 +3445,15 @@
   function emphOf(q, h, F, ctx) {
     if (h) {
       if (h.k === 'arrive') return candidateEmphasis(q, h, F, ctx);
+      if (F._ts && (h.k === 'pcell' || h.k === 'tcell')) {
+        const ev=h.ev||st.ev,axis=h.k==='pcell'?'price':'time',index=h.k==='pcell'?h.k0:h.b0;
+        const cell=F._ts.maps?.[ev]?.[axis+'_peaks'].find(v=>v.index===index);
+        return q.ev===ev && !!cell && tsInside(q,cell);
+      }
       if (h.k === 'pcell') return (!h.ev || h.ev === q.ev) && q.k >= h.k0 && q.k < h.k1;
       if (h.k === 'tcell') return q.b >= h.b0 && q.b < h.b1;
       if (h.k === 'area') return inArea(q, st.area);
-      if (h.k === 'zone') return h.ev === q.ev && F.zcell[h.ev].get(q.k + '|' + q.b) === h.i;
+      if (h.k === 'zone') return h.ev === q.ev && (F._ts ? tsMember(F.zones[h.ev].zones[h.i],q) : F.zcell[h.ev].get(q.k + '|' + q.b) === h.i);
       if (h.k === 'pt') return q.i === h.i;
       if (h.k === 'out') return q.m.outcome === h.cat;
       if (h.k === 'evrow') return true;
@@ -3571,7 +3578,7 @@
       const Zm = F.zones[ev];
       if (!Zm) continue;
       Zm.zones.forEach((z, i) => {
-        const pts = F.ev[ev].pts.filter(q => F.zcell[ev].get(q.k + '|' + q.b) === i).map(q => [V.X(q.t + 2.5), V.Y(q.p), q.b]);
+        const pts = F.ev[ev].pts.filter(q => F._ts ? tsMember(z,q) : F.zcell[ev].get(q.k + '|' + q.b) === i).map(q => [V.X(q.t + 2.5), V.Y(q.p), q.b]);
         if (!pts.length) { out[ev].push(null); return; }
         const kd = kde(pts, 18), pb = new Map();
         for (const p of pts) pb.set(p[2], (pb.get(p[2]) || 0) + 1);
@@ -3958,7 +3965,7 @@
   // confirmation, R away from it, each to the least crowded place. The others stay inside, as a background.
   function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env) {
     const imp = expiredLook(s), zp = zonePass(F, ev, z), zt = ppTxt(zp), share = zp.pct || 0;
-    const ps = F.ev[ev].pts.filter(q => F.zcell[ev].get(q.k + '|' + q.b) === i);
+    const ps = F.ev[ev].pts.filter(q => F._ts ? tsMember(z,q) : F.zcell[ev].get(q.k + '|' + q.b) === i);
     let cx = (g.bb[0] + g.bb[2]) / 2, cy = (g.bb[1] + g.bb[3]) / 2;
     if (ps.length) { cx = ps.reduce((a, q) => a + V.X(q.t + 2.5), 0) / ps.length; cy = ps.reduce((a, q) => a + V.Y(q.p), 0) / ps.length; }
     const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
@@ -4036,6 +4043,7 @@
   //   DIFFERENT named events, never probabilities of two opposite next moves. Do not apply a winner/loser contrast.
   // Passed windows are dimmer.
   function bandHills(F, ctx, ev) {
+    if(F._ts?.maps)return tsHills(F,ev);
     if (F._pb?.proof && ev === 'R') return pbBandHills(F);
     const Zm = F.zones[ev];
     if (!Zm) return [];
@@ -4100,14 +4108,11 @@
     c.fillStyle = C.grid; c.fillRect(B0.x, B0.y, B0.w, 1);
     drawMidnight(c, B0.y, B0.y + B0.h);
     const T = { R: F.ev.R.T, X: F.ev.X.T }, mx = Math.max(1, ...T.R.values(), ...T.X.values());
-    // PB-L allows several local events per session; FINAL-X has one. This pair is not a two-outcome balance.
-    // Keep the common n/N height scale, but never suppress one colour or amplify it as the other colour's loser.
-    const comparable = !F._pb;
     // operator 2026-10-06: the height is LINEAR in the share (the square root hid the difference: 4,8 against 3,2 looked
     // like 1,22 instead of 1,5); the counts are unchanged
     const yOf = (ev, n) => cy + dir[ev] * (1 + half * Math.min(1, Math.max(0, n) / mx));
     // the columns
-    V.bandCols = []; V.bandBars = [];
+    V.bandCols = [];
     const labels = [];
     for (let b = 0; b < F.nb; b++) {
       const t0 = F.f + 15 * b, x0 = V.X(t0) + 1, x1 = V.X(t0 + 15) - 1;
@@ -4121,20 +4126,16 @@
         if (n && ppHeld(F, 'EST:B-RX-WINDOW-' + ev, { b0: b, b1: b + 1 })) { if (lit) labels.push({ x: (x0 + x1) / 2, y: cy + dir[ev] * 9, t: '—', col: cfg[ev] }); continue; }
         // the balance inside the 15 minutes (operator 2026-10-06): the larger side brighter, the smaller dimmer, the more
         // so the stronger the tilt (setting «контраст перевеса»); a drawing of the same two shares, not a new number
-        const dom = comparable && n + o > 0 ? (n - o) / (n + o) : 0;
+        const dom = !F._ts && n + o > 0 ? (n - o) / (n + o) : 0;
         let a = (0.12 + 0.26 * Math.pow(n / mx, 0.7)) * Math.max(0.15, 1 + cfg.domK / 100 * dom);
         if (past) a *= 0.5;
         if (lit || zl) a = Math.max(a, 0.5);
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, n);
-        // As on 24, every published window remains visible, including FINAL-X outside the constellation windows.
-        const visible=n>0;
-        V.bandBars.push({ev,b,n,visible,comparable,dom,alpha:Math.min(1,a*cfg.stripA/80),x0,x1,y,cy});
-        if(!visible)continue;
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
         // a thin outline on the side that outweighs, even for a small tilt (3,8 against 3,2), stronger with the tilt but
         // always quiet (operator 2026-10-06: an outline takes the eye, so only the winner and only lightly)
-        if (comparable && n > o && cfg.domLine > 0 && Math.abs(y - cy) > 3) {
+        if (!F._ts && n > o && cfg.domLine > 0 && Math.abs(y - cy) > 3) {
           c.strokeStyle = rgba(cfg[ev], Math.min(0.9, (0.12 + 0.18 * Math.min(1, 3 * dom)) * (past ? 0.6 : 1) * cfg.domLine / 100)); c.lineWidth = 1;   // barely visible (operator 2026-10-06)
           c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir[ev], y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1));
         }
@@ -4146,7 +4147,7 @@
     V.hills = [];
     for (const ev of ['X', 'R']) H[ev].forEach(o => {
       if (!o || zoneHeld(F, ev, o.i)) return;          // a withheld zone (SWPC-1.1 M14): no hill
-      const s = S[ev][o.i], imp = expiredLook(s), on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
+      const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
       const scr = o.pts.map(([t, d]) => [V.X(t), cy + dir[ev] * (1 + 0.94 * half * d / hmax[ev])]);
       c.beginPath(); c.moveTo(scr[0][0], cy + dir[ev]);
       for (const p of scr) c.lineTo(p[0], p[1]);
@@ -4157,7 +4158,7 @@
       c.save(); if (on) { c.shadowColor = rgba(col, 0.6); c.shadowBlur = 18; } c.fillStyle = rgba(col, Math.min(0.8, a)); c.fill(); c.restore();
       c.strokeStyle = rgba(col, imp ? 0.18 : on ? 0.95 : other ? 0.3 : 0.6); c.lineWidth = on ? 1.4 : 1; c.setLineDash(imp ? [3, 4] : []);
       c.beginPath(); scr.forEach((p, j) => j ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.stroke(); c.setLineDash([]);
-      V.hills.push({ ev, i: o.i, scr, cy, up: dir[ev] < 0, look:s, alpha:Math.min(0.8,a), dashed:imp });
+      V.hills.push({ ev, i: o.i, scr, cy, up: dir[ev] < 0 });
     });
     for (const L of labels) { c.font = '700 10.5px ' + FONT; c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, L.y); c.textAlign = 'left'; }
     // the capsules: the zone over its whole time window, its share and status inside. Operator 2026-10-06: no outline on a
@@ -4168,7 +4169,7 @@
     const capMax = Math.max(1e-9, ...caps.map(q => q.o.z.p_snapshot));
     for (const { ev, o, ln } of caps) {
       if (zoneHeld(F, ev, o.i)) continue;               // a withheld zone (SWPC-1.1 M14): no capsule
-      const s = S[ev][o.i], imp = expiredLook(s), hold = s === 'HOLDS', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
+      const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', hold = s === 'HOLDS', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
       const x0 = V.X(F.f + 15 * o.b0) + 1, x1 = V.X(F.f + 15 * o.b1) - 1, y0 = dir[ev] < 0 ? B.y + 3 + ln * (LH + 2) : B.y + B.h - 3 - (ln + 1) * (LH + 2) + 2, w = x1 - x0;
       const r = Math.pow(o.z.p_snapshot / capMax, 0.7);
       c.save(); c.globalAlpha = other ? 0.5 : 1;
@@ -4351,10 +4352,10 @@
   // always right of it. Rows of a zone brighter, each zone's densest row in a larger type; a zone's price extent is a
   // thin tick at the right edge. A segment is the share of the whole band over the whole horizon, never the zone's.
   function drawProjRX(c, ctx) {
-    const F = ctx.F, A_ = V.proj, h = hv(), top0 = 40, bot0 = A_.h - 16, x0 = A_.x + 52, gap = 6, blen = A_.w - 52 - 52 - gap;
+    const F = ctx.F, A_ = V.proj, h = hv(), top0 = 40, bot0 = A_.h - 16, x0 = A_.x + 38, blen = A_.w - 38 - 36;
     c.fillStyle = C.axis; c.fillRect(A_.x, 0, A_.w, A_.h);
     c.fillStyle = C.grid; c.fillRect(A_.x, 0, 1, A_.h);
-    V.projBars = []; V.projLabels = []; V.projCols = { X: [A_.x, A_.x + A_.w], R: [A_.x, A_.x + A_.w] }; V.projUnk = null; V.projEdge = null;
+    V.projBars = []; V.projCols = { X: [A_.x, A_.x + A_.w], R: [A_.x, A_.x + A_.w] }; V.projUnk = null; V.projEdge = null;
     c.save(); c.beginPath(); c.rect(A_.x, 0, A_.w, A_.h); c.clip();
     const info = {}, lanes = [], out = { X: [0, 0], R: [0, 0] }, outK = { X: [null, null], R: [null, null] };
     for (const ev of ['R', 'X']) {
@@ -4371,14 +4372,13 @@
     }
     const keys = [...new Set([...F.ev.R.P.keys(), ...F.ev.X.P.keys()])];
     const mx = Math.max(1, ...keys.map(k => (F.ev.R.P.get(k) || 0) + (F.ev.X.P.get(k) || 0)));
-    const m1 = Math.max(1, ...F.ev.R.P.values(), ...F.ev.X.P.values()), str = n => Math.pow(n / m1, 0.75);
-    const focus = { R: projectionFocus(F,'R','P'), X: projectionFocus(F,'X','P') };
+    const m1 = Math.max(1, ...F.ev.R.P.values(), ...F.ev.X.P.values()), str = n => Math.pow(n / m1, 0.75);   // 0..1, one scale
     // operator 2026-10-06: a band's sessions whose event is already behind today's slice (by the clock) vs still ahead;
-    // the segment keeps its whole length (the band's share); past clock mass has a readable neutral colour, not vanishing alpha
+    // the segment keeps its whole length (the band's share), the passed part is faded, so «what is still ahead» reads
     const Rch = reachOf(F, ctx), sl = Rch.sl, gone = { R: new Map(), X: new Map() };
     for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) if (q.t + 5 <= sl) gone[ev].set(q.k, (gone[ev].get(q.k) || 0) + 1);
-    // Price reachability is separate from the family's clock: no active role colour when the final event is impossible,
-    // but neither the original n/N nor its actual earlier/later split is rewritten.
+    // audit 2026-10-06: a band where today's final event can no longer lie (today's R is already deeper, today's X already
+    // further) is faded whole and its label grey: this is what «the level has traded today» means
     const labels = [];
     for (const k of keys) {
       const [top, bot] = cellY(F, k, k + 1);
@@ -4390,49 +4390,46 @@
       for (const ev of ['R', 'X']) {
         const I = info[ev], n = I.D.P.get(k) || 0;
         if (!n) continue;
-        if (ev === 'X' && (info.R.D.P.get(k) || 0)) x += gap;
         const z = I.zr.get(k), on = !!(h && h.k === 'pcell' && h.ev === ev && k >= h.k0 && k < h.k1);
         const inA = !!(st.area && st.area.ev === ev && isFinite(st.area.k0) && k >= st.area.k0 && k < st.area.k1);
-        const len = Math.max(2, blen * n / mx), g = Math.min(n, gone[ev].get(k) || 0), la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
-        const paint = bandPaint(ev, Rch.okK(ev, k), Rch.known);
-        const substantial = focus[ev].shown.has(k), visible = substantial || on || inA, r = str(n);
-        // The mass/zone/hover hierarchy is the one of screen 24. Counts and the two clock parts stay untouched.
-        let a = z != null ? 0.22 + 0.78 * r : 0.1 + 0.32 * r;
-        if (I.hzi != null) a = z === I.hzi ? Math.max(a,0.6) : a * 0.4;
+        const r = str(n);
+        let a = z != null ? 0.22 + 0.78 * r : 0.1 + 0.32 * r;     // a zone row from faint to full, a residual row stays quiet
+        if (I.hzi != null) a = z === I.hzi ? Math.max(a, 0.6) : a * 0.4;
         if (on || inA) a = 1;
-        const futureA = Math.min(1,a*cfg.projA/90) * (Rch.okK(ev,k) ? 1 : cfg.passedA/100*1.8);
-        const earlierA = Math.min(1,Math.max(0.2,0.75*a*cfg.projA/90*cfg.passedA/30));
+        const len = Math.max(2, blen * n / mx), g = F._ts || Rch.okK(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
         // a withheld band share (its passport «—», SWPC-1.1 M14): no bar; the next segment keeps its place, the label says «—»
         if (ppHeld(F, 'EST:B-RX-BAND-' + ev, { k0: k, k1: k + 1 })) { labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk: false, on, z, rowH: bot - top, ok: Rch.okK(ev, k) }); x += len; continue; }
-        c.fillStyle = rgba(paint.fill, futureA); if(visible)c.fillRect(x, top + 0.5, la, hh);
-        if (g && visible) {
-          c.fillStyle = rgba(cfg.projDoneC, earlierA);
+        const spent=F._ts&&!Rch.okK(ev,k);
+        c.fillStyle = spent ? rgba(stateCol(cfg[ev], 'spent'),Math.min(1,a*cfg.projA/90)*cfg.passedA/100*1.8) : rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
+        if (g) {
+          const dead = !Rch.okK(ev, k);
+          c.fillStyle = dead ? rgba(stateCol(cfg[ev], 'spent'), Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8))
+            : rgba(cfg.doneC, Math.min(1, Math.max(0.2, 0.75 * a * cfg.projA / 90 * cfg.passedA / 30)));
           c.fillRect(x + la, top + 0.5, len - la, hh);
         }
-        if(on || inA){c.strokeStyle=paint.edge;c.lineWidth=1;c.strokeRect(Math.round(x)+0.5,Math.round(top)+0.5,Math.max(1,len-1),hh);}
-        V.projBars.push({ ev, k, top, bot, x0: x, x1: x + len, n, earlier: g, later: n - g, paint, visible, substantial, futureA, earlierA });
+        V.projBars.push({ ev, k, top, bot, x0: x, x1: x + len, n, earlier:g, later:n-g });
         const pk = I.peak.has(k);
-        if (on || focus[ev].labels.has(k)) labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top, ok: Rch.okK(ev, k), paint });
+        if (on || pk || z != null || 100 * n / F.N >= 3) labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top, ok: Rch.okK(ev, k) });
         x += len;
       }
     }
     // the labels: R left of the bar, X right of it; per side the hovered and the zones' peaks first, never overlapping
     const used = { R: [], X: [] };
     for (const L of labels.sort((a, b) => (b.on - a.on) || (b.pk - a.pk) || (b.n - a.n))) {
-      // Size follows the original historical mass on one scale. Time and applicability never reduce readability:
-      // paint/shape identify the state; the collision rule keeps the remaining 11.5+ px labels apart.
-      const dead = !L.on && (!L.ok || L.ahead <= 0), gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1;
-      const paint = L.paint || bandPaint(L.ev, L.ok, Rch.known);
-      const fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
+      // the label's size and brightness follow the share on the same scale as the bar: the strongest rows read first
+      // the strongest row of the column 14 px bold, the weakest zone rows about 9 px (linear in the share)
+      // the weight of a label follows what is still AHEAD in its band (the number stays the band's whole share); a band
+      // with nothing ahead is grey and small: it has played out today (operator 2026-10-06)
+      // grey only when today's final event can no longer lie in the band (reachability); a band whose family events are
+      // all behind the clock but still reachable today is green (history clock) — DR-LAB-NOW-1.0 F2, the audit's D4
+      const dead = !L.on && (L.ahead <= 0 || (F._ts && !L.ok)), gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
       if (used[L.ev].some(u => Math.abs(u[0] - L.y) < (u[1] + fs) / 2 + 1)) continue;
       used[L.ev].push([L.y, fs]);
-      const wt = L.on || (!dead && q > 0.7) ? '700 ' : L.z != null && !dead ? '600 ' : '';
+      const col = cfg[L.ev], wt = L.on || (!dead && q > 0.7) ? '700 ' : L.z != null && !dead ? '600 ' : '';
       c.textBaseline = 'middle';
-      const t = ppTxt(evPass(F, L.ev, 'price_cell', [L.k, L.k + 1], null, L.n)), tw = columnPctW(c, t, wt, fs);
-      const tx = L.ev === 'R' ? Math.max(A_.x + 3, x0 - 3 - tw) : Math.min(L.xe + 3, A_.x + A_.w - tw - 6);
-      const ink = L.on ? '#FFFFFF' : gone ? rgba(cfg.doneC,0.75) : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(cfg[L.ev],0.45*r),0.5+0.5*r) : C.text3;
-      columnPctDraw(c, t, tx, Math.round(L.y) + 0.5, wt, fs, ink);
-      V.projLabels.push({ ev: L.ev, k: L.k, box: [tx, L.y - fs / 2, tw, fs], fs, paint, ink });
+      const t = ppTxt(evPass(F, L.ev, 'price_cell', [L.k, L.k + 1], null, L.n)), tw = pctW(c, t, wt, fs);
+      pctDraw(c, t, L.ev === 'R' ? Math.max(A_.x + 3, x0 - 3 - tw) : Math.min(L.xe + 3, A_.x + A_.w - tw - 6), L.y + 0.5, wt, fs,
+        L.on ? '#FFFFFF' : gone ? rgba(cfg.doneC, 0.75) : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(col, 0.45 * r), 0.5 + 0.5 * r) : C.text3);
     }
     // the zones' price extents: thin ticks at the right edge, one lane per overlap
     const ends = [];
@@ -4441,18 +4438,18 @@
       while (ends[ln] != null && ends[ln] > o.k0) ln++;
       ends[ln] = o.k1;
       const [ya, yb] = cellY(F, o.k0, o.k1), y0 = Math.max(top0, ya), y1 = Math.min(bot0, yb);
-      if (y1 > y0) { c.fillStyle = rgba(cfg['proj' + o.ev], o.hot ? 1 : 0.7); c.fillRect(A_.x + A_.w - 4 - 3 * ln, y0, 2, y1 - y0); }
+      if (y1 > y0) { c.fillStyle = rgba(cfg[o.ev], o.hot ? 1 : 0.7); c.fillRect(A_.x + A_.w - 4 - 3 * ln, y0, 2, y1 - y0); }
     });
     // the heads (R on the left, X on the right, as their percentages) and the shares beyond the frame
     c.textBaseline = 'top'; c.font = '700 10.5px ' + FONT;
-    c.fillStyle = cfg.projR; c.fillText('R откат', A_.x + 5, 3);
+    c.fillStyle = cfg.R; c.fillText('R откат', A_.x + 5, 3);
     const hx = 'X прод.';
-    c.fillStyle = cfg.projX; c.fillText(hx, A_.x + A_.w - c.measureText(hx).width - 5, 3);
+    c.fillStyle = cfg.X; c.fillText(hx, A_.x + A_.w - c.measureText(hx).width - 5, 3);
     const shares = (i, y, base) => {
       c.font = '10px ' + FONT; c.textBaseline = base;
       c.fillStyle = C.text2; c.fillText(i ? '▼' : '▲', A_.x + A_.w / 2 - 4, y);
-      if (out.R[i]) { c.fillStyle = cfg.projR; c.fillText(ppTxt(outPass(F, 'R', i, outK.R[i], out.R[i])), A_.x + 5, y); }
-      if (out.X[i]) { const t = ppTxt(outPass(F, 'X', i, outK.X[i], out.X[i])); c.fillStyle = cfg.projX; c.fillText(t, A_.x + A_.w - c.measureText(t).width - 5, y); }
+      if (out.R[i]) { c.fillStyle = cfg.R; c.fillText(ppTxt(outPass(F, 'R', i, outK.R[i], out.R[i])), A_.x + 5, y); }
+      if (out.X[i]) { const t = ppTxt(outPass(F, 'X', i, outK.X[i], out.X[i])); c.fillStyle = cfg.X; c.fillText(t, A_.x + A_.w - c.measureText(t).width - 5, y); }
     };
     if (out.X[0] + out.R[0]) shares(0, 18, 'top');
     if (out.X[1] + out.R[1]) shares(1, A_.h - 3, 'bottom');
@@ -4738,6 +4735,7 @@
   const zonesOf = (F, ev) => F && F.zones ? F.zones[ev || st.ev] || null : null;
   const zoneName = z => band(z.price_low, z.price_high) + ' SD × ' + clk(z.time_start) + '–' + clk(z.time_end);
   function zonePass(F, ev, z) {
+    if(F._ts)return tsPass(F,ev,'CORE',z);
     if (F._pb && ev === 'R') return pbZonePass(F, z);
     const Zm = F.zones[ev], E = 'EST:B-ZONE-' + ev;
     return pp(F, { estimand: E, params: { zone_id: z.zone_id }, event_id: ev, region_kind: 'zone_mask', exact_price_bounds: null, time_bounds: null, cell_mask: z.cell_mask.length, zone_id: z.zone_id,
@@ -4778,6 +4776,7 @@
   // dimmer) — it is still possible today and never called impossible. Supersedes entry 18's «POSSIBLE without sessions
   // ahead drawn as IMPOSSIBLE» (the audit of 06.10 #2: empirical occupancy is not reachability).
   function zoneClock(F, ctx, ev) {
+    if(F._ts)return (F._ts.today?.[ev]||[]).map(v=>v.history_clock);
     if (F._pb && ev === 'R') return F.zones.R.zones.map((z,i) => (PB.model?.F.ev.R.pts || F.ev.R.pts).some(q => z.cell_mask.some(([k,b]) => k === q.k && b === q.b) && q.t + 5 > sliceOf(ctx)) ? 'FUTURE_PRESENT' : sliceOf(ctx) < z.time_end ? 'FUTURE_EMPTY' : 'PAST_ONLY');
     const Zm = F.zones[ev];
     if (!Zm) return [];
@@ -4870,6 +4869,7 @@
   // request differs from the server's) is not asserted — no status word («—»), no state look, today's reachability open;
   // the zones' shares, their n / N and their drawing as history stay
   function zoneStatus(F, ctx, ev) {
+    if(F._ts)return (F._ts.today?.[ev]||[]).map(v=>v.status);
     if (F._pb && ev === 'R') return F.zones.R.zones.map(() => 'POSSIBLE');
     const Zm = F.zones[ev];
     if (!Zm) return [];
@@ -5041,11 +5041,28 @@
   const ICFG = window.DR_INTEGRATION || { enabled: false }, REVIEW = ICFG.registry;
   // phase / nowmarks: the operator's decisions of 2026-10-08 (meaning/17 §7) on the page only, over accepted bundles and the
   // candidate labels FF:PHASE-RULE, row_mark / title_mark (integration/candidates/registry/40-claims.yaml); no server call
-  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled, phase: false, nowmarks: false, pullbacks: !!ICFG.enabled };
+  // The old broad PB overlay is superseded by the explicitly approved time x SD profile of 23.5.
+  // Legacy flags cannot reinstate that overlay; the new profile is the normal bounds view.
+  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled, phase: false, nowmarks: false, pullbacks: false };
   // the viewer's own choice of trials is kept in this browser like every other setting (2026-10-19); the address still adds
   const TRIAL_KEY = 'drlab.d235.trials';
-  if (ICFG.enabled) try { const kept = JSON.parse(localStorage.getItem(TRIAL_KEY) || '{}'); for (const k in TRIAL) if (typeof kept[k] === 'boolean') TRIAL[k] = kept[k]; } catch (e) { /* defaults */ }
-  if (ICFG.enabled) for (const k of (new URLSearchParams(location.hash.slice(1)).get('trial') || '').split(',')) if (k in TRIAL) TRIAL[k] = true;
+  if (ICFG.enabled) try {
+    const kept = JSON.parse(localStorage.getItem(TRIAL_KEY) || '{}');
+    for (const k in TRIAL) if (k !== 'pullbacks' && typeof kept[k] === 'boolean') TRIAL[k] = kept[k];
+    if (kept.pullbacks) {
+      if (localStorage.getItem(TRIAL_KEY+'.before-withdrawal') == null) localStorage.setItem(TRIAL_KEY+'.before-withdrawal',JSON.stringify(kept));
+      localStorage.setItem(TRIAL_KEY,JSON.stringify({...kept,pullbacks:false}));
+    }
+  } catch (e) { /* defaults */ }
+  if (ICFG.enabled) for (const k of (new URLSearchParams(location.hash.slice(1)).get('trial') || '').split(',')) if (k in TRIAL && k !== 'pullbacks') TRIAL[k] = true;
+  {
+    const q=new URLSearchParams(location.hash.slice(1)),before=q.toString();
+    const active=(q.get('trial')||'').split(',').filter(k=>k&&k!=='pullbacks');
+    if(active.length)q.set('trial',active.join(','));else q.delete('trial');
+    if(q.get('mode')==='pullbacks')q.delete('mode');
+    // The locality scale remains an explicit parameter of the new profile.
+    if(q.toString()!==before)history.replaceState(null,'',location.pathname+location.search+(q.toString()?'#'+q:''));
+  }
   if (ICFG.enabled) window.addEventListener('hashchange',()=>location.reload());
   const IS = { key: null, packet: null, pending: new Set(), cache: new Map(), error: null, discarded: 0, committed: 0, selection: null, epoch: 0 };
   function sceneRequest() {
@@ -5211,7 +5228,8 @@
   // clock (known, of N: EST:B-CLOCK-R over the whole price range, part EARLIER, a passport the server verifies). A rule
   // of the operator, not a statement about the market; only for the confirmation family (a break is another frame)
   function phaseOf(F, ctx) {
-    if (F?._pb) F = PB.model.base; // the existing phase trial is defined on FINAL-R, never on multiple local bottoms
+    if (F?._ts) return null; // an old final-R phase must not control the local-PB map
+    if (F?._pb) F = PB.model.base;
     if (!TRIAL.phase || !F || F.brk || !F.N) return null;
     const rows = todayRows(F, ctx);
     if (!rows.length) return null;
@@ -5297,8 +5315,8 @@
     if (!ICFG.enabled) return '';
     return '<details class="cgd"><summary class="cg">Испытание кандидатов</summary>' +
       [['pre', 'История до подтверждения'], ['arrive', 'Отсюда до места · Q1'], ['paths', 'Связанные пути в нижнем окне'], ['continuations', 'Продолжения · закреплённое окно'],
-        ['phase', 'Фаза по вашему правилу · 08.10'], ['nowmarks', '«Сейчас»: откат числом и отметками у шкалы · 08.10'], ['pullbacks', 'Откаты до обновления · кандидат 21.10']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
-      (TRIAL.pullbacks ? '<div class="p21-note">'+pbScaleSwitch()+'</div>' : '') +
+        ['phase', 'Фаза по вашему правилу · 08.10'], ['nowmarks', '«Сейчас»: откат числом и отметками у шкалы · 08.10']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
+      '<div class="p21-note">'+pbScaleSwitch()+'</div>'+
       '<button type="button" id="auditScene">Проверить происхождение и опору</button><div id="auditResult" class="p21-note"></div></details>';
   }
   async function auditScene() {
@@ -5313,6 +5331,7 @@
     }catch(e){el.textContent='Проверка не завершилась: '+e.message;}
   }
   function setTrial(k, on) {
+    if(k==='pullbacks')return false; // rejected bounds mapping; not a dormant checkbox that can undo the repair
     TRIAL[k] = !!on; IS.key = null; IS.packet = null; IS.error = null;
     try { localStorage.setItem(TRIAL_KEY, JSON.stringify(TRIAL)); } catch (e) { /* not kept */ }
     if(k==='continuations'&&!on){CS.seq++;CS.packet=null;CS.drawing=null;if(st.mode==='continuations')st.mode='bounds';}
@@ -5599,14 +5618,14 @@
   {
     const q = new URLSearchParams(location.hash.slice(1)), k = +q.get('pbscale');
     if (PB_SCALES.includes(k)) PB.scale = k;
-    if (ICFG.enabled && q.get('mode') === 'pullbacks') { TRIAL.pullbacks = true; st.mode = 'bounds'; }
+    // Superseded broad PB overlays cannot replace the approved finite time x SD map.
   }
-  const pullbackMode = () => ICFG.enabled && TRIAL.pullbacks && st.mode === 'bounds';
+  const pullbackMode = () => ICFG.enabled && st.mode === 'bounds'; // 23.5 now uses its approved time x SD profile by default
   // Keep the original star layer on. Compact cell representatives below prevent a catalogue of overlapping episodes.
   function pbRequest(ctx) {
     if (!ctx.F || !ctx.F.N || !ctx.s.conf) return null;
-    const cut = sliceOf(ctx), view = st.view === 'conf' ? 'conf' : 'auto', a = st.area, region = a && a.ev !== 'X' ? [a.k0,a.k1,a.b0,a.b1].map(v=>Number.isFinite(v)?v:null) : null;
-    return { cut, view, region, key: [JSON.stringify(region),IS.epoch, A.inst, ctx.D.iso, ctx.s.k, cut, view, st.scope, ctx.F.r.snapshot_id].join('|') };
+    const cut = sliceOf(ctx), view = st.view === 'conf' ? 'conf' : 'auto', a = st.area, region = a ? [a.k0,a.k1,a.b0,a.b1].map(v=>Number.isFinite(v)?v:null) : null;
+    return { cut, view, region, key: [PB.scale,JSON.stringify(region),IS.epoch, A.inst, ctx.D.iso, ctx.s.k, cut, view, st.scope, ctx.F.r.snapshot_id].join('|') };
   }
   function pbPacket(ctx) { const q = pbRequest(ctx); return q && PB.key === q.key ? PB.packet : null; }
   function requestPullbacks(ctx) {
@@ -5615,15 +5634,16 @@
     if (!q || (q.key === PB.key && (PB.packet || PB.error)) || PB.pending === q.key) return;
     const token = ++PB.seq, F = ctx.F;
     PB.key = q.key; PB.packet = null; PB.error = null; PB.pending = q.key; PB.cl = null;
-    const args = new URLSearchParams({ instrument: A.inst, session: ctx.s.k, at: q.cut, view: q.view, scope: st.scope });
+    const args = new URLSearchParams({ instrument: A.inst, session: ctx.s.k, at: q.cut, view: q.view, scope: st.scope, scale: PB.scale });
     if (A.src === 'hist') args.set('date', A.date);
     if (q.region) args.set('region', JSON.stringify(q.region));
-    fetch('/api/integration/pullbacks?' + args).then(async res => {
+    fetch('/api/integration/time-sd?' + args).then(async res => {
       const r = await res.json();
       if (!res.ok) throw Error(r.message || r.error || 'Сервер не ответил');
       if (token !== PB.seq) return;
       if (r.status !== 'OK') throw Error(r.message || r.status);
       await pbVerify(r, q, ctx, F);
+      await tsVerify(r, q, ctx, F);
       if (token !== PB.seq) return;
       PB.packet = r; PB.verified++;
     }).catch(e => { if (token === PB.seq) { PB.error = e.message; PB.packet = null; } })
@@ -6125,6 +6145,252 @@
     if(F.ev.X.unknown+F.ev.X.none){const p=undPass(F,'X','BOTH');out.push(link({k:'evrow',ev:'X'},prow(lbl(p.estimand,'row',{ev:'X'}),ppTxt(p)),'dim',p,plainTitle(p)));}
     return out.join('');
   }
+
+  // Approved plan 22.10: one time x SD table, finite local cores and peak-cell projections.
+  // Rendering functions keep their existing geometry. Every new number has an EST:TS-* bundle and exact region.
+  const tsData = ctx => pbPacket(ctx)?.proof.time_sd || null;
+  const tsLabel = key => lbl('EST:TS-CORE-R', key);
+  const tsFields = ['k0','k1','b0','b1'];
+  const tsSame = (a,b) => tsFields.every(k=>a[k]===b[k]);
+  const tsBox = (bounds,time,F) => ({k0:Number.isFinite(bounds?.[0])?bounds[0]:null,k1:Number.isFinite(bounds?.[1])?bounds[1]:null,
+    b0:time?(time[0]-F.f)/15:null,b1:time?(time[1]-F.f)/15:null});
+  const tsInside = (q,v) => (v.k0==null||q.k>=v.k0)&&(v.k1==null||q.k<v.k1)&&(v.b0==null||q.b>=v.b0)&&(v.b1==null||q.b<v.b1);
+  const tsMember = (z,q) => z.cell_mask.some(([k,b])=>q.k===k&&q.b===b);
+  const TS_TRACE = [];
+
+  async function tsVerify(r,q,ctx,F) {
+    const p=r.proof,t=p.time_sd;
+    if(!t||t.version!=='DR-LAB-TIME-SD-1.0'||t.scale!==PB.scale)throw Error('Нет выпуска времени × SD выбранного масштаба');
+    const want={time_minutes:15,price_cells:3,price_cell_num:1,price_cell_den:10,atom_minutes:5,min_abs:4,min_frac_num:1,min_frac_den:20,projection:'MAX_KNOWN_JOINT_CELL',temporal_growth:false};
+    if(JSON.stringify(t.definition)!==JSON.stringify(want))throw Error('Другая геометрия времени × SD');
+    const source={...p};delete source.time_sd;delete source.time_sd_source;
+    if(await cHash(source)!==p.time_sd_source)throw Error('Изменён исходный выпуск эпизодов');
+    const known=new Set(F.M.map(m=>m.id)),w=new Map(p.sessions.map(s=>[s.id,s.w]));
+    for(const ev of ['R','X']) {
+      const m=t.maps?.[ev];if(!m||m.event!==(ev==='R'?'PB_L':'FINAL_X'))throw Error('Подменён тип события '+ev);
+      const expected=ev==='R'?p.points.filter(v=>v.kt>=PB.scale):F.M.filter(v=>v.X.s==='known').map(v=>({id:v.id+'|FINAL-X',case:v.id,v:v.X.v,open:v.X.t,k:Math.floor(10*v.X.v/v.w),b:Math.floor((v.X.t-F.f)/15),episodes:[]}));
+      if(JSON.stringify(m.points)!==JSON.stringify(expected))throw Error('Точки '+ev+' не совпадают с исходными событиями');
+      const cellKeys=[...new Set(expected.map(v=>v.k+'|'+v.b))].sort();
+      if(JSON.stringify(m.cells.map(v=>v.k+'|'+v.b).sort())!==JSON.stringify(cellKeys))throw Error('Неполная совместная таблица '+ev);
+      const checkRegion=v=>{
+        const qs=expected.filter(pt=>tsInside(pt,v)),ids=[...new Set(qs.map(pt=>pt.case))].sort(),later=new Set(qs.filter(pt=>pt.open+5>q.cut).map(pt=>pt.case)).size;
+        if(JSON.stringify(ids)!==JSON.stringify(v.members)||v.n_known!==ids.length||v.earlier!==ids.length-later||v.later!==later||
+           v.n_possible!==v.possible.length||new Set(v.possible).size!==v.possible.length||v.possible.some(id=>!known.has(id)||ids.includes(id)))throw Error('Состав/часы области '+ev+' не совпадают');
+      };
+      for(const v of [...m.cells,...m.cores,...m.price_peaks,...m.time_peaks,...m.regions])checkRegion(v);
+      if(m.need!==Math.max(4,Math.ceil(F.N/20)))throw Error('Другая минимальная опора');
+      const densityCache=new Map(),support=(k,b)=>{const key=k+'|'+b;if(!densityCache.has(key))densityCache.set(key,new Set(expected.filter(v=>v.b===b&&v.k>=k-1&&v.k<=k+1).map(v=>v.case)).size);return densityCache.get(key);};
+      const candidates=new Map();
+      for(const v of expected)for(const off of [-1,0,1]){
+        const k=v.k+off,b=v.b,n=support(k,b);
+        if(n<m.need)continue;
+        if([-1,0,1].some(dk=>[-1,0,1].some(db=>support(k+dk,b+db)>n)))continue;
+        candidates.set(k+'|'+b,{k,b,n});
+      }
+      const sorted=[...candidates.values()].sort((a,b)=>a.b-b.b||a.k-b.k),runs=[];
+      for(const c of sorted){const last=runs.at(-1),tail=last?.at(-1);if(tail&&tail.b===c.b&&tail.n===c.n&&tail.k+1===c.k)last.push(c);else runs.push([c]);}
+      const anchors=runs.map(a=>a.sort((p,q)=>Math.abs(2*p.k+1)-Math.abs(2*q.k+1)||p.k-q.k)[0]).sort((a,b)=>a.b-b.b||b.n-a.n||Math.abs(2*a.k+1)-Math.abs(2*b.k+1)||a.k-b.k);
+      if(JSON.stringify(anchors.map(a=>[a.k,a.b,a.n]))!==JSON.stringify(m.cores.map(z=>[...z.anchor,z.apex_D])))throw Error('Ядра не являются локальными максимумами '+ev);
+      for(const z of m.cores){const [k,b]=z.anchor;if(z.time_end-z.time_start!==15||z.price_high-z.price_low!==3||JSON.stringify(z.cell_mask)!==JSON.stringify([[k-1,b],[k,b],[k+1,b]])||z.n_known!==z.apex_D)throw Error('Ядро выросло за свой локальный масштаб');}
+      for(const axis of ['price','time'])for(const v of m[axis+'_peaks']){
+        const pool=m.cells.filter(c=>axis==='price'?c.k===v.index:c.b===v.index).sort((a,b)=>b.n_known-a.n_known||(axis==='price'?a.b-b.b:Math.abs(2*a.k+1)-Math.abs(2*b.k+1)||a.k-b.k));
+        if(!pool.length||!tsSame(pool[0],v))throw Error('Проекция потеряла вторую координату');
+      }
+      for(const [kind,items]of [['CORE',m.cores],['PEAK',[...m.price_peaks,...m.time_peaks]],['REGION',[...m.cells,...m.regions]]])for(const v of items){
+        const b=tsBundle(r,ev,kind,v),pt=b?.estimates.find(e=>e.value_kind==='POINT'),bd=b?.estimates.find(e=>e.value_kind==='BOUNDS');
+        if(!pt||pt.numerator!==v.n_known||pt.denominator!==F.N||Math.abs(pt.value-v.n_known/F.N)>1e-12||(v.n_possible&&(!bd||Math.abs(bd.upper-(v.n_known+v.n_possible)/F.N)>1e-12)))throw Error('Нет собственного паспорта числа времени × SD');
+      }
+      if(q.region&&!m.regions.some(v=>tsFields.every((k,i)=>v[k]===q.region[i])))throw Error('Не опубликована выбранная область '+ev);
+      const cats=m.sessions,catBundle=pbBundle(r,'EST:TS-SESSIONS-'+ev,p=>p.scale===PB.scale);
+      if(Object.values(cats).reduce((a,b)=>a+b,0)!==F.N||!catBundle||catBundle.estimates[0].denominator!==F.N||catBundle.estimates[0].categories.some(c=>cats[c.category]!==c.count))throw Error('Категории не сохраняют N или собственный паспорт');
+      if(t.today?.[ev]?.length!==m.cores.length)throw Error('Нет сегодняшних фактов каждого ядра');
+    }
+    // Every established post-L vote has its own chronological path witness; no unrelated terminal X is substituted.
+    const pts=new Map(t.maps.R.points.map(v=>[v.id,v])),ws=new Map(p.sessions.map(v=>[v.id,v]));
+    for(const v of t.links){
+      const z=t.maps.R.cores.find(z=>z.zone_id===v.source_id),ids=[];
+      if(!z)throw Error('Продолжение без исходного ядра');
+      for(const hit of v.witnesses){
+        const pt=pts.get(hit.point_id),s=ws.get(hit.case),j=p.grid.indexOf(hit.target_close),bar=s?.bars[j],b=(hit.target_open-F.f)/15;
+        if(!pt||pt.case!==hit.case||!tsInside(pt,z)||hit.target_open<pt.open+5||hit.l_open!==pt.open||!bar||hit.target_close!==hit.target_open+5||
+          (v.b0!=null&&Math.floor(b)<v.b0)||(v.b1!=null&&Math.floor(b)>=v.b1)||(v.k0!=null&&10*bar[1]<v.k0*s.w)||(v.k1!=null&&10*bar[2]>=v.k1*s.w))throw Error('Подменена связь после локального отката');
+        ids.push(hit.case);
+      }
+      if(JSON.stringify([...new Set(ids)].sort())!==JSON.stringify(v.members)||v.n_known!==v.members.length)throw Error('Повторный голос связанного пути');
+    }
+    return r;
+  }
+
+  function tsBundle(r,ev,kind,v) {
+    const est='EST:TS-'+kind+(kind==='LINK'?'':'-'+ev);
+    return pbBundle(r,est,p=>p.scale===PB.scale&&(kind==='CORE'?p.zone_id===v.zone_id:kind==='PEAK'?p.axis===v.axis&&p.index===v.index&&tsSame(p,v):kind==='LINK'?p.source_id===v.source_id&&p.target_id===v.target_id:tsSame(p,v)));
+  }
+  function tsPass(F,ev,kind,v) {
+    const r=F._pb,b=v&&tsBundle(r,ev,kind,v),pt=b?.estimates.find(e=>e.value_kind==='POINT'),bd=b?.estimates.find(e=>e.value_kind==='BOUNDS');
+    const p={candidate:true,estimand:'EST:TS-'+kind+(kind==='LINK'?'':'-'+ev),event_id:ev==='R'?'PB_L':'FINAL_X',pct:pt?100*pt.value:null,pctHi:bd?100*bd.upper:null,
+      yes_count:pt?.numerator||0,unknown_count:v?.n_possible||0,N:F.N,phrase:b?.claim.statement_ru||'Число ещё не опубликовано',horizon:'собственная активация → конец блока; указанное окно ET',bundle:b,region:v};
+    if(b&&!TS_TRACE.some(q=>q.bundle===b.id))TS_TRACE.push({estimand:p.estimand,bundle:b.id,ev,kind,region:v,yes:p.yes_count,N:F.N});
+    return p;
+  }
+  function tsFind(F,ev,kind,bounds,time,outframe=false) {
+    const m=F._ts?.maps?.[ev];if(!m)return null;
+    if(kind==='price_cell')return m.price_peaks.find(v=>v.index===bounds?.[0])||null;
+    if(kind==='time_cell')return m.time_peaks.find(v=>v.index===(time[0]-F.f)/15)||null;
+    const box=tsBox(bounds,time,F);let v=[...m.regions,...m.cells].find(v=>tsSame(v,box));
+    if(!v&&outframe){const ks=m.points.map(q=>q.k);if(box.k0<=Math.min(...ks))v=m.regions.find(v=>v.k0==null&&v.k1===box.k1&&v.b0==null&&v.b1==null);else if(box.k1>Math.max(...ks))v=m.regions.find(v=>v.k0===box.k0&&v.k1==null&&v.b0==null&&v.b1==null);}
+    return v||null;
+  }
+  function tsRegionPass(F,ev,kind,bounds,time,outframe=false) {
+    const v=tsFind(F,ev,kind,bounds,time,outframe);return tsPass(F,ev,kind==='price_cell'||kind==='time_cell'?'PEAK':'REGION',v);
+  }
+  function tsZoneHeld(F,ev,i){const z=F.zones[ev]?.zones[i];return !z||!tsBundle(F._pb,ev,'CORE',z);}
+  function tsCategories(F,ev) {
+    const est='EST:TS-SESSIONS-'+ev,b=pbBundle(F._pb,est,p=>p.scale===PB.scale);
+    if(b&&!TS_TRACE.some(q=>q.bundle===b.id))TS_TRACE.push({estimand:est,bundle:b.id,ev,kind:'SESSIONS',N:F.N});
+    return b;
+  }
+  function tsProjectionHeld(F,est,params) {
+    const ev=est.at(-1),price='k0'in params;
+    return tsRegionPass(F,ev,price?'price_cell':'time_cell',price?[params.k0,params.k1]:null,price?null:[F.f+15*params.b0,F.f+15*params.b1]).pct==null;
+  }
+
+  pbMapContext = function(ctx) {
+    if(ctx.F?._ts)return ctx;
+    if(!pullbackMode()||!ctx.F)return ctx;
+    if(PB.model?.base&&PB.model.base.r.family_id!==ctx.F.r.family_id){st.area=null;if(/^pb/.test(st.pin?.k||''))st.pin=null;st.hover=null;}
+    requestPullbacks(ctx);const r=pbPacket(ctx),t=r?.proof.time_sd,F=ctx.F,key=r&&r.release_id;
+    if(PB.model?.key===key&&PB.model?.base===F)return {...ctx,F:PB.model.F};
+    const mi=new Map(F.M.map((m,i)=>[m.id,i])),ws=new Map((r?.proof.sessions||[]).map(w=>[w.id,w]));
+    const ev={},zones={},zcell={};
+    for(const e of ['R','X']) {
+      const m=t?.maps[e],pts=(m?.points||[]).map(q=>({ev:e,i:mi.get(q.case),m:F.M[mi.get(q.case)],pbid:e==='R'?q.id:null,source_id:q.id,t:q.open,k:q.k,b:q.b,p:F.u2p(q.v/ws.get(q.case).w)}));
+      const cells=new Map((m?.cells||[]).map(c=>[c.k+'|'+c.b,{k:c.k,b:c.b,list:c.members.map(id=>mi.get(id))}]));
+      ev[e]={event_id:e==='R'?'PB_L':'FINAL_X',pts,cells,P:new Map((m?.price_peaks||[]).map(v=>[v.index,v.n_known])),T:new Map((m?.time_peaks||[]).map(v=>[v.index,v.n_known])),
+        known:new Set(pts.map(q=>q.m.id)).size,unknown:m?.sessions.UNKNOWN||0,none:m?.sessions.NONE||0};
+      const zs=(m?.cores||[]).map(z=>({...z,event_id:e,n_zone:z.n_known,p_snapshot:z.n_known/F.N,member_session_ids:z.members}));
+      zones[e]={zones:zs,unknown_count:ev[e].unknown,no_event_count:ev[e].none};zcell[e]=new Map();
+      zs.forEach((z,i)=>z.cell_mask.forEach(([k,b])=>{if(!zcell[e].has(k+'|'+b))zcell[e].set(k+'|'+b,i);}));
+    }
+    const view={...F,_pb:r||{loading:true},_ts:t||{loading:true},_cl:null,ev,zones,zcell,what:{...F.what,R:'Дна локальных откатов до обновления'},names:{...F.names}};
+    PB.model={key,base:F,F:view};TS_TRACE.length=0;return {...ctx,F:view};
+  };
+  pbCloudContext = function(ctx) {
+    const F=ctx.F;if(!F?._ts?.maps)return ctx;if(PB.model.cloud)return {...ctx,F:PB.model.cloud};
+    const ev={};
+    for(const e of ['R','X']){
+      const groups=new Map();for(const q of F.ev[e].pts){if(!F.zones[e].zones.some(z=>tsMember(z,q)))continue;const key=q.k+'|'+q.t;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(q);}
+      const pts=[...groups.values()].map(qs=>{const avg=qs.reduce((n,q)=>n+q.p,0)/qs.length;return qs.slice().sort((a,b)=>Math.abs(a.p-avg)-Math.abs(b.p-avg)||a.source_id.localeCompare(b.source_id))[0];});
+      ev[e]={...F.ev[e],pts};
+    }
+    PB.model.cloud={...F,_cl:null,ev};return {...ctx,F:PB.model.cloud};
+  };
+  pbProjectionContext = function(ctx) {
+    const F=ctx.F;if(!F?._ts?.maps)return ctx;const ev={};
+    for(const e of ['R','X']){const by=new Map();for(const q of F.ev[e].pts){const peak=F._ts.maps[e].price_peaks.find(v=>v.index===q.k);if(!peak||!tsInside(q,peak))continue;const key=q.k+'|'+q.m.id,old=by.get(key);if(!old||old.t<q.t)by.set(key,q);}ev[e]={...F.ev[e],pts:[...by.values()]};}
+    return {...ctx,F:{...F,ev}};
+  };
+  pbRange = function(ctx,lo,hi) {
+    const t=tsData(ctx),F=ctx.F;if(!t||!F)return [lo,hi];
+    for(const e of ['R','X'])t.maps[e].cores.forEach((z,i)=>{const rel=t.today[e][i];if(rel.clock==='PAST'&&!(e==='X'&&rel.status==='HOLDS'))return;if(e==='X'&&rel.status==='IMPOSSIBLE')return;const a=F.u2p(z.price_low/10),b=F.u2p(z.price_high/10);lo=Math.min(lo,a,b);hi=Math.max(hi,a,b);});
+    return [lo,hi];
+  };
+  pbVisualHover = function(h) {
+    if(!h)return h;
+    if(h.k==='pbzone')return {...h,k:'zone',ev:h.ev||'R'};
+    if(h.k==='pbpcell')return {...h,k:'pcell',ev:h.ev||'R'};
+    if(h.k==='pbtcell')return {...h,k:'tcell'};
+    if(h.k==='pbarea')return {...h,k:'area'};
+    if(h.k==='pbpt'){const q=PB.model?.F.ev.R.pts.find(q=>q.pbid===h.id);return q?{...h,k:'pt',ev:'R',i:q.i,q}:h;}
+    return h;
+  };
+  pbSemanticHit = function(h) {
+    if(!pullbackMode()||!h)return h;
+    if(h.k==='zone')return {...h,k:'pbzone'};
+    if(h.k==='pcell')return {...h,k:'pbpcell'};
+    if(h.k==='tcell'){const up=V.ctx.F.d0>0?'X':'R';return {...h,k:'pbtcell',ev:h.ev||(st.my<V.bandCy?up:up==='R'?'X':'R')};}
+    if(h.k==='unk')return {...h,k:'pbunk'};
+    if(h.k==='area')return {...h,k:'pbarea'};
+    if(h.k==='pt'&&h.q?.pbid)return {k:'pbpt',id:h.q.pbid,same:new Set(h.same).size,ev:'R'};
+    return h;
+  };
+  pbZonePass = (F,z)=>tsPass(F,'R','CORE',z);
+  pbRegionPass = (F,bounds,time,outframe)=>tsRegionPass(F,'R','region',bounds,time,outframe);
+
+  function tsPlace(F,v){if(!v)return '';return (v.k0!=null?band(v.k0,v.k1)+' SD':'вся цена')+' · '+(v.b0!=null?clk(F.f+15*v.b0)+'–'+clk(F.f+15*v.b1):'весь горизонт');}
+  function tsRows(F,ev,kind,v){const p=tsPass(F,ev,kind,v);return '<div class="is" data-ts-est="'+p.estimand+'" data-ts-bundle="'+(p.bundle?.id||'')+'"><b class="big" style="color:'+cfg[ev]+'">'+ppTxt(p,true)+'</b> · '+esc(tsPlace(F,v))+'</div><div class="is">'+esc(p.phrase)+'</div>'+(v?'<div class="is k">'+tsLabel('earlier')+': '+pct(100*v.earlier/F.N)+' · '+tsLabel('later')+': '+pct(100*v.later/F.N)+'</div>':'');}
+  function tsZoneInspector(ctx,h) {
+    const F=pbMapContext(ctx).F,ev=h.ev||'R',z=F?.zones[ev]?.zones[h.i];if(!z)return '<div class="is">'+esc(pbStatus(ctx))+'</div>';
+    const rel=F._ts.today[ev][h.i],v=rel.visit,visit={...v,t:v.close,start:z.time_start,end:z.time_end};
+    let html='<div class="ih" style="color:'+cfg[ev]+'">'+z.label+' · '+tsLabel(ev)+'</div>'+tsRows(F,ev,'CORE',z);
+    html+='<div class="is">'+tsLabel('core')+' · '+lbl('FF:PB-TODAY',rel.clock)+'</div><div class="is">'+visitWords(visit)+'</div>';
+    if(ev==='R'){
+      const w=pbW(F),c=rel.completion;
+      html+='<div class="is">'+(c.state==='COMPLETED'?lbl('FF:PB-TODAY','COMPLETED',{top:w.top,h:clk(c.h_open),t:clk(c.b_close)}):c.state==='IN_ZONE_NOT_UPDATED'?lbl('FF:PB-TODAY','IN_ZONE_NOT_UPDATED',{top:w.top,h:clk(c.h_open)}):lbl('FF:PB-TODAY','NONE'))+'</div>';
+      const links=F._ts.links.filter(v=>v.source_id===z.zone_id&&v.n_known+v.n_possible>0);
+      if(links.length)html+='<div class="ih">'+tsLabel('after')+'</div>'+links.map(v=>{const p=tsPass(F,'R','LINK',v),target=F.zones.X.zones.find(q=>q.zone_id===v.target_id);return '<div class="is" data-ts-est="EST:TS-LINK" data-ts-bundle="'+(p.bundle?.id||'')+'">'+esc((target?.label||'область')+' · '+tsPlace(F,v))+' · <b>'+ppTxt(p,true)+'</b></div>';}).join('')+'<div class="is k">'+tsLabel('source')+'</div>';
+    }else html+='<div class="is">'+zst(rel.status)+'</div>';
+    return html;
+  }
+  const tsOldInspector=pbInspector;
+  pbInspector=function(ctx,h){if(h?.k==='pbpt')return tsOldInspector(ctx,h);if(h?.k==='pbzone')return tsZoneInspector(ctx,h);if(h?.k==='pbunk')return pbUnknownHtml(ctx);return pbRegionInspector(ctx,h);};
+  pbUnknownHtml=function(ctx){const F=pbMapContext(ctx).F;if(!F?._ts?.maps)return '<div class="is">'+esc(pbStatus(ctx))+'</div>';
+    return '<div class="ih">Не распределено по координатам</div>'+['R','X'].map(ev=>{const b=tsCategories(F,ev);return (b?.estimates[0].categories||[]).filter(c=>['UNKNOWN','NONE'].includes(c.category)).map(c=>'<div class="is" data-ts-est="'+b.estimand+'" data-ts-bundle="'+b.id+'">'+ev+' · '+tsLabel(c.category)+' · '+pct(100*c.count/F.N)+'</div>').join('');}).join('');};
+  pbJointXTip=(ctx,h)=>tsZoneInspector(ctx,{...h,ev:'X'});
+  pbRegionInspector=function(ctx,h){
+    const F=pbMapContext(ctx).F;if(!F?._ts?.maps)return '<div class="is">'+esc(pbStatus(ctx))+'</div>';
+    if(h?.k==='pbarea'){const a=st.area,ev=a?.ev||st.ev;if(!a)return '';const v=tsFind(F,ev,'region',[a.k0,a.k1],a.b0!=null?[F.f+15*a.b0,F.f+15*a.b1]:null);return '<div class="ih">'+tsLabel('region')+'</div>'+tsRows(F,ev,'REGION',v);}
+    const isTime=h?.k==='pbtcell'||h?.k==='tcell',ev=h?.ev||st.ev,axis=isTime?'time':'price',index=isTime?h.b0:h.k0;
+    const v=F._ts.maps[ev][axis+'_peaks'].find(v=>v.index===index);
+    return '<div class="ih" style="color:'+cfg[ev]+'">'+ev+' · '+tsLabel(axis)+'</div>'+tsRows(F,ev,'PEAK',v);
+  };
+  pbCombinedZones=function(ctx){
+    requestPullbacks(ctx);const F=pbMapContext(ctx).F,t=F?._ts;
+    let out='<div class="p21-h second"><span>Зоны по времени</span>'+scopeSwitch()+'</div>';
+    if(!t?.maps)return out+'<div class="p21-note">'+esc(pbStatus(ctx))+'</div>';
+    const all=['R','X'].flatMap(ev=>F.zones[ev].zones.map((z,i)=>({ev,z,i}))).sort((a,b)=>a.z.time_start-b.z.time_start||b.z.n_known-a.z.n_known),sl=sliceOf(ctx);let sep=false;
+    for(const {ev,z,i}of all){
+      if(!sep&&z.time_end>sl){out+='<div class="p24-now"><span></span>сейчас '+clk(sl)+'<span></span></div>';sep=true;}
+      const p=tsPass(F,ev,'CORE',z),rel=t.today[ev][i],status=ev==='R'?lbl('FF:PB-TODAY',rel.clock):zst(rel.status);
+      const look=ev==='R'?(rel.clock==='PAST'?'IMPOSSIBLE':'POSSIBLE'):rel.status;
+      out+=link({k:'pbzone',ev,i},'<span class="t"><span><span class="zt">'+clk(z.time_start)+'–'+clk(z.time_end)+'</span> <i class="zn" style="color:'+cfg[ev]+'">'+z.label+'</i></span><span class="p21-sub">'+band(z.price_low,z.price_high)+' SD · '+status+'</span></span><b class="zp">'+ppTxt(p,true)+'</b>','mc zst-'+look,null,p.phrase).replace('data-l21=','data-ts-est="'+p.estimand+'" data-ts-bundle="'+p.bundle.id+'" data-l21=');
+    }
+    if(!sep)out+='<div class="p24-now"><span></span>'+(sl>=F.end?'блок закончен':'сейчас '+clk(sl))+'<span></span></div>';
+    if(!all.length)out+='<div class="p21-note">'+tsLabel('none')+'</div>';
+    for(const ev of ['R','X']){const b=tsCategories(F,ev);if(b)for(const c of b.estimates[0].categories.filter(c=>c.category!=='IN_ZONES'))out+='<div class="p21-link dim" data-ts-est="'+b.estimand+'" data-ts-bundle="'+b.id+'">'+prow('<i style="color:'+cfg[ev]+'">'+ev+'</i> '+tsLabel(c.category),pct(100*c.count/F.N))+'</div>';}
+    return out;
+  };
+  pbAreaHtml=function(ctx){const F=pbMapContext(ctx).F,a=st.area,ev=a.ev||st.ev,v=tsFind(F,ev,'region',[a.k0,a.k1],a.b0!=null?[F.f+15*a.b0,F.f+15*a.b1]:null),p=tsPass(F,ev,'REGION',v);return '<div class="p21-h second p24-sel">Выбранная область <span><button class="p24-x" data-clear="area" title="Снять выбор (Esc)">✕</button></span></div>'+link({k:'pbarea',ev},prow('<i style="color:'+cfg[ev]+'">'+ev+'</i> '+esc(tsPlace(F,v)),ppTxt(p,true)),'',null,p.phrase);};
+
+  pbGeom=function(ctx,r){const F=pbMapContext(ctx).F,p=r.proof;return {W:new Map(p.sessions.map(w=>[w.id,w])),E:new Map(p.episodes.map(e=>[e.id,e])),P:new Map(p.points.map(q=>[q.id,q])),zones:(F._ts?.maps?.R.cores||[]).map((z,i)=>({z,i,pts:p.points.filter(q=>q.kt>=PB.scale&&tsInside(q,z)).map(q=>({q,x:V.X(q.open+2.5),y:V.Y(F.u2p(q.v/p.sessions.find(w=>w.id===q.case).w))}))}))};};
+  const tsOldDetail=pbDetail;
+  pbDetail=function(ctx,h){if(h.k==='pbpt')return tsOldDetail(ctx,h);if(h.k==='pbunk')return {head:'Не распределено по координатам',body:pbUnknownHtml(ctx)};const F=pbMapContext(ctx).F,ev=h.ev||st.ev;
+    if(h.k==='pbzone'){const z=F.zones[ev].zones[h.i];if(!z)return {head:'Время × SD',body:''};let body=tsZoneInspector(ctx,h);
+      body+='<div class="dt">Истории этого ядра</div>'+F._ts.maps[ev].points.filter(q=>tsInside(q,z)).map(q=>ev==='R'?'<div class="is" data-pbpt="'+esc(q.id)+'">'+esc(pbDate(q.case))+' · '+clk(q.open)+' · '+sd(q.v/rWidth(F,q.case))+'</div>':'<div class="is">'+esc(pbDate(q.case))+' · '+clk(q.open)+' · '+sd(q.v/rWidth(F,q.case))+'</div>').join('');
+      return {head:z.label+' · '+tsLabel(ev),body};}
+    return {head:'Время × SD',body:pbRegionInspector(ctx,h)};
+  };
+  function rWidth(F,id){return F._pb.proof.sessions.find(w=>w.id===id).w;}
+  pbCards=function(g,ctx){if(!pullbackMode())return false;const F=pbMapContext(ctx).F;if(!F?._ts?.maps)return false;drawHeat('dcR',F,ctx,'R');drawHeat('dcX',F,ctx,'X');return true;};
+  function tsHills(F,ev){return F.zones[ev].zones.map((z,i)=>{const cases=new Map();for(const q of F.ev[ev].pts)if(tsMember(z,q)){if(!cases.has(q.m.id))cases.set(q.m.id,new Set());cases.get(q.m.id).add(q.t+2.5);}const pts=[];let pk=0,pkT=z.time_start;for(let t=z.time_start;t<=z.time_end+.01;t+=1.5){let d=0;for(const times of cases.values())d+=Math.max(...[...times].map(u=>Math.exp(-((t-u)**2)/(2*7**2))));pts.push([t,d]);if(d>pk){pk=d;pkT=t;}}return {z,i,pts,pk,pkT,b0:z.b0,b1:z.b1,cases:cases.size};});}
+  const tsOldLink=linkOf;
+  linkOf=function(ctx){const F=ctx.F,h=hv();if(!F?._ts?.maps||!h||!['pcell','tcell'].includes(h.k))return tsOldLink(ctx);
+    V.lk=null;const ev=h.ev||st.ev,axis=h.k==='pcell'?'price':'time',index=h.k==='pcell'?h.k0:h.b0,v=F._ts.maps[ev][axis+'_peaks'].find(v=>v.index===index);if(!v)return;
+    const target={event_id:ev,cell_mask:[[v.k0,v.b0]],time_start:F.f+15*v.b0,time_end:F.f+15*v.b1};
+    V.lk={ev,src:'pcell',x:V.X(F.f+15*v.b0+7.5),y:V.Y(F.u2p((v.k0+v.k1)/20)),b:v.b0,k0:v.k0,k1:v.k1,n:v.n_known,past:v.later===0,marker:targetMarker(F,ctx,ev,target)};
+    V.win={pA:null,pB:null,t0:target.time_start,t1:target.time_end,col:V.lk.marker.paint.color};
+  };
+  const tsOldTip=tipHtml;
+  const tsFinalFamily=F=>({...F,names:{...F.names,R:'Окончательный откат',X:'Окончательное расширение'}});
+  tipHtml=function(h,ctx){if(pullbackMode()&&h?.k==='hcell'){const F=pbMapContext(ctx).F,v=tsFind(F,h.ev,'region',[h.kk,h.kk+1],[F.f+15*h.b,F.f+15*(h.b+1)]);return '<div class="ih">'+h.ev+' · время × SD</div>'+tsRows(F,h.ev,'REGION',v);}if(pullbackMode()&&h?.k==='pt')return tsOldTip(h,{...ctx,F:tsFinalFamily(ctx.F)});return tsOldTip(h,ctx);};
+  const tsOldZoneTip=zoneTip;
+  zoneTip=function(F,ctx,h){return pullbackMode()?tsZoneInspector(ctx,h):tsOldZoneTip(F,ctx,h);};
+  // These function bindings are hoisted from panel.js; numerical BASE/NOW passports are kept as final-extreme context.
+  const tsOldNowHtml=nowHtml;
+  nowHtml=function(F,ctx){const html=tsOldNowHtml(F,ctx);return pullbackMode()?html.replace('Сейчас',tsLabel('context')):html;};
+  const tsOldDetBody=detBody;
+  detBody=function(ctx,o){if(pullbackMode()&&o&&['zone','pcell','tcell','area'].includes(o.k))return pbDetail(ctx,pbSemanticHit(o));if(pullbackMode()&&o?.k==='pt')return tsOldDetBody({...ctx,F:tsFinalFamily(ctx.F)},o);return tsOldDetBody(ctx,o);};
+  const tsOldMember=memberHtml;
+  memberHtml=function(F,m){return tsOldMember(pullbackMode()?tsFinalFamily(F):F,m);};
   // ---------- the right panel: design 22's place and manner (percentages only, every line a link to the chart) ----------
   // What it holds (spec §10.3): the family and its slice; the chosen event and its unknown mass; the DR outcome of the
   // family (one 100 %); the selected area; the pinned level; the pinned history session. In «Путь семьи»: the family's
@@ -6182,7 +6448,7 @@
       if (tf) out.push('<div class="p21-note" title="' + esc(lbl('FF:TODAY-PREFIX', 'title', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)) })) + '">' + tf + '</div>');
     }
     if (st.mode === 'path') out.push(columnHtml(F, ctx));
-    if (st.area && st.mode === 'bounds') out.push(pullbackMode() && st.area.ev !== 'X' ? pbAreaHtml(ctx) : areaHtml(F, ctx));
+    if (st.area && st.mode === 'bounds') out.push(pullbackMode() ? pbAreaHtml(ctx) : areaHtml(F, ctx));
     const h = st.pin;
     if (h && h.k === 'lvl' && h.l) out.push(levelHtml(F, ctx, h.l));
     if (h && h.k === 'pt' && F.M[h.i]) out.push(memberHtml(F, F.M[h.i]));
@@ -6630,7 +6896,7 @@
   // Page pixels of every layer and block in this frame, written into <script id="geo" type="application/json"> so a
   // headless browser can dump them next to its screenshot of the same address. Changes nothing on the screen.
   function geoDump(ctx) {
-    const F = ctx.F, r0 = cv.getBoundingClientRect(), ox = r0.left, oy = r0.top, s = ctx.s;
+    const F = pbMapContext(ctx).F, r0 = cv.getBoundingClientRect(), ox = r0.left, oy = r0.top, s = ctx.s;
     const P = (x, y) => [Math.round(ox + x), Math.round(oy + y)];
     const rect = el => { if (!el) return null; const r = el.getBoundingClientRect(); return r.width || r.height ? [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height)] : null; };
     const G = { url: location.hash, W: innerWidth, H: innerHeight, mode: st.mode, view: F ? F.view : null, dom: {}, chart: {}, panel: {}, det: {} };
@@ -6802,7 +7068,7 @@
     if (h && h.k === 'fcell' && d.zone === 'proj') { st.col = h.j; render(true); return; }
     if (h && (h.k === 'tcell' || h.k === 'pbtcell') && F) {                                  // a click on the time histogram: a window (for the band)
       const a = st.area && isFinite(st.area.k0) ? st.area : null, same = st.area && st.area.b0 === h.b0 && st.area.b1 === h.b1;
-      st.area = same ? (a ? { k0: a.k0, k1: a.k1, ev: a.ev } : null) : { k0: a ? a.k0 : -Infinity, k1: a ? a.k1 : Infinity, b0: h.b0, b1: h.b1, ev: a ? a.ev : st.ev };
+      st.area = same ? (a ? { k0: a.k0, k1: a.k1, ev: a.ev } : null) : { k0: a ? a.k0 : -Infinity, k1: a ? a.k1 : Infinity, b0: h.b0, b1: h.b1, ev: a ? a.ev : h.ev || st.ev };
       render(true); return;
     }
     if (h && ['pbzone','pbpcell','pbtcell','pbarea','pbunk'].includes(h.k)) { pin(h); return; }
@@ -7081,6 +7347,7 @@
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
   window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, reachOf, zoneLook, zoneClock, visitState, visitPaint, zonePaint, bandPaint, markerPaint, targetMarker, colorBindings: COLOR235, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+    timeSd:()=>({data:tsData(cur()),trace:TS_TRACE.slice(),profile:'DR-LAB-TIME-SD-1.0'}),emphOf,
     preOf, arriveOf, arriveBundle, candidateSelection, integration: () => ({ enabled: ICFG.enabled, trials: {...TRIAL}, ...IS, packet: scenePacket() }), setTrial,
     continuations:()=>({...CS,packet:continuationPacket(cur())}),pinContinuation,verifyContinuation,
     pullbacks:()=>({...PB,packet:pbPacket(cur()),mode:pullbackMode()}),pbHit:(x,y)=>pbHit(x,y),pbGeom:()=>{const c=cur(),r=pbPacket(c);return r?pbGeom(c,r):null;},mapContext:()=>pbMapContext(cur()),timeHills:()=>{const c=pbMapContext(cur());return c.F?{R:bandHills(c.F,c,'R'),X:bandHills(c.F,c,'X')}:null;},

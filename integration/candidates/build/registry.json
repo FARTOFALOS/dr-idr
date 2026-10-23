@@ -3953,6 +3953,1105 @@
     "subject_ru": "сессии этой семьи (F, один N), каждая со своими откатами перед обновлением своих вершин",
     "value_form": "BOUNDS_IF_UNKNOWN",
     "version": "0.1"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "DescriptiveClaim",
+    "estimand": "EST:TS-CORE-R",
+    "forbidden_readings_ru": [
+     "шанс разворота или продолжения сегодня",
+     "здесь закончится сегодняшний откат",
+     "доли созвездий делят 100 %",
+     "посещение области — завершённый откат",
+     "площадь свечения — членство"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "CF:TS-CORE-R",
+    "labels": [
+     {
+      "key": "core",
+      "surface": "INSPECTOR",
+      "text_ru": "локальное ядро · 15 минут × 0,3 SD",
+      "view": "ANY"
+     },
+     {
+      "key": "price",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этой SD-ячейки в одном окне 15 минут",
+      "view": "ANY"
+     },
+     {
+      "key": "time",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этих 15 минут в одной SD-ячейке",
+      "view": "ANY"
+     },
+     {
+      "key": "region",
+      "surface": "INSPECTOR",
+      "text_ru": "событие в выбранной области времени и цены",
+      "view": "ANY"
+     },
+     {
+      "key": "R",
+      "surface": "INSPECTOR",
+      "text_ru": "локальный откат до обновления",
+      "view": "ANY"
+     },
+     {
+      "key": "X",
+      "surface": "INSPECTOR",
+      "text_ru": "окончательное расширение",
+      "view": "ANY"
+     },
+     {
+      "key": "earlier",
+      "surface": "INSPECTOR",
+      "text_ru": "только ранние установленные события",
+      "view": "ANY"
+     },
+     {
+      "key": "later",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие позже среза",
+      "view": "ANY"
+     },
+     {
+      "key": "after",
+      "surface": "INSPECTOR",
+      "text_ru": "после откатов из этого ядра",
+      "view": "ANY"
+     },
+     {
+      "key": "context",
+      "surface": "INSPECTOR",
+      "text_ru": "Сейчас · итоговые R/X",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "INSPECTOR",
+      "text_ru": "нет ядра с достаточной локальной опорой",
+      "view": "ANY"
+     },
+     {
+      "key": "source",
+      "surface": "INSPECTOR",
+      "text_ru": "история тех же эпизодов; доля всей семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "IN_ZONES",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие в ядрах",
+      "view": "ANY"
+     },
+     {
+      "key": "OUTSIDE",
+      "surface": "INSPECTOR",
+      "text_ru": "установленные только вне ядер",
+      "view": "ANY"
+     },
+     {
+      "key": "UNKNOWN",
+      "surface": "INSPECTOR",
+      "text_ru": "без установленной координаты",
+      "view": "ANY"
+     },
+     {
+      "key": "NONE",
+      "surface": "INSPECTOR",
+      "text_ru": "без события / нет периода",
+      "view": "ANY"
+     }
+    ],
+    "note": "Words for the approved implementation plan; no C2/C3 and no automatic operator perceptual acceptance.",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C0",
+     "§12.6",
+     "K33"
+    ],
+    "statement_ru": "У {yes} из {N} сессий семьи локальный откат до обновления находится в указанной совместной области времени и SD; ещё у {unknown} присутствие не установлено.",
+    "subject_ru": "вся фиксированная семья F; локальный откат до обновления",
+    "value_form": "BOUNDS_IF_UNKNOWN",
+    "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "DescriptiveClaim",
+    "estimand": "EST:TS-PEAK-R",
+    "forbidden_readings_ru": [
+     "шанс разворота или продолжения сегодня",
+     "здесь закончится сегодняшний откат",
+     "доли созвездий делят 100 %",
+     "посещение области — завершённый откат",
+     "площадь свечения — членство"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "CF:TS-PEAK-R",
+    "labels": [
+     {
+      "key": "core",
+      "surface": "INSPECTOR",
+      "text_ru": "локальное ядро · 15 минут × 0,3 SD",
+      "view": "ANY"
+     },
+     {
+      "key": "price",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этой SD-ячейки в одном окне 15 минут",
+      "view": "ANY"
+     },
+     {
+      "key": "time",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этих 15 минут в одной SD-ячейке",
+      "view": "ANY"
+     },
+     {
+      "key": "region",
+      "surface": "INSPECTOR",
+      "text_ru": "событие в выбранной области времени и цены",
+      "view": "ANY"
+     },
+     {
+      "key": "R",
+      "surface": "INSPECTOR",
+      "text_ru": "локальный откат до обновления",
+      "view": "ANY"
+     },
+     {
+      "key": "X",
+      "surface": "INSPECTOR",
+      "text_ru": "окончательное расширение",
+      "view": "ANY"
+     },
+     {
+      "key": "earlier",
+      "surface": "INSPECTOR",
+      "text_ru": "только ранние установленные события",
+      "view": "ANY"
+     },
+     {
+      "key": "later",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие позже среза",
+      "view": "ANY"
+     },
+     {
+      "key": "after",
+      "surface": "INSPECTOR",
+      "text_ru": "после откатов из этого ядра",
+      "view": "ANY"
+     },
+     {
+      "key": "context",
+      "surface": "INSPECTOR",
+      "text_ru": "Сейчас · итоговые R/X",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "INSPECTOR",
+      "text_ru": "нет ядра с достаточной локальной опорой",
+      "view": "ANY"
+     },
+     {
+      "key": "source",
+      "surface": "INSPECTOR",
+      "text_ru": "история тех же эпизодов; доля всей семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "IN_ZONES",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие в ядрах",
+      "view": "ANY"
+     },
+     {
+      "key": "OUTSIDE",
+      "surface": "INSPECTOR",
+      "text_ru": "установленные только вне ядер",
+      "view": "ANY"
+     },
+     {
+      "key": "UNKNOWN",
+      "surface": "INSPECTOR",
+      "text_ru": "без установленной координаты",
+      "view": "ANY"
+     },
+     {
+      "key": "NONE",
+      "surface": "INSPECTOR",
+      "text_ru": "без события / нет периода",
+      "view": "ANY"
+     }
+    ],
+    "note": "Words for the approved implementation plan; no C2/C3 and no automatic operator perceptual acceptance.",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C0",
+     "§12.6",
+     "K33"
+    ],
+    "statement_ru": "У {yes} из {N} сессий семьи локальный откат до обновления находится в указанной совместной области времени и SD; ещё у {unknown} присутствие не установлено.",
+    "subject_ru": "вся фиксированная семья F; локальный откат до обновления",
+    "value_form": "BOUNDS_IF_UNKNOWN",
+    "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "DescriptiveClaim",
+    "estimand": "EST:TS-REGION-R",
+    "forbidden_readings_ru": [
+     "шанс разворота или продолжения сегодня",
+     "здесь закончится сегодняшний откат",
+     "доли созвездий делят 100 %",
+     "посещение области — завершённый откат",
+     "площадь свечения — членство"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "CF:TS-REGION-R",
+    "labels": [
+     {
+      "key": "core",
+      "surface": "INSPECTOR",
+      "text_ru": "локальное ядро · 15 минут × 0,3 SD",
+      "view": "ANY"
+     },
+     {
+      "key": "price",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этой SD-ячейки в одном окне 15 минут",
+      "view": "ANY"
+     },
+     {
+      "key": "time",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этих 15 минут в одной SD-ячейке",
+      "view": "ANY"
+     },
+     {
+      "key": "region",
+      "surface": "INSPECTOR",
+      "text_ru": "событие в выбранной области времени и цены",
+      "view": "ANY"
+     },
+     {
+      "key": "R",
+      "surface": "INSPECTOR",
+      "text_ru": "локальный откат до обновления",
+      "view": "ANY"
+     },
+     {
+      "key": "X",
+      "surface": "INSPECTOR",
+      "text_ru": "окончательное расширение",
+      "view": "ANY"
+     },
+     {
+      "key": "earlier",
+      "surface": "INSPECTOR",
+      "text_ru": "только ранние установленные события",
+      "view": "ANY"
+     },
+     {
+      "key": "later",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие позже среза",
+      "view": "ANY"
+     },
+     {
+      "key": "after",
+      "surface": "INSPECTOR",
+      "text_ru": "после откатов из этого ядра",
+      "view": "ANY"
+     },
+     {
+      "key": "context",
+      "surface": "INSPECTOR",
+      "text_ru": "Сейчас · итоговые R/X",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "INSPECTOR",
+      "text_ru": "нет ядра с достаточной локальной опорой",
+      "view": "ANY"
+     },
+     {
+      "key": "source",
+      "surface": "INSPECTOR",
+      "text_ru": "история тех же эпизодов; доля всей семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "IN_ZONES",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие в ядрах",
+      "view": "ANY"
+     },
+     {
+      "key": "OUTSIDE",
+      "surface": "INSPECTOR",
+      "text_ru": "установленные только вне ядер",
+      "view": "ANY"
+     },
+     {
+      "key": "UNKNOWN",
+      "surface": "INSPECTOR",
+      "text_ru": "без установленной координаты",
+      "view": "ANY"
+     },
+     {
+      "key": "NONE",
+      "surface": "INSPECTOR",
+      "text_ru": "без события / нет периода",
+      "view": "ANY"
+     }
+    ],
+    "note": "Words for the approved implementation plan; no C2/C3 and no automatic operator perceptual acceptance.",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C0",
+     "§12.6",
+     "K33"
+    ],
+    "statement_ru": "У {yes} из {N} сессий семьи локальный откат до обновления находится в указанной совместной области времени и SD; ещё у {unknown} присутствие не установлено.",
+    "subject_ru": "вся фиксированная семья F; локальный откат до обновления",
+    "value_form": "BOUNDS_IF_UNKNOWN",
+    "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "DescriptiveClaim",
+    "estimand": "EST:TS-SESSIONS-R",
+    "forbidden_readings_ru": [
+     "сессии без откатов — ошибка данных",
+     "вне созвездий — нет откатов"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "CF:TS-SESSIONS-R",
+    "labels": [
+     {
+      "key": "core",
+      "surface": "INSPECTOR",
+      "text_ru": "локальное ядро · 15 минут × 0,3 SD",
+      "view": "ANY"
+     },
+     {
+      "key": "price",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этой SD-ячейки в одном окне 15 минут",
+      "view": "ANY"
+     },
+     {
+      "key": "time",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этих 15 минут в одной SD-ячейке",
+      "view": "ANY"
+     },
+     {
+      "key": "region",
+      "surface": "INSPECTOR",
+      "text_ru": "событие в выбранной области времени и цены",
+      "view": "ANY"
+     },
+     {
+      "key": "R",
+      "surface": "INSPECTOR",
+      "text_ru": "локальный откат до обновления",
+      "view": "ANY"
+     },
+     {
+      "key": "X",
+      "surface": "INSPECTOR",
+      "text_ru": "окончательное расширение",
+      "view": "ANY"
+     },
+     {
+      "key": "earlier",
+      "surface": "INSPECTOR",
+      "text_ru": "только ранние установленные события",
+      "view": "ANY"
+     },
+     {
+      "key": "later",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие позже среза",
+      "view": "ANY"
+     },
+     {
+      "key": "after",
+      "surface": "INSPECTOR",
+      "text_ru": "после откатов из этого ядра",
+      "view": "ANY"
+     },
+     {
+      "key": "context",
+      "surface": "INSPECTOR",
+      "text_ru": "Сейчас · итоговые R/X",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "INSPECTOR",
+      "text_ru": "нет ядра с достаточной локальной опорой",
+      "view": "ANY"
+     },
+     {
+      "key": "source",
+      "surface": "INSPECTOR",
+      "text_ru": "история тех же эпизодов; доля всей семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "IN_ZONES",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие в ядрах",
+      "view": "ANY"
+     },
+     {
+      "key": "OUTSIDE",
+      "surface": "INSPECTOR",
+      "text_ru": "установленные только вне ядер",
+      "view": "ANY"
+     },
+     {
+      "key": "UNKNOWN",
+      "surface": "INSPECTOR",
+      "text_ru": "без установленной координаты",
+      "view": "ANY"
+     },
+     {
+      "key": "NONE",
+      "surface": "INSPECTOR",
+      "text_ru": "без события / нет периода",
+      "view": "ANY"
+     }
+    ],
+    "note": "Words for the approved implementation plan; no C2/C3 and no automatic operator perceptual acceptance.",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C0",
+     "§12.6"
+    ],
+    "statement_ru": "Из {N} сессий: в локальных ядрах {in_zones}, установленные только вне ядер {outside}, неизвестно {unknown}, без события {none}.",
+    "subject_ru": "вся фиксированная семья F; локальный откат до обновления",
+    "value_form": "CATEGORY_SHARES",
+    "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "DescriptiveClaim",
+    "estimand": "EST:TS-CORE-X",
+    "forbidden_readings_ru": [
+     "шанс разворота или продолжения сегодня",
+     "здесь закончится сегодняшний откат",
+     "доли созвездий делят 100 %",
+     "посещение области — завершённый откат",
+     "площадь свечения — членство"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "CF:TS-CORE-X",
+    "labels": [
+     {
+      "key": "core",
+      "surface": "INSPECTOR",
+      "text_ru": "локальное ядро · 15 минут × 0,3 SD",
+      "view": "ANY"
+     },
+     {
+      "key": "price",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этой SD-ячейки в одном окне 15 минут",
+      "view": "ANY"
+     },
+     {
+      "key": "time",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этих 15 минут в одной SD-ячейке",
+      "view": "ANY"
+     },
+     {
+      "key": "region",
+      "surface": "INSPECTOR",
+      "text_ru": "событие в выбранной области времени и цены",
+      "view": "ANY"
+     },
+     {
+      "key": "R",
+      "surface": "INSPECTOR",
+      "text_ru": "локальный откат до обновления",
+      "view": "ANY"
+     },
+     {
+      "key": "X",
+      "surface": "INSPECTOR",
+      "text_ru": "окончательное расширение",
+      "view": "ANY"
+     },
+     {
+      "key": "earlier",
+      "surface": "INSPECTOR",
+      "text_ru": "только ранние установленные события",
+      "view": "ANY"
+     },
+     {
+      "key": "later",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие позже среза",
+      "view": "ANY"
+     },
+     {
+      "key": "after",
+      "surface": "INSPECTOR",
+      "text_ru": "после откатов из этого ядра",
+      "view": "ANY"
+     },
+     {
+      "key": "context",
+      "surface": "INSPECTOR",
+      "text_ru": "Сейчас · итоговые R/X",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "INSPECTOR",
+      "text_ru": "нет ядра с достаточной локальной опорой",
+      "view": "ANY"
+     },
+     {
+      "key": "source",
+      "surface": "INSPECTOR",
+      "text_ru": "история тех же эпизодов; доля всей семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "IN_ZONES",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие в ядрах",
+      "view": "ANY"
+     },
+     {
+      "key": "OUTSIDE",
+      "surface": "INSPECTOR",
+      "text_ru": "установленные только вне ядер",
+      "view": "ANY"
+     },
+     {
+      "key": "UNKNOWN",
+      "surface": "INSPECTOR",
+      "text_ru": "без установленной координаты",
+      "view": "ANY"
+     },
+     {
+      "key": "NONE",
+      "surface": "INSPECTOR",
+      "text_ru": "без события / нет периода",
+      "view": "ANY"
+     }
+    ],
+    "note": "Words for the approved implementation plan; no C2/C3 and no automatic operator perceptual acceptance.",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C0",
+     "§12.6",
+     "K33"
+    ],
+    "statement_ru": "У {yes} из {N} сессий семьи окончательное расширение находится в указанной совместной области времени и SD; ещё у {unknown} присутствие не установлено.",
+    "subject_ru": "вся фиксированная семья F; окончательное расширение",
+    "value_form": "BOUNDS_IF_UNKNOWN",
+    "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "DescriptiveClaim",
+    "estimand": "EST:TS-PEAK-X",
+    "forbidden_readings_ru": [
+     "шанс разворота или продолжения сегодня",
+     "здесь закончится сегодняшний откат",
+     "доли созвездий делят 100 %",
+     "посещение области — завершённый откат",
+     "площадь свечения — членство"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "CF:TS-PEAK-X",
+    "labels": [
+     {
+      "key": "core",
+      "surface": "INSPECTOR",
+      "text_ru": "локальное ядро · 15 минут × 0,3 SD",
+      "view": "ANY"
+     },
+     {
+      "key": "price",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этой SD-ячейки в одном окне 15 минут",
+      "view": "ANY"
+     },
+     {
+      "key": "time",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этих 15 минут в одной SD-ячейке",
+      "view": "ANY"
+     },
+     {
+      "key": "region",
+      "surface": "INSPECTOR",
+      "text_ru": "событие в выбранной области времени и цены",
+      "view": "ANY"
+     },
+     {
+      "key": "R",
+      "surface": "INSPECTOR",
+      "text_ru": "локальный откат до обновления",
+      "view": "ANY"
+     },
+     {
+      "key": "X",
+      "surface": "INSPECTOR",
+      "text_ru": "окончательное расширение",
+      "view": "ANY"
+     },
+     {
+      "key": "earlier",
+      "surface": "INSPECTOR",
+      "text_ru": "только ранние установленные события",
+      "view": "ANY"
+     },
+     {
+      "key": "later",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие позже среза",
+      "view": "ANY"
+     },
+     {
+      "key": "after",
+      "surface": "INSPECTOR",
+      "text_ru": "после откатов из этого ядра",
+      "view": "ANY"
+     },
+     {
+      "key": "context",
+      "surface": "INSPECTOR",
+      "text_ru": "Сейчас · итоговые R/X",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "INSPECTOR",
+      "text_ru": "нет ядра с достаточной локальной опорой",
+      "view": "ANY"
+     },
+     {
+      "key": "source",
+      "surface": "INSPECTOR",
+      "text_ru": "история тех же эпизодов; доля всей семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "IN_ZONES",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие в ядрах",
+      "view": "ANY"
+     },
+     {
+      "key": "OUTSIDE",
+      "surface": "INSPECTOR",
+      "text_ru": "установленные только вне ядер",
+      "view": "ANY"
+     },
+     {
+      "key": "UNKNOWN",
+      "surface": "INSPECTOR",
+      "text_ru": "без установленной координаты",
+      "view": "ANY"
+     },
+     {
+      "key": "NONE",
+      "surface": "INSPECTOR",
+      "text_ru": "без события / нет периода",
+      "view": "ANY"
+     }
+    ],
+    "note": "Words for the approved implementation plan; no C2/C3 and no automatic operator perceptual acceptance.",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C0",
+     "§12.6",
+     "K33"
+    ],
+    "statement_ru": "У {yes} из {N} сессий семьи окончательное расширение находится в указанной совместной области времени и SD; ещё у {unknown} присутствие не установлено.",
+    "subject_ru": "вся фиксированная семья F; окончательное расширение",
+    "value_form": "BOUNDS_IF_UNKNOWN",
+    "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "DescriptiveClaim",
+    "estimand": "EST:TS-REGION-X",
+    "forbidden_readings_ru": [
+     "шанс разворота или продолжения сегодня",
+     "здесь закончится сегодняшний откат",
+     "доли созвездий делят 100 %",
+     "посещение области — завершённый откат",
+     "площадь свечения — членство"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "CF:TS-REGION-X",
+    "labels": [
+     {
+      "key": "core",
+      "surface": "INSPECTOR",
+      "text_ru": "локальное ядро · 15 минут × 0,3 SD",
+      "view": "ANY"
+     },
+     {
+      "key": "price",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этой SD-ячейки в одном окне 15 минут",
+      "view": "ANY"
+     },
+     {
+      "key": "time",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этих 15 минут в одной SD-ячейке",
+      "view": "ANY"
+     },
+     {
+      "key": "region",
+      "surface": "INSPECTOR",
+      "text_ru": "событие в выбранной области времени и цены",
+      "view": "ANY"
+     },
+     {
+      "key": "R",
+      "surface": "INSPECTOR",
+      "text_ru": "локальный откат до обновления",
+      "view": "ANY"
+     },
+     {
+      "key": "X",
+      "surface": "INSPECTOR",
+      "text_ru": "окончательное расширение",
+      "view": "ANY"
+     },
+     {
+      "key": "earlier",
+      "surface": "INSPECTOR",
+      "text_ru": "только ранние установленные события",
+      "view": "ANY"
+     },
+     {
+      "key": "later",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие позже среза",
+      "view": "ANY"
+     },
+     {
+      "key": "after",
+      "surface": "INSPECTOR",
+      "text_ru": "после откатов из этого ядра",
+      "view": "ANY"
+     },
+     {
+      "key": "context",
+      "surface": "INSPECTOR",
+      "text_ru": "Сейчас · итоговые R/X",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "INSPECTOR",
+      "text_ru": "нет ядра с достаточной локальной опорой",
+      "view": "ANY"
+     },
+     {
+      "key": "source",
+      "surface": "INSPECTOR",
+      "text_ru": "история тех же эпизодов; доля всей семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "IN_ZONES",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие в ядрах",
+      "view": "ANY"
+     },
+     {
+      "key": "OUTSIDE",
+      "surface": "INSPECTOR",
+      "text_ru": "установленные только вне ядер",
+      "view": "ANY"
+     },
+     {
+      "key": "UNKNOWN",
+      "surface": "INSPECTOR",
+      "text_ru": "без установленной координаты",
+      "view": "ANY"
+     },
+     {
+      "key": "NONE",
+      "surface": "INSPECTOR",
+      "text_ru": "без события / нет периода",
+      "view": "ANY"
+     }
+    ],
+    "note": "Words for the approved implementation plan; no C2/C3 and no automatic operator perceptual acceptance.",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C0",
+     "§12.6",
+     "K33"
+    ],
+    "statement_ru": "У {yes} из {N} сессий семьи окончательное расширение находится в указанной совместной области времени и SD; ещё у {unknown} присутствие не установлено.",
+    "subject_ru": "вся фиксированная семья F; окончательное расширение",
+    "value_form": "BOUNDS_IF_UNKNOWN",
+    "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "DescriptiveClaim",
+    "estimand": "EST:TS-SESSIONS-X",
+    "forbidden_readings_ru": [
+     "сессии без откатов — ошибка данных",
+     "вне созвездий — нет откатов"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "CF:TS-SESSIONS-X",
+    "labels": [
+     {
+      "key": "core",
+      "surface": "INSPECTOR",
+      "text_ru": "локальное ядро · 15 минут × 0,3 SD",
+      "view": "ANY"
+     },
+     {
+      "key": "price",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этой SD-ячейки в одном окне 15 минут",
+      "view": "ANY"
+     },
+     {
+      "key": "time",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этих 15 минут в одной SD-ячейке",
+      "view": "ANY"
+     },
+     {
+      "key": "region",
+      "surface": "INSPECTOR",
+      "text_ru": "событие в выбранной области времени и цены",
+      "view": "ANY"
+     },
+     {
+      "key": "R",
+      "surface": "INSPECTOR",
+      "text_ru": "локальный откат до обновления",
+      "view": "ANY"
+     },
+     {
+      "key": "X",
+      "surface": "INSPECTOR",
+      "text_ru": "окончательное расширение",
+      "view": "ANY"
+     },
+     {
+      "key": "earlier",
+      "surface": "INSPECTOR",
+      "text_ru": "только ранние установленные события",
+      "view": "ANY"
+     },
+     {
+      "key": "later",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие позже среза",
+      "view": "ANY"
+     },
+     {
+      "key": "after",
+      "surface": "INSPECTOR",
+      "text_ru": "после откатов из этого ядра",
+      "view": "ANY"
+     },
+     {
+      "key": "context",
+      "surface": "INSPECTOR",
+      "text_ru": "Сейчас · итоговые R/X",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "INSPECTOR",
+      "text_ru": "нет ядра с достаточной локальной опорой",
+      "view": "ANY"
+     },
+     {
+      "key": "source",
+      "surface": "INSPECTOR",
+      "text_ru": "история тех же эпизодов; доля всей семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "IN_ZONES",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие в ядрах",
+      "view": "ANY"
+     },
+     {
+      "key": "OUTSIDE",
+      "surface": "INSPECTOR",
+      "text_ru": "установленные только вне ядер",
+      "view": "ANY"
+     },
+     {
+      "key": "UNKNOWN",
+      "surface": "INSPECTOR",
+      "text_ru": "без установленной координаты",
+      "view": "ANY"
+     },
+     {
+      "key": "NONE",
+      "surface": "INSPECTOR",
+      "text_ru": "без события / нет периода",
+      "view": "ANY"
+     }
+    ],
+    "note": "Words for the approved implementation plan; no C2/C3 and no automatic operator perceptual acceptance.",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C0",
+     "§12.6"
+    ],
+    "statement_ru": "Из {N} сессий: в локальных ядрах {in_zones}, установленные только вне ядер {outside}, неизвестно {unknown}, без события {none}.",
+    "subject_ru": "вся фиксированная семья F; окончательное расширение",
+    "value_form": "CATEGORY_SHARES",
+    "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "DescriptiveClaim",
+    "estimand": "EST:TS-LINK",
+    "forbidden_readings_ru": [
+     "шанс разворота или продолжения сегодня",
+     "здесь закончится сегодняшний откат",
+     "доли созвездий делят 100 %",
+     "посещение области — завершённый откат",
+     "площадь свечения — членство"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "CF:TS-LINK",
+    "labels": [
+     {
+      "key": "core",
+      "surface": "INSPECTOR",
+      "text_ru": "локальное ядро · 15 минут × 0,3 SD",
+      "view": "ANY"
+     },
+     {
+      "key": "price",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этой SD-ячейки в одном окне 15 минут",
+      "view": "ANY"
+     },
+     {
+      "key": "time",
+      "surface": "INSPECTOR",
+      "text_ru": "пик этих 15 минут в одной SD-ячейке",
+      "view": "ANY"
+     },
+     {
+      "key": "region",
+      "surface": "INSPECTOR",
+      "text_ru": "событие в выбранной области времени и цены",
+      "view": "ANY"
+     },
+     {
+      "key": "R",
+      "surface": "INSPECTOR",
+      "text_ru": "локальный откат до обновления",
+      "view": "ANY"
+     },
+     {
+      "key": "X",
+      "surface": "INSPECTOR",
+      "text_ru": "окончательное расширение",
+      "view": "ANY"
+     },
+     {
+      "key": "earlier",
+      "surface": "INSPECTOR",
+      "text_ru": "только ранние установленные события",
+      "view": "ANY"
+     },
+     {
+      "key": "later",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие позже среза",
+      "view": "ANY"
+     },
+     {
+      "key": "after",
+      "surface": "INSPECTOR",
+      "text_ru": "после откатов из этого ядра",
+      "view": "ANY"
+     },
+     {
+      "key": "context",
+      "surface": "INSPECTOR",
+      "text_ru": "Сейчас · итоговые R/X",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "INSPECTOR",
+      "text_ru": "нет ядра с достаточной локальной опорой",
+      "view": "ANY"
+     },
+     {
+      "key": "source",
+      "surface": "INSPECTOR",
+      "text_ru": "история тех же эпизодов; доля всей семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "IN_ZONES",
+      "surface": "INSPECTOR",
+      "text_ru": "есть установленное событие в ядрах",
+      "view": "ANY"
+     },
+     {
+      "key": "OUTSIDE",
+      "surface": "INSPECTOR",
+      "text_ru": "установленные только вне ядер",
+      "view": "ANY"
+     },
+     {
+      "key": "UNKNOWN",
+      "surface": "INSPECTOR",
+      "text_ru": "без установленной координаты",
+      "view": "ANY"
+     },
+     {
+      "key": "NONE",
+      "surface": "INSPECTOR",
+      "text_ru": "без события / нет периода",
+      "view": "ANY"
+     }
+    ],
+    "note": "Words for the approved implementation plan; no C2/C3 and no automatic operator perceptual acceptance.",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C0",
+     "§12.6",
+     "K33"
+    ],
+    "statement_ru": "У {yes} из {N} сессий семьи после отката из исходного ядра тот же путь посетил целевую область в её окне; ещё у {unknown} цепочка не установлена.",
+    "subject_ru": "вся фиксированная семья F; локальный откат до обновления",
+    "value_form": "BOUNDS_IF_UNKNOWN",
+    "version": "1.0"
    }
   ],
   "comparisons": [
@@ -4230,6 +5329,28 @@
     ],
     "title_ru": "zone-map-3 над точками откатов, один голос сессии",
     "version": "0.1"
+   },
+   {
+    "density_rule": "unique case IDs in k-1,k,k+1 of the SAME b; M5 witnesses retained",
+    "diagnostics": [
+     "local historical support; no inference of predictive advantage"
+    ],
+    "frozen": true,
+    "grid": "GRID:K10-J15-1",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "ALG:TIME-SD-CORE-1",
+    "min_support_rule": "max(4,ceil(N/20)); unknown is kept in N and in bounds, never used to promote a peak",
+    "order_rule": "time b, descending established support, centre nearest u=0, lower k; separate R and X",
+    "region_rule": "local maximum against adjacent price centres/time windows; compare neighbours but never join their cells; equal adjacent price peaks in same b: centre nearest u=0 then lower k; equal time peaks remain separate",
+    "sc_ref": [
+     "P3"
+    ],
+    "seed_rule": "deterministic, no random procedure",
+    "source_refs": [
+     "SRC:TIME-SD-235"
+    ],
+    "title_ru": "Локальные ядра 0,3 SD × 15 минут",
+    "version": "1.0"
    }
   ],
   "editions": [
@@ -6249,6 +7370,626 @@
     ],
     "surface": "API:/api/integration/pullbacks",
     "target": "EST:PB-REGION"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.PB.0",
+    "path": "proof.definition.{default_scale,min_abs,min_frac_num,min_frac_den}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.PB.1",
+    "path": "proof.definition.scales[*]",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.PB.2",
+    "path": "proof.context.{cut,formed,end}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "DENOMINATOR",
+    "id": "FE:TS.PB.3",
+    "path": "proof.context.N",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.PB.4",
+    "path": "proof.grid[*]",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "IDENTIFIER",
+    "id": "FE:TS.PB.5",
+    "path": "proof.first_i",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "CASE_RECORD",
+    "id": "FE:TS.PB.6",
+    "path": "proof.sessions[*].{w,direction,edge_ticks,oppv,act_i,first_i,gap}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.PB.7",
+    "path": "proof.sessions[*].{act,brk}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "CASE_RECORD",
+    "id": "FE:TS.PB.8",
+    "path": "proof.sessions[*].bars[*][*]",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "MEASUREMENT",
+    "id": "FE:TS.PB.9",
+    "path": "proof.episodes[*].{a,b,h,kt,kn,jb,jl,L,lo,hi,gap,cap}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.PB.10",
+    "path": "proof.episodes[*].{h_open,b_close,l_open}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "MEASUREMENT",
+    "id": "FE:TS.PB.11",
+    "path": "proof.episodes[*].cand[*][*]",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "MEASUREMENT",
+    "id": "FE:TS.PB.12",
+    "path": "proof.episodes[*].span[*]",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "MEASUREMENT",
+    "id": "FE:TS.PB.13",
+    "path": "proof.points[*].{i,v,k,b,kt,kn}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.PB.14",
+    "path": "proof.points[*].open",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.PB.15",
+    "path": "proof.maps.{*}.{scale,need}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.PB.16",
+    "path": "proof.maps.{*}.{points,episodes}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.PB.17",
+    "path": "proof.maps.{*}.sessions.{IN_ZONES,OUTSIDE,UNKNOWN,NONE}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.PB.18",
+    "path": "proof.maps.{*}.zones[*].{apex_D,n_known,n_possible,n_points,n_episodes}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.PB.19",
+    "path": "proof.maps.{*}.zones[*].{price_low,price_high}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.PB.20",
+    "path": "proof.maps.{*}.zones[*].{time_start,time_end}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.PB.21",
+    "path": "proof.maps.{*}.zones[*].cell_mask[*][*]",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.PB.22",
+    "path": "proof.maps.{*}.zones[*].anchor[*]",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.PB.23",
+    "path": "proof.today.{cut,act}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "PREFIX_STATE",
+    "id": "FE:TS.PB.24",
+    "path": "proof.today.{direction,w,edge_ticks,oppv}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "OBSERVATION",
+    "id": "FE:TS.PB.25",
+    "path": "proof.today.bars[*][*]",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "PREFIX_STATE",
+    "id": "FE:TS.PB.26",
+    "path": "proof.today.episodes[*].{a,b,h,kt,kn,jb,jl,L,k,cb,lo,hi,gap,cap}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.PB.27",
+    "path": "proof.today.episodes[*].{h_open,b_close,l_open}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "PREFIX_STATE",
+    "id": "FE:TS.PB.28",
+    "path": "proof.today.episodes[*].cand[*][*]",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "PREFIX_STATE",
+    "id": "FE:TS.PB.29",
+    "path": "proof.today.episodes[*].span[*]",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.PB.30",
+    "path": "proof.today.zones.{*}[*].visit.close",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.PB.31",
+    "path": "proof.today.zones.{*}[*].completion.{b_close,h_open}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "DR-LAB-PB-0.1 proof: definition, context, witnesses, episodes, points, constellations, today"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.PB.32",
+    "path": "proof.marginals.{*}[*].{k0,k1,b0,b1}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "EST:PB-REGION"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.PB.33",
+    "path": "proof.marginals.{*}[*].{n_known,n_possible,earlier,later}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "EST:PB-REGION"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.34",
+    "path": "proof.time_sd.scale",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "PB locality scale; X remains FINAL-X"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.35",
+    "path": "proof.time_sd.definition.{time_minutes,price_cells,price_cell_num,price_cell_den,atom_minutes,min_abs,min_frac_num,min_frac_den}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "ALG:TIME-SD-CORE-1 frozen constants"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.36",
+    "path": "proof.time_sd.maps.{*}.need",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "support floor"
+   },
+   {
+    "field_kind": "MEASUREMENT",
+    "id": "FE:TS.37",
+    "path": "proof.time_sd.maps.{*}.points[*].{i,v,k,b,kt,kn,open}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "verified PB-L or accepted FINAL-X coordinates"
+   },
+   {
+    "field_kind": "MEASUREMENT",
+    "id": "FE:TS.38",
+    "path": "proof.time_sd.maps.{*}.m5[*].{k,open}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "M5 x 0.1 IDR cell"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.39",
+    "path": "proof.time_sd.maps.{*}.m5[*].n_known",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "unique session support in M5 cell"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.40",
+    "path": "proof.time_sd.maps.{*}.cells[*].{k0,k1,b0,b1,k,b,index}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "exact cell mask / chosen joint cell; original second coordinate is retained"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.41",
+    "path": "proof.time_sd.maps.{*}.cells[*].{n_known,n_possible,earlier,later}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "EST:TS-* same-region unique membership, unknown and nonoverlapping known clock parts"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.42",
+    "path": "proof.time_sd.maps.{*}.cores[*].{k0,k1,b0,b1,k,b,index}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "exact cell mask / chosen joint cell; original second coordinate is retained"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.43",
+    "path": "proof.time_sd.maps.{*}.cores[*].{n_known,n_possible,earlier,later}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "EST:TS-* same-region unique membership, unknown and nonoverlapping known clock parts"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.44",
+    "path": "proof.time_sd.maps.{*}.price_peaks[*].{k0,k1,b0,b1,k,b,index}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "exact cell mask / chosen joint cell; original second coordinate is retained"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.45",
+    "path": "proof.time_sd.maps.{*}.price_peaks[*].{n_known,n_possible,earlier,later}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "EST:TS-* same-region unique membership, unknown and nonoverlapping known clock parts"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.46",
+    "path": "proof.time_sd.maps.{*}.time_peaks[*].{k0,k1,b0,b1,k,b,index}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "exact cell mask / chosen joint cell; original second coordinate is retained"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.47",
+    "path": "proof.time_sd.maps.{*}.time_peaks[*].{n_known,n_possible,earlier,later}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "EST:TS-* same-region unique membership, unknown and nonoverlapping known clock parts"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.48",
+    "path": "proof.time_sd.maps.{*}.regions[*].{k0,k1,b0,b1,k,b,index}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "exact cell mask / chosen joint cell; original second coordinate is retained"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.49",
+    "path": "proof.time_sd.maps.{*}.regions[*].{n_known,n_possible,earlier,later}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "EST:TS-* same-region unique membership, unknown and nonoverlapping known clock parts"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.50",
+    "path": "proof.time_sd.maps.{*}.cores[*].{apex_D,n_points,n_episodes}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "core support and retained witnesses; not additional votes"
+   },
+   {
+    "field_kind": "MEASUREMENT",
+    "id": "FE:TS.51",
+    "path": "proof.time_sd.maps.{*}.cores[*].{price_low,price_high,time_start,time_end}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "fixed core bounds"
+   },
+   {
+    "field_kind": "MEASUREMENT",
+    "id": "FE:TS.52",
+    "path": "proof.time_sd.maps.{*}.cores[*].anchor[*]",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "canonical core centre"
+   },
+   {
+    "field_kind": "MEASUREMENT",
+    "id": "FE:TS.53",
+    "path": "proof.time_sd.maps.{*}.cores[*].cell_mask[*][*]",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "exact finite mask"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.54",
+    "path": "proof.time_sd.maps.{*}.sessions.{IN_ZONES,OUTSIDE,UNKNOWN,NONE}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "EST:TS-SESSIONS-* categories of N"
+   },
+   {
+    "field_kind": "PARAMETER",
+    "id": "FE:TS.55",
+    "path": "proof.time_sd.links[*].{k0,k1,b0,b1}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "target joint region after the source L"
+   },
+   {
+    "field_kind": "SUPPORT_COUNT",
+    "id": "FE:TS.56",
+    "path": "proof.time_sd.links[*].{n_known,n_possible}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "EST:TS-LINK unique cases; full F denominator"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.57",
+    "path": "proof.time_sd.links[*].witnesses[*].{l_open,target_open,target_close}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "same-case chronological witness after L close"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.58",
+    "path": "proof.time_sd.today.R[*].visit.{close,eligible}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "exact current closed-M5 visit; eligible slots distinguish no period"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.59",
+    "path": "proof.time_sd.today.R[*].completion.{b_close,h_open}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "own completed PB episode, never mere price visit"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.60",
+    "path": "proof.time_sd.today.X[*].visit.{close,eligible}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "exact current closed-M5 visit; eligible slots distinguish no period"
+   },
+   {
+    "field_kind": "TIME",
+    "id": "FE:TS.61",
+    "path": "proof.time_sd.today.X[*].completion.{b_close,h_open}",
+    "sc_ref": [
+     "§12.3"
+    ],
+    "surface": "API:/api/integration/time-sd",
+    "target": "own completed PB episode, never mere price visit"
    }
   ],
   "estimands": [
@@ -8978,6 +10719,545 @@
      "SRC:CODE-PB24"
     ],
     "version": "0.1"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "EST:TS-CORE-R",
+    "parameters": [
+     {
+      "meaning_ru": "scale — объявленная область или правило выбора",
+      "name": "scale",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k0 — объявленная область или правило выбора",
+      "name": "k0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k1 — объявленная область или правило выбора",
+      "name": "k1",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b0 — объявленная область или правило выбора",
+      "name": "b0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b1 — объявленная область или правило выбора",
+      "name": "b1",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "ядро этой версии/снимка/типа",
+      "name": "zone_id",
+      "parameter_kind": "ZONE_ID"
+     }
+    ],
+    "profile": "PROFILE:TIME-SD-235",
+    "q1_formalised_part_ru": "локальный откат до обновления: доля уникальных сессий в точном ядре 0,3 SD × 15 минут",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION",
+    "q4_case_set": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1",
+     "CS:F-BREAK-1",
+     "CS:F-BREAK-ALL-1"
+    ],
+    "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+    "q5_outcome": "OUT:PB-L-1",
+    "q5_region": "REG:TIME-SD-CORE",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "общие часы ET; события после собственной активации до конца блока; clock разделяет установленные события по open+5 <= cut; повторяемый PB имеет один голос сессии в области",
+    "q7_measure": "SHARE",
+    "q8_order_ru": "точка — установленные / N; при неустановленных — границы [установленные / N; (установленные + возможные) / N]; созвездия могут делить сессии: доли не складываются в 100 %",
+    "q8_unknown": "BINARY_BOUNDS_OVER_D",
+    "q8_weights": "NONE",
+    "question": "Q:TIME-SD-235",
+    "sc_ref": [
+     "T1",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:TIME-SD-235"
+    ],
+    "version": "1.0"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "EST:TS-PEAK-R",
+    "parameters": [
+     {
+      "meaning_ru": "scale — объявленная область или правило выбора",
+      "name": "scale",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k0 — объявленная область или правило выбора",
+      "name": "k0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k1 — объявленная область или правило выбора",
+      "name": "k1",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b0 — объявленная область или правило выбора",
+      "name": "b0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b1 — объявленная область или правило выбора",
+      "name": "b1",
+      "parameter_kind": "THRESHOLD"
+     }
+    ],
+    "profile": "PROFILE:TIME-SD-235",
+    "q1_formalised_part_ru": "локальный откат до обновления: поддержка выбранной совместной клетки: максимум по времени для фиксированной цены или максимум по цене для фиксированного времени",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION",
+    "q4_case_set": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1",
+     "CS:F-BREAK-1",
+     "CS:F-BREAK-ALL-1"
+    ],
+    "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+    "q5_outcome": "OUT:PB-L-1",
+    "q5_region": "REG:JOINT-1",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "общие часы ET; события после собственной активации до конца блока; clock разделяет установленные события по open+5 <= cut; повторяемый PB имеет один голос сессии в области",
+    "q7_measure": "SHARE",
+    "q8_order_ru": "точка — установленные / N; при неустановленных — границы [установленные / N; (установленные + возможные) / N]; созвездия могут делить сессии: доли не складываются в 100 %",
+    "q8_unknown": "BINARY_BOUNDS_OVER_D",
+    "q8_weights": "NONE",
+    "question": "Q:TIME-SD-235",
+    "sc_ref": [
+     "T1",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:TIME-SD-235"
+    ],
+    "version": "1.0"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "EST:TS-REGION-R",
+    "parameters": [
+     {
+      "meaning_ru": "scale — объявленная область или правило выбора",
+      "name": "scale",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k0 — объявленная область или правило выбора",
+      "name": "k0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k1 — объявленная область или правило выбора",
+      "name": "k1",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b0 — объявленная область или правило выбора",
+      "name": "b0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b1 — объявленная область или правило выбора",
+      "name": "b1",
+      "parameter_kind": "THRESHOLD"
+     }
+    ],
+    "profile": "PROFILE:TIME-SD-235",
+    "q1_formalised_part_ru": "локальный откат до обновления: доля уникальных сессий в точной выбранной области",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION",
+    "q4_case_set": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1",
+     "CS:F-BREAK-1",
+     "CS:F-BREAK-ALL-1"
+    ],
+    "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+    "q5_outcome": "OUT:PB-L-1",
+    "q5_region": "REG:JOINT-1",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "общие часы ET; события после собственной активации до конца блока; clock разделяет установленные события по open+5 <= cut; повторяемый PB имеет один голос сессии в области",
+    "q7_measure": "SHARE",
+    "q8_order_ru": "точка — установленные / N; при неустановленных — границы [установленные / N; (установленные + возможные) / N]; созвездия могут делить сессии: доли не складываются в 100 %",
+    "q8_unknown": "BINARY_BOUNDS_OVER_D",
+    "q8_weights": "NONE",
+    "question": "Q:TIME-SD-235",
+    "sc_ref": [
+     "T1",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:TIME-SD-235"
+    ],
+    "version": "1.0"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "EST:TS-SESSIONS-R",
+    "parameters": [
+     {
+      "meaning_ru": "scale — объявленная область или правило выбора",
+      "name": "scale",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k0 — объявленная область или правило выбора",
+      "name": "k0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k1 — объявленная область или правило выбора",
+      "name": "k1",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b0 — объявленная область или правило выбора",
+      "name": "b0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b1 — объявленная область или правило выбора",
+      "name": "b1",
+      "parameter_kind": "THRESHOLD"
+     }
+    ],
+    "profile": "PROFILE:TIME-SD-235",
+    "q1_formalised_part_ru": "локальный откат до обновления: в ядрах / установленные только вне ядер / неизвестно / нет события",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION",
+    "q4_case_set": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1",
+     "CS:F-BREAK-1",
+     "CS:F-BREAK-ALL-1"
+    ],
+    "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+    "q5_outcome": "OUT:PB-L-1",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "общие часы ET; события после собственной активации до конца блока; clock разделяет установленные события по open+5 <= cut; повторяемый PB имеет один голос сессии в области",
+    "q7_measure": "CATEGORY_SHARES",
+    "q8_order_ru": "четыре категории вместе = N; неустановленные — своя категория",
+    "q8_unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE",
+    "q8_weights": "NONE",
+    "question": "Q:TIME-SD-235",
+    "sc_ref": [
+     "T1",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:TIME-SD-235"
+    ],
+    "version": "1.0"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "EST:TS-CORE-X",
+    "parameters": [
+     {
+      "meaning_ru": "scale — объявленная область или правило выбора",
+      "name": "scale",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k0 — объявленная область или правило выбора",
+      "name": "k0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k1 — объявленная область или правило выбора",
+      "name": "k1",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b0 — объявленная область или правило выбора",
+      "name": "b0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b1 — объявленная область или правило выбора",
+      "name": "b1",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "ядро этой версии/снимка/типа",
+      "name": "zone_id",
+      "parameter_kind": "ZONE_ID"
+     }
+    ],
+    "profile": "PROFILE:TIME-SD-235",
+    "q1_formalised_part_ru": "окончательное расширение: доля уникальных сессий в точном ядре 0,3 SD × 15 минут",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION",
+    "q4_case_set": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1",
+     "CS:F-BREAK-1",
+     "CS:F-BREAK-ALL-1"
+    ],
+    "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+    "q5_outcome": "OUT:FINAL-X-1",
+    "q5_region": "REG:TIME-SD-CORE",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "общие часы ET; события после собственной активации до конца блока; clock разделяет установленные события по open+5 <= cut; повторяемый PB имеет один голос сессии в области",
+    "q7_measure": "SHARE",
+    "q8_order_ru": "точка — установленные / N; при неустановленных — границы [установленные / N; (установленные + возможные) / N]; созвездия могут делить сессии: доли не складываются в 100 %",
+    "q8_unknown": "BINARY_BOUNDS_OVER_D",
+    "q8_weights": "NONE",
+    "question": "Q:TIME-SD-235",
+    "sc_ref": [
+     "T1",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:TIME-SD-235"
+    ],
+    "version": "1.0"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "EST:TS-PEAK-X",
+    "parameters": [
+     {
+      "meaning_ru": "scale — объявленная область или правило выбора",
+      "name": "scale",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k0 — объявленная область или правило выбора",
+      "name": "k0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k1 — объявленная область или правило выбора",
+      "name": "k1",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b0 — объявленная область или правило выбора",
+      "name": "b0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b1 — объявленная область или правило выбора",
+      "name": "b1",
+      "parameter_kind": "THRESHOLD"
+     }
+    ],
+    "profile": "PROFILE:TIME-SD-235",
+    "q1_formalised_part_ru": "окончательное расширение: поддержка выбранной совместной клетки: максимум по времени для фиксированной цены или максимум по цене для фиксированного времени",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION",
+    "q4_case_set": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1",
+     "CS:F-BREAK-1",
+     "CS:F-BREAK-ALL-1"
+    ],
+    "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+    "q5_outcome": "OUT:FINAL-X-1",
+    "q5_region": "REG:JOINT-1",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "общие часы ET; события после собственной активации до конца блока; clock разделяет установленные события по open+5 <= cut; повторяемый PB имеет один голос сессии в области",
+    "q7_measure": "SHARE",
+    "q8_order_ru": "точка — установленные / N; при неустановленных — границы [установленные / N; (установленные + возможные) / N]; созвездия могут делить сессии: доли не складываются в 100 %",
+    "q8_unknown": "BINARY_BOUNDS_OVER_D",
+    "q8_weights": "NONE",
+    "question": "Q:TIME-SD-235",
+    "sc_ref": [
+     "T1",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:TIME-SD-235"
+    ],
+    "version": "1.0"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "EST:TS-REGION-X",
+    "parameters": [
+     {
+      "meaning_ru": "scale — объявленная область или правило выбора",
+      "name": "scale",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k0 — объявленная область или правило выбора",
+      "name": "k0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k1 — объявленная область или правило выбора",
+      "name": "k1",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b0 — объявленная область или правило выбора",
+      "name": "b0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b1 — объявленная область или правило выбора",
+      "name": "b1",
+      "parameter_kind": "THRESHOLD"
+     }
+    ],
+    "profile": "PROFILE:TIME-SD-235",
+    "q1_formalised_part_ru": "окончательное расширение: доля уникальных сессий в точной выбранной области",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION",
+    "q4_case_set": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1",
+     "CS:F-BREAK-1",
+     "CS:F-BREAK-ALL-1"
+    ],
+    "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+    "q5_outcome": "OUT:FINAL-X-1",
+    "q5_region": "REG:JOINT-1",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "общие часы ET; события после собственной активации до конца блока; clock разделяет установленные события по open+5 <= cut; повторяемый PB имеет один голос сессии в области",
+    "q7_measure": "SHARE",
+    "q8_order_ru": "точка — установленные / N; при неустановленных — границы [установленные / N; (установленные + возможные) / N]; созвездия могут делить сессии: доли не складываются в 100 %",
+    "q8_unknown": "BINARY_BOUNDS_OVER_D",
+    "q8_weights": "NONE",
+    "question": "Q:TIME-SD-235",
+    "sc_ref": [
+     "T1",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:TIME-SD-235"
+    ],
+    "version": "1.0"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "EST:TS-SESSIONS-X",
+    "parameters": [
+     {
+      "meaning_ru": "scale — объявленная область или правило выбора",
+      "name": "scale",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k0 — объявленная область или правило выбора",
+      "name": "k0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "k1 — объявленная область или правило выбора",
+      "name": "k1",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b0 — объявленная область или правило выбора",
+      "name": "b0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "b1 — объявленная область или правило выбора",
+      "name": "b1",
+      "parameter_kind": "THRESHOLD"
+     }
+    ],
+    "profile": "PROFILE:TIME-SD-235",
+    "q1_formalised_part_ru": "окончательное расширение: в ядрах / установленные только вне ядер / неизвестно / нет события",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION",
+    "q4_case_set": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1",
+     "CS:F-BREAK-1",
+     "CS:F-BREAK-ALL-1"
+    ],
+    "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+    "q5_outcome": "OUT:FINAL-X-1",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "общие часы ET; события после собственной активации до конца блока; clock разделяет установленные события по open+5 <= cut; повторяемый PB имеет один голос сессии в области",
+    "q7_measure": "CATEGORY_SHARES",
+    "q8_order_ru": "четыре категории вместе = N; неустановленные — своя категория",
+    "q8_unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE",
+    "q8_weights": "NONE",
+    "question": "Q:TIME-SD-235",
+    "sc_ref": [
+     "T1",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:TIME-SD-235"
+    ],
+    "version": "1.0"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "EST:TS-LINK",
+    "parameters": [
+     {
+      "meaning_ru": "Масштаб локальности",
+      "name": "scale",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "Нижняя включённая граница цены или null",
+      "name": "k0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "Верхняя исключённая граница цены или null",
+      "name": "k1",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "Начало времени или null",
+      "name": "b0",
+      "parameter_kind": "THRESHOLD"
+     },
+     {
+      "meaning_ru": "Конец времени или null",
+      "name": "b1",
+      "parameter_kind": "THRESHOLD"
+     }
+    ],
+    "profile": "PROFILE:TIME-SD-235",
+    "q1_formalised_part_ru": "доля всей семьи с совместной цепочкой: PB-L в исходном ядре, затем тот же исторический путь посещает выбранную область в её окне",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION",
+    "q4_case_set": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1",
+     "CS:F-BREAK-1",
+     "CS:F-BREAK-ALL-1"
+    ],
+    "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+    "q5_outcome": "OUT:TS-POST-L",
+    "q5_region": "REG:JOINT-1",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "после закрытия M5 своего L до собственного конца блока, внутри целевого окна; source L принадлежит выбранному ядру",
+    "q7_measure": "SHARE",
+    "q8_order_ru": "точка — установленные / N; при неустановленных — границы [установленные / N; (установленные + возможные) / N]; созвездия могут делить сессии: доли не складываются в 100 %",
+    "q8_unknown": "BINARY_BOUNDS_OVER_D",
+    "q8_weights": "NONE",
+    "question": "Q:TIME-SD-LINK",
+    "sc_ref": [
+     "T1",
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:TIME-SD-235"
+    ],
+    "version": "1.0"
    }
   ],
   "estimators": [
@@ -9405,6 +11685,177 @@
     ],
     "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
     "version": "0.1"
+   },
+   {
+    "estimands": [
+     "EST:TS-CORE-R"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "ESTR:TS-CORE-R",
+    "implementations": [
+     "lab/time_sd235.py::derive"
+    ],
+    "reference_definition": "lab/contract.py::ref_time_sd235",
+    "rounding_ru": "точные счёты; проценты после деления, один знак",
+    "rule": "ALGORITHMIC_REGION_SHARE",
+    "sc_ref": [
+     "V0",
+     "P3"
+    ],
+    "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
+    "version": "1.0"
+   },
+   {
+    "estimands": [
+     "EST:TS-PEAK-R"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "ESTR:TS-PEAK-R",
+    "implementations": [
+     "lab/time_sd235.py::derive"
+    ],
+    "reference_definition": "lab/contract.py::ref_time_sd235",
+    "rounding_ru": "точные счёты; проценты после деления, один знак",
+    "rule": "ALGORITHMIC_REGION_SHARE",
+    "sc_ref": [
+     "V0",
+     "P3"
+    ],
+    "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
+    "version": "1.0"
+   },
+   {
+    "estimands": [
+     "EST:TS-REGION-R"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "ESTR:TS-REGION-R",
+    "implementations": [
+     "lab/time_sd235.py::derive"
+    ],
+    "reference_definition": "lab/contract.py::ref_time_sd235",
+    "rounding_ru": "точные счёты; проценты после деления, один знак",
+    "rule": "ALGORITHMIC_REGION_SHARE",
+    "sc_ref": [
+     "V0",
+     "P3"
+    ],
+    "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
+    "version": "1.0"
+   },
+   {
+    "estimands": [
+     "EST:TS-SESSIONS-R"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "ESTR:TS-SESSIONS-R",
+    "implementations": [
+     "lab/time_sd235.py::derive"
+    ],
+    "reference_definition": "lab/contract.py::ref_time_sd235",
+    "rounding_ru": "точные счёты; проценты после деления, один знак",
+    "rule": "CATEGORY_COUNTS_OVER_N",
+    "sc_ref": [
+     "V0",
+     "V2.1"
+    ],
+    "unknown_handling_ru": "категории вместе = N_base",
+    "version": "1.0"
+   },
+   {
+    "estimands": [
+     "EST:TS-CORE-X"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "ESTR:TS-CORE-X",
+    "implementations": [
+     "lab/time_sd235.py::derive"
+    ],
+    "reference_definition": "lab/contract.py::ref_time_sd235",
+    "rounding_ru": "точные счёты; проценты после деления, один знак",
+    "rule": "ALGORITHMIC_REGION_SHARE",
+    "sc_ref": [
+     "V0",
+     "P3"
+    ],
+    "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
+    "version": "1.0"
+   },
+   {
+    "estimands": [
+     "EST:TS-PEAK-X"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "ESTR:TS-PEAK-X",
+    "implementations": [
+     "lab/time_sd235.py::derive"
+    ],
+    "reference_definition": "lab/contract.py::ref_time_sd235",
+    "rounding_ru": "точные счёты; проценты после деления, один знак",
+    "rule": "ALGORITHMIC_REGION_SHARE",
+    "sc_ref": [
+     "V0",
+     "P3"
+    ],
+    "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
+    "version": "1.0"
+   },
+   {
+    "estimands": [
+     "EST:TS-REGION-X"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "ESTR:TS-REGION-X",
+    "implementations": [
+     "lab/time_sd235.py::derive"
+    ],
+    "reference_definition": "lab/contract.py::ref_time_sd235",
+    "rounding_ru": "точные счёты; проценты после деления, один знак",
+    "rule": "ALGORITHMIC_REGION_SHARE",
+    "sc_ref": [
+     "V0",
+     "P3"
+    ],
+    "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
+    "version": "1.0"
+   },
+   {
+    "estimands": [
+     "EST:TS-SESSIONS-X"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "ESTR:TS-SESSIONS-X",
+    "implementations": [
+     "lab/time_sd235.py::derive"
+    ],
+    "reference_definition": "lab/contract.py::ref_time_sd235",
+    "rounding_ru": "точные счёты; проценты после деления, один знак",
+    "rule": "CATEGORY_COUNTS_OVER_N",
+    "sc_ref": [
+     "V0",
+     "V2.1"
+    ],
+    "unknown_handling_ru": "категории вместе = N_base",
+    "version": "1.0"
+   },
+   {
+    "estimands": [
+     "EST:TS-LINK"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "ESTR:TS-LINK",
+    "implementations": [
+     "lab/time_sd235.py::following"
+    ],
+    "reference_definition": "lab/contract.py::ref_time_sd235",
+    "rounding_ru": "точные счёты; проценты после деления, один знак",
+    "rule": "ALGORITHMIC_REGION_SHARE",
+    "sc_ref": [
+     "V0",
+     "P3"
+    ],
+    "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
+    "version": "1.0"
    }
   ],
   "examples": [
@@ -12730,6 +15181,35 @@
     "title_ru": "дно отката перед первым обновлением локальной вершины",
     "uses_case_future_as_label": true,
     "version": "0.1"
+   },
+   {
+    "components": [
+     "EXISTENCE"
+    ],
+    "contribution": "ONE_BINARY_VOTE",
+    "event": "VISIT",
+    "grounds": "PROPOSAL",
+    "horizon_end": "BLOCK_END_CLOSE_INCLUSIVE",
+    "horizon_start": "OWN_PB_BOTTOM_CLOSE_EXCLUSIVE",
+    "id": "OUT:TS-POST-L",
+    "implementations": [
+     "lab/time_sd235.py::following"
+    ],
+    "projection": "BAND_VISIT",
+    "reference_definition": "lab/contract.py::ref_time_sd235",
+    "sc_ref": [
+     "P0.2",
+     "§12.4/B-VISIT",
+     "K18"
+    ],
+    "source_refs": [
+     "SRC:TIME-SD-235"
+    ],
+    "statuses": "Joint event: a verified PB-L in the source core AND a later M5 of that SAME case visits the target price/time region. Earliest target bar opens at/after the close of the source L M5. Own block end. Full F denominator; uncertain source or missing later bars yields bounds; unrelated FINAL-X and targets before L never establish YES.",
+    "tie_rule": "ONE_VOTE_PER_CASE",
+    "title_ru": "Посещение области после дна эпизода из ядра",
+    "uses_case_future_as_label": true,
+    "version": "1.0"
    }
   ],
   "profiles": [
@@ -12841,6 +15321,21 @@
     ],
     "title_ru": "Откаты перед обновлением экстремума",
     "version": "0.1"
+   },
+   {
+    "edition": "DR-LAB-CANDIDATES-1",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "PROFILE:TIME-SD-235",
+    "note": "CANDIDATE FOR LOCAL REVIEW; implementation explicitly authorized 22.10. R=PB-L, X=FINAL-X, fixed 0.3 IDR x 15min cores, peak joint-cell projections, full N. Not operator perceptually accepted.",
+    "profile_status": "ACTIVE",
+    "sc_ref": [
+     "§12.6"
+    ],
+    "source_refs": [
+     "SRC:TIME-SD-235"
+    ],
+    "title_ru": "Время × SD · 23.5",
+    "version": "1.0"
    }
   ],
   "questions": [
@@ -13110,6 +15605,28 @@
     "scene_ru": "вся семья N: сессии с установленными откатами в созвездиях, только вне созвездий, не установленными по M5 и без таких откатов",
     "text_ru": "У скольких сессий семьи такие откаты были, и сколько из них в созвездиях?",
     "version": "1"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "Q:TIME-SD-235",
+    "sc_ref": [
+     "T0",
+     "§12.6"
+    ],
+    "scene_ru": "совместная область времени и SD, локальное ядро и пиковые проекции; одна F, один N",
+    "text_ru": "В какие окна времени и в каких SD-ячейках совпадали события сессий семьи?",
+    "version": "1"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "Q:TIME-SD-LINK",
+    "sc_ref": [
+     "T0",
+     "§12.6"
+    ],
+    "scene_ru": "те же эпизоды и их последующие M5 после закрытия M5 дна; посещение области в её собственном окне, одна сессия один голос от полной F",
+    "text_ru": "Куда и когда шли те же истории после откатов из выбранного ядра?",
+    "version": "1"
    }
   ],
   "regions": [
@@ -13277,6 +15794,21 @@
     ],
     "title_ru": "созвездие откатов перед обновлением",
     "version": "0.1"
+   },
+   {
+    "bounds_rule": "exact three adjacent 0.1-IDR cells in one 15-minute window; no temporal growth",
+    "density_algorithm": "ALG:TIME-SD-CORE-1",
+    "grid": "GRID:K10-J15-1",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "REG:TIME-SD-CORE",
+    "origin": "ALGORITHM",
+    "region_kind": "ZONE_MASK",
+    "sc_ref": [
+     "P2",
+     "P3"
+    ],
+    "title_ru": "локальное ядро времени × SD",
+    "version": "1.0"
    }
   ],
   "registry_part": "merged",
@@ -13803,6 +16335,16 @@
     "sc_ref": [
      "§12.6"
     ]
+   },
+   {
+    "document": "meaning/lens/2026-10-22-plan-23-5-time-sd.md",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "SRC:TIME-SD-235",
+    "locator": "Plan presented in this chat on 22.10; direct human response «РЕАЛИЗУЙ» authorizes this implementation. No C2/C3 or perceptual acceptance is inferred.",
+    "role": "DECISION",
+    "sc_ref": [
+     "§12.6"
+    ]
    }
   ],
   "strategy_rules": [
@@ -14156,6 +16698,31 @@
      "§12.3"
     ],
     "surface_profile": "SC11_PULLBACKS_0_1"
+   },
+   {
+    "definitions": "SRC:TIME-SD-235",
+    "estimands": [
+     "EST:TS-CORE-R",
+     "EST:TS-PEAK-R",
+     "EST:TS-REGION-R",
+     "EST:TS-SESSIONS-R",
+     "EST:TS-CORE-X",
+     "EST:TS-PEAK-X",
+     "EST:TS-REGION-X",
+     "EST:TS-SESSIONS-X",
+     "EST:TS-LINK",
+     "EST:PB-ZONE",
+     "EST:PB-SESSIONS",
+     "EST:PB-REGION"
+    ],
+    "id": "API:/api/integration/time-sd",
+    "marking": "proposed time-SD profile; retained independently verified PB source evidence; no C2/C3",
+    "route": "/api/integration/time-sd",
+    "sc_ref": [
+     "§12.3",
+     "§12.6"
+    ],
+    "surface_profile": "SC11_TIME_SD_235"
    }
   ],
   "temporal_frames": [
@@ -14351,9 +16918,9 @@
   "document_sha256_lf": "783064fc5c1445b149300cf4b2d610ec1b9f4ef7bb58cd5311c89c20c0cb450a",
   "edition": "DR-LAB-CANDIDATES-1",
   "linkml": "1.11.1",
-  "registry_sha256": "5d7ef25cb102f4777bc6d0b3e31f218ee1f6e0ca9296cda913d0105f333f8655",
-  "runtime_spec_sha256": "f8cb696d267dba532308c85e61fcfd150a22913b17c0464db413229e9fb0e46d",
-  "schema_sha256_lf": "99116af6c85f8c965111d7352d5ad0ae63b1c122bc9e15850d8df76a46446e35",
+  "registry_sha256": "2fc179a49f34ef60eae450ba935973e505bf6d33914d20bfdc330977308c6d82",
+  "runtime_spec_sha256": "c5b7168c45693d03bd9d82b22a0077ef214090c9eb52244e23735843be01d36a",
+  "schema_sha256_lf": "1184ad1ff20af64c1876a1eb4f70061d21649fd92b1aac180511e5861603d5c0",
   "sources": {
    "contract/schema/dr_lab_sc.yaml": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
    "integration/candidates/SC11-proposal.md": "783064fc5c1445b149300cf4b2d610ec1b9f4ef7bb58cd5311c89c20c0cb450a",
@@ -14367,7 +16934,8 @@
    "integration/candidates/registry/70-obligations.yaml": "222c8ef1523ddad91d930b98c44ca360679257460f305b56d5bcad86eef2ae90",
    "integration/candidates/registry/80-continuations.yaml": "0adc669ab07b78921ba7e9911d5e80e26de85063f5ca93ae61bd79f60b95e1ed",
    "integration/candidates/registry/90-pullbacks.yaml": "0bcc119aef1355b385d8378e66fcd2866ccbb97f042dd576069052d64bb44536",
-   "integration/candidates/schema.yaml": "99116af6c85f8c965111d7352d5ad0ae63b1c122bc9e15850d8df76a46446e35",
+   "integration/candidates/registry/95-time-sd.yaml": "f3fefbcaf6ddfee7e07841991cc5360481ba90c2e5c6ecbc21a8e1f2951e5543",
+   "integration/candidates/schema.yaml": "1184ad1ff20af64c1876a1eb4f70061d21649fd92b1aac180511e5861603d5c0",
    "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"
   }
  }

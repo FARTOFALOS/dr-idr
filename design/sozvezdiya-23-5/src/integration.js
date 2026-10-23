@@ -2,11 +2,28 @@
   const ICFG = window.DR_INTEGRATION || { enabled: false }, REVIEW = ICFG.registry;
   // phase / nowmarks: the operator's decisions of 2026-10-08 (meaning/17 §7) on the page only, over accepted bundles and the
   // candidate labels FF:PHASE-RULE, row_mark / title_mark (integration/candidates/registry/40-claims.yaml); no server call
-  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled, phase: false, nowmarks: false, pullbacks: !!ICFG.enabled };
+  // The old broad PB overlay is superseded by the explicitly approved time x SD profile of 23.5.
+  // Legacy flags cannot reinstate that overlay; the new profile is the normal bounds view.
+  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled, phase: false, nowmarks: false, pullbacks: false };
   // the viewer's own choice of trials is kept in this browser like every other setting (2026-10-19); the address still adds
   const TRIAL_KEY = 'drlab.d235.trials';
-  if (ICFG.enabled) try { const kept = JSON.parse(localStorage.getItem(TRIAL_KEY) || '{}'); for (const k in TRIAL) if (typeof kept[k] === 'boolean') TRIAL[k] = kept[k]; } catch (e) { /* defaults */ }
-  if (ICFG.enabled) for (const k of (new URLSearchParams(location.hash.slice(1)).get('trial') || '').split(',')) if (k in TRIAL) TRIAL[k] = true;
+  if (ICFG.enabled) try {
+    const kept = JSON.parse(localStorage.getItem(TRIAL_KEY) || '{}');
+    for (const k in TRIAL) if (k !== 'pullbacks' && typeof kept[k] === 'boolean') TRIAL[k] = kept[k];
+    if (kept.pullbacks) {
+      if (localStorage.getItem(TRIAL_KEY+'.before-withdrawal') == null) localStorage.setItem(TRIAL_KEY+'.before-withdrawal',JSON.stringify(kept));
+      localStorage.setItem(TRIAL_KEY,JSON.stringify({...kept,pullbacks:false}));
+    }
+  } catch (e) { /* defaults */ }
+  if (ICFG.enabled) for (const k of (new URLSearchParams(location.hash.slice(1)).get('trial') || '').split(',')) if (k in TRIAL && k !== 'pullbacks') TRIAL[k] = true;
+  {
+    const q=new URLSearchParams(location.hash.slice(1)),before=q.toString();
+    const active=(q.get('trial')||'').split(',').filter(k=>k&&k!=='pullbacks');
+    if(active.length)q.set('trial',active.join(','));else q.delete('trial');
+    if(q.get('mode')==='pullbacks')q.delete('mode');
+    // The locality scale remains an explicit parameter of the new profile.
+    if(q.toString()!==before)history.replaceState(null,'',location.pathname+location.search+(q.toString()?'#'+q:''));
+  }
   if (ICFG.enabled) window.addEventListener('hashchange',()=>location.reload());
   const IS = { key: null, packet: null, pending: new Set(), cache: new Map(), error: null, discarded: 0, committed: 0, selection: null, epoch: 0 };
   function sceneRequest() {
@@ -172,7 +189,8 @@
   // clock (known, of N: EST:B-CLOCK-R over the whole price range, part EARLIER, a passport the server verifies). A rule
   // of the operator, not a statement about the market; only for the confirmation family (a break is another frame)
   function phaseOf(F, ctx) {
-    if (F?._pb) F = PB.model.base; // the existing phase trial is defined on FINAL-R, never on multiple local bottoms
+    if (F?._ts) return null; // an old final-R phase must not control the local-PB map
+    if (F?._pb) F = PB.model.base;
     if (!TRIAL.phase || !F || F.brk || !F.N) return null;
     const rows = todayRows(F, ctx);
     if (!rows.length) return null;
@@ -258,8 +276,8 @@
     if (!ICFG.enabled) return '';
     return '<details class="cgd"><summary class="cg">Испытание кандидатов</summary>' +
       [['pre', 'История до подтверждения'], ['arrive', 'Отсюда до места · Q1'], ['paths', 'Связанные пути в нижнем окне'], ['continuations', 'Продолжения · закреплённое окно'],
-        ['phase', 'Фаза по вашему правилу · 08.10'], ['nowmarks', '«Сейчас»: откат числом и отметками у шкалы · 08.10'], ['pullbacks', 'Откаты до обновления · кандидат 21.10']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
-      (TRIAL.pullbacks ? '<div class="p21-note">'+pbScaleSwitch()+'</div>' : '') +
+        ['phase', 'Фаза по вашему правилу · 08.10'], ['nowmarks', '«Сейчас»: откат числом и отметками у шкалы · 08.10']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
+      '<div class="p21-note">'+pbScaleSwitch()+'</div>'+
       '<button type="button" id="auditScene">Проверить происхождение и опору</button><div id="auditResult" class="p21-note"></div></details>';
   }
   async function auditScene() {
@@ -274,6 +292,7 @@
     }catch(e){el.textContent='Проверка не завершилась: '+e.message;}
   }
   function setTrial(k, on) {
+    if(k==='pullbacks')return false; // rejected bounds mapping; not a dormant checkbox that can undo the repair
     TRIAL[k] = !!on; IS.key = null; IS.packet = null; IS.error = null;
     try { localStorage.setItem(TRIAL_KEY, JSON.stringify(TRIAL)); } catch (e) { /* not kept */ }
     if(k==='continuations'&&!on){CS.seq++;CS.packet=null;CS.drawing=null;if(st.mode==='continuations')st.mode='bounds';}

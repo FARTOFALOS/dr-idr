@@ -1,33 +1,31 @@
 # DR IDR — entry for agents
 
-## Working 23.5 alongside 24 · 2026-10-22
+## Working 23.5: time × SD · 2026-10-23
 
-The operator explicitly authorized the 22.10 integration and push to main in the current chat. Start with
-[`docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md`](docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md): definitions, all existing facets,
-source dispositions, rejected substitutions and the genuinely uncertain decisions are recorded there.
+Start with [DR-LAB-TIME-SD-1.0](docs/DR-LAB-23-5-TIME-SD.md) and the
+[approved implementation plan](meaning/lens/2026-10-22-plan-23-5-time-sd.md). The direct human «РЕАЛИЗУЙ»,
+followed by «ПРОДОЛЖАЙ», authorizes this implementation. The earlier main-publication instruction applies to this
+same task. This is not automatic perceptual or predictive acceptance.
 
-- Screen 24 remains `/24/`, source `design/sozvezdiya-24/src`, normal launcher/port 8767.
-- Working 23.5 is `/23-5/`, source `design/sozvezdiya-23-5/src`, `start-dr-lab-23-5.cmd`, port 8735.
-  Do not copy its source/build over 24. Browser settings use separate namespaces.
-- On 23.5 only, amber R is the display alias of candidate PB-L (local H→L→B); X stays FINAL-X. Accepted BASE/NOW,
-  final-R/X order, PRE/ARRIVE and fixed-target Continuations retain their own objects and supports.
-- Price/time projections count unique sessions per region. The time hill uses the full zone's witnesses, not compact
-  display nodes. A past PB window is dimmed by its clock, never by FINAL-R's monotone price constraint.
-- Correction after the operator's comparison on 22.10: stars remain on; compact M5/SD representatives cover the FULL
-  zone, not its anchor neighbourhood. Every nonempty time bin of both colours is drawn, including X outside zones.
-  PB-L (several local events) and FINAL-X (one final event) are not competing outcomes: their counts are unchanged,
-  but the time band's winner/loser contrast and outline are disabled for this mixed pair. See the correction in the
-  semantic decisions document and `tests/constellations235_page.mjs` (actual canvas, not just data availability).
-- The operator requested the shading of 24 and no noise from small rows: visibility uses the existing support floor
-  and peaks; hidden rows remain inspectable, with unchanged N. New visible entities require discussion.
-- Accepted SC-1.1 stays at 53 estimands; the separate proposal now has 63. Publication does not grant C2/C3 or H acceptance.
+- Screen 24 and its accepted BASE/NOW definitions remain at `/24/`, port 8767. Its source is unchanged.
+- Screen 23.5 at `/23-5/`, port 8735, uses its own source, settings and `start-dr-lab-23-5.cmd` shortcut.
+- Bounds on 23.5 uses the time × SD profile by default. R is local PB-L, X is named FINAL-X context.
+  The old broad PB overlay and the temporary uncommitted rollback are not the intended working result.
+- Both maps use exact 0.3 SD × 15-minute local cores. M5/0.1 SD witnesses are compacted for drawing only.
+  Price and time rectangles show maxima of joint-cell support and retain their other coordinate. Full-band or
+  whole-window unions remain separately named area questions. Full F/N and unknown mass are preserved.
+- Post-L links use the same source episodes and subsequent M5 paths after L closes, never unrelated FINAL-X cases.
+- Today's clock, visit and completed PB episode remain different facts. FINAL-R phase cannot dim a local PB map.
+- Existing layout, opacity, font rules, 116px price column, hover/pin and six lower windows are retained.
+- Accepted SC-1.1 remains 53 estimands. The separate proposed registry has 72 (63 existing + 9 time-SD).
+  No new ontology stack; all ten existing facets are mapped in `integration/profile235-bindings.json`.
 
-Machine map: `integration/profile235-bindings.json`; evidence: `integration/23-5-release-checks.json`.
-Besides the required checks below, the addressed checks are `tests/profile235_bindings.py`, `pullbacks24.py`,
-`profile235_page.mjs`, `pullbacks235_page.mjs`, `shading235_page.mjs`, `visit_states_page.mjs`,
-`continuations235_page.mjs`. Build both pages independently after a shared contract build. Use `-HistoryOnly`
-for launcher checks; `-Port` permits an isolated test port without disturbing the operator's two screens.
-
+Addressed checks: `tests/time_sd235.py`, `time_sd235_page.mjs`, `profile235_bindings.py`, `pullbacks24.py`,
+`continuations235_page.mjs`, plus the shared checks below. Current evidence: `integration/23-5-time-sd-checks.json`.
+The older `profile235_page`, `pullbacks235_page`, `shading235_page`, `constellations235_page` assert the superseded
+22.10 broad-zone/marginal profile; they are historical checks, not acceptance of the new formulas.
+Build both pages after a shared contract build. Use launchers with `-HistoryOnly` for verification; `-Port` allows
+an isolated test server. Never use an old check receipt as evidence for a changed release.
 
 ## Update · 2026-10-19
 
