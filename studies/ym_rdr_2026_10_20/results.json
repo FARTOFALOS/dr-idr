@@ -1,0 +1,1241 @@
+{
+ "study": "ym_rdr_2026_10_20",
+ "algorithm": "zone-map-3",
+ "family_id": "94ff135d851522ab",
+ "snapshot_id": "5e45094fe4034c9f",
+ "family": {
+  "instrument": "YM",
+  "session": "RDR",
+  "weekday": "Tue",
+  "direction": "long",
+  "window": [
+   "10:30",
+   "10:45"
+  ],
+  "years": "2006-2025",
+  "N": 157
+ },
+ "min_support": 8,
+ "grid": {
+  "price_sd": 0.1,
+  "time_min": 15,
+  "smoothing": "3x3 cells (0.3 SD x 45 min)"
+ },
+ "events": {
+  "R": {
+   "verification": {
+    "zones": 1,
+    "structure_equal": true,
+    "diagnostics_equal": true,
+    "compared": [
+     "cell_mask",
+     "member_session_ids",
+     "residual_ids",
+     "label",
+     "zone_id",
+     "n_zone",
+     "p_snapshot",
+     "price_low",
+     "price_high",
+     "time_start",
+     "time_end",
+     "peak_anchor",
+     "min_support",
+     "N_family",
+     "unknown_count",
+     "no_event_count",
+     "grid_member_jaccard",
+     "bootstrap_recovery",
+     "null_status",
+     "null_excess",
+     "null_interval",
+     "p_real_mask",
+     "p_null_mask",
+     "minimum_detectable_excess",
+     "null_frozen_overlap",
+     "null_validation_n"
+    ],
+    "independent_reference_equal": true
+   },
+   "known": 156,
+   "unknown": 1,
+   "no_event": 0,
+   "residual_share": 0.828,
+   "zones": [
+    {
+     "label": "R1",
+     "n": 26,
+     "share": 0.1656,
+     "price_sd": [
+      -0.2,
+      0.2
+     ],
+     "time_et": [
+      "10:30",
+      "11:45"
+     ],
+     "grid_jaccard": {
+      "price_half": 0.69,
+      "time_5": 0.926,
+      "time_10": 0.808,
+      "min": 0.69
+     },
+     "bootstrap": {
+      "mean": 0.477,
+      "share_ge_half": 0.4,
+      "of": 50
+     },
+     "null": {
+      "status": "measured",
+      "excess": -0.0128,
+      "interval": [
+       -0.0705,
+       0.039
+      ]
+     }
+    }
+   ],
+   "shifted_grids": [
+    {
+     "price_shift_sd": 0.05,
+     "time_shift_min": 0,
+     "zones": [
+      {
+       "n": 23,
+       "share": 0.1465,
+       "price_sd": [
+        -0.25,
+        0.25
+       ],
+       "time_et": [
+        "10:30",
+        "11:45"
+       ]
+      },
+      {
+       "n": 24,
+       "share": 0.1529,
+       "price_sd": [
+        -1.25,
+        -0.15
+       ],
+       "time_et": [
+        "13:45",
+        "16:00"
+       ]
+      }
+     ]
+    },
+    {
+     "price_shift_sd": 0.0,
+     "time_shift_min": 5,
+     "zones": [
+      {
+       "n": 26,
+       "share": 0.1656,
+       "price_sd": [
+        -0.2,
+        0.2
+       ],
+       "time_et": [
+        "10:35",
+        "11:50"
+       ]
+      }
+     ]
+    },
+    {
+     "price_shift_sd": 0.0,
+     "time_shift_min": 10,
+     "zones": [
+      {
+       "n": 21,
+       "share": 0.1338,
+       "price_sd": [
+        -0.2,
+        0.2
+       ],
+       "time_et": [
+        "10:25",
+        "11:25"
+       ]
+      },
+      {
+       "n": 15,
+       "share": 0.0955,
+       "price_sd": [
+        -1.2,
+        -0.4
+       ],
+       "time_et": [
+        "13:40",
+        "16:10"
+       ]
+      }
+     ]
+    }
+   ],
+   "components": [
+    {
+     "apex_D": 17,
+     "apex": [
+      -0.1,
+      "10:45"
+     ],
+     "level": 8.5,
+     "n_sessions_in_component": 26,
+     "verdict": "zone",
+     "price_sd": [
+      -0.2,
+      0.2
+     ],
+     "time_et": [
+      "10:30",
+      "11:45"
+     ]
+    },
+    {
+     "apex_D": 9,
+     "apex": [
+      -0.7,
+      "15:30"
+     ],
+     "level": 4.5,
+     "n_sessions_in_component": 5,
+     "verdict": "below_support",
+     "price_sd": [
+      -0.9,
+      -0.6
+     ],
+     "time_et": [
+      "15:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 8,
+     "apex": [
+      -0.9,
+      "15:30"
+     ],
+     "level": 4.0,
+     "n_sessions_in_component": 15,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      -1.2,
+      -0.4
+     ],
+     "time_et": [
+      "13:45",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 8,
+     "apex": [
+      -0.3,
+      "15:30"
+     ],
+     "level": 4.0,
+     "n_sessions_in_component": 5,
+     "verdict": "below_support",
+     "price_sd": [
+      -0.5,
+      -0.1
+     ],
+     "time_et": [
+      "15:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 7,
+     "apex": [
+      -0.1,
+      "12:00"
+     ],
+     "level": 3.5,
+     "n_sessions_in_component": 47,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      -0.4,
+      0.6
+     ],
+     "time_et": [
+      "10:30",
+      "12:45"
+     ]
+    },
+    {
+     "apex_D": 7,
+     "apex": [
+      -0.5,
+      "15:30"
+     ],
+     "level": 3.5,
+     "n_sessions_in_component": 5,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      -0.5,
+      -0.1
+     ],
+     "time_et": [
+      "15:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 6,
+     "apex": [
+      -1.0,
+      "14:00"
+     ],
+     "level": 3.0,
+     "n_sessions_in_component": 28,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      -1.4,
+      -0.1
+     ],
+     "time_et": [
+      "13:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 5,
+     "apex": [
+      0.4,
+      "10:30"
+     ],
+     "level": 2.5,
+     "n_sessions_in_component": 58,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      -1.0,
+      0.7
+     ],
+     "time_et": [
+      "10:30",
+      "13:15"
+     ]
+    },
+    {
+     "apex_D": 5,
+     "apex": [
+      -0.8,
+      "14:15"
+     ],
+     "level": 2.5,
+     "n_sessions_in_component": 28,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      -1.4,
+      -0.1
+     ],
+     "time_et": [
+      "13:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 4,
+     "apex": [
+      -0.7,
+      "10:45"
+     ],
+     "level": 2.0,
+     "n_sessions_in_component": 115,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      -1.4,
+      0.7
+     ],
+     "time_et": [
+      "10:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 3,
+     "apex": [
+      -1.0,
+      "11:30"
+     ],
+     "level": 1.5,
+     "n_sessions_in_component": 115,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      -1.4,
+      0.7
+     ],
+     "time_et": [
+      "10:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 3,
+     "apex": [
+      -1.7,
+      "15:30"
+     ],
+     "level": 1.5,
+     "n_sessions_in_component": 3,
+     "verdict": "below_support",
+     "price_sd": [
+      -1.9,
+      -1.5
+     ],
+     "time_et": [
+      "15:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 2,
+     "apex": [
+      -1.4,
+      "11:45"
+     ],
+     "level": 1.0,
+     "n_sessions_in_component": 146,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      -2.8,
+      0.7
+     ],
+     "time_et": [
+      "10:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 2,
+     "apex": [
+      -3.6,
+      "15:00"
+     ],
+     "level": 1.0,
+     "n_sessions_in_component": 5,
+     "verdict": "below_support",
+     "price_sd": [
+      -3.7,
+      -2.9
+     ],
+     "time_et": [
+      "14:45",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 1,
+     "apex": [
+      -5.2,
+      "11:00"
+     ],
+     "level": 0.5,
+     "n_sessions_in_component": 1,
+     "verdict": "below_support",
+     "price_sd": [
+      -5.2,
+      -4.9
+     ],
+     "time_et": [
+      "11:00",
+      "11:45"
+     ]
+    },
+    {
+     "apex_D": 1,
+     "apex": [
+      -1.8,
+      "11:15"
+     ],
+     "level": 0.5,
+     "n_sessions_in_component": 146,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      -2.8,
+      0.7
+     ],
+     "time_et": [
+      "10:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 1,
+     "apex": [
+      -3.0,
+      "11:45"
+     ],
+     "level": 0.5,
+     "n_sessions_in_component": 1,
+     "verdict": "below_support",
+     "price_sd": [
+      -3.0,
+      -2.7
+     ],
+     "time_et": [
+      "11:45",
+      "12:30"
+     ]
+    },
+    {
+     "apex_D": 1,
+     "apex": [
+      -3.6,
+      "13:45"
+     ],
+     "level": 0.5,
+     "n_sessions_in_component": 1,
+     "verdict": "below_support",
+     "price_sd": [
+      -3.6,
+      -3.3
+     ],
+     "time_et": [
+      "13:45",
+      "14:30"
+     ]
+    },
+    {
+     "apex_D": 1,
+     "apex": [
+      -5.7,
+      "15:15"
+     ],
+     "level": 0.5,
+     "n_sessions_in_component": 1,
+     "verdict": "below_support",
+     "price_sd": [
+      -5.7,
+      -5.4
+     ],
+     "time_et": [
+      "15:15",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 1,
+     "apex": [
+      -7.8,
+      "15:30"
+     ],
+     "level": 0.5,
+     "n_sessions_in_component": 1,
+     "verdict": "below_support",
+     "price_sd": [
+      -7.8,
+      -7.5
+     ],
+     "time_et": [
+      "15:30",
+      "16:00"
+     ]
+    }
+   ],
+   "quantiles_all_known": {
+    "price_sd": {
+     "q10": -2.26,
+     "q30": -1.03,
+     "q50": -0.55,
+     "q70": -0.19,
+     "q90": 0.1
+    },
+    "time_et": {
+     "q10": "10:45",
+     "q30": "11:35",
+     "q50": "13:00",
+     "q70": "14:40",
+     "q90": "15:55"
+    }
+   }
+  },
+  "X": {
+   "verification": {
+    "zones": 3,
+    "structure_equal": true,
+    "diagnostics_equal": true,
+    "compared": [
+     "cell_mask",
+     "member_session_ids",
+     "residual_ids",
+     "label",
+     "zone_id",
+     "n_zone",
+     "p_snapshot",
+     "price_low",
+     "price_high",
+     "time_start",
+     "time_end",
+     "peak_anchor",
+     "min_support",
+     "N_family",
+     "unknown_count",
+     "no_event_count",
+     "grid_member_jaccard",
+     "bootstrap_recovery",
+     "null_status",
+     "null_excess",
+     "null_interval",
+     "p_real_mask",
+     "p_null_mask",
+     "minimum_detectable_excess",
+     "null_frozen_overlap",
+     "null_validation_n"
+    ],
+    "independent_reference_equal": true
+   },
+   "known": 156,
+   "unknown": 1,
+   "no_event": 0,
+   "residual_share": 0.7389,
+   "zones": [
+    {
+     "label": "X1",
+     "n": 19,
+     "share": 0.121,
+     "price_sd": [
+      0.1,
+      0.6
+     ],
+     "time_et": [
+      "10:30",
+      "11:15"
+     ],
+     "grid_jaccard": {
+      "price_half": 0.947,
+      "time_5": 0.905,
+      "time_10": 0.95,
+      "min": 0.905
+     },
+     "bootstrap": {
+      "mean": 0.477,
+      "share_ge_half": 0.5,
+      "of": 50
+     },
+     "null": {
+      "status": "measured",
+      "excess": -0.0641,
+      "interval": [
+       -0.1023,
+       -0.0317
+      ]
+     }
+    },
+    {
+     "label": "X2",
+     "n": 12,
+     "share": 0.0764,
+     "price_sd": [
+      0.9,
+      1.4
+     ],
+     "time_et": [
+      "15:00",
+      "16:00"
+     ],
+     "grid_jaccard": {
+      "price_half": 0.0,
+      "time_5": 0.923,
+      "time_10": 0.923,
+      "min": 0.0
+     },
+     "bootstrap": {
+      "mean": 0.241,
+      "share_ge_half": 0.34,
+      "of": 50
+     },
+     "null": {
+      "status": "measured",
+      "excess": 0.0385,
+      "interval": [
+       0.0,
+       0.0864
+      ]
+     }
+    },
+    {
+     "label": "X3",
+     "n": 9,
+     "share": 0.0573,
+     "price_sd": [
+      0.5,
+      0.8
+     ],
+     "time_et": [
+      "15:30",
+      "16:00"
+     ],
+     "grid_jaccard": {
+      "price_half": 1.0,
+      "time_5": 0.889,
+      "time_10": 1.0,
+      "min": 0.889
+     },
+     "bootstrap": {
+      "mean": 0.107,
+      "share_ge_half": 0.12,
+      "of": 50
+     },
+     "null": {
+      "status": "not_applicable: the older half has no zone at this place",
+      "excess": null,
+      "interval": null
+     }
+    }
+   ],
+   "shifted_grids": [
+    {
+     "price_shift_sd": 0.05,
+     "time_shift_min": 0,
+     "zones": [
+      {
+       "n": 18,
+       "share": 0.1146,
+       "price_sd": [
+        0.15,
+        0.55
+       ],
+       "time_et": [
+        "10:30",
+        "11:15"
+       ]
+      },
+      {
+       "n": 9,
+       "share": 0.0573,
+       "price_sd": [
+        0.45,
+        0.85
+       ],
+       "time_et": [
+        "15:30",
+        "16:00"
+       ]
+      }
+     ]
+    },
+    {
+     "price_shift_sd": 0.0,
+     "time_shift_min": 5,
+     "zones": [
+      {
+       "n": 21,
+       "share": 0.1338,
+       "price_sd": [
+        0.1,
+        0.7
+       ],
+       "time_et": [
+        "10:35",
+        "11:05"
+       ]
+      },
+      {
+       "n": 13,
+       "share": 0.0828,
+       "price_sd": [
+        0.9,
+        1.4
+       ],
+       "time_et": [
+        "14:50",
+        "16:05"
+       ]
+      },
+      {
+       "n": 8,
+       "share": 0.051,
+       "price_sd": [
+        0.5,
+        0.8
+       ],
+       "time_et": [
+        "15:35",
+        "16:05"
+       ]
+      }
+     ]
+    },
+    {
+     "price_shift_sd": 0.0,
+     "time_shift_min": 10,
+     "zones": [
+      {
+       "n": 20,
+       "share": 0.1274,
+       "price_sd": [
+        0.1,
+        0.6
+       ],
+       "time_et": [
+        "10:25",
+        "11:10"
+       ]
+      },
+      {
+       "n": 13,
+       "share": 0.0828,
+       "price_sd": [
+        0.9,
+        1.4
+       ],
+       "time_et": [
+        "14:55",
+        "16:10"
+       ]
+      },
+      {
+       "n": 9,
+       "share": 0.0573,
+       "price_sd": [
+        0.4,
+        0.8
+       ],
+       "time_et": [
+        "15:10",
+        "16:10"
+       ]
+      }
+     ]
+    }
+   ],
+   "components": [
+    {
+     "apex_D": 16,
+     "apex": [
+      0.2,
+      "10:45"
+     ],
+     "level": 8.0,
+     "n_sessions_in_component": 19,
+     "verdict": "zone",
+     "price_sd": [
+      0.1,
+      0.6
+     ],
+     "time_et": [
+      "10:30",
+      "11:15"
+     ]
+    },
+    {
+     "apex_D": 11,
+     "apex": [
+      0.6,
+      "15:30"
+     ],
+     "level": 5.5,
+     "n_sessions_in_component": 9,
+     "verdict": "zone",
+     "price_sd": [
+      0.5,
+      0.8
+     ],
+     "time_et": [
+      "15:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 9,
+     "apex": [
+      0.8,
+      "11:15"
+     ],
+     "level": 4.5,
+     "n_sessions_in_component": 40,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      0.0,
+      1.1
+     ],
+     "time_et": [
+      "10:30",
+      "12:15"
+     ]
+    },
+    {
+     "apex_D": 9,
+     "apex": [
+      1.1,
+      "15:30"
+     ],
+     "level": 4.5,
+     "n_sessions_in_component": 12,
+     "verdict": "zone",
+     "price_sd": [
+      0.9,
+      1.4
+     ],
+     "time_et": [
+      "15:00",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 7,
+     "apex": [
+      1.0,
+      "11:15"
+     ],
+     "level": 3.5,
+     "n_sessions_in_component": 47,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      0.0,
+      1.1
+     ],
+     "time_et": [
+      "10:30",
+      "13:00"
+     ]
+    },
+    {
+     "apex_D": 7,
+     "apex": [
+      1.1,
+      "15:00"
+     ],
+     "level": 3.5,
+     "n_sessions_in_component": 25,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      0.4,
+      1.4
+     ],
+     "time_et": [
+      "14:45",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 6,
+     "apex": [
+      0.3,
+      "12:00"
+     ],
+     "level": 3.0,
+     "n_sessions_in_component": 53,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      0.0,
+      1.4
+     ],
+     "time_et": [
+      "10:30",
+      "13:30"
+     ]
+    },
+    {
+     "apex_D": 6,
+     "apex": [
+      0.5,
+      "14:15"
+     ],
+     "level": 3.0,
+     "n_sessions_in_component": 34,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      0.3,
+      1.4
+     ],
+     "time_et": [
+      "14:15",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 5,
+     "apex": [
+      0.5,
+      "14:45"
+     ],
+     "level": 2.5,
+     "n_sessions_in_component": 34,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      0.3,
+      1.4
+     ],
+     "time_et": [
+      "14:15",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 4,
+     "apex": [
+      1.3,
+      "12:15"
+     ],
+     "level": 2.0,
+     "n_sessions_in_component": 117,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      0.0,
+      1.9
+     ],
+     "time_et": [
+      "10:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 4,
+     "apex": [
+      1.9,
+      "15:30"
+     ],
+     "level": 2.0,
+     "n_sessions_in_component": 5,
+     "verdict": "below_support",
+     "price_sd": [
+      1.7,
+      2.5
+     ],
+     "time_et": [
+      "15:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 4,
+     "apex": [
+      2.8,
+      "15:30"
+     ],
+     "level": 2.0,
+     "n_sessions_in_component": 7,
+     "verdict": "below_support",
+     "price_sd": [
+      2.6,
+      3.3
+     ],
+     "time_et": [
+      "15:15",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 3,
+     "apex": [
+      1.1,
+      "12:30"
+     ],
+     "level": 1.5,
+     "n_sessions_in_component": 117,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      0.0,
+      1.9
+     ],
+     "time_et": [
+      "10:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 3,
+     "apex": [
+      2.1,
+      "15:30"
+     ],
+     "level": 1.5,
+     "n_sessions_in_component": 5,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      1.7,
+      2.5
+     ],
+     "time_et": [
+      "15:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 3,
+     "apex": [
+      2.6,
+      "15:30"
+     ],
+     "level": 1.5,
+     "n_sessions_in_component": 7,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      2.6,
+      3.3
+     ],
+     "time_et": [
+      "15:15",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 2,
+     "apex": [
+      1.3,
+      "11:00"
+     ],
+     "level": 1.0,
+     "n_sessions_in_component": 148,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      -0.1,
+      3.8
+     ],
+     "time_et": [
+      "10:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 2,
+     "apex": [
+      2.6,
+      "13:30"
+     ],
+     "level": 1.0,
+     "n_sessions_in_component": 3,
+     "verdict": "below_support",
+     "price_sd": [
+      2.5,
+      3.2
+     ],
+     "time_et": [
+      "12:45",
+      "14:15"
+     ]
+    },
+    {
+     "apex_D": 1,
+     "apex": [
+      1.9,
+      "11:00"
+     ],
+     "level": 0.5,
+     "n_sessions_in_component": 148,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      -0.1,
+      3.8
+     ],
+     "time_et": [
+      "10:30",
+      "16:00"
+     ]
+    },
+    {
+     "apex_D": 1,
+     "apex": [
+      2.4,
+      "11:15"
+     ],
+     "level": 0.5,
+     "n_sessions_in_component": 2,
+     "verdict": "below_support",
+     "price_sd": [
+      2.1,
+      2.7
+     ],
+     "time_et": [
+      "11:15",
+      "12:45"
+     ]
+    },
+    {
+     "apex_D": 1,
+     "apex": [
+      3.8,
+      "11:15"
+     ],
+     "level": 0.5,
+     "n_sessions_in_component": 1,
+     "verdict": "below_support",
+     "price_sd": [
+      3.8,
+      4.1
+     ],
+     "time_et": [
+      "11:15",
+      "12:00"
+     ]
+    },
+    {
+     "apex_D": 1,
+     "apex": [
+      7.0,
+      "12:30"
+     ],
+     "level": 0.5,
+     "n_sessions_in_component": 1,
+     "verdict": "below_support",
+     "price_sd": [
+      7.0,
+      7.3
+     ],
+     "time_et": [
+      "12:30",
+      "13:15"
+     ]
+    },
+    {
+     "apex_D": 1,
+     "apex": [
+      2.9,
+      "12:45"
+     ],
+     "level": 0.5,
+     "n_sessions_in_component": 3,
+     "verdict": "joins_higher_peak",
+     "price_sd": [
+      2.5,
+      3.2
+     ],
+     "time_et": [
+      "12:45",
+      "14:15"
+     ]
+    },
+    {
+     "apex_D": 1,
+     "apex": [
+      6.8,
+      "15:30"
+     ],
+     "level": 0.5,
+     "n_sessions_in_component": 1,
+     "verdict": "below_support",
+     "price_sd": [
+      6.8,
+      7.1
+     ],
+     "time_et": [
+      "15:30",
+      "16:00"
+     ]
+    }
+   ],
+   "quantiles_all_known": {
+    "price_sd": {
+     "q10": 0.32,
+     "q30": 0.59,
+     "q50": 0.92,
+     "q70": 1.3,
+     "q90": 2.72
+    },
+    "time_et": {
+     "q10": "10:40",
+     "q30": "11:40",
+     "q50": "13:30",
+     "q70": "15:05",
+     "q90": "15:55"
+    }
+   }
+  }
+ }
+}
