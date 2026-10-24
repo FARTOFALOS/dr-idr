@@ -1,0 +1,780 @@
+{
+  "id": "RPX-SEM-0.1",
+  "artifact_kind": "IMPLEMENTATION_MAPPING_NOT_REGISTRY",
+  "status": "PROPOSAL",
+  "runtime_enabled": false,
+  "admitted_predictive_claims": [],
+  "baseline": {
+    "main_commit": "f35faaeb54d445d4d17de6264d096b6005ac9e6d",
+    "study_commit": "2bfd09633922c254fe58eb0e926fd13e2aedea81",
+    "reference_status": "FROZEN_REFERENCE_NOT_CURRENT_CATALOG"
+  },
+  "source_hashes": {
+    "AGENTS.md": "4d2b2f75f36a9b7061663f612fffef4c489810403136a09072af6fee18b8813c",
+    "contract/schema/dr_lab_sc.yaml": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
+    "contract/build/runtime_spec.json": "9795540070e3c2d2e04f06013481334397c5afe792f18fcb11f9417237d533b7",
+    "contract/build/registry.json": "a4797e24a737e1935149177760bb65a2c05810a25413958f3290902c35885a74",
+    "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b",
+    "spec/DR-LAB-SWPC-1.1.md": "b2178ba3ae36d7faf66e428c4fff8949cddc845fc593ebc0635fea98e0771217",
+    "integration/candidates/schema.yaml": "03a955e90c4f0d0fa9253597a62ca4ac2726b993a58c9fdcef27566f5fafe597",
+    "integration/candidates/build/runtime_spec.json": "e593528adaa23b6b6be118034e081bba48f3e8759e8fe93071b5bc980ac5484a",
+    "integration/candidates/build/registry.json": "b316f5d6374c4bd5bbc1efc401fd48431df4cb2768bbfe47ee51bf8ca35e0dc2",
+    "integration/reference/source.json": "dc3a6e1567f1e639f173da25548cd616e650bf1017a576357f11f120e75e615c",
+    "integration/reference/README.md": "5f2d472e9556675b0638cd45c956958f1aa0559160f00dd87bacf71c13678115",
+    "integration/reference/trace/schema/dr_lab_fom.yaml": "cfade97f5ccb647d4bfc7b7bac9b29672230c1992ac9b10cdfd33413ed4bf506",
+    "integration/reference/trace/build/trace_runtime_spec.json": "c790d809635e3062033a0155f04641c646df4e2d77cb61bb1899a8dfd2fc46b7",
+    "integration/reference/trace/build/dr_lab_trace.schema.json": "a3a2c990b2a43a2f66d8bd9ee914336e644615286b48bd46c7728ccf73884193",
+    "integration/reference/trace/catalog/55-terms.yaml": "6e7bb8fe22f249d02e1cdcc2a23e23504b2baa76cd556d1f002342f0a90e0044",
+    "integration/reference/trace/catalog/60-facets.yaml": "8b3440c683ad9fe98566421f66ecba9466999be5d4325e4ec409ae4802a8e8a5",
+    "integration/reference/trace/fom.py": "d97e2d4581034c6f4df0b65bed1cac9817ba816b58d50503bf247c5c7bfb6c36",
+    "meaning/17-rabota-treidera.md": "b7348c34f0dd99f616538bbf030c0447841721f08f7b75d1c2597a3537e5bacf",
+    "meaning/21-svodnaya-karta-24.md": "f807c20e2cefd8a644e220a474ffd22e75676bc4e14c95aa7f56fabf34ae5dbb",
+    "design/sozvezdiya-24/src/integration.js": "bb7cc19d35b6712e6a5fab700e9c7ec19d2cb032b22cd2d12dcf723b6c2e93eb"
+  },
+  "git_sources": [
+    {
+      "revision": "2bfd09633922c254fe58eb0e926fd13e2aedea81",
+      "path": "studies/r_pre_x_2026_10_21/rpx.py",
+      "sha256_lf": "3ca6ebb1ce165a82a3e88c69e38852bbdc5fa52f10a97ba7bfc340fb01ce7673"
+    },
+    {
+      "revision": "2bfd09633922c254fe58eb0e926fd13e2aedea81",
+      "path": "studies/r_pre_x_2026_10_21/README.md",
+      "sha256_lf": "713256cd2dd35079bca2f85a6be83e6b8c40a1300d75586b0f15a7ad5b1e5109"
+    },
+    {
+      "revision": "2bfd09633922c254fe58eb0e926fd13e2aedea81",
+      "path": "studies/r_pre_x_2026_10_21/results.json",
+      "sha256_lf": "b85d52320f032bab1222e6374a8ed36e8e1694de5669d1eecd42dfba2f4bc367"
+    }
+  ],
+  "existing_bindings": [
+    {
+      "id": "OUT:FINAL-R-1",
+      "registry": "accepted",
+      "class": "OutcomeSpecification",
+      "slots": [
+        "projection",
+        "event",
+        "horizon_start",
+        "horizon_end",
+        "uses_case_future_as_label"
+      ]
+    },
+    {
+      "id": "OUT:FINAL-X-1",
+      "registry": "accepted",
+      "class": "OutcomeSpecification",
+      "slots": [
+        "projection",
+        "event",
+        "horizon_start",
+        "horizon_end",
+        "uses_case_future_as_label"
+      ]
+    },
+    {
+      "id": "EST:N-NEW-R",
+      "registry": "accepted",
+      "class": "EstimandSpecification",
+      "slots": [
+        "question",
+        "q4_case_set",
+        "q4_denominator",
+        "q5_outcome",
+        "q6_cut"
+      ]
+    },
+    {
+      "id": "EST:B-LEVEL-REST",
+      "registry": "accepted",
+      "class": "EstimandSpecification",
+      "slots": [
+        "q5_outcome",
+        "q6_time_ru",
+        "q4_denominator"
+      ]
+    },
+    {
+      "id": "EST:B-CLOCK-R",
+      "registry": "accepted",
+      "class": "EstimandSpecification",
+      "slots": [
+        "q5_outcome",
+        "q6_time_ru",
+        "q4_denominator"
+      ]
+    },
+    {
+      "id": "CS:F-CONF-1",
+      "registry": "accepted",
+      "class": "CaseSetSpecification",
+      "slots": [
+        "role",
+        "condition_availability",
+        "activation_kind"
+      ]
+    },
+    {
+      "id": "CS:F-CONF-ALL-1",
+      "registry": "accepted",
+      "class": "CaseSetSpecification",
+      "slots": [
+        "role",
+        "condition_availability",
+        "activation_kind"
+      ]
+    },
+    {
+      "id": "MF:CONFIRMATION-1",
+      "registry": "accepted",
+      "class": "MeasurementFrameSpecification",
+      "slots": [
+        "origin_rule",
+        "direction_rule",
+        "unit",
+        "forward_formula"
+      ]
+    },
+    {
+      "id": "FF:TODAY-PREFIX",
+      "registry": "accepted",
+      "class": "FactForm",
+      "slots": [
+        "record_class",
+        "statement_ru"
+      ]
+    },
+    {
+      "id": "FF:PHASE-RULE",
+      "registry": "candidate",
+      "class": "FactForm",
+      "slots": [
+        "record_class",
+        "statement_ru"
+      ]
+    }
+  ],
+  "class_bindings": [
+    {
+      "concept": "E0",
+      "class": "KnowledgeCut",
+      "source": "accepted",
+      "slots": [
+        "cut_close_minute",
+        "cut_clock_et",
+        "mode"
+      ]
+    },
+    {
+      "concept": "E1",
+      "class": "PrefixState",
+      "source": "accepted",
+      "slots": [
+        "prefix_status",
+        "seen_ticks",
+        "seen_first_open_minute"
+      ]
+    },
+    {
+      "concept": "H2",
+      "class": "CaseSetSnapshot",
+      "source": "accepted",
+      "slots": [
+        "family_id",
+        "snapshot_id",
+        "n_members",
+        "data_revision"
+      ]
+    },
+    {
+      "concept": "T0.1",
+      "class": "QuestionRequest",
+      "source": "accepted",
+      "slots": [
+        "questions"
+      ]
+    },
+    {
+      "concept": "V1/V2",
+      "class": "StatisticalResultBundle",
+      "source": "accepted",
+      "slots": [
+        "estimand",
+        "derivation",
+        "estimates",
+        "supports",
+        "admissible_claims"
+      ]
+    },
+    {
+      "concept": "definition facets",
+      "class": "FacetDefinition",
+      "source": "reference",
+      "slots": [
+        "projection",
+        "scope_ru",
+        "cardinality",
+        "unknown_rule"
+      ]
+    },
+    {
+      "concept": "bounded research evidence",
+      "class": "ResearchFinding",
+      "source": "reference",
+      "slots": [
+        "validates",
+        "conclusion",
+        "negative_scope_ru",
+        "accepted_basis"
+      ]
+    },
+    {
+      "concept": "profile standing",
+      "class": "ProfileStanding",
+      "source": "reference",
+      "slots": [
+        "profile_key",
+        "decision",
+        "human_acceptance",
+        "in_trace_scope"
+      ]
+    }
+  ],
+  "proposed_profile": {
+    "id": "PROFILE:RPX-RESEARCH-1",
+    "class": "Profile",
+    "decision": "PROPOSED",
+    "human_acceptance": "PENDING",
+    "live_binding": false
+  },
+  "proposed_questions": [
+    {
+      "id": "Q:RPX-GUARDED",
+      "class": "TraderQuestionSpecification",
+      "text_ru": "Где и когда лежат сохранённые процедурой исследования минимумы до первой свечи окончательного X и какая масса не имеет координаты?"
+    },
+    {
+      "id": "Q:RPX-BAR",
+      "class": "TraderQuestionSpecification",
+      "text_ru": "Где и когда лежат минимумы по полностью предшествующим свече окончательного X M5 и какая масса не имеет такого измерительного окна?"
+    }
+  ],
+  "proposed_outcomes": [
+    {
+      "id": "OUT:RPX-GUARDED-1",
+      "class": "OutcomeSpecification",
+      "projection": "GUARDED_PRE_FINAL_X_BAR_MIN",
+      "event": "R_PRE_X_GUARDED",
+      "horizon_start": "OWN_ACTIVATION_CLOSE_EXCLUSIVE",
+      "horizon_end": "BEFORE_FIRST_FINAL_X_M5",
+      "endpoint_outcome": "OUT:FINAL-X-1",
+      "endpoint_evidence_horizon": "BLOCK_END_CLOSE_INCLUSIVE",
+      "guard_rule": "TOP_BAR_LOWER_WITHHOLDS_COORDINATE",
+      "uses_case_future_as_label": true,
+      "grounds": "PROPOSAL",
+      "legacy_statuses": [
+        "KNOWN",
+        "NO_PRE_X_PERIOD",
+        "SAME_M5_UNRESOLVED",
+        "UNKNOWN",
+        "NONE"
+      ],
+      "empirical_status": "SOURCE_STUDY_ACCEPTED_AS_INPUT",
+      "source_study_revision": "2bfd09633922c254fe58eb0e926fd13e2aedea81"
+    },
+    {
+      "id": "OUT:RPX-BAR-MIN-1",
+      "class": "OutcomeSpecification",
+      "projection": "PRE_FINAL_X_BAR_MIN",
+      "event": "R_PRE_X_BAR",
+      "horizon_start": "OWN_ACTIVATION_CLOSE_EXCLUSIVE",
+      "horizon_end": "BEFORE_FIRST_FINAL_X_M5",
+      "endpoint_outcome": "OUT:FINAL-X-1",
+      "endpoint_evidence_horizon": "BLOCK_END_CLOSE_INCLUSIVE",
+      "guard_rule": "DIAGNOSTIC_ONLY",
+      "uses_case_future_as_label": true,
+      "grounds": "PROPOSAL",
+      "statuses": [
+        "KNOWN",
+        "NO_PRE_X_M5",
+        "UNKNOWN_ENDPOINT",
+        "NO_PERIOD"
+      ],
+      "empirical_status": "NOT_MEASURED"
+    }
+  ],
+  "proposed_estimands": [
+    {
+      "id": "EST:RPX-GUARDED-STATUS",
+      "class": "EstimandSpecification",
+      "question": "Q:RPX-GUARDED",
+      "q5_outcome": "OUT:RPX-GUARDED-1",
+      "q7_measure": "CATEGORY_SHARES",
+      "claim_form": "CF:RPX-GUARDED-STATUS"
+    },
+    {
+      "id": "EST:RPX-GUARDED-JOINT",
+      "class": "EstimandSpecification",
+      "question": "Q:RPX-GUARDED",
+      "q5_outcome": "OUT:RPX-GUARDED-1",
+      "q7_measure": "DISTRIBUTION",
+      "claim_form": "CF:RPX-GUARDED-JOINT"
+    },
+    {
+      "id": "EST:RPX-GUARDED-CLOCK",
+      "class": "EstimandSpecification",
+      "question": "Q:RPX-GUARDED",
+      "q5_outcome": "OUT:RPX-GUARDED-1",
+      "q7_measure": "SHARE",
+      "claim_form": "CF:RPX-GUARDED-CLOCK"
+    },
+    {
+      "id": "EST:RPX-BAR-STATUS",
+      "class": "EstimandSpecification",
+      "question": "Q:RPX-BAR",
+      "q5_outcome": "OUT:RPX-BAR-MIN-1",
+      "q7_measure": "CATEGORY_SHARES",
+      "claim_form": "CF:RPX-BAR-STATUS"
+    },
+    {
+      "id": "EST:RPX-BAR-JOINT",
+      "class": "EstimandSpecification",
+      "question": "Q:RPX-BAR",
+      "q5_outcome": "OUT:RPX-BAR-MIN-1",
+      "q7_measure": "DISTRIBUTION",
+      "claim_form": "CF:RPX-BAR-JOINT"
+    },
+    {
+      "id": "EST:RPX-BAR-CLOCK",
+      "class": "EstimandSpecification",
+      "question": "Q:RPX-BAR",
+      "q5_outcome": "OUT:RPX-BAR-MIN-1",
+      "q7_measure": "SHARE",
+      "claim_form": "CF:RPX-BAR-CLOCK"
+    }
+  ],
+  "estimand_common": {
+    "profile": "PROFILE:RPX-RESEARCH-1",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION",
+    "q4_case_set": [
+      "CS:F-CONF-1",
+      "CS:F-CONF-ALL-1"
+    ],
+    "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+    "q8_unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE",
+    "q8_weights": "NONE",
+    "claim_class": "DescriptiveClaim",
+    "surface_bindings": []
+  },
+  "schema_delta": {
+    "enums": {
+      "ProjectionKind": [
+        "PRE_FINAL_X_BAR_MIN",
+        "GUARDED_PRE_FINAL_X_BAR_MIN"
+      ],
+      "EventKind": [
+        "R_PRE_X_BAR",
+        "R_PRE_X_GUARDED"
+      ],
+      "HorizonEnd": [
+        "BEFORE_FIRST_FINAL_X_M5"
+      ]
+    },
+    "fields": [
+      {
+        "class": "OutcomeSpecification",
+        "field": "endpoint_outcome",
+        "range": "OutcomeSpecification",
+        "required_for": [
+          "PRE_FINAL_X_BAR_MIN",
+          "GUARDED_PRE_FINAL_X_BAR_MIN"
+        ]
+      },
+      {
+        "class": "OutcomeSpecification",
+        "field": "endpoint_evidence_horizon",
+        "range": "HorizonEnd",
+        "required_for": [
+          "PRE_FINAL_X_BAR_MIN",
+          "GUARDED_PRE_FINAL_X_BAR_MIN"
+        ]
+      },
+      {
+        "class": "OutcomeSpecification",
+        "field": "guard_rule",
+        "range": "string",
+        "required_for": [
+          "PRE_FINAL_X_BAR_MIN",
+          "GUARDED_PRE_FINAL_X_BAR_MIN"
+        ]
+      }
+    ],
+    "new_classes": [
+      {
+        "class": "RpxOutcomeRecord",
+        "conceptual_source": "SC-1.1 P1/E2",
+        "definition": "README.md#5-запись-результата-и-время-знания"
+      }
+    ],
+    "conceptual_not_machine_classes": [
+      "OutcomeRecord",
+      "KnowledgeAssessment"
+    ],
+    "pattern_extensions": [
+      {
+        "class": "ProfileStanding",
+        "field": "profile_key",
+        "source": "reference",
+        "new_value": "RPX-RESEARCH-1"
+      }
+    ]
+  },
+  "facet_assignments": [
+    {
+      "facet": "FACET:CATEGORY",
+      "target_class": "OutcomeSpecification",
+      "value": "OutcomeSpecification",
+      "source": "actual registered class"
+    },
+    {
+      "facet": "FACET:PHASE",
+      "target_class": "EstimandSpecification",
+      "value": [
+        "AFTER_CONFIRMATION"
+      ],
+      "source": "q4_case_set -> activation_kind=CONFIRMATION"
+    },
+    {
+      "facet": "FACET:KNOWLEDGE",
+      "target_class": "EstimandSpecification",
+      "value": [
+        "AT_ACTIVATION",
+        "CASE_FUTURE_LABEL"
+      ],
+      "source": "case-set condition plus outcome uses_case_future_as_label; not one availability timestamp"
+    },
+    {
+      "facet": "FACET:PRICE",
+      "target_class": "EstimandSpecification",
+      "value": [
+        "MF:CONFIRMATION-1"
+      ],
+      "source": "case-set activation and case-local frame"
+    },
+    {
+      "facet": "FACET:TIME",
+      "target_class": "EstimandSpecification",
+      "value": [
+        "OWN_HORIZON"
+      ],
+      "source": "outcome horizon_start; endpoint details remain in OutcomeSpecification"
+    },
+    {
+      "facet": "FACET:SET_ROLE",
+      "target_class": "CaseSetSpecification",
+      "value": "BASE_FAMILY",
+      "source": "CaseSetSpecification.role"
+    },
+    {
+      "facet": "FACET:DENOMINATOR",
+      "target_class": "EstimandSpecification",
+      "value": "N_BASE_UNIQUE_MEMBERS",
+      "source": "q4_denominator"
+    },
+    {
+      "facet": "FACET:CLAIM",
+      "target_class": "EstimandSpecification",
+      "value": "DescriptiveClaim",
+      "source": "candidate claim form, never the research result"
+    },
+    {
+      "facet": "FACET:GROUNDS",
+      "target_class": "OutcomeSpecification",
+      "value": "PROPOSAL",
+      "source": "definition grounds; research records separately RESEARCH_RESULT"
+    },
+    {
+      "facet": "FACET:SURFACE",
+      "target_class": "EstimandSpecification",
+      "value": [],
+      "source": "no actual UI binding in this phase"
+    },
+    {
+      "facet": "FACET:OUTCOME",
+      "target_class": "EstimandSpecification",
+      "value_source_slot": "q5_outcome",
+      "source": "direct identity reference; new facet, no new calculator"
+    }
+  ],
+  "definition_edges": [
+    {
+      "from": "OUT:RPX-GUARDED-1",
+      "to": "OUT:FINAL-X-1",
+      "field": "endpoint_outcome",
+      "kind": "TEMPORAL",
+      "scope": "SAME_CASE_FRAME_FULL_HORIZON"
+    },
+    {
+      "from": "OUT:RPX-BAR-MIN-1",
+      "to": "OUT:FINAL-X-1",
+      "field": "endpoint_outcome",
+      "kind": "TEMPORAL",
+      "scope": "SAME_CASE_FRAME_FULL_HORIZON"
+    }
+  ],
+  "preserved_pragmatic_binding": {
+    "term": "TERM:PULLBACK-MAX",
+    "serving_estimand": "EST:B-LEVEL-REST",
+    "source": "meaning/17-rabota-treidera.md",
+    "scope": "reported operator answer 2026-10-08",
+    "relationship": "PRACTICAL_ANSWER_IN_CONTEXT",
+    "mathematical_identity": false,
+    "change_to_existing_answer": false,
+    "mandatory_sequence_B_then_L": false
+  },
+  "fom_catalog_patch": {
+    "catalog_part": "rpx-proposal-not-active",
+    "terms": [
+      {
+        "id": "TERM:RPX-GUARDED",
+        "title_ru": "минимум до X по процедуре исследования",
+        "scheme": "RPX-RESEARCH",
+        "aliases": [
+          "R→X исследования"
+        ],
+        "denotes": [
+          "OUT:RPX-GUARDED-1"
+        ],
+        "definition_ru": "Процедура rpx.py из 2bfd096 с guard для более глубокого low свечи X.",
+        "evidence": [
+          "meaning/lens/2026-10-21-rpx-decisions/README.md"
+        ],
+        "boundary_ru": "Не окончательный R, не сегодняшний минимум и не распознанное завершение отката."
+      },
+      {
+        "id": "TERM:RPX-BAR",
+        "title_ru": "минимум по M5 до свечи X",
+        "scheme": "RPX-MEASUREMENT",
+        "aliases": [],
+        "denotes": [
+          "OUT:RPX-BAR-MIN-1"
+        ],
+        "definition_ru": "Минимум направленных low полностью предшествующих первой свече окончательного X M5.",
+        "evidence": [
+          "meaning/lens/2026-10-21-rpx-decisions/README.md"
+        ],
+        "boundary_ru": "Low самой свечи X не входит; результаты guarded-исследования не наследуются."
+      },
+      {
+        "id": "TERM:RPX-NO-PRE-M5",
+        "title_ru": "нет отдельной M5 до свечи X",
+        "scheme": "RPX-MEASUREMENT",
+        "aliases": [],
+        "denotes": [
+          "OUT:RPX-BAR-MIN-1"
+        ],
+        "definition_ru": "Первая M5 полного горизонта является первой M5 окончательного X; измерительное окно B пусто.",
+        "evidence": [
+          "meaning/lens/2026-10-21-rpx-decisions/README.md"
+        ],
+        "boundary_ru": "Это отсутствие измерительного окна, не доказанное отсутствие внутрисвечного отката."
+      },
+      {
+        "id": "TERM:RPX-LEVEL-REST-LITERAL",
+        "title_ru": "достижение уровня после среза",
+        "scheme": "BASE24",
+        "aliases": [],
+        "denotes": [
+          "EST:B-LEVEL-REST"
+        ],
+        "definition_ru": "Доля фиксированной семьи с достижением уровня или дальше на общем остатке после среза.",
+        "evidence": [
+          "contract/registry/30-questions-estimands.yaml",
+          "meaning/17-rabota-treidera.md"
+        ],
+        "boundary_ru": "Подходящий оператору ответ в контексте 08.10 не является математическим тождеством с drawdown от максимума."
+      }
+    ],
+    "term_relations": [
+      {
+        "id": "TM:RPX-01",
+        "left": "TERM:RPX-GUARDED",
+        "right": "TERM:RPX-BAR",
+        "mapping": "NOT_IDENTICAL",
+        "scope_ru": "B непусто и low свечи X глубже минимума B",
+        "reason_ru": "Raw имеет координату, guarded её снимает.",
+        "guards": [
+          "W04"
+        ],
+        "evidence": [
+          "meaning/lens/2026-10-21-rpx-decisions/README.md"
+        ]
+      },
+      {
+        "id": "TM:RPX-02",
+        "left": "TERM:RPX-GUARDED",
+        "right": "TERM:FINAL-R",
+        "mapping": "NOT_IDENTICAL",
+        "scope_ru": "Собственный горизонт после активации",
+        "reason_ru": "Разные конечные границы измерительного окна.",
+        "guards": [
+          "W04"
+        ],
+        "evidence": [
+          "meaning/lens/2026-10-21-rpx-decisions/README.md"
+        ]
+      },
+      {
+        "id": "TM:RPX-03",
+        "left": "TERM:RPX-BAR",
+        "right": "TERM:TODAY-LOW",
+        "mapping": "NOT_IDENTICAL",
+        "scope_ru": "Сегодняшний префикс и ретроспективная метка",
+        "reason_ru": "Endpoint RPX использует окончательный X, PrefixState только наблюдения до среза.",
+        "guards": [
+          "W04"
+        ],
+        "evidence": [
+          "meaning/lens/2026-10-21-rpx-decisions/README.md"
+        ]
+      },
+      {
+        "id": "TM:RPX-04",
+        "left": "TERM:RPX-NO-PRE-M5",
+        "right": "TERM:ZERO",
+        "mapping": "NOT_IDENTICAL",
+        "scope_ru": "Пустое окно измерения",
+        "reason_ru": "Отсутствующая координата не является нулевой ценой.",
+        "guards": [
+          "W04"
+        ],
+        "evidence": [
+          "meaning/lens/2026-10-21-rpx-decisions/README.md"
+        ]
+      },
+      {
+        "id": "TM:RPX-05",
+        "left": "TERM:RPX-LEVEL-REST-LITERAL",
+        "right": "TERM:PULLBACK-MAX",
+        "mapping": "RELATED",
+        "scope_ru": "Практический вопрос оператора и принятый им ответ, запись 08.10",
+        "reason_ru": "Сохранить пригодность ответа в контексте; не выводить математическое тождество с измерением от максимума.",
+        "guards": [
+          "W12"
+        ],
+        "evidence": [
+          "meaning/17-rabota-treidera.md"
+        ]
+      }
+    ],
+    "facet_definitions": [
+      {
+        "id": "FACET:OUTCOME",
+        "title_ru": "Измеряемая проекция случая",
+        "basis_ru": "Какой точный OutcomeSpecification измеряется?",
+        "projection": "outcome_id",
+        "scope_ru": "ESTIMANDS",
+        "cardinality": "ONE",
+        "unknown_rule": "UNKNOWN при отсутствующей или неразрешимой q5_outcome; NOT_APPLICABLE вне estimands.",
+        "evidence": [
+          "contract/schema/dr_lab_sc.yaml",
+          "meaning/lens/2026-10-21-rpx-decisions/README.md"
+        ],
+        "used_by": [
+          "CQ-RPX-01"
+        ]
+      }
+    ],
+    "competency_questions": [
+      {
+        "id": "CQ-RPX-01",
+        "title_ru": "Какой именно RPX породил оценку и зависит ли он от окончательного X того же случая?",
+        "question_kind": "RELATIONSHIP",
+        "query": "planned:facet-and-lineage",
+        "argument": "outcome_id",
+        "baseline_status": "PROPOSED_NOT_IMPLEMENTED",
+        "answer_kind": "ID_SET",
+        "expected_ids": [
+          "OUT:RPX-GUARDED-1",
+          "OUT:RPX-BAR-MIN-1",
+          "OUT:FINAL-X-1"
+        ],
+        "forbidden_ids": [],
+        "held_out": false,
+        "machine_gate": false,
+        "evidence": [
+          "meaning/lens/2026-10-21-rpx-decisions/README.md"
+        ],
+        "boundary_ru": "Ожидаемые ответы не являются источником графа зависимостей и не являются рыночной валидацией.",
+        "expected_ru": "Точный outcome_id оценки; действительная endpoint-связь к X того же случая; различие guarded/raw."
+      }
+    ],
+    "research_findings": [
+      {
+        "id": "RS:RPX-ORDER-20261021",
+        "version": "1",
+        "sc_ref": [
+          "V3",
+          "P0.1"
+        ],
+        "grounds": "RESEARCH_RESULT",
+        "validates": [
+          "OUT:RPX-GUARDED-1",
+          "OUT:FINAL-R-1"
+        ],
+        "validation_kind": "RESEARCH_EXPLORATORY",
+        "lifecycle": "NOT_PROMOTED",
+        "corpus_seen_before": true,
+        "corpus_ru": "Цели NQ/ES/YM ADR/ODR/RDR 2018–2025 с известным полным горизонтом, по протоколу 2bfd096.",
+        "protocol_ru": "Протокол af9c66f; результаты 2bfd096, приняты оператором как исходные числа для смыслового анализа.",
+        "result_ru": "76,5–84,4% поздних окончательных R целей после первого окончательного X; доля поздних глубоких координат guarded RPX существенно ниже.",
+        "claim_level": "B_INFORMATION",
+        "conclusion": "OBSERVED",
+        "allowed_claim_ru": "Различие объявленных проекций и порядка первых экстремумов на этом корпусе.",
+        "negative_scope_ru": "Не доказывает отсутствие последующего движения или повторного X после R.",
+        "uncertainty_ru": "Числа не пересчитывались в этом пакете; определение позднего и глубокого — из исходного протокола.",
+        "not_generalised_ru": "Не переносить результат на raw RPX, свинги, неизвестные горизонты или новый основной экран.",
+        "evidence": [
+          "meaning/lens/2026-10-21-rpx-decisions/README.md"
+        ],
+        "accepted_basis": false
+      },
+      {
+        "id": "RS:RPX-NULL-20261021",
+        "version": "1",
+        "sc_ref": [
+          "V3"
+        ],
+        "grounds": "RESEARCH_RESULT",
+        "validates": [
+          "OUT:RPX-GUARDED-1"
+        ],
+        "validation_kind": "RESEARCH_EXPLORATORY",
+        "lifecycle": "NOT_PROMOTED",
+        "corpus_seen_before": true,
+        "corpus_ru": "Шесть основных разрезов weekday × ADR/ODR/RDR × N 20–59/N>=60, цели 2018–2025, исходный guarded RPX.",
+        "protocol_ru": "Попадание в зоны прошлого против 20 sign-flip-1 копий пути цели; интервалы 5–95% по торговым неделям.",
+        "result_ru": "Избыток попаданий guarded RPX от −0,6 до +1,7 п.п.; все указанные интервалы включают ноль.",
+        "claim_level": "C_TRANSFER",
+        "conclusion": "NOT_DETECTED",
+        "allowed_claim_ru": "По этой метрике и этому контролю различимый избыток не обнаружен.",
+        "negative_scope_ru": "Не установлена эквивалентность, отсутствие любой информации или отсутствие механизма DR.",
+        "uncertainty_ru": "Один контроль; уже виденный корпус; копии сохраняют реализованные размеры и время свечных движений цели.",
+        "not_generalised_ru": "Не назначать sign-flip цели доступным заранее прогнозом; не переносить на raw RPX или человеческую полезность 2D.",
+        "evidence": [
+          "meaning/lens/2026-10-21-rpx-decisions/README.md"
+        ],
+        "accepted_basis": false
+      }
+    ]
+  },
+  "validation_boundary": {
+    "mapping_only": true,
+    "numeric_recalculation": "NOT_RUN",
+    "candidate_runtime": "NOT_IMPLEMENTED",
+    "human_reading": "NOT_TESTED",
+    "history_2026": "NOT_OPENED"
+  }
+}

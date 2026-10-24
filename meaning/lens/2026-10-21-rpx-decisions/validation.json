@@ -1,0 +1,75 @@
+{
+  "artifact": "RPX-SEM-0.1",
+  "outcome": "PASS",
+  "scope": "proposal mapping, references, FOM record structure and source preservation only",
+  "checks": {
+    "SOURCE-PINS": 24,
+    "NO-PROMOTION": 4,
+    "REFERENCE-STANDING": 1,
+    "TYPED-REFERENCE": 10,
+    "EXISTING-SLOT": 63,
+    "EXISTING-CLASS": 8,
+    "PROPOSED-IDENTITY": 12,
+    "SCHEMA-DELTA": 21,
+    "NO-INVENTED-CLASS": 3,
+    "RPX-SEPARATION": 1,
+    "WINDOW-VS-EVIDENCE": 2,
+    "EVIDENCE-SCOPE": 6,
+    "SET-DENOMINATOR": 1,
+    "ESTIMAND-LINK": 6,
+    "ENDPOINT-DEPENDENCY": 3,
+    "TERM-REFERENCE": 9,
+    "TERM-GUARD": 5,
+    "PRAGMATIC-NOT-IDENTITY": 1,
+    "FACET-SCOPE": 22,
+    "FACET-DERIVATION": 1,
+    "EVIDENCE-FILE": 15,
+    "FOM-STRUCTURE": 1
+  },
+  "violations": [],
+  "counterexamples": [
+    {
+      "case": "wrong existing type",
+      "expected_check": "TYPED-REFERENCE",
+      "detected": true
+    },
+    {
+      "case": "C2 promotion",
+      "expected_check": "NO-PROMOTION",
+      "detected": true
+    },
+    {
+      "case": "raw inherits research",
+      "expected_check": "EVIDENCE-SCOPE",
+      "detected": true
+    },
+    {
+      "case": "measurement becomes full block",
+      "expected_check": "WINDOW-VS-EVIDENCE",
+      "detected": true
+    },
+    {
+      "case": "set role attached to outcome",
+      "expected_check": "FACET-SCOPE",
+      "detected": true
+    },
+    {
+      "case": "pragmatic answer becomes identity",
+      "expected_check": "PRAGMATIC-NOT-IDENTITY",
+      "detected": true
+    },
+    {
+      "case": "guarded loses dependency on X",
+      "expected_check": "ENDPOINT-DEPENDENCY",
+      "detected": true
+    }
+  ],
+  "boundaries": {
+    "mapping_only": true,
+    "numeric_recalculation": "NOT_RUN",
+    "candidate_runtime": "NOT_IMPLEMENTED",
+    "human_reading": "NOT_TESTED",
+    "history_2026": "NOT_OPENED"
+  },
+  "manifest_sha256": "cababa49c8ed2110beaa15837c718491a5999fba9d854e3eb037588ea0918a20"
+}
