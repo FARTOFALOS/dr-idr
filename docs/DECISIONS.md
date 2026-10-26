@@ -67,3 +67,52 @@ and the operator disagree, the operator wins.
 | 2026-10-07 | **Post-merge audit cleanup.** `contract/README.md` aligned with the accepted scope (BASE-24 / NOW-1.0 and their future changes; legacy outside). The SC-1.1 claim gate is fail-closed for future C2/C3: generic predictive-admission, policy or authority records cannot activate a forecast/decision by mere presence. A later edition must explicitly bind the exact target and case-set/domain to validation + human admission, and for C3 also to a concrete policy + action authority, with the gate/tests changed deliberately. Current BASE-24 / NOW-1.0 numbers and meanings are unchanged. | operator asked the executor to apply the audit findings; executor hardening |
 | 2026-10-07 | **DR-LAB-SWPC-1.1 is the current implementation target for screen 24's visual presentation.** The operator asked to reconcile the closed 1.0 with current `main`, update the repository, and hand 1.1 to the visual engineer for implementation. This authorizes implementation of its closed PresentationBindings/M01–M18, not perceptual pre-acceptance: after the engineer finishes, the operator tests H01–H12 and accepts, rejects or requests local corrections. | operator, current chat; curator reconciliation |
 | 2026-10-15 | **Integrate the working continuation chain into screen 24, then main after checks.** Fixed F/RX, a fixed physical target and absolute window, successive closed M5, own POS_GEO support with real paths, residual question and observed fact. Review all 12 open PRs as sources before main, preserve provenance and proposal status. The operator explicitly answered «После проверок разрешаю объединить в main», then required build, semantic checks and the decisions skill before final replacement/push. This is authority for this implementation/publication sequence, not perceptual acceptance, blanket PR adoption or C2/C3. | operator, direct authenticated messages and clarification reply in this Codex conversation; implementation choices by executor; details in meaning/07 and integration/DELIVERY.md |
+| 2026-10-19 | **Aggregate every lens, the external review and PR #15 into one map, and make screen 24 a fully working interface on real data.** Executor's decisions within that request: the launcher restarts a TradingView opened without port 9222 again (the change of 15.10 had left the screen without live candles); the registry words of `B-LEVEL-REST` / `B-VISIT-REST` (common remainder) and of `CMP:C-POS` / `CF:C-WINDOW` (POS_GEO as computed) aligned with the executable definitions, pinned by `tests/semantic_links.py`, no number changed; the operator's decisions of 08.10 (phase rule, «Сейчас» pullback marks) on screen as candidate trials, not accepted view; the third edition of the 18.10 audit kept local on its PR branch. Map: `meaning/21-svodnaya-karta-24.md`. The operator then decided to publish: «закоммить в main и запушь всю работу 19.10 вместе с правкой 16.10, и запушь третью редакцию аудита в PR #15» — this also publishes his local visual edit of 16.10; it is not acceptance of the candidates and not a merge of PR #15. | operator, chat 19.10 (request, publication); executor (decisions, `meaning/07`) |
+| 2026-10-21 | **Candidate «Откаты до обновления» (DR-LAB-PB-0.1): rule of the update and data.** An update of a vertex is an exceedance by at least one tick, a wick and a gap included; a touch or equality is not («если на тик, то это уже исполняется… Тик — это не одно и то же»). The order inside an M5 is not resolved with M1 candles («М1 я тоже против»): the unknown stays unknown and widens the share's upper bound (the M5 atom of 01.10). The default scale and a filter «only before the break» were not decided: the operator did not find the scale question understandable and wants the accepted constellation picture kept; the candidate stays an optional trial, off by default, and the accepted R/X constellations are untouched. He ordered a full audit of the previous executor's work, all checks, and publication as a PR with the executor's verdict. | operator, live chat 21.10 (voice) |
+
+
+## 22.10.2026 · Рабочая 23.5 в main, отдельно от 24
+
+**Прямое поручение оператора в текущем аутентифицированном чате:** сохранить прежний UI, восстановить затемнение
+и отбор выраженных кластеров как в 24, исправить проекции новых откатов; применить decisions, перепроверить фасеты,
+«всё это запушь в Main с описанием». Новые видимые сущности — сначала обсуждать. Это разрешение текущей
+публикации, не бессрочное разрешение на публикации и не принятие прогноза.
+
+**Реализация:** отдельная `/23-5/` и namespace настроек, не замена файлов 24. PB-L в прежней янтарной роли R;
+FINAL-X, BASE/NOW, порядок окончательных R/X и условные Продолжения сохранены как отдельные вопросы.
+Счётчики цены/времени — объединения сессий; неизвестное и отсутствие различаются. Исправлены унаследованные ячейки
+FINAL-R, доставка выбранной области, Infinity/null, смешанная подсказка «?» и исходные данные временного холма.
+Слабые строки не удаляются из истории при скрытии, N не перенормируется. Затемнение взято из 24 вместо плоской
+контрастной темы; PAST относится к концу окна, не к запрету более высокого локального отката.
+
+**Смысл и проверка:** [решения и 10 фасетов](DR-LAB-23-5-SEMANTIC-DECISIONS.md),
+[12 статистических и 5 фактических/визуальных носителей](../integration/profile235-bindings.json),
+[источники](../integration/23-5-source-dispositions.json), [результаты](../integration/23-5-release-checks.json).
+Принятых величин 53, предложенных 63. У неоптимизированного масштаба, clock многократных событий и порога внимания
+названы альтернативы и ограничения. Основной 24 сохраняется для сравнения; человеческая приёмка вида не выводится
+из машинного PASS.
+
+## 22.10.2026 · Исправление после сравнения оператором 23.5 / 24
+
+Оператор отверг рисунок «одной точкой» и спросил о почти полностью янтарной ленте времени. Исполнитель восстановил
+звёзды обоих цветов, представление всей маски зоны вместо anchor и непустые временные столбики X вне зон.
+Для PB-L / FINAL-X снят цветовой «перевес»: многократное локальное событие и единственный итог не составляют
+двух противоположных исходов движения. События и частоты не изменены, общей линейной шкалы n/N не подменяли.
+Это исправление того же поручения, не принятие вероятностного прогноза и не новое разрешение на публикации.
+Причины, тесты и оставшееся ограничение смешанной карты: [решения](DR-LAB-23-5-SEMANTIC-DECISIONS.md),
+[цепочка](../meaning/07-cepochka-reshenij.md), [проверки](../integration/23-5-constellation-correction-checks.json).
+
+## 23.10.2026 · Реализация плана «время × SD» в 23.5
+
+Прямое поручение после предъявленного плана: «РЕАЛИЗУЙ», затем «ПРОДОЛЖАЙ». Предыдущий запрет кодировать
+на этапе обсуждения заменён этим поручением. Разрешение push в main относится к тому же незавершённому заданию.
+Откат предыдущего исполнителя к 24 не принят как отмена локальных откатов пользователем.
+
+Выбранные в плане конечные ядра 0,3 SD × 15 минут и пики совместных клеток реализованы для PB-L и FINAL-X
+в существующем UI. Связанные цели считаются по последующим M5 тех же эпизодов после L; F/N/UNKNOWN сохраняются.
+Параметры явно именованы и не подбирались по желаемой картинке. Цена/время и подсветка имеют одну область,
+часы не заменяются сегодняшней достижимостью. Принятая 24 сохраняет определения и собственные исходники.
+
+Полный [смысловой разбор и десять фасетов](DR-LAB-23-5-TIME-SD.md), [план с происхождением разрешения](../meaning/lens/2026-10-22-plan-23-5-time-sd.md),
+[машинная карта](../integration/profile235-bindings.json), [проверки](../integration/23-5-time-sd-checks.json).
+Человеческая визуальная приёмка, прогнозная переносимость и торговая результативность не присвоены исполнителем.

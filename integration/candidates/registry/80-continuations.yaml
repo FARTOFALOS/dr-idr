@@ -235,7 +235,7 @@
  "claim_forms": [
   {
    "id": "CF:C-WINDOW",
-   "version": "1.0",
+   "version": "1.1",
    "sc_ref": [
     "C1",
     "§12.6",
@@ -244,9 +244,9 @@
    "grounds": "PROPOSAL",
    "estimand": "EST:C-WINDOW",
    "claim_class": "ConditionalDescriptiveClaim",
-   "subject_ru": "сессии семьи, которые в этот же час стояли там же и ещё не были у места",
+   "subject_ru": "исторические случаи POS_GEO того же инструмента и блока (не только семья F), которые в этот же час по общим часам стояли там же; внутри окна — ещё и не посещавшие область в его прошедшей части",
    "condition_ru": "Опора конкретного остаточного вопроса; сравнивалось положение, не полный путь; условие непосещения части окна объявлено отдельно",
-   "statement_ru": "На срезе {cut}, среди {n} исторических случаев с близким положением и указанным условием {yes} посетили область в оставшемся окне {window}; {unknown} исходов неизвестны.",
+   "statement_ru": "На срезе {cut}, среди {n} исторических случаев с близким положением и указанным условием {yes} посетили область в оставшемся окне {window}; исход неизвестен у {unknown}.",
    "labels": [
     {
      "surface": "PANEL",
@@ -349,6 +349,84 @@
      "view": "ANY",
      "key": "bounds",
      "text_ru": "{lo}–{hi}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "history_head",
+     "text_ru": "Ход вопроса"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "history_seen",
+     "text_ru": "Просмотренные M5 · новые сверху"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "history_whole",
+     "text_ru": "Всё окно"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "history_rest",
+     "text_ru": "Остаток {from}–{to}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "history_yes",
+     "text_ru": "Посещение установлено"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "history_no",
+     "text_ru": "Без посещения"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "no_visit_yet",
+     "text_ru": "В окне до {time} не заходили"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "support_n",
+     "text_ru": "опора {n}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "membership_change",
+     "text_ru": "В набор по положению с {time}: вошли {entered}, вышли {left}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "support_chain",
+     "text_ru": "По положению {position} → опора остатка {risk}"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "exclude_WINDOW_ALREADY_VISITED",
+     "text_ru": "Уже заходили в окно"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "exclude_WINDOW_VISIT_UNKNOWN",
+     "text_ru": "Посещение неизвестно"
+    },
+    {
+     "surface": "PANEL",
+     "view": "ANY",
+     "key": "exclude_NOT_ACTIVE_AT_WINDOW_START",
+     "text_ru": "Подтвердились позднее начала окна"
     }
    ],
    "value_form": "POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN",
@@ -548,6 +626,17 @@
    "path": "comparison.{entered,left}",
    "field_kind": "SUPPORT_COUNT",
    "target": "EST:C-WINDOW fixed-target scene; context, exact source records and declared support"
+  },
+  {
+   "id": "FE:C.17",
+   "sc_ref": [
+    "H2",
+    "V2.1"
+   ],
+   "surface": "API:/api/integration/continuations",
+   "path": "proof.exclusion_counts.{*}",
+   "field_kind": "SUPPORT_COUNT",
+   "target": "CS:C-POS minus CS:C-RISK, counted by independently checked elapsed-window exclusion reason; not outcomes in the remaining window"
   }
  ],
  "comparisons": [
@@ -559,12 +648,13 @@
     "§12.6"
    ],
    "grounds": "PROPOSAL",
-   "title_ru": "«отсюда» — ещё не были у места и стоят там же",
+   "title_ru": "«стоят там же» — близкое положение close на общих часах; прежние посещения места не исключают",
    "alignment": "COMMON_SESSION_CLOCK",
    "features": [
-    "eligible at t by the B0 rule of NOW-1.0 (lab/now24.py::series)",
-    "not yet at the place after the own confirmation: min low_u over (own confirmation, t] > L",
-    "u = the close of the M5 closing at t, in the case's own scale u = d (p - e) / w"
+    "eligible at t by the B0 rule of NOW-1.0 applied to G (lab/continuity24.py::prefix): own activation before t, at least one later M5, a complete prefix, no close beyond the own opposite DR",
+    "u = the close of the M5 closing at t, in the case's own directed scale u = d (p - e) / w",
+    "earlier visits of the place do not exclude a case: a visit before the pinned window is not a visit inside it (lab/continuity24.py::select reads no target geometry); inside the window the residual question adds its own condition, no visit in the elapsed part of the window (CS:C-RISK)",
+    "G is not the family F: same instrument and block, all weekdays, both directions and activation windows, strictly earlier dates up to 2025-12-31 (CS:C-G)"
    ],
    "feature_availability": "PREFIX_AT_CUT",
    "tolerance": "|u_hist - u_today| <= 1/4 inclusive, exact in integers: 4 |v_m w_t - v_t w_m| <= w_m w_t (lab/now24.py::_near); written down before the measurements (screens 21-22, PRE-24), never widened",
@@ -573,7 +663,8 @@
    "source_refs": [
     "SRC:Q1-PILOT",
     "SRC:KADR-1.1",
-    "SRC:CODE-NOW24"
+    "SRC:CODE-NOW24",
+    "SRC:CANDIDATES-1"
    ]
   }
  ]

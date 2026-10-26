@@ -14,7 +14,7 @@ import numpy as np
 
 from revisions24 import digest
 
-VERSION = "FIXED-WINDOW-CONTINUITY-1"
+VERSION = "FIXED-WINDOW-CONTINUITY-2"
 METHOD = "POS_GEO:quarter:common-clock:1"
 
 
@@ -241,8 +241,10 @@ def release(cases, today, grid, target, cut, original, sequence=None):
             if cond["kind"] == "WINDOW_NO_VISIT":
                 if c["a"] >= 0 and grid[c["a"]] >= target.first_close:
                     why = "NOT_ACTIVE_AT_WINDOW_START"
-                elif visit(c, grid, target, last=cut) != "NO":
-                    why = "WINDOW_ALREADY_VISITED_OR_UNKNOWN"
+                else:
+                    elapsed = visit(c, grid, target, last=cut)
+                    if elapsed != "NO":
+                        why = "WINDOW_ALREADY_VISITED" if elapsed == "YES" else "WINDOW_VISIT_UNKNOWN"
             elif sequence_value(c, grid, cond, cut) != "YES":
                 why = "SEQUENCE_NOT_ESTABLISHED"
             if why:

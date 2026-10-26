@@ -1,0 +1,127 @@
+{
+  "date": "2026-10-22",
+  "status": "PASS_MACHINE_CHECKS",
+  "source_base": "2ceb7cbfdf4045a59a53bcca63db87a542346640",
+  "surface": "/23-5/",
+  "operator_visual_acceptance": "NOT_GRANTED",
+  "reason": "operator rejected the previous picture; this is a correction, not inferred acceptance",
+  "operator_comparison": {
+    "instrument": "NQ",
+    "session": "RDR",
+    "date": "2026-10-22",
+    "cut": "10:40",
+    "screen24": "http://127.0.0.1:8767/24/",
+    "screen235": "http://127.0.0.1:8735/23-5/"
+  },
+  "viewports": [
+    [
+      1600,
+      900
+    ],
+    [
+      1920,
+      1000
+    ]
+  ],
+  "checks": [
+    {
+      "name": "constellations235_page",
+      "status": "PASS",
+      "checks": 15,
+      "assertions": [
+        "1600: real canvas draws stars of both colours by default",
+        "1600: one genuine witness per occupied M5/SD cell, not fabricated points or all episodes",
+        "1600: the full zone produces a constellation beyond its anchor",
+        "1600: all window shares actually paint, including blue bins outside zones",
+        "1600: no winner/loser contrast for unlike events; heights keep a common linear scale",
+        "1600: X, full family N and typed semantic contracts are unchanged",
+        "1600: candidate-off restores accepted R/X without leaking PB presentation",
+        "1920: real canvas draws stars of both colours by default",
+        "1920: one genuine witness per occupied M5/SD cell, not fabricated points or all episodes",
+        "1920: the full zone produces a constellation beyond its anchor",
+        "1920: all window shares actually paint, including blue bins outside zones",
+        "1920: no winner/loser contrast for unlike events; heights keep a common linear scale",
+        "1920: X, full family N and typed semantic contracts are unchanged",
+        "1920: candidate-off restores accepted R/X without leaking PB presentation",
+        "no browser exceptions"
+      ]
+    },
+    {
+      "name": "pullbacks24",
+      "status": "PASS",
+      "checks": 57
+    },
+    {
+      "name": "pullbacks235_page",
+      "status": "PASS",
+      "checks": 45
+    },
+    {
+      "name": "shading235_page",
+      "status": "PASS",
+      "checks": 17,
+      "changed_assertion": "every nonempty time bin remains drawn; price-row support filter retained"
+    },
+    {
+      "name": "profile235_page",
+      "status": "PASS",
+      "checks": 9
+    },
+    {
+      "name": "visit_states_page",
+      "status": "PASS",
+      "checks_per_viewport": 35,
+      "ui_check24_problems": []
+    },
+    {
+      "name": "profile235_bindings",
+      "status": "PASS",
+      "facets": 10,
+      "statistical_carriers": 12,
+      "fact_presentation_carriers": 5,
+      "accepted_estimands": 53
+    },
+    {
+      "name": "smoke",
+      "status": "PASS"
+    },
+    {
+      "name": "node syntax and git diff whitespace",
+      "status": "PASS"
+    },
+    {
+      "name": "before_after_closed_cut_10_40",
+      "status": "PASS",
+      "unchanged": [
+        "episodes",
+        "points",
+        "maps",
+        "marginals"
+      ]
+    }
+  ],
+  "unchanged": [
+    "screen24 source and build",
+    "backend event definitions and counts",
+    "contract and proposed registry",
+    "desktop shortcut target"
+  ],
+  "sources": {
+    "design/sozvezdiya-23-5/src/app.js": "aee65ad0ec7d5df707bc31efe207340d0f1f4b6710d4fd6b18edaba8cecbf3e7",
+    "design/sozvezdiya-23-5/src/pullbacks.js": "22a14923614387db3c3ca928d9bef228e37986685344e90d7445fb89c20e5ad6",
+    "lab/dist/23-5/d24.js": "3262aa9a5960f51e90f240cf5e72067d7fa72fc2a7ab86ee2309cbe241725b0c",
+    "tests/constellations235_page.mjs": "dadfa0f56ee4e0d55d5c6526ffdf66cb4f90594397c32fa9b063fedabd8fae44",
+    "tests/shading235_page.mjs": "c01b24d23e6fa0c73d6c498b5c9c41b4b15d8c5b0848afa523375b5358b021f0",
+    "lab/pullbacks24.py": "5cf8d188625c9a70fcf3f50325f597f462cda55eca9e5baafbda5f6afca0fdd0",
+    "lab/pullbacks_ref.py": "00e8719908c77ca58d4886d160ba91a822a1ff4f9d82633b2416e1730e206df3",
+    "design/sozvezdiya-24/src/app.js": "88b5adc95a0d0054d7c32598524cf6062a700c140580c6946cba068ce7773309",
+    "lab/dist/24/d24.js": "968b46415c736bd3691c91e69b3d434760fab4d29ffa3f7e173d7c7b539dc9e2"
+  },
+  "limits": [
+    "PB-L is a multiple local event, FINAL-X one final event; they are not two opposite outcomes of the next move",
+    "neither their height ratio nor their total coloured area is a forecast probability",
+    "no independent per-colour rescaling or frequency adjustment to make a balanced picture",
+    "C0/C1 only; no C2/C3 or operator perceptual acceptance",
+    "market tape, complete witnesses and runtime logs remain local"
+  ]
+}

@@ -689,12 +689,12 @@ claim_forms:
       - {surface: PANEL, view: ANY, key: support_b0, text_ru: "опора {n} из {N}"}
       - {surface: PANEL, view: ANY, key: support_path, text_ru: "похожих {m} из {n} · {matcher}"}
       - {surface: PANEL, view: ANY, key: row_mark, text_ru: "{ev}"}
-      - {surface: PANEL, view: ANY, key: title_mark, text_ru: "{ev}: после {cut} новый, более глубокий откат — ниже сегодняшнего дна {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка."}
+      - {surface: PANEL, view: ANY, key: title_mark, text_ru: "{ev}: после {cut} новый, более глубокий откат — глубже сегодняшней точки отката {today} — был у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это история, не прогноз и не сделка."}
     value_form: POINT_AMONG_KNOWN_BOUNDS_IF_UNKNOWN
     price_transfer: NONE
     forbidden_readings_ru: ["вероятность того, что сегодня откат углубится", "разворот", "вход или сделка", "новая семья вместо N_base"]
     acceptance: ACCEPTED_BY_OPERATOR
-    note: "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark); the title_mark words are the executor's, for his acceptance"
+    note: "K33: the screen said «откат углубится» (predictive grammar about today's future) for a C1 historical share; the operator's words of 2026-10-07: «В истории: R позже углублялся… / Если углублялся…». Operator 2026-10-08 (meaning/17 §7): the pullback line shows only the number (row_mark) and its levels as marks at the price scale; the words and the support are in its title (title_mark); the title_mark words are the executor's, for his acceptance. 2026-10-19: title_mark made side-neutral («глубже сегодняшней точки отката» instead of «ниже сегодняшнего дна»: in a short the pullback goes up)"
   - id: CF:N-NEW-X
     version: "1.1"
     sc_ref: ["C1", "§12.4/N-NEW", "K33"]
@@ -804,7 +804,7 @@ claim_forms:
     statement_ru: "У тех {n} исторических случаев, у которых после {cut} откат углублялся, он уходил ещё на {q50} SD (медиана; квартили {q25}…{q75}); от сегодняшнего экстремума это {p50} ({p25}…{p75}). Неизвестна величина у {unknown}."
     labels:
       - {surface: PANEL, view: ANY, key: sub, text_ru: "Если углублялся: до {p50} · {p25}…{p75}"}
-      - {surface: PANEL, view: ANY, key: title_mark, text_ru: "У тех, у кого откат углублялся, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшнее дно, полоса — у половины, черта — обычно."}
+      - {surface: PANEL, view: ANY, key: title_mark, text_ru: "У тех, у кого откат углублялся, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшняя точка отката, полоса — у половины, черта — обычно."}
     value_form: QUANTILES
     price_transfer: M0_TODAY_EXTREME
     forbidden_readings_ru: ["сегодняшняя цель", "средний остаток всех сопоставимых", "откат дойдёт сюда"]
@@ -1197,6 +1197,55 @@ fact_forms:
     forbidden_readings_ru: ["доли надёжны", "набор расширен"]
     acceptance: PROPOSED_BY_EXECUTOR
     note: "Operator 2026-10-08 (meaning/17 §7): before the confirmation «честно писать «мало»» for n < 20 (his option «показать «мало сессий: n=…»»); after a DR break the same answer, where the threshold 20 is applied by the executor (to be confirmed at acceptance); the title is the executor's"
+  - id: FF:TODAY-VISIT
+    version: "1"
+    sc_ref: ["E1", "P0.2", "K33"]
+    grounds: PROPOSAL
+    record_class: PrefixState
+    statement_ru: "Посещение сегодняшней закрытой M5 после активации: для зоны проверяются её собственные клетки цены и времени; для кружка при выборе полосы — эта полоса в выделенных пиковых 15 минутах. Цвет кружка и отметка посещения относятся к одной точной области и окну. Статус узкой области не перекрашивает долю полосы за весь горизонт. Посещение, непосещение завершённого окна и неизвестность различаются; исходная доля окончательных R/X и полный N семьи сохраняются."
+    labels:
+      - {surface: PANEL, view: ANY, key: VISITED, text_ru: "✓ посещена в {time}"}
+      - {surface: PANEL, view: ANY, key: PENDING, text_ru: "ещё не посещена"}
+      - {surface: PANEL, view: ANY, key: FUTURE, text_ru: "○ окно впереди"}
+      - {surface: PANEL, view: ANY, key: OPEN, text_ru: "● окно действует · не посещена"}
+      - {surface: PANEL, view: ANY, key: MISSED, text_ru: "× окно прошло · не посетили"}
+      - {surface: PANEL, view: ANY, key: UNKNOWN, text_ru: "посещение неизвестно"}
+      - {surface: PANEL, view: ANY, key: NO_PERIOD, text_ru: "окно закончилось к активации"}
+      - {surface: INSPECTOR, view: ANY, key: zone_scope, text_ru: "Приход сегодня — в клетки зоны и в её окно. Исходная доля семьи сохранена."}
+      - {surface: INSPECTOR, view: ANY, key: column_scope, text_ru: "Сегодня: эта полоса внутри {zone}, окно {window}. Процент — исходная доля полосы за весь горизонт."}
+      - {surface: INSPECTOR, view: ANY, key: peak_scope, text_ru: "Приход сегодня — в выбранную полосу именно в {window}. Кружок и отметка относятся к этому окну; процент полосы — за весь горизонт."}
+      - {surface: INSPECTOR, view: ANY, key: band_scope, text_ru: "Приход сегодня — в полосу после активации. Повторный приход — отдельный вопрос."}
+      - {surface: INSPECTOR, view: ANY, key: clock, text_ru: "Часть «раньше среза»: экстремумы истории раньше {time}. Эти сессии остаются в семье и её знаменателе. ✓ — посещение сегодня в нужные цену и время."}
+      - {surface: INSPECTOR, view: ANY, key: final, text_ru: "Зона для окончательного {ev}: {status}. Посещение — отдельный факт."}
+    forbidden_readings_ru: ["шанс повторного прихода", "зелёные сессии исключены из семьи", "посещение доказывает окончательный экстремум", "прогноз", "сигнал"]
+    acceptance: PROPOSED_BY_EXECUTOR
+    note: "Local 23.5 presentation under the operator's 2026-10-20 request, including his later instruction to implement the color specification now: check facets and mappings, use matching green checks/circles for a confirmed visit and red for known nonvisit of a finished window. PB235 in spec/ekran-24/16-cveta-i-fasety-23-5.md replaces the defective first color composition. A full-horizon band's role/clock colors never inherit a narrower zone's visit outcome; the selected band marker and its separate visit note share exactly its selected 15-minute target, while a zone marker shares the zone's exact cell mask. These remain observed visits, not finality, forecasts or a strategy amendment."
+  - id: FF:TODAY-Z-PASSED
+    version: "1"
+    sc_ref: ["E1", "§12.4/TODAY-Z"]
+    grounds: OPERATOR_REQUIREMENT
+    record_class: PrefixState
+    statement_ru: "Сегодня закрытая M5 {time} после активации прошла через собственную клетку зоны (цена × 15 минут) внутри её окна; окончательный экстремум дня сюда уже не ляжет — сегодняшний уже дальше. Факт сегодняшнего дня, не доля и не прогноз."
+    labels:
+      - {surface: PANEL, view: ANY, key: passed, text_ru: "пройдена в {time}"}
+      - {surface: TOOLTIP, view: ANY, key: title, text_ru: "Сегодня цена прошла эту зону в её окне: закрытая M5 {time} вошла в её клетки. Окончательный экстремум дня здесь уже не будет — сегодняшний ушёл дальше. Зона отработана, следить за ней не нужно. Кандидат 23.5 · приёмка не проведена."}
+    forbidden_readings_ru: ["процент", "прогноз", "сигнал"]
+    acceptance: PROPOSED_BY_EXECUTOR
+    note: "Operator 2026-10-20 on the live NQ ODR: X1 «полностью отработал… почему этот кластер ещё светится как первоначальный?… чтобы я понимал, что это тоже уже реализовано… на него не обращать внимания». A refinement of the word for the accepted status IMPOSSIBLE (FF:TODAY-Z), which stays as it is and is still checked against the server; only the zones today's price traded through inside their window say «пройдена», those it never reached keep «невозможна»"
+  - id: FF:CANDIDATE-STATUS
+    version: "1"
+    sc_ref: ["§14.1", "§14.3", "K33"]
+    grounds: OPERATOR_REQUIREMENT
+    record_class: PublicationStanding
+    statement_ru: "Функция экрана на испытании (редакция DR-LAB-CANDIDATES-1): приёмка оператором не проведена. Её числа — описание истории или условный ответ по сопоставимым случаям, не прогноз; принятые функции экрана (DR до 16:00, «Сейчас», зоны) от неё не зависят."
+    labels:
+      - {surface: PANEL, view: ANY, key: tag, text_ru: "кандидат"}
+      - {surface: INSPECTOR, view: ANY, key: foot, text_ru: "кандидат · приёмка не проведена"}
+      - {surface: TOOLTIP, view: ANY, key: title, text_ru: "Кандидат на испытании: ваша приёмка не проведена. Не принятая часть экрана и не прогноз; «DR до 16:00», «Сейчас» и зоны от него не зависят. Выключается в ⚙ → Испытание кандидатов."}
+      - {surface: TOOLTIP, view: ANY, key: mode_title, text_ru: "Продолжения — кандидат на испытании, приёмка не проведена: условный ответ по сопоставимым случаям, не прогноз. Выключается в ⚙ → Испытание кандидатов."}
+    forbidden_readings_ru: ["принятая функция экрана", "прогноз", "сигнал"]
+    acceptance: PROPOSED_BY_EXECUTOR
+    note: "Operator 2026-10-19 (finalisation of screen 24 for his acceptance): «проверь, что кандидаты не подменяют принятую семантику и не получают статус прогноза» and «понятные статусы принятых функций и кандидатов». Every candidate block, the trial form of a «Сейчас» row and the «Продолжения» mode carry this standing where they are shown; the words are the executor's"
   - id: FF:K-TARGET
     version: "1"
     sc_ref: ["E1", "§12.6"]

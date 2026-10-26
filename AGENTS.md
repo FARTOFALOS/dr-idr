@@ -1,5 +1,66 @@
 # DR IDR — entry for agents
 
+## Working 23.5: time × SD · 2026-10-23
+
+Start with [DR-LAB-TIME-SD-1.0](docs/DR-LAB-23-5-TIME-SD.md) and the
+[approved implementation plan](meaning/lens/2026-10-22-plan-23-5-time-sd.md). The direct human «РЕАЛИЗУЙ»,
+followed by «ПРОДОЛЖАЙ», authorizes this implementation. The earlier main-publication instruction applies to this
+same task. This is not automatic perceptual or predictive acceptance.
+
+- Screen 24 and its accepted BASE/NOW definitions remain at `/24/`, port 8767. Its source is unchanged.
+- Screen 23.5 at `/23-5/`, port 8735, uses its own source, settings and `start-dr-lab-23-5.cmd` shortcut.
+- Bounds on 23.5 uses the time × SD profile by default. R is local PB-L, X is named FINAL-X context.
+  The old broad PB overlay and the temporary uncommitted rollback are not the intended working result.
+- Both maps use exact 0.3 SD × 15-minute local cores. M5/0.1 SD witnesses are compacted for drawing only.
+  Price and time rectangles show maxima of joint-cell support and retain their other coordinate. Full-band or
+  whole-window unions remain separately named area questions. Full F/N and unknown mass are preserved.
+- Post-L links use the same source episodes and subsequent M5 paths after L closes, never unrelated FINAL-X cases.
+- Today's clock, visit and completed PB episode remain different facts. FINAL-R phase cannot dim a local PB map.
+- Existing layout, opacity, font rules, 116px price column, hover/pin and six lower windows are retained.
+- Accepted SC-1.1 remains 53 estimands. The separate proposed registry has 72 (63 existing + 9 time-SD).
+  No new ontology stack; all ten existing facets are mapped in `integration/profile235-bindings.json`.
+
+Addressed checks: `tests/time_sd235.py`, `time_sd235_page.mjs`, `profile235_bindings.py`, `pullbacks24.py`,
+`continuations235_page.mjs`, plus the shared checks below. Current evidence: `integration/23-5-time-sd-checks.json`.
+The older `profile235_page`, `pullbacks235_page`, `shading235_page`, `constellations235_page` assert the superseded
+22.10 broad-zone/marginal profile; they are historical checks, not acceptance of the new formulas.
+Build both pages after a shared contract build. Use launchers with `-HistoryOnly` for verification; `-Port` allows
+an isolated test server. Never use an old check receipt as evidence for a changed release.
+
+## Update · 2026-10-19
+
+Read [`meaning/21-svodnaya-karta-24.md`](meaning/21-svodnaya-karta-24.md) first. It is one map of every lens, the
+external review of 19.10 and PR #15. It covers each layer of screen 24 by object, set, condition, horizon, denominator
+and claim, with its status (accepted or candidate), the gaps, and how to check them on the screen.
+
+What changed on 19.10. No number changed its object, set or denominator.
+- **The launcher restarts again a TradingView opened without port 9222**, as before 2026-10-15 and as
+  `docs/ARCHITECTURE.md` says. Without the port the screen had no live candles. Agents' checks run the launcher with
+  `-HistoryOnly`, which never touches TradingView.
+- **Registry words = executable definitions**, pinned by `tests/semantic_links.py`:
+  - `EST:B-LEVEL-REST` / `EST:B-VISIT-REST` count the common remainder (t, H];
+  - `CMP:C-POS` / `CF:C-WINDOW` describe POS_GEO as computed: earlier visits of the place do not exclude a case, and the
+    set G is not F.
+- **The operator's decisions of 08.10 reach the screen** as two candidate trials in «⚙ → Испытание кандидатов»: the
+  phase rule (`FF:PHASE-RULE`) and the «Сейчас» pullback line as a number with marks at the price scale. The code lives
+  in `integration.js`. The viewer's trial choice is kept in `localStorage`.
+- Run `tests/semantic_links.py` with the other required checks.
+
+## Implementation update · 2026-10-21
+
+Screen 24 has one more separate candidate, **«Откаты до обновления»** (DR-LAB-PB-0.1): for the family F on screen,
+every historical episode vertex H → pullback bottom L → first exceedance B, at scales of locality 1 / 2 / 3 / 6, and
+their constellations (zone-map-3 geometry, one vote per session). Definition with the provenance of every rule:
+`meaning/lens/2026-10-21-otkaty-do-obnovleniya/03-opredelenie-PB-0.1.md`; screen passport `spec/ekran-24/15-otkaty.md`.
+Code `lab/pullbacks24.py` (route `GET /api/integration/pullbacks`, `--integration` only), independent reference
+`lab/pullbacks_ref.py`, page `design/sozvezdiya-24/src/pullbacks.js`, registry part
+`integration/candidates/registry/90-pullbacks.yaml` (the proposed registry now has 62 estimands; accepted SC-1.1 still
+53, plus one SERVICE entry for the route). It reads the accepted family snapshot and never changes BASE/NOW or R/X.
+Check: `tests/pullbacks24.py`. The rule «exceedance by one tick, wick and gap included; a touch is not an update» is
+the operator's (chat 21.10); M1 candles are not used for the order inside an M5 (operator, 21.10). The candidate is
+off by default and not accepted. Audit of this work, the full check run on Windows and the verdict:
+`meaning/lens/2026-10-21-otkaty-do-obnovleniya/05-audit-i-resheniya.md`.
+
 ## Implementation update · 2026-10-15
 
 Start with [the integrated working result](integration/DELIVERY.md) and the latest node of
@@ -11,8 +72,9 @@ has 60. Implementation in main is not C2/C3 or operator perceptual acceptance. F
 with explicit scoped runtime checks, not a claim of full catalog rebinding.
 
 The normal launcher starts `server.py --integration` on 8767; the ordinary default view remains the accepted map.
-It checks loaded source/data versions, replaces its own stale server, preserves an already open TradingView without
-9222, and supports `-HistoryOnly`. The historical base stops in 2025. Candidate toggles are independent.
+It checks loaded source/data versions, replaces its own stale server, restarts a TradingView opened without 9222
+(since 2026-10-19 again; from 15.10 to 19.10 it left such a window alone and the screen had no live candles), and
+supports `-HistoryOnly`, which leaves TradingView untouched. The historical base stops in 2025. Candidate toggles are independent.
 New checks: `tests/continuity24.py`, `continuations24.py`, `continuations_page.mjs`, `q1_prefix_metadata.py`,
 `q1_reveal.py`. Run them along with the existing required checks below. `integration/pr-dispositions.json` records
 the current fate of every source unit; old PR closure is not blanket adoption. No new ontology stack was added.

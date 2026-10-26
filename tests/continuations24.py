@@ -59,7 +59,8 @@ def main():
     check(early['status']=='BEFORE_TARGET' and 'proof' not in early,'replay before pin time does not issue a retroactive target answer')
     req['at']=670;req['date']='2026-01-01'
     check(W.response(req)['status']=='OUT_OF_SCOPE','closed 2026 tape cannot be opened through continuation API')
-    check(len(C.registry()['estimands'])==53 and len(I.review_gate().registry()['estimands'])==60,'accepted 53-estimand registry is separate from 60-estimand proposed candidate registry')
+    # since 2026-10-21 the proposed edition also holds the two estimands of the candidate DR-LAB-PB-0.1 (tests/pullbacks24.py)
+    check(len(C.registry()['estimands'])==53 and len([e for e in I.review_gate().registry()['estimands'] if not e['id'].startswith(('EST:PB-','EST:TS-'))])==60,'accepted 53-estimand registry is separate from the original 60-estimand candidate set; later PB/TS are isolated extensions')
     print('ALL GOOD; elapsed',round(time.perf_counter()-started,2),'s',flush=True)
 
 

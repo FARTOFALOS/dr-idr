@@ -2275,7 +2275,8 @@
                 "DELTA_X",
                 "TAU_R",
                 "TAU_X",
-                "CONFIRMATION"
+                "CONFIRMATION",
+                "PB_L"
             ],
             "title": "EventKind",
             "type": "string"
@@ -2557,7 +2558,8 @@
                 "COMMON_CUT_EXCLUSIVE",
                 "BOX_END",
                 "SINGLE_M5",
-                "NOT_APPLICABLE"
+                "NOT_APPLICABLE",
+                "OWN_PB_BOTTOM_CLOSE_EXCLUSIVE"
             ],
             "title": "HorizonStart",
             "type": "string"
@@ -3805,7 +3807,8 @@
                 "FIRST_CONFIRMATION_AFTER_CUT",
                 "ALGORITHMIC_REGION_MEMBERSHIP",
                 "CLOCK_SPLIT",
-                "REGION_STABILITY"
+                "REGION_STABILITY",
+                "PULLBACK_BEFORE_UPDATE"
             ],
             "title": "ProjectionKind",
             "type": "string"
@@ -4903,7 +4906,9 @@
                 "LEGACY_CLASSIC",
                 "LEGACY_RESEARCH_DASHBOARD",
                 "SERVICE",
-                "SC11_CONTINUATIONS_0_1"
+                "SC11_CONTINUATIONS_0_1",
+                "SC11_PULLBACKS_0_1",
+                "SC11_TIME_SD_235"
             ],
             "title": "SurfaceProfile",
             "type": "string"

@@ -1,0 +1,191 @@
+{
+  "date": "2026-10-22",
+  "status": "PASS",
+  "platform": "Windows",
+  "source_base": "2a1f2c7f30ed4e4ef0ae8dd214ba98d8f0f0b2ca",
+  "accepted_estimands": 53,
+  "proposed_estimands": 63,
+  "screen24_source_unchanged_from_base": true,
+  "surface": "/23-5/",
+  "viewports": [
+    [
+      1600,
+      900
+    ],
+    [
+      1920,
+      1000
+    ]
+  ],
+  "checks": [
+    {
+      "name": "smoke",
+      "status": "PASS"
+    },
+    {
+      "name": "semantic_links",
+      "status": "PASS"
+    },
+    {
+      "name": "sem24",
+      "status": "PASS"
+    },
+    {
+      "name": "now24",
+      "status": "PASS"
+    },
+    {
+      "name": "contract_sc11",
+      "status": "PASS"
+    },
+    {
+      "name": "swpc11",
+      "status": "PASS"
+    },
+    {
+      "name": "integration24",
+      "status": "PASS"
+    },
+    {
+      "name": "integration_baseline",
+      "status": "PASS"
+    },
+    {
+      "name": "continuity24",
+      "status": "PASS"
+    },
+    {
+      "name": "continuations24",
+      "status": "PASS"
+    },
+    {
+      "name": "continuations_transfer",
+      "status": "PASS"
+    },
+    {
+      "name": "q1_pilot",
+      "status": "PASS"
+    },
+    {
+      "name": "q1_prefix_metadata",
+      "status": "PASS"
+    },
+    {
+      "name": "q1_reveal",
+      "status": "PASS"
+    },
+    {
+      "name": "run_candidate_checks",
+      "status": "PASS"
+    },
+    {
+      "name": "pullbacks24",
+      "status": "PASS",
+      "checks": 57
+    },
+    {
+      "name": "swpc11_browser",
+      "status": "PASS",
+      "checks": 74
+    },
+    {
+      "name": "pullbacks235_page",
+      "status": "PASS",
+      "checks": 45
+    },
+    {
+      "name": "shading235_page",
+      "status": "PASS",
+      "checks": 17
+    },
+    {
+      "name": "profile235_page",
+      "status": "PASS",
+      "checks": 9
+    },
+    {
+      "name": "continuations235_page",
+      "status": "PASS",
+      "checks": 58
+    },
+    {
+      "name": "continuations24_page",
+      "status": "PASS",
+      "checks": 45
+    },
+    {
+      "name": "visit_states235",
+      "status": "PASS",
+      "checks_per_viewport": 35,
+      "ui_check24_problems": []
+    },
+    {
+      "name": "profile235_bindings",
+      "status": "PASS",
+      "statistical_carriers": 12,
+      "fact_presentation_carriers": 5,
+      "facets": 10,
+      "inherited_accepted_estimands": 53
+    }
+  ],
+  "launcher": {
+    "cold_start": "PASS",
+    "repeat_start": "PASS",
+    "source_identity": "PASS",
+    "history_only_does_not_touch_tradingview": true,
+    "isolated_test_ports": [
+      8795,
+      8796
+    ]
+  },
+  "api_selected_region": {
+    "joint_region_round_trip": "PASS",
+    "reversed_region": "REJECTED",
+    "boolean_bounds": "REJECTED",
+    "unbounded_price": "PASS"
+  },
+  "test_harness_correction": "SWPC bootstrap now waits for the requested loader and URL before installing helpers; assertions unchanged; full 74 PASS after fixing initial runner races",
+  "sources": {
+    "design/sozvezdiya-23-5/src/app.js": "ed52199a20e4ce30a98d76d3d2d2e18302232543f44d95a7ba96b8cb13f5881f",
+    "design/sozvezdiya-23-5/src/build.py": "56fcc6cfc74914005eefa6c3ce81186073d45a2d756505c31b248c054ae0b55c",
+    "design/sozvezdiya-23-5/src/continuations.js": "7041ef9b98a8b37516f1c2faf6e2ca5abe6fb9f5b8228c29678a48eb6be56be0",
+    "design/sozvezdiya-23-5/src/integration.js": "c909b42fd7921f0046761519fa55104f21686adbeb96b9740fc217ae4d94c6e0",
+    "design/sozvezdiya-23-5/src/page.html": "cf6094877ade601a7d679c6c03cfb72210c0e831d44915f8f4aa00ad3c8126a8",
+    "design/sozvezdiya-23-5/src/panel.css": "a48a4fbf75e188f5cd2f8869f3ee7ca22dcbf8e1b4ccc16e63bf0c5388a93693",
+    "design/sozvezdiya-23-5/src/panel.js": "f9729708b15622aa1fc2cdf7d0fe01e149835d28387a2abf30c68845bd906cfa",
+    "design/sozvezdiya-23-5/src/pullbacks.js": "8ac5bb0ae0f5712f5ea83bd015063205dfa5c673ae11ed1fbf7cf9e562af1646",
+    "lab/arrive24.py": "8d086c2b207817d2b4e5bf8d23a555e3a7f35d7da766103285dd71c6e6dd2b24",
+    "lab/build_boxes.py": "0f82daa6272475fb7b4413a0a465e19c24ef06ec52407817bb76ea5bafc2390a",
+    "lab/build_market.py": "9789245887226e01152b1f96a57a892d1be0724187cedc9c824e66a03637c266",
+    "lab/cluster24.py": "1fe3b782e518f41585096676edead70e8a34b588bea2b8ffae4ea37f23b559d0",
+    "lab/continuations24.py": "30914aae2029209f265cb7d775016656937a10e1a70f68d6a411c67a40185d65",
+    "lab/continuity24.py": "a3bfa730089893f3a3630e5d6d17d0b846405a9a534be893e8ba24d0d89b3ecc",
+    "lab/continuity_audit.py": "0080a7e944110f4929a3b32d1f4a819581a52590dd23e9f012d33baa0638f992",
+    "lab/contract.py": "1e62c8be4a1c6820c099d6b98ee0468dbfbd1aacb4065cdb940335af009af023",
+    "lab/engine.py": "76f8e26f496b235e237be14318d448a955d54999d854aff81a5024d81a760058",
+    "lab/engine_market.py": "1e494f42cc13d1ea23be1eaa214860536101c2a2f8b3346f5b36f5070366c60f",
+    "lab/integration24.py": "6d6858a77c9d5d53b1f2aedca2dcd46e2be1f0503b60907d7c048e7d5f1460c8",
+    "lab/integration_audit.py": "9d12a9ea7a0493d2d1b33ac1aca8dec447b03c5dccd643432a8bca71a269d45e",
+    "lab/live.py": "ae837167ef494694a1898aec0db65caa3bab7a467b1c17adb2e3d27f9a93ae0b",
+    "lab/now24.py": "fcf3280900cac292b6ce58d3c6d98057b6bb77c5824abd5b9af33c947a5c385b",
+    "lab/now24_validate.py": "191d6c5f43971e4547749519c1148d3b6e6f8d826330d8ff5d55767235ea4472",
+    "lab/pre24.py": "d782e83558b77dbc72719de6fe0228a6bae984dfe8a0edb89782be215daa7bfc",
+    "lab/pullbacks24.py": "5cf8d188625c9a70fcf3f50325f597f462cda55eca9e5baafbda5f6afca0fdd0",
+    "lab/pullbacks_ref.py": "00e8719908c77ca58d4886d160ba91a822a1ff4f9d82633b2416e1730e206df3",
+    "lab/revisions24.py": "0ef83a22d37607ea3853d75297f1184597ca57ec0ccef518b1359e9a1acabf24",
+    "lab/runtime_identity.py": "f699eaf48f64560de0915986060783c992ebba99e6254f706cbd933349084482",
+    "lab/scene21.py": "34c5dbf8d42d2cd9841be15abc5fa997ff0984fdffe12660e04b967ca94fdd63",
+    "lab/scene24.py": "738108a7dbe4182a6444c9cf55eea415999bdaff123d84f4650169ae744e2590",
+    "lab/server.py": "26a1da3a2e351314ad51d058249deb7be83adb66531b889c9e6ea5f1d5e00d5a",
+    "lab/zonemap24.py": "b929c558ec7b31a1b15e71fe26256af50ef5392c06aa51a94688360409b33f1e"
+  },
+  "limits": [
+    "C0 historical PB/BASE and C1 conditional history, no C2/C3",
+    "operator perceptual acceptance is not inferred from checks",
+    "scale/clock/display alternatives are explicit in the decisions document",
+    "market tape, full witnesses and runtime logs are not published"
+  ],
+  "historical_record": "machine checks for the initial 22.10 release 2ceb7cb; not current visual acceptance",
+  "operator_visual_verdict": "REJECTED_AFTER_COMPARISON_2026-10-22",
+  "visual_correction_receipt": "integration/23-5-constellation-correction-checks.json"
+}

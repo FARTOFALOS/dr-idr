@@ -1,7 +1,10 @@
 ﻿# DR Lab: one-click start for the operator (the desktop shortcut "DR Lab" points to start-dr-lab.cmd).
 # 1) TradingView Desktop with the debugging port 9222 (live candles), 2) the history base (built once),
 # 3) the local server on 127.0.0.1:8767 (hidden, logs in lab/.runtime), 4) the page.
-# Idempotent: whatever already runs is left as is. Everything stays on this computer.
+# Idempotent: a running server of the current build and a TradingView with the port are left as is. A TradingView
+# opened without the port (its own icon, Windows autostart) is restarted with it, as before 2026-10-15: the live
+# candles need the port (operator 2026-10-19). -HistoryOnly never touches TradingView (agents' checks).
+# Everything stays on this computer.
 # The root / opens the working screen, design 24 since 2026-10-01 night (the server redirects / to /24/); design 22 is at
 # /22/. -Page 24/ opens design 24 directly (the shortcut "DR Lab 24", start-dr-lab-24.cmd).
 param([switch]$NoBrowser, [switch]$HistoryOnly, [string]$Page = '')
@@ -34,12 +37,14 @@ if ($HistoryOnly) {
     Write-Host '  [ok] Исторический запуск без изменения TradingView'
 } elseif (Test-Url 'http://127.0.0.1:9222/json/version') {
     Write-Host '  [ok] TradingView уже запущен с каналом для свечей'
-} elseif (Get-Process TradingView -ErrorAction SilentlyContinue) {
-    Write-Host '  [!] TradingView открыт без канала 9222; история доступна, окно не перезапускалось' -ForegroundColor Yellow
 } elseif (-not (Test-Path $tvCli)) {
     Write-Host "  [!] Не найден tradingview-mcp ($mcp): живое окно работать не будет, история работает" -ForegroundColor Yellow
 } else {
-    Write-Host '  [..] Запускаю TradingView с каналом для свечей (открытый TradingView перезапустится)'
+    if (Get-Process TradingView -ErrorAction SilentlyContinue) {
+        Write-Host '  [..] TradingView открыт без канала для свечей: перезапускаю его с каналом (окно откроется заново)'
+    } else {
+        Write-Host '  [..] Запускаю TradingView с каналом для свечей'
+    }
     & node $tvCli launch | Out-Null
     $ready = $false
     for ($i = 0; $i -lt 60; $i++) {
