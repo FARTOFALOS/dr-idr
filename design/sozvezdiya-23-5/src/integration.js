@@ -4,11 +4,14 @@
   // candidate labels FF:PHASE-RULE, row_mark / title_mark (integration/candidates/registry/40-claims.yaml); no server call
   // The old broad PB overlay is superseded by the explicitly approved time x SD profile of 23.5.
   // Legacy flags cannot reinstate that overlay; the new profile is the normal bounds view.
-  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled, phase: false, nowmarks: false, pullbacks: false };
+  // Operator 2026-10-26: on 23.5 the decisions of 08.10 are on by default (before confirmation, «Сейчас» as a number with
+  // marks, the phase rule as two facts); screen 24 keeps them off. «ON_0810» switches them on once over an older saved choice.
+  const TRIAL = { pre: !!ICFG.enabled, arrive: false, paths: false, continuations: !!ICFG.enabled, phase: !!ICFG.enabled, nowmarks: !!ICFG.enabled, pullbacks: false };
   // the viewer's own choice of trials is kept in this browser like every other setting (2026-10-19); the address still adds
-  const TRIAL_KEY = 'drlab.d235.trials';
+  const TRIAL_KEY = 'drlab.d235.trials', ON_0810 = 'drlab.d235.trials.on0810';
   if (ICFG.enabled) try {
     const kept = JSON.parse(localStorage.getItem(TRIAL_KEY) || '{}');
+    if (localStorage.getItem(ON_0810) == null) { for (const k of ['pre', 'phase', 'nowmarks']) delete kept[k]; localStorage.setItem(TRIAL_KEY, JSON.stringify(kept)); localStorage.setItem(ON_0810, '1'); }
     for (const k in TRIAL) if (k !== 'pullbacks' && typeof kept[k] === 'boolean') TRIAL[k] = kept[k];
     if (kept.pullbacks) {
       if (localStorage.getItem(TRIAL_KEY+'.before-withdrawal') == null) localStorage.setItem(TRIAL_KEY+'.before-withdrawal',JSON.stringify(kept));
@@ -188,9 +191,9 @@
   // retirement zone (−0.7) AND at least half of the family's sessions had their final R earlier than the cut by the common
   // clock (known, of N: EST:B-CLOCK-R over the whole price range, part EARLIER, a passport the server verifies). A rule
   // of the operator, not a statement about the market; only for the confirmation family (a break is another frame)
+  // Operator 2026-10-26: the screen shows what was, it does not switch sides by a rule. On 23.5 the rule is its two facts
+  // with today's values; no «откат сделан» verdict and no quieter side (phaseK = 1).
   function phaseOf(F, ctx) {
-    if (F?._ts) return null; // an old final-R phase must not control the local-PB map
-    if (F?._pb) F = PB.model.base;
     if (!TRIAL.phase || !F || F.brk || !F.N) return null;
     const rows = todayRows(F, ctx);
     if (!rows.length) return null;
@@ -203,13 +206,13 @@
   }
   // the zones of the side the rule points at stay as they are; the other side's haze and stars a little quieter
   // (operator 2026-10-06 «пока откат не сделан, зоны R чуть ярче, после — зоны X»; 2026-10-08 the rule); never a size
-  const phaseK = (ph, ev) => !ph ? 1 : ev === (ph.done ? 'X' : 'R') ? 1 : 0.72;
+  const phaseK = () => 1;
   // its one place in the panel: the state and both criteria with today's values
   function phasePanel(F, ctx) {
     const ph = phaseOf(F, ctx), P = 'FF:PHASE-RULE';
     if (!ph) return '';
     const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true);
-    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + candTag() + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
+    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + candTag() + '</span></div>' +
       '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
       link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
   }
@@ -277,7 +280,6 @@
     return '<details class="cgd"><summary class="cg">Испытание кандидатов</summary>' +
       [['pre', 'История до подтверждения'], ['arrive', 'Отсюда до места · Q1'], ['paths', 'Связанные пути в нижнем окне'], ['continuations', 'Продолжения · закреплённое окно'],
         ['phase', 'Фаза по вашему правилу · 08.10'], ['nowmarks', '«Сейчас»: откат числом и отметками у шкалы · 08.10']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
-      '<div class="p21-note">'+pbScaleSwitch()+'</div>'+
       '<button type="button" id="auditScene">Проверить происхождение и опору</button><div id="auditResult" class="p21-note"></div></details>';
   }
   async function auditScene() {

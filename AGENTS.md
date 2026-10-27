@@ -1,6 +1,59 @@
 # DR IDR — entry for agents
 
-## Working 23.5: time × SD · 2026-10-23
+## Main screen 23.5 · 2026-10-27: one table time × SD
+
+**23.5 is the main screen** (operator, 27.10: «23.5 стал основным экраном в репозитории… чтобы мы от этого
+отталкивались»). The root `http://127.0.0.1:8767/` opens `/23-5/`, and screen 24 stays at `/24/` (shortcut «DR Lab 24»).
+Start new work from 23.5. The sections below about screen 24 describe the main line from 01.10 to 27.10: they are
+history and the source of the protected BASE/NOW definitions.
+
+Read [DR-LAB-23-5-MATRIX](docs/DR-LAB-23-5-MATRIX.md) first. Its last section logs every action and check of 27.10. On screen 23.5 the base map is one table 15 min × 0.1 SD
+of the final R / X (`matrix235.js`). The page reads no zone-map-3: the family view `mxView` has empty `zones`.
+- At rest the price column and the time band show each row's / window's strongest cell. This is the operator's 27.10
+  rule: the strongest local condensation, not the row sum. Hover on a row / window of one event opens that event's full
+  row / column, and the other event stays at rest. Every number is `EST:B-RX-REGION` of SC-1.1.
+- Haze = density of all the event's sessions; stars = one witness per M5 × 0.1 SD; threads = nearest witness in
+  neighbouring cells. None of them makes a number.
+- Check: `node tests/matrix235_page.mjs <23.5 base>` (105). Screen 24's source and SC-1.1 are unchanged. The server
+  changed in one line: the root redirect.
+- Merged into `main` and pushed on the operator's word of 27.10. This is not his perceptual acceptance of the view
+  (О28). The local SEM-1.0 work of 27.10, uncommitted in the operator's checkout, is NOT in `main`: it was built on
+  the zone map and must be reconciled with the table before it lands.
+
+## Semantic reset созвездий · 2026-10-27
+
+**Перед любой новой работой над базовыми созвездиями R/X сначала прочитайте
+[meaning/22-time-price-constellation-reset.md](meaning/22-time-price-constellation-reset.md).**
+
+Новая операторская рамка: fixed F → один FINAL-R/FINAL-X на known session → одна матрица
+`15 min × 0.1 SD` с массой клетки `n/N` → две взаимно раскрывающиеся UI-проекции.
+Hover по SD показывает весь его профиль по времени; hover по времени — весь профиль по SD.
+Созвездие — frontend-визуализация сильной массы той же матрицы через representative real witnesses,
+дымку и нити, а не отдельный backend zone-object.
+
+Не импортировать по умолчанию `zone-map-3`, connected masks, half-height, fixed `0.3 SD` core,
+PB-L, SW или multi-event voting как базовую семантику. Из 23.5 разрешено переиспользовать joint-cell
+математику и witness compaction только после сохранения FINAL-R/X и общей F/N.
+
+## Working 23.5 · 2026-10-26 (supersedes the time × SD section below)
+
+Start with [DR-LAB-23-5-SWEEPS](docs/DR-LAB-23-5-SWEEPS.md) and the 26.10 node of `meaning/07-cepochka-reshenij.md`.
+The operator settled these in a round of questions on 26.10 and then said: «Собирай 23.5 по согласованному локально,
+24 не трогай, ничего не пушь без моего слова». Local build only; no publication, no visual acceptance.
+
+- The main map of 23.5 is again the final R / X of every **session** (one star per session, the zones and shares of
+  screen 24). Do not put local pullbacks or any multi-event object under the letter R, and do not replace the zone rule
+  by fixed 0.3 SD × 15-minute cores: on final R that rule finds no constellation in 3 of 4 families (check of 26.10).
+- The screen shows history and today's facts (reachability, clock, visit); it inserts no prediction logic (operator 26.10).
+  The phase rule of 08.10 is shown as its two facts, without a verdict or a quieter side.
+- The decisions of 08.10 are on by default in 23.5 only. Screen 24, its source, build, contract registries and the
+  server code are unchanged.
+- Local pullbacks are the overlay «Съёмы лоу» (SW-0.1), switched in «Слои ▾», off by default, computed by the page
+  (`sweeps235.js`) and recomputed by `lab/sweeps235_ref.py`. Not yet in the candidate registry (no SC passports).
+- Checks: `tests/sweeps235.py`, `tests/sweeps235_page.mjs` (+ shared checks). The older 23.5 page checks below assert
+  superseded variants.
+
+## Working 23.5: time × SD · 2026-10-23 (superseded on 26.10)
 
 Start with [DR-LAB-TIME-SD-1.0](docs/DR-LAB-23-5-TIME-SD.md) and the
 [approved implementation plan](meaning/lens/2026-10-22-plan-23-5-time-sd.md). The direct human «РЕАЛИЗУЙ»,

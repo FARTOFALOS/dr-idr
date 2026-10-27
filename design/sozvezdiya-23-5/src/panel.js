@@ -47,6 +47,7 @@
     if (s.failed) out.push(viewSwitch(s));
     if (F.out) out.push(outcomeHtml(F));
     out.push(phasePanel(F, ctx));
+    out.push(swPanel(F, ctx));
     out.push(nowHtml(F, ctx));
     out.push(candidatePanel(ctx));
     if (st.mode === 'bounds') {
