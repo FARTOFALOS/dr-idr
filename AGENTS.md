@@ -1,5 +1,25 @@
 # DR IDR — entry for agents
 
+## Main screen 23.5 · 2026-10-27: one table time × SD
+
+**23.5 is the main screen** (operator, 27.10: «23.5 стал основным экраном в репозитории… чтобы мы от этого
+отталкивались»). The root `http://127.0.0.1:8767/` opens `/23-5/`, and screen 24 stays at `/24/` (shortcut «DR Lab 24»).
+Start new work from 23.5. The sections below about screen 24 describe the main line from 01.10 to 27.10: they are
+history and the source of the protected BASE/NOW definitions.
+
+Read [DR-LAB-23-5-MATRIX](docs/DR-LAB-23-5-MATRIX.md) first. Its last section logs every action and check of 27.10. On screen 23.5 the base map is one table 15 min × 0.1 SD
+of the final R / X (`matrix235.js`). The page reads no zone-map-3: the family view `mxView` has empty `zones`.
+- At rest the price column and the time band show each row's / window's strongest cell. This is the operator's 27.10
+  rule: the strongest local condensation, not the row sum. Hover on a row / window of one event opens that event's full
+  row / column, and the other event stays at rest. Every number is `EST:B-RX-REGION` of SC-1.1.
+- Haze = density of all the event's sessions; stars = one witness per M5 × 0.1 SD; threads = nearest witness in
+  neighbouring cells. None of them makes a number.
+- Check: `node tests/matrix235_page.mjs <23.5 base>` (105). Screen 24's source and SC-1.1 are unchanged. The server
+  changed in one line: the root redirect.
+- Merged into `main` and pushed on the operator's word of 27.10. This is not his perceptual acceptance of the view
+  (О28). The local SEM-1.0 work of 27.10, uncommitted in the operator's checkout, is NOT in `main`: it was built on
+  the zone map and must be reconciled with the table before it lands.
+
 ## Semantic reset созвездий · 2026-10-27
 
 **Перед любой новой работой над базовыми созвездиями R/X сначала прочитайте
