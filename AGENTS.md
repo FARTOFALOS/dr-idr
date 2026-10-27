@@ -5,14 +5,15 @@
 **Перед любой новой работой над базовыми созвездиями R/X сначала прочитайте
 [meaning/22-time-price-constellation-reset.md](meaning/22-time-price-constellation-reset.md).**
 
-Новая операторская рамка возвращает базовый вопрос к простой последовательности:
-фиксированная F → один FINAL-R или FINAL-X на сессию → распределение времени события → явно выбранное time window →
-SD-distribution тех же событий → одна или несколько соседних концентраций. Созвездие — форма показа концентрации,
-не самостоятельная event-ontology.
+Новая операторская рамка: fixed F → один FINAL-R/FINAL-X на known session → одна матрица
+`15 min × 0.1 SD` с массой клетки `n/N` → две взаимно раскрывающиеся UI-проекции.
+Hover по SD показывает весь его профиль по времени; hover по времени — весь профиль по SD.
+Созвездие — frontend-визуализация сильной массы той же матрицы через representative real witnesses,
+дымку и нити, а не отдельный backend zone-object.
 
-Это **не** автоматическая отмена screen 24, SC-1.1, 23.5 или прошлых исследований. Но при следующей реализации
-нельзя по умолчанию импортировать `zone-map-3`, PB-L, SW, fixed 0.3 SD core, path-null/status или universal event engine
-как будто они выражают эту Time → Price семантику. Они отвечают на отдельные вопросы и требуют explicit semantic mapping.
+Не импортировать по умолчанию `zone-map-3`, connected masks, half-height, fixed `0.3 SD` core,
+PB-L, SW или multi-event voting как базовую семантику. Из 23.5 разрешено переиспользовать joint-cell
+математику и witness compaction только после сохранения FINAL-R/X и общей F/N.
 
 ## Working 23.5: time × SD · 2026-10-23
 
