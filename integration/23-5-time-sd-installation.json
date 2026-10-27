@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-24",
+  "implementation_commit": "8e507cc23c022b635651b121e2966e06150a094a",
+  "status": "INSTALLED_AND_VERIFIED",
+  "source_hashes_match_tested_release": true,
+  "servers": [
+    {
+      "port": 8735,
+      "workspace": "primary checkout",
+      "loaded_source": "d0d3f96c524dce4b5c6b23064d36536a7b75791240ac8fd252e66ce5931b640f",
+      "loaded_data": "4f1bdc51a6fed1a078b8040fc614d6db708da2311b4d20ca52b0747caca4d94f",
+      "fresh": true
+    },
+    {
+      "port": 8767,
+      "workspace": "primary checkout",
+      "loaded_source": "d0d3f96c524dce4b5c6b23064d36536a7b75791240ac8fd252e66ce5931b640f",
+      "loaded_data": "4f1bdc51a6fed1a078b8040fc614d6db708da2311b4d20ca52b0747caca4d94f",
+      "fresh": true
+    }
+  ],
+  "launchers": {
+    "screen235": "start-dr-lab-23-5.cmd",
+    "screen24": "start-dr-lab.cmd",
+    "mode": "HistoryOnly -NoBrowser",
+    "restart": "PASS",
+    "repeat": "PASS; no second listener",
+    "desktop_shortcut235": "DR Lab 23.5.lnk -> primary start-dr-lab-23-5.cmd; no arguments"
+  },
+  "comparison": {
+    "instrument": "NQ",
+    "session": "RDR",
+    "date": "2025-12-17",
+    "cut_et": "11:10",
+    "scope": "weekday",
+    "N": 156,
+    "new_cores": {
+      "R": 9,
+      "X": 3
+    },
+    "primary_release": "c2f7defd6e47778bbef1d43d5d02c43225babdf7ca35249eb428c2a7eca477d5",
+    "browser": "Both installed screens opened and inspected in Chrome; 23.5 screenshot saved locally",
+    "root_redirect": "http://127.0.0.1:8767/24/",
+    "legacy22_http": 200
+  },
+  "recovery": {
+    "stash": "17ef1c7e87f0b50e2a39bc8357a840edf56be834",
+    "backup": "lab/.runtime/time-sd-before-20261022T174305Z/working-files.zip",
+    "verified_files": 18,
+    "concurrent_changes_before_install": 0
+  },
+  "screenshot_local": {
+    "path": "lab/.runtime/time-sd-235-installed.png",
+    "sha256": "2ef716a4b6eb0d65621f669ac5d7be1215ae86154898770d9c126f73cb387b51"
+  },
+  "acceptance": "No operator visual acceptance or predictive validity inferred"
+}

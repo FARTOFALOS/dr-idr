@@ -5,7 +5,7 @@
 # the main working copy's lab/.runtime (git-ignored, never published). TradingView as in DR Lab 24's launcher (the
 # operator's rule of 19.10, AGENTS.md): one opened without the candle channel (port 9222) is restarted with it, the window
 # opens again; -HistoryOnly never touches it. Idempotent.
-param([switch]$NoBrowser, [switch]$HistoryOnly, [string]$Page = '23-5/#trial=pullbacks&pbscale=1', [ValidateRange(1024,65535)][int]$Port = 8735)
+param([switch]$NoBrowser, [switch]$HistoryOnly, [string]$Page = '23-5/', [ValidateRange(1024,65535)][int]$Port = 8735)
 
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot

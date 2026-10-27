@@ -1,6 +1,7 @@
 """Build the separate working view 23.5 to lab/dist/23-5. Keeps the source and build of screen 24 separate.
-PB-L occupies the old amber R layout slot, FINAL-X stays blue; all numerical meaning remains in typed contracts.
-See docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md before altering the mapping or the appearance.
+The main map is the final R / X of every session in one table time x SD (matrix235.js: the reset of 27.10,
+meaning/22-time-price-constellation-reset.md); the local layer «Съёмы лоу» is sweeps235.js (operator 2026-10-26).
+See docs/DR-LAB-23-5-MATRIX.md and docs/DR-LAB-23-5-SWEEPS.md before altering the mapping or the appearance.
 """
 import os
 
@@ -14,7 +15,7 @@ def read(name):
 
 
 page = read('page.html').replace('/*__PANEL24CSS__*/', read('panel.css'))
-app = read('app.js').replace('  /*__INTEGRATION24__*/\n', read('integration.js') + '\n' + read('continuations.js') + '\n' + read('pullbacks.js')).replace('  /*__PANEL24__*/\n', read('panel.js'))
+app = read('app.js').replace('  /*__INTEGRATION24__*/\n', read('integration.js') + '\n' + read('continuations.js') + '\n' + read('pullbacks.js') + '\n' + read('time_sd235.js') + '\n' + read('matrix235.js') + '\n' + read('sweeps235.js')).replace('  /*__PANEL24__*/\n', read('panel.js'))
 # DR-LAB-SC-1.1: the page embeds the page registry of the machine contract (estimands, claim forms with their labels,
 # fact forms), built by contract/tools/build.py; the page renders only these labels and checks its registry hash
 # against the server's envelopes (a contract rebuilt without rebuilding this page is reported, never ignored)

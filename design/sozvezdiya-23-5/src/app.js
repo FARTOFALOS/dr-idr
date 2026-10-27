@@ -1,6 +1,6 @@
-// DR Lab 23.5: R on this surface is the display alias of PB_L (local H -> L -> B), not OUT:FINAL-R-1.
-// X and accepted BASE/NOW remain FINAL-X / their own estimands. Do not replace design/sozvezdiya-24 with this source.
-// Semantic bindings, decisions and uncertainty: docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md.
+// DR Lab 23.5 (operator 2026-10-26): the main map is the final R / X of every session, the zones of screen 24; the
+// decisions of 08.10 are on; local pullbacks are the overlay «Съёмы лоу» (sweeps235.js). Screen 24 keeps its own source.
+// Meaning, decisions and checks: docs/DR-LAB-23-5-SWEEPS.md (the time x SD variant of 23.10: docs/DR-LAB-23-5-TIME-SD.md).
 // ================= DR Lab · design 24 «Границы хода» =================
 // Design 22's working screen (candles of the day, the three sessions' DR / IDR, replay, the right panel, hover / pin,
 // layers, settings) with its statistical layer replaced by the semantic specification DR-LAB-SEM-1.0
@@ -137,7 +137,8 @@
   const LAYERS = [
     ['pts', 'Точки: одна сессия — одно событие', '#EBA06C'], ['zones', 'Созвездия: зоны R / X (карта зон)', '#72A9EC'],
     ['proj', 'Гистограммы цены справа', '#EBA06C'], ['strip', 'Лента времени снизу', '#72A9EC'], ['std', 'STD', C.stdOn],
-    ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VI (volume imbalance)', C.vib], ['det', 'Шесть окон семьи (снизу)', C.text2]
+    ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VI (volume imbalance)', C.vib], ['det', 'Шесть окон семьи (снизу)', C.text2],
+    ['sweep', 'Съёмы лоу · локальный слой (кандидат)', '#B89CFF']   // 23.5 only, off by default (operator 2026-10-26; sweeps235.js)
   ];
 
   // ---------- small helpers ----------
@@ -656,7 +657,7 @@
     const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : SC11.forms[id];
     // FF:PHASE-RULE exists only in the candidate edition (08.10); the candidate words of the accepted «Сейчас» forms are
     // never reached from here (tests/integration_faults.mjs), only by reviewLbl for the trial «nowmarks»
-    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id.startsWith('EST:PB-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:CANDIDATE-STATUS','FF:TODAY-Z-PASSED','FF:TODAY-VISIT','FF:PB-TODAY','FF:PB-EPISODE'].includes(id);
+    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id.startsWith('EST:PB-')||id.startsWith('EST:TS-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:CANDIDATE-STATUS','FF:TODAY-Z-PASSED','FF:TODAY-VISIT','FF:PB-TODAY','FF:PB-EPISODE'].includes(id);
     const extra = candidateId && REVIEW && (id.startsWith('FF:') ? REVIEW.facts[id] : REVIEW.forms[id]);
     const box = own && own.labels[key] ? own : extra || own;
     const set = box && box.labels[key], t = set && (view && set[view] != null ? set[view] : set.ANY);
@@ -704,8 +705,8 @@
   // DR-LAB-SWPC-1.1 M14: a carrier drawn from a number follows that number's passport — withheld («—»), it no longer
   // asserts its share by length, fill or glow. The passport is the one of the same estimand and parameters made on this
   // snapshot (no passport = the number was never shown alone; its count is then proven by the reconciled table)
-  const ppHeld = (F, est, params) => { if (F._pb && /^EST:B-RX-(BAND|WINDOW)-R$/.test(est)) return pbRegionPass(F, 'k0' in params ? [params.k0, params.k1] : null, 'b0' in params ? [F.f + 15 * params.b0, F.f + 15 * params.b1] : null).pct == null; const p = P24.byKey.get(F.r.snapshot_id + '|' + est + '|' + JSON.stringify(params)); return !!(p && p.violation); };
-  const zoneHeld = (F, ev, i) => { if (F._pb && ev === 'R') return !pbBundle(F._pb, 'EST:PB-ZONE', p => p.scale === PB.scale && p.zone_id === F.zones.R.zones[i]?.zone_id); const z = F.zones[ev] && F.zones[ev].zones[i]; return !!z && ppHeld(F, 'EST:B-ZONE-' + ev, { zone_id: z.zone_id }); };
+  const ppHeld = (F, est, params) => { if(F._ts && /^EST:B-RX-(BAND|WINDOW)-[RX]$/.test(est))return tsProjectionHeld(F,est,params); if (F._pb && /^EST:B-RX-(BAND|WINDOW)-R$/.test(est)) return pbRegionPass(F, 'k0' in params ? [params.k0, params.k1] : null, 'b0' in params ? [F.f + 15 * params.b0, F.f + 15 * params.b1] : null).pct == null; const p = P24.byKey.get(F.r.snapshot_id + '|' + est + '|' + JSON.stringify(params)); return !!(p && p.violation); };
+  const zoneHeld = (F, ev, i) => { if(F._ts)return tsZoneHeld(F,ev,i); if (F._pb && ev === 'R') return !pbBundle(F._pb, 'EST:PB-ZONE', p => p.scale === PB.scale && p.zone_id === F.zones.R.zones[i]?.zone_id); const z = F.zones[ev] && F.zones[ev].zones[i]; return !!z && ppHeld(F, 'EST:B-ZONE-' + ev, { zone_id: z.zone_id }); };
   // a NOW number (lab/contract.py::attach_now, all C1) is shown only with its bundle on this cut, under the registered
   // claim form admissible there; the shown values must be the bundle's
   function nowBundle(n, est, role, C) {
@@ -766,6 +767,7 @@
   const hzOf = F => lbl('FF:PASSPORT-VIEW', 'horizon', { from: F.from, end: clk(F.end) });
   // a share of R or X in an area: a price band (B-RX-BAND), a time window (B-RX-WINDOW) or both (B-RX-REGION)
   function evPass(F, ev, region, bounds, time, yes) {
+    if(F._ts)return tsRegionPass(F,ev,region,bounds,time);
     if (F._pb && ev === 'R') return pbRegionPass(F, bounds, time);
     const D = F.ev[ev], est = 'EST:B-RX-' + (bounds && time ? 'REGION' : bounds ? 'BAND' : 'WINDOW') + '-' + ev, params = {};
     if (bounds) Object.assign(params, { k0: bounds[0], k1: bounds[1] });
@@ -789,6 +791,7 @@
   }
   // the share of the family beyond the frame of the price column (B-RX-OUTFRAME): the cells [k0, k1) out of view
   function outPass(F, ev, i, kr, n) {
+    if(F._ts)return tsRegionPass(F,ev,'region',[kr[0],kr[1]+1],null,true);
     if (F._pb && ev === 'R') return pbRegionPass(F, [kr[0], kr[1] + 1], null, true);
     const D = F.ev[ev];
     return pp(F, { estimand: 'EST:B-RX-OUTFRAME-' + ev, params: { side: i ? 'BELOW' : 'ABOVE', k0: kr[0], k1: kr[1] + 1 }, event_id: ev, region_kind: 'out_of_frame', start_rule: F.from, end_rule: 'до ' + clk(F.end),
@@ -871,7 +874,7 @@
   // ---------- view state ----------
   const st = {
     session: 'RDR', rp: null, v0: 545, v1: 975, p0: null, p1: null, auto: true,
-    L: { pts: true, zones: true, proj: true, strip: true, std: true, prev: true, vib: true, det: true },
+    L: { pts: true, zones: true, proj: true, strip: true, std: true, prev: true, vib: true, det: true, sweep: false },
     ev: 'R', mode: 'bounds', view: 'auto', scope: 'weekday', area: null, tool: false, col: null,
     hover: null, pin: null, mx: -1, my: -1, drag: null, stripH: 46, stripPin: false, menu: false,
     detH: 22, detPin: false, detOver: false, navHover: false
@@ -883,7 +886,7 @@
 
   function cur() {
     const D = day(), obs = st.rp != null ? st.rp : NOW, live = st.rp == null;
-    const s = sess(D, st.session, obs, live), F = snapOf(D, s);
+    const s = sess(D, st.session, obs, live), F = mxView(snapOf(D, s));      // matrix235.js: the table view (reset 27.10)
     return { D, obs, live, s, F };
   }
   // the right edge of the time axis is anchored at the session end + rightPad minutes (12; was 45 until 2026-10-06) (design 22's wheel; operator 2026-10-06:
@@ -931,7 +934,7 @@
     const bounds = !!(ctx.F && ctx.F.N) && st.mode === 'bounds';
     // the price column holds R and X in one column in «Границы хода» (each its own 100 %; operator 2026-10-06: one
     // column, not two), one M5 column in «Путь семьи»
-    const projW = !continuationMode() && st.L.proj && ctx.F && ctx.F.N ? (bounds ? 176 : 96) : 0;
+    const projW = !continuationMode() && st.L.proj && ctx.F && ctx.F.N ? (bounds ? 116 : 96) : 0;
     // the time band under the chart (variant «Окна времени»): capsules, hills, columns; operator 2026-10-06: the candles
     // take the height, the band about an eighth of it (84-118 px)
     const bandH = bounds && st.L.strip ? Math.round(clamp((H - handleH - timeH) * cfg.bandH / 100, 60, (H - handleH - timeH) * 0.4)) : 0;
@@ -963,7 +966,10 @@
     // R and X: the constellations the trader looks at next); scattered points and impossible zones do not widen it,
     // the points beyond the frame are named by ▲ / ▼ in the price column
     if (pullbackMode() && isFinite(lo)) [lo, hi] = pbRange(ctx, lo, hi);       // the candidate's own constellations (DR-LAB-PB-0.1)
-    if (ctx.F && isFinite(lo)) for (const ev of (pullbackMode() ? ['X'] : ['R', 'X'])) {
+    // with the table (matrix235.js) the frame holds the middle 60 % of each event's sessions that today's final event
+    // can still take (by price): a rule of the view only, the rest named by ▲ / ▼ as before
+    if (ctx.F && ctx.F._mx && isFinite(lo)) { const sp = mxSpan(ctx.F, ctx); if (sp) { lo = Math.min(lo, sp[0]); hi = Math.max(hi, sp[1]); } }
+    if (ctx.F && isFinite(lo)) for (const ev of (pullbackMode() ? [] : ['R', 'X'])) {
       const Zm = ctx.F.zones[ev], S = Zm ? zoneStatus(ctx.F, ctx, ev) : [];
       if (Zm) Zm.zones.forEach((z, i) => {
         if (S[i] === 'IMPOSSIBLE') return;
@@ -1030,6 +1036,7 @@
     if (F && !continuationMode()) drawLink(c, mapCtx);
     if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, cloudCtx);
     if (F && st.mode === 'bounds') drawPair(c, mapCtx);
+    if (F) drawSweeps(c, ctx);
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
     if (F && !continuationMode()) drawArea(c, mapCtx);
     if (F && st.mini) drawMini(c, ctx);
@@ -1362,10 +1369,15 @@
   function emphOf(q, h, F, ctx) {
     if (h) {
       if (h.k === 'arrive') return candidateEmphasis(q, h, F, ctx);
+      if (F._ts && (h.k === 'pcell' || h.k === 'tcell')) {
+        const ev=h.ev||st.ev,axis=h.k==='pcell'?'price':'time',index=h.k==='pcell'?h.k0:h.b0;
+        const cell=F._ts.maps?.[ev]?.[axis+'_peaks'].find(v=>v.index===index);
+        return q.ev===ev && !!cell && tsInside(q,cell);
+      }
       if (h.k === 'pcell') return (!h.ev || h.ev === q.ev) && q.k >= h.k0 && q.k < h.k1;
-      if (h.k === 'tcell') return q.b >= h.b0 && q.b < h.b1;
+      if (h.k === 'tcell') return (!h.ev || h.ev === q.ev) && q.b >= h.b0 && q.b < h.b1;
       if (h.k === 'area') return inArea(q, st.area);
-      if (h.k === 'zone') return h.ev === q.ev && F.zcell[h.ev].get(q.k + '|' + q.b) === h.i;
+      if (h.k === 'zone') return h.ev === q.ev && (F._ts ? tsMember(F.zones[h.ev].zones[h.i],q) : F.zcell[h.ev].get(q.k + '|' + q.b) === h.i);
       if (h.k === 'pt') return q.i === h.i;
       if (h.k === 'out') return q.m.outcome === h.cat;
       if (h.k === 'evrow') return true;
@@ -1385,21 +1397,30 @@
     return i != null && !zoneHeld(F, q.ev, i) ? i : null;
   }
   function drawPoints(c, ctx) {
-    const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100, ph = phaseOf(F, ctx);
+    const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100, ph = phaseOf(F._full || F, ctx);   // the rule counts the whole family, never the drawn witnesses
     V.stars = [];
+    // the reset of 27.10: the witnesses of the table, each as bright as the density of all the event's sessions where it
+    // stands (continuous; below the drawing floor nothing is drawn), a cell today's final event can no longer take in
+    // the spent shade
+    const Rch = F._mx ? reachOf(F, ctx) : null;
     for (const ev of ['R', 'X']) {
       const pk = phaseK(ph, ev), col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent');
       for (const q of F.ev[ev].pts) {
-        const zi = pointZone(F, q);
-        if (zi == null) continue;
-        const col = expiredLook(look[zi]) ? spent : look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
+        let zi = null, col = col0, mass = 1;
+        if (F._mx) { mass = mxMass(mxDens(mxFieldOf(F._full || F, ctx)[ev], V.X(q.t + 2.5), V.Y(q.p))); if (!Rch.okCell(ev, q.k, q.b)) col = spent; }
+        else {
+          zi = pointZone(F, q);
+          if (zi == null) continue;
+          col = expiredLook(look[zi]) ? spent : look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
+        }
         const x = V.X(q.t + 2.5), y = V.Y(q.p);
         if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
-        V.stars.push({ev,zi,x,y,q});
         const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx);
-        let a = (past ? cfg.pastA : cfg.ptA) / 100 * 1.1, r = R0;
+        let a = (past ? cfg.pastA : cfg.ptA) / 100 * 1.1 * mass, r = R0;
         if (e === true) { a = Math.min(1, Math.max(a, 0.55) + 0.3); r = R0 * 1.3; } else if (e === false) a *= 0.28;
         a = Math.min(1, e === true ? a : a * pk);
+        if (F._mx && a < MX_FLOOR) continue;
+        V.stars.push({ev,zi,x,y,q});
         if (!F.brk && q.m.outcome === 'broken') { c.strokeStyle = rgba(col, a); c.lineWidth = 1; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.stroke(); }
         else { c.fillStyle = rgba(col, a); c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill(); }
       }
@@ -1490,7 +1511,7 @@
       const Zm = F.zones[ev];
       if (!Zm) continue;
       Zm.zones.forEach((z, i) => {
-        const pts = F.ev[ev].pts.filter(q => F.zcell[ev].get(q.k + '|' + q.b) === i).map(q => [V.X(q.t + 2.5), V.Y(q.p), q.b]);
+        const pts = F.ev[ev].pts.filter(q => F._ts ? tsMember(z,q) : F.zcell[ev].get(q.k + '|' + q.b) === i).map(q => [V.X(q.t + 2.5), V.Y(q.p), q.b]);
         if (!pts.length) { out[ev].push(null); return; }
         const kd = kde(pts, 18), pb = new Map();
         for (const p of pts) pb.set(p[2], (pb.get(p[2]) || 0) + 1);
@@ -1512,6 +1533,7 @@
     return 0.8;
   }
   function drawClouds(c, ctx) {
+    if (ctx.F._mx) return mxClouds(c, ctx);
     const F = ctx.F, CL = cloudsOf(F), h = hv(), ph = phaseOf(F, ctx);
     for (const ev of ['R', 'X']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev], fa = cfg.cloudA / 100 * phaseK(ph, ev), ta = cfg.threadA / 100 * phaseK(ph, ev);
@@ -1587,7 +1609,8 @@
         V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg[h.ev], 'spent') : cfg[h.ev] });
       }
       return;
-    } else if (h.k === 'pcell' && h.ev) {
+    } else if (h.k === 'pcell' && h.ev && F._mx) mxLink(F, ctx, h);
+    else if (h.k === 'pcell' && h.ev) {
       const yc = (V.Y(F.u2p(h.k0 / 10)) + V.Y(F.u2p(h.k1 / 10))) / 2;
       const pk = peakAhead(F, ctx, F.ev[h.ev].pts.filter(q => q.k >= h.k0 && q.k < h.k1), h.ev, yc);
       if (pk) {
@@ -1877,7 +1900,7 @@
   // confirmation, R away from it, each to the least crowded place. The others stay inside, as a background.
   function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env) {
     const imp = expiredLook(s), zp = zonePass(F, ev, z), zt = ppTxt(zp), share = zp.pct || 0;
-    const ps = F.ev[ev].pts.filter(q => F.zcell[ev].get(q.k + '|' + q.b) === i);
+    const ps = F.ev[ev].pts.filter(q => F._ts ? tsMember(z,q) : F.zcell[ev].get(q.k + '|' + q.b) === i);
     let cx = (g.bb[0] + g.bb[2]) / 2, cy = (g.bb[1] + g.bb[3]) / 2;
     if (ps.length) { cx = ps.reduce((a, q) => a + V.X(q.t + 2.5), 0) / ps.length; cy = ps.reduce((a, q) => a + V.Y(q.p), 0) / ps.length; }
     const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
@@ -1955,6 +1978,7 @@
   //   DIFFERENT named events, never probabilities of two opposite next moves. Do not apply a winner/loser contrast.
   // Passed windows are dimmer.
   function bandHills(F, ctx, ev) {
+    if(F._ts?.maps)return tsHills(F,ev);
     if (F._pb?.proof && ev === 'R') return pbBandHills(F);
     const Zm = F.zones[ev];
     if (!Zm) return [];
@@ -1980,6 +2004,7 @@
     let yLow = 0;
     for (const b of ctx.D.bars) if (b.t + 5 >= st.v0 && b.t <= st.v1) yLow = Math.max(yLow, V.Y(b.l));
     if (s.drL != null) yLow = Math.max(yLow, V.Y(s.drL), V.Y(s.drH));
+    if (F._mx) { const sp = mxSpan(F, ctx); if (sp) yLow = Math.max(yLow, V.Y(sp[0]), V.Y(sp[1])); }    // the table's framed mass
     for (const ev of ['R', 'X']) {
       const Zm = F.zones[ev], S = Zm ? zoneStatus(F, ctx, ev) : [];
       if (Zm) Zm.zones.forEach((z, i) => {
@@ -1995,10 +2020,13 @@
     // the band's drawing area: its own strip plus the free height above it (operator 2026-10-06: the columns of X and R
     // must be tall enough to compare, without covering the chart)
     const ov = V.bandOv = bandOverlay(ctx), B = { x: B0.x, y: B0.y - ov, w: B0.w, h: B0.h + ov };
-    const S = { X: zoneLook(F, ctx, 'X'), R: zoneLook(F, ctx, 'R') }, H = { X: bandHills(F, ctx, 'X'), R: bandHills(F, ctx, 'R') };
+    // the reset of 27.10 (matrix235.js): a column is a cell of the table (a window's strongest cell, or the opened row's
+    // cell); no capsules and no hills: they were the zones' windows and the shapes of their stars
+    const sec = F._mx ? mxSection(h, 'time') : null, mval = (ev, b) => F._mx ? mxBandVal(F, ev, b, sec) : null;
+    const S = { X: zoneLook(F, ctx, 'X'), R: zoneLook(F, ctx, 'R') }, H = F._mx ? { X: [], R: [] } : { X: bandHills(F, ctx, 'X'), R: bandHills(F, ctx, 'R') };
     // the capsules' lanes first: a zone takes the first lane where it does not overlap an earlier one (two lanes at most)
     const caps = [], lanesUsed = { X: 0, R: 0 };
-    for (const ev of ['X', 'R']) {
+    for (const ev of F._mx ? [] : ['X', 'R']) {
       const ends = [];
       H[ev].filter(Boolean).slice().sort((a, b) => a.b0 - b.b0).forEach(o => {
         let ln = 0;
@@ -2018,46 +2046,42 @@
     if (ov > 0) { const gr = c.createLinearGradient(0, B.y, 0, B0.y); gr.addColorStop(0, 'rgba(10,11,15,0)'); gr.addColorStop(1, 'rgba(10,11,15,.72)'); c.fillStyle = gr; c.fillRect(B.x, B.y, B.w, ov); }
     c.fillStyle = C.grid; c.fillRect(B0.x, B0.y, B0.w, 1);
     drawMidnight(c, B0.y, B0.y + B0.h);
-    const T = { R: F.ev.R.T, X: F.ev.X.T }, mx = Math.max(1, ...T.R.values(), ...T.X.values());
-    // PB-L allows several local events per session; FINAL-X has one. This pair is not a two-outcome balance.
-    // Keep the common n/N height scale, but never suppress one colour or amplify it as the other colour's loser.
-    const comparable = !F._pb;
+    const T = { R: F.ev.R.T, X: F.ev.X.T }, mx = F._mx ? F._mx.max : Math.max(1, ...T.R.values(), ...T.X.values());
     // operator 2026-10-06: the height is LINEAR in the share (the square root hid the difference: 4,8 against 3,2 looked
     // like 1,22 instead of 1,5); the counts are unchanged
     const yOf = (ev, n) => cy + dir[ev] * (1 + half * Math.min(1, Math.max(0, n) / mx));
     // the columns
-    V.bandCols = []; V.bandBars = [];
+    V.bandCols = []; V.bandVals = [];
     const labels = [];
     for (let b = 0; b < F.nb; b++) {
       const t0 = F.f + 15 * b, x0 = V.X(t0) + 1, x1 = V.X(t0 + 15) - 1;
       if (x1 < B.x || x0 > B.x + B.w) continue;
       V.bandCols.push({ b, x0, x1 });
       const nX = T.X.get(b) || 0, nR = T.R.get(b) || 0, past = t0 + 15 <= sl;
-      const lit = (h && h.k === 'tcell' && b >= h.b0 && b < h.b1) || (lk && lk.b === b), zl = h && h.k === 'zone' && F.zones[h.ev] && F.zones[h.ev].zones[h.i] && F.zones[h.ev].zones[h.i].cell_mask.some(([, bb]) => bb === b);
+      const litOf = ev => (h && h.k === 'tcell' && (!h.ev || h.ev === ev) && b >= h.b0 && b < h.b1) || (lk && lk.b === b && (!F._mx || lk.ev === ev)), lit = litOf('X') || litOf('R'), zl = h && h.k === 'zone' && F.zones[h.ev] && F.zones[h.ev].zones[h.i] && F.zones[h.ev].zones[h.i].cell_mask.some(([, bb]) => bb === b);
       for (const ev of ['X', 'R']) {
-        const n = ev === 'X' ? nX : nR, o = ev === 'X' ? nR : nX;
+        const mv = mval(ev, b), n = F._mx ? (mv ? mv.n : 0) : ev === 'X' ? nX : nR, o = ev === 'X' ? nR : nX, litE = F._mx ? litOf(ev) : lit;
+        if (mv && mv.n) V.bandVals.push({ ev, b, k: mv.k, n: mv.n, ans: mv.ans });
         // a withheld window share (its passport «—», SWPC-1.1 M14) draws no column; its place stays empty
-        if (n && ppHeld(F, 'EST:B-RX-WINDOW-' + ev, { b0: b, b1: b + 1 })) { if (lit) labels.push({ x: (x0 + x1) / 2, y: cy + dir[ev] * 9, t: '—', col: cfg[ev] }); continue; }
+        if (n && (F._mx ? ppHeld(F, 'EST:B-RX-REGION-' + ev, { k0: mv.k, k1: mv.k + 1, b0: b, b1: b + 1 }) : ppHeld(F, 'EST:B-RX-WINDOW-' + ev, { b0: b, b1: b + 1 }))) { if (litE) labels.push({ x: (x0 + x1) / 2, y: cy + dir[ev] * 9, t: '—', col: cfg[ev] }); continue; }
         // the balance inside the 15 minutes (operator 2026-10-06): the larger side brighter, the smaller dimmer, the more
-        // so the stronger the tilt (setting «контраст перевеса»); a drawing of the same two shares, not a new number
-        const dom = comparable && n + o > 0 ? (n - o) / (n + o) : 0;
+        // so the stronger the tilt (setting «контраст перевеса»); a drawing of the same two shares, not a new number.
+        // Not with the table: R's and X's strongest cells of a window are not the two shares of that window
+        const dom = !F._ts && !F._mx && n + o > 0 ? (n - o) / (n + o) : 0;
         let a = (0.12 + 0.26 * Math.pow(n / mx, 0.7)) * Math.max(0.15, 1 + cfg.domK / 100 * dom);
         if (past) a *= 0.5;
-        if (lit || zl) a = Math.max(a, 0.5);
+        if (mv && !mv.ans) a *= 0.35;
+        if (litE || zl) a = Math.max(a, 0.5);
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, n);
-        // As on 24, every published window remains visible, including FINAL-X outside the constellation windows.
-        const visible=n>0;
-        V.bandBars.push({ev,b,n,visible,comparable,dom,alpha:Math.min(1,a*cfg.stripA/80),x0,x1,y,cy});
-        if(!visible)continue;
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
         // a thin outline on the side that outweighs, even for a small tilt (3,8 against 3,2), stronger with the tilt but
         // always quiet (operator 2026-10-06: an outline takes the eye, so only the winner and only lightly)
-        if (comparable && n > o && cfg.domLine > 0 && Math.abs(y - cy) > 3) {
+        if (!F._ts && !F._mx && n > o && cfg.domLine > 0 && Math.abs(y - cy) > 3) {
           c.strokeStyle = rgba(cfg[ev], Math.min(0.9, (0.12 + 0.18 * Math.min(1, 3 * dom)) * (past ? 0.6 : 1) * cfg.domLine / 100)); c.lineWidth = 1;   // barely visible (operator 2026-10-06)
           c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir[ev], y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1));
         }
-        if (lit && n) labels.push({ x: (x0 + x1) / 2, y: dir[ev] < 0 ? y - 7 : y + 8, t: ppTxt(evPass(F, ev, 'time_cell', null, [t0, t0 + 15], n)).replace('%', ''), col: cfg[ev] });
+        if (F._mx ? n && (litE || (sec && sec.ev === ev)) : lit && n) labels.push({ x: (x0 + x1) / 2, y: dir[ev] < 0 ? y - 7 : y + 8, t: ppTxt(F._mx ? mxCellPass(F, ev, mv) : evPass(F, ev, 'time_cell', null, [t0, t0 + 15], n)).replace('%', ''), col: cfg[ev] });
       }
     }
     // the hills: one height scale per event, its tallest hill filling its half (a shape, not a number)
@@ -2065,7 +2089,7 @@
     V.hills = [];
     for (const ev of ['X', 'R']) H[ev].forEach(o => {
       if (!o || zoneHeld(F, ev, o.i)) return;          // a withheld zone (SWPC-1.1 M14): no hill
-      const s = S[ev][o.i], imp = expiredLook(s), on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
+      const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
       const scr = o.pts.map(([t, d]) => [V.X(t), cy + dir[ev] * (1 + 0.94 * half * d / hmax[ev])]);
       c.beginPath(); c.moveTo(scr[0][0], cy + dir[ev]);
       for (const p of scr) c.lineTo(p[0], p[1]);
@@ -2076,7 +2100,7 @@
       c.save(); if (on) { c.shadowColor = rgba(col, 0.6); c.shadowBlur = 18; } c.fillStyle = rgba(col, Math.min(0.8, a)); c.fill(); c.restore();
       c.strokeStyle = rgba(col, imp ? 0.18 : on ? 0.95 : other ? 0.3 : 0.6); c.lineWidth = on ? 1.4 : 1; c.setLineDash(imp ? [3, 4] : []);
       c.beginPath(); scr.forEach((p, j) => j ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.stroke(); c.setLineDash([]);
-      V.hills.push({ ev, i: o.i, scr, cy, up: dir[ev] < 0, look:s, alpha:Math.min(0.8,a), dashed:imp });
+      if (!F._mx) V.hills.push({ ev, i: o.i, scr, cy, up: dir[ev] < 0 });
     });
     for (const L of labels) { c.font = '700 10.5px ' + FONT; c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, L.y); c.textAlign = 'left'; }
     // the capsules: the zone over its whole time window, its share and status inside. Operator 2026-10-06: no outline on a
@@ -2087,7 +2111,7 @@
     const capMax = Math.max(1e-9, ...caps.map(q => q.o.z.p_snapshot));
     for (const { ev, o, ln } of caps) {
       if (zoneHeld(F, ev, o.i)) continue;               // a withheld zone (SWPC-1.1 M14): no capsule
-      const s = S[ev][o.i], imp = expiredLook(s), hold = s === 'HOLDS', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
+      const s = S[ev][o.i], imp = s === 'IMPOSSIBLE', hold = s === 'HOLDS', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === o.i), other = !!(h && h.k === 'zone' && !on), col = stateCol(cfg[ev], s);
       const x0 = V.X(F.f + 15 * o.b0) + 1, x1 = V.X(F.f + 15 * o.b1) - 1, y0 = dir[ev] < 0 ? B.y + 3 + ln * (LH + 2) : B.y + B.h - 3 - (ln + 1) * (LH + 2) + 2, w = x1 - x0;
       const r = Math.pow(o.z.p_snapshot / capMax, 0.7);
       c.save(); c.globalAlpha = other ? 0.5 : 1;
@@ -2270,10 +2294,10 @@
   // always right of it. Rows of a zone brighter, each zone's densest row in a larger type; a zone's price extent is a
   // thin tick at the right edge. A segment is the share of the whole band over the whole horizon, never the zone's.
   function drawProjRX(c, ctx) {
-    const F = ctx.F, A_ = V.proj, h = hv(), top0 = 40, bot0 = A_.h - 16, x0 = A_.x + 52, gap = 6, blen = A_.w - 52 - 52 - gap;
+    const F = ctx.F, A_ = V.proj, h = hv(), top0 = 40, bot0 = A_.h - 16, x0 = A_.x + 38, blen = A_.w - 38 - 36;
     c.fillStyle = C.axis; c.fillRect(A_.x, 0, A_.w, A_.h);
     c.fillStyle = C.grid; c.fillRect(A_.x, 0, 1, A_.h);
-    V.projBars = []; V.projLabels = []; V.projCols = { X: [A_.x, A_.x + A_.w], R: [A_.x, A_.x + A_.w] }; V.projUnk = null; V.projEdge = null;
+    V.projBars = []; V.projCols = { X: [A_.x, A_.x + A_.w], R: [A_.x, A_.x + A_.w] }; V.projUnk = null; V.projEdge = null;
     c.save(); c.beginPath(); c.rect(A_.x, 0, A_.w, A_.h); c.clip();
     const info = {}, lanes = [], out = { X: [0, 0], R: [0, 0] }, outK = { X: [null, null], R: [null, null] };
     for (const ev of ['R', 'X']) {
@@ -2290,14 +2314,13 @@
     }
     const keys = [...new Set([...F.ev.R.P.keys(), ...F.ev.X.P.keys()])];
     const mx = Math.max(1, ...keys.map(k => (F.ev.R.P.get(k) || 0) + (F.ev.X.P.get(k) || 0)));
-    const m1 = Math.max(1, ...F.ev.R.P.values(), ...F.ev.X.P.values()), str = n => Math.pow(n / m1, 0.75);
-    const focus = { R: projectionFocus(F,'R','P'), X: projectionFocus(F,'X','P') };
+    const m1 = Math.max(1, ...F.ev.R.P.values(), ...F.ev.X.P.values()), str = n => Math.pow(n / m1, 0.75);   // 0..1, one scale
     // operator 2026-10-06: a band's sessions whose event is already behind today's slice (by the clock) vs still ahead;
-    // the segment keeps its whole length (the band's share); past clock mass has a readable neutral colour, not vanishing alpha
+    // the segment keeps its whole length (the band's share), the passed part is faded, so «what is still ahead» reads
     const Rch = reachOf(F, ctx), sl = Rch.sl, gone = { R: new Map(), X: new Map() };
     for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) if (q.t + 5 <= sl) gone[ev].set(q.k, (gone[ev].get(q.k) || 0) + 1);
-    // Price reachability is separate from the family's clock: no active role colour when the final event is impossible,
-    // but neither the original n/N nor its actual earlier/later split is rewritten.
+    // audit 2026-10-06: a band where today's final event can no longer lie (today's R is already deeper, today's X already
+    // further) is faded whole and its label grey: this is what «the level has traded today» means
     const labels = [];
     for (const k of keys) {
       const [top, bot] = cellY(F, k, k + 1);
@@ -2309,49 +2332,46 @@
       for (const ev of ['R', 'X']) {
         const I = info[ev], n = I.D.P.get(k) || 0;
         if (!n) continue;
-        if (ev === 'X' && (info.R.D.P.get(k) || 0)) x += gap;
         const z = I.zr.get(k), on = !!(h && h.k === 'pcell' && h.ev === ev && k >= h.k0 && k < h.k1);
         const inA = !!(st.area && st.area.ev === ev && isFinite(st.area.k0) && k >= st.area.k0 && k < st.area.k1);
-        const len = Math.max(2, blen * n / mx), g = Math.min(n, gone[ev].get(k) || 0), la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
-        const paint = bandPaint(ev, Rch.okK(ev, k), Rch.known);
-        const substantial = focus[ev].shown.has(k), visible = substantial || on || inA, r = str(n);
-        // The mass/zone/hover hierarchy is the one of screen 24. Counts and the two clock parts stay untouched.
-        let a = z != null ? 0.22 + 0.78 * r : 0.1 + 0.32 * r;
-        if (I.hzi != null) a = z === I.hzi ? Math.max(a,0.6) : a * 0.4;
+        const r = str(n);
+        let a = z != null ? 0.22 + 0.78 * r : 0.1 + 0.32 * r;     // a zone row from faint to full, a residual row stays quiet
+        if (I.hzi != null) a = z === I.hzi ? Math.max(a, 0.6) : a * 0.4;
         if (on || inA) a = 1;
-        const futureA = Math.min(1,a*cfg.projA/90) * (Rch.okK(ev,k) ? 1 : cfg.passedA/100*1.8);
-        const earlierA = Math.min(1,Math.max(0.2,0.75*a*cfg.projA/90*cfg.passedA/30));
+        const len = Math.max(2, blen * n / mx), g = F._ts || Rch.okK(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
         // a withheld band share (its passport «—», SWPC-1.1 M14): no bar; the next segment keeps its place, the label says «—»
         if (ppHeld(F, 'EST:B-RX-BAND-' + ev, { k0: k, k1: k + 1 })) { labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk: false, on, z, rowH: bot - top, ok: Rch.okK(ev, k) }); x += len; continue; }
-        c.fillStyle = rgba(paint.fill, futureA); if(visible)c.fillRect(x, top + 0.5, la, hh);
-        if (g && visible) {
-          c.fillStyle = rgba(cfg.projDoneC, earlierA);
+        const spent=F._ts&&!Rch.okK(ev,k);
+        c.fillStyle = spent ? rgba(stateCol(cfg[ev], 'spent'),Math.min(1,a*cfg.projA/90)*cfg.passedA/100*1.8) : rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
+        if (g) {
+          const dead = !Rch.okK(ev, k);
+          c.fillStyle = dead ? rgba(stateCol(cfg[ev], 'spent'), Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8))
+            : rgba(cfg.doneC, Math.min(1, Math.max(0.2, 0.75 * a * cfg.projA / 90 * cfg.passedA / 30)));
           c.fillRect(x + la, top + 0.5, len - la, hh);
         }
-        if(on || inA){c.strokeStyle=paint.edge;c.lineWidth=1;c.strokeRect(Math.round(x)+0.5,Math.round(top)+0.5,Math.max(1,len-1),hh);}
-        V.projBars.push({ ev, k, top, bot, x0: x, x1: x + len, n, earlier: g, later: n - g, paint, visible, substantial, futureA, earlierA });
+        V.projBars.push({ ev, k, top, bot, x0: x, x1: x + len, n, earlier:g, later:n-g });
         const pk = I.peak.has(k);
-        if (on || focus[ev].labels.has(k)) labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top, ok: Rch.okK(ev, k), paint });
+        if (on || pk || z != null || 100 * n / F.N >= 3) labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top, ok: Rch.okK(ev, k) });
         x += len;
       }
     }
     // the labels: R left of the bar, X right of it; per side the hovered and the zones' peaks first, never overlapping
     const used = { R: [], X: [] };
     for (const L of labels.sort((a, b) => (b.on - a.on) || (b.pk - a.pk) || (b.n - a.n))) {
-      // Size follows the original historical mass on one scale. Time and applicability never reduce readability:
-      // paint/shape identify the state; the collision rule keeps the remaining 11.5+ px labels apart.
-      const dead = !L.on && (!L.ok || L.ahead <= 0), gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1;
-      const paint = L.paint || bandPaint(L.ev, L.ok, Rch.known);
-      const fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
+      // the label's size and brightness follow the share on the same scale as the bar: the strongest rows read first
+      // the strongest row of the column 14 px bold, the weakest zone rows about 9 px (linear in the share)
+      // the weight of a label follows what is still AHEAD in its band (the number stays the band's whole share); a band
+      // with nothing ahead is grey and small: it has played out today (operator 2026-10-06)
+      // grey only when today's final event can no longer lie in the band (reachability); a band whose family events are
+      // all behind the clock but still reachable today is green (history clock) — DR-LAB-NOW-1.0 F2, the audit's D4
+      const dead = !L.on && (L.ahead <= 0 || (F._ts && !L.ok)), gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
       if (used[L.ev].some(u => Math.abs(u[0] - L.y) < (u[1] + fs) / 2 + 1)) continue;
       used[L.ev].push([L.y, fs]);
-      const wt = L.on || (!dead && q > 0.7) ? '700 ' : L.z != null && !dead ? '600 ' : '';
+      const col = cfg[L.ev], wt = L.on || (!dead && q > 0.7) ? '700 ' : L.z != null && !dead ? '600 ' : '';
       c.textBaseline = 'middle';
-      const t = ppTxt(evPass(F, L.ev, 'price_cell', [L.k, L.k + 1], null, L.n)), tw = columnPctW(c, t, wt, fs);
-      const tx = L.ev === 'R' ? Math.max(A_.x + 3, x0 - 3 - tw) : Math.min(L.xe + 3, A_.x + A_.w - tw - 6);
-      const ink = L.on ? '#FFFFFF' : gone ? rgba(cfg.doneC,0.75) : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(cfg[L.ev],0.45*r),0.5+0.5*r) : C.text3;
-      columnPctDraw(c, t, tx, Math.round(L.y) + 0.5, wt, fs, ink);
-      V.projLabels.push({ ev: L.ev, k: L.k, box: [tx, L.y - fs / 2, tw, fs], fs, paint, ink });
+      const t = ppTxt(evPass(F, L.ev, 'price_cell', [L.k, L.k + 1], null, L.n)), tw = pctW(c, t, wt, fs);
+      pctDraw(c, t, L.ev === 'R' ? Math.max(A_.x + 3, x0 - 3 - tw) : Math.min(L.xe + 3, A_.x + A_.w - tw - 6), L.y + 0.5, wt, fs,
+        L.on ? '#FFFFFF' : gone ? rgba(cfg.doneC, 0.75) : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(col, 0.45 * r), 0.5 + 0.5 * r) : C.text3);
     }
     // the zones' price extents: thin ticks at the right edge, one lane per overlap
     const ends = [];
@@ -2360,25 +2380,25 @@
       while (ends[ln] != null && ends[ln] > o.k0) ln++;
       ends[ln] = o.k1;
       const [ya, yb] = cellY(F, o.k0, o.k1), y0 = Math.max(top0, ya), y1 = Math.min(bot0, yb);
-      if (y1 > y0) { c.fillStyle = rgba(cfg['proj' + o.ev], o.hot ? 1 : 0.7); c.fillRect(A_.x + A_.w - 4 - 3 * ln, y0, 2, y1 - y0); }
+      if (y1 > y0) { c.fillStyle = rgba(cfg[o.ev], o.hot ? 1 : 0.7); c.fillRect(A_.x + A_.w - 4 - 3 * ln, y0, 2, y1 - y0); }
     });
     // the heads (R on the left, X on the right, as their percentages) and the shares beyond the frame
     c.textBaseline = 'top'; c.font = '700 10.5px ' + FONT;
-    c.fillStyle = cfg.projR; c.fillText('R откат', A_.x + 5, 3);
+    c.fillStyle = cfg.R; c.fillText('R откат', A_.x + 5, 3);
     const hx = 'X прод.';
-    c.fillStyle = cfg.projX; c.fillText(hx, A_.x + A_.w - c.measureText(hx).width - 5, 3);
+    c.fillStyle = cfg.X; c.fillText(hx, A_.x + A_.w - c.measureText(hx).width - 5, 3);
     const shares = (i, y, base) => {
       c.font = '10px ' + FONT; c.textBaseline = base;
       c.fillStyle = C.text2; c.fillText(i ? '▼' : '▲', A_.x + A_.w / 2 - 4, y);
-      if (out.R[i]) { c.fillStyle = cfg.projR; c.fillText(ppTxt(outPass(F, 'R', i, outK.R[i], out.R[i])), A_.x + 5, y); }
-      if (out.X[i]) { const t = ppTxt(outPass(F, 'X', i, outK.X[i], out.X[i])); c.fillStyle = cfg.projX; c.fillText(t, A_.x + A_.w - c.measureText(t).width - 5, y); }
+      if (out.R[i]) { c.fillStyle = cfg.R; c.fillText(ppTxt(outPass(F, 'R', i, outK.R[i], out.R[i])), A_.x + 5, y); }
+      if (out.X[i]) { const t = ppTxt(outPass(F, 'X', i, outK.X[i], out.X[i])); c.fillStyle = cfg.X; c.fillText(t, A_.x + A_.w - c.measureText(t).width - 5, y); }
     };
     if (out.X[0] + out.R[0]) shares(0, 18, 'top');
     if (out.X[1] + out.R[1]) shares(1, A_.h - 3, 'bottom');
     c.restore();
   }
   function drawProj(c, ctx) {
-    if (st.mode === 'bounds') return drawProjRX(c, ctx);
+    if (st.mode === 'bounds') return ctx.F && ctx.F._mx ? mxDrawProj(c, ctx) : drawProjRX(c, ctx);
     const F = ctx.F, A_ = V.proj, W = A_.w - 40, h = hv(), d = projData(ctx);
     c.fillStyle = C.axis; c.fillRect(A_.x, 0, A_.w, A_.h);
     c.fillStyle = C.grid; c.fillRect(A_.x, 0, 1, A_.h);
@@ -2448,7 +2468,7 @@
   }
 
   // ---------- hit test ----------
-  function hit(x, y) { return pbSemanticHit(hitMap(x, y)); }
+  function hit(x, y) { return swHit(x, y) || pbSemanticHit(hitMap(x, y)); }
   function hitMap(x, y) {
     const ctx = pbMapContext(V.ctx), F = ctx.F;
     if (F && V.projW && x >= V.proj.x && y < V.plot.h) {
@@ -2484,7 +2504,7 @@
         if (H.up ? y < cy && y >= yh - 2 : y > cy && y <= yh + 2) return { k: 'zone', ev: H.ev, i: H.i, src: 'strip' };
       }
       const q = (V.bandCols || []).find(z => x >= z.x0 - 1 && x <= z.x1 + 1);
-      if (q) return { k: 'tcell', b0: q.b, b1: q.b + 1, src: 'strip' };
+      if (q) return F._mx ? { k: 'tcell', b0: q.b, b1: q.b + 1, src: 'strip', ev: (y < cy) === (F.d0 > 0) ? 'X' : 'R' } : { k: 'tcell', b0: q.b, b1: q.b + 1, src: 'strip' };
       return { k: 'stripBg' };
     }
     if (st.area && V.areaHit) for (const a of V.areaHit) if (a.part !== 'frame' && x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3]) return { k: 'area', part: a.part };
@@ -2495,6 +2515,7 @@
       // a star of R or of X: the nearest within 5 px
       let best = null, bd = 5;
       for (const star of V.stars || []) { const d = Math.hypot(star.x - x, star.y - y); if (d < bd) { bd = d; best = star.q; } }
+      if (best && F._mx) return { k: 'pt', ev: best.ev, i: best.i, q: best, same: best.same };
       if (best) {
         const all = F.ev[best.ev].pts.filter(q => pointZone(F,q) != null && Math.hypot(V.X(q.t + 2.5) - V.X(best.t + 2.5), V.Y(q.p) - V.Y(best.p)) < 2.5);
         return { k: 'pt', ev: best.ev, i: best.i, q: best, same: all.map(q => q.i) };
@@ -2553,9 +2574,9 @@
       const ev = h.ev || st.ev, a = { k0: h.k0, k1: h.k1 }, nX = areaCount(F, 'X', a), nR = areaCount(F, 'R', a), lk = V && V.lk, sl = sliceOf(ctx), rg = { k0: h.k0, k1: h.k1 };
       const pX = evPass(F, 'X', 'price_cell', [h.k0, h.k1], null, nX), pR = evPass(F, 'R', 'price_cell', [h.k0, h.k1], null, nR);
       const vf = visitPass(F, h.k0, h.k1, null), vr = visitPass(F, h.k0, h.k1, sl), p0 = F.u2p(h.k0 / 10), p1 = F.u2p(h.k1 / 10);
-      const pk = lk && lk.src === 'pcell' && lk.ev === ev && lk.k0 === h.k0 ? peakPass(F, ev, rg, lk.b, lk.past, sl, lk.n) : null;
+      const pk = !F._mx && lk && lk.src === 'pcell' && lk.ev === ev && lk.k0 === h.k0 ? peakPass(F, ev, rg, lk.b, lk.past, sl, lk.n) : null;
       const selectedVisit = lk && lk.src === 'pcell' && lk.marker ? { ...lk.marker.visit, peakWindow: clk(F.f + 15 * lk.b) + '–' + clk(F.f + 15 * (lk.b + 1)) } : null;
-      return '<div class="ih">Полоса ' + band(h.k0, h.k1) + ' SD</div><div class="is">' + px(Math.min(p0, p1)) + '–' + px(Math.max(p0, p1)) + ' · ' + where(s, F.u2p((h.k0 + h.k1) / 20)) + '</div>' + (selectedVisit ? visitNote(F, ctx, h.k0, h.k1, null, selectedVisit) : '') +
+      return '<div class="ih">Полоса ' + band(h.k0, h.k1) + ' SD</div><div class="is">' + px(Math.min(p0, p1)) + '–' + px(Math.max(p0, p1)) + ' · ' + where(s, F.u2p((h.k0 + h.k1) / 20)) + '</div>' + (F._mx ? mxTip(F, h) : '') + (selectedVisit ? visitNote(F, ctx, h.k0, h.k1, null, selectedVisit) : '') +
         '<div class="iq">' + lbl('EST:B-RX-BAND-' + ev, 'question', { from: F.from, end: clk(F.end) }) + '</div>' + twoBars(F, pX, pR, ev, { k0: h.k0, k1: h.k1, b0: null, b1: null }) +
         (pk ? '<div class="il" style="color:' + (REVIEW ? cfg[ev] : lk.past ? '#F23645' : cfg[ev]) + '">' + lbl(pk.estimand, lk.past ? 'band_past' : 'band_ahead', { ev, window: clk(F.f + 15 * lk.b) + '–' + clk(F.f + 15 * lk.b + 15), pct: ppTxt(pk) }) + '</div>' : '') +
         (() => { const Rch = reachOf(F, ctx), gn = e => F.ev[e].pts.filter(q => q.k >= h.k0 && q.k < h.k1 && q.t + 5 <= sl).length, gX = gn('X'), gR = gn('R');
@@ -2577,7 +2598,7 @@
         evPass(F, ev, 'price_time', [bk, bk + 1], [t0, t0 + 15], bc);                  // the named cell is a passport too (B-RX-REGION)
         return '<div class="ir">' + lbl('EST:B-RX-REGION-' + ev, 'mode_cell', { ev, band: band(bk, bk + 1) }) + '<b>' + px(F.u2p((bk + 0.5) / 10)) + '</b></div>';
       };
-      return '<div class="ih">' + clk(t0) + '–' + clk(t0 + 15) + '</div><div class="iq">' + lbl('EST:B-RX-WINDOW-X', 'question') + '</div>' + twoBars(F, pX, pR, 'X', { k0: null, k1: null, b0: b, b1: b + 1 }) + peakK('X') + peakK('R') + ifoot(F, lbl('FF:SHARE-STEP', 'foot_time'));
+      return '<div class="ih">' + clk(t0) + '–' + clk(t0 + 15) + '</div>' + (F._mx ? mxTip(F, h) : '') + '<div class="iq">' + lbl('EST:B-RX-WINDOW-X', 'question') + '</div>' + twoBars(F, pX, pR, 'X', { k0: null, k1: null, b0: b, b1: b + 1 }) + peakK('X') + peakK('R') + ifoot(F, lbl('FF:SHARE-STEP', 'foot_time'));
     }
     if (h.k === 'unk' && F) {
       const cd = st.mode === 'path' ? colFor(ctx) : null;
@@ -2657,6 +2678,7 @@
   const zonesOf = (F, ev) => F && F.zones ? F.zones[ev || st.ev] || null : null;
   const zoneName = z => band(z.price_low, z.price_high) + ' SD × ' + clk(z.time_start) + '–' + clk(z.time_end);
   function zonePass(F, ev, z) {
+    if(F._ts)return tsPass(F,ev,'CORE',z);
     if (F._pb && ev === 'R') return pbZonePass(F, z);
     const Zm = F.zones[ev], E = 'EST:B-ZONE-' + ev;
     return pp(F, { estimand: E, params: { zone_id: z.zone_id }, event_id: ev, region_kind: 'zone_mask', exact_price_bounds: null, time_bounds: null, cell_mask: z.cell_mask.length, zone_id: z.zone_id,
@@ -2697,6 +2719,7 @@
   // dimmer) — it is still possible today and never called impossible. Supersedes entry 18's «POSSIBLE without sessions
   // ahead drawn as IMPOSSIBLE» (the audit of 06.10 #2: empirical occupancy is not reachability).
   function zoneClock(F, ctx, ev) {
+    if(F._ts)return (F._ts.today?.[ev]||[]).map(v=>v.history_clock);
     if (F._pb && ev === 'R') return F.zones.R.zones.map((z,i) => (PB.model?.F.ev.R.pts || F.ev.R.pts).some(q => z.cell_mask.some(([k,b]) => k === q.k && b === q.b) && q.t + 5 > sliceOf(ctx)) ? 'FUTURE_PRESENT' : sliceOf(ctx) < z.time_end ? 'FUTURE_EMPTY' : 'PAST_ONLY');
     const Zm = F.zones[ev];
     if (!Zm) return [];
@@ -2719,7 +2742,9 @@
     if (v.state === 'WITHHELD') return zst('WITHHELD');
     const paint = zonePaint(F, ctx, z.event_id, z, s);
     const words = v.state === 'PENDING' && ['FUTURE', 'OPEN'].includes(paint.state) ? lbl('FF:TODAY-VISIT', paint.state) : visitWords(v);
-    return '<span class="p24-visit" data-visit="' + v.state + '" style="color:' + (v.state === 'VISITED' ? cfg.visitC : v.state === 'MISSED' ? cfg.visitMissC : '#C0CBDC') + '">' + words + '</span>';
+    // 2026-10-26: the row keeps both of today's facts, the status of the final extreme (possible / holds / impossible)
+    // and the visit of the zone's own cells in its window; they are different questions (meaning/14, spec 16 §2)
+    return zst(s) + ' · <span class="p24-visit" data-visit="' + v.state + '" style="color:' + (v.state === 'VISITED' ? cfg.visitC : v.state === 'MISSED' ? cfg.visitMissC : '#C0CBDC') + '">' + words + '</span>';
   }
   // Three different questions stay distinct: immutable R/X mass; its historical clock; today's actual visit.
   // A zone uses its exact cells and window. A column band has no zone-window: its horizon is (activation, block end].
@@ -2789,6 +2814,7 @@
   // request differs from the server's) is not asserted — no status word («—»), no state look, today's reachability open;
   // the zones' shares, their n / N and their drawing as history stay
   function zoneStatus(F, ctx, ev) {
+    if(F._ts)return (F._ts.today?.[ev]||[]).map(v=>v.status);
     if (F._pb && ev === 'R') return F.zones.R.zones.map(() => 'POSSIBLE');
     const Zm = F.zones[ev];
     if (!Zm) return [];
@@ -2962,7 +2988,7 @@
   // Page pixels of every layer and block in this frame, written into <script id="geo" type="application/json"> so a
   // headless browser can dump them next to its screenshot of the same address. Changes nothing on the screen.
   function geoDump(ctx) {
-    const F = ctx.F, r0 = cv.getBoundingClientRect(), ox = r0.left, oy = r0.top, s = ctx.s;
+    const F = pbMapContext(ctx).F, r0 = cv.getBoundingClientRect(), ox = r0.left, oy = r0.top, s = ctx.s;
     const P = (x, y) => [Math.round(ox + x), Math.round(oy + y)];
     const rect = el => { if (!el) return null; const r = el.getBoundingClientRect(); return r.width || r.height ? [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height)] : null; };
     const G = { url: location.hash, W: innerWidth, H: innerHeight, mode: st.mode, view: F ? F.view : null, dom: {}, chart: {}, panel: {}, det: {} };
@@ -3044,7 +3070,7 @@
     const el = dom('insp');
     if (!el || !V) return;
     const ctx = V.ctx, use = h && h.k !== 'stripBg' ? h : st.pin;
-    let html = continuationMode() ? continuationInspector(ctx) : use && /^pb/.test(use.k) ? pbInspector(ctx, use) : pullbackMode() && use?.k === 'pcell' ? pbRegionInspector(ctx,use) : use ? tipHtml(use, ctx) : '';
+    let html = continuationMode() ? continuationInspector(ctx) : use && /^sw/.test(use.k) ? swInspector(ctx, use) : use && /^pb/.test(use.k) ? pbInspector(ctx, use) : pullbackMode() && use?.k === 'pcell' ? pbRegionInspector(ctx,use) : use ? tipHtml(use, ctx) : '';
     if (!html && ctx.F && ctx.F.N) html = '<div class="ih">Слепок семьи</div><div class="is">' + esc(ctx.F.cond) + '</div>' + ifoot(ctx.F, lbl('FF:SHARE-STEP', 'foot_fixed', { event: lbl('FF:PASSPORT-VIEW', 'at_act', null, VW(ctx.F)), t: clk(ctx.F.act0) }));
     if (el._h !== html) { el.innerHTML = html; el._h = html; }
   }
@@ -3134,7 +3160,7 @@
     if (h && h.k === 'fcell' && d.zone === 'proj') { st.col = h.j; render(true); return; }
     if (h && (h.k === 'tcell' || h.k === 'pbtcell') && F) {                                  // a click on the time histogram: a window (for the band)
       const a = st.area && isFinite(st.area.k0) ? st.area : null, same = st.area && st.area.b0 === h.b0 && st.area.b1 === h.b1;
-      st.area = same ? (a ? { k0: a.k0, k1: a.k1, ev: a.ev } : null) : { k0: a ? a.k0 : -Infinity, k1: a ? a.k1 : Infinity, b0: h.b0, b1: h.b1, ev: a ? a.ev : st.ev };
+      st.area = same ? (a ? { k0: a.k0, k1: a.k1, ev: a.ev } : null) : { k0: a ? a.k0 : -Infinity, k1: a ? a.k1 : Infinity, b0: h.b0, b1: h.b1, ev: a ? a.ev : h.ev || st.ev };
       render(true); return;
     }
     if (h && ['pbzone','pbpcell','pbtcell','pbarea','pbunk'].includes(h.k)) { pin(h); return; }
@@ -3413,6 +3439,7 @@
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
   window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, reachOf, zoneLook, zoneClock, visitState, visitPaint, zonePaint, bandPaint, markerPaint, targetMarker, colorBindings: COLOR235, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+    timeSd:()=>({data:tsData(cur()),trace:TS_TRACE.slice(),profile:'DR-LAB-TIME-SD-1.0'}),emphOf,
     preOf, arriveOf, arriveBundle, candidateSelection, integration: () => ({ enabled: ICFG.enabled, trials: {...TRIAL}, ...IS, packet: scenePacket() }), setTrial,
     continuations:()=>({...CS,packet:continuationPacket(cur())}),pinContinuation,verifyContinuation,
     pullbacks:()=>({...PB,packet:pbPacket(cur()),mode:pullbackMode()}),pbHit:(x,y)=>pbHit(x,y),pbGeom:()=>{const c=cur(),r=pbPacket(c);return r?pbGeom(c,r):null;},mapContext:()=>pbMapContext(cur()),timeHills:()=>{const c=pbMapContext(cur());return c.F?{R:bandHills(c.F,c,'R'),X:bandHills(c.F,c,'X')}:null;},

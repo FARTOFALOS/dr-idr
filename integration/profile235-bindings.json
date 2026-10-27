@@ -1,8 +1,8 @@
 {
   "kind": "implementation mapping; not a normative registry",
-  "date": "2026-10-22",
+  "date": "2026-10-23",
   "surface": "/23-5/",
-  "source": "docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md",
+  "source": "docs/DR-LAB-23-5-TIME-SD.md",
   "facets": [
     "FACET:CATEGORY",
     "FACET:PHASE",
@@ -17,24 +17,24 @@
   ],
   "bindings": [
     {
-      "carrier": "PB constellation",
+      "carrier": "R finite constellation",
       "event": "PB_L",
       "estimands": [
-        "EST:PB-ZONE"
+        "EST:TS-CORE-R"
       ],
-      "profile": "PROFILE:PB-24",
+      "profile": "PROFILE:TIME-SD-235",
       "set_role": "F",
-      "horizon": "own activation -> block end",
+      "horizon": "own activation -> block end; exact declared ET window",
       "claim_class": "DescriptiveClaim",
-      "note": "R display alias; exact mask; all unknown mass retained",
+      "note": "exact 0.3 IDR x 15 minute core, with known/possible members",
       "outcomes": [
         "OUT:PB-L-1"
       ],
       "denominators": {
-        "EST:PB-ZONE": "N_BASE_UNIQUE_MEMBERS"
+        "EST:TS-CORE-R": "N_BASE_UNIQUE_MEMBERS"
       },
       "case_sets": {
-        "EST:PB-ZONE": [
+        "EST:TS-CORE-R": [
           "CS:F-CONF-1",
           "CS:F-CONF-ALL-1",
           "CS:F-BREAK-1",
@@ -43,24 +43,24 @@
       }
     },
     {
-      "carrier": "PB price / time / joint",
+      "carrier": "R price and time peaks",
       "event": "PB_L",
       "estimands": [
-        "EST:PB-REGION"
+        "EST:TS-PEAK-R"
       ],
-      "profile": "PROFILE:PB-24",
+      "profile": "PROFILE:TIME-SD-235",
       "set_role": "F",
-      "horizon": "own activation -> block end",
+      "horizon": "own activation -> block end; exact declared ET window",
       "claim_class": "DescriptiveClaim",
-      "note": "unique-case union, not sum of episodes or cells",
+      "note": "MAX of joint cell support, original second coordinate retained; not full-band union",
       "outcomes": [
         "OUT:PB-L-1"
       ],
       "denominators": {
-        "EST:PB-REGION": "N_BASE_UNIQUE_MEMBERS"
+        "EST:TS-PEAK-R": "N_BASE_UNIQUE_MEMBERS"
       },
       "case_sets": {
-        "EST:PB-REGION": [
+        "EST:TS-PEAK-R": [
           "CS:F-CONF-1",
           "CS:F-CONF-ALL-1",
           "CS:F-BREAK-1",
@@ -69,24 +69,24 @@
       }
     },
     {
-      "carrier": "PB residual categories",
+      "carrier": "R selected area and off-frame mass",
       "event": "PB_L",
       "estimands": [
-        "EST:PB-SESSIONS"
+        "EST:TS-REGION-R"
       ],
-      "profile": "PROFILE:PB-24",
+      "profile": "PROFILE:TIME-SD-235",
       "set_role": "F",
-      "horizon": "own activation -> block end",
+      "horizon": "own activation -> block end; exact declared ET window",
       "claim_class": "DescriptiveClaim",
-      "note": "four disjoint categories of N; unknown is not absence",
+      "note": "unique-case union in the explicitly named region; not peak concentration",
       "outcomes": [
         "OUT:PB-L-1"
       ],
       "denominators": {
-        "EST:PB-SESSIONS": "N_BASE_UNIQUE_MEMBERS"
+        "EST:TS-REGION-R": "N_BASE_UNIQUE_MEMBERS"
       },
       "case_sets": {
-        "EST:PB-SESSIONS": [
+        "EST:TS-REGION-R": [
           "CS:F-CONF-1",
           "CS:F-CONF-ALL-1",
           "CS:F-BREAK-1",
@@ -95,58 +95,154 @@
       }
     },
     {
-      "carrier": "Final-X constellations",
+      "carrier": "R residual categories",
+      "event": "PB_L",
+      "estimands": [
+        "EST:TS-SESSIONS-R"
+      ],
+      "profile": "PROFILE:TIME-SD-235",
+      "set_role": "F",
+      "horizon": "own activation -> block end; exact declared ET window",
+      "claim_class": "DescriptiveClaim",
+      "note": "four disjoint categories of the full family; unknown remains unknown",
+      "outcomes": [
+        "OUT:PB-L-1"
+      ],
+      "denominators": {
+        "EST:TS-SESSIONS-R": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:TS-SESSIONS-R": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1",
+          "CS:F-BREAK-1",
+          "CS:F-BREAK-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "X finite constellation",
       "event": "FINAL_X",
       "estimands": [
-        "EST:B-ZONE-X"
+        "EST:TS-CORE-X"
       ],
-      "profile": "PROFILE:BASE-24",
+      "profile": "PROFILE:TIME-SD-235",
       "set_role": "F",
-      "horizon": "own activation -> block end",
+      "horizon": "own activation -> block end; exact declared ET window",
       "claim_class": "DescriptiveClaim",
-      "note": "unchanged final-X outcome",
-      "outcomes": [
-        "OUT:ZONE-MEMBERSHIP-1"
-      ],
-      "denominators": {
-        "EST:B-ZONE-X": "N_BASE_UNIQUE_MEMBERS"
-      },
-      "case_sets": {
-        "EST:B-ZONE-X": [
-          "CS:F-CONF-1",
-          "CS:F-CONF-ALL-1",
-          "CS:F-BREAK-1",
-          "CS:F-BREAK-ALL-1"
-        ]
-      }
-    },
-    {
-      "carrier": "Final-X projections",
-      "event": "FINAL_X",
-      "estimands": [
-        "EST:B-RX-BAND-X",
-        "EST:B-RX-WINDOW-X"
-      ],
-      "profile": "PROFILE:BASE-24",
-      "set_role": "F",
-      "horizon": "own activation -> block end",
-      "claim_class": "DescriptiveClaim",
-      "note": "full-band share, not a zone-window visit",
+      "note": "exact 0.3 IDR x 15 minute core, with known/possible members",
       "outcomes": [
         "OUT:FINAL-X-1"
       ],
       "denominators": {
-        "EST:B-RX-BAND-X": "N_BASE_UNIQUE_MEMBERS",
-        "EST:B-RX-WINDOW-X": "N_BASE_UNIQUE_MEMBERS"
+        "EST:TS-CORE-X": "N_BASE_UNIQUE_MEMBERS"
       },
       "case_sets": {
-        "EST:B-RX-BAND-X": [
+        "EST:TS-CORE-X": [
           "CS:F-CONF-1",
           "CS:F-CONF-ALL-1",
           "CS:F-BREAK-1",
           "CS:F-BREAK-ALL-1"
-        ],
-        "EST:B-RX-WINDOW-X": [
+        ]
+      }
+    },
+    {
+      "carrier": "X price and time peaks",
+      "event": "FINAL_X",
+      "estimands": [
+        "EST:TS-PEAK-X"
+      ],
+      "profile": "PROFILE:TIME-SD-235",
+      "set_role": "F",
+      "horizon": "own activation -> block end; exact declared ET window",
+      "claim_class": "DescriptiveClaim",
+      "note": "MAX of joint cell support, original second coordinate retained; not full-band union",
+      "outcomes": [
+        "OUT:FINAL-X-1"
+      ],
+      "denominators": {
+        "EST:TS-PEAK-X": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:TS-PEAK-X": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1",
+          "CS:F-BREAK-1",
+          "CS:F-BREAK-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "X selected area and off-frame mass",
+      "event": "FINAL_X",
+      "estimands": [
+        "EST:TS-REGION-X"
+      ],
+      "profile": "PROFILE:TIME-SD-235",
+      "set_role": "F",
+      "horizon": "own activation -> block end; exact declared ET window",
+      "claim_class": "DescriptiveClaim",
+      "note": "unique-case union in the explicitly named region; not peak concentration",
+      "outcomes": [
+        "OUT:FINAL-X-1"
+      ],
+      "denominators": {
+        "EST:TS-REGION-X": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:TS-REGION-X": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1",
+          "CS:F-BREAK-1",
+          "CS:F-BREAK-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "X residual categories",
+      "event": "FINAL_X",
+      "estimands": [
+        "EST:TS-SESSIONS-X"
+      ],
+      "profile": "PROFILE:TIME-SD-235",
+      "set_role": "F",
+      "horizon": "own activation -> block end; exact declared ET window",
+      "claim_class": "DescriptiveClaim",
+      "note": "four disjoint categories of the full family; unknown remains unknown",
+      "outcomes": [
+        "OUT:FINAL-X-1"
+      ],
+      "denominators": {
+        "EST:TS-SESSIONS-X": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:TS-SESSIONS-X": [
+          "CS:F-CONF-1",
+          "CS:F-CONF-ALL-1",
+          "CS:F-BREAK-1",
+          "CS:F-BREAK-ALL-1"
+        ]
+      }
+    },
+    {
+      "carrier": "same-source post-L target",
+      "event": "POST_L_WINDOW_VISIT",
+      "estimands": [
+        "EST:TS-LINK"
+      ],
+      "profile": "PROFILE:TIME-SD-235",
+      "set_role": "F",
+      "horizon": "after own source L M5 closes -> own block end, inside target window",
+      "claim_class": "DescriptiveClaim",
+      "note": "joint chain, not a conditional probability among lows; no unrelated or earlier FINAL-X",
+      "outcomes": [
+        "OUT:TS-POST-L"
+      ],
+      "denominators": {
+        "EST:TS-LINK": "N_BASE_UNIQUE_MEMBERS"
+      },
+      "case_sets": {
+        "EST:TS-LINK": [
           "CS:F-CONF-1",
           "CS:F-CONF-ALL-1",
           "CS:F-BREAK-1",
@@ -421,7 +517,7 @@
     }
   ],
   "accepted_estimands": 53,
-  "proposed_estimands": 63,
+  "proposed_estimands": 72,
   "claim_ceiling": "C1; no C2/C3",
   "perceptual_acceptance": "NOT_INFERRED_FROM_TESTS",
   "fact_bindings": [
@@ -433,7 +529,7 @@
       ],
       "object": "today closed prefix / own historical witness",
       "denominator": null,
-      "note": "a visit is not completion; H/L/B and DR order belong to the episode"
+      "note": "visit of the exact new core is not PB completion; H/L/B belongs to its same verified episode"
     },
     {
       "carrier": "today visits",
@@ -478,7 +574,9 @@
     "EST:B-RX-JOINT-R",
     "EST:B-RX-JOINT-X",
     "EST:B-RX-BAND-R",
+    "EST:B-RX-BAND-X",
     "EST:B-RX-WINDOW-R",
+    "EST:B-RX-WINDOW-X",
     "EST:B-RX-REGION-R",
     "EST:B-RX-REGION-X",
     "EST:B-RX-UNDETERMINED-R",
@@ -489,6 +587,7 @@
     "EST:B-RX-OUTFRAME-X",
     "EST:B-RX-DIFF",
     "EST:B-ZONE-R",
+    "EST:B-ZONE-X",
     "EST:B-ZONE-RESIDUAL-R",
     "EST:B-ZONE-RESIDUAL-X",
     "EST:B-CLOSE-MISSING",

@@ -47,6 +47,7 @@
     if (s.failed) out.push(viewSwitch(s));
     if (F.out) out.push(outcomeHtml(F));
     out.push(phasePanel(F, ctx));
+    out.push(swPanel(F, ctx));
     out.push(nowHtml(F, ctx));
     out.push(candidatePanel(ctx));
     if (st.mode === 'bounds') {
@@ -55,7 +56,7 @@
       if (tf) out.push('<div class="p21-note" title="' + esc(lbl('FF:TODAY-PREFIX', 'title', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)) })) + '">' + tf + '</div>');
     }
     if (st.mode === 'path') out.push(columnHtml(F, ctx));
-    if (st.area && st.mode === 'bounds') out.push(pullbackMode() && st.area.ev !== 'X' ? pbAreaHtml(ctx) : areaHtml(F, ctx));
+    if (st.area && st.mode === 'bounds') out.push(pullbackMode() ? pbAreaHtml(ctx) : areaHtml(F, ctx));
     const h = st.pin;
     if (h && h.k === 'lvl' && h.l) out.push(levelHtml(F, ctx, h.l));
     if (h && h.k === 'pt' && F.M[h.i]) out.push(memberHtml(F, F.M[h.i]));

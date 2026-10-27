@@ -1,5 +1,8 @@
 # DR Lab 23.5: смысл, фасеты, решения и границы
 
+> Historical 22.10 broad-zone implementation, superseded by [time × SD](DR-LAB-23-5-TIME-SD.md) on 23.10.
+> Its formulas and test counts below describe the previous attempt, not the current default 23.5.
+
 22.10.2026. Рабочий результат для сравнения с 24. Прямое поручение оператора в текущем чате: исправить 23.5,
 сохранить знакомый дизайн, перепроверить перенесённый смысл через `decisions` и фасеты, опубликовать в `main`
 с объяснением для следующих инженеров. Это разрешение данной публикации, не принятие прогноза или торговой модели.

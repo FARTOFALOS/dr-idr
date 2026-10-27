@@ -14,14 +14,16 @@
   {
     const q = new URLSearchParams(location.hash.slice(1)), k = +q.get('pbscale');
     if (PB_SCALES.includes(k)) PB.scale = k;
-    if (ICFG.enabled && q.get('mode') === 'pullbacks') { TRIAL.pullbacks = true; st.mode = 'bounds'; }
+    // Superseded broad PB overlays cannot replace the approved finite time x SD map.
   }
-  const pullbackMode = () => ICFG.enabled && TRIAL.pullbacks && st.mode === 'bounds';
+  // Operator 2026-10-26: the main map of 23.5 is again the final R / X of every session (one star per session, the
+  // zones of screen 24); local pullbacks are a separate overlay layer (sweeps235.js). The PB / time x SD map stays off.
+  const pullbackMode = () => false;
   // Keep the original star layer on. Compact cell representatives below prevent a catalogue of overlapping episodes.
   function pbRequest(ctx) {
     if (!ctx.F || !ctx.F.N || !ctx.s.conf) return null;
-    const cut = sliceOf(ctx), view = st.view === 'conf' ? 'conf' : 'auto', a = st.area, region = a && a.ev !== 'X' ? [a.k0,a.k1,a.b0,a.b1].map(v=>Number.isFinite(v)?v:null) : null;
-    return { cut, view, region, key: [JSON.stringify(region),IS.epoch, A.inst, ctx.D.iso, ctx.s.k, cut, view, st.scope, ctx.F.r.snapshot_id].join('|') };
+    const cut = sliceOf(ctx), view = st.view === 'conf' ? 'conf' : 'auto', a = st.area, region = a ? [a.k0,a.k1,a.b0,a.b1].map(v=>Number.isFinite(v)?v:null) : null;
+    return { cut, view, region, key: [PB.scale,JSON.stringify(region),IS.epoch, A.inst, ctx.D.iso, ctx.s.k, cut, view, st.scope, ctx.F.r.snapshot_id].join('|') };
   }
   function pbPacket(ctx) { const q = pbRequest(ctx); return q && PB.key === q.key ? PB.packet : null; }
   function requestPullbacks(ctx) {
@@ -30,15 +32,16 @@
     if (!q || (q.key === PB.key && (PB.packet || PB.error)) || PB.pending === q.key) return;
     const token = ++PB.seq, F = ctx.F;
     PB.key = q.key; PB.packet = null; PB.error = null; PB.pending = q.key; PB.cl = null;
-    const args = new URLSearchParams({ instrument: A.inst, session: ctx.s.k, at: q.cut, view: q.view, scope: st.scope });
+    const args = new URLSearchParams({ instrument: A.inst, session: ctx.s.k, at: q.cut, view: q.view, scope: st.scope, scale: PB.scale });
     if (A.src === 'hist') args.set('date', A.date);
     if (q.region) args.set('region', JSON.stringify(q.region));
-    fetch('/api/integration/pullbacks?' + args).then(async res => {
+    fetch('/api/integration/time-sd?' + args).then(async res => {
       const r = await res.json();
       if (!res.ok) throw Error(r.message || r.error || 'Сервер не ответил');
       if (token !== PB.seq) return;
       if (r.status !== 'OK') throw Error(r.message || r.status);
       await pbVerify(r, q, ctx, F);
+      await tsVerify(r, q, ctx, F);
       if (token !== PB.seq) return;
       PB.packet = r; PB.verified++;
     }).catch(e => { if (token === PB.seq) { PB.error = e.message; PB.packet = null; } })

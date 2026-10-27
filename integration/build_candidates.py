@@ -42,6 +42,10 @@ def main():
     changed_enums['SurfaceProfile']['permissible_values']['SC11_PULLBACKS_0_1']={'description':'separate pullback-before-update candidate DR-LAB-PB-0.1, C0 only'}
     changed_enums['ProjectionKind']['permissible_values']['PULLBACK_BEFORE_UPDATE']={'description':'bottom of a local pullback before the first update of its vertex (DR-LAB-PB-0.1)'}
     changed_enums['EventKind']['permissible_values']['PB_L']={'description':'the bottom L of an episode H -> L -> B (DR-LAB-PB-0.1)'}
+    changed_enums['SurfaceProfile']['permissible_values']['SC11_TIME_SD_235']={'description':'23.5 time x SD cores, peak joint-cell support and same-episode post-L paths; C0 only'}
+    changed_enums['HorizonStart']=dict(spec['enums']['HorizonStart'])
+    changed_enums['HorizonStart']['permissible_values']=dict(spec['enums']['HorizonStart']['permissible_values'])
+    changed_enums['HorizonStart']['permissible_values']['OWN_PB_BOTTOM_CLOSE_EXCLUSIVE']={'description':'M5 after the close of the same historical episode bottom L, inside the selected target window'}
     dump(HERE/'schema.yaml',dict(id='https://dr-lab.local/candidates',name='dr_lab_candidates',
         imports=['../../contract/schema/dr_lab_sc'],enums=changed_enums))
     builder.SCHEMA=HERE/'schema.yaml'; builder.REG_DIR=HERE/'registry'; builder.OUT=HERE/'build'

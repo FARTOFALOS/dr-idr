@@ -10180,6 +10180,17 @@
      "§12.3"
     ],
     "surface_profile": "SERVICE"
+   },
+   {
+    "definitions": "SRC:SC-1.1",
+    "id": "API:/api/integration/time-sd",
+    "marking": "separate 23.5 time x SD candidate envelope; accepted estimands unchanged",
+    "route": "/api/integration/time-sd",
+    "sc_ref": [
+     "§1.3",
+     "§12.3"
+    ],
+    "surface_profile": "SERVICE"
    }
   ],
   "temporal_frames": [
@@ -10375,7 +10386,7 @@
   "document_sha256_lf": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b",
   "edition": "DR-LAB-SC-1.1",
   "linkml": "1.11.1",
-  "registry_sha256": "3d2764bd7c2ab797e636b5e85d46090c4a6beeeb2925676bb27d7266a563ca8f",
+  "registry_sha256": "c49e2cf5e06206ad8aafe145f4861eda949660fbbec16d4b60e87d272582aa50",
   "runtime_spec_sha256": "9795540070e3c2d2e04f06013481334397c5afe792f18fcb11f9417237d533b7",
   "schema_sha256_lf": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
   "sources": {
@@ -10385,7 +10396,7 @@
    "contract/registry/30-questions-estimands.yaml": "3de31f3c4d9a85990738558c800aab481d968c7f26695ca70d304ca36eafa6cd",
    "contract/registry/40-claims.yaml": "199d0c0ac73819fd6f4659297f91f8fb8a7ff80bfb296ebe342fbdda12027b23",
    "contract/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
-   "contract/registry/60-surfaces.yaml": "a48adc02823c796156a8c9822f68dd11521dd65e2295b775a21dab8094437504",
+   "contract/registry/60-surfaces.yaml": "173c6385240db1a195301770b4dc28dc1c69a9ae372d65348801650cb2995b88",
    "contract/registry/70-obligations.yaml": "c5baded1777e25e259c687bdb72c0fb707ec966bfd53d1439691e8db3dbc5174",
    "contract/schema/dr_lab_sc.yaml": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
    "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"
