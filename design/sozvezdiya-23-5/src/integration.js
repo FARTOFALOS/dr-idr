@@ -11,7 +11,7 @@
   const TRIAL_KEY = 'drlab.d235.trials', ON_0810 = 'drlab.d235.trials.on0810';
   if (ICFG.enabled) try {
     const kept = JSON.parse(localStorage.getItem(TRIAL_KEY) || '{}');
-    if (localStorage.getItem(ON_0810) == null) { for (const k of ['pre', 'phase', 'nowmarks']) delete kept[k]; localStorage.setItem(ON_0810, '1'); }
+    if (localStorage.getItem(ON_0810) == null) { for (const k of ['pre', 'phase', 'nowmarks']) delete kept[k]; localStorage.setItem(TRIAL_KEY, JSON.stringify(kept)); localStorage.setItem(ON_0810, '1'); }
     for (const k in TRIAL) if (k !== 'pullbacks' && typeof kept[k] === 'boolean') TRIAL[k] = kept[k];
     if (kept.pullbacks) {
       if (localStorage.getItem(TRIAL_KEY+'.before-withdrawal') == null) localStorage.setItem(TRIAL_KEY+'.before-withdrawal',JSON.stringify(kept));

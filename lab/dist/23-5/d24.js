@@ -1,7 +1,7 @@
 // Built from design/sozvezdiya-23-5/src (app.js + panel.js) by its build.py: edit there.
-// DR Lab 23.5: approved time x SD plan, finite local cores and peak projections.
-// R=PB-L, X=FINAL-X context; EST:TS-* passports and same-episode post-L witnesses. Screen 24 keeps its own profile.
-// Semantic bindings, decisions and uncertainty: docs/DR-LAB-23-5-TIME-SD.md.
+// DR Lab 23.5 (operator 2026-10-26): the main map is the final R / X of every session, the zones of screen 24; the
+// decisions of 08.10 are on; local pullbacks are the overlay «Съёмы лоу» (sweeps235.js). Screen 24 keeps its own source.
+// Meaning, decisions and checks: docs/DR-LAB-23-5-SWEEPS.md (the time x SD variant of 23.10: docs/DR-LAB-23-5-TIME-SD.md).
 // ================= DR Lab · design 24 «Границы хода» =================
 // Design 22's working screen (candles of the day, the three sessions' DR / IDR, replay, the right panel, hover / pin,
 // layers, settings) with its statistical layer replaced by the semantic specification DR-LAB-SEM-1.0
@@ -5054,7 +5054,7 @@
   const TRIAL_KEY = 'drlab.d235.trials', ON_0810 = 'drlab.d235.trials.on0810';
   if (ICFG.enabled) try {
     const kept = JSON.parse(localStorage.getItem(TRIAL_KEY) || '{}');
-    if (localStorage.getItem(ON_0810) == null) { for (const k of ['pre', 'phase', 'nowmarks']) delete kept[k]; localStorage.setItem(ON_0810, '1'); }
+    if (localStorage.getItem(ON_0810) == null) { for (const k of ['pre', 'phase', 'nowmarks']) delete kept[k]; localStorage.setItem(TRIAL_KEY, JSON.stringify(kept)); localStorage.setItem(ON_0810, '1'); }
     for (const k in TRIAL) if (k !== 'pullbacks' && typeof kept[k] === 'boolean') TRIAL[k] = kept[k];
     if (kept.pullbacks) {
       if (localStorage.getItem(TRIAL_KEY+'.before-withdrawal') == null) localStorage.setItem(TRIAL_KEY+'.before-withdrawal',JSON.stringify(kept));
