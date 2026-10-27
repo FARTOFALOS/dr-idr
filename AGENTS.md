@@ -1,5 +1,19 @@
 # DR IDR — entry for agents
 
+## Semantic reset созвездий · 2026-10-27
+
+**Перед любой новой работой над базовыми созвездиями R/X сначала прочитайте
+[meaning/22-time-price-constellation-reset.md](meaning/22-time-price-constellation-reset.md).**
+
+Новая операторская рамка возвращает базовый вопрос к простой последовательности:
+фиксированная F → один FINAL-R или FINAL-X на сессию → распределение времени события → явно выбранное time window →
+SD-distribution тех же событий → одна или несколько соседних концентраций. Созвездие — форма показа концентрации,
+не самостоятельная event-ontology.
+
+Это **не** автоматическая отмена screen 24, SC-1.1, 23.5 или прошлых исследований. Но при следующей реализации
+нельзя по умолчанию импортировать `zone-map-3`, PB-L, SW, fixed 0.3 SD core, path-null/status или universal event engine
+как будто они выражают эту Time → Price семантику. Они отвечают на отдельные вопросы и требуют explicit semantic mapping.
+
 ## Working 23.5: time × SD · 2026-10-23
 
 Start with [DR-LAB-TIME-SD-1.0](docs/DR-LAB-23-5-TIME-SD.md) and the
