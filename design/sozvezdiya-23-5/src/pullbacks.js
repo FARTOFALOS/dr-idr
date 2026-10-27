@@ -16,7 +16,9 @@
     if (PB_SCALES.includes(k)) PB.scale = k;
     // Superseded broad PB overlays cannot replace the approved finite time x SD map.
   }
-  const pullbackMode = () => ICFG.enabled && st.mode === 'bounds'; // 23.5 now uses its approved time x SD profile by default
+  // Operator 2026-10-26: the main map of 23.5 is again the final R / X of every session (one star per session, the
+  // zones of screen 24); local pullbacks are a separate overlay layer (sweeps235.js). The PB / time x SD map stays off.
+  const pullbackMode = () => false;
   // Keep the original star layer on. Compact cell representatives below prevent a catalogue of overlapping episodes.
   function pbRequest(ctx) {
     if (!ctx.F || !ctx.F.N || !ctx.s.conf) return null;

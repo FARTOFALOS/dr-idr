@@ -1,6 +1,6 @@
-// DR Lab 23.5: approved time x SD plan, finite local cores and peak projections.
-// R=PB-L, X=FINAL-X context; EST:TS-* passports and same-episode post-L witnesses. Screen 24 keeps its own profile.
-// Semantic bindings, decisions and uncertainty: docs/DR-LAB-23-5-TIME-SD.md.
+// DR Lab 23.5 (operator 2026-10-26): the main map is the final R / X of every session, the zones of screen 24; the
+// decisions of 08.10 are on; local pullbacks are the overlay «Съёмы лоу» (sweeps235.js). Screen 24 keeps its own source.
+// Meaning, decisions and checks: docs/DR-LAB-23-5-SWEEPS.md (the time x SD variant of 23.10: docs/DR-LAB-23-5-TIME-SD.md).
 // ================= DR Lab · design 24 «Границы хода» =================
 // Design 22's working screen (candles of the day, the three sessions' DR / IDR, replay, the right panel, hover / pin,
 // layers, settings) with its statistical layer replaced by the semantic specification DR-LAB-SEM-1.0
@@ -137,7 +137,8 @@
   const LAYERS = [
     ['pts', 'Точки: одна сессия — одно событие', '#EBA06C'], ['zones', 'Созвездия: зоны R / X (карта зон)', '#72A9EC'],
     ['proj', 'Гистограммы цены справа', '#EBA06C'], ['strip', 'Лента времени снизу', '#72A9EC'], ['std', 'STD', C.stdOn],
-    ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VI (volume imbalance)', C.vib], ['det', 'Шесть окон семьи (снизу)', C.text2]
+    ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VI (volume imbalance)', C.vib], ['det', 'Шесть окон семьи (снизу)', C.text2],
+    ['sweep', 'Съёмы лоу · локальный слой (кандидат)', '#B89CFF']   // 23.5 only, off by default (operator 2026-10-26; sweeps235.js)
   ];
 
   // ---------- small helpers ----------
@@ -873,7 +874,7 @@
   // ---------- view state ----------
   const st = {
     session: 'RDR', rp: null, v0: 545, v1: 975, p0: null, p1: null, auto: true,
-    L: { pts: true, zones: true, proj: true, strip: true, std: true, prev: true, vib: true, det: true },
+    L: { pts: true, zones: true, proj: true, strip: true, std: true, prev: true, vib: true, det: true, sweep: false },
     ev: 'R', mode: 'bounds', view: 'auto', scope: 'weekday', area: null, tool: false, col: null,
     hover: null, pin: null, mx: -1, my: -1, drag: null, stripH: 46, stripPin: false, menu: false,
     detH: 22, detPin: false, detOver: false, navHover: false
@@ -1032,6 +1033,7 @@
     if (F && !continuationMode()) drawLink(c, mapCtx);
     if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, cloudCtx);
     if (F && st.mode === 'bounds') drawPair(c, mapCtx);
+    if (F) drawSweeps(c, ctx);
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
     if (F && !continuationMode()) drawArea(c, mapCtx);
     if (F && st.mini) drawMini(c, ctx);
@@ -2445,7 +2447,7 @@
   }
 
   // ---------- hit test ----------
-  function hit(x, y) { return pbSemanticHit(hitMap(x, y)); }
+  function hit(x, y) { return swHit(x, y) || pbSemanticHit(hitMap(x, y)); }
   function hitMap(x, y) {
     const ctx = pbMapContext(V.ctx), F = ctx.F;
     if (F && V.projW && x >= V.proj.x && y < V.plot.h) {
@@ -2718,7 +2720,9 @@
     if (v.state === 'WITHHELD') return zst('WITHHELD');
     const paint = zonePaint(F, ctx, z.event_id, z, s);
     const words = v.state === 'PENDING' && ['FUTURE', 'OPEN'].includes(paint.state) ? lbl('FF:TODAY-VISIT', paint.state) : visitWords(v);
-    return '<span class="p24-visit" data-visit="' + v.state + '" style="color:' + (v.state === 'VISITED' ? cfg.visitC : v.state === 'MISSED' ? cfg.visitMissC : '#C0CBDC') + '">' + words + '</span>';
+    // 2026-10-26: the row keeps both of today's facts, the status of the final extreme (possible / holds / impossible)
+    // and the visit of the zone's own cells in its window; they are different questions (meaning/14, spec 16 §2)
+    return zst(s) + ' · <span class="p24-visit" data-visit="' + v.state + '" style="color:' + (v.state === 'VISITED' ? cfg.visitC : v.state === 'MISSED' ? cfg.visitMissC : '#C0CBDC') + '">' + words + '</span>';
   }
   // Three different questions stay distinct: immutable R/X mass; its historical clock; today's actual visit.
   // A zone uses its exact cells and window. A column band has no zone-window: its horizon is (activation, block end].
@@ -3044,7 +3048,7 @@
     const el = dom('insp');
     if (!el || !V) return;
     const ctx = V.ctx, use = h && h.k !== 'stripBg' ? h : st.pin;
-    let html = continuationMode() ? continuationInspector(ctx) : use && /^pb/.test(use.k) ? pbInspector(ctx, use) : pullbackMode() && use?.k === 'pcell' ? pbRegionInspector(ctx,use) : use ? tipHtml(use, ctx) : '';
+    let html = continuationMode() ? continuationInspector(ctx) : use && /^sw/.test(use.k) ? swInspector(ctx, use) : use && /^pb/.test(use.k) ? pbInspector(ctx, use) : pullbackMode() && use?.k === 'pcell' ? pbRegionInspector(ctx,use) : use ? tipHtml(use, ctx) : '';
     if (!html && ctx.F && ctx.F.N) html = '<div class="ih">Слепок семьи</div><div class="is">' + esc(ctx.F.cond) + '</div>' + ifoot(ctx.F, lbl('FF:SHARE-STEP', 'foot_fixed', { event: lbl('FF:PASSPORT-VIEW', 'at_act', null, VW(ctx.F)), t: clk(ctx.F.act0) }));
     if (el._h !== html) { el.innerHTML = html; el._h = html; }
   }

@@ -1,6 +1,24 @@
 # DR IDR — entry for agents
 
-## Working 23.5: time × SD · 2026-10-23
+## Working 23.5 · 2026-10-26 (supersedes the time × SD section below)
+
+Start with [DR-LAB-23-5-SWEEPS](docs/DR-LAB-23-5-SWEEPS.md) and the 26.10 node of `meaning/07-cepochka-reshenij.md`.
+The operator settled these in a round of questions on 26.10 and then said: «Собирай 23.5 по согласованному локально,
+24 не трогай, ничего не пушь без моего слова». Local build only; no publication, no visual acceptance.
+
+- The main map of 23.5 is again the final R / X of every **session** (one star per session, the zones and shares of
+  screen 24). Do not put local pullbacks or any multi-event object under the letter R, and do not replace the zone rule
+  by fixed 0.3 SD × 15-minute cores: on final R that rule finds no constellation in 3 of 4 families (check of 26.10).
+- The screen shows history and today's facts (reachability, clock, visit); it inserts no prediction logic (operator 26.10).
+  The phase rule of 08.10 is shown as its two facts, without a verdict or a quieter side.
+- The decisions of 08.10 are on by default in 23.5 only. Screen 24, its source, build, contract registries and the
+  server code are unchanged.
+- Local pullbacks are the overlay «Съёмы лоу» (SW-0.1), switched in «Слои ▾», off by default, computed by the page
+  (`sweeps235.js`) and recomputed by `lab/sweeps235_ref.py`. Not yet in the candidate registry (no SC passports).
+- Checks: `tests/sweeps235.py`, `tests/sweeps235_page.mjs` (+ shared checks). The older 23.5 page checks below assert
+  superseded variants.
+
+## Working 23.5: time × SD · 2026-10-23 (superseded on 26.10)
 
 Start with [DR-LAB-TIME-SD-1.0](docs/DR-LAB-23-5-TIME-SD.md) and the
 [approved implementation plan](meaning/lens/2026-10-22-plan-23-5-time-sd.md). The direct human «РЕАЛИЗУЙ»,
