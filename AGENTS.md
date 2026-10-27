@@ -1,5 +1,20 @@
 # DR IDR — entry for agents
 
+## Semantic reset созвездий · 2026-10-27
+
+**Перед любой новой работой над базовыми созвездиями R/X сначала прочитайте
+[meaning/22-time-price-constellation-reset.md](meaning/22-time-price-constellation-reset.md).**
+
+Новая операторская рамка: fixed F → один FINAL-R/FINAL-X на known session → одна матрица
+`15 min × 0.1 SD` с массой клетки `n/N` → две взаимно раскрывающиеся UI-проекции.
+Hover по SD показывает весь его профиль по времени; hover по времени — весь профиль по SD.
+Созвездие — frontend-визуализация сильной массы той же матрицы через representative real witnesses,
+дымку и нити, а не отдельный backend zone-object.
+
+Не импортировать по умолчанию `zone-map-3`, connected masks, half-height, fixed `0.3 SD` core,
+PB-L, SW или multi-event voting как базовую семантику. Из 23.5 разрешено переиспользовать joint-cell
+математику и witness compaction только после сохранения FINAL-R/X и общей F/N.
+
 ## Working 23.5 · 2026-10-26 (supersedes the time × SD section below)
 
 Start with [DR-LAB-23-5-SWEEPS](docs/DR-LAB-23-5-SWEEPS.md) and the 26.10 node of `meaning/07-cepochka-reshenij.md`.
