@@ -7,14 +7,17 @@
 Start new work from 23.5. The sections below about screen 24 describe the main line from 01.10 to 27.10: they are
 history and the source of the protected BASE/NOW definitions.
 
-Read [DR-LAB-23-5-MATRIX](docs/DR-LAB-23-5-MATRIX.md) first. Its last section logs every action and check of 27.10. On screen 23.5 the base map is one table 15 min × 0.1 SD
-of the final R / X (`matrix235.js`). The page reads no zone-map-3: the family view `mxView` has empty `zones`.
+Read [DR-LAB-23-5-MATRIX](docs/DR-LAB-23-5-MATRIX.md) first: its last sections log every action and check of 27–28.10.
+On screen 23.5 the numbers come from one table 15 min × 0.1 SD of the final R / X (`matrix235.js`). The drawing is the
+23.5 drawing as it was (operator 28.10: «те же визуализации, просто с новым смыслом»): constellations of zone-map-3 with
+their stars, haze, threads and label, capsules and hills, the column's colours. Which stars form a constellation is
+that drawing, never a number.
 - At rest the price column and the time band show each row's / window's strongest cell. This is the operator's 27.10
   rule: the strongest local condensation, not the row sum. Hover on a row / window of one event opens that event's full
   row / column, and the other event stays at rest. Every number is `EST:B-RX-REGION` of SC-1.1.
-- Haze = density of all the event's sessions; stars = one witness per M5 × 0.1 SD; threads = nearest witness in
-  neighbouring cells. None of them makes a number.
-- Check: `node tests/matrix235_page.mjs <23.5 base>` (105). Screen 24's source and SC-1.1 are unchanged. The server
+- A constellation's percentage (and its row in «Зоны по времени») is its strongest cell, the same kind of number as
+  the rectangle (operator 28.10). Equal maxima of a row are co-maxima: all lit and named.
+- Check: `node tests/matrix235_page.mjs <23.5 base>` (109). Screen 24's source and SC-1.1 are unchanged. The server
   changed in one line: the root redirect.
 - Merged into `main` and pushed on the operator's word of 27.10. This is not his perceptual acceptance of the view
   (О28). The local SEM-1.0 work of 27.10, uncommitted in the operator's checkout, is NOT in `main`: it was built on
@@ -35,7 +38,7 @@ Hover по SD показывает весь его профиль по врем�
 PB-L, SW или multi-event voting как базовую семантику. Из 23.5 разрешено переиспользовать joint-cell
 математику и witness compaction только после сохранения FINAL-R/X и общей F/N.
 
-## Working 23.5 · 2026-10-26 (supersedes the time × SD section below)
+## HISTORICAL / SUPERSEDED by the table time × SD of 27.10 — DO NOT IMPLEMENT AS CURRENT BASE · Working 23.5 · 2026-10-26 (supersedes the time × SD section below)
 
 Start with [DR-LAB-23-5-SWEEPS](docs/DR-LAB-23-5-SWEEPS.md) and the 26.10 node of `meaning/07-cepochka-reshenij.md`.
 The operator settled these in a round of questions on 26.10 and then said: «Собирай 23.5 по согласованному локально,
@@ -53,7 +56,7 @@ The operator settled these in a round of questions on 26.10 and then said: «С�
 - Checks: `tests/sweeps235.py`, `tests/sweeps235_page.mjs` (+ shared checks). The older 23.5 page checks below assert
   superseded variants.
 
-## Working 23.5: time × SD · 2026-10-23 (superseded on 26.10)
+## HISTORICAL / SUPERSEDED by the table time × SD of 27.10 — DO NOT IMPLEMENT AS CURRENT BASE · Working 23.5: time × SD · 2026-10-23 (superseded on 26.10)
 
 Start with [DR-LAB-TIME-SD-1.0](docs/DR-LAB-23-5-TIME-SD.md) and the
 [approved implementation plan](meaning/lens/2026-10-22-plan-23-5-time-sd.md). The direct human «РЕАЛИЗУЙ»,

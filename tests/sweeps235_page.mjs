@@ -33,8 +33,8 @@ try {
         const d = window.__d24, c = d.cur(), F = c.F;
         const q = new URLSearchParams({ instrument: d.A.inst, session: c.s.k, at: Math.floor((d.st.rp) / 5) * 5, view: 'conf', scope: d.st.scope, trials: '', date: d.A.date });
         const api = (await (await fetch('/api/integration/scene?' + q)).json()).family;
-        // since the reset of 27.10 the main map is the table time × SD of the final R / X: the page reads no zones
-        const same = !!F._mx && JSON.stringify(F.zones) === '{}' && ['R', 'X'].every(ev => F._mx[ev].known === F.ev[ev].known);
+        // since the reset of 27.10 the numbers come from the table time × SD; the constellations are still drawn by the zones
+        const same = !!F._mx && ['R', 'X'].every(ev => JSON.stringify(F.zones[ev].zones.map(z => z.zone_id)) === JSON.stringify(api.zones[ev].zones.map(z => z.zone_id)) && F._mx[ev].known === F.ev[ev].known);
         const timeSd = performance.getEntriesByType('resource').some(e => e.name.includes('/api/integration/time-sd'));
         const off = d.st.L.sweep === false && !d.V.sw;
         d.st.L.sweep = true; d.render(true);
@@ -47,7 +47,7 @@ try {
           zones: M.zones.map(z => ({ label: z.label, n: z.n, k0: z.k0, k1: z.k1, t0: z.t0, t1: z.t1, stars: z.stars.length, depth: +z.depth.toFixed(6) })) },
           geo, zoneStars, tip, panel, verdict: /смотрим X|откат сделан/.test(panel), rows: [...document.querySelectorAll('#panel .p24-visit')].length };
       });
-      ck(s.same && !s.timeSd, tag + ': the main map is the table time × SD of the final R / X (no zones read), no PB time x SD request');
+      ck(s.same && !s.timeSd, tag + ': numbers from the table time × SD, constellations drawn by the same zones as the server, no PB time x SD request');
       ck(s.off, tag + ': the local layer is off by default');
       ck(!s.verdict, tag + ': the phase rule shows its facts without a verdict');
       ck(s.view === 'conf', tag + ': the confirmation family (the reference reads the same)');
