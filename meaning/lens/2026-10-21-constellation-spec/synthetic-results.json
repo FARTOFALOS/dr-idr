@@ -1,0 +1,50 @@
+{
+  "algorithm": "constellation-neighbourhood-1",
+  "price_radius": "3/20",
+  "time_radius": 20,
+  "protocol_sha256": "622f59da24bf195e3d2c2452ad2e379edaddbced7e3dacd95b7345c81c97b3fd",
+  "source_sha256": "82717185e78af73607be0178eef0aae07861301e284dba8b996c96cb8fe4a86e",
+  "synthetic": {
+    "outcome": "PASS",
+    "assertions": 31,
+    "cases": [
+      "one compact island, no forced 70 percent coverage",
+      "two islands",
+      "same price at separate hours is not one time-price constellation",
+      "sparse field has no forced region",
+      "dense plateau remains one component",
+      "non-core bridge cannot merge cores",
+      "dense bridge is explicitly one ridge",
+      "shared border is residual, not arbitrary assignment",
+      "input permutation invariance",
+      "translation invariance without a bin origin",
+      "tick representation invariance",
+      "different cases at the same location retain their votes",
+      "duplicate case id rejected",
+      "non-coordinate cases remain in N and support threshold",
+      "closed exact neighbourhood boundary",
+      "outside exact time boundary",
+      "source time domain clips region, not member counts",
+      "small component is residual without reassignment",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership"
+    ]
+  },
+  "repository_commit": "f35faaeb54d445d4d17de6264d096b6005ac9e6d",
+  "calculator_sha256_lf": {
+    "lab/scene24.py": "738108a7dbe4182a6444c9cf55eea415999bdaff123d84f4650169ae744e2590",
+    "lab/scene21.py": "34c5dbf8d42d2cd9841be15abc5fa997ff0984fdffe12660e04b967ca94fdd63",
+    "lab/zonemap24.py": "b929c558ec7b31a1b15e71fe26256af50ef5392c06aa51a94688360409b33f1e"
+  }
+}

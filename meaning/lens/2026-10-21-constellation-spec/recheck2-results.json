@@ -1,0 +1,97 @@
+{
+ "author": "Claude (Opus 5.5)",
+ "scope": "540 confirmation-family maps (270 families x R/X), history < 2026-01-01; aggregates only",
+ "criterion": "CN-1 removes the arbitrariness of zone-map-3 only if, for R and for X separately, the share of its zones surviving its perturbations is at least zone-map-3's under its grid shifts and its births per perturbed map are not higher. Otherwise non-arbitrariness is not a ground to show CN-1.",
+ "F_arbitrariness": {
+  "zone-map-3": {
+   "R": {
+    "zones": 2139,
+    "perturbed_maps": 810,
+    "survived_share": 0.8503973819541842,
+    "mean_best_jaccard": 0.7520074965810126,
+    "births_per_perturbed_map": 0.4308641975308642
+   },
+   "X": {
+    "zones": 2169,
+    "perturbed_maps": 810,
+    "survived_share": 0.8473951129552789,
+    "mean_best_jaccard": 0.7508910139648299,
+    "births_per_perturbed_map": 0.3814814814814815
+   }
+  },
+  "CN-1": {
+   "R": {
+    "zones": 2340,
+    "perturbed_maps": 1080,
+    "survived_share": 0.8940170940170941,
+    "mean_best_jaccard": 0.8336149858699706,
+    "births_per_perturbed_map": 0.22870370370370371
+   },
+   "X": {
+    "zones": 2212,
+    "perturbed_maps": 1080,
+    "survived_share": 0.8874321880650995,
+    "mean_best_jaccard": 0.8359676726236833,
+    "births_per_perturbed_map": 0.2222222222222222
+   }
+  }
+ },
+ "F_cn1_removes_arbitrariness": {
+  "R": true,
+  "X": true
+ },
+ "G_onset_composition": {
+  "family R": {
+   "members": 23673,
+   "onset_share": 0.1434968107126262
+  },
+  "family X": {
+   "members": 23673,
+   "onset_share": 0.170320618426055,
+   "dr_broken_if_onset": 0.6589781746031746,
+   "dr_broken_if_later": 0.15503283946845883
+  },
+  "zone-map-3 R": {
+   "members": 7804,
+   "onset_share": 0.2951050743208611
+  },
+  "zone-map-3 X": {
+   "members": 7775,
+   "onset_share": 0.36205787781350485,
+   "dr_broken_if_onset": 0.6632326820603908,
+   "dr_broken_if_later": 0.20181451612903226
+  },
+  "CN-1 R": {
+   "members": 7006,
+   "onset_share": 0.38138738224379104
+  },
+  "CN-1 X": {
+   "members": 6833,
+   "onset_share": 0.4844138738475048,
+   "dr_broken_if_onset": 0.6646525679758308,
+   "dr_broken_if_later": 0.34459267669599775
+  }
+ },
+ "G_ym_rdr_R": {
+  "family": {
+   "n": 156,
+   "onset_2_m5": 0.12179487179487179,
+   "onset_3_m5": 0.16025641025641027
+  },
+  "zone-map-3 R1": {
+   "n": 26,
+   "onset_2_m5": 0.38461538461538464,
+   "onset_3_m5": 0.5384615384615384
+  },
+  "CN-1": {
+   "n": 41,
+   "onset_2_m5": 0.34146341463414637,
+   "onset_3_m5": 0.4634146341463415
+  },
+  "only CN-1": {
+   "n": 15,
+   "onset_2_m5": 0.26666666666666666,
+   "onset_3_m5": 0.3333333333333333
+  }
+ }
+}
