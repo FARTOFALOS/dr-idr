@@ -1,0 +1,40 @@
+# R before the session's extreme on screen 23.5 (operator 2026-10-29). Screen 24 and SC-1.1 keep OUT:FINAL-R-1.
+registry_part: r-before-x-235
+source_references:
+  - id: SRC:R-BEFORE-X-2910
+    sc_ref: ["P0.1", "§12.6"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: meaning/07-cepochka-reshenij.md
+    locator: "node «29.10.2026 · 23.5: R — откат до экстремума сессии»: the operator, live chat 29.10, after the finding that every final R of the last 15 minutes of ES RDR чт лонг 10:30–10:45 came after the session's high (77 of 185 final R after X): «Да, переведи R»"
+outcomes:
+  - id: OUT:R-BEFORE-X-1
+    version: "1"
+    sc_ref: ["P0.1", "P0.2", "P1"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: откат до экстремума сессии (R до X)
+    projection: EXTREME_BEFORE_FINAL_X
+    event: R
+    contribution: ONE_POINT
+    horizon_start: OWN_ACTIVATION_CLOSE_EXCLUSIVE
+    horizon_end: BEFORE_FIRST_M5_OF_FINAL_X
+    tie_rule: REPEATS_KEPT_NO_EXTRA_VOTE
+    components: [ENDPOINT, FIRST_TIME]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_before_extreme_R"
+    implementations: ["lab/scene24.py::measure", "lab/zonemap24.py::pre_today", "design/sozvezdiya-23-5/src/app.js::preToday"]
+    statuses: "KNOWN: R = min directed low over the M5 that close after the own activation and open before the first M5 of the final X (OUT:FINAL-X-1 KNOWN); the M5 of X itself is not looked into (no M1 inside an M5); its time = the open of the first M5 reaching it, every tie kept; NO_PERIOD: X KNOWN on the first M5 after the activation (no M5 before it) or no M5 on the horizon; UNKNOWN: X UNKNOWN (no bound is given). A family asks for it with the view flag ':rpre' and carries key.r_event = R_BEFORE_X and semantics DR-LAB-SEM-1.0+R_BEFORE_X. On screen 23.5 the R estimands of SC-1.1 (EST:B-RX-*-R, EST:B-ZONE-R, EST:B-CLOCK-*-R, EST:B-ORDER) are evaluated over this outcome instead of OUT:FINAL-R-1; no separate estimand set is registered. Today's reachability: the candidate is the deepest point before the first M5 of today's running high; a low made after it that undercuts the candidate and every low since stays possible while an M5 is left for a new high; a strictly lower later low stays possible while one more M5 is left after it."
+    source_refs: [SRC:R-BEFORE-X-2910, SRC:SEM-1.0]
+fact_forms:
+  - id: FF:R-BEFORE-X
+    version: "1"
+    sc_ref: ["P0.1", "§12.3"]
+    grounds: OPERATOR_REQUIREMENT
+    record_class: OperatorNamedRule
+    statement_ru: "Решение оператора (29.10.2026) для экрана 23.5: R — откат до экстремума сессии, самая глубокая точка против подтверждения (против слома) до первой M5 итогового X; M5 самого X не входит. Нет M5 до неё — нет периода. Окончательный R до конца блока (OUT:FINAL-R-1) на 23.5 не показывается; экран 24 не меняется."
+    labels:
+      - {surface: PASSPORT, view: CONF, key: what_R, text_ru: "самая глубокая точка против подтверждения до экстремума сессии"}
+      - {surface: PASSPORT, view: BRK, key: what_R, text_ru: "самая глубокая точка против слома до экстремума сессии"}
+    forbidden_readings_ru: ["окончательный откат до конца блока", "падение после хая дня", "откат завершён"]
+    acceptance: PROPOSED_BY_EXECUTOR
+    note: "The object is the operator's decision of 29.10 (SRC:R-BEFORE-X-2910); the words are the executor's, for his acceptance."

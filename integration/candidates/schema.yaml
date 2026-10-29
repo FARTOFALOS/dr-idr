@@ -31,6 +31,9 @@
     "REGION_STABILITY": {},
     "PULLBACK_BEFORE_UPDATE": {
      "description": "bottom of a local pullback before the first update of its vertex (DR-LAB-PB-0.1)"
+    },
+    "EXTREME_BEFORE_FINAL_X": {
+     "description": "the deepest point against the activation before the first M5 of the final X (STRATEGY §1.6, DRlens 2023)"
     }
    }
   },
@@ -111,6 +114,21 @@
     "NOT_APPLICABLE": {},
     "OWN_PB_BOTTOM_CLOSE_EXCLUSIVE": {
      "description": "M5 after the close of the same historical episode bottom L, inside the selected target window"
+    }
+   }
+  },
+  "HorizonEnd": {
+   "annotations": {
+    "sc_ref": "P0.1"
+   },
+   "permissible_values": {
+    "BLOCK_END_CLOSE_INCLUSIVE": {
+     "description": "M5, закрывшаяся ровно в H, входит; открывшаяся в H — нет"
+    },
+    "SINGLE_M5": {},
+    "NOT_APPLICABLE": {},
+    "BEFORE_FIRST_M5_OF_FINAL_X": {
+     "description": "M5 opening before the first M5 of the final X; that M5 is not looked into"
     }
    }
   }
