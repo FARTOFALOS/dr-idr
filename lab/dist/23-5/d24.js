@@ -369,6 +369,9 @@
   // the family is fixed at its activation: its key is the trading day, never the moment the live candles were fetched
   // (D.d changes with every minute's refresh; keyed by it, the page asked for the same family again each minute and
   // showed «Собираю семью…» until the server answered — operator 2026-10-20)
+  // operator 29.10: on 23.5 R is the deepest point before the session's extreme (OUT:R-BEFORE-X-1, FF:R-BEFORE-X), not
+  // the final R to the block end; every family request carries the flag ':rpre' and a family without it is not shown
+  const RBX = ':rpre';
   const famKey = (D, s, view) => A.inst + '|' + (D.iso || D.d) + '|' + s.k + '|' + s.conf + '|' + s.side + '|' + view + '|' + (view === 'brk' ? s.failed : '') + '|' + st.scope;
   const sliceOf = ctx => ctx.live ? Math.floor(NOW / 5) * 5 : ctx.obs;      // the last closed M5 (AGENTS.md rule 6)
   function requestFamily(fk, s, view) {
@@ -376,7 +379,7 @@
     if (A.pending.has(fk)) return;
     A.pending.add(fk);
     const at = s.live ? Math.floor(NOW / 5) * 5 : s.obs;
-    fetch('/api/d24/family?instrument=' + A.inst + '&session=' + s.k + '&at=' + at + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + view + (st.scope === 'all' ? ':all' : ''))
+    fetch('/api/d24/family?instrument=' + A.inst + '&session=' + s.k + '&at=' + at + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + view + (st.scope === 'all' ? ':all' : '') + RBX)
       .then(r => r.json()).then(r => { r._fk = fk; r._ctx = 'fam|' + (A.respSeq = (A.respSeq || 0) + 1); A.fams.set(fk, r); if (A.fams.size > 40) A.fams.delete(A.fams.keys().next().value); })
       .catch(() => A.fams.set(fk, { status: 'error', message: 'Локальный сервер не ответил' }))
       .finally(() => { A.pending.delete(fk); redraw(true); });
@@ -392,7 +395,7 @@
     if (r) return r;
     if (!A.nowPending.has(key)) {
       A.nowPending.add(key);
-      fetch('/api/d24/now?instrument=' + A.inst + '&session=' + ctx.s.k + '&at=' + sl + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + F.view + (st.scope === 'all' ? ':all' : ''))
+      fetch('/api/d24/now?instrument=' + A.inst + '&session=' + ctx.s.k + '&at=' + sl + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + F.view + (st.scope === 'all' ? ':all' : '') + RBX)
         .then(x => x.json()).then(x => { x._ctx = 'now|' + (A.respSeq = (A.respSeq || 0) + 1); A.now.set(key, x); if (A.now.size > 80) A.now.delete(A.now.keys().next().value); })
         // SWPC-1.1 W13: a request that did not arrive says so in the block's place (not «нет данных», which reads as an
         // answer); the base map stays as it is
@@ -405,7 +408,7 @@
     if (!s.conf || !['confirmed', 'broken', 'done'].includes(s.status) || D.d === 'none') return null;
     const view = wantView(s), fk = famKey(D, s, view), r = A.fams.get(fk);
     if (!r) { requestFamily(fk, s, view); return null; }
-    if (r.status !== 'ok' || r.view !== view || (r.key.scope || 'weekday') !== st.scope || !r.today || r.today.c0 !== s.conf || r.today.side !== s.side) return null;
+    if (r.status !== 'ok' || r.view !== view || (r.key.scope || 'weekday') !== st.scope || r.key.r_event !== 'R_BEFORE_X' || !r.today || r.today.c0 !== s.conf || r.today.side !== s.side) return null;
     // DR-LAB-SC-1.1: a family without its envelope or from another registry is refused (no statistic, the reason in the
     // panel); one the server published with a violation (a withheld zone) is shown and the violation surfaced
     if (r._refused === undefined) {
@@ -431,13 +434,13 @@
       d0, e0, w0, tick, e0t: Math.round(e0 / tick), w0t: Math.round(w0 / tick), act0: brk ? s.failed : s.conf, side,
       // the words of the view (operator 2026-10-06; X = the author's max extension): registered labels (FF:PASSPORT-VIEW)
       names: { R: lbl('FF:PASSPORT-VIEW', 'name_R', null, vw), X: lbl('FF:PASSPORT-VIEW', 'name_X', null, vw) },
-      what: { R: lbl('FF:PASSPORT-VIEW', 'what_R', null, vw), X: lbl('FF:PASSPORT-VIEW', 'what_X', null, vw) },
+      what: { R: lbl('FF:R-BEFORE-X', 'what_R', null, vw), X: lbl('FF:PASSPORT-VIEW', 'what_X', null, vw) }, rbx: r.key.r_event === 'R_BEFORE_X',
       from: lbl('FF:PASSPORT-VIEW', 'from', null, vw), nb: (r.schedule.end - r.schedule.formed) / 15,
       // DR-LAB-SC-1.1: the family's case-set rule (CS:F-CONF-1 …) and its envelope (bundles, records, checks)
       cs: r.contract.case_sets && r.contract.case_sets[0] ? r.contract.case_sets[0].spec : null, env: r.contract,
       // the request of this family, so its passports are recomputed by the reference on their own family whatever is on
       // screen later (another slice, the break family, another day)
-      req: { instrument: r.key.instrument, session: r.key.session, at: r.today.slice, date: r.today.source === 'history' ? r.today.date : null, view: view + (r.key.scope === 'all' ? ':all' : '') }
+      req: { instrument: r.key.instrument, session: r.key.session, at: r.today.slice, date: r.today.source === 'history' ? r.today.date : null, view: view + (r.key.scope === 'all' ? ':all' : '') + RBX }
     };
     F.u2p = u => F.e0 + F.d0 * u * F.w0;
     F.p2u = p => F.d0 * (p - F.e0) / F.w0;
@@ -2738,7 +2741,7 @@
     const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : SC11.forms[id];
     // FF:PHASE-RULE exists only in the candidate edition (08.10); the candidate words of the accepted «Сейчас» forms are
     // never reached from here (tests/integration_faults.mjs), only by reviewLbl for the trial «nowmarks»
-    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id.startsWith('EST:PB-')||id.startsWith('EST:TS-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:CANDIDATE-STATUS','FF:TODAY-Z-PASSED','FF:TODAY-VISIT','FF:PB-TODAY','FF:PB-EPISODE'].includes(id);
+    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id.startsWith('EST:PB-')||id.startsWith('EST:TS-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:CANDIDATE-STATUS','FF:TODAY-Z-PASSED','FF:TODAY-VISIT','FF:PB-TODAY','FF:PB-EPISODE','FF:R-BEFORE-X'].includes(id);
     const extra = candidateId && REVIEW && (id.startsWith('FF:') ? REVIEW.facts[id] : REVIEW.forms[id]);
     const box = own && own.labels[key] ? own : extra || own;
     const set = box && box.labels[key], t = set && (view && set[view] != null ? set[view] : set.ANY);
@@ -4788,7 +4791,29 @@
     }
     const okK = (ev, k) => F._pb && ev === 'R' ? sl <= last : !known || (cur[ev] && k === cur[ev].k) || (sl <= last && (ext[ev] == null || (ev === 'R' ? k * w < ext[ev] : (k + 1) * w > ext[ev])));
     const okCell = (ev, k, b) => F._pb && ev === 'R' ? F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last : !known || (cur[ev] && k === cur[ev].k && b === cur[ev].b) || (okK(ev, k) && F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last);
-    return { sl, known, ext, cur, okK, okCell };
+    if (!F.rbx) return { sl, known, ext, cur, okK, okCell };
+    // R before the extreme: the candidate's cell, a low after the running high while an M5 is left for a new high, or a
+    // strictly lower later low that leaves one more M5 for it (lab/contract.py::_reach_k, ref_reach_before_x)
+    const pre = known ? preToday(F, rows) : null, past = new Set(pre ? pre.past.map(c => c.k + '|' + c.b) : []), pastK = new Set(pre ? pre.past.map(c => c.k) : []);
+    cur.R = pre && pre.q; ext.R = pre && pre.v10;
+    const deeper = k => ext.R == null || k * w < ext.R;
+    const okKR = (ev, k) => ev !== 'R' ? okK(ev, k) : !known || (cur.R && k === cur.R.k) || (sl <= last && pastK.has(k)) || (sl <= last - 5 && deeper(k));
+    const okCellR = (ev, k, b) => ev !== 'R' ? okCell(ev, k, b) : !known || (cur.R && k === cur.R.k && b === cur.R.b) || (sl <= last && past.has(k + '|' + b)) ||
+      (deeper(k) && Math.max(sl, F.f + 15 * b) <= Math.min(F.f + 15 * b + 10, last - 5));
+    return { sl, known, ext, cur, okK: okKR, okCell: okCellR };
+  }
+  // today's R before the extreme from the closed M5 after the activation (lab/zonemap24.py::pre_today): q = the cell of the
+  // deepest point before the first M5 of the running high (null when that high is on the first M5); past = the cells of
+  // the M5 from the running high on that undercut it and every low since; v10 = 10 x the lowest of them (null: no M5)
+  function preToday(F, rows) {
+    if (!rows.length) return { q: null, past: [], v10: null };
+    let jh = 0, cand = null;
+    for (let i = 1; i < rows.length; i++) if (rows[i].hi > rows[jh].hi) jh = i;
+    for (let i = 0; i < jh; i++) if (!cand || rows[i].lo < cand.lo) cand = rows[i];
+    const cell = r => ({ k: fdiv(10 * r.lo, F.w0t), b: Math.floor((r.T - 5 - F.f) / 15) }), past = [];
+    let low = cand ? cand.lo : null;
+    for (let i = jh; i < rows.length; i++) if (low == null || rows[i].lo < low) { past.push(cell(rows[i])); low = rows[i].lo; }
+    return { q: cand && cell(cand), past, v10: 10 * low };
   }
   // DR-LAB-NOW-1.0 F2 (2026-10-06): two independent axes, never one state.
   //   reachability = the zone status (HOLDS / POSSIBLE / IMPOSSIBLE / STATUS_UNKNOWN): can today's final event still lie
@@ -4902,6 +4927,16 @@
     const sl = sliceOf(ctx), rows = todayRows(F, ctx), w = F.w0t, last = F.end - 5;
     let out;
     if (rows.length !== Math.max(0, (sl - F.act0) / 5)) out = Zm.zones.map(() => 'STATUS_UNKNOWN');
+    else if (F.rbx && ev === 'R') {
+      // R before the extreme (lab/zonemap24.py::status_pre)
+      const pre = preToday(F, rows), past = new Set(pre.past.map(c => c.k + '|' + c.b));
+      out = Zm.zones.map(z => {
+        if (pre.q && z.cell_mask.some(([k, b]) => k === pre.q.k && b === pre.q.b)) return 'HOLDS';
+        if (sl > last) return 'IMPOSSIBLE';
+        if (z.cell_mask.some(([k, b]) => past.has(k + '|' + b))) return 'POSSIBLE';
+        return z.cell_mask.some(([k, b]) => (pre.v10 == null || k * w < pre.v10) && Math.max(sl, F.f + 15 * b) <= Math.min(F.f + 15 * b + 10, last - 5)) ? 'POSSIBLE' : 'IMPOSSIBLE';
+      });
+    }
     else {
       let q = null, v10 = null;
       if (rows.length) {
@@ -5108,7 +5143,7 @@
     if (IS.key === q.key && IS.packet || IS.pending.has(q.key)) return;
     if (IS.key !== q.key) { IS.error = null; IS.key = q.key; IS.packet = null; }
     IS.pending.add(q.key);
-    const query = new URLSearchParams({ instrument: A.inst, session: q.s.k, at: q.cut, view: q.view, scope: st.scope, trials: q.trials.join(',') });
+    const query = new URLSearchParams({ instrument: A.inst, session: q.s.k, at: q.cut, view: q.view + RBX, scope: st.scope, trials: q.trials.join(',') });
     if (A.src === 'hist') query.set('date', A.date);
     fetch('/api/integration/scene?' + query).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(r => {
       if (q.key !== sceneRequest().key) { IS.discarded++; return; }
@@ -6423,7 +6458,8 @@
 
   // ---------- semantic reset of 27.10 (meaning/22-time-price-constellation-reset.md): one table time × SD ----------
   // The base numbers of 23.5 come from ONE joint table per event: for the fixed family F every known session gives one
-  // final R and one final X (time, SD) and votes in exactly one 15-minute × 0.1-SD cell; the mass of a cell is n / N of
+  // R and one final X (time, SD) and votes in exactly one 15-minute × 0.1-SD cell (since 29.10 R is the pullback before
+  // the session's extreme, the deepest point before the first M5 of the final X: RBX in app.js); the mass of a cell is n / N of
   // the same F (EST:B-RX-REGION of SC-1.1). The drawing of 23.5 stays as it was (operator 27.10: «те же визуализации,
   // просто с новым смыслом»): constellations, their stars, haze and threads, capsules and hills, the colours of the
   // columns. What changes is what the numbers are:

@@ -1563,6 +1563,15 @@
    },
    "record": "PrefixState"
   },
+  "FF:R-BEFORE-X": {
+   "labels": {
+    "what_R": {
+     "BRK": "самая глубокая точка против слома до экстремума сессии",
+     "CONF": "самая глубокая точка против подтверждения до экстремума сессии"
+    }
+   },
+   "record": "OperatorNamedRule"
+  },
   "FF:SESSION": {
    "labels": {},
    "record": "StrategySessionRecord"
@@ -3603,5 +3612,5 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "2fc179a49f34ef60"
+ "registry_hash": "ec44aa7e0aebeee4"
 }

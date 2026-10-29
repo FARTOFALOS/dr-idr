@@ -44,7 +44,7 @@
     if (IS.key === q.key && IS.packet || IS.pending.has(q.key)) return;
     if (IS.key !== q.key) { IS.error = null; IS.key = q.key; IS.packet = null; }
     IS.pending.add(q.key);
-    const query = new URLSearchParams({ instrument: A.inst, session: q.s.k, at: q.cut, view: q.view, scope: st.scope, trials: q.trials.join(',') });
+    const query = new URLSearchParams({ instrument: A.inst, session: q.s.k, at: q.cut, view: q.view + RBX, scope: st.scope, trials: q.trials.join(',') });
     if (A.src === 'hist') query.set('date', A.date);
     fetch('/api/integration/scene?' + query).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(r => {
       if (q.key !== sceneRequest().key) { IS.discarded++; return; }

@@ -46,6 +46,11 @@ def main():
     changed_enums['HorizonStart']=dict(spec['enums']['HorizonStart'])
     changed_enums['HorizonStart']['permissible_values']=dict(spec['enums']['HorizonStart']['permissible_values'])
     changed_enums['HorizonStart']['permissible_values']['OWN_PB_BOTTOM_CLOSE_EXCLUSIVE']={'description':'M5 after the close of the same historical episode bottom L, inside the selected target window'}
+    # R before the session's extreme (operator 2026-10-29, screen 23.5 only): its own projection and horizon end
+    changed_enums['ProjectionKind']['permissible_values']['EXTREME_BEFORE_FINAL_X']={'description':'the deepest point against the activation before the first M5 of the final X (STRATEGY §1.6, DRlens 2023)'}
+    changed_enums['HorizonEnd']=dict(spec['enums']['HorizonEnd'])
+    changed_enums['HorizonEnd']['permissible_values']=dict(spec['enums']['HorizonEnd']['permissible_values'])
+    changed_enums['HorizonEnd']['permissible_values']['BEFORE_FIRST_M5_OF_FINAL_X']={'description':'M5 opening before the first M5 of the final X; that M5 is not looked into'}
     dump(HERE/'schema.yaml',dict(id='https://dr-lab.local/candidates',name='dr_lab_candidates',
         imports=['../../contract/schema/dr_lab_sc'],enums=changed_enums))
     builder.SCHEMA=HERE/'schema.yaml'; builder.REG_DIR=HERE/'registry'; builder.OUT=HERE/'build'

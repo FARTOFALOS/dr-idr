@@ -11,7 +11,10 @@
 //      equal maxima of a row are co-maxima: every tied window is lit and named;
 //   5. the slice moves today's facts only: the table, its numbers and the history after the slice stay;
 //   6. without the server's zones in the packet every number of the column and the band is the same;
-//   7. fixtures: a spread row against a peaked row, all cells single, two equal maxima of a row, the order of points.
+//   7. fixtures: a spread row against a peaked row, all cells single, two equal maxima of a row, the order of points;
+//   8. R on 23.5 is the deepest point before the session's extreme (operator 29.10, OUT:R-BEFORE-X-1): the family is
+//      asked with ':rpre', every R lies before its own X, X and the members are those of the final-R family, and where
+//      the final R came before X both R agree; the passport words say «до экстремума сессии».
 // node tests/matrix235_page.mjs [http://127.0.0.1:8735]
 import fs from 'node:fs';
 import { startChrome, evaluate } from './trace_page.mjs';
@@ -47,8 +50,17 @@ try {
     const s = await evaluate(b.cdp, async SIGsrc => {
       const SIG = eval('(' + SIGsrc + ')');
       const d = window.__d24, c = d.cur(), F = c.F, T = F._mx;
-      const q = new URLSearchParams({ instrument: d.A.inst, session: c.s.k, at: Math.floor(d.st.rp / 5) * 5, view: 'conf', scope: d.st.scope, trials: '', date: d.A.date });
+      const q = new URLSearchParams({ instrument: d.A.inst, session: c.s.k, at: Math.floor(d.st.rp / 5) * 5, view: 'conf:rpre', scope: d.st.scope, trials: '', date: d.A.date });
       const api = (await (await fetch('/api/integration/scene?' + q)).json()).family, r = {};
+      // 8. the family of the final R (screen 24's) against the page's: same members and X, R before X everywhere
+      q.set('view', 'conf');
+      const f24 = (await (await fetch('/api/integration/scene?' + q)).json()).family, by = new Map(f24.members.map(m => [m.id, m]));
+      const rbx = { flag: F.r.key.r_event === 'R_BEFORE_X' && api.key.r_event === 'R_BEFORE_X' && !f24.key.r_event && F.r.snapshot_id === api.snapshot_id && api.snapshot_id !== f24.snapshot_id,
+        before: F.M.every(m => m.R.s !== 'known' || (m.X.s === 'known' && m.R.t < m.X.t)),
+        xSame: F.M.length === f24.members.length && F.M.every(m => by.has(m.id) && JSON.stringify(m.X) === JSON.stringify(by.get(m.id).X)),
+        agree: F.M.every(m => { const o = by.get(m.id); return !(o.R.s === 'known' && o.X.s === 'known' && o.R.t < o.X.t) || (m.R.v === o.R.v && m.R.t === o.R.t); }),
+        moved: F.M.filter(m => { const o = by.get(m.id); return o.R.s === 'known' && o.X.s === 'known' && o.R.t > o.X.t; }).length,
+        words: F.what.R === 'самая глубокая точка против подтверждения до экстремума сессии' };
       for (const ev of ['R', 'X']) {
         const cells = api.counts[ev].cells, sum = cells.reduce((a, x) => a + x[2], 0), at_ = new Map(cells.map(x => [x[0] + '|' + x[1], x[2]]));
         const page = T[ev].cells.map(x => [x.k, x.b, x.n].join(',')).sort().join(';'), srv = cells.map(x => x.join(',')).sort().join(';');
@@ -99,8 +111,10 @@ try {
         ties = { want: a.bs.sort((x, y) => x - y).join(','), got: (d.V.lk?.ties || []).join(','), named: (tip.match(/%/g) || []).length >= a.bs.length };
         d.st.hover = null; d.render(true); break;
       }
-      return { N: F.N, r, zones: zs.length, zoneOk, starsInZones, ties, caps: (d.V.caps || []).length, sig: SIG(), slice: d.st.rp, snap: F.r.snapshot_id };
+      return { N: F.N, r, rbx, zones: zs.length, zoneOk, starsInZones, ties, caps: (d.V.caps || []).length, sig: SIG(), slice: d.st.rp, snap: F.r.snapshot_id };
     }, SIG.toString());
+    ck(s.rbx.flag && s.rbx.words, `${tag}: R is the deepest point before the session's extreme (family ':rpre', its own snapshot, its words)`);
+    ck(s.rbx.before && s.rbx.xSame && s.rbx.agree, `${tag}: every R lies before its X; members and X = the final-R family; where the final R came first both agree (${s.rbx.moved} final R after X moved)`);
     for (const ev of ['R', 'X']) {
       const r = s.r[ev];
       ck(r.same, `${tag} ${ev}: the page's table = the server's joint cells`);

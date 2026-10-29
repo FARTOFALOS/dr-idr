@@ -1,6 +1,7 @@
   // ---------- semantic reset of 27.10 (meaning/22-time-price-constellation-reset.md): one table time × SD ----------
   // The base numbers of 23.5 come from ONE joint table per event: for the fixed family F every known session gives one
-  // final R and one final X (time, SD) and votes in exactly one 15-minute × 0.1-SD cell; the mass of a cell is n / N of
+  // R and one final X (time, SD) and votes in exactly one 15-minute × 0.1-SD cell (since 29.10 R is the pullback before
+  // the session's extreme, the deepest point before the first M5 of the final X: RBX in app.js); the mass of a cell is n / N of
   // the same F (EST:B-RX-REGION of SC-1.1). The drawing of 23.5 stays as it was (operator 27.10: «те же визуализации,
   // просто с новым смыслом»): constellations, their stars, haze and threads, capsules and hills, the colours of the
   // columns. What changes is what the numbers are:

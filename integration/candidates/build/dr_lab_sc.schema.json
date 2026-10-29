@@ -2546,7 +2546,8 @@
             "enum": [
                 "BLOCK_END_CLOSE_INCLUSIVE",
                 "SINGLE_M5",
-                "NOT_APPLICABLE"
+                "NOT_APPLICABLE",
+                "BEFORE_FIRST_M5_OF_FINAL_X"
             ],
             "title": "HorizonEnd",
             "type": "string"
@@ -3808,7 +3809,8 @@
                 "ALGORITHMIC_REGION_MEMBERSHIP",
                 "CLOCK_SPLIT",
                 "REGION_STABILITY",
-                "PULLBACK_BEFORE_UPDATE"
+                "PULLBACK_BEFORE_UPDATE",
+                "EXTREME_BEFORE_FINAL_X"
             ],
             "title": "ProjectionKind",
             "type": "string"
