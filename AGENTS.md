@@ -17,7 +17,12 @@ that drawing, never a number.
   row / column, and the other event stays at rest. Every number is `EST:B-RX-REGION` of SC-1.1.
 - A constellation's percentage (and its row in «Зоны по времени») is its strongest cell, the same kind of number as
   the rectangle (operator 28.10). Equal maxima of a row are co-maxima: all lit and named.
-- Check: `node tests/matrix235_page.mjs <23.5 base>` (109). Screen 24's source and SC-1.1 are unchanged. The server
+- **R on 23.5 is the pullback before the session's extreme** (operator 29.10, «Да, переведи R»): the deepest point against the
+  activation before the first M5 of the final X, not the deepest point to the block end. The page asks every family with the
+  flag `:rpre` (`key.r_event = R_BEFORE_X`); without the flag the server returns the final-R family of screen 24 unchanged.
+  Reference `lab/contract.py::ref_before_extreme_R`; candidate registry `OUT:R-BEFORE-X-1`. NOW-1.0 and PRE-24 still use the
+  final R (О30). X is unchanged; its pile at 16:00 is real (days that closed at their high).
+- Check: `node tests/matrix235_page.mjs <23.5 base>` (117). Screen 24's source and SC-1.1 are unchanged. The server
   changed in one line: the root redirect.
 - Merged into `main` and pushed on the operator's word of 27.10. This is not his perceptual acceptance of the view
   (О28). The local SEM-1.0 work of 27.10, uncommitted in the operator's checkout, is NOT in `main`: it was built on

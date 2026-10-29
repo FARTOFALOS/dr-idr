@@ -31,7 +31,7 @@ try {
       await ready();
       const s = await evaluate(b.cdp, async () => {
         const d = window.__d24, c = d.cur(), F = c.F;
-        const q = new URLSearchParams({ instrument: d.A.inst, session: c.s.k, at: Math.floor((d.st.rp) / 5) * 5, view: 'conf', scope: d.st.scope, trials: '', date: d.A.date });
+        const q = new URLSearchParams({ instrument: d.A.inst, session: c.s.k, at: Math.floor((d.st.rp) / 5) * 5, view: 'conf:rpre', scope: d.st.scope, trials: '', date: d.A.date });
         const api = (await (await fetch('/api/integration/scene?' + q)).json()).family;
         // since the reset of 27.10 the numbers come from the table time × SD; the constellations are still drawn by the zones
         const same = !!F._mx && ['R', 'X'].every(ev => JSON.stringify(F.zones[ev].zones.map(z => z.zone_id)) === JSON.stringify(api.zones[ev].zones.map(z => z.zone_id)) && F._mx[ev].known === F.ev[ev].known);

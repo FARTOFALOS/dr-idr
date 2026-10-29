@@ -248,6 +248,24 @@ def ref_final_extreme(path, grid, act, end, ev):
     return dict(s="known", v=int(v), t=ties[0], ties=ties)
 
 
+def ref_before_extreme_R(path, grid, act, end):
+    """R before the session's extreme (operator 29.10, screen 23.5 only; STRATEGY §1.6 «откат до экстремума сессии»,
+    DRlens 2023): the min low_u over the M5 of the horizon that open before the first M5 of the final X (that M5 is not
+    looked into); none of them: NO_PERIOD; an X that is not KNOWN leaves R in its status, without a bound."""
+    X = ref_final_extreme(path, grid, act, end, "X")
+    if X["s"] != "known": return dict(s=X["s"])
+    obs = [(grid[j] - 5, path[j][0]) for j in _horizon(grid, act, end) if grid[j] - 5 < X["t"]]
+    if not obs: return dict(s="none")
+    v = min(lo for _, lo in obs)
+    ties = [t for t, lo in obs if lo == v]
+    return dict(s="known", v=int(v), t=ties[0], ties=ties)
+
+
+def ref_r_before_x(fam):
+    """The R definition a family declares: True for R before the extreme (key.r_event R_BEFORE_X), False for the final R."""
+    return (fam.get("key") or {}).get("r_event") == "R_BEFORE_X"
+
+
 def ref_dr_outcome(path, grid, act, end, oppv):
     """P0.2: BROKEN (an observed close strictly beyond the own opposite DR) / HELD / UNKNOWN / NO_PERIOD, the break
     close, and whether its first time is known (no hole before it)."""
@@ -372,6 +390,37 @@ def ref_reachability(cells, ev, q, v10, w, t_next, formed, last_open):
     for k, b in cs:
         if q is not None and not (k * w < v10 if ev == "R" else (k + 1) * w > v10): continue
         if formed + 15 * b + 10 >= t_next and formed + 15 * b <= last_open: return "POSSIBLE"
+    return "IMPOSSIBLE"
+
+
+def ref_today_before_x(rows, w, formed):
+    """Today's R before the extreme from closed M5 rows (close, low_u, high_u): (q, past, v10) — q the cell of the lowest
+    low before the first M5 of the running high (None when that high is on the first M5), past the cells of the M5 from
+    the running high on that undercut it and every low since (each R if a new high follows), v10 = 10 x the lowest of
+    them (a later M5 must go strictly below; None without rows)."""
+    if not rows: return None, set(), None
+    h = max(r[2] for r in rows)
+    jh = next(i for i, r in enumerate(rows) if r[2] == h)
+    cand = min(rows[:jh], key=lambda r: r[1]) if jh else None
+    low, past = (cand[1] if cand else None), set()
+    for r in rows[jh:]:
+        if low is None or r[1] < low:
+            past.add((ref_cell(r[1], w), (r[0] - 5 - formed) // 15)); low = r[1]
+    q = None if cand is None else (ref_cell(cand[1], w), (cand[0] - 5 - formed) // 15)
+    return q, past, 10 * low
+
+
+def ref_reach_before_x(cells, q, past, v10, w, t_next, formed, last_open):
+    """E3 for R before the extreme: HOLDS (today's candidate in the region) / POSSIBLE (a past low after the running high
+    becomes R with a new high on a later M5, or a strictly lower low on a later M5 that leaves one more M5 for the new
+    high) / IMPOSSIBLE."""
+    cs = {tuple(c) for c in cells}
+    if q is not None and tuple(q) in cs: return "HOLDS"
+    if t_next > last_open: return "IMPOSSIBLE"
+    if cs & set(past): return "POSSIBLE"
+    for k, b in cs:
+        if v10 is not None and k * w >= v10: continue
+        if max(t_next, formed + 15 * b) <= min(formed + 15 * b + 10, last_open - 5): return "POSSIBLE"
     return "IMPOSSIBLE"
 
 
@@ -635,6 +684,9 @@ def verify_snapshot(inst, B, snap):
     der = derive_base(inst, B, session)
     by_id = {_sid(inst, B["boxes"][i]): (i, act, dd) for i, act, dd in mem}
     grid = snap["grid"]
+    rbx = ref_r_before_x(snap)
+    if key.get("r_event", "R_BEFORE_X") != "R_BEFORE_X" or (snap.get("semantics") == "DR-LAB-SEM-1.0+R_BEFORE_X") != rbx:
+        v.append(("OUTCOME", ["P0.1", "K09"], f"the R definition {key.get('r_event')} and the semantics {snap.get('semantics')} disagree"))
     ref = dict(R=Counter(), X=Counter(), unknown=Counter(), none=Counter(), outcome=Counter(), order=Counter(), members={})
     for m in snap["members"]:
         if m["id"] not in by_id: continue
@@ -647,7 +699,7 @@ def verify_snapshot(inst, B, snap):
         if m["path"] != path: v.append(("PATH", ["O1", "M0"], f"{m['id']}: the directed path differs from the base")); continue
         r = {}
         for ev in ("R", "X"):
-            x = ref_final_extreme(path, grid, act, end, ev)
+            x = ref_before_extreme_R(path, grid, act, end) if ev == "R" and rbx else ref_final_extreme(path, grid, act, end, ev)
             mine = {k: m[ev][k] for k in m[ev] if k in ("s", "v", "t", "ties", "bound")}
             if mine != x: v.append(("OUTCOME", ["P0.1", "P1", "K31"], f"{m['id']}: {ev} {m[ev]} != reference {x}"))
             r[ev] = x
@@ -786,6 +838,9 @@ def verify_today_zones(fam, bars, tick, zones_ref):
         times = {m["id"]: m[ev]["t"] for m in fam["members"] if m[ev]["s"] == "known"}
         clock = [ref_history_clock(z["cell_mask"], [times[s] for s in z["member_session_ids"] if s in times], slice_, formed, end - 5) for z in zm["zones"]]
         if gap: status, q, v10 = ["UNKNOWN"] * len(zm["zones"]), None, None
+        elif ev == "R" and ref_r_before_x(fam):
+            q, past, v10 = ref_today_before_x(rows, w_t, formed)
+            status = [ref_reach_before_x(z["cell_mask"], q, past, v10, w_t, slice_, formed, end - 5) for z in zm["zones"]]
         elif rows:
             j = min(range(len(rows)), key=lambda i: (rows[i][1], i)) if ev == "R" else min(range(len(rows)), key=lambda i: (-rows[i][2], i))
             val = rows[j][1] if ev == "R" else rows[j][2]
@@ -1965,6 +2020,14 @@ def _reach_k(fam, bars, tick, cut, ev):
         lo, hi = (b[3], b[2]) if d == 1 else (b[2], b[3])
         rows.append((d * (tk(lo) - e_t), d * (tk(hi) - e_t)))
     open_ = cut <= sch["end"] - 5
+    if ev == "R" and ref_r_before_x(fam):
+        # R before the extreme: the candidate's cell; a past low after the running high (a new high still to come); any
+        # cell as deep as the lowest of them or deeper on a later M5 that leaves one more M5 for the new high
+        q, past, v10 = ref_today_before_x([(act + 5 * (i + 1), lo, hi) for i, (lo, hi) in enumerate(rows)], w_t, sch["formed"])
+        later = cut <= sch["end"] - 10
+        ks = ({q[0]} if q else set()) | ({k for k, _ in past} if open_ else set())
+        kl = None if v10 is None else ref_cell(v10 // 10, w_t)
+        return lambda k: k in ks or (later and (kl is None or k <= kl))
     if not rows: return (lambda k: True) if open_ else (lambda k: False)
     kc = ref_cell(min(r[0] for r in rows), w_t) if ev == "R" else ref_cell(max(r[1] for r in rows), w_t)
     if not open_: return lambda k: k == kc

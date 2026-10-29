@@ -123,9 +123,10 @@ def _match(zone, other):
     return best
 
 
-def _flip(path, act_i, rng, reps, e):
+def _flip(path, act_i, rng, reps, e, r_before_x=False):
     """Sign-flip copies of one session (the null of the synthesis §11): every M5 after the activation reflected with
-    p = 1/2 about the previous synthetic close. Returns (values, indices) of the R (min low) or X (max high) per copy."""
+    p = 1/2 about the previous synthetic close. Returns (values, indices) of the R (min low) or X (max high) per copy;
+    r_before_x: R over the M5 before the copy's first M5 of its high (inf: no M5 before it, no period)."""
     seg = path[act_i + 1:]
     c0 = path[act_i, 2]
     prev = np.concatenate([[c0], seg[:-1, 2]])
@@ -135,6 +136,8 @@ def _flip(path, act_i, rng, reps, e):
     pv = np.concatenate([np.full((reps, 1), c0), cl[:, :-1]], axis=1)
     lo = pv + np.where(eps > 0, dL, -dH)
     hi = pv + np.where(eps > 0, dH, -dL)
+    if e == "R" and r_before_x:
+        lo = np.where(np.arange(lo.shape[1])[None, :] < hi.argmax(1)[:, None], lo, np.inf)
     return (lo.min(1), lo.argmin(1)) if e == "R" else (hi.max(1), hi.argmax(1))
 
 
@@ -210,11 +213,12 @@ def _null(z, disc, newer, grid, formed, e, snap, z_i):
         real.append(cell_of(x["v"], m["w"], x["t"], formed) in frozen)
         P = np.array([q if q is not None else [np.nan] * 3 for q in m["path"]], dtype=float)
         ai = int(np.searchsorted(grid, m["act"]))
-        vals, idx = _flip(P, ai, rng, NULL_REPS, e)
+        vals, idx = _flip(P, ai, rng, NULL_REPS, e, snap["key"].get("r_event") == "R_BEFORE_X")
+        ok = np.isfinite(vals)
         t = grid[ai + 1 + idx] - 5
-        k = np.floor_divide(10 * vals.astype(np.int64), m["w"])
+        k = np.floor_divide(10 * np.where(ok, vals, 0).astype(np.int64), m["w"])
         b = (t - formed) // 15
-        H.append(np.array([(int(kk), int(bb)) in frozen for kk, bb in zip(k, b)]))
+        H.append(np.array([bool(o) and (int(kk), int(bb)) in frozen for o, kk, bb in zip(ok, k, b)]))
     real = np.array(real, dtype=float); H = np.array(H, dtype=float)
     q_null = H.mean(0)
     p_real, p_null = float(real.mean()), float(np.median(q_null))
@@ -241,6 +245,39 @@ def status(cells, e, q, v10, w, t_next, formed, last_open):
     for k, b in cs:
         if q is not None and not (k * w < v10 if e == "R" else (k + 1) * w > v10): continue      # no extreme yet: any price
         if formed + 15 * b + 10 >= t_next and formed + 15 * b <= last_open: return "POSSIBLE"
+    return "IMPOSSIBLE"
+
+
+def pre_today(rows):
+    """Today's R before the extreme (lab/scene24.py, module note) from closed M5 [(close, low, high)] after the
+    activation, directed ticks. Returns (candidate, past, low): candidate = (close, low) of the lowest low before the
+    first M5 of the running high (None when that high is on the first M5); past = every M5 from the running high on
+    whose low undercuts the candidate and all lows since the running high before it (each becomes R if a new high
+    follows); low = the lowest of these, which a later M5 must undercut to become R (None before any M5)."""
+    if not rows: return None, [], None
+    jh = 0
+    for i, r in enumerate(rows):
+        if r[2] > rows[jh][2]: jh = i
+    cand = None
+    for r in rows[:jh]:
+        if cand is None or r[1] < cand[1]: cand = (r[0], r[1])
+    past, low = [], None if cand is None else cand[1]
+    for r in rows[jh:]:
+        if low is None or r[1] < low: past.append((r[0], r[1])); low = r[1]
+    return cand, past, low
+
+
+def status_pre(cells, q, past, v10, w, t_next, formed, last_open):
+    """Today's status of one zone of R before the extreme: HOLDS when today's candidate cell q lies in it; POSSIBLE when
+    a new high on a later M5 can still make a past cell R in it, or a strictly lower low (cell k with k w < v10, any
+    price before the first M5) on a later M5 that leaves one more M5 for the new high; else IMPOSSIBLE."""
+    cs = set(map(tuple, cells))
+    if q is not None and tuple(q) in cs: return "HOLDS"
+    if t_next > last_open: return "IMPOSSIBLE"
+    if any(tuple(c) in cs for c in past): return "POSSIBLE"
+    for k, b in cs:
+        if v10 is not None and not k * w < v10: continue
+        if max(t_next, formed + 15 * b) <= min(formed + 15 * b + 10, last_open - 5): return "POSSIBLE"
     return "IMPOSSIBLE"
 
 
