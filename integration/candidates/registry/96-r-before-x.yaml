@@ -35,6 +35,23 @@ fact_forms:
     labels:
       - {surface: PASSPORT, view: CONF, key: what_R, text_ru: "самая глубокая точка против подтверждения до экстремума сессии"}
       - {surface: PASSPORT, view: BRK, key: what_R, text_ru: "самая глубокая точка против слома до экстремума сессии"}
+      - {surface: INSPECTOR, view: ANY, key: zone_final_R, text_ru: "Зона отката до вершины: {status}. Посещение — отдельный факт."}
+      - {surface: INSPECTOR, view: ANY, key: zone_final_X, text_ru: "Зона максимума хода: {status}. Посещение — отдельный факт."}
+      - {surface: PANEL, view: ANY, key: phase_clock, text_ru: "откат до вершины у семьи к {cut} был у {share} · нужно половина"}
+      - {surface: PANEL, view: ANY, key: phase_title, text_ru: "Ваше правило от 08.10: «откат сделан», когда откат достиг −0,7 и у половины сессий семьи откат до вершины по часам уже был. Это правило, а не факт рынка и не сигнал; где кончится откат сегодня, до конца сессии неизвестно."}
+      - {surface: PANEL, view: CONF, key: now_row, text_ru: "В истории: цена позже уходила ниже сегодняшнего дна"}
+      - {surface: PANEL, view: BRK, key: now_row, text_ru: "В истории: цена позже уходила против слома дальше сегодняшней точки"}
+      - {surface: PANEL, view: ANY, key: now_sub, text_ru: "Если уходила: до {p50} · {p25}…{p75}"}
+      - {surface: PANEL, view: ANY, key: now_row_mark, text_ru: "ниже сегодняшнего дна"}
+      - {surface: PANEL, view: ANY, key: now_title_mark, text_ru: "После {cut} цена ушла ниже сегодняшней точки отката {today} у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это новый лой в любой момент, в том числе после хая дня, а не откат до вершины. История, не прогноз и не сделка."}
+      - {surface: PANEL, view: ANY, key: now_if_title_mark, text_ru: "У тех, у кого цена ушла ниже, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшняя точка отката, полоса — у половины, черта — обычно."}
+      - {surface: PANEL, view: ANY, key: pre_title_R, text_ru: "откат до вершины после подтверждения — обычно до {q50} SD, у половины {q25}…{q75}"}
+      - {surface: INSPECTOR, view: ANY, key: zone_share, text_ru: "семьи — в самой плотной клетке созвездия: {band} SD × {window}"}
+      - {surface: PANEL, view: ANY, key: zone_row, text_ru: "самая плотная клетка"}
+      - {surface: INSPECTOR, view: ANY, key: q_band_R, text_ru: "дно отката до вершины в этой полосе · {from} до {end}"}
+      - {surface: INSPECTOR, view: ANY, key: q_band_X, text_ru: "максимум хода в этой полосе · {from} до {end}"}
+      - {surface: INSPECTOR, view: ANY, key: q_window, text_ru: "в эти 15 минут: R — дно отката до вершины, X — максимум хода"}
+      - {surface: INSPECTOR, view: ANY, key: q_zone, text_ru: "в окне {window}: R — дно отката до вершины, X — максимум хода"}
     forbidden_readings_ru: ["окончательный откат до конца блока", "падение после хая дня", "откат завершён"]
     acceptance: PROPOSED_BY_EXECUTOR
-    note: "The object is the operator's decision of 29.10 (SRC:R-BEFORE-X-2910); the words are the executor's, for his acceptance."
+    note: "The object is the operator's decision of 29.10 (SRC:R-BEFORE-X-2910); the words are the executor's, for his acceptance. On 23.5 these words replace every line that called R «окончательный»: the zone status, the phase rule (08.10), «До подтверждения»; the «Сейчас» line of a new low below today's deepest point is named as its own event (a new low at any time, not R); and the number of a constellation is named as its densest cell (28.10)."

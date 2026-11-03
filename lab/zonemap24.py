@@ -19,6 +19,13 @@ Diagnostics are properties of a zone, never a permission to exist: the same zone
 resampled sessions (Jaccard of member sets), and a path-null measured on sessions that did not shape the zone (the
 older half finds the region, the newer half is compared with sign-flipped copies of its own paths).
 Today's status of a zone (HOLDS / POSSIBLE / IMPOSSIBLE) follows the reachable set of the final event (§23-24 of V2).
+
+Screen 23.5 (operator 30.10.2026, «прикрути бэкэнд к фронтенду», the drawing unchanged): a family asked with the flag
+':tcells' takes its constellations from the joint table itself, `table-cells-1`: a star cell is a cell of the table holding
+at least 2 known sessions (one session is not a place); star cells at most 2 cells apart in both price and time (one cell
+between them at most) are one constellation; it needs the same support, max(4, ceil(0.05 N)) sessions. Nothing is smoothed:
+a constellation holds only cells where sessions really are, its peak anchor is its strongest cell. The same record as a
+zone, so the same diagnostics, statuses and drawing follow; the research table of zone-map-3 does not apply to it.
 """
 from __future__ import annotations
 
@@ -29,6 +36,8 @@ import numpy as np
 from scipy import ndimage
 
 VERSION = "zone-map-3"
+TABLE_RULE, TABLE_VERSION = "TABLE_CELLS", "table-cells-1"    # key.zone_rule of a family with ':tcells' and its algorithm
+TABLE_MIN_CELL, TABLE_GAP = 2, 2                              # sessions of a star cell; the farthest star cell of one constellation
 NULL_MODEL = "sign-flip-1"           # each M5 after the session's own activation reflected about the previous close
 RATIO = 0.5                          # the half height
 MIN_ABS, MIN_FRAC = 4, 0.05          # the minimum support
@@ -110,6 +119,35 @@ def zone_map(points, N, b_lo, b_hi):
     return dict(zones=zones, residual=sorted({s for _, _, s in points} - used), need=need)
 
 
+def table_map(points, N, b_lo, b_hi):
+    """The constellations of the joint table (module note): the same result as zone_map. points: [(k, b, session_id)]."""
+    need = max(MIN_ABS, math.ceil(MIN_FRAC * N))
+    where = {}
+    for k, b, sid in points:
+        if b_lo <= b <= b_hi: where.setdefault((k, b), []).append(sid)
+    stars = {c for c, v in where.items() if len(v) >= TABLE_MIN_CELL}
+    zones, seen = [], set()
+    for c0 in sorted(stars):
+        if c0 in seen: continue
+        comp, stack = [c0], [c0]
+        seen.add(c0)
+        while stack:
+            q = stack.pop()
+            for o in stars - seen:
+                if abs(o[0] - q[0]) <= TABLE_GAP and abs(o[1] - q[1]) <= TABLE_GAP:
+                    seen.add(o); comp.append(o); stack.append(o)
+        members = sorted({s for c in comp for s in where[c]})
+        if len(members) < need: continue
+        top = max(len(where[c]) for c in comp)
+        anchor = min((c for c in comp if len(where[c]) == top), key=lambda c: (c[1], abs(2 * c[0] + 1), c[0]))
+        zones.append(dict(cells=sorted(comp), members=members, n=len(members), apex_D=top, anchor=anchor,
+                          price=[min(c[0] for c in comp), max(c[0] for c in comp) + 1], time=[min(c[1] for c in comp), max(c[1] for c in comp) + 1]))
+    near0 = lambda z: 0 if z["price"][0] <= 0 < z["price"][1] else z["price"][0] if z["price"][0] > 0 else -z["price"][1]
+    zones.sort(key=lambda z: (z["time"][0], -z["n"], near0(z)))
+    used = {s for z in zones for s in z["members"]}
+    return dict(zones=zones, residual=sorted({s for _, _, s in points} - used), need=need)
+
+
 def _jaccard(a, b):
     a, b = set(a), set(b)
     return len(a & b) / len(a | b) if a | b else 0.0
@@ -141,9 +179,9 @@ def _flip(path, act_i, rng, reps, e, r_before_x=False):
     return (lo.min(1), lo.argmin(1)) if e == "R" else (hi.max(1), hi.argmax(1))
 
 
-def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None):
+def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None, rule=None):
     """The zone map of event e for snapshot members (scene24 records), optionally on a shifted grid or with resampling
-    weights (a session counted w times)."""
+    weights (a session counted w times); rule TABLE_RULE: the constellations of the joint table."""
     pts = []
     for i, m in enumerate(members):
         x = m[e]
@@ -151,7 +189,7 @@ def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None):
         k, b = cell_of(x["v"], m["w"], x["t"], formed, dk, dt)
         for _ in range(1 if weights is None else int(weights[i])): pts.append((k, b, ids[i]))
     t_first, t_last = formed + 15 * win + 5, end - 5
-    return zone_map(pts, len(members) if weights is None else int(sum(weights)), (t_first - formed - dt) // 15, (t_last - formed - dt) // 15)
+    return (table_map if rule == TABLE_RULE else zone_map)(pts, len(members) if weights is None else int(sum(weights)), (t_first - formed - dt) // 15, (t_last - formed - dt) // 15)
 
 
 def evaluate(snap, e):
@@ -161,24 +199,26 @@ def evaluate(snap, e):
     win = (snap["key"]["window"][0] - formed) // 15
     ids = [m["id"] for m in mem]
     N = len(mem)
-    zm = map_of(mem, e, formed, end, win, ids)
+    rule = snap["key"].get("zone_rule")
+    version = TABLE_VERSION if rule == TABLE_RULE else VERSION
+    zm = map_of(mem, e, formed, end, win, ids, rule=rule)
     unknown = sum(1 for m in mem if m[e]["s"] == "unknown")
     none = sum(1 for m in mem if m[e]["s"] == "none")
-    base = dict(algorithm_version=VERSION, family_scope=snap["key"].get("scope", "weekday"), family_id=snap["family_id"],
+    base = dict(algorithm_version=version, family_scope=snap["key"].get("scope", "weekday"), family_id=snap["family_id"],
                 snapshot_id=snap["snapshot_id"], event_id=e, N_family=N, n_residual_total=len(zm["residual"]),
-                unknown_count=unknown, no_event_count=none, min_support=zm["need"], study_refs=study_refs(snap["key"]["session"], e))
+                unknown_count=unknown, no_event_count=none, min_support=zm["need"], study_refs=None if rule == TABLE_RULE else study_refs(snap["key"]["session"], e))
     # diagnostics on the whole map (once per event)
-    shifted = [map_of(mem, e, formed, end, win, ids, dk, dt) for dk, dt in SHIFTS]
+    shifted = [map_of(mem, e, formed, end, win, ids, dk, dt, rule=rule) for dk, dt in SHIFTS]
     rng = np.random.default_rng(seed(snap["family_id"], snap["snapshot_id"], e, "bootstrap"))
-    boots = [map_of(mem, e, formed, end, win, ids, weights=rng.multinomial(N, np.full(N, 1 / N))) for _ in range(BOOT)] if N else []
+    boots = [map_of(mem, e, formed, end, win, ids, weights=rng.multinomial(N, np.full(N, 1 / N)), rule=rule) for _ in range(BOOT)] if N else []
     older = mem[:N // 2]
-    disc = map_of(older, e, formed, end, win, ids[:N // 2]) if len(older) else dict(zones=[])
+    disc = map_of(older, e, formed, end, win, ids[:N // 2], rule=rule) if len(older) else dict(zones=[])
     newer = [m for m in mem[N // 2:] if m[e]["s"] == "known"]
     grid = np.array(snap["grid"])
     zones = []
     for z_i, z in enumerate(zm["zones"]):
         label = f"{e}{z_i + 1}"
-        zid = hashlib.sha1("|".join(map(str, (snap["snapshot_id"], e, z["anchor"], VERSION))).encode()).hexdigest()[:12]
+        zid = hashlib.sha1("|".join(map(str, (snap["snapshot_id"], e, z["anchor"], version))).encode()).hexdigest()[:12]
         jac = [round(_match(z, s), 3) for s in shifted]
         rec = [_match(z, b) for b in boots]
         out = dict(base, zone_id=zid, label=label, peak_anchor=list(z["anchor"]), cell_mask=[list(c) for c in z["cells"]],

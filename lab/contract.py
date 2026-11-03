@@ -381,6 +381,39 @@ def ref_zone_map(points, n_family, b_lo, b_hi, ratio=(1, 2), min_abs=4, min_frac
     return dict(zones=zones, residual=sorted({s for _, _, s in points} - used), need=need)
 
 
+TABLE_CELLS_VERSION = "table-cells-1"       # ALG:TABLE-CELLS-1 of the candidate registry (screen 23.5, operator 30.10)
+
+
+def ref_table_map(points, n_family, b_lo, b_hi):
+    """The constellations of the joint table written from their definition: star cells = cells with 2+ known sessions;
+    a union of star cells at most 2 apart in both price and time; support n >= max(4, ceil(0.05 N)); order as zone-map-3."""
+    need = max(4, -(-n_family // 20))
+    cells = Counter((k, b) for k, b, _ in points if b_lo <= b <= b_hi)
+    stars = sorted(c for c, n in cells.items() if n >= 2)
+    parent = {c: c for c in stars}
+    def find(c):
+        while parent[c] != c: c = parent[c]
+        return c
+    for i, a in enumerate(stars):
+        for z in stars[i + 1:]:
+            if abs(a[0] - z[0]) <= 2 and abs(a[1] - z[1]) <= 2: parent[find(a)] = find(z)
+    groups = {}
+    for c in stars: groups.setdefault(find(c), []).append(c)
+    zones = []
+    for comp in groups.values():
+        cs = set(comp)
+        members = sorted({s for k, b, s in points if (k, b) in cs})
+        if len(members) < need: continue
+        top = max(cells[c] for c in comp)
+        anchor = sorted((c for c in comp if cells[c] == top), key=lambda c: (c[1], abs(2 * c[0] + 1), c[0]))[0]
+        kk = [c[0] for c in comp]; bb = [c[1] for c in comp]
+        zones.append(dict(cells=sorted(comp), members=members, n=len(members), anchor=anchor, price=[min(kk), max(kk) + 1], time=[min(bb), max(bb) + 1]))
+    near0 = lambda z: 0 if z["price"][0] <= 0 < z["price"][1] else z["price"][0] if z["price"][0] > 0 else -z["price"][1]
+    zones.sort(key=lambda z: (z["time"][0], -z["n"], near0(z)))
+    used = {s for z in zones for s in z["members"]}
+    return dict(zones=zones, residual=sorted({s for _, _, s in points} - used), need=need)
+
+
 def ref_reachability(cells, ev, q, v10, w, t_next, formed, last_open):
     """E3: HOLDS (today's provisional extreme lies in the region) / POSSIBLE (a strictly further new extreme can
     still land in a cell of it in time) / IMPOSSIBLE. q = None before the first M5 after the activation."""
@@ -764,9 +797,11 @@ def _verify_zones(snap, zm, ev, ref):
     for m in snap["members"]:
         x = ref["members"].get(m["id"], {}).get(ev)
         if x and x["s"] == "known": pts.append((ref_cell(x["v"], m["w"]), (x["t"] - formed) // 15, m["id"]))
-    alg = get("ALG:ZONE-MAP-3")
+    table = key.get("zone_rule") == "TABLE_CELLS"
+    if key.get("zone_rule", "TABLE_CELLS") != "TABLE_CELLS": v.append(("ALGORITHM", ["P3"], f"{ev}: unknown zone rule {key.get('zone_rule')}"))
+    alg = dict(version=TABLE_CELLS_VERSION) if table else get("ALG:ZONE-MAP-3")
     t_first, t_last = formed + 15 * win + 5, end - 5
-    R = ref_zone_map(pts, snap["N"], (t_first - formed) // 15, (t_last - formed) // 15)
+    R = (ref_table_map if table else ref_zone_map)(pts, snap["N"], (t_first - formed) // 15, (t_last - formed) // 15)
     if zm.get("algorithm_version") != alg["version"]: v.append(("ALGORITHM", ["P3"], f"{ev}: algorithm {zm.get('algorithm_version')} is not the registry's {alg['version']}"))
     if zm.get("min_support") != R["need"]: v.append(("SUPPORT", ["P3"], f"{ev}: minimum support differs"))
     got = [(sorted(map(tuple, z["cell_mask"])), sorted(z["member_session_ids"]), z["n_zone"], tuple(z["peak_anchor"])) for z in zm.get("zones", [])]
@@ -1094,7 +1129,7 @@ def attach_family(out, inst, B, day, params):
             continue
         unk, none = zm["unknown_count"], zm["no_event_count"]
         for z in zm["zones"]:
-            env.d.setdefault("regions", []).append(dict(zone_id=z["zone_id"], algorithm="ALG:ZONE-MAP-3", event=ev, snapshot_id=sid, n_cells=len(z["cell_mask"]),
+            env.d.setdefault("regions", []).append(dict(zone_id=z["zone_id"], algorithm="ALG:TABLE-CELLS-1" if snap["key"].get("zone_rule") == "TABLE_CELLS" else "ALG:ZONE-MAP-3", event=ev, snapshot_id=sid, n_cells=len(z["cell_mask"]),
                                                         n_zone=z["n_zone"], min_support=zm["min_support"], mask_verified=True))
             env.bundle(f"EST:B-ZONE-{ev}", cs_id, sid, "lab/zonemap24.py::evaluate", inputs, [_share_est("ESTR:ZONE-SHARE-1", z["n_zone"], N)],
                        [dict(case_set=sid, n_base=N, components=[dict(component="MEMBERSHIP", of=N, yes=z["n_zone"], unknown=unk, no_period=none)])],
@@ -1570,7 +1605,7 @@ def verify_pre(inst, B, pre, bars, tick, day, params):
         S["n"] += 1
         S["win"][win] += 1
         for ev in ("R", "X"):
-            x = ref_final_extreme(path, grid, c, end, ev)
+            x = ref_before_extreme_R(path, grid, c, end) if ev == "R" and ref_r_before_x(pre) else ref_final_extreme(path, grid, c, end, ev)
             if {k: mm[ev][k] for k in mm[ev] if k in ("s", "v", "t", "ties", "bound")} != x: v.append(("OUTCOME", ["P0.1", "P1", "K31"], f"{mm['id']}: {ev} {mm[ev]} != reference {x}"))
             if x["s"] == "known": S[ev].append(Fraction(x["v"], w))
             else: S[ev + ("u" if x["s"] == "unknown" else "n")] += 1

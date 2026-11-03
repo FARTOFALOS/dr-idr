@@ -257,11 +257,12 @@ def dates(inst):
 
 
 # ---------- the snapshot of a family ----------
-def _snapshot(inst, B, session, weekday, side, view, win, cutoff, scope="weekday", r_before_x=False):
+def _snapshot(inst, B, session, weekday, side, view, win, cutoff, scope="weekday", r_before_x=False, table_zones=False):
     """The family of the key and its measurements; independent of today's slice (spec §9.2, §13.1). scope 'all' drops
     the weekday from the key: another family, another N and snapshot (zone-map-3 §2.2), never a fallback. r_before_x:
-    the same members with R before the extreme (module note), another snapshot and identity."""
-    key = (inst, session, weekday, side, view, win, cutoff, scope, r_before_x, source_version(inst, B)["built"])
+    the same members with R before the extreme (module note), another snapshot and identity. table_zones: the same
+    members, measurements and identity, its constellations from the joint table (lab/zonemap24.py)."""
+    key = (inst, session, weekday, side, view, win, cutoff, scope, r_before_x, table_zones, source_version(inst, B)["built"])
     if key in _SNAP: return _SNAP[key]
     start, formed, end = SESS[session]
     shift = SHIFT[session]
@@ -347,6 +348,7 @@ def _snapshot(inst, B, session, weekday, side, view, win, cutoff, scope="weekday
                    end="конец блока " + clk(end) + "; M5, закрывшаяся в " + clk(end) + ", входит",
                    time="открытие первой M5, достигшей цены", atom="существующая M5-свеча базы; дырка = целиком отсутствующая M5"),
         grid=grid, members=members, counts=counts, journal=dict(journal))
+    if table_zones: snap["key"]["zone_rule"] = zonemap24.TABLE_RULE
     if r_before_x:
         snap["key"]["r_event"] = R_BEFORE_X
         snap["rules"]["R"] = "самая глубокая точка до первой M5 итогового X, M5 самого X не входит; нет M5 до неё — нет периода"
@@ -380,7 +382,7 @@ def _today_zones(snap, bars, tick, d, e_px, w_px, act, slice_, formed, end):
             q = None if cand is None else zonemap24.cell_of(cand[1], w_t, cand[0] - 5, formed)
             pc = [zonemap24.cell_of(v, w_t, T - 5, formed) for T, v in past]
             v10 = None if low is None else 10 * low
-            out[ev] = dict(state="ok" if rows else "none", q=None if q is None else list(q), v10=v10, w=w_t, clock=clock, past=[list(c) for c in pc],
+            out[ev] = dict(state="ok" if rows else "none", q=None if q is None else list(q), v10=v10, w=w_t, clock=clock,
                            status=[zonemap24.status_pre(z["cell_mask"], q, pc, v10, w_t, slice_, formed, end - 5) for z in zm["zones"]])
             continue
         if rows:
@@ -412,6 +414,7 @@ def _family(inst, session, at=None, date=None, view="auto"):
     view, *flags = (view or "auto").split(":")
     scope = "all" if "all" in flags else "weekday"
     r_before_x = "rpre" in flags          # R before the session's extreme (module note), screen 23.5
+    table_zones = "tcells" in flags       # the constellations of the joint table (lab/zonemap24.py), screen 23.5
     if inst not in scene21.live.SYMBOLS: raise ValueError("Unknown instrument")
     if session not in SESS: raise ValueError("Unknown session")
     B = _base(inst)
@@ -432,7 +435,7 @@ def _family(inst, session, at=None, date=None, view="auto"):
     v = "brk" if (view in ("auto", "brk") and brk) else "conf"
     win = today["brkWindow"] if v == "brk" else today["window"]
     cutoff = day["date"]
-    snap = _snapshot(inst, B, session, day["weekday"], side, v, win, cutoff, scope, r_before_x)
+    snap = _snapshot(inst, B, session, day["weekday"], side, v, win, cutoff, scope, r_before_x, table_zones)
     # the zone maps of R and X (zone-map-3, meaning/12): once per snapshot (kept in it), so the slice never moves them
     if "zones" not in snap: snap["zones"] = {e: zonemap24.evaluate(snap, e) for e in ("R", "X")}
     out = dict(snap)
