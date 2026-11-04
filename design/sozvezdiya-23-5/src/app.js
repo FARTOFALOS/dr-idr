@@ -1239,8 +1239,8 @@
       V.win = { t0: null, t1: null, pA: F.u2p(h.k0 / 10), pB: F.u2p(h.k1 / 10), col };
     }
     if (h.k === 'mcell') V.win = { t0: F.f + 15 * h.b0, t1: F.f + 15 * (h.b0 + 1), pA: F.u2p(h.k0 / 10), pB: F.u2p((h.k0 + 1) / 10), col };
-    if (h.k === 'tpwin' && F._tp) {                                 // TP-1.1: the hovered window's hours over the chart
-      const tt = tpWinT(F, h.id);
+    if ((h.k === 'tpwin' || h.k === 'tpxbox') && F._tp) {          // TP-1.1: the hovered window's (box's) hours over the chart
+      const xb = h.k === 'tpxbox' && F._tp.xc && F._tp.xc.box, tt = h.k === 'tpxbox' ? (xb ? [F.f + 15 * xb[0], F.f + 15 * xb[1]] : null) : tpWinT(F, h.id);
       if (tt) { const x0 = V.X(tt[0]), x1 = V.X(tt[1]); c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h); V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R }; }
     }
     if (h.k === 'tcell') {
@@ -1406,6 +1406,7 @@
       if (h.k === 'area') return inArea(q, st.area);
       if (h.k === 'zone') return h.ev === q.ev && (F._ts ? tsMember(F.zones[h.ev].zones[h.i],q) : F.zcell[h.ev].get(q.k + '|' + q.b) === h.i);
       if (h.k === 'pt') return q.i === h.i;
+      if (h.k === 'tpxbox' && F._tp && F._tp.xc && F._tp.xc.box) return q.ev === 'X' && q.b >= F._tp.xc.box[0] && q.b < F._tp.xc.box[1];   // TP-1.1: the box «вершина»
       if (h.k === 'out') return q.m.outcome === h.cat;
       if (h.k === 'evrow') return true;
       if (h.k === 'hcell') return h.ev === q.ev && q.k === h.kk && q.b === h.b;
@@ -2595,6 +2596,7 @@
     if (h.k === 'mcell' && F && F._mx) return mxCellTip(F, h);
     if (F && F._tp && h.k === 'tpwin') return tpWinTip(F, h);          // TP-1.1 (tp235.js)
     if (F && F._tp && h.k === 'tpline') return tpLineTip(F, h);
+    if (F && F._tp && h.k === 'tpxbox') return tpXBoxTip(F, h);
     if (F && F._tp && h.k === 'tcell') return tpCellTip(F, ctx, h);
     if (h.k === 'pt' && F) {
       const m = F.M[h.i], ev = h.ev || st.ev, e = m[ev], other = ev === 'R' ? 'X' : 'R', o = m[other], M_ = 'FF:MEMBER';
@@ -3201,7 +3203,7 @@
     const was = key(st.hover);
     st.hover = h && !['paxis', 'taxis', 'stripBg'].includes(h.k) ? h : (h && h.k === 'stripBg' ? h : null);
     if (st.hover && st.hover.ev) st.ev = st.hover.ev;      // the event in focus: what the panel and the area speak of
-    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin'].includes(h.k) ? 'pointer' : 'crosshair';
+    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin', 'tpxbox'].includes(h.k) ? 'pointer' : 'crosshair';
     if (alPlusAt(x, y)) cv.style.cursor = 'pointer';
     else { const al = alNear(x, y); if (al) cv.style.cursor = Math.abs(x - al.x) <= 8 ? 'pointer' : 'ns-resize'; }
     showTip(st.hover);
@@ -3244,7 +3246,7 @@
       render(true); return;
     }
     if (h && h.k === 'tpwin') { tpPinWindow(h.id); return; }           // TP-1.1: a window fixes the price column and constellations
-    if (h && h.k === 'tpline') return;
+    if (h && (h.k === 'tpline' || h.k === 'tpxbox')) return;
     if (h && ['pbzone','pbpcell','pbtcell','pbarea','pbunk'].includes(h.k)) { pin(h); return; }
     if (h && h.k === 'zone' && d.zone === 'strip') { pin(h); return; }
     if (d.zone !== 'plot' && d.zone !== 'draw') return;
@@ -3530,7 +3532,8 @@
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),
     verify: () => verifyNow(), lbl, cfg,
     // TP-1.1 (tp235.js): the state of the core on screen, for tests/tp235_page.mjs
-    tp: () => { const F = V && V.ctx && V.ctx.F, P = F && F._tp; return { on: TP.on, pin: TP.pin, w: P ? P.w : null, N: P ? { F: P.A && P.A.N, T: P.T.N, W: F.N } : null, clock: P ? P.clock : null, x: P ? P.x : null,
+    tp: () => { const F = V && V.ctx && V.ctx.F, P = F && F._tp; return { on: TP.on, pin: TP.pin, w: P ? P.w : null, N: P ? { F: P.A && P.A.N, T: P.T.N, W: F.N } : null, clock: P ? P.clock : null, x: P ? P.x : null, xc: P ? P.xc : null,
+      xzones: F && F.zones && F.zones.X ? F.zones.X.zones.map(z => ({ label: z.label, cells: z.cell_mask, n: z.n_zone })) : [],
       zones: F && F.zones ? { R: (F.zones.R || { zones: [] }).zones.length, X: (F.zones.X || { zones: [] }).zones.length } : null, caps: (V && V.tpCaps || []).map(q => q.id), lines: (V && V.tpLines || []).map(q => q.ev + ':' + q.id) }; },
     tpHit: (x, y) => tpHit(x, y) };
   initPanel24();

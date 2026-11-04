@@ -3320,8 +3320,8 @@
       V.win = { t0: null, t1: null, pA: F.u2p(h.k0 / 10), pB: F.u2p(h.k1 / 10), col };
     }
     if (h.k === 'mcell') V.win = { t0: F.f + 15 * h.b0, t1: F.f + 15 * (h.b0 + 1), pA: F.u2p(h.k0 / 10), pB: F.u2p((h.k0 + 1) / 10), col };
-    if (h.k === 'tpwin' && F._tp) {                                 // TP-1.1: the hovered window's hours over the chart
-      const tt = tpWinT(F, h.id);
+    if ((h.k === 'tpwin' || h.k === 'tpxbox') && F._tp) {          // TP-1.1: the hovered window's (box's) hours over the chart
+      const xb = h.k === 'tpxbox' && F._tp.xc && F._tp.xc.box, tt = h.k === 'tpxbox' ? (xb ? [F.f + 15 * xb[0], F.f + 15 * xb[1]] : null) : tpWinT(F, h.id);
       if (tt) { const x0 = V.X(tt[0]), x1 = V.X(tt[1]); c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h); V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R }; }
     }
     if (h.k === 'tcell') {
@@ -3487,6 +3487,7 @@
       if (h.k === 'area') return inArea(q, st.area);
       if (h.k === 'zone') return h.ev === q.ev && (F._ts ? tsMember(F.zones[h.ev].zones[h.i],q) : F.zcell[h.ev].get(q.k + '|' + q.b) === h.i);
       if (h.k === 'pt') return q.i === h.i;
+      if (h.k === 'tpxbox' && F._tp && F._tp.xc && F._tp.xc.box) return q.ev === 'X' && q.b >= F._tp.xc.box[0] && q.b < F._tp.xc.box[1];   // TP-1.1: the box «вершина»
       if (h.k === 'out') return q.m.outcome === h.cat;
       if (h.k === 'evrow') return true;
       if (h.k === 'hcell') return h.ev === q.ev && q.k === h.kk && q.b === h.b;
@@ -4676,6 +4677,7 @@
     if (h.k === 'mcell' && F && F._mx) return mxCellTip(F, h);
     if (F && F._tp && h.k === 'tpwin') return tpWinTip(F, h);          // TP-1.1 (tp235.js)
     if (F && F._tp && h.k === 'tpline') return tpLineTip(F, h);
+    if (F && F._tp && h.k === 'tpxbox') return tpXBoxTip(F, h);
     if (F && F._tp && h.k === 'tcell') return tpCellTip(F, ctx, h);
     if (h.k === 'pt' && F) {
       const m = F.M[h.i], ev = h.ev || st.ev, e = m[ev], other = ev === 'R' ? 'X' : 'R', o = m[other], M_ = 'FF:MEMBER';
@@ -6732,9 +6734,12 @@
   // - the band (time): the clock of T's pullbacks R before the top (per 15 minutes, share of |T|), every bunch drawn
   //   brighter with its share, the lines of the median and of the 70 % mark, and in the place of the zone capsules the
   //   windows: W1 (first bunch → median), W2 (median → 70 %), «позже» after 70 % and «до окна» before W1; X is the selected
-  //   window's sessions, its columns and its own median and 70 % lines (no X constellation in time);
+  //   window's sessions in the same manner (operator 04.11: «так же самое можно и X показывать»): its bunches brighter with
+  //   their shares, its median and 70 % lines, the box «вершина» from its first bunch to its median (the author's «max
+  //   extension median time»), and its last 15 minutes apart («ход не кончился до закрытия», never a place);
   // - the price column and the constellations: the sessions of one window T_W (flag ':held:tw=W1'), its price bands as
-  //   the places (zone rule TP_BANDS); at rest W1, a window under the mouse on the band shows its sessions, a click fixes it.
+  //   the places of R, the bunch × band places of their tops as the places of X (zone rule TP_BANDS, tp-bands-2); at rest
+  //   W1, a window under the mouse on the band shows its sessions, a click fixes it.
   // The drawing and the colours of 23.5 stay as they were (operator 03.11: «все ценовые, все цветовые, как у нас были»).
   // «Сейчас» (NOW-1.0) stays on the whole family F: its move to T is a separate task (core §6).
   // '#tp=0' in the address shows the previous meaning (the table of 30.10) for comparison, and so does '#cells=1' (the layer
@@ -6812,6 +6817,27 @@
     if (G.N !== tpCount(T.tpc, W[0], W[1])) return 'число сессий окна ' + TP_NAME[w];
     return null;
   }
+  // the clock of the window's tops X (lab/tp11.py::xplaces, the same rule): bunches over the block without its last 15
+  // minutes, the median, the box «вершина» from the first bunch to the median, the tops of the last 15 minutes apart
+  function tpXClock(G) {
+    const f = G.f, bLo = Math.floor((G.r.key.window[0] - f) / 15), bHi = Math.floor((G.end - 5 - f) / 15), m = tpMarks(G.M, 'X', f), at = new Map(m.cells), c = [];
+    for (let b = bLo; b < bHi; b++) c.push(at.get(b) || 0);
+    const bunches = [];
+    for (const [lo, hi, top] of tpRegions(c)) { let n = 0; for (let j = lo; j <= hi; j++) n += c[j]; if (n >= tpNeed(G.N)) bunches.push({ b0: bLo + lo, b1: bLo + hi + 1, n, peak: bLo + top }); }
+    const median = tpQuant(m.ts, 1, 2);
+    let box = null;
+    if (median) { const bm = Math.floor((median.t - f) / 15), first = bunches.find(u => u.b0 <= bm); box = [first ? first.b0 : bLo, bm + 1]; }
+    return { cells: m.cells, bunches, median, box, close: at.get(bHi) || 0, bLo, bHi, need: tpNeed(G.N) };
+  }
+  // every place of X lies inside one bunch of the page's X clock and never in the last 15 minutes
+  function tpXCheck(G) {
+    const xc = G.tpxc, Z = (G.zones.X || { zones: [] }).zones;
+    for (const z of Z) {
+      const bs = z.cell_mask.map(q => q[1]), u = xc.bunches.find(q => bs.every(b => b >= q.b0 && b < q.b1));
+      if (!u || bs.some(b => b >= xc.bHi)) return 'места вершины ' + z.label;
+    }
+    return null;
+  }
   function tpXMarks(G) { const m = tpMarks(G.M, 'X', G.f); return { median: tpQuant(m.ts, 1, 2), p70: tpQuant(m.ts, 7, 10), known: m.ts.length, unknown: m.unknown, none: m.none, cells: m.cells }; }
   // one family of TP: its response checked like the family of the screen (snapOf), then built by the same buildSnap
   function tpSnap(D, s, w, T) {
@@ -6830,8 +6856,8 @@
       const G = buildSnap(r, s, 'conf');
       G.req.view = 'conf' + (r.key.scope === 'all' ? ':all' : '') + tpFlags(w);
       G.tpw = w || null;
-      if (w) G.tpx = tpXMarks(G); else G.tpc = tpClock(G);          // T: its clock; T_W: its X lines
-      const bad = G.held.has('family') ? 'счёт страницы не совпал с пакетом сервера (' + G.mismatch.join(', ') + ')' : tpCheck(G, w, T);
+      if (w) { G.tpx = tpXMarks(G); G.tpxc = tpXClock(G); } else G.tpc = tpClock(G);   // T: its clock; T_W: the clock of its tops
+      const bad = G.held.has('family') ? 'счёт страницы не совпал с пакетом сервера (' + G.mismatch.join(', ') + ')' : tpCheck(G, w, T) || (w ? tpXCheck(G) : null);
       if (bad) { r._refused = G.held.has('family') ? bad : 'страница пересчитала другое: ' + bad; kViolate(r._refused, null, r._ctx); return null; }
       r._F = G;
     }
@@ -6851,7 +6877,7 @@
     if (TP.last !== w) { TP.last = w; if (st.pin && ['pt', 'zone', 'mcell'].includes(st.pin.k)) st.pin = null; }
     const key = G.r.snapshot_id + '|' + T.r.snapshot_id + '|' + (F0 ? F0.r.snapshot_id : '');
     if (G._tpv && G._tpv._tpKey === key) return G._tpv;
-    return (G._tpv = Object.assign({}, G, { _tp: { T, A: F0, clock: tp, w, x: w ? G.tpx : null }, _tpKey: key }));
+    return (G._tpv = Object.assign({}, G, { _tp: { T, A: F0, clock: tp, w, x: w ? G.tpx : null, xc: w ? G.tpxc : null }, _tpKey: key }));
   }
   // what the panel says while a TP family is missing or refused
   function tpStatus(ctx) {
@@ -6869,6 +6895,8 @@
   const tpCount = (tp, b0, b1) => tp.cells.filter(([b]) => b >= b0 && b < b1).reduce((s, q) => s + q[1], 0);
   // the share of a stretch of T's clock: EST:B-RX-WINDOW-R on the family T (its N = |T|), verified by the server like any other
   const tpShare = (F, b0, b1) => evPass(F._tp.T, 'R', 'time_band', null, [F.f + 15 * b0, F.f + 15 * b1], tpCount(F._tp.clock, b0, b1));
+  // the share of a stretch of the window's tops: EST:B-RX-WINDOW-X on the window family (its N = |T_W|)
+  const tpXShare = (F, b0, b1) => { let n = 0; for (const [b, k] of F.ev.X.T) if (b >= b0 && b < b1) n += k; return evPass(F, 'X', 'time_band', null, [F.f + 15 * b0, F.f + 15 * b1], n); };
   // a line of the clock: by the close of its M5 the half (70 %) of the set's known events had happened; its number is the
   // E4 clock of the same family (EST:B-CLOCK, all prices, part EARLIER, cut = that close)
   function tpLines(F) {
@@ -6888,8 +6916,8 @@
   function tpBand(c, ctx) {
     const F = ctx.F, P = F._tp, T = P.T, tp = P.clock, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
     const ov = V.bandOv = bandOverlay(ctx), B = { x: B0.x, y: B0.y - ov, w: B0.w, h: B0.h + ov };
-    // one lane of window capsules on the side of R (where the zone capsules of R stood); X has none
-    const LH = 15, lane = { R: 1, X: 0 }, upEv = dir.X < 0 ? 'X' : 'R', dnEv = upEv === 'X' ? 'R' : 'X';
+    // one lane of capsules on each side (where the zone capsules stood): the windows on R's, the box «вершина» on X's
+    const LH = 15, lane = { R: 1, X: P.xc ? 1 : 0 }, upEv = dir.X < 0 ? 'X' : 'R', dnEv = upEv === 'X' ? 'R' : 'X';
     const top = B.y + 3 + lane[upEv] * (LH + 2) + 2, bot = B.y + B.h - 3 - lane[dnEv] * (LH + 2) - 2;
     const cy = Math.round((top + bot) / 2) + 0.5, half = (bot - top) / 2 - 2;
     c.save(); c.beginPath(); c.rect(B.x, B.y, B.w, B.h); c.clip();
@@ -6903,7 +6931,7 @@
     for (const n of nR.values()) mx = Math.max(mx, n / NR);
     for (const n of nX.values()) mx = Math.max(mx, n / NX);
     const yOf = (ev, s) => cy + dir[ev] * (1 + half * Math.min(1, Math.max(0, s) / mx));
-    const bunchOf = b => tp.bunches.find(u => b >= u.b0 && b < u.b1);
+    const bunchOf = b => tp.bunches.find(u => b >= u.b0 && b < u.b1), xc = P.xc, xBunchOf = b => xc && xc.bunches.find(u => b >= u.b0 && b < u.b1);
     const Wsel = P.w && tp.windows[P.w];
     V.bandCols = []; V.bandVals = []; V.caps = []; V.hills = []; V.tpCaps = []; V.tpLines = [];
     const labels = [];
@@ -6917,15 +6945,17 @@
         if (!n) continue;
         // a withheld share (its passport «—», SWPC-1.1 M14) draws no column; its place stays empty
         if (ppHeld(G, 'EST:B-RX-WINDOW-' + ev, { b0: b, b1: b + 1 })) { if (lit) labels.push({ x: (x0 + x1) / 2, y: cy + dir[ev] * 9, t: '—', col: cfg[ev] }); continue; }
-        const inW = ev === 'R' ? !!(Wsel && b >= Wsel[0] && b < Wsel[1]) : true, bu = ev === 'R' && bunchOf(b);
+        const inW = ev === 'R' ? !!(Wsel && b >= Wsel[0] && b < Wsel[1]) : true, bu = ev === 'R' ? bunchOf(b) : xBunchOf(b), closeX = ev === 'X' && xc && b === xc.bHi;
         let a = 0.12 + 0.26 * Math.pow(share / mx, 0.7);
         if (past) a *= 0.5;
         if (!inW) a *= 0.6;                                   // outside the selected window: quieter, never hidden
+        if (closeX) a *= 0.55;                                // the tops of the last 15 minutes: a move not ended before the close
         if (lit) a = Math.max(a, 0.5);
         if (bu) a = Math.max(a, (past ? 0.3 : 0.5) + 0.45 * share / mx);   // a bunch: brighter (the author's darker time mode)
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, share);
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
+        if (closeX && Math.abs(y - cy) > 3) { c.save(); c.strokeStyle = rgba(cfg.X, 0.55); c.lineWidth = 1; c.setLineDash([2, 2]); c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir.X, y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1)); c.restore(); }
         if (lit) labels.push({ x: (x0 + x1) / 2, y: dir[ev] < 0 ? y - 7 : y + 8, t: ppTxt(evPass(G, ev, 'time_cell', null, [t0, t0 + 15], n)).replace('%', ''), col: cfg[ev] });
       }
     }
@@ -6936,6 +6966,13 @@
       // beyond the apex column's end, or inside it when the column fills its half (the window lane stays clear)
       const n = nR.get(u.peak) || 0, x = (V.X(F.f + 15 * u.peak) + V.X(F.f + 15 * u.peak + 15)) / 2, y = yOf('R', n / NR), inside = Math.abs(y - cy) > half - 10;
       labels.push({ x, y: y + dir.R * (inside ? -8 : 9), t: ppTxt(p), col: inside ? '#F4F1EC' : mixW(cfg.R, 0.25), big: true });
+    }
+    // the same for the window's tops X (their share of T_W)
+    if (xc) for (const u of xc.bunches) {
+      const p = tpXShare(F, u.b0, u.b1);
+      if (p.pct == null) continue;
+      const n = nX.get(u.peak) || 0, x = (V.X(F.f + 15 * u.peak) + V.X(F.f + 15 * u.peak + 15)) / 2, y = yOf('X', n / NX), inside = Math.abs(y - cy) > half - 10;
+      labels.push({ x, y: y + dir.X * (inside ? -8 : 9), t: ppTxt(p), col: inside ? '#EEF5FF' : mixW(cfg.X, 0.25), big: true });
     }
     // the lines of the clock: the median solid, the 70 % mark dashed, each in its event's half
     for (const L of tpLines(F)) {
@@ -6973,6 +7010,25 @@
       c.restore();
       V.tpCaps.push({ id: w, box: [x0, y0, wd, LH] });
     }
+    // the box «вершина» on X's lane: from the first bunch of tops to their median (the author's max extension median time)
+    if (xc && xc.box) {
+      const p = tpXShare(F, xc.box[0], xc.box[1]), x0 = V.X(F.f + 15 * xc.box[0]) + 1, x1 = V.X(F.f + 15 * xc.box[1]) - 1, wd = x1 - x0, y0 = dir.X < 0 ? B.y + 3 : B.y + B.h - 3 - LH + 2;
+      if (x1 >= B.x && x0 <= B.x + B.w && wd >= 4) {
+        const hov = !!(h && h.k === 'tpxbox'), nm = 'вершина';
+        c.save();
+        c.fillStyle = rgba(cfg.X, Math.min(1, (0.22 + (hov ? 0.1 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
+        if (hov) { c.strokeStyle = rgba(cfg.X, 0.6); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
+        c.beginPath(); c.rect(x0 + 2, y0, wd - 4, LH); c.clip(); c.textBaseline = 'middle';
+        c.font = '700 10.5px ' + FONT;
+        const nw = c.measureText(nm).width, pw = pctW(c, ppTxt(p), '700 ', 10.5);
+        c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(mixW(cfg.X, 0.2), Math.min(1, 0.9 * cfg.capTxt / 100));
+        let x = x0 + 9;
+        if (wd >= nw + 14) { c.fillText(nm, x, y0 + LH / 2 + 0.5); x += nw + 6; }
+        if (wd >= nw + pw + 20) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5, rgba(mixW(cfg.X, 0.35), Math.min(1, 0.85 * cfg.capTxt / 100)));
+        c.restore();
+        V.tpCaps.push({ id: 'XBOX', box: [x0, y0, wd, LH] });
+      }
+    }
     // the centre line, the slice, the names of the halves, the unknown mass (R of T, X of the window), as drawBand
     const xF = V.X(F.f), xE = V.X(F.end);
     c.fillStyle = 'rgba(209,212,220,.14)'; c.fillRect(Math.max(B.x, xF), cy, Math.min(B.x + B.w, xE) - Math.max(B.x, xF), 1);
@@ -7001,7 +7057,7 @@
   function tpHit(x, y) {
     const inBox = a => x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3];
     const w = (V.tpCaps || []).find(inBox);
-    if (w) return { k: 'tpwin', id: w.id, src: 'strip' };
+    if (w) return w.id === 'XBOX' ? { k: 'tpxbox', ev: 'X', src: 'strip' } : { k: 'tpwin', id: w.id, src: 'strip' };
     const L = (V.tpLines || []).find(q => Math.abs(x - q.x) <= 3 && y >= q.y0 - 2 && y <= q.y1 + 2);
     if (L) return { k: 'tpline', ev: L.ev, id: L.id, src: 'strip' };
     return null;
@@ -7015,6 +7071,13 @@
     const p = tpShare(F, W[0], W[1]), on = F._tp.w === h.id;
     return '<div class="ih">' + TP_NAME[h.id] + ' · ' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '</div>' + sentence(p) +
       '<div class="if">' + (on ? 'Колонка цены и созвездия — сессии этого окна.' : 'Наведено: колонка цены и созвездия — сессии этого окна; щелчок закрепляет.') + ' Только true-сессии: DR удержали до ' + clk(F.end) + '.</div>';
+  }
+  function tpXBoxTip(F, h) {
+    const xc = F._tp.xc;
+    if (!xc || !xc.box) return '';
+    const p = tpXShare(F, xc.box[0], xc.box[1]), med = xc.median;
+    return '<div class="ih">Время вершины · ' + clk(F.f + 15 * xc.box[0]) + '–' + clk(F.f + 15 * xc.box[1]) + '</div>' + sentence(p) +
+      '<div class="if">От первого пучка вершин до их медианы у сессий окна ' + TP_NAME[F._tp.w] + (med ? ': к ' + clk(med.t + 5) + ' вершину сделала половина из них' : '') + '. Как у автора: max extension median time.</div>';
   }
   function tpLineTip(F, h) {
     const L = tpLines(F).find(q => q.ev === h.ev && q.id === h.id);
@@ -7031,9 +7094,12 @@
     for (const [q, n] of F.ev.X.T) if (q >= b && q < b1) nX += n;
     const pR = evPass(T, 'R', 'time_cell', null, [t0, t1], nR), pX = evPass(F, 'X', 'time_cell', null, [t0, t1], nX);
     const u = P.clock.bunches.find(q => b >= q.b0 && b < q.b1), w = TP_WINDOWS.find(k => P.clock.windows[k] && b >= P.clock.windows[k][0] && b < P.clock.windows[k][1]);
+    const xu = P.xc && P.xc.bunches.find(q => b >= q.b0 && b < q.b1), close = P.xc && b1 > P.xc.bHi;
     const row = (ev, p, set) => '<div class="ib"><i style="color:' + cfg[ev] + '">' + lbl(p.estimand, 'two_row', { ev, name: (ev === 'R' ? T : F).names[ev].toLowerCase() }) + '</i><span class="k"> ' + set + ' </span><b>' + ppTxt(p) + '</b></div>';
     return '<div class="ih">' + clk(t0) + '–' + clk(t1) + (w ? ' · ' + TP_NAME[w] : '') + (u ? ' · пучок ' + clk(F.f + 15 * u.b0) + '–' + clk(F.f + 15 * u.b1) : '') + '</div>' +
-      '<div class="iq">' + lbl('FF:R-BEFORE-X', 'q_window') + '</div>' + row('R', pR, 'true') + row('X', pX, TP_NAME[P.w || 'W1']) + ifoot(T, lbl('FF:SHARE-STEP', 'foot_time'));
+      '<div class="iq">' + lbl('FF:R-BEFORE-X', 'q_window') + '</div>' + row('R', pR, 'true') + row('X', pX, TP_NAME[P.w || 'W1']) +
+      (xu ? '<div class="is" style="color:' + cfg.X + '">пучок вершин ' + clk(F.f + 15 * xu.b0) + '–' + clk(F.f + 15 * xu.b1) + '</div>' : '') +
+      (close ? '<div class="is">Вершина в последние 15 минут сессии: ход не кончился до закрытия — это не место вершины.</div>' : '') + ifoot(T, lbl('FF:SHARE-STEP', 'foot_time'));
   }
   // the R-side depth under the mouse in the price column (operator 03.11: not drawn, only a number when asked): of the
   // window's sessions, those whose pullback went deeper than this band's lower edge (EST:B-RX-BAND-R over the deeper cells)
@@ -7063,9 +7129,16 @@
     }
     if (T.ev.R.unknown + T.ev.R.none) { const u = undPass(T, 'R', 'BOTH'); out.push(link({ k: 'evrow', ev: 'R' }, prow(lbl('EST:B-RX-UNDETERMINED-R', 'row', { ev: '<i style="color:' + cfg.R + '">R</i>' }), ppTxt(u)), 'dim', u, plainTitle(u))); }
     // the continuation of the window's sessions: the time lines of their own top X (the ladder is on today's levels)
-    const xl = tpLines(F).filter(L => L.ev === 'X');
-    if (P.w) out.push('<div class="p21-h second"><span title="Вершина хода X у сессий окна ' + TP_NAME[P.w] + '; ступени «дошли до уровня» — на линиях уровней графика (наведите).">Продолжение · ' + TP_NAME[P.w] + '</span><span>доля от окна</span></div>' +
-      (xl.length ? '<div class="p21-note">' + xl.map(L => '<span title="' + esc(lbl('EST:B-CLOCK-X', 'earlier', { t: clk(L.cut) }) + ': ' + ppTxt(L.p)) + '">' + (L.id === 'median' ? 'медиана вершины' : '70 % вершин') + ' <b style="color:' + cfg.X + '">' + clk(L.cut) + '</b></span>').join(' · ') + '</div>' : ''));
+    const xl = tpLines(F).filter(L => L.ev === 'X'), xc = P.xc;
+    if (P.w) {
+      out.push('<div class="p21-h second"><span title="Вершина хода X у сессий окна ' + TP_NAME[P.w] + ': пучки времени, их медиана и 70 %, места вершины на графике (синие созвездия); ступени «дошли до уровня» — на линиях уровней графика (наведите).">Продолжение · ' + TP_NAME[P.w] + '</span><span>доля от окна</span></div>');
+      if (xc) for (const u of xc.bunches) { const p = tpXShare(F, u.b0, u.b1); out.push(link({ k: 'tcell', ev: 'X', b0: u.b0, b1: u.b1, src: 'tpx' }, prow('пучок вершин ' + clk(F.f + 15 * u.b0) + '–' + clk(F.f + 15 * u.b1), ppTxt(p)), 'mc', p, plainTitle(p))); }
+      if (xc && !xc.bunches.length) out.push('<div class="p21-note">Пучков вершин нет: ни один отрезок времени не набрал ' + xc.need + ' сессий окна.</div>');
+      if (xl.length) out.push('<div class="p21-note">' + xl.map(L => '<span title="' + esc(lbl('EST:B-CLOCK-X', 'earlier', { t: clk(L.cut) }) + ': ' + ppTxt(L.p)) + '">' + (L.id === 'median' ? 'медиана вершины' : '70 % вершин') + ' <b style="color:' + cfg.X + '">' + clk(L.cut) + '</b></span>').join(' · ') + '</div>');
+      if (xc && xc.box) { const p = tpXShare(F, xc.box[0], xc.box[1]); out.push(link({ k: 'tpxbox', ev: 'X' }, prow('время вершины ' + clk(F.f + 15 * xc.box[0]) + '–' + clk(F.f + 15 * xc.box[1]), ppTxt(p)), 'mc', p, plainTitle(p))); }
+      if (xc && xc.close) { const p = tpXShare(F, xc.bHi, xc.bHi + 1); out.push(link({ k: 'tcell', ev: 'X', b0: xc.bHi, b1: xc.bHi + 1, src: 'tpx' }, prow('ход не кончился до закрытия', ppTxt(p)), 'dim', p, plainTitle(p))); }
+      if (F.ev.X.unknown + F.ev.X.none) { const u = undPass(F, 'X', 'BOTH'); out.push(link({ k: 'evrow', ev: 'X' }, prow(lbl('EST:B-RX-UNDETERMINED-X', 'row', { ev: '<i style="color:' + cfg.X + '">X</i>' }), ppTxt(u)), 'dim', u, plainTitle(u))); }
+    }
     return out.join('');
   }
 
@@ -7378,7 +7451,7 @@
     rows.sort((a, b) => a.z.time_start - b.z.time_start || b.z.p_snapshot - a.z.p_snapshot);
     // TP-1.1: the places of the window's pullbacks, each its share of the window (core §4.5)
     const tw = F._tp && F._tp.w && F._tp.clock.windows[F._tp.w];
-    const out = [F._tp ? '<div class="p21-h second"><span title="Место = окно × полоса цены: полосы ищутся только среди сессий окна; доля — от сессий окна">Места отката · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
+    const out = [F._tp ? '<div class="p21-h second"><span title="Место отката = окно × полоса цены среди сессий окна; место вершины = пучок вершин × полоса цены среди тех же сессий; доля — от сессий окна">Места отката и вершины · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
     if (!rows.length) out.push('<div class="p21-note">' + lbl('EST:B-ZONE-R', 'none') + '</div>');
     let sep = false;
     for (const r of rows) {
@@ -7391,7 +7464,6 @@
     if (!sep) out.push('<div class="p24-now"><span></span>' + (sl >= F.end ? 'блок закончен' : 'сейчас ' + clk(sl)) + '<span></span></div>');
     // the rest of each event's 100 %: outside the zones, and not determined (never drawn at any price)
     for (const ev of ['X', 'R']) {
-      if (F._tp && ev === 'X') continue;                               // TP-1.1: X has no constellation, so no «outside the zones» either
       const Zm = zonesOf(F, ev), D = F.ev[ev];
       const tag = '<i style="color:' + cfg[ev] + '">' + ev + '</i>';
       if (Zm) { const r = resPass(F, ev); out.push(link({ k: 'evrow', ev }, prow(lbl('EST:B-ZONE-RESIDUAL-' + ev, 'row', { ev: tag }), ppTxt(r)), 'dim', r, plainTitle(r))); }
@@ -7942,7 +8014,7 @@
     const was = key(st.hover);
     st.hover = h && !['paxis', 'taxis', 'stripBg'].includes(h.k) ? h : (h && h.k === 'stripBg' ? h : null);
     if (st.hover && st.hover.ev) st.ev = st.hover.ev;      // the event in focus: what the panel and the area speak of
-    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin'].includes(h.k) ? 'pointer' : 'crosshair';
+    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin', 'tpxbox'].includes(h.k) ? 'pointer' : 'crosshair';
     if (alPlusAt(x, y)) cv.style.cursor = 'pointer';
     else { const al = alNear(x, y); if (al) cv.style.cursor = Math.abs(x - al.x) <= 8 ? 'pointer' : 'ns-resize'; }
     showTip(st.hover);
@@ -7985,7 +8057,7 @@
       render(true); return;
     }
     if (h && h.k === 'tpwin') { tpPinWindow(h.id); return; }           // TP-1.1: a window fixes the price column and constellations
-    if (h && h.k === 'tpline') return;
+    if (h && (h.k === 'tpline' || h.k === 'tpxbox')) return;
     if (h && ['pbzone','pbpcell','pbtcell','pbarea','pbunk'].includes(h.k)) { pin(h); return; }
     if (h && h.k === 'zone' && d.zone === 'strip') { pin(h); return; }
     if (d.zone !== 'plot' && d.zone !== 'draw') return;
@@ -8271,7 +8343,8 @@
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),
     verify: () => verifyNow(), lbl, cfg,
     // TP-1.1 (tp235.js): the state of the core on screen, for tests/tp235_page.mjs
-    tp: () => { const F = V && V.ctx && V.ctx.F, P = F && F._tp; return { on: TP.on, pin: TP.pin, w: P ? P.w : null, N: P ? { F: P.A && P.A.N, T: P.T.N, W: F.N } : null, clock: P ? P.clock : null, x: P ? P.x : null,
+    tp: () => { const F = V && V.ctx && V.ctx.F, P = F && F._tp; return { on: TP.on, pin: TP.pin, w: P ? P.w : null, N: P ? { F: P.A && P.A.N, T: P.T.N, W: F.N } : null, clock: P ? P.clock : null, x: P ? P.x : null, xc: P ? P.xc : null,
+      xzones: F && F.zones && F.zones.X ? F.zones.X.zones.map(z => ({ label: z.label, cells: z.cell_mask, n: z.n_zone })) : [],
       zones: F && F.zones ? { R: (F.zones.R || { zones: [] }).zones.length, X: (F.zones.X || { zones: [] }).zones.length } : null, caps: (V && V.tpCaps || []).map(q => q.id), lines: (V && V.tpLines || []).map(q => q.ev + ':' + q.id) }; },
     tpHit: (x, y) => tpHit(x, y) };
   initPanel24();

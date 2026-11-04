@@ -4,7 +4,8 @@
 //
 // For a few history scenes: the confirmation family shows T (the sessions whose DR held) and one window's sessions T_W;
 // the DR outcome is the whole family's; every number on screen is a passport the server's reference re-derived (no
-// violation, none unchecked); the windows partition T's known pullbacks; X has no constellation; a window under the mouse
+// violation, none unchecked); the windows partition T's known pullbacks; the places of X lie in bunches of tops and never
+// in the last 15 minutes; a window under the mouse
 // switches the view and a click fixes it; '#tp=0' shows the table of 30.10 again. Exit code 0 = every check passed.
 import { startChrome, evaluate } from './trace_page.mjs';
 
@@ -61,7 +62,10 @@ try {
     ck(r.tN === r.tHeld, 'T is exactly the sessions whose DR held (' + r.tN + ' of ' + r.outN + ')');
     ck(r.heldAll, 'every session on screen held its DR');
     ck(r.sumW === r.known, 'the windows partition the known pullbacks of T (' + r.sumW + ' = ' + r.known + ')');
-    ck(r.t.zones && r.t.zones.X === 0, 'X has no constellation');
+    // X (operator 04.11): its places lie inside a bunch of the window's tops and never in the last 15 minutes of the block
+    const xc = r.t.xc, xin = z => z.cells.every(([, b]) => b < xc.bHi) && xc.bunches.some(u => z.cells.every(([, b]) => b >= u.b0 && b < u.b1));
+    ck(!!xc && r.t.xzones.every(xin), 'every place of X lies in a bunch of tops, none in the last 15 minutes (' + r.t.xzones.length + ' places, ' + (xc ? xc.bunches.length : 0) + ' bunches)');
+    ck(!xc || !xc.box || (xc.box[0] < xc.box[1] && r.t.caps.includes('XBOX')), 'the box «вершина» is drawn from the first bunch of tops to their median');
     ck(r.nT && (r.nW !== false), 'every passport of T counts over |T|, of the window over |T_W|');
     ck(/Время отката · true-сессии/.test(r.panel) && /Места отката/.test(r.panel), 'the panel shows the clock of T and the places of the window');
     ck(r.t.lines.includes('R:median'), 'the median line of T is drawn');

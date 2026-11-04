@@ -11,7 +11,11 @@ What it measures, in the author's order (time → price → continuation):
   from the left … up until the median»), W2 from the median to the 70 % mark (the author's second window), LATE after
   it, BEFORE ahead of W1;
 - the price bands of one window's sessions (the author's «the data automatically adjusts»): a window family T_W is the
-  sessions of T whose R lies in the window, and its bands are the places of the screen.
+  sessions of T whose R lies in the window, and its bands are the places of the screen;
+- the places of the same sessions' top X (operator 04.11: «так же самое можно и X показывать»; the author's «max extension
+  median time» box and «cluster of extension» targets): first the bunches of X in time, then inside each bunch the price
+  bands of its sessions. A top in the last 15 minutes of the block is a move that had not ended before the close: it is
+  counted apart («ход не кончился до закрытия») and never forms a place (the old pile of X at 16:00).
 
 The bunch and band rule (executor's provisional choice, [И]; the numbers are the operator's next stage, core §12): over
 raw counts of one axis (15-minute cells, or 0.1-SD cells), an apex is a cell at least as high as its neighbours; an
@@ -26,7 +30,7 @@ from __future__ import annotations
 STEP = 15                          # minutes of a time cell (the operator's grid)
 VERSION = "tp-1.1"
 BANDS_RULE, NONE_RULE = "TP_BANDS", "TP_NONE"     # key.zone_rule of a window family and of T itself
-BANDS_VERSION = "tp-bands-1"
+BANDS_VERSION = "tp-bands-2"      # 2 (04.11): X has its places too (xplaces)
 WINDOWS = ("BEFORE", "W1", "W2", "LATE")
 Q_MEDIAN, Q_70 = (1, 2), (7, 10)
 
@@ -143,6 +147,29 @@ def bands(points, n_family, b_lo, b_hi):
         cs = sorted(occ)
         zones.append(dict(cells=cs, members=members, n=len(members), apex_D=top, anchor=anchor,
                           price=[k_lo + lo, k_lo + hi + 1], time=[min(q[1] for q in cs), max(q[1] for q in cs) + 1]))
+    near0 = lambda z: 0 if z["price"][0] <= 0 < z["price"][1] else z["price"][0] if z["price"][0] > 0 else -z["price"][1]
+    zones.sort(key=lambda z: (z["time"][0], -z["n"], near0(z)))
+    used = {s for z in zones for s in z["members"]}
+    return dict(zones=zones, residual=sorted({s for _, _, s in pts} - used), need=req)
+
+
+def xplaces(points, n_family, b_lo, b_hi):
+    """The places of the top X of one window family (module note): the bunches of X over the 15-minute cells of the block
+    without its last cell (a top there had not ended before the close), each kept with max(4, ceil(0.05 N)) sessions;
+    inside each bunch the price bands of its sessions by the same rule (bands). points: [(k, b, session_id)]. The record
+    has the shape of bands / lab/zonemap24.py::zone_map; the residual holds every known top outside a place, those of the
+    last cell included."""
+    pts = [p for p in points if b_lo <= p[1] <= b_hi]
+    req = need(n_family)
+    body = [p for p in pts if p[1] < b_hi]
+    counts = {}
+    for _, b, _ in body: counts[b] = counts.get(b, 0) + 1
+    c = [counts.get(b, 0) for b in range(b_lo, b_hi)]
+    zones = []
+    for lo, hi, _ in regions(c):
+        sel = [p for p in body if b_lo + lo <= p[1] <= b_lo + hi]
+        if len({s for _, _, s in sel}) < req: continue
+        zones.extend(bands(sel, n_family, b_lo + lo, b_lo + hi)["zones"])
     near0 = lambda z: 0 if z["price"][0] <= 0 < z["price"][1] else z["price"][0] if z["price"][0] > 0 else -z["price"][1]
     zones.sort(key=lambda z: (z["time"][0], -z["n"], near0(z)))
     used = {s for z in zones for s in z["members"]}

@@ -1,17 +1,20 @@
 # DR IDR — entry for agents
 
-## Screen 23.5 · 2026-11-04: the semantic core TP-1.2 (code and flags say tp-1.1; supersedes the table of 27–30.10 for the confirmation family)
+## Screen 23.5 · 2026-11-04: the semantic core TP-1.3 (code and flags say tp-1.1; supersedes the table of 27–30.10 for the confirmation family)
 
-**Start here.** The meaning is [meaning/23-tp-smyslovoe-yadro.md](meaning/23-tp-smyslovoe-yadro.md) (DR-LAB-TP-1.2, the
+**Start here.** The meaning is [meaning/23-tp-smyslovoe-yadro.md](meaning/23-tp-smyslovoe-yadro.md) (DR-LAB-TP-1.3, the
 author's Time & Price on true sessions; operator 02–04.11); how it is built is [DR-LAB-23-5-TP](docs/DR-LAB-23-5-TP.md).
 Everything older in this file and in `meaning/` is history where it disagrees with the core: do not bring back the
-whole-family («honest») cohort as the base, the strongest table cell as a place, X constellations in time, final
-extremes as places, or C13. The confirmation family of 23.5 is shown by the core, on the 23.5 drawing as it was:
+whole-family («honest») cohort as the base, the strongest table cell as a place, X stars outside the places of
+tops, final extremes (tops of the last 15 minutes) as places, or C13. The confirmation family of 23.5 is shown by the core, on the 23.5 drawing as it was:
 - the DR outcome is the whole family's, one 100 %; everything else is T, the sessions whose DR held (flag `:held`);
 - the band: T's clock of R before the top, every bunch with its share, the median and 70 % lines, the windows `W1`
-  (first bunch → median), `W2` (median → 70 %), `до окна`, `позже`; X of the window's sessions, its lines, no X
-  constellation in time;
-- the price column and the constellations: one window's sessions T_W (flag `:held:tw=W1`, zone rule `TP_BANDS`); at
+  (first bunch → median), `W2` (median → 70 %), `до окна`, `позже`; X of the window's sessions: its clock of tops
+  (bunches with shares, median and 70 % lines, the box «вершина» = first bunch of tops → their median); tops of the
+  last 15 minutes apart («ход не кончился до закрытия»), never a bunch or a place (operator 04.11 evening, core 1.3);
+- the price column and the constellations: one window's sessions T_W (flag `:held:tw=W1`, zone rule `TP_BANDS`
+  `tp-bands-2`): places of R = price bands among T_W; places of X = a bunch of tops × a price band, blue
+  (`tp11.xplaces`, reference `ref_tp_xplaces`; the page refuses a window whose X place leaves its bunch). At
   rest W1, a hovered window shows its sessions, a click fixes it.
 - No new estimand; the clock of T is not published (no declared field meaning in SC-1.1), the page counts it from T's
   members (`tp235.js`), the contract re-derives T and T_W. NOW-1.0 stays on the whole family (moving it to T is open).

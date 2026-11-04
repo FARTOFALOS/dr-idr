@@ -87,7 +87,7 @@
     rows.sort((a, b) => a.z.time_start - b.z.time_start || b.z.p_snapshot - a.z.p_snapshot);
     // TP-1.1: the places of the window's pullbacks, each its share of the window (core §4.5)
     const tw = F._tp && F._tp.w && F._tp.clock.windows[F._tp.w];
-    const out = [F._tp ? '<div class="p21-h second"><span title="Место = окно × полоса цены: полосы ищутся только среди сессий окна; доля — от сессий окна">Места отката · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
+    const out = [F._tp ? '<div class="p21-h second"><span title="Место отката = окно × полоса цены среди сессий окна; место вершины = пучок вершин × полоса цены среди тех же сессий; доля — от сессий окна">Места отката и вершины · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
     if (!rows.length) out.push('<div class="p21-note">' + lbl('EST:B-ZONE-R', 'none') + '</div>');
     let sep = false;
     for (const r of rows) {
@@ -100,7 +100,6 @@
     if (!sep) out.push('<div class="p24-now"><span></span>' + (sl >= F.end ? 'блок закончен' : 'сейчас ' + clk(sl)) + '<span></span></div>');
     // the rest of each event's 100 %: outside the zones, and not determined (never drawn at any price)
     for (const ev of ['X', 'R']) {
-      if (F._tp && ev === 'X') continue;                               // TP-1.1: X has no constellation, so no «outside the zones» either
       const Zm = zonesOf(F, ev), D = F.ev[ev];
       const tag = '<i style="color:' + cfg[ev] + '">' + ev + '</i>';
       if (Zm) { const r = resPass(F, ev); out.push(link({ k: 'evrow', ev }, prow(lbl('EST:B-ZONE-RESIDUAL-' + ev, 'row', { ev: tag }), ppTxt(r)), 'dim', r, plainTitle(r))); }

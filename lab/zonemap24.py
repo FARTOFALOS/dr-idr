@@ -28,9 +28,9 @@ a constellation holds only cells where sessions really are, its peak anchor is i
 zone, so the same diagnostics, statuses and drawing follow; the research table of zone-map-3 does not apply to it.
 
 Screen 23.5, the semantic core DR-LAB-TP-1.1 (operator 03.11.2026): a window family (':held:tw=W1' …, lab/tp11.py) takes
-its R constellations from the price bands of the window's sessions, `tp-bands-1` (key.zone_rule TP_BANDS): the places of
-the screen, each with the cells its sessions really occupy, its share n / N of the window family; X has no
-constellation there (the continuation is read by its levels and its time lines). The family T itself (TP_NONE) has none.
+its R constellations from the price bands of the window's sessions and, since 04.11, its X constellations from the bunches of
+their tops in time and the price bands inside each bunch (`tp-bands-2`, key.zone_rule TP_BANDS); a top in the last 15
+minutes of the block never forms a place. The family T itself (TP_NONE) has none.
 """
 from __future__ import annotations
 
@@ -189,7 +189,7 @@ def _flip(path, act_i, rng, reps, e, r_before_x=False):
 def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None, rule=None):
     """The zone map of event e for snapshot members (scene24 records), optionally on a shifted grid or with resampling
     weights (a session counted w times); rule TABLE_RULE: the constellations of the joint table; tp11.BANDS_RULE: the
-    price bands of a window family (R only); tp11.NONE_RULE: none."""
+    price bands of a window family (R) and the bunch x band places of its tops (X); tp11.NONE_RULE: none."""
     pts = []
     for i, m in enumerate(members):
         x = m[e]
@@ -199,9 +199,9 @@ def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None, rule=Non
     t_first, t_last = formed + 15 * win + 5, end - 5
     n = len(members) if weights is None else int(sum(weights))
     lo, hi = (t_first - formed - dt) // 15, (t_last - formed - dt) // 15
-    if rule == tp11.NONE_RULE or (rule == tp11.BANDS_RULE and e == "X"):
+    if rule == tp11.NONE_RULE:
         return dict(zones=[], residual=sorted({s for _, _, s in pts}), need=tp11.need(n))
-    if rule == tp11.BANDS_RULE: return tp11.bands(pts, n, lo, hi)
+    if rule == tp11.BANDS_RULE: return (tp11.xplaces if e == "X" else tp11.bands)(pts, n, lo, hi)
     return (table_map if rule == TABLE_RULE else zone_map)(pts, n, lo, hi)
 
 

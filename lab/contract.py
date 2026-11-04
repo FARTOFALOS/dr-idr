@@ -414,7 +414,7 @@ def ref_table_map(points, n_family, b_lo, b_hi):
     return dict(zones=zones, residual=sorted({s for _, _, s in points} - used), need=need)
 
 
-TP_BANDS_VERSION = "tp-bands-1"       # DR-LAB-TP-1.1 on screen 23.5 (operator 03.11): the bands of a window family
+TP_BANDS_VERSION = "tp-bands-2"       # DR-LAB-TP-1.1 on screen 23.5: the bands of a window family (03.11), its X places (04.11)
 
 
 def ref_tp_need(n):
@@ -502,6 +502,26 @@ def ref_tp_bands(points, n_family, b_lo, b_hi):
         cells = sorted(occ)
         zones.append(dict(cells=cells, members=members, n=len(members), anchor=anchor, price=[k_lo + lo, k_lo + hi + 1],
                           time=[min(b for _, b in cells), max(b for _, b in cells) + 1]))
+    near0 = lambda z: 0 if z["price"][0] <= 0 < z["price"][1] else z["price"][0] if z["price"][0] > 0 else -z["price"][1]
+    zones.sort(key=lambda z: (z["time"][0], -z["n"], near0(z)))
+    used = {sid for z in zones for sid in z["members"]}
+    return dict(zones=zones, residual=sorted({sid for _, _, sid in pts} - used), need=need)
+
+
+def ref_tp_xplaces(points, n_family, b_lo, b_hi):
+    """The places of the tops X of a window family (lab/tp11.py::xplaces, operator 04.11) from their definition: the bunch
+    rule over the 15-minute cells of the block without its last cell (a top in the last 15 minutes is a move that had not
+    ended before the close and is never a place), a bunch kept with the support; inside each kept bunch the band rule over
+    the 0.1-SD cells of its tops (ref_tp_bands); the residual = every known top outside a place."""
+    pts = [q for q in points if b_lo <= q[1] <= b_hi]
+    need = ref_tp_need(n_family)
+    body = [q for q in pts if q[1] < b_hi]
+    cnt = Counter(b for _, b, _ in body)
+    c = [cnt.get(b, 0) for b in range(b_lo, b_hi)]
+    zones = []
+    for lo, hi, _ in ref_tp_regions(c):
+        sel = [q for q in body if b_lo + lo <= q[1] <= b_lo + hi]
+        if len({sid for _, _, sid in sel}) >= need: zones += ref_tp_bands(sel, n_family, b_lo + lo, b_lo + hi)["zones"]
     near0 = lambda z: 0 if z["price"][0] <= 0 < z["price"][1] else z["price"][0] if z["price"][0] > 0 else -z["price"][1]
     zones.sort(key=lambda z: (z["time"][0], -z["n"], near0(z)))
     used = {sid for z in zones for sid in z["members"]}
@@ -936,8 +956,8 @@ def _verify_zones(snap, zm, ev, ref):
     alg = dict(version=TABLE_CELLS_VERSION) if table else dict(version=TP_BANDS_VERSION) if tp else get("ALG:ZONE-MAP-3")
     t_first, t_last = formed + 15 * win + 5, end - 5
     b_lo, b_hi = (t_first - formed) // 15, (t_last - formed) // 15
-    if tp and (rule == "TP_NONE" or ev == "X"): R = dict(zones=[], residual=sorted({sid for _, _, sid in pts}), need=ref_tp_need(snap["N"]))
-    elif tp: R = ref_tp_bands(pts, snap["N"], b_lo, b_hi)
+    if tp and rule == "TP_NONE": R = dict(zones=[], residual=sorted({sid for _, _, sid in pts}), need=ref_tp_need(snap["N"]))
+    elif tp: R = (ref_tp_xplaces if ev == "X" else ref_tp_bands)(pts, snap["N"], b_lo, b_hi)
     else: R = (ref_table_map if table else ref_zone_map)(pts, snap["N"], b_lo, b_hi)
     if zm.get("algorithm_version") != alg["version"]: v.append(("ALGORITHM", ["P3"], f"{ev}: algorithm {zm.get('algorithm_version')} is not the registry's {alg['version']}"))
     if zm.get("min_support") != R["need"]: v.append(("SUPPORT", ["P3"], f"{ev}: minimum support differs"))
@@ -1266,7 +1286,7 @@ def attach_family(out, inst, B, day, params):
             continue
         unk, none = zm["unknown_count"], zm["no_event_count"]
         for z in zm["zones"]:
-            env.d.setdefault("regions", []).append(dict(zone_id=z["zone_id"], algorithm="ALG:TABLE-CELLS-1" if snap["key"].get("zone_rule") == "TABLE_CELLS" else "ALG:TP-BANDS-1" if snap["key"].get("zone_rule") == "TP_BANDS" else "ALG:ZONE-MAP-3", event=ev, snapshot_id=sid, n_cells=len(z["cell_mask"]),
+            env.d.setdefault("regions", []).append(dict(zone_id=z["zone_id"], algorithm="ALG:TABLE-CELLS-1" if snap["key"].get("zone_rule") == "TABLE_CELLS" else "ALG:TP-BANDS-2" if snap["key"].get("zone_rule") == "TP_BANDS" else "ALG:ZONE-MAP-3", event=ev, snapshot_id=sid, n_cells=len(z["cell_mask"]),
                                                         n_zone=z["n_zone"], min_support=zm["min_support"], mask_verified=True))
             env.bundle(f"EST:B-ZONE-{ev}", cs_id, sid, "lab/zonemap24.py::evaluate", inputs, [_share_est("ESTR:ZONE-SHARE-1", z["n_zone"], N)],
                        [dict(case_set=sid, n_base=N, components=[dict(component="MEMBERSHIP", of=N, yes=z["n_zone"], unknown=unk, no_period=none)])],
