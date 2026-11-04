@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DR Lab 23.5 · сводка «Маршрут» · макет</title>
+<style>
+/* Mockup of the right panel «Сводка» of screen 23.5, variant C «Маршрут» (2026-11-04).
+   Numbers are the core's conditional example (meaning/23 §4.8), NOT market data.
+   Colours and type are the screen's own (design/sozvezdiya-23-5/src/page.html, panel.css; meaning/13 entry 26). */
+:root{--bg:#08090C;--panel:#0E1014;--line:#1C2027;--line2:#252B34;--text:#D1D4DC;--text2:#A3A8B3;--head:#A6AFBC;--ink:#EEF1F5;
+  --R:#EBA06C;--X:#72A9EC;--held:#6FB59A;--broken:#E5877F;--track:#262B35;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:13px/1.35 -apple-system,BlinkMacSystemFont,"Trebuchet MS",Roboto,Ubuntu,sans-serif;font-variant-numeric:tabular-nums}
+.page{padding:26px 32px 30px;min-width:0}
+.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin:0 0 6px}
+.top h1{margin:0;font-size:18px;font-weight:700;color:var(--ink)}
+.top .tag{padding:1px 6px;border:1px solid #3A4150;border-radius:3px;font-size:11px;color:var(--text2)}
+.lead{margin:0 0 20px;max-width:1100px;font-size:12.5px;color:var(--text2)}
+.moments{display:flex;flex-wrap:wrap;gap:32px}
+.col{width:292px;display:flex;flex-direction:column;gap:10px}
+.cap{height:48px;display:flex;flex-direction:column;gap:4px}
+.cap .t{font-size:20px;font-weight:700;line-height:1;color:var(--ink)}
+.cap .s{font-size:12.5px;color:var(--text2)}
+.panel{position:relative;width:292px;height:560px;padding:12px;background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+.head{display:flex;justify-content:space-between;align-items:baseline;height:16px;font-size:12px}
+.head b{color:var(--head);font-weight:600}
+.route{position:relative;height:444px}
+.line-a{position:absolute;left:21px;width:2px;border-radius:1px;background:#8F98A6}
+.line-b{position:absolute;left:21px;width:0;border-left:2px dashed #3A4150}
+.st{position:absolute;left:0;width:268px;height:52px;border-radius:6px;outline:none;cursor:default}
+.st:hover .lbl,.st:focus-visible .lbl{text-decoration:underline;text-underline-offset:3px;text-decoration-color:#5E6673}
+.st:focus-visible{box-shadow:0 0 0 1px #5E6C84}
+.st .ring{position:absolute;left:0;top:2px;width:44px;height:44px;border-radius:50%;border:2px solid transparent;background:var(--panel)}
+.st .disc{position:absolute;left:4px;top:6px;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#0E1014}
+.st .halfmark{position:absolute;left:21.25px;top:24px;width:1.5px;height:18px;background:#F4F6F8}
+.st .row1{position:absolute;left:54px;top:1px;width:214px;display:flex;justify-content:space-between;align-items:baseline}
+.st .lbl{font-size:12.5px;font-weight:600}
+.st .num{font-size:17px;font-weight:700}
+.st .sub{position:absolute;left:54px;top:21px;width:214px;font-size:10.5px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st .chip{position:absolute;left:54px;top:35px;width:214px;display:flex;align-items:center;gap:5px;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st .chip i{width:6px;height:6px;flex:none;border-radius:50%}
+.now{position:absolute;left:15px;width:14px;height:14px;border-radius:50%;background:#F4F6F8;box-shadow:0 0 0 4px rgba(244,246,248,.16)}
+.nowtxt{position:absolute;left:54px;font-size:12px;font-weight:700;color:#F4F6F8;white-space:nowrap;outline:none}
+.nowtxt span{font-weight:400;color:var(--text2)}
+.foot{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line2);padding-top:8px;outline:none}
+.foot .fh{display:flex;align-items:center;gap:8px}
+.foot .fm{display:flex;gap:20px}
+.foot .h{font-size:11px;font-weight:600;color:var(--head)}
+.foot .tg{padding:0 4px;border:1px solid #3A4150;border-radius:3px;font-size:9.5px;line-height:12px;color:var(--text2)}
+.foot .m{display:inline-flex;align-items:center;gap:4px}
+.foot .m i{width:16px;height:16px;border-radius:50%;-webkit-mask:radial-gradient(closest-side,transparent calc(100% - 3.5px),#000 calc(100% - 2.9px));mask:radial-gradient(closest-side,transparent calc(100% - 3.5px),#000 calc(100% - 2.9px))}
+.foot .m b{font-size:12.5px;color:var(--ink)}
+.foot .m b small{font-size:9px;color:var(--text2);font-weight:400}
+.foot .m em{font-style:normal;font-size:10.5px;color:var(--text2);white-space:nowrap}
+/* the inspector under the panel: what is under the mouse (the screen's #insp, panel.css) */
+.insp{width:292px;height:300px;padding:10px 14px;background:#0B0C10;border-left:1px solid var(--line);border-top:1px solid #2A2F38;font-size:12.5px;line-height:1.4;color:#C9CFD8;overflow:hidden}
+.insp .ih{display:flex;align-items:baseline;justify-content:space-between;gap:6px;font-size:14px;font-weight:600;color:#E6EAF0}
+.insp .is{margin:4px 0 8px;color:#B6BDC8;font-size:12px}
+.insp .ir{display:grid;grid-template-columns:78px 1fr;gap:6px;margin:3px 0;font-size:11.5px}
+.insp .ir span{color:#8F98A6}
+.insp .ir b{font-weight:500;color:#D1D4DC}
+.insp .if{margin-top:8px;color:#8F98A6;font-size:11px}
+.legend{margin-top:22px;max-width:1100px;display:flex;flex-wrap:wrap;gap:8px 24px;font-size:12px;color:var(--text2)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:50%}
+@media (max-width:700px){.page{padding:18px 16px}.moments{gap:22px}}
+</style>
+</head>
+<body>
+<main class="page">
+<div class="top"><h1>Сводка 23.5 · «Маршрут»</h1><span class="tag">макет</span><span class="tag">условный пример ядра §4.8 — не данные</span></div>
+<p class="lead">Правая панель экрана 23.5 вместо нынешнего текста. Станции идут в порядке метода: время отката → место в окне → цель → вершина. Заливка кружка — доля истории, обводка — что было сегодня, белая точка — «сейчас». Наведите на станцию: в инспекторе появятся её набор, мера и что она значит. Четыре момента: три — одна и та же сессия, четвёртый — другой день, где ступень взята раньше места.</p>
+<div class="moments" id="moments"></div>
+<div class="legend">
+<span><i style="background:conic-gradient(#EBA06C 0 46%, #262B35 46% 100%)"></i>доля истории (заливка)</span>
+<span><i style="background:#0E1014;box-shadow:inset 0 0 0 2px #F4F6F8"></i>сегодня было</span>
+<span><i style="background:#0E1014;box-shadow:inset 0 0 0 2px #EBA06C"></i>сегодня идёт</span>
+<span><i style="background:#0E1014;border:2px dashed #4A505B"></i>прошло без события</span>
+<span><i style="background:#F4F6F8;width:10px;height:10px"></i>сейчас</span>
+<span><i style="background:#F7C948;width:8px;height:8px"></i>порядок не как в методе</span>
+</div>
+</main>
+<script>
+'use strict';
+// ---------- illustrative frame: the core's conditional example (meaning/23 §4.8), NOT market data ----------
+// F: 100 sessions; DR held 80, broke 18, undetermined 2. T: the 80 held sessions. Windows of T's R clock:
+// before 2 (2,5 %), W1 10:45–11:45 37 (46,3 %), W2 15 (18,8 %), later 23 (28,8 %), top at once 3 (3,8 %).
+// W1 places: R1 +0,1…−0,2 SD 20 of 37 (54,1 %), R2 −0,5…−0,7 9 (24,3 %). W1 ladder «дошли до»: +0,5 89 %, +1,0 70 %,
+// +1,5 38 %, +2,0 16 %. W1 places of the top (0,2 SD): X1 +0,6…+0,8 16 %, X2 +1,2…+1,4 24 %; top in the last 15 min 14 %.
+// Clock lines: ½ of T's pullbacks by 11:35, 70 % by 12:20; ½ of W1's tops by 12:45, 70 % by 14:00.
+const C = { R: '#EBA06C', Rh: '#F6C9A6', X: '#72A9EC', Xh: '#A9CBF3', held: '#6FB59A', track: '#262B35', warn: '#F7C948' };
+const FRAME = 'RDR · ср · лонг · 10:30–10:45';
+
+// Each station: what it shows, the set and denominator, the SC-1.1 estimand behind its number (already registered;
+// no new measure), what it does not mean (core §7, §8) and what lights on the chart when it is hovered.
+const STATIONS = [
+  { id: 'conf', kind: 'conf', color: C.held, label: 'Подтверждение', num: '10:35', sub: 'лонг · окно подтверждения 10:30–10:45',
+    what: 'Факт сегодня: первое закрытие M5 за DR. Окно подтверждения — ключ семьи.', set: 'сегодня', est: 'факт пути', not: '—', chart: 'плашка ↑ 10:35' },
+  { id: 'dr', kind: 'pie', p: 80, color: C.held, label: 'DR удержали', num: '80%', sub: 'сломали 18% · вся семья',
+    what: 'Исход DR семьи — единственная 100 % ядра: удержали 80 %, сломали 18 %, не определено 2 %. Всё ниже — только true-сессии (удержали).',
+    set: 'вся семья F · от N', est: 'EST:B-DR', not: 'не вероятность сегодня', chart: '—' },
+  { id: 'w1', kind: 'pie', p: 46.25, color: C.R, label: 'Окно отката W1', num: '46%', sub: '10:45–11:45 · от true-сессий',
+    what: 'У 46 % true-сессий откат до вершины был в окне W1: от начала первого пучка до медианы.',
+    set: 'true-сессии T · от |T|', est: 'EST:B-RX-WINDOW-R на T', not: 'не время входа и не «откат сегодня будет здесь»', chart: 'капсула W1 на ленте; колонка и созвездия — сессии W1' },
+  { id: 'r1', kind: 'pie', p: 54.05, color: C.R, hold: C.Rh, label: 'Место R1', num: '54%', sub: '+0,1…−0,2 SD · R2 24% −0,5…−0,7',
+    what: 'Из сессий окна W1 у 54 % откат был в полосе +0,1…−0,2 SD (это 25 % всех true). Второе место R2 −0,5…−0,7 — 24 %.',
+    set: 'сессии окна W1 · от |T_W|', est: 'EST:B-ZONE-R на T_W', not: 'не вход и не стоп', chart: 'созвездие R1 (дымка, звёзды, нити)' },
+  { id: 'half', kind: 'clock', clock: 'e4', color: C.R, label: '½ откатов', num: '11:35', sub: 'к 11:35 откат был у половины true',
+    what: 'Линия ½: к 11:35 откат до вершины уже был у половины true-сессий. Заливка — у скольких он по часам уже позади к срезу.',
+    set: 'true-сессии T · от |T|', est: 'EST:B-CLOCK-R на T (часть «раньше»)', not: 'не «откат сегодня уже был»', chart: 'линия ½ на ленте, сторона R' },
+  { id: 'tgt', kind: 'pie', p: 70.3, color: C.X, label: 'Цель +1,0', num: '70%', sub: 'дошли · +0,5 89 · +1,5 38 · +2,0 16',
+    what: 'До +1,0 дошли 70 % сессий окна W1: их вершина хода не ниже +1,0. Ступени: +0,5 — 89 %, +1,5 — 38 %, +2,0 — 16 %.',
+    set: 'сессии окна W1 · от |T_W|', est: 'EST:B-RX-BAND-X на T_W (клетки ≥ уровня)', not: 'не цель и не прогноз', chart: 'уровень +1,0 и сессии, дошедшие до него' },
+  { id: 'x2', kind: 'pie', p: 24.3, color: C.X, hold: C.Xh, label: 'Место вершины X2', num: '24%', sub: '+1,2…+1,4 кончили · X1 16% +0,6…+0,8',
+    what: 'Из сессий окна W1 у 24 % ход кончился в полосе +1,2…+1,4 SD (место вершины, шаг 0,2). Вершины последних 15 минут в места не входят.',
+    set: 'сессии окна W1 · от |T_W|', est: 'EST:B-ZONE-X на T_W', not: 'не цель и не время цели', chart: 'синее созвездие X2' },
+  { id: 'halfx', kind: 'clock', clock: 'xe4', color: C.X, label: '½ вершин', num: '12:45', sub: '70% вершин к 14:00 · до закрытия 14%',
+    what: 'К 12:45 вершина хода была у половины сессий окна W1, к 14:00 — у 70 %. После медианы ход дальше бывал всё реже. У 14 % ход не кончился до закрытия.',
+    set: 'сессии окна W1 · от |T_W|', est: 'EST:B-CLOCK-X на T_W', not: 'не время цели сегодня', chart: 'линии ½ и 70 % на ленте, сторона X' }
+];
+
+// Today's facts at four cuts (closed M5 only). The first three are one session; the fourth is another day of the same
+// family, where a step was taken before price came to the place (core §6 p. 3: the author's «no trade» — shown as a fact).
+const MOMENTS = [
+  { t: '10:50', cap: 'в окне W1 · отката в место ещё не было', e4: 11, xe4: 0, nowAfter: 2, hold: {}, now: [74, 81],
+    st: { conf: ['done', '✓ 10:35'], dr: ['done', 'сегодня DR цел'], w1: ['cur', 'идёт · до 11:45'], r1: ['ahead', 'ждём · сейчас +0,15'], half: ['ahead', 'впереди'],
+          tgt: ['ahead', 'впереди · максимум +0,42'], x2: ['ahead', 'впереди'], halfx: ['ahead', 'впереди'] } },
+  { t: '11:40', cap: 'откат был в R1 · +0,5 взят · ½ откатов позади', e4: 49, xe4: 19, nowAfter: 4, hold: { r1: true }, now: [58, 69],
+    st: { conf: ['done', '✓ 10:35'], dr: ['done', 'сегодня DR цел'], w1: ['cur', 'кончается в 11:45'], r1: ['done', '✓ 10:55 · держится'], half: ['done', '✓ позади'],
+          tgt: ['cur', '+0,5 ✓ 11:20 · дальше +1,0'], x2: ['ahead', 'впереди · максимум +0,78'], halfx: ['ahead', 'впереди'] } },
+  { t: '14:30', cap: '+1,0 взят · максимум в X2 · 70 % откатов позади', e4: 85, xe4: 76, nowAfter: 7, hold: { r1: true, x2: true }, now: [31, 42],
+    st: { conf: ['done', '✓ 10:35'], dr: ['done', 'сегодня DR цел'], w1: ['past', 'прошло'], r1: ['done', '✓ 10:55 · держится'], half: ['done', '✓ позади'],
+          tgt: ['done', '✓ 12:40'], x2: ['cur', 'максимум сегодня +1,31 — здесь'], halfx: ['done', '✓ позади · дальше ход реже'] } },
+  { t: '11:05', cap: 'другой день · ступень взята раньше места', e4: 24, xe4: 3, nowAfter: 2, hold: {}, now: [70, 77], warn: 'tgt',
+    st: { conf: ['done', '✓ 10:35'], dr: ['done', 'сегодня DR цел'], w1: ['cur', 'идёт · до 11:45'], r1: ['ahead', 'ждём · сейчас +0,38'], half: ['ahead', 'впереди'],
+          tgt: ['cur', '+0,5 ✓ 10:50 — раньше места R1'], x2: ['ahead', 'впереди'], halfx: ['ahead', 'впереди'] } }
+];
+
+// Today's state of a station → its outline and type (the colour catalogue of meaning/13 entry 26: white = was, own
+// colour = going on, slate dashed = passed without the event)
+const LOOK = {
+  done: { ring: '#F4F6F8', style: 'solid', label: '#EEF1F5', num: '#EEF1F5', chip: '#EEF1F5', dot: '#F4F6F8', op: 1 },
+  cur: { ring: null, style: 'solid', label: '#EEF1F5', num: '#EEF1F5', chip: '#EEF1F5', dot: null, op: 1 },
+  ahead: { ring: 'transparent', style: 'solid', label: '#C9CFD8', num: '#D1D4DC', chip: '#A3A8B3', dot: '#5B6270', op: 0.85 },
+  past: { ring: '#4A505B', style: 'dashed', label: '#8F98A6', num: '#8F98A6', chip: '#8F98A6', dot: '#4A505B', op: 0.45 }
+};
+const ROW = 52, NOWROW = 22;
+const pie = (p, col) => 'conic-gradient(' + col + ' 0deg ' + (p * 3.6).toFixed(2) + 'deg, ' + C.track + ' ' + (p * 3.6).toFixed(2) + 'deg 360deg)';
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+
+function stationHtml(s, m, top) {
+  const [state, chip] = m.st[s.id], L = LOOK[state], col = (m.hold[s.id] && s.hold) || s.color;
+  const fill = s.kind === 'conf' ? s.color : s.kind === 'clock' ? pie(m[s.clock], col) : pie(s.p, col);
+  const warn = m.warn === s.id;
+  return '<div class="st" tabindex="0" data-st="' + s.id + '" style="top:' + top + 'px" aria-label="' + esc(s.label + ' ' + s.num + '. ' + chip) + '">' +
+    '<div class="ring" style="border-color:' + (L.ring || col) + ';border-style:' + L.style + '"></div>' +
+    '<div class="disc" style="background:' + fill + ';opacity:' + L.op + '">' + (s.kind === 'conf' ? '↑' : '') + '</div>' +
+    (s.kind === 'clock' ? '<div class="halfmark"></div>' : '') +
+    '<div class="row1"><span class="lbl" style="color:' + L.label + '">' + esc(s.label) + '</span><span class="num" style="color:' + L.num + '">' + esc(s.num) + '</span></div>' +
+    '<div class="sub">' + esc(s.sub) + '</div>' +
+    '<div class="chip" style="color:' + L.chip + '"><i style="background:' + (warn ? C.warn : (L.dot || col)) + '"></i>' + esc(chip) + '</div></div>';
+}
+
+function panelHtml(m) {
+  let y = 0, nowTop = 0;
+  const rows = [];
+  STATIONS.forEach((s, i) => {
+    rows.push(stationHtml(s, m, y));
+    y += ROW;
+    if (i === m.nowAfter) { nowTop = y + 2; y += NOWROW; }
+  });
+  const first = 24, last = (STATIONS.length - 1) * ROW + NOWROW * (m.nowAfter < STATIONS.length - 1 ? 1 : 0) + 24, nowC = nowTop + 7;
+  const aTop = first, aH = Math.max(0, Math.min(nowC, last) - first), bTop = Math.min(nowC, last), bH = Math.max(0, last - nowC);
+  const meter = (p, col) => 'conic-gradient(' + col + ' 0deg ' + (p * 3.6).toFixed(1) + 'deg, ' + C.track + ' ' + (p * 3.6).toFixed(1) + 'deg 360deg)';
+  return '<div class="panel">' +
+    '<div class="head"><b>' + FRAME + '</b><span>после ' + m.t + '</span></div>' +
+    '<div class="route">' +
+      '<div class="line-a" style="top:' + aTop + 'px;height:' + aH + 'px"></div>' +
+      '<div class="line-b" style="top:' + bTop + 'px;height:' + bH + 'px"></div>' +
+      rows.join('') +
+      '<div class="now" style="top:' + nowTop + 'px"></div>' +
+      '<div class="nowtxt" tabindex="0" data-st="now" style="top:' + (nowTop - 1) + 'px">сейчас ' + m.t + '<span> · откатов позади ' + m.e4 + '%</span></div>' +
+    '</div>' +
+    '<div class="foot" tabindex="0" data-st="nowlayer"><div class="fh"><span class="h">Дальше у похожих</span><span class="tg">вся семья</span></div><div class="fm">' +
+      '<span class="m"><i style="background:' + meter(m.now[0], C.R) + '"></i><b>' + m.now[0] + '<small>%</small></b><em>R глубже</em></span>' +
+      '<span class="m"><i style="background:' + meter(m.now[1], C.X) + '"></i><b>' + m.now[1] + '<small>%</small></b><em>X дальше</em></span>' +
+    '</div></div></div>';
+}
+
+// the inspector: the passport of the hovered element; at rest the family's frame (as the screen's «Слепок семьи»)
+function inspHtml(m, id) {
+  const row = (k, v) => '<div class="ir"><span>' + k + '</span><b>' + v + '</b></div>';
+  if (!id) return '<div class="ih">Слепок семьи</div><div class="is">' + FRAME + ' · история 2006–2025</div>' +
+    row('семья', 'N 100 · DR удержали 80') + row('true', '80 сессий: на них часы отката и окна') + row('окно W1', '37 сессий: колонка цены, места, продолжение') +
+    row('срез', 'последняя закрытая M5 · ' + m.t) + '<div class="if">Условный пример ядра TP §4.8 — не рыночные данные. Наведите на станцию.</div>';
+  if (id === 'now') return '<div class="ih">Сейчас ' + m.t + '<span>' + m.e4 + '%</span></div>' +
+    '<div class="is">У ' + m.e4 + ' % true-сессий откат до вершины по часам был раньше этого среза.</div>' +
+    row('набор', 'true-сессии T · от |T|') + row('мера', 'EST:B-CLOCK-R на T, срез ' + m.t) + row('на графике', 'срез на ленте') + '<div class="if">не значит: «откат сегодня уже был»</div>';
+  if (id === 'nowlayer') return '<div class="ih">Дальше у похожих</div>' +
+    '<div class="is">У сессий всей семьи, живых к ' + m.t + ', откат позже уходил глубже сегодняшней точки — ' + m.now[0] + ' %; ход позже шёл дальше сегодняшнего максимума — ' + m.now[1] + ' %.</div>' +
+    row('набор', 'вся семья F, живые к срезу (NOW-1.0)') + row('мера', 'EST:N-NEW-R, EST:N-NEW-X') + row('на графике', 'отметки «Сейчас» у шкалы цены') +
+    '<div class="if">Пока по всей семье, а не по true: перевод на T открыт (ядро §6). Не прогноз.</div>';
+  const s = STATIONS.find(q => q.id === id), [state, chip] = m.st[id];
+  return '<div class="ih">' + esc(s.label) + '<span>' + esc(s.num) + '</span></div><div class="is">' + esc(s.what) + '</div>' +
+    row('набор', esc(s.set)) + row('мера', esc(s.est)) + row('сегодня', esc(chip)) + row('на графике', esc(s.chart)) +
+    (m.warn === id ? '<div class="if" style="color:#F7C948">У автора: ступень взята раньше, чем цена пришла в место отката, — сделки нет. Экран показывает только факт.</div>' : '') +
+    '<div class="if">не значит: ' + esc(s.not) + '</div>';
+}
+
+const root = document.getElementById('moments');
+root.innerHTML = MOMENTS.map((m, i) => '<section class="col" data-m="' + i + '"><div class="cap"><div class="t">' + m.t + '</div><div class="s">' + esc(m.cap) + '</div></div>' +
+  panelHtml(m) + '<div class="insp" aria-live="polite">' + inspHtml(m, null) + '</div></section>').join('');
+root.querySelectorAll('.col').forEach(col => {
+  const m = MOMENTS[+col.dataset.m], insp = col.querySelector('.insp');
+  const show = el => { insp.innerHTML = inspHtml(m, el ? el.dataset.st : null); };
+  col.querySelectorAll('[data-st]').forEach(el => {
+    el.addEventListener('mouseenter', () => show(el));
+    el.addEventListener('focus', () => show(el));
+    el.addEventListener('mouseleave', () => show(null));
+    el.addEventListener('blur', () => show(null));
+  });
+});
+</script>
+</body>
+</html>
