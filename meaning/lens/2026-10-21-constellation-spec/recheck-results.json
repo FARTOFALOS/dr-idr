@@ -1,0 +1,322 @@
+{
+ "author": "Claude (Opus 5.5), independent recheck of Codex CN-1",
+ "scope": "aggregates only; history < 2026-01-01",
+ "codex_files_intact": {
+  "algorithm.json": true,
+  "lens19_check.py": true,
+  "probe-results.json": true,
+  "probe.py": true,
+  "PROTOCOL.md": true,
+  "semantic-counterexamples.json": true,
+  "SPEC.md": true,
+  "synthetic-results.json": true,
+  "verify_package.py": true
+ },
+ "checkpoint_json_present": false,
+ "A_numeric_digest_reproduced": true,
+ "A_scale_recovery_min_max": {
+  "1/10/20": [
+   0.25925925925925924,
+   0.9642857142857143
+  ],
+  "1/5/20": [
+   0.375,
+   1.0
+  ],
+  "3/20/15": [
+   0.4791666666666667,
+   1.0
+  ],
+  "3/20/25": [
+   0.7461538461538462,
+   1.0
+  ]
+ },
+ "A_scale_maps_below_0_5": 8,
+ "C_border_rules": {
+  "maps": 540,
+  "maps_with_shared": 3,
+  "shared_cases": 3,
+  "maps_with_small_component": 18,
+  "small_component_cases": 105,
+  "maps_one_zone": 179,
+  "maps_no_zone": 5,
+  "cases": 50412
+ },
+ "B_deletion10_recovery_by_original_zone_size": {
+  "zone-map-3": {
+   "<15": {
+    "zone_draws": 340,
+    "mean_recovery": 0.7226664654389567
+   },
+   "15-29": {
+    "zone_draws": 300,
+    "mean_recovery": 0.8248974963761116
+   },
+   ">=30": {
+    "zone_draws": 180,
+    "mean_recovery": 0.9157089753526478
+   }
+  },
+  "CN-1": {
+   "<15": {
+    "zone_draws": 220,
+    "mean_recovery": 0.7528533209215027
+   },
+   "15-29": {
+    "zone_draws": 120,
+    "mean_recovery": 0.926218961971856
+   },
+   ">=30": {
+    "zone_draws": 220,
+    "mean_recovery": 0.9684157413556469
+   }
+  }
+ },
+ "D_half_sample_maps": [
+  {
+   "label": "NQ ADR R",
+   "zone_map_3": 0.6707278138528139,
+   "cn1": 0.643367778055278,
+   "zones_zone_map_3": 2,
+   "zones_cn1": 2
+  },
+  {
+   "label": "NQ ADR X",
+   "zone_map_3": 0.8594745532245532,
+   "cn1": 0.9504310966810967,
+   "zones_zone_map_3": 1,
+   "zones_cn1": 1
+  },
+  {
+   "label": "NQ ODR R",
+   "zone_map_3": 0.5253889548158548,
+   "cn1": 0.7567058197694321,
+   "zones_zone_map_3": 2,
+   "zones_cn1": 1
+  },
+  {
+   "label": "NQ ODR X",
+   "zone_map_3": 0.6076628272971152,
+   "cn1": 0.8803433748334644,
+   "zones_zone_map_3": 3,
+   "zones_cn1": 1
+  },
+  {
+   "label": "NQ RDR R",
+   "zone_map_3": 0.6149541940201854,
+   "cn1": 0.7775417892877999,
+   "zones_zone_map_3": 2,
+   "zones_cn1": 1
+  },
+  {
+   "label": "NQ RDR X",
+   "zone_map_3": 0.7038663181131598,
+   "cn1": 0.902444251225211,
+   "zones_zone_map_3": 2,
+   "zones_cn1": 1
+  },
+  {
+   "label": "ES ADR R",
+   "zone_map_3": 0.4783155345471522,
+   "cn1": 0.6312104847766612,
+   "zones_zone_map_3": 4,
+   "zones_cn1": 2
+  },
+  {
+   "label": "ES ADR X",
+   "zone_map_3": 0.39785603242646583,
+   "cn1": 0.650842895172423,
+   "zones_zone_map_3": 4,
+   "zones_cn1": 2
+  },
+  {
+   "label": "ES ODR R",
+   "zone_map_3": 0.7716933814597531,
+   "cn1": 0.9139185183935975,
+   "zones_zone_map_3": 1,
+   "zones_cn1": 1
+  },
+  {
+   "label": "ES ODR X",
+   "zone_map_3": 0.5978402167005108,
+   "cn1": 0.6256447963800905,
+   "zones_zone_map_3": 3,
+   "zones_cn1": 2
+  },
+  {
+   "label": "ES RDR R",
+   "zone_map_3": 0.6658631563654783,
+   "cn1": 0.9264885939777149,
+   "zones_zone_map_3": 2,
+   "zones_cn1": 1
+  },
+  {
+   "label": "ES RDR X",
+   "zone_map_3": 0.6899015839466691,
+   "cn1": 0.6811514125852361,
+   "zones_zone_map_3": 2,
+   "zones_cn1": 3
+  },
+  {
+   "label": "YM ADR R",
+   "zone_map_3": 0.4206665903540904,
+   "cn1": 0.5724915035944448,
+   "zones_zone_map_3": 2,
+   "zones_cn1": 1
+  },
+  {
+   "label": "YM ADR X",
+   "zone_map_3": 0.5449754187805659,
+   "cn1": 0.740315170940171,
+   "zones_zone_map_3": 2,
+   "zones_cn1": 2
+  },
+  {
+   "label": "YM ODR R",
+   "zone_map_3": 0.5723500869932927,
+   "cn1": 0.8430507909964432,
+   "zones_zone_map_3": 2,
+   "zones_cn1": 1
+  },
+  {
+   "label": "YM ODR X",
+   "zone_map_3": 0.6410834386202033,
+   "cn1": 0.6257060074428495,
+   "zones_zone_map_3": 3,
+   "zones_cn1": 2
+  },
+  {
+   "label": "YM RDR R",
+   "zone_map_3": 0.7804609728506787,
+   "cn1": 0.812634189538046,
+   "zones_zone_map_3": 1,
+   "zones_cn1": 1
+  },
+  {
+   "label": "YM RDR X",
+   "zone_map_3": 0.6344017556517556,
+   "cn1": 0.7040930365930366,
+   "zones_zone_map_3": 3,
+   "zones_cn1": 3
+  }
+ ],
+ "D_half_sample_R": {
+  "maps": 9,
+  "zone_map_3": 0.6111578539177,
+  "cn1": 0.7641566075988242,
+  "cn1_higher": 8
+ },
+ "D_half_sample_X": {
+  "maps": 9,
+  "zone_map_3": 0.6307846827512221,
+  "cn1": 0.7512191157615088,
+  "cn1_higher": 7
+ },
+ "E_ym_rdr_late_R": {
+  "N": 157,
+  "support_m": 8,
+  "late_deep_known": 60,
+  "late_deep_share": 0.3821656050955414,
+  "scales": {
+   "3/20/20": {
+    "declared_in": "CN-1",
+    "best_late_neighbourhood": 6,
+    "zones": [
+     {
+      "n": 41,
+      "core_time_et": [
+       635,
+       715
+      ]
+     }
+    ]
+   },
+   "1/10/20": {
+    "declared_in": "protocol",
+    "best_late_neighbourhood": 5,
+    "zones": [
+     {
+      "n": 32,
+      "core_time_et": [
+       635,
+       685
+      ]
+     }
+    ]
+   },
+   "1/5/20": {
+    "declared_in": "protocol",
+    "best_late_neighbourhood": 7,
+    "zones": [
+     {
+      "n": 44,
+      "core_time_et": [
+       635,
+       715
+      ]
+     }
+    ]
+   },
+   "3/20/15": {
+    "declared_in": "protocol",
+    "best_late_neighbourhood": 6,
+    "zones": [
+     {
+      "n": 28,
+      "core_time_et": [
+       635,
+       665
+      ]
+     }
+    ]
+   },
+   "3/20/25": {
+    "declared_in": "protocol",
+    "best_late_neighbourhood": 7,
+    "zones": [
+     {
+      "n": 43,
+      "core_time_et": [
+       635,
+       720
+      ]
+     }
+    ]
+   },
+   "1/4/30": {
+    "declared_in": "exploratory",
+    "best_late_neighbourhood": 12,
+    "zones": [
+     {
+      "n": 57,
+      "core_time_et": [
+       635,
+       735
+      ]
+     },
+     {
+      "n": 44,
+      "core_time_et": [
+       835,
+       955
+      ]
+     }
+    ]
+   },
+   "3/10/45": {
+    "declared_in": "exploratory",
+    "best_late_neighbourhood": 21,
+    "zones": [
+     {
+      "n": 122,
+      "core_time_et": [
+       635,
+       955
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

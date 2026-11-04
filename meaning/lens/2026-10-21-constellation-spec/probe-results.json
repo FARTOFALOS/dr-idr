@@ -1,0 +1,1711 @@
+{
+  "algorithm": "constellation-neighbourhood-1",
+  "price_radius": "3/20",
+  "time_radius": 20,
+  "protocol_sha256": "622f59da24bf195e3d2c2452ad2e379edaddbced7e3dacd95b7345c81c97b3fd",
+  "source_sha256": "82717185e78af73607be0178eef0aae07861301e284dba8b996c96cb8fe4a86e",
+  "synthetic": {
+    "outcome": "PASS",
+    "assertions": 31,
+    "cases": [
+      "one compact island, no forced 70 percent coverage",
+      "two islands",
+      "same price at separate hours is not one time-price constellation",
+      "sparse field has no forced region",
+      "dense plateau remains one component",
+      "non-core bridge cannot merge cores",
+      "dense bridge is explicitly one ridge",
+      "shared border is residual, not arbitrary assignment",
+      "input permutation invariance",
+      "translation invariance without a bin origin",
+      "tick representation invariance",
+      "different cases at the same location retain their votes",
+      "duplicate case id rejected",
+      "non-coordinate cases remain in N and support threshold",
+      "closed exact neighbourhood boundary",
+      "outside exact time boundary",
+      "source time domain clips region, not member counts",
+      "small component is residual without reassignment",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership",
+      "region predicate equals membership"
+    ]
+  },
+  "repository_commit": "f35faaeb54d445d4d17de6264d096b6005ac9e6d",
+  "calculator_sha256_lf": {
+    "lab/scene24.py": "738108a7dbe4182a6444c9cf55eea415999bdaff123d84f4650169ae744e2590",
+    "lab/scene21.py": "34c5dbf8d42d2cd9841be15abc5fa997ff0984fdffe12660e04b967ca94fdd63",
+    "lab/zonemap24.py": "b929c558ec7b31a1b15e71fe26256af50ef5392c06aa51a94688360409b33f1e"
+  },
+  "historical": {
+    "scope": "270 fixed end-of-2025 confirmation families, R and X separately; not walk-forward",
+    "family_event_maps": 540,
+    "base_versions": {
+      "NQ": {
+        "base": "dr-lab-boxes-1",
+        "boxes": 14312,
+        "built": 1790625423,
+        "history": "2006-01-01..2025-12-31"
+      },
+      "ES": {
+        "base": "dr-lab-boxes-1",
+        "boxes": 15092,
+        "built": 1790625468,
+        "history": "2006-01-01..2025-12-31"
+      },
+      "YM": {
+        "base": "dr-lab-boxes-1",
+        "boxes": 14507,
+        "built": 1790625486,
+        "history": "2006-01-01..2025-12-31"
+      }
+    },
+    "groups": {
+      "ADR R N20-59": {
+        "family_event_maps": 21,
+        "mean_N": 49,
+        "old": {
+          "zones": 2.1904761904761907,
+          "covered": 14.952380952380953,
+          "coverage": 0.3045196855591155,
+          "largest_share": 0.18586626386985738,
+          "largest_price_span": 0.5843683292002213,
+          "largest_time_span": 55.95238095238095
+        },
+        "cn1": {
+          "zones": 1.2857142857142858,
+          "covered": 10.047619047619047,
+          "coverage": 0.201562910336579,
+          "largest_share": 0.16575729155945754,
+          "largest_price_span": 0.37820614095213384,
+          "largest_time_span": 29.047619047619047
+        }
+      },
+      "ADR R N>=60": {
+        "family_event_maps": 69,
+        "mean_N": 101.42028985507247,
+        "old": {
+          "zones": 2.4057971014492754,
+          "covered": 25.73913043478261,
+          "coverage": 0.2602832096318835,
+          "largest_share": 0.1539408201347554,
+          "largest_price_span": 0.6945595817536645,
+          "largest_time_span": 77.3913043478261
+        },
+        "cn1": {
+          "zones": 1.8985507246376812,
+          "covered": 22.28985507246377,
+          "coverage": 0.2265417417312025,
+          "largest_share": 0.16650929845342127,
+          "largest_price_span": 0.508637289140053,
+          "largest_time_span": 47.53623188405797
+        }
+      },
+      "ADR X N20-59": {
+        "family_event_maps": 21,
+        "mean_N": 49,
+        "old": {
+          "zones": 2.380952380952381,
+          "covered": 15.095238095238095,
+          "coverage": 0.3030368339522783,
+          "largest_share": 0.16675930702058914,
+          "largest_price_span": 0.5614017077449095,
+          "largest_time_span": 63.57142857142857
+        },
+        "cn1": {
+          "zones": 1.5714285714285714,
+          "covered": 9.857142857142858,
+          "coverage": 0.2003205739677348,
+          "largest_share": 0.15243201487150296,
+          "largest_price_span": 0.33200248451232445,
+          "largest_time_span": 29.523809523809526
+        }
+      },
+      "ADR X N>=60": {
+        "family_event_maps": 69,
+        "mean_N": 101.42028985507247,
+        "old": {
+          "zones": 2.4782608695652173,
+          "covered": 26.014492753623188,
+          "coverage": 0.26772271701626266,
+          "largest_share": 0.16150607829318647,
+          "largest_price_span": 0.729710026059131,
+          "largest_time_span": 74.05797101449275
+        },
+        "cn1": {
+          "zones": 1.855072463768116,
+          "covered": 21.666666666666668,
+          "coverage": 0.21998024942046523,
+          "largest_share": 0.15853668826839398,
+          "largest_price_span": 0.5272303617074879,
+          "largest_time_span": 40.79710144927536
+        }
+      },
+      "ODR R N20-59": {
+        "family_event_maps": 23,
+        "mean_N": 49.869565217391305,
+        "old": {
+          "zones": 2.391304347826087,
+          "covered": 19.434782608695652,
+          "coverage": 0.388456501026546,
+          "largest_share": 0.21314637205679218,
+          "largest_price_span": 0.6563682306310383,
+          "largest_time_span": 76.95652173913044
+        },
+        "cn1": {
+          "zones": 2,
+          "covered": 13.73913043478261,
+          "coverage": 0.27181863779882104,
+          "largest_share": 0.17237507574062805,
+          "largest_price_span": 0.35763940054625315,
+          "largest_time_span": 38.47826086956522
+        }
+      },
+      "ODR R N>=60": {
+        "family_event_maps": 67,
+        "mean_N": 111.5223880597015,
+        "old": {
+          "zones": 3.044776119402985,
+          "covered": 35.014925373134325,
+          "coverage": 0.34249130093830843,
+          "largest_share": 0.1706174627687116,
+          "largest_price_span": 0.6752730651264728,
+          "largest_time_span": 71.64179104477611
+        },
+        "cn1": {
+          "zones": 2.4925373134328357,
+          "covered": 31.791044776119403,
+          "coverage": 0.29946290229443695,
+          "largest_share": 0.18879454574285065,
+          "largest_price_span": 0.5835494372579489,
+          "largest_time_span": 47.46268656716418
+        }
+      },
+      "ODR X N20-59": {
+        "family_event_maps": 23,
+        "mean_N": 49.869565217391305,
+        "old": {
+          "zones": 2.5217391304347827,
+          "covered": 18.17391304347826,
+          "coverage": 0.3629665130055436,
+          "largest_share": 0.2036179862988555,
+          "largest_price_span": 0.624207338990896,
+          "largest_time_span": 60.43478260869565
+        },
+        "cn1": {
+          "zones": 1.7391304347826086,
+          "covered": 14.043478260869565,
+          "coverage": 0.2765143970360326,
+          "largest_share": 0.20706626760549082,
+          "largest_price_span": 0.43157652673829416,
+          "largest_time_span": 40
+        }
+      },
+      "ODR X N>=60": {
+        "family_event_maps": 67,
+        "mean_N": 111.5223880597015,
+        "old": {
+          "zones": 2.8955223880597014,
+          "covered": 35,
+          "coverage": 0.3284958400109282,
+          "largest_share": 0.1798256151863351,
+          "largest_price_span": 0.6999253543635666,
+          "largest_time_span": 67.38805970149254
+        },
+        "cn1": {
+          "zones": 2.1044776119402986,
+          "covered": 31.597014925373134,
+          "coverage": 0.3014334812386562,
+          "largest_share": 0.2197254676124143,
+          "largest_price_span": 0.6861324714862145,
+          "largest_time_span": 47.014925373134325
+        }
+      },
+      "RDR R N20-59": {
+        "family_event_maps": 21,
+        "mean_N": 50.523809523809526,
+        "old": {
+          "zones": 2.6666666666666665,
+          "covered": 18.857142857142858,
+          "coverage": 0.3733659861679415,
+          "largest_share": 0.1981327142274683,
+          "largest_price_span": 0.5726333839070868,
+          "largest_time_span": 53.80952380952381
+        },
+        "cn1": {
+          "zones": 2.619047619047619,
+          "covered": 17.238095238095237,
+          "coverage": 0.33288920320039295,
+          "largest_share": 0.18626341357387588,
+          "largest_price_span": 0.3757106467623536,
+          "largest_time_span": 37.38095238095238
+        }
+      },
+      "RDR R N>=60": {
+        "family_event_maps": 69,
+        "mean_N": 108.68115942028986,
+        "old": {
+          "zones": 2.6956521739130435,
+          "covered": 36.594202898550726,
+          "coverage": 0.3440882795138074,
+          "largest_share": 0.19117648627321285,
+          "largest_price_span": 0.6762111216426916,
+          "largest_time_span": 68.76811594202898
+        },
+        "cn1": {
+          "zones": 2.3043478260869565,
+          "covered": 35.492753623188406,
+          "coverage": 0.3375931572179406,
+          "largest_share": 0.23974761130852876,
+          "largest_price_span": 0.6173671868944609,
+          "largest_time_span": 55.869565217391305
+        }
+      },
+      "RDR X N20-59": {
+        "family_event_maps": 21,
+        "mean_N": 50.523809523809526,
+        "old": {
+          "zones": 2.3333333333333335,
+          "covered": 17.761904761904763,
+          "coverage": 0.3455596499517831,
+          "largest_share": 0.20310175253142237,
+          "largest_price_span": 0.6007696710393801,
+          "largest_time_span": 71.42857142857143
+        },
+        "cn1": {
+          "zones": 1.9047619047619047,
+          "covered": 13.380952380952381,
+          "coverage": 0.259185957045902,
+          "largest_share": 0.17646603103212866,
+          "largest_price_span": 0.36227475058819636,
+          "largest_time_span": 37.61904761904762
+        }
+      },
+      "RDR X N>=60": {
+        "family_event_maps": 69,
+        "mean_N": 108.68115942028986,
+        "old": {
+          "zones": 2.9130434782608696,
+          "covered": 36.6231884057971,
+          "coverage": 0.3479404742038055,
+          "largest_share": 0.18747263019872862,
+          "largest_price_span": 0.7193466359661004,
+          "largest_time_span": 58.91304347826087
+        },
+        "cn1": {
+          "zones": 2.4782608695652173,
+          "covered": 34.927536231884055,
+          "coverage": 0.32384494155403265,
+          "largest_share": 0.21474754948164954,
+          "largest_price_span": 0.6225513262077612,
+          "largest_time_span": 44.130434782608695
+        }
+      }
+    },
+    "diagnostics": [
+      {
+        "label": "NQ ADR R Tuesday long window0",
+        "N": 151,
+        "known": 120,
+        "source_statuses": {
+          "unknown": 31,
+          "known": 120
+        },
+        "old": {
+          "zones": 2,
+          "covered": 29,
+          "coverage": 0.19205298013245034,
+          "largest_share": 0.09933774834437085,
+          "largest_price_span": 0.8916666666666667,
+          "largest_time_span": 60
+        },
+        "cn1": {
+          "zones": 2,
+          "covered": 26,
+          "coverage": 0.17218543046357615,
+          "largest_share": 0.11920529801324503,
+          "largest_price_span": 0.4478228228228228,
+          "largest_time_span": 40
+        },
+        "deletion_recovery_old": 0.7601877289377289,
+        "deletion_recovery_cn1": 0.8841531217750258,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 15,
+            "coverage": 0.09933774834437085,
+            "largest_share": 0.09933774834437085,
+            "largest_price_span": 0.3368526897938663,
+            "largest_time_span": 25,
+            "recovery": 0.4166666666666667
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 32,
+            "coverage": 0.2119205298013245,
+            "largest_share": 0.152317880794702,
+            "largest_price_span": 0.7352941176470589,
+            "largest_time_span": 45,
+            "recovery": 0.8357487922705313
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 1,
+            "covered": 18,
+            "coverage": 0.11920529801324503,
+            "largest_share": 0.11920529801324503,
+            "largest_price_span": 0.4478228228228228,
+            "largest_time_span": 25,
+            "recovery": 0.5
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 2,
+            "covered": 30,
+            "coverage": 0.1986754966887417,
+            "largest_share": 0.13245033112582782,
+            "largest_price_span": 0.4478228228228228,
+            "largest_time_span": 50,
+            "recovery": 0.8500000000000001
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "NQ ADR X Tuesday long window0",
+        "N": 151,
+        "known": 120,
+        "source_statuses": {
+          "unknown": 31,
+          "known": 120
+        },
+        "old": {
+          "zones": 1,
+          "covered": 16,
+          "coverage": 0.10596026490066225,
+          "largest_share": 0.10596026490066225,
+          "largest_price_span": 0.2864721485411141,
+          "largest_time_span": 25
+        },
+        "cn1": {
+          "zones": 1,
+          "covered": 21,
+          "coverage": 0.1390728476821192,
+          "largest_share": 0.1390728476821192,
+          "largest_price_span": 0.4967197750702905,
+          "largest_time_span": 40
+        },
+        "deletion_recovery_old": 0.9807692307692307,
+        "deletion_recovery_cn1": 0.9798643360853113,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 17,
+            "coverage": 0.11258278145695365,
+            "largest_share": 0.11258278145695365,
+            "largest_price_span": 0.2864721485411141,
+            "largest_time_span": 25,
+            "recovery": 0.8095238095238095
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 34,
+            "coverage": 0.2251655629139073,
+            "largest_share": 0.1456953642384106,
+            "largest_price_span": 0.5340909090909091,
+            "largest_time_span": 45,
+            "recovery": 0.9545454545454546
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 1,
+            "covered": 21,
+            "coverage": 0.1390728476821192,
+            "largest_share": 0.1390728476821192,
+            "largest_price_span": 0.4967197750702905,
+            "largest_time_span": 40,
+            "recovery": 1.0
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 2,
+            "covered": 30,
+            "coverage": 0.1986754966887417,
+            "largest_share": 0.1390728476821192,
+            "largest_price_span": 0.4967197750702905,
+            "largest_time_span": 45,
+            "recovery": 1.0
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "NQ ODR R Tuesday long window0",
+        "N": 186,
+        "known": 179,
+        "source_statuses": {
+          "unknown": 7,
+          "known": 179
+        },
+        "old": {
+          "zones": 2,
+          "covered": 49,
+          "coverage": 0.26344086021505375,
+          "largest_share": 0.1827956989247312,
+          "largest_price_span": 0.6518518518518519,
+          "largest_time_span": 65
+        },
+        "cn1": {
+          "zones": 1,
+          "covered": 60,
+          "coverage": 0.3225806451612903,
+          "largest_share": 0.3225806451612903,
+          "largest_price_span": 1.0025641025641026,
+          "largest_time_span": 65
+        },
+        "deletion_recovery_old": 0.8969502542521954,
+        "deletion_recovery_cn1": 0.9144226324298652,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 38,
+            "coverage": 0.20430107526881722,
+            "largest_share": 0.20430107526881722,
+            "largest_price_span": 0.6,
+            "largest_time_span": 40,
+            "recovery": 0.6333333333333333
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 70,
+            "coverage": 0.3763440860215054,
+            "largest_share": 0.3763440860215054,
+            "largest_price_span": 1.311262026032824,
+            "largest_time_span": 70,
+            "recovery": 0.8571428571428571
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 2,
+            "covered": 54,
+            "coverage": 0.2903225806451613,
+            "largest_share": 0.20430107526881722,
+            "largest_price_span": 0.775,
+            "largest_time_span": 35,
+            "recovery": 0.6333333333333333
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 1,
+            "covered": 65,
+            "coverage": 0.34946236559139787,
+            "largest_share": 0.34946236559139787,
+            "largest_price_span": 1.1142857142857143,
+            "largest_time_span": 70,
+            "recovery": 0.9230769230769231
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "NQ ODR X Tuesday long window0",
+        "N": 186,
+        "known": 179,
+        "source_statuses": {
+          "unknown": 7,
+          "known": 179
+        },
+        "old": {
+          "zones": 3,
+          "covered": 56,
+          "coverage": 0.3010752688172043,
+          "largest_share": 0.13978494623655913,
+          "largest_price_span": 0.6680672268907563,
+          "largest_time_span": 85
+        },
+        "cn1": {
+          "zones": 1,
+          "covered": 34,
+          "coverage": 0.1827956989247312,
+          "largest_share": 0.1827956989247312,
+          "largest_price_span": 0.6796017878911012,
+          "largest_time_span": 35
+        },
+        "deletion_recovery_old": 0.8050844543705797,
+        "deletion_recovery_cn1": 0.9790094377952415,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 28,
+            "coverage": 0.15053763440860216,
+            "largest_share": 0.15053763440860216,
+            "largest_price_span": 0.4868421052631579,
+            "largest_time_span": 30,
+            "recovery": 0.8235294117647058
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 42,
+            "coverage": 0.22580645161290322,
+            "largest_share": 0.22580645161290322,
+            "largest_price_span": 0.9352239767966484,
+            "largest_time_span": 35,
+            "recovery": 0.8095238095238095
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 1,
+            "covered": 35,
+            "coverage": 0.1881720430107527,
+            "largest_share": 0.1881720430107527,
+            "largest_price_span": 0.71412864211105,
+            "largest_time_span": 35,
+            "recovery": 0.9714285714285714
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 2,
+            "covered": 45,
+            "coverage": 0.24193548387096775,
+            "largest_share": 0.1881720430107527,
+            "largest_price_span": 0.6796017878911012,
+            "largest_time_span": 55,
+            "recovery": 0.9714285714285714
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "NQ RDR R Tuesday long window0",
+        "N": 181,
+        "known": 179,
+        "source_statuses": {
+          "known": 179,
+          "unknown": 2
+        },
+        "old": {
+          "zones": 2,
+          "covered": 55,
+          "coverage": 0.30386740331491713,
+          "largest_share": 0.19337016574585636,
+          "largest_price_span": 0.9827160493827161,
+          "largest_time_span": 70
+        },
+        "cn1": {
+          "zones": 1,
+          "covered": 54,
+          "coverage": 0.2983425414364641,
+          "largest_share": 0.2983425414364641,
+          "largest_price_span": 0.7702702702702703,
+          "largest_time_span": 55
+        },
+        "deletion_recovery_old": 0.7446698017112178,
+        "deletion_recovery_cn1": 0.9251722411835296,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 40,
+            "coverage": 0.22099447513812154,
+            "largest_share": 0.22099447513812154,
+            "largest_price_span": 0.44324324324324327,
+            "largest_time_span": 50,
+            "recovery": 0.7407407407407407
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 67,
+            "coverage": 0.3701657458563536,
+            "largest_share": 0.3701657458563536,
+            "largest_price_span": 0.925899409343118,
+            "largest_time_span": 115,
+            "recovery": 0.8059701492537313
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 1,
+            "covered": 41,
+            "coverage": 0.2265193370165746,
+            "largest_share": 0.2265193370165746,
+            "largest_price_span": 0.4947600661886376,
+            "largest_time_span": 45,
+            "recovery": 0.7592592592592593
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 1,
+            "covered": 63,
+            "coverage": 0.34806629834254144,
+            "largest_share": 0.34806629834254144,
+            "largest_price_span": 0.7702702702702703,
+            "largest_time_span": 95,
+            "recovery": 0.8571428571428571
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "NQ RDR X Tuesday long window0",
+        "N": 181,
+        "known": 179,
+        "source_statuses": {
+          "known": 179,
+          "unknown": 2
+        },
+        "old": {
+          "zones": 2,
+          "covered": 75,
+          "coverage": 0.4143646408839779,
+          "largest_share": 0.2596685082872928,
+          "largest_price_span": 1.46088131927548,
+          "largest_time_span": 80
+        },
+        "cn1": {
+          "zones": 1,
+          "covered": 39,
+          "coverage": 0.2154696132596685,
+          "largest_share": 0.2154696132596685,
+          "largest_price_span": 0.5459561128526645,
+          "largest_time_span": 50
+        },
+        "deletion_recovery_old": 0.8923295967234443,
+        "deletion_recovery_cn1": 0.9774603174603175,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 32,
+            "coverage": 0.17679558011049723,
+            "largest_share": 0.17679558011049723,
+            "largest_price_span": 0.3590811128526646,
+            "largest_time_span": 45,
+            "recovery": 0.8205128205128205
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 4,
+            "covered": 92,
+            "coverage": 0.5082872928176796,
+            "largest_share": 0.23756906077348067,
+            "largest_price_span": 0.6202418271383788,
+            "largest_time_span": 65,
+            "recovery": 0.9069767441860465
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 1,
+            "covered": 35,
+            "coverage": 0.19337016574585636,
+            "largest_share": 0.19337016574585636,
+            "largest_price_span": 0.4464966533932051,
+            "largest_time_span": 45,
+            "recovery": 0.8974358974358975
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 2,
+            "covered": 55,
+            "coverage": 0.30386740331491713,
+            "largest_share": 0.2265193370165746,
+            "largest_price_span": 0.5868071766824519,
+            "largest_time_span": 55,
+            "recovery": 0.9512195121951219
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "ES ADR R Tuesday long window0",
+        "N": 142,
+        "known": 139,
+        "source_statuses": {
+          "unknown": 3,
+          "known": 139
+        },
+        "old": {
+          "zones": 4,
+          "covered": 49,
+          "coverage": 0.34507042253521125,
+          "largest_share": 0.09859154929577464,
+          "largest_price_span": 0.9125,
+          "largest_time_span": 160
+        },
+        "cn1": {
+          "zones": 2,
+          "covered": 33,
+          "coverage": 0.2323943661971831,
+          "largest_share": 0.16901408450704225,
+          "largest_price_span": 0.5227272727272727,
+          "largest_time_span": 45
+        },
+        "deletion_recovery_old": 0.7291462703962704,
+        "deletion_recovery_cn1": 0.9029819975663798,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 22,
+            "coverage": 0.15492957746478872,
+            "largest_share": 0.09859154929577464,
+            "largest_price_span": 0.26785714285714285,
+            "largest_time_span": 30,
+            "recovery": 0.7361111111111112
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 47,
+            "coverage": 0.33098591549295775,
+            "largest_share": 0.16901408450704225,
+            "largest_price_span": 0.8888888888888888,
+            "largest_time_span": 60,
+            "recovery": 0.6275
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 2,
+            "covered": 31,
+            "coverage": 0.21830985915492956,
+            "largest_share": 0.1619718309859155,
+            "largest_price_span": 0.5227272727272727,
+            "largest_time_span": 40,
+            "recovery": 0.9236111111111112
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 2,
+            "covered": 43,
+            "coverage": 0.3028169014084507,
+            "largest_share": 0.2112676056338028,
+            "largest_price_span": 0.7846153846153846,
+            "largest_time_span": 65,
+            "recovery": 0.7461538461538462
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "ES ADR X Tuesday long window0",
+        "N": 142,
+        "known": 139,
+        "source_statuses": {
+          "unknown": 3,
+          "known": 139
+        },
+        "old": {
+          "zones": 4,
+          "covered": 62,
+          "coverage": 0.43661971830985913,
+          "largest_share": 0.2323943661971831,
+          "largest_price_span": 1.0660377358490567,
+          "largest_time_span": 95
+        },
+        "cn1": {
+          "zones": 2,
+          "covered": 35,
+          "coverage": 0.24647887323943662,
+          "largest_share": 0.16901408450704225,
+          "largest_price_span": 0.5844155844155844,
+          "largest_time_span": 40
+        },
+        "deletion_recovery_old": 0.7150806322869031,
+        "deletion_recovery_cn1": 0.9254575074683771,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 29,
+            "coverage": 0.20422535211267606,
+            "largest_share": 0.14788732394366197,
+            "largest_price_span": 0.4700854700854701,
+            "largest_time_span": 40,
+            "recovery": 0.8011363636363636
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 36,
+            "coverage": 0.2535211267605634,
+            "largest_share": 0.2535211267605634,
+            "largest_price_span": 1.0389610389610389,
+            "largest_time_span": 40,
+            "recovery": 0.4861111111111111
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 2,
+            "covered": 33,
+            "coverage": 0.2323943661971831,
+            "largest_share": 0.1619718309859155,
+            "largest_price_span": 0.5844155844155844,
+            "largest_time_span": 35,
+            "recovery": 0.9337121212121212
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 2,
+            "covered": 35,
+            "coverage": 0.24647887323943662,
+            "largest_share": 0.15492957746478872,
+            "largest_price_span": 0.5238095238095238,
+            "largest_time_span": 40,
+            "recovery": 0.8814102564102564
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "ES ODR R Tuesday long window0",
+        "N": 164,
+        "known": 164,
+        "source_statuses": {
+          "known": 164
+        },
+        "old": {
+          "zones": 1,
+          "covered": 34,
+          "coverage": 0.2073170731707317,
+          "largest_share": 0.2073170731707317,
+          "largest_price_span": 0.6818181818181818,
+          "largest_time_span": 50
+        },
+        "cn1": {
+          "zones": 1,
+          "covered": 60,
+          "coverage": 0.36585365853658536,
+          "largest_share": 0.36585365853658536,
+          "largest_price_span": 0.7954545454545454,
+          "largest_time_span": 65
+        },
+        "deletion_recovery_old": 0.9454396360880281,
+        "deletion_recovery_cn1": 0.9780846032538596,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 49,
+            "coverage": 0.29878048780487804,
+            "largest_share": 0.29878048780487804,
+            "largest_price_span": 0.6785714285714286,
+            "largest_time_span": 65,
+            "recovery": 0.8166666666666667
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 74,
+            "coverage": 0.45121951219512196,
+            "largest_share": 0.39634146341463417,
+            "largest_price_span": 0.9596774193548387,
+            "largest_time_span": 75,
+            "recovery": 0.9230769230769231
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 1,
+            "covered": 55,
+            "coverage": 0.3353658536585366,
+            "largest_share": 0.3353658536585366,
+            "largest_price_span": 0.75,
+            "largest_time_span": 65,
+            "recovery": 0.9166666666666666
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 1,
+            "covered": 62,
+            "coverage": 0.3780487804878049,
+            "largest_share": 0.3780487804878049,
+            "largest_price_span": 0.85,
+            "largest_time_span": 75,
+            "recovery": 0.967741935483871
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "ES ODR X Tuesday long window0",
+        "N": 164,
+        "known": 164,
+        "source_statuses": {
+          "known": 164
+        },
+        "old": {
+          "zones": 3,
+          "covered": 50,
+          "coverage": 0.3048780487804878,
+          "largest_share": 0.12195121951219512,
+          "largest_price_span": 0.41884057971014493,
+          "largest_time_span": 115
+        },
+        "cn1": {
+          "zones": 2,
+          "covered": 39,
+          "coverage": 0.23780487804878048,
+          "largest_share": 0.18292682926829268,
+          "largest_price_span": 0.556998556998557,
+          "largest_time_span": 35
+        },
+        "deletion_recovery_old": 0.8730471734148204,
+        "deletion_recovery_cn1": 0.7769444444444444,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 26,
+            "coverage": 0.15853658536585366,
+            "largest_share": 0.15853658536585366,
+            "largest_price_span": 0.4313946922642575,
+            "largest_time_span": 35,
+            "recovery": 0.43333333333333335
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 43,
+            "coverage": 0.2621951219512195,
+            "largest_share": 0.18292682926829268,
+            "largest_price_span": 0.556998556998557,
+            "largest_time_span": 45,
+            "recovery": 0.8461538461538461
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 2,
+            "covered": 39,
+            "coverage": 0.23780487804878048,
+            "largest_share": 0.18292682926829268,
+            "largest_price_span": 0.556998556998557,
+            "largest_time_span": 35,
+            "recovery": 1.0
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 2,
+            "covered": 43,
+            "coverage": 0.2621951219512195,
+            "largest_share": 0.1951219512195122,
+            "largest_price_span": 0.556998556998557,
+            "largest_time_span": 60,
+            "recovery": 0.8778409090909092
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "ES RDR R Tuesday long window0",
+        "N": 170,
+        "known": 167,
+        "source_statuses": {
+          "unknown": 3,
+          "known": 167
+        },
+        "old": {
+          "zones": 2,
+          "covered": 50,
+          "coverage": 0.29411764705882354,
+          "largest_share": 0.21176470588235294,
+          "largest_price_span": 0.7839262187088274,
+          "largest_time_span": 50
+        },
+        "cn1": {
+          "zones": 1,
+          "covered": 57,
+          "coverage": 0.3352941176470588,
+          "largest_share": 0.3352941176470588,
+          "largest_price_span": 0.9440353460972017,
+          "largest_time_span": 65
+        },
+        "deletion_recovery_old": 0.7688893053366738,
+        "deletion_recovery_cn1": 0.9899270652705526,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 48,
+            "coverage": 0.2823529411764706,
+            "largest_share": 0.2823529411764706,
+            "largest_price_span": 0.7017543859649122,
+            "largest_time_span": 50,
+            "recovery": 0.8421052631578947
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 57,
+            "coverage": 0.3352941176470588,
+            "largest_share": 0.3352941176470588,
+            "largest_price_span": 0.9440353460972017,
+            "largest_time_span": 65,
+            "recovery": 1.0
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 1,
+            "covered": 52,
+            "coverage": 0.3058823529411765,
+            "largest_share": 0.3058823529411765,
+            "largest_price_span": 0.8857142857142857,
+            "largest_time_span": 50,
+            "recovery": 0.9122807017543859
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 1,
+            "covered": 59,
+            "coverage": 0.34705882352941175,
+            "largest_share": 0.34705882352941175,
+            "largest_price_span": 0.9440353460972017,
+            "largest_time_span": 65,
+            "recovery": 0.9661016949152542
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "ES RDR X Tuesday long window0",
+        "N": 170,
+        "known": 167,
+        "source_statuses": {
+          "unknown": 3,
+          "known": 167
+        },
+        "old": {
+          "zones": 2,
+          "covered": 41,
+          "coverage": 0.2411764705882353,
+          "largest_share": 0.18235294117647058,
+          "largest_price_span": 0.5892857142857143,
+          "largest_time_span": 35
+        },
+        "cn1": {
+          "zones": 3,
+          "covered": 58,
+          "coverage": 0.3411764705882353,
+          "largest_share": 0.20588235294117646,
+          "largest_price_span": 0.725,
+          "largest_time_span": 50
+        },
+        "deletion_recovery_old": 0.9543878806378806,
+        "deletion_recovery_cn1": 0.9516986347732316,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 45,
+            "coverage": 0.2647058823529412,
+            "largest_share": 0.19411764705882353,
+            "largest_price_span": 0.5892857142857143,
+            "largest_time_span": 45,
+            "recovery": 0.621978021978022
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 3,
+            "covered": 69,
+            "coverage": 0.40588235294117647,
+            "largest_share": 0.21176470588235294,
+            "largest_price_span": 0.7638888888888888,
+            "largest_time_span": 50,
+            "recovery": 0.7873093681917211
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 2,
+            "covered": 44,
+            "coverage": 0.25882352941176473,
+            "largest_share": 0.18823529411764706,
+            "largest_price_span": 0.725,
+            "largest_time_span": 35,
+            "recovery": 0.6124542124542125
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 3,
+            "covered": 59,
+            "coverage": 0.34705882352941175,
+            "largest_share": 0.21176470588235294,
+            "largest_price_span": 0.725,
+            "largest_time_span": 60,
+            "recovery": 0.9907407407407407
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "YM ADR R Tuesday long window0",
+        "N": 140,
+        "known": 113,
+        "source_statuses": {
+          "unknown": 27,
+          "known": 113
+        },
+        "old": {
+          "zones": 2,
+          "covered": 37,
+          "coverage": 0.2642857142857143,
+          "largest_share": 0.2,
+          "largest_price_span": 0.95,
+          "largest_time_span": 85
+        },
+        "cn1": {
+          "zones": 1,
+          "covered": 27,
+          "coverage": 0.19285714285714287,
+          "largest_share": 0.19285714285714287,
+          "largest_price_span": 0.7142857142857143,
+          "largest_time_span": 70
+        },
+        "deletion_recovery_old": 0.7177505701514322,
+        "deletion_recovery_cn1": 0.7633246934225195,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 7,
+            "coverage": 0.05,
+            "largest_share": 0.05,
+            "largest_price_span": 0.17261904761904762,
+            "largest_time_span": 30,
+            "recovery": 0.25925925925925924
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 36,
+            "coverage": 0.2571428571428571,
+            "largest_share": 0.2571428571428571,
+            "largest_price_span": 1.1747685185185186,
+            "largest_time_span": 85,
+            "recovery": 0.75
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 2,
+            "covered": 24,
+            "coverage": 0.17142857142857143,
+            "largest_share": 0.12142857142857143,
+            "largest_price_span": 0.35507246376811596,
+            "largest_time_span": 60,
+            "recovery": 0.6296296296296297
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 1,
+            "covered": 30,
+            "coverage": 0.21428571428571427,
+            "largest_share": 0.21428571428571427,
+            "largest_price_span": 0.8333333333333334,
+            "largest_time_span": 80,
+            "recovery": 0.9
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "YM ADR X Tuesday long window0",
+        "N": 140,
+        "known": 113,
+        "source_statuses": {
+          "unknown": 27,
+          "known": 113
+        },
+        "old": {
+          "zones": 2,
+          "covered": 30,
+          "coverage": 0.21428571428571427,
+          "largest_share": 0.12857142857142856,
+          "largest_price_span": 0.6432926829268293,
+          "largest_time_span": 85
+        },
+        "cn1": {
+          "zones": 2,
+          "covered": 21,
+          "coverage": 0.15,
+          "largest_share": 0.1,
+          "largest_price_span": 0.3125,
+          "largest_time_span": 40
+        },
+        "deletion_recovery_old": 0.8159966508706665,
+        "deletion_recovery_cn1": 0.7702272727272728,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 20,
+            "coverage": 0.14285714285714285,
+            "largest_share": 0.09285714285714286,
+            "largest_price_span": 0.18421052631578946,
+            "largest_time_span": 25,
+            "recovery": 0.9642857142857143
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 28,
+            "coverage": 0.2,
+            "largest_share": 0.2,
+            "largest_price_span": 0.7653508771929824,
+            "largest_time_span": 55,
+            "recovery": 0.375
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 2,
+            "covered": 21,
+            "coverage": 0.15,
+            "largest_share": 0.1,
+            "largest_price_span": 0.3125,
+            "largest_time_span": 40,
+            "recovery": 1.0
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 3,
+            "covered": 28,
+            "coverage": 0.2,
+            "largest_share": 0.09285714285714286,
+            "largest_price_span": 0.18421052631578946,
+            "largest_time_span": 55,
+            "recovery": 0.9642857142857143
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "YM ODR R Tuesday long window0",
+        "N": 157,
+        "known": 151,
+        "source_statuses": {
+          "unknown": 6,
+          "known": 151
+        },
+        "old": {
+          "zones": 2,
+          "covered": 53,
+          "coverage": 0.3375796178343949,
+          "largest_share": 0.2356687898089172,
+          "largest_price_span": 0.994235588972431,
+          "largest_time_span": 90
+        },
+        "cn1": {
+          "zones": 1,
+          "covered": 48,
+          "coverage": 0.3057324840764331,
+          "largest_share": 0.3057324840764331,
+          "largest_price_span": 0.8593103448275862,
+          "largest_time_span": 70
+        },
+        "deletion_recovery_old": 0.7207242492182602,
+        "deletion_recovery_cn1": 0.966247103345948,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 45,
+            "coverage": 0.28662420382165604,
+            "largest_share": 0.28662420382165604,
+            "largest_price_span": 0.7916883116883117,
+            "largest_time_span": 70,
+            "recovery": 0.9375
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 64,
+            "coverage": 0.40764331210191085,
+            "largest_share": 0.3248407643312102,
+            "largest_price_span": 0.9660872043317185,
+            "largest_time_span": 70,
+            "recovery": 0.9411764705882353
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 2,
+            "covered": 44,
+            "coverage": 0.2802547770700637,
+            "largest_share": 0.1464968152866242,
+            "largest_price_span": 0.610079575596817,
+            "largest_time_span": 40,
+            "recovery": 0.4791666666666667
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 1,
+            "covered": 49,
+            "coverage": 0.31210191082802546,
+            "largest_share": 0.31210191082802546,
+            "largest_price_span": 0.8593103448275862,
+            "largest_time_span": 70,
+            "recovery": 0.9795918367346939
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "YM ODR X Tuesday long window0",
+        "N": 157,
+        "known": 151,
+        "source_statuses": {
+          "unknown": 6,
+          "known": 151
+        },
+        "old": {
+          "zones": 3,
+          "covered": 64,
+          "coverage": 0.40764331210191085,
+          "largest_share": 0.1910828025477707,
+          "largest_price_span": 1.1988505747126437,
+          "largest_time_span": 145
+        },
+        "cn1": {
+          "zones": 2,
+          "covered": 49,
+          "coverage": 0.31210191082802546,
+          "largest_share": 0.2484076433121019,
+          "largest_price_span": 0.7441687344913152,
+          "largest_time_span": 70
+        },
+        "deletion_recovery_old": 0.9204470277804319,
+        "deletion_recovery_cn1": 0.6962527773189537,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 39,
+            "coverage": 0.2484076433121019,
+            "largest_share": 0.1464968152866242,
+            "largest_price_span": 0.4632801161103048,
+            "largest_time_span": 65,
+            "recovery": 0.2948717948717949
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 68,
+            "coverage": 0.43312101910828027,
+            "largest_share": 0.3503184713375796,
+            "largest_price_span": 1.2205128205128206,
+            "largest_time_span": 80,
+            "recovery": 0.44545454545454544
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 2,
+            "covered": 43,
+            "coverage": 0.27388535031847133,
+            "largest_share": 0.21019108280254778,
+            "largest_price_span": 0.7252747252747253,
+            "largest_time_span": 35,
+            "recovery": 0.9230769230769231
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 2,
+            "covered": 54,
+            "coverage": 0.34394904458598724,
+            "largest_share": 0.2802547770700637,
+            "largest_price_span": 0.7441687344913152,
+            "largest_time_span": 70,
+            "recovery": 0.9431818181818181
+          }
+        ],
+        "ym_zone_aggregates": []
+      },
+      {
+        "label": "YM RDR R Tuesday long window0",
+        "N": 157,
+        "known": 156,
+        "source_statuses": {
+          "known": 156,
+          "unknown": 1
+        },
+        "old": {
+          "zones": 1,
+          "covered": 26,
+          "coverage": 0.16560509554140126,
+          "largest_share": 0.16560509554140126,
+          "largest_price_span": 0.35429864253393667,
+          "largest_time_span": 60
+        },
+        "cn1": {
+          "zones": 1,
+          "covered": 41,
+          "coverage": 0.2611464968152866,
+          "largest_share": 0.2611464968152866,
+          "largest_price_span": 0.5538617886178862,
+          "largest_time_span": 100
+        },
+        "deletion_recovery_old": 0.9369184096901488,
+        "deletion_recovery_cn1": 0.9637827785854102,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 32,
+            "coverage": 0.20382165605095542,
+            "largest_share": 0.20382165605095542,
+            "largest_price_span": 0.4956140350877193,
+            "largest_time_span": 70,
+            "recovery": 0.7804878048780488
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 1,
+            "covered": 44,
+            "coverage": 0.2802547770700637,
+            "largest_share": 0.2802547770700637,
+            "largest_price_span": 0.6894678492239468,
+            "largest_time_span": 100,
+            "recovery": 0.9318181818181818
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 1,
+            "covered": 28,
+            "coverage": 0.17834394904458598,
+            "largest_share": 0.17834394904458598,
+            "largest_price_span": 0.5416666666666666,
+            "largest_time_span": 45,
+            "recovery": 0.6829268292682927
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 1,
+            "covered": 43,
+            "coverage": 0.27388535031847133,
+            "largest_share": 0.27388535031847133,
+            "largest_price_span": 0.5538617886178862,
+            "largest_time_span": 110,
+            "recovery": 0.9534883720930233
+          }
+        ],
+        "ym_zone_aggregates": [
+          {
+            "n": 41,
+            "share": 0.2611464968152866,
+            "core_n": 30,
+            "member_price_min_max": [
+              -0.2621951219512195,
+              0.2916666666666667
+            ],
+            "member_time_min_max": [
+              635,
+              735
+            ]
+          }
+        ]
+      },
+      {
+        "label": "YM RDR X Tuesday long window0",
+        "N": 157,
+        "known": 156,
+        "source_statuses": {
+          "known": 156,
+          "unknown": 1
+        },
+        "old": {
+          "zones": 3,
+          "covered": 40,
+          "coverage": 0.25477707006369427,
+          "largest_share": 0.12101910828025478,
+          "largest_price_span": 0.34318360914105595,
+          "largest_time_span": 50
+        },
+        "cn1": {
+          "zones": 3,
+          "covered": 45,
+          "coverage": 0.28662420382165604,
+          "largest_share": 0.14012738853503184,
+          "largest_price_span": 0.45243741765480894,
+          "largest_time_span": 45
+        },
+        "deletion_recovery_old": 0.7660413330456405,
+        "deletion_recovery_cn1": 0.8085690235690236,
+        "scales": [
+          {
+            "price_radius": "1/10",
+            "time_radius": 20,
+            "zones": 2,
+            "covered": 28,
+            "coverage": 0.17834394904458598,
+            "largest_share": 0.12738853503184713,
+            "largest_price_span": 0.34318360914105595,
+            "largest_time_span": 25,
+            "recovery": 0.5252525252525252
+          },
+          {
+            "price_radius": "1/5",
+            "time_radius": 20,
+            "zones": 5,
+            "covered": 75,
+            "coverage": 0.47770700636942676,
+            "largest_share": 0.17197452229299362,
+            "largest_price_span": 0.6502373128879153,
+            "largest_time_span": 75,
+            "recovery": 0.7830009496676164
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 15,
+            "zones": 2,
+            "covered": 32,
+            "coverage": 0.20382165605095542,
+            "largest_share": 0.14012738853503184,
+            "largest_price_span": 0.45243741765480894,
+            "largest_time_span": 25,
+            "recovery": 0.6111111111111112
+          },
+          {
+            "price_radius": "3/20",
+            "time_radius": 25,
+            "zones": 5,
+            "covered": 78,
+            "coverage": 0.4968152866242038,
+            "largest_share": 0.17834394904458598,
+            "largest_price_span": 0.593939393939394,
+            "largest_time_span": 65,
+            "recovery": 0.773015873015873
+          }
+        ],
+        "ym_zone_aggregates": [
+          {
+            "n": 22,
+            "share": 0.14012738853503184,
+            "core_n": 20,
+            "member_price_min_max": [
+              0.06060606060606061,
+              0.5130434782608696
+            ],
+            "member_time_min_max": [
+              635,
+              660
+            ]
+          },
+          {
+            "n": 11,
+            "share": 0.07006369426751592,
+            "core_n": 2,
+            "member_price_min_max": [
+              0.6781609195402298,
+              0.9565217391304348
+            ],
+            "member_time_min_max": [
+              675,
+              720
+            ]
+          },
+          {
+            "n": 12,
+            "share": 0.07643312101910828,
+            "core_n": 7,
+            "member_price_min_max": [
+              0.45794392523364486,
+              0.8433734939759037
+            ],
+            "member_time_min_max": [
+              925,
+              955
+            ]
+          }
+        ]
+      }
+    ],
+    "seconds": 22.533,
+    "limitations": [
+      "seen history",
+      "only activation windows 0,1,2",
+      "stability subset Tuesday long window0",
+      "coverage and Jaccard do not measure predictive value or operator understanding",
+      "no new pullback outcome calculated",
+      "no 2026 historical observations"
+    ]
+  }
+}

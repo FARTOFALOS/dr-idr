@@ -1,0 +1,51 @@
+{
+  "outcome": "PASS",
+  "checks": {
+    "protocol_before_run_unchanged": true,
+    "exact_probe_source": true,
+    "calculators_unchanged": true,
+    "declared_parameters": true,
+    "not_deployed": true,
+    "accepted_ids_exist": true,
+    "new_ids_not_silently_registered": true,
+    "real_schema_boundary": true,
+    "synthetic_pass": true,
+    "declared_scope": true,
+    "history_closed": true,
+    "source_state_ledgers": true,
+    "semantic_counterexample": true,
+    "numeric_results_preserved_after_provenance_and_domain_checks": true
+  },
+  "deletion_diagnostics": {
+    "R": {
+      "maps": 9,
+      "old": 0.8022973584202173,
+      "cn1": 0.9208995818703434,
+      "cn1_higher": 9
+    },
+    "X": {
+      "maps": 9,
+      "old": 0.8581315533221775,
+      "cn1": 0.8739426390713526,
+      "cn1_higher": 4
+    }
+  },
+  "numeric_digest": "25dc061c850eb0d2352754f7844dd4b7a3ac22697b96796975977d190af3ae06",
+  "boundaries": [
+    "research prototype only",
+    "not walk-forward",
+    "not operator acceptance",
+    "no active schema or UI change"
+  ],
+  "artifact_hashes": {
+    "algorithm.json": "6cea39680195176d63d10117588bfe454792208a0d976c4d8eb0be335adfb1e4",
+    "lens19_check.py": "547819ae2fd4091352f509115dcab015a2ecfd36f8e88c0d1fb4b42d1314e33a",
+    "probe-results.json": "14171b8c11d03cc515601988e9f860d6fef68fd6c9187dd630b89a82d33aaebd",
+    "probe.py": "82717185e78af73607be0178eef0aae07861301e284dba8b996c96cb8fe4a86e",
+    "PROTOCOL.md": "622f59da24bf195e3d2c2452ad2e379edaddbced7e3dacd95b7345c81c97b3fd",
+    "semantic-counterexamples.json": "4ab3b05e590847a14e7cfa9cde67e5f6e24a19870cff46e8d3cf8f9f58a75142",
+    "SPEC.md": "dcbdda7811f32a20e6d5eb53d9e3c55a228d25107118e39173fffd216e63f4c5",
+    "synthetic-results.json": "603bcc8ff6670521c5b3be67dc94271f3f8b4acaf493df2a62914ec7e02e0a49",
+    "verify_package.py": "b0eb41e9f126ae0f1788e92d132f3edff26bda3d57f7d1aa0beda14c5a19b2fd"
+  }
+}
