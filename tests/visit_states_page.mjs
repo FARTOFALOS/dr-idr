@@ -23,7 +23,7 @@ async function shot(name){
 try{
  for(const [width,height] of [[1600,900],[1920,1000]]){
   await B.cdp.send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
-  await open('#date=2025-12-17&inst=NQ&session=RDR&at=11:10');
+  await open('#date=2025-12-17&inst=NQ&session=RDR&at=11:10&tp=0');
   const check=await evaluate(B.cdp,()=>{
    const d=window.__d24, F=d.cur().F, done=[];
    const ck=(ok,name)=>{if(!ok)throw Error(name);done.push(name);};

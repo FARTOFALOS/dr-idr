@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import {startChrome,evaluate} from './trace_page.mjs';
 const base=process.argv[2]||'http://127.0.0.1:8795',b=await startChrome(),checks=[],errors=[];
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
-const fragment='#date=2025-12-17&inst=NQ&session=RDR&at=11:10';
+const fragment='#date=2025-12-17&inst=NQ&session=RDR&at=11:10&tp=0';
 const ck=(ok,name)=>{if(!ok)throw Error(name);checks.push(name);console.log('PASS '+name);};
 b.cdp.on('Runtime.exceptionThrown',e=>errors.push(e.exceptionDetails.exception?.description||e.exceptionDetails.text));
 async function open(view){await b.cdp.send('Page.navigate',{url:'about:blank'});await b.cdp.send('Page.navigate',{url:base+view+fragment});await ready(view.includes('23-5'));}

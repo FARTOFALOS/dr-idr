@@ -10,7 +10,7 @@ b.cdp.on('Runtime.exceptionThrown',e=>errors.push(e.exceptionDetails.exception?.
 await b.cdp.send('Page.addScriptToEvaluateOnNewDocument',{source:`window.__fills=[];const f=CanvasRenderingContext2D.prototype.fillRect;CanvasRenderingContext2D.prototype.fillRect=function(...a){if(this.canvas.id==='cv')window.__fills.push({a,fill:this.fillStyle,alpha:this.globalAlpha});return f.apply(this,a);};`});
 async function open(at){
  await b.cdp.send('Page.navigate',{url:'about:blank'});
- await b.cdp.send('Page.navigate',{url:base+view+'#date=2025-12-17&inst=NQ&session=RDR&at='+at+'&trial=pullbacks&pbscale=1'});
+ await b.cdp.send('Page.navigate',{url:base+view+'#date=2025-12-17&inst=NQ&session=RDR&at='+at+'&trial=pullbacks&pbscale=1&tp=0'});
  for(let i=0;i<300;i++){const s=await evaluate(b.cdp,()=>{const d=window.__d24,p=d?.pullbacks();return {ok:!!p?.packet&&d.V.bandBars?.length&&d.V.projBars?.some(q=>q.ev==='R'),error:p?.error};});if(s.error)throw Error(s.error);if(s.ok)return;await pause(200);}
  throw Error('screen did not settle');
 }

@@ -26,6 +26,11 @@ at least 2 known sessions (one session is not a place); star cells at most 2 cel
 between them at most) are one constellation; it needs the same support, max(4, ceil(0.05 N)) sessions. Nothing is smoothed:
 a constellation holds only cells where sessions really are, its peak anchor is its strongest cell. The same record as a
 zone, so the same diagnostics, statuses and drawing follow; the research table of zone-map-3 does not apply to it.
+
+Screen 23.5, the semantic core DR-LAB-TP-1.1 (operator 03.11.2026): a window family (':held:tw=W1' …, lab/tp11.py) takes
+its R constellations from the price bands of the window's sessions, `tp-bands-1` (key.zone_rule TP_BANDS): the places of
+the screen, each with the cells its sessions really occupy, its share n / N of the window family; X has no
+constellation there (the continuation is read by its levels and its time lines). The family T itself (TP_NONE) has none.
 """
 from __future__ import annotations
 
@@ -34,6 +39,8 @@ import math
 
 import numpy as np
 from scipy import ndimage
+
+import tp11
 
 VERSION = "zone-map-3"
 TABLE_RULE, TABLE_VERSION = "TABLE_CELLS", "table-cells-1"    # key.zone_rule of a family with ':tcells' and its algorithm
@@ -181,7 +188,8 @@ def _flip(path, act_i, rng, reps, e, r_before_x=False):
 
 def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None, rule=None):
     """The zone map of event e for snapshot members (scene24 records), optionally on a shifted grid or with resampling
-    weights (a session counted w times); rule TABLE_RULE: the constellations of the joint table."""
+    weights (a session counted w times); rule TABLE_RULE: the constellations of the joint table; tp11.BANDS_RULE: the
+    price bands of a window family (R only); tp11.NONE_RULE: none."""
     pts = []
     for i, m in enumerate(members):
         x = m[e]
@@ -189,7 +197,12 @@ def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None, rule=Non
         k, b = cell_of(x["v"], m["w"], x["t"], formed, dk, dt)
         for _ in range(1 if weights is None else int(weights[i])): pts.append((k, b, ids[i]))
     t_first, t_last = formed + 15 * win + 5, end - 5
-    return (table_map if rule == TABLE_RULE else zone_map)(pts, len(members) if weights is None else int(sum(weights)), (t_first - formed - dt) // 15, (t_last - formed - dt) // 15)
+    n = len(members) if weights is None else int(sum(weights))
+    lo, hi = (t_first - formed - dt) // 15, (t_last - formed - dt) // 15
+    if rule == tp11.NONE_RULE or (rule == tp11.BANDS_RULE and e == "X"):
+        return dict(zones=[], residual=sorted({s for _, _, s in pts}), need=tp11.need(n))
+    if rule == tp11.BANDS_RULE: return tp11.bands(pts, n, lo, hi)
+    return (table_map if rule == TABLE_RULE else zone_map)(pts, n, lo, hi)
 
 
 def evaluate(snap, e):
@@ -200,13 +213,13 @@ def evaluate(snap, e):
     ids = [m["id"] for m in mem]
     N = len(mem)
     rule = snap["key"].get("zone_rule")
-    version = TABLE_VERSION if rule == TABLE_RULE else VERSION
+    version = TABLE_VERSION if rule == TABLE_RULE else tp11.BANDS_VERSION if rule in (tp11.BANDS_RULE, tp11.NONE_RULE) else VERSION
     zm = map_of(mem, e, formed, end, win, ids, rule=rule)
     unknown = sum(1 for m in mem if m[e]["s"] == "unknown")
     none = sum(1 for m in mem if m[e]["s"] == "none")
     base = dict(algorithm_version=version, family_scope=snap["key"].get("scope", "weekday"), family_id=snap["family_id"],
                 snapshot_id=snap["snapshot_id"], event_id=e, N_family=N, n_residual_total=len(zm["residual"]),
-                unknown_count=unknown, no_event_count=none, min_support=zm["need"], study_refs=None if rule == TABLE_RULE else study_refs(snap["key"]["session"], e))
+                unknown_count=unknown, no_event_count=none, min_support=zm["need"], study_refs=None if rule is not None else study_refs(snap["key"]["session"], e))
     # diagnostics on the whole map (once per event)
     shifted = [map_of(mem, e, formed, end, win, ids, dk, dt, rule=rule) for dk, dt in SHIFTS]
     rng = np.random.default_rng(seed(snap["family_id"], snap["snapshot_id"], e, "bootstrap"))

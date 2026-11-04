@@ -29,7 +29,7 @@ try {
   for (const [inst, sess, date, at] of scenes) {
     const tag = `${inst} ${sess} ${date} ${at}`;
     await b.cdp.send('Page.navigate', { url: 'about:blank' });
-    await b.cdp.send('Page.navigate', { url: `${base}/23-5/#date=${date}&inst=${inst}&session=${sess}&at=${at}&cells=1` });
+    await b.cdp.send('Page.navigate', { url: `${base}/23-5/#date=${date}&inst=${inst}&session=${sess}&at=${at}&cells=1&tp=0` });
     await ready();
     const s = await evaluate(b.cdp, () => {
       const d = window.__d24, m = window.__mx235, F = d.cur().F, V = d.V, T = F._mx;

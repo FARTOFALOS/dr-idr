@@ -414,6 +414,100 @@ def ref_table_map(points, n_family, b_lo, b_hi):
     return dict(zones=zones, residual=sorted({s for _, _, s in points} - used), need=need)
 
 
+TP_BANDS_VERSION = "tp-bands-1"       # DR-LAB-TP-1.1 on screen 23.5 (operator 03.11): the bands of a window family
+
+
+def ref_tp_need(n):
+    return max(4, -(-n // 20))
+
+
+def ref_tp_regions(c):
+    """The bunch / band rule of DR-LAB-TP-1.1 written from its definition (lab/tp11.py, module note): an apex is higher than
+    the cell before it and not lower than the cell after it; it is kept when its height above the higher of its two bases
+    (the lowest cell before the first higher apex on that side, the earlier of equal ones being the higher, or 0 past the
+    edge) is at least half its height; two kept apexes in a row split the axis at the first lowest cell between them; the
+    region of a kept apex is its run of cells of at least half its height inside its own part."""
+    n = len(c)
+    tops = [i for i in range(n) if c[i] > 0 and (i == 0 or c[i] > c[i - 1]) and (i == n - 1 or c[i] >= c[i + 1])]
+
+    def base(i, step):
+        j = i + step
+        while 0 <= j < n and not (c[j] > c[i] or (c[j] == c[i] and j < i)): j += step
+        if not 0 <= j < n: return 0
+        between = c[min(i, j) + 1:max(i, j)] if abs(j - i) > 1 else []
+        return min(list(between) + [c[i]])
+    kept = [i for i in tops if 2 * (c[i] - max(base(i, -1), base(i, 1))) >= c[i]]
+    cuts = []
+    for a, z in zip(kept, kept[1:]):
+        seg = c[a:z + 1]
+        cuts.append(a + seg.index(min(seg)))
+    out = []
+    for q, i in enumerate(kept):
+        lo_lim = cuts[q - 1] + 1 if q else 0
+        hi_lim = cuts[q] - 1 if q < len(cuts) else n - 1
+        lo = i
+        while lo > lo_lim and 2 * c[lo - 1] >= c[i]: lo -= 1
+        hi = i
+        while hi < hi_lim and 2 * c[hi + 1] >= c[i]: hi += 1
+        out.append((lo, hi, i))
+    return out
+
+
+def ref_tp_quantile(ts, num, den):
+    if not ts: return None
+    k = -(-num * len(ts) // den)
+    return dict(t=int(sorted(ts)[k - 1]), k=int(k), K=len(ts))
+
+
+def ref_tp_clock(events, formed, win, end):
+    """The clock of T (lab/tp11.py::windows) from the reference R of its members: cells, bunches, median, 70 %, windows."""
+    N = len(events)
+    ts = [x["t"] for x in events if x["s"] == "known"]
+    cells = Counter((t - formed) // 15 for t in ts)
+    b_lo, b_hi = win, (end - 5 - formed) // 15
+    c = [cells.get(b, 0) for b in range(b_lo, b_hi + 1)]
+    bunches = [dict(b0=b_lo + lo, b1=b_lo + hi + 1, n=sum(c[lo:hi + 1]), peak=b_lo + top) for lo, hi, top in ref_tp_regions(c)
+               if sum(c[lo:hi + 1]) >= ref_tp_need(N)]
+    med, p70 = ref_tp_quantile(ts, 1, 2), ref_tp_quantile(ts, 7, 10)
+    W = dict(BEFORE=None, W1=None, W2=None, LATE=None)
+    if med:
+        bm, bp = (med["t"] - formed) // 15, (p70["t"] - formed) // 15
+        early = [u["b0"] for u in bunches if u["b0"] <= bm]
+        s0 = early[0] if early else b_lo
+        W["W1"] = [s0, bm + 1]
+        if s0 > b_lo: W["BEFORE"] = [b_lo, s0]
+        if bp > bm: W["W2"] = [bm + 1, bp + 1]
+        if bp < b_hi: W["LATE"] = [bp + 1, b_hi + 1]
+    return dict(N=N, known=len(ts), unknown=sum(1 for x in events if x["s"] == "unknown"), none=sum(1 for x in events if x["s"] == "none"),
+                cells=[[b, n] for b, n in sorted(cells.items())], bunches=bunches, median=med, p70=p70, windows=W, need=ref_tp_need(N))
+
+
+def ref_tp_bands(points, n_family, b_lo, b_hi):
+    """The places of a window family by the band rule over its 0.1-SD cells (lab/tp11.py::bands): cells = the cells its
+    sessions occupy; apex cell = the fullest, then the earliest, nearest u = 0, lowest; order by start, share, nearness."""
+    pts = [q for q in points if b_lo <= q[1] <= b_hi]
+    need = ref_tp_need(n_family)
+    if not pts: return dict(zones=[], residual=[], need=need)
+    k_lo = min(k for k, _, _ in pts)
+    cnt = Counter(k - k_lo for k, _, _ in pts)
+    c = [cnt.get(i, 0) for i in range(max(cnt) + 1)]
+    zones = []
+    for lo, hi, _ in ref_tp_regions(c):
+        sel = [q for q in pts if lo <= q[0] - k_lo <= hi]
+        members = sorted({sid for _, _, sid in sel})
+        if len(members) < need: continue
+        occ = Counter((k, b) for k, b, _ in sel)
+        top = max(occ.values())
+        anchor = sorted((q for q, m in occ.items() if m == top), key=lambda q: (q[1], abs(2 * q[0] + 1), q[0]))[0]
+        cells = sorted(occ)
+        zones.append(dict(cells=cells, members=members, n=len(members), anchor=anchor, price=[k_lo + lo, k_lo + hi + 1],
+                          time=[min(b for _, b in cells), max(b for _, b in cells) + 1]))
+    near0 = lambda z: 0 if z["price"][0] <= 0 < z["price"][1] else z["price"][0] if z["price"][0] > 0 else -z["price"][1]
+    zones.sort(key=lambda z: (z["time"][0], -z["n"], near0(z)))
+    used = {sid for z in zones for sid in z["members"]}
+    return dict(zones=zones, residual=sorted({sid for _, _, sid in pts} - used), need=need)
+
+
 def ref_reachability(cells, ev, q, v10, w, t_next, formed, last_open):
     """E3: HOLDS (today's provisional extreme lies in the region) / POSSIBLE (a strictly further new extreme can
     still land in a cell of it in time) / IMPOSSIBLE. q = None before the first M5 after the activation."""
@@ -707,6 +801,33 @@ def verify_snapshot(inst, B, snap):
         v.append(("GRID", ["M1"], "the common clock grid is not every M5 close after the box"))
     mem, journal, base_errs = ref_family(inst, B, session, key["weekday"], side, view, win, key["cutoff"], key.get("scope", "weekday"))
     for e in base_errs[:5]: v.append(("BASE_DERIVATION", ["O1", "S1", "S2"], e))
+    tp_ref = None
+    if key.get("cohort") is not None or "tp" in snap:
+        # DR-LAB-TP-1.1: T = the re-derived members whose reference DR outcome is HELD; T_W = those of T whose reference R
+        # lies in the window of T's reference clock
+        if key.get("cohort") != "HELD" or view != "conf":
+            v.append(("COHORT", ["H1"], f"cohort {key.get('cohort')} on a {view} family"))
+        der0, grid0 = derive_base(inst, B, session), snap["grid"]
+        held, rr = [], {}
+        for i, act, dd in mem:
+            box, d = B["boxes"][i], der0[i]
+            e0 = box["idr_high"] if dd == 1 else box["idr_low"]
+            path0 = [list(ref_directed(d["rows"][T], dd, e0)) if T in d["rows"] else None for T in grid0]
+            if ref_dr_outcome(path0, grid0, act, end, dd * ((box["dr_low"] if side == 1 else box["dr_high"]) - e0))[0] != "held": continue
+            held.append((i, act, dd))
+            rr[i] = ref_before_extreme_R(path0, grid0, act, end) if ref_r_before_x(snap) else ref_final_extreme(path0, grid0, act, end, "R")
+        tp_ref = ref_tp_clock([rr[i] for i, _, _ in held], formed, win, end)
+        mem = held
+        tw = key.get("tp_window")
+        if tw is not None:
+            W = tp_ref["windows"].get(tw)
+            mem = [(i, act, dd) for i, act, dd in held if W and rr[i]["s"] == "known" and W[0] <= (rr[i]["t"] - formed) // 15 < W[1]]
+        # the family response publishes no clock (its numbers would have no declared meaning, §12.3): the page recounts
+        # it from T's members; a clock that is published anyway must be the reference's
+        if "tp" in snap:
+            mine = {k: (snap.get("tp") or {}).get(k) for k in tp_ref}
+            if mine != tp_ref or (snap.get("tp") or {}).get("selected") != tw:
+                v.append(("TP_CLOCK", ["P3", "K31"], "the clock of T (bunches, median, 70 %, windows) differs from the reference"))
     ids_ref = sorted(_sid(inst, B["boxes"][i]) for i, _, _ in mem)
     if sorted(snap["ids"]) != ids_ref or len(set(snap["ids"])) != len(snap["ids"]):
         v.append(("MEMBERSHIP", ["H1", "H2"], f"members differ from the key's re-derived set ({len(snap['ids'])} vs {len(ids_ref)})"))
@@ -718,7 +839,11 @@ def verify_snapshot(inst, B, snap):
     by_id = {_sid(inst, B["boxes"][i]): (i, act, dd) for i, act, dd in mem}
     grid = snap["grid"]
     rbx = ref_r_before_x(snap)
-    if key.get("r_event", "R_BEFORE_X") != "R_BEFORE_X" or (snap.get("semantics") == "DR-LAB-SEM-1.0+R_BEFORE_X") != rbx:
+    # the semantics a key implies: R before the extreme, then (TP-1.1) the cohort HELD and its window, in this order
+    sem0 = snap.get("semantics") or ""
+    tp_sfx = ("+HELD" if key.get("cohort") == "HELD" else "") + ("+TW:" + key["tp_window"] if key.get("tp_window") else "")
+    sem_base = sem0[:len(sem0) - len(tp_sfx)] if sem0.endswith(tp_sfx) else None
+    if key.get("r_event", "R_BEFORE_X") != "R_BEFORE_X" or sem_base is None or (sem_base == "DR-LAB-SEM-1.0+R_BEFORE_X") != rbx:
         v.append(("OUTCOME", ["P0.1", "K09"], f"the R definition {key.get('r_event')} and the semantics {snap.get('semantics')} disagree"))
     ref = dict(R=Counter(), X=Counter(), unknown=Counter(), none=Counter(), outcome=Counter(), order=Counter(), members={})
     for m in snap["members"]:
@@ -749,6 +874,12 @@ def verify_snapshot(inst, B, snap):
                 v.append(("DR_OUTCOME", ["P0.2", "K14"], f"{m['id']}: DR outcome {m.get('outcome')} != reference {cat}"))
             ref["outcome"][cat] += 1
         ref["members"][m["id"]] = dict(path=path, act=act, w=w, R=r["R"], X=r["X"])
+    if tp_ref is not None and key.get("tp_window") is not None and "tp" in snap:
+        xs = [ref["members"][m["id"]]["X"] for m in snap["members"] if m["id"] in ref["members"]]
+        kx = [x["t"] for x in xs if x["s"] == "known"]
+        want_x = dict(median=ref_tp_quantile(kx, 1, 2), p70=ref_tp_quantile(kx, 7, 10), known=len(kx), unknown=sum(1 for x in xs if x["s"] == "unknown"),
+                      none=sum(1 for x in xs if x["s"] == "none"), cells=[[b, n] for b, n in sorted(Counter((t - formed) // 15 for t in kx).items())])
+        if (snap.get("tp") or {}).get("x") != want_x: v.append(("TP_CLOCK", ["P3", "K31"], "the X marks of the window differ from the reference"))
     for ev in ("R", "X"):
         c = snap["counts"][ev]
         cells = sorted([k, b, n] for (k, b), n in ref[ev].items())
@@ -797,11 +928,17 @@ def _verify_zones(snap, zm, ev, ref):
     for m in snap["members"]:
         x = ref["members"].get(m["id"], {}).get(ev)
         if x and x["s"] == "known": pts.append((ref_cell(x["v"], m["w"]), (x["t"] - formed) // 15, m["id"]))
-    table = key.get("zone_rule") == "TABLE_CELLS"
-    if key.get("zone_rule", "TABLE_CELLS") != "TABLE_CELLS": v.append(("ALGORITHM", ["P3"], f"{ev}: unknown zone rule {key.get('zone_rule')}"))
-    alg = dict(version=TABLE_CELLS_VERSION) if table else get("ALG:ZONE-MAP-3")
+    rule = key.get("zone_rule")
+    table, tp = rule == "TABLE_CELLS", rule in ("TP_BANDS", "TP_NONE")
+    if rule is not None and not (table or tp): v.append(("ALGORITHM", ["P3"], f"{ev}: unknown zone rule {rule}"))
+    if tp and (key.get("cohort") != "HELD" or (rule == "TP_BANDS") != (key.get("tp_window") is not None)):
+        v.append(("ALGORITHM", ["P3"], f"{ev}: zone rule {rule} on a family without its window"))
+    alg = dict(version=TABLE_CELLS_VERSION) if table else dict(version=TP_BANDS_VERSION) if tp else get("ALG:ZONE-MAP-3")
     t_first, t_last = formed + 15 * win + 5, end - 5
-    R = (ref_table_map if table else ref_zone_map)(pts, snap["N"], (t_first - formed) // 15, (t_last - formed) // 15)
+    b_lo, b_hi = (t_first - formed) // 15, (t_last - formed) // 15
+    if tp and (rule == "TP_NONE" or ev == "X"): R = dict(zones=[], residual=sorted({sid for _, _, sid in pts}), need=ref_tp_need(snap["N"]))
+    elif tp: R = ref_tp_bands(pts, snap["N"], b_lo, b_hi)
+    else: R = (ref_table_map if table else ref_zone_map)(pts, snap["N"], b_lo, b_hi)
     if zm.get("algorithm_version") != alg["version"]: v.append(("ALGORITHM", ["P3"], f"{ev}: algorithm {zm.get('algorithm_version')} is not the registry's {alg['version']}"))
     if zm.get("min_support") != R["need"]: v.append(("SUPPORT", ["P3"], f"{ev}: minimum support differs"))
     got = [(sorted(map(tuple, z["cell_mask"])), sorted(z["member_session_ids"]), z["n_zone"], tuple(z["peak_anchor"])) for z in zm.get("zones", [])]
@@ -1129,7 +1266,7 @@ def attach_family(out, inst, B, day, params):
             continue
         unk, none = zm["unknown_count"], zm["no_event_count"]
         for z in zm["zones"]:
-            env.d.setdefault("regions", []).append(dict(zone_id=z["zone_id"], algorithm="ALG:TABLE-CELLS-1" if snap["key"].get("zone_rule") == "TABLE_CELLS" else "ALG:ZONE-MAP-3", event=ev, snapshot_id=sid, n_cells=len(z["cell_mask"]),
+            env.d.setdefault("regions", []).append(dict(zone_id=z["zone_id"], algorithm="ALG:TABLE-CELLS-1" if snap["key"].get("zone_rule") == "TABLE_CELLS" else "ALG:TP-BANDS-1" if snap["key"].get("zone_rule") == "TP_BANDS" else "ALG:ZONE-MAP-3", event=ev, snapshot_id=sid, n_cells=len(z["cell_mask"]),
                                                         n_zone=z["n_zone"], min_support=zm["min_support"], mask_verified=True))
             env.bundle(f"EST:B-ZONE-{ev}", cs_id, sid, "lab/zonemap24.py::evaluate", inputs, [_share_est("ESTR:ZONE-SHARE-1", z["n_zone"], N)],
                        [dict(case_set=sid, n_base=N, components=[dict(component="MEMBERSHIP", of=N, yes=z["n_zone"], unknown=unk, no_period=none)])],
