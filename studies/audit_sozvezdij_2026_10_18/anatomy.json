@@ -1,0 +1,182 @@
+{
+ "ADR R": {
+  "families": 172,
+  "N_median": 46.5,
+  "zones_per_family_median": 2.0,
+  "families_without_zone": 0.029,
+  "zone_mass_median": 0.29,
+  "residual_median": 0.613,
+  "zone_share_median": 0.125,
+  "zone_share_p90": 0.262,
+  "zone_mass_part": {
+   "early": 0.607,
+   "middle": 0.15,
+   "late": 0.243
+  },
+  "r_before_x": {
+   "early": 0.964,
+   "middle": 0.453,
+   "late": 0.03,
+   "residual": 0.403
+  },
+  "early_zone_median_u": -0.03,
+  "late_zone_median_u": -0.95,
+  "early_zone_broken_minus_family": -0.271,
+  "late_zone_broken_minus_family": -0.1,
+  "events_known": 9412,
+  "share_unknown": 0.11,
+  "final_within_60min_of_activation": 0.373,
+  "final_in_last_60min": 0.251,
+  "final_on_first_bar": 0.114
+ },
+ "ADR X": {
+  "families": 172,
+  "N_median": 46.5,
+  "zones_per_family_median": 2.0,
+  "families_without_zone": 0.047,
+  "zone_mass_median": 0.263,
+  "residual_median": 0.621,
+  "zone_share_median": 0.122,
+  "zone_share_p90": 0.237,
+  "zone_mass_part": {
+   "early": 0.705,
+   "middle": 0.078,
+   "late": 0.217
+  },
+  "r_before_x": {
+   "early": 0.034,
+   "middle": 0.68,
+   "late": 0.954,
+   "residual": 0.57
+  },
+  "early_zone_median_u": 0.64,
+  "late_zone_median_u": 1.73,
+  "early_zone_broken_minus_family": 0.255,
+  "late_zone_broken_minus_family": -0.198,
+  "events_known": 9412,
+  "share_unknown": 0.11,
+  "final_within_60min_of_activation": 0.432,
+  "final_in_last_60min": 0.229,
+  "final_on_first_bar": 0.15
+ },
+ "ODR R": {
+  "families": 174,
+  "N_median": 46.5,
+  "zones_per_family_median": 2.0,
+  "families_without_zone": 0.023,
+  "zone_mass_median": 0.351,
+  "residual_median": 0.625,
+  "zone_share_median": 0.139,
+  "zone_share_p90": 0.25,
+  "zone_mass_part": {
+   "early": 0.503,
+   "middle": 0.1,
+   "late": 0.397
+  },
+  "r_before_x": {
+   "early": 0.958,
+   "middle": 0.463,
+   "late": 0.059,
+   "residual": 0.426
+  },
+  "early_zone_median_u": 0.0,
+  "late_zone_median_u": -1.0,
+  "early_zone_broken_minus_family": -0.25,
+  "late_zone_broken_minus_family": -0.094,
+  "events_known": 10817,
+  "share_unknown": 0.028,
+  "final_within_60min_of_activation": 0.329,
+  "final_in_last_60min": 0.351,
+  "final_on_first_bar": 0.109
+ },
+ "ODR X": {
+  "families": 174,
+  "N_median": 46.5,
+  "zones_per_family_median": 2.0,
+  "families_without_zone": 0.04,
+  "zone_mass_median": 0.328,
+  "residual_median": 0.644,
+  "zone_share_median": 0.139,
+  "zone_share_p90": 0.25,
+  "zone_mass_part": {
+   "early": 0.626,
+   "middle": 0.104,
+   "late": 0.27
+  },
+  "r_before_x": {
+   "early": 0.03,
+   "middle": 0.528,
+   "late": 0.918,
+   "residual": 0.545
+  },
+  "early_zone_median_u": 0.53,
+  "late_zone_median_u": 1.47,
+  "early_zone_broken_minus_family": 0.267,
+  "late_zone_broken_minus_family": -0.179,
+  "events_known": 10817,
+  "share_unknown": 0.028,
+  "final_within_60min_of_activation": 0.399,
+  "final_in_last_60min": 0.294,
+  "final_on_first_bar": 0.128
+ },
+ "RDR R": {
+  "families": 170,
+  "N_median": 46.0,
+  "zones_per_family_median": 2.0,
+  "families_without_zone": 0.029,
+  "zone_mass_median": 0.359,
+  "residual_median": 0.607,
+  "zone_share_median": 0.146,
+  "zone_share_p90": 0.25,
+  "zone_mass_part": {
+   "early": 0.53,
+   "middle": 0.159,
+   "late": 0.311
+  },
+  "r_before_x": {
+   "early": 0.992,
+   "middle": 0.492,
+   "late": 0.025,
+   "residual": 0.429
+  },
+  "early_zone_median_u": 0.02,
+  "late_zone_median_u": -0.87,
+  "early_zone_broken_minus_family": -0.2,
+  "late_zone_broken_minus_family": -0.086,
+  "events_known": 10501,
+  "share_unknown": 0.038,
+  "final_within_60min_of_activation": 0.32,
+  "final_in_last_60min": 0.305,
+  "final_on_first_bar": 0.111
+ },
+ "RDR X": {
+  "families": 170,
+  "N_median": 46.0,
+  "zones_per_family_median": 2.0,
+  "families_without_zone": 0.029,
+  "zone_mass_median": 0.354,
+  "residual_median": 0.608,
+  "zone_share_median": 0.145,
+  "zone_share_p90": 0.263,
+  "zone_mass_part": {
+   "early": 0.56,
+   "middle": 0.072,
+   "late": 0.367
+  },
+  "r_before_x": {
+   "early": 0.017,
+   "middle": 0.484,
+   "late": 0.965,
+   "residual": 0.548
+  },
+  "early_zone_median_u": 0.51,
+  "late_zone_median_u": 1.26,
+  "early_zone_broken_minus_family": 0.266,
+  "late_zone_broken_minus_family": -0.171,
+  "events_known": 10501,
+  "share_unknown": 0.038,
+  "final_within_60min_of_activation": 0.346,
+  "final_in_last_60min": 0.325,
+  "final_on_first_bar": 0.113
+ }
+}

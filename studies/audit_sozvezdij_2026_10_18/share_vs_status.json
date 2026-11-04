@@ -1,0 +1,850 @@
+{
+ "status": {
+  "N20-59 R 30min HOLDS any": {
+   "zones": 2090,
+   "mean_share": 0.2064,
+   "realised": 0.2981
+  },
+  "N20-59 R 30min HOLDS early": {
+   "zones": 2079,
+   "mean_share": 0.2066,
+   "realised": 0.2987
+  },
+  "N20-59 R 30min HOLDS middle": {
+   "zones": 11,
+   "mean_share": 0.165,
+   "realised": 0.1818
+  },
+  "N20-59 R 30min IMPOSSIBLE any": {
+   "zones": 1720,
+   "mean_share": 0.1633,
+   "realised": 0.0
+  },
+  "N20-59 R 30min IMPOSSIBLE early": {
+   "zones": 1516,
+   "mean_share": 0.1691,
+   "realised": 0.0
+  },
+  "N20-59 R 30min IMPOSSIBLE late": {
+   "zones": 91,
+   "mean_share": 0.1288,
+   "realised": 0.0
+  },
+  "N20-59 R 30min IMPOSSIBLE middle": {
+   "zones": 113,
+   "mean_share": 0.1137,
+   "realised": 0.0
+  },
+  "N20-59 R 30min POSSIBLE any": {
+   "zones": 6896,
+   "mean_share": 0.1493,
+   "realised": 0.0567
+  },
+  "N20-59 R 30min POSSIBLE early": {
+   "zones": 1251,
+   "mean_share": 0.1854,
+   "realised": 0.0312
+  },
+  "N20-59 R 30min POSSIBLE late": {
+   "zones": 3579,
+   "mean_share": 0.1489,
+   "realised": 0.0757
+  },
+  "N20-59 R 30min POSSIBLE middle": {
+   "zones": 2066,
+   "mean_share": 0.1282,
+   "realised": 0.0392
+  },
+  "N20-59 R 60min HOLDS any": {
+   "zones": 1534,
+   "mean_share": 0.2053,
+   "realised": 0.4276
+  },
+  "N20-59 R 60min HOLDS early": {
+   "zones": 1466,
+   "mean_share": 0.2075,
+   "realised": 0.4379
+  },
+  "N20-59 R 60min HOLDS late": {
+   "zones": 5,
+   "mean_share": 0.2828,
+   "realised": 0.2
+  },
+  "N20-59 R 60min HOLDS middle": {
+   "zones": 63,
+   "mean_share": 0.1476,
+   "realised": 0.2063
+  },
+  "N20-59 R 60min IMPOSSIBLE any": {
+   "zones": 3211,
+   "mean_share": 0.1691,
+   "realised": 0.0
+  },
+  "N20-59 R 60min IMPOSSIBLE early": {
+   "zones": 2721,
+   "mean_share": 0.1769,
+   "realised": 0.0
+  },
+  "N20-59 R 60min IMPOSSIBLE late": {
+   "zones": 241,
+   "mean_share": 0.1316,
+   "realised": 0.0
+  },
+  "N20-59 R 60min IMPOSSIBLE middle": {
+   "zones": 249,
+   "mean_share": 0.1199,
+   "realised": 0.0
+  },
+  "N20-59 R 60min POSSIBLE any": {
+   "zones": 5961,
+   "mean_share": 0.1483,
+   "realised": 0.0601
+  },
+  "N20-59 R 60min POSSIBLE early": {
+   "zones": 659,
+   "mean_share": 0.2008,
+   "realised": 0.0273
+  },
+  "N20-59 R 60min POSSIBLE late": {
+   "zones": 3424,
+   "mean_share": 0.1494,
+   "realised": 0.0789
+  },
+  "N20-59 R 60min POSSIBLE middle": {
+   "zones": 1878,
+   "mean_share": 0.128,
+   "realised": 0.0373
+  },
+  "N20-59 R 120min HOLDS any": {
+   "zones": 1157,
+   "mean_share": 0.2035,
+   "realised": 0.6145
+  },
+  "N20-59 R 120min HOLDS early": {
+   "zones": 1024,
+   "mean_share": 0.2079,
+   "realised": 0.6416
+  },
+  "N20-59 R 120min HOLDS late": {
+   "zones": 16,
+   "mean_share": 0.2592,
+   "realised": 0.625
+  },
+  "N20-59 R 120min HOLDS middle": {
+   "zones": 117,
+   "mean_share": 0.1574,
+   "realised": 0.3761
+  },
+  "N20-59 R 120min IMPOSSIBLE any": {
+   "zones": 4901,
+   "mean_share": 0.1685,
+   "realised": 0.0
+  },
+  "N20-59 R 120min IMPOSSIBLE early": {
+   "zones": 3637,
+   "mean_share": 0.1821,
+   "realised": 0.0
+  },
+  "N20-59 R 120min IMPOSSIBLE late": {
+   "zones": 461,
+   "mean_share": 0.1415,
+   "realised": 0.0
+  },
+  "N20-59 R 120min IMPOSSIBLE middle": {
+   "zones": 803,
+   "mean_share": 0.1228,
+   "realised": 0.0
+  },
+  "N20-59 R 120min POSSIBLE any": {
+   "zones": 4648,
+   "mean_share": 0.1464,
+   "realised": 0.0652
+  },
+  "N20-59 R 120min POSSIBLE early": {
+   "zones": 185,
+   "mean_share": 0.2308,
+   "realised": 0.0162
+  },
+  "N20-59 R 120min POSSIBLE late": {
+   "zones": 3193,
+   "mean_share": 0.1488,
+   "realised": 0.0817
+  },
+  "N20-59 R 120min POSSIBLE middle": {
+   "zones": 1270,
+   "mean_share": 0.128,
+   "realised": 0.0307
+  },
+  "N20-59 X 30min HOLDS any": {
+   "zones": 1950,
+   "mean_share": 0.2077,
+   "realised": 0.3277
+  },
+  "N20-59 X 30min HOLDS early": {
+   "zones": 1945,
+   "mean_share": 0.2079,
+   "realised": 0.3275
+  },
+  "N20-59 X 30min HOLDS middle": {
+   "zones": 5,
+   "mean_share": 0.1254,
+   "realised": 0.4
+  },
+  "N20-59 X 30min IMPOSSIBLE any": {
+   "zones": 2458,
+   "mean_share": 0.1702,
+   "realised": 0.0
+  },
+  "N20-59 X 30min IMPOSSIBLE early": {
+   "zones": 2074,
+   "mean_share": 0.1797,
+   "realised": 0.0
+  },
+  "N20-59 X 30min IMPOSSIBLE late": {
+   "zones": 206,
+   "mean_share": 0.1219,
+   "realised": 0.0
+  },
+  "N20-59 X 30min IMPOSSIBLE middle": {
+   "zones": 178,
+   "mean_share": 0.1146,
+   "realised": 0.0
+  },
+  "N20-59 X 30min POSSIBLE any": {
+   "zones": 5951,
+   "mean_share": 0.1414,
+   "realised": 0.0452
+  },
+  "N20-59 X 30min POSSIBLE early": {
+   "zones": 1784,
+   "mean_share": 0.1639,
+   "realised": 0.028
+  },
+  "N20-59 X 30min POSSIBLE late": {
+   "zones": 2757,
+   "mean_share": 0.1391,
+   "realised": 0.0613
+  },
+  "N20-59 X 30min POSSIBLE middle": {
+   "zones": 1410,
+   "mean_share": 0.1173,
+   "realised": 0.0355
+  },
+  "N20-59 X 60min HOLDS any": {
+   "zones": 1449,
+   "mean_share": 0.2068,
+   "realised": 0.4672
+  },
+  "N20-59 X 60min HOLDS early": {
+   "zones": 1429,
+   "mean_share": 0.2073,
+   "realised": 0.4696
+  },
+  "N20-59 X 60min HOLDS middle": {
+   "zones": 20,
+   "mean_share": 0.1707,
+   "realised": 0.3
+  },
+  "N20-59 X 60min IMPOSSIBLE any": {
+   "zones": 4171,
+   "mean_share": 0.17,
+   "realised": 0.0
+  },
+  "N20-59 X 60min IMPOSSIBLE early": {
+   "zones": 3570,
+   "mean_share": 0.178,
+   "realised": 0.0
+  },
+  "N20-59 X 60min IMPOSSIBLE late": {
+   "zones": 337,
+   "mean_share": 0.128,
+   "realised": 0.0
+  },
+  "N20-59 X 60min IMPOSSIBLE middle": {
+   "zones": 264,
+   "mean_share": 0.115,
+   "realised": 0.0
+  },
+  "N20-59 X 60min POSSIBLE any": {
+   "zones": 4739,
+   "mean_share": 0.1384,
+   "realised": 0.0487
+  },
+  "N20-59 X 60min POSSIBLE early": {
+   "zones": 804,
+   "mean_share": 0.1714,
+   "realised": 0.0199
+  },
+  "N20-59 X 60min POSSIBLE late": {
+   "zones": 2626,
+   "mean_share": 0.1391,
+   "realised": 0.0644
+  },
+  "N20-59 X 60min POSSIBLE middle": {
+   "zones": 1309,
+   "mean_share": 0.1166,
+   "realised": 0.0351
+  },
+  "N20-59 X 120min HOLDS any": {
+   "zones": 1098,
+   "mean_share": 0.2026,
+   "realised": 0.6475
+  },
+  "N20-59 X 120min HOLDS early": {
+   "zones": 1037,
+   "mean_share": 0.206,
+   "realised": 0.6596
+  },
+  "N20-59 X 120min HOLDS late": {
+   "zones": 7,
+   "mean_share": 0.2524,
+   "realised": 0.4286
+  },
+  "N20-59 X 120min HOLDS middle": {
+   "zones": 54,
+   "mean_share": 0.1301,
+   "realised": 0.4444
+  },
+  "N20-59 X 120min IMPOSSIBLE any": {
+   "zones": 5695,
+   "mean_share": 0.1677,
+   "realised": 0.0
+  },
+  "N20-59 X 120min IMPOSSIBLE early": {
+   "zones": 4628,
+   "mean_share": 0.1784,
+   "realised": 0.0
+  },
+  "N20-59 X 120min IMPOSSIBLE late": {
+   "zones": 496,
+   "mean_share": 0.1301,
+   "realised": 0.0
+  },
+  "N20-59 X 120min IMPOSSIBLE middle": {
+   "zones": 571,
+   "mean_share": 0.1136,
+   "realised": 0.0
+  },
+  "N20-59 X 120min POSSIBLE any": {
+   "zones": 3566,
+   "mean_share": 0.1366,
+   "realised": 0.0552
+  },
+  "N20-59 X 120min POSSIBLE early": {
+   "zones": 138,
+   "mean_share": 0.2208,
+   "realised": 0.0217
+  },
+  "N20-59 X 120min POSSIBLE late": {
+   "zones": 2460,
+   "mean_share": 0.1391,
+   "realised": 0.0675
+  },
+  "N20-59 X 120min POSSIBLE middle": {
+   "zones": 968,
+   "mean_share": 0.1184,
+   "realised": 0.0289
+  },
+  "N>=60 R 30min HOLDS any": {
+   "zones": 4089,
+   "mean_share": 0.1658,
+   "realised": 0.2864
+  },
+  "N>=60 R 30min HOLDS early": {
+   "zones": 4079,
+   "mean_share": 0.1659,
+   "realised": 0.2866
+  },
+  "N>=60 R 30min HOLDS middle": {
+   "zones": 10,
+   "mean_share": 0.1218,
+   "realised": 0.2
+  },
+  "N>=60 R 30min IMPOSSIBLE any": {
+   "zones": 2691,
+   "mean_share": 0.1306,
+   "realised": 0.0
+  },
+  "N>=60 R 30min IMPOSSIBLE early": {
+   "zones": 2350,
+   "mean_share": 0.1385,
+   "realised": 0.0
+  },
+  "N>=60 R 30min IMPOSSIBLE late": {
+   "zones": 186,
+   "mean_share": 0.0794,
+   "realised": 0.0
+  },
+  "N>=60 R 30min IMPOSSIBLE middle": {
+   "zones": 155,
+   "mean_share": 0.0725,
+   "realised": 0.0
+  },
+  "N>=60 R 30min POSSIBLE any": {
+   "zones": 13273,
+   "mean_share": 0.0938,
+   "realised": 0.0427
+  },
+  "N>=60 R 30min POSSIBLE early": {
+   "zones": 1832,
+   "mean_share": 0.1395,
+   "realised": 0.0218
+  },
+  "N>=60 R 30min POSSIBLE late": {
+   "zones": 7717,
+   "mean_share": 0.091,
+   "realised": 0.0533
+  },
+  "N>=60 R 30min POSSIBLE middle": {
+   "zones": 3724,
+   "mean_share": 0.0771,
+   "realised": 0.0311
+  },
+  "N>=60 R 60min HOLDS any": {
+   "zones": 2844,
+   "mean_share": 0.1649,
+   "realised": 0.4237
+  },
+  "N>=60 R 60min HOLDS early": {
+   "zones": 2780,
+   "mean_share": 0.1665,
+   "realised": 0.4299
+  },
+  "N>=60 R 60min HOLDS late": {
+   "zones": 1,
+   "mean_share": 0.3077,
+   "realised": 1.0
+  },
+  "N>=60 R 60min HOLDS middle": {
+   "zones": 63,
+   "mean_share": 0.0949,
+   "realised": 0.1429
+  },
+  "N>=60 R 60min IMPOSSIBLE any": {
+   "zones": 5519,
+   "mean_share": 0.136,
+   "realised": 0.0
+  },
+  "N>=60 R 60min IMPOSSIBLE early": {
+   "zones": 4701,
+   "mean_share": 0.146,
+   "realised": 0.0
+  },
+  "N>=60 R 60min IMPOSSIBLE late": {
+   "zones": 446,
+   "mean_share": 0.0829,
+   "realised": 0.0
+  },
+  "N>=60 R 60min IMPOSSIBLE middle": {
+   "zones": 372,
+   "mean_share": 0.0735,
+   "realised": 0.0
+  },
+  "N>=60 R 60min POSSIBLE any": {
+   "zones": 11690,
+   "mean_share": 0.0902,
+   "realised": 0.0456
+  },
+  "N>=60 R 60min POSSIBLE early": {
+   "zones": 780,
+   "mean_share": 0.139,
+   "realised": 0.0179
+  },
+  "N>=60 R 60min POSSIBLE late": {
+   "zones": 7456,
+   "mean_share": 0.0912,
+   "realised": 0.055
+  },
+  "N>=60 R 60min POSSIBLE middle": {
+   "zones": 3454,
+   "mean_share": 0.0771,
+   "realised": 0.0316
+  },
+  "N>=60 R 120min HOLDS any": {
+   "zones": 2021,
+   "mean_share": 0.1611,
+   "realised": 0.6279
+  },
+  "N>=60 R 120min HOLDS early": {
+   "zones": 1844,
+   "mean_share": 0.1668,
+   "realised": 0.6551
+  },
+  "N>=60 R 120min HOLDS late": {
+   "zones": 12,
+   "mean_share": 0.1588,
+   "realised": 0.25
+  },
+  "N>=60 R 120min HOLDS middle": {
+   "zones": 165,
+   "mean_share": 0.0969,
+   "realised": 0.3515
+  },
+  "N>=60 R 120min IMPOSSIBLE any": {
+   "zones": 8453,
+   "mean_share": 0.1308,
+   "realised": 0.0
+  },
+  "N>=60 R 120min IMPOSSIBLE early": {
+   "zones": 6297,
+   "mean_share": 0.1486,
+   "realised": 0.0
+  },
+  "N>=60 R 120min IMPOSSIBLE late": {
+   "zones": 917,
+   "mean_share": 0.085,
+   "realised": 0.0
+  },
+  "N>=60 R 120min IMPOSSIBLE middle": {
+   "zones": 1239,
+   "mean_share": 0.0745,
+   "realised": 0.0
+  },
+  "N>=60 R 120min POSSIBLE any": {
+   "zones": 9579,
+   "mean_share": 0.088,
+   "realised": 0.049
+  },
+  "N>=60 R 120min POSSIBLE early": {
+   "zones": 120,
+   "mean_share": 0.1192,
+   "realised": 0.0083
+  },
+  "N>=60 R 120min POSSIBLE late": {
+   "zones": 6974,
+   "mean_share": 0.0914,
+   "realised": 0.0585
+  },
+  "N>=60 R 120min POSSIBLE middle": {
+   "zones": 2485,
+   "mean_share": 0.077,
+   "realised": 0.0241
+  },
+  "N>=60 X 30min HOLDS any": {
+   "zones": 3764,
+   "mean_share": 0.172,
+   "realised": 0.2912
+  },
+  "N>=60 X 30min HOLDS early": {
+   "zones": 3760,
+   "mean_share": 0.172,
+   "realised": 0.291
+  },
+  "N>=60 X 30min HOLDS late": {
+   "zones": 1,
+   "mean_share": 0.4026,
+   "realised": 1.0
+  },
+  "N>=60 X 30min HOLDS middle": {
+   "zones": 3,
+   "mean_share": 0.0713,
+   "realised": 0.3333
+  },
+  "N>=60 X 30min IMPOSSIBLE any": {
+   "zones": 4287,
+   "mean_share": 0.135,
+   "realised": 0.0
+  },
+  "N>=60 X 30min IMPOSSIBLE early": {
+   "zones": 3448,
+   "mean_share": 0.1495,
+   "realised": 0.0
+  },
+  "N>=60 X 30min IMPOSSIBLE late": {
+   "zones": 507,
+   "mean_share": 0.0814,
+   "realised": 0.0
+  },
+  "N>=60 X 30min IMPOSSIBLE middle": {
+   "zones": 332,
+   "mean_share": 0.066,
+   "realised": 0.0
+  },
+  "N>=60 X 30min POSSIBLE any": {
+   "zones": 12310,
+   "mean_share": 0.0867,
+   "realised": 0.0426
+  },
+  "N>=60 X 30min POSSIBLE early": {
+   "zones": 2620,
+   "mean_share": 0.107,
+   "realised": 0.0176
+  },
+  "N>=60 X 30min POSSIBLE late": {
+   "zones": 6979,
+   "mean_share": 0.0853,
+   "realised": 0.0589
+  },
+  "N>=60 X 30min POSSIBLE middle": {
+   "zones": 2711,
+   "mean_share": 0.0707,
+   "realised": 0.0251
+  },
+  "N>=60 X 60min HOLDS any": {
+   "zones": 2572,
+   "mean_share": 0.1699,
+   "realised": 0.4428
+  },
+  "N>=60 X 60min HOLDS early": {
+   "zones": 2543,
+   "mean_share": 0.1706,
+   "realised": 0.4444
+  },
+  "N>=60 X 60min HOLDS late": {
+   "zones": 2,
+   "mean_share": 0.3263,
+   "realised": 0.5
+  },
+  "N>=60 X 60min HOLDS middle": {
+   "zones": 27,
+   "mean_share": 0.0895,
+   "realised": 0.2963
+  },
+  "N>=60 X 60min IMPOSSIBLE any": {
+   "zones": 7469,
+   "mean_share": 0.1335,
+   "realised": 0.0
+  },
+  "N>=60 X 60min IMPOSSIBLE early": {
+   "zones": 6135,
+   "mean_share": 0.1459,
+   "realised": 0.0
+  },
+  "N>=60 X 60min IMPOSSIBLE late": {
+   "zones": 824,
+   "mean_share": 0.0818,
+   "realised": 0.0
+  },
+  "N>=60 X 60min IMPOSSIBLE middle": {
+   "zones": 510,
+   "mean_share": 0.0676,
+   "realised": 0.0
+  },
+  "N>=60 X 60min POSSIBLE any": {
+   "zones": 10320,
+   "mean_share": 0.0832,
+   "realised": 0.0467
+  },
+  "N>=60 X 60min POSSIBLE early": {
+   "zones": 1150,
+   "mean_share": 0.0986,
+   "realised": 0.0087
+  },
+  "N>=60 X 60min POSSIBLE late": {
+   "zones": 6661,
+   "mean_share": 0.0854,
+   "realised": 0.0617
+  },
+  "N>=60 X 60min POSSIBLE middle": {
+   "zones": 2509,
+   "mean_share": 0.0705,
+   "realised": 0.0243
+  },
+  "N>=60 X 120min HOLDS any": {
+   "zones": 1904,
+   "mean_share": 0.1671,
+   "realised": 0.6145
+  },
+  "N>=60 X 120min HOLDS early": {
+   "zones": 1832,
+   "mean_share": 0.1701,
+   "realised": 0.6217
+  },
+  "N>=60 X 120min HOLDS late": {
+   "zones": 9,
+   "mean_share": 0.1789,
+   "realised": 0.3333
+  },
+  "N>=60 X 120min HOLDS middle": {
+   "zones": 63,
+   "mean_share": 0.0784,
+   "realised": 0.4444
+  },
+  "N>=60 X 120min IMPOSSIBLE any": {
+   "zones": 9967,
+   "mean_share": 0.1278,
+   "realised": 0.0
+  },
+  "N>=60 X 120min IMPOSSIBLE early": {
+   "zones": 7805,
+   "mean_share": 0.1422,
+   "realised": 0.0
+  },
+  "N>=60 X 120min IMPOSSIBLE late": {
+   "zones": 1241,
+   "mean_share": 0.0827,
+   "realised": 0.0
+  },
+  "N>=60 X 120min IMPOSSIBLE middle": {
+   "zones": 921,
+   "mean_share": 0.0667,
+   "realised": 0.0
+  },
+  "N>=60 X 120min POSSIBLE any": {
+   "zones": 8490,
+   "mean_share": 0.0826,
+   "realised": 0.0531
+  },
+  "N>=60 X 120min POSSIBLE early": {
+   "zones": 191,
+   "mean_share": 0.1101,
+   "realised": 0.0052
+  },
+  "N>=60 X 120min POSSIBLE late": {
+   "zones": 6237,
+   "mean_share": 0.0854,
+   "realised": 0.0656
+  },
+  "N>=60 X 120min POSSIBLE middle": {
+   "zones": 2062,
+   "mean_share": 0.0715,
+   "realised": 0.0199
+  }
+ },
+ "transfer": {
+  "all N20-59 ADR R": {
+   "targets": 463,
+   "mean_mass": 0.3376,
+   "landed": 0.2333,
+   "ratio": 0.691
+  },
+  "all N20-59 ADR X": {
+   "targets": 463,
+   "mean_mass": 0.3276,
+   "landed": 0.1922,
+   "ratio": 0.587
+  },
+  "all N20-59 ODR R": {
+   "targets": 799,
+   "mean_mass": 0.481,
+   "landed": 0.3317,
+   "ratio": 0.69
+  },
+  "all N20-59 ODR X": {
+   "targets": 799,
+   "mean_mass": 0.4161,
+   "landed": 0.2728,
+   "ratio": 0.656
+  },
+  "all N20-59 RDR R": {
+   "targets": 808,
+   "mean_mass": 0.4393,
+   "landed": 0.2785,
+   "ratio": 0.634
+  },
+  "all N20-59 RDR X": {
+   "targets": 808,
+   "mean_mass": 0.4492,
+   "landed": 0.2698,
+   "ratio": 0.601
+  },
+  "all N>=60 ADR R": {
+   "targets": 4975,
+   "mean_mass": 0.2181,
+   "landed": 0.2233,
+   "ratio": 1.024
+  },
+  "all N>=60 ADR X": {
+   "targets": 4975,
+   "mean_mass": 0.2233,
+   "landed": 0.2269,
+   "ratio": 1.016
+  },
+  "all N>=60 ODR R": {
+   "targets": 4872,
+   "mean_mass": 0.2853,
+   "landed": 0.2445,
+   "ratio": 0.857
+  },
+  "all N>=60 ODR X": {
+   "targets": 4872,
+   "mean_mass": 0.279,
+   "landed": 0.2391,
+   "ratio": 0.857
+  },
+  "all N>=60 RDR R": {
+   "targets": 4569,
+   "mean_mass": 0.2987,
+   "landed": 0.2725,
+   "ratio": 0.912
+  },
+  "all N>=60 RDR X": {
+   "targets": 4569,
+   "mean_mass": 0.3199,
+   "landed": 0.2839,
+   "ratio": 0.887
+  },
+  "weekday N20-59 ADR R": {
+   "targets": 1960,
+   "mean_mass": 0.2627,
+   "landed": 0.1454,
+   "ratio": 0.554
+  },
+  "weekday N20-59 ADR X": {
+   "targets": 1960,
+   "mean_mass": 0.2647,
+   "landed": 0.1679,
+   "ratio": 0.634
+  },
+  "weekday N20-59 ODR R": {
+   "targets": 1741,
+   "mean_mass": 0.3611,
+   "landed": 0.2074,
+   "ratio": 0.574
+  },
+  "weekday N20-59 ODR X": {
+   "targets": 1741,
+   "mean_mass": 0.3399,
+   "landed": 0.174,
+   "ratio": 0.512
+  },
+  "weekday N20-59 RDR R": {
+   "targets": 1642,
+   "mean_mass": 0.3644,
+   "landed": 0.2241,
+   "ratio": 0.615
+  },
+  "weekday N20-59 RDR X": {
+   "targets": 1642,
+   "mean_mass": 0.3373,
+   "landed": 0.1681,
+   "ratio": 0.498
+  },
+  "weekday N>=60 ADR R": {
+   "targets": 2550,
+   "mean_mass": 0.2392,
+   "landed": 0.1878,
+   "ratio": 0.785
+  },
+  "weekday N>=60 ADR X": {
+   "targets": 2550,
+   "mean_mass": 0.2514,
+   "landed": 0.1741,
+   "ratio": 0.693
+  },
+  "weekday N>=60 ODR R": {
+   "targets": 2619,
+   "mean_mass": 0.3219,
+   "landed": 0.2249,
+   "ratio": 0.699
+  },
+  "weekday N>=60 ODR X": {
+   "targets": 2619,
+   "mean_mass": 0.3178,
+   "landed": 0.2119,
+   "ratio": 0.667
+  },
+  "weekday N>=60 RDR R": {
+   "targets": 2459,
+   "mean_mass": 0.3341,
+   "landed": 0.2725,
+   "ratio": 0.816
+  },
+  "weekday N>=60 RDR X": {
+   "targets": 2459,
+   "mean_mass": 0.3333,
+   "landed": 0.2529,
+   "ratio": 0.759
+  }
+ }
+}
