@@ -1,0 +1,24 @@
+# The constellations of the joint table on screen 23.5 (operator 2026-10-30). Screen 24 and SC-1.1 keep ALG:ZONE-MAP-3.
+registry_part: table-cells-235
+source_references:
+  - id: SRC:TABLE-CELLS-3010
+    sc_ref: ["P3", "§12.6"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: meaning/07-cepochka-reshenij.md
+    locator: "node «30.10.2026 · 23.5: созвездия из таблицы в прежнем рисунке»: the operator, live chat 30.10, looking at the zones' drawing: «ничего не надо по-другому, просто этот смысл, который на бэкэнде, вставить для созвездий, которые были раньше… прикрути бэкэнд к фронтенду»"
+density_algorithms:
+  - id: ALG:TABLE-CELLS-1
+    version: "table-cells-1"
+    sc_ref: ["P3"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: созвездия из совместной таблицы
+    grid: GRID:K10-J15-1
+    density_rule: "n(cell) = the family's known events of one kind in the 15-minute x 0.1-SD cell; no smoothing; a star cell holds at least 2 sessions"
+    region_rule: "star cells at most 2 cells apart in both price and time are one constellation; it holds only star cells, never an empty cell"
+    min_support_rule: "n_zone >= max(4, ceil(0.05 N)), the support of zone-map-3; otherwise its sessions stay in the residual; share = n_zone / N_base"
+    order_rule: "by start time, then share, then nearness to u = 0; label E1, E2 … in that order"
+    diagnostics: ["the same as ALG:ZONE-MAP-3, computed with this rule"]
+    seed_rule: "every random procedure seeded from the version, the family, the snapshot, the event and the test"
+    frozen: false
+    source_refs: [SRC:TABLE-CELLS-3010]

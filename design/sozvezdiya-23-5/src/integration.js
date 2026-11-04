@@ -150,7 +150,9 @@
         const when=preBundle(r,'EST:P-WHEN',h.id),dr=preBundle(r,'EST:P-DR',h.id);
         if(when){const e=when.estimates[0],top=e.categories.reduce((a,b)=>a.count>=b.count?a:b);html+='<div class="is" title="'+esc(when.claim.statement_ru)+'">'+lbl('EST:P-WHEN','when',{window:top.category,k:top.count,n:e.denominator})+'</div>';}
         if(dr){const e=dr.estimates[0],held=e.categories.find(x=>x.category==='HELD');html+='<div class="is" title="'+esc(dr.claim.statement_ru)+'">'+lbl('EST:P-DR','dr',{held:held?.count||0,n:e.denominator})+'</div>';}
-        for(const ev of ['R','X']){const b=preBundle(r,'EST:P-'+ev,h.id),q=b?.estimates[0]?.quantiles?.find(x=>x.quantile===.5);if(q)html+='<div class="is" title="'+esc(b.claim.statement_ru)+'">'+lbl('EST:P-'+ev,ev==='R'?'r':'x',{q50:sd(q.value)})+'</div>';}
+        // 23.5 (29.10): with the family flag the server's R is the pullback before the top; its title says so
+        const qv=(b,x)=>b?.estimates[0]?.quantiles?.find(y=>y.quantile===x)?.value,rb=r.key?.r_event==='R_BEFORE_X';
+        for(const ev of ['R','X']){const b=preBundle(r,'EST:P-'+ev,h.id),q=b?.estimates[0]?.quantiles?.find(x=>x.quantile===.5);if(q)html+='<div class="is" title="'+esc(ev==='R'&&rb?lbl('FF:R-BEFORE-X','pre_title_R',{q50:sd(q.value),q25:sd(qv(b,.25)),q75:sd(qv(b,.75))}):b.claim.statement_ru)+'">'+lbl('EST:P-'+ev,ev==='R'?'r':'x',{q50:sd(q.value)})+'</div>';}
       }
       return html+'<div class="is">' + (r.few ? 'мало сессий · ' : '') + 'кандидат · приёмка не проведена</div>';
     }
@@ -211,10 +213,10 @@
   function phasePanel(F, ctx) {
     const ph = phaseOf(F, ctx), P = 'FF:PHASE-RULE';
     if (!ph) return '';
-    const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true);
-    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + candTag() + '</span></div>' +
+    const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true), RB = F.rbx ? 'FF:R-BEFORE-X' : null;   // 23.5: the pullback before the top (29.10)
+    return '<div class="p24-phase" title="' + esc(RB ? lbl(RB, 'phase_title') : lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + candTag() + '</span></div>' +
       '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
-      link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
+      link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + (RB ? lbl(RB, 'phase_clock', { cut: clk(ph.cut), share }) : lbl(P, 'clock', { cut: clk(ph.cut), share })) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
   }
   // the candidate edition's own words for the accepted «Сейчас» forms (row_mark / title_mark, operator 08.10), read only
   // here and only for the trial «nowmarks»: the general lbl() keeps refusing them (tests/integration_faults.mjs)
@@ -230,9 +232,12 @@
   function nowMarkRow(F, n, E, o) {
     const { val, bN, bI, bT, q, tm, sp, u0, sgn, lv } = o, NE = 'EST:N-NEW-R';
     const P = v => Math.round(F.u2p(u0 + sgn * v)), cnt = sp.N_match_unknown ? sp.N_new_yes + '–' + (sp.N_new_yes + sp.N_match_unknown) : String(sp.N_new_yes);
-    const t1 = bN ? reviewLbl(NE, 'title_mark', { ev: 'R', cut: n.cut.cut_clock_et, today: num(P(0), 0), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base }) : '';
-    const t2 = bI ? reviewLbl('EST:N-IF-NEW-R', 'title_mark', { p50: lv(q.q50), lo: num(Math.min(P(q.q25), P(q.q75)), 0), hi: num(Math.max(P(q.q25), P(q.q75)), 0), time: bT ? reviewLbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' }) : '';
-    return link({ k: 'now', ev: 'R' }, '<span class="t"><span>' + reviewLbl(NE, 'row_mark', { ev: '<i style="color:' + cfg.R + '">R</i>' }) + candTag() + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' '));
+    // 23.5 (29.10): a new low below today's point after the cut is its own event (it may come after the top), not R
+    const RB = F.rbx, w1 = { ev: 'R', cut: n.cut.cut_clock_et, today: num(P(0), 0), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base };
+    const w2 = { p50: lv(q.q50), lo: num(Math.min(P(q.q25), P(q.q75)), 0), hi: num(Math.max(P(q.q25), P(q.q75)), 0), time: bT ? reviewLbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' };
+    const t1 = bN ? (RB ? lbl('FF:R-BEFORE-X', 'now_title_mark', w1) : reviewLbl(NE, 'title_mark', w1)) : '';
+    const t2 = bI ? (RB ? lbl('FF:R-BEFORE-X', 'now_if_title_mark', w2) : reviewLbl('EST:N-IF-NEW-R', 'title_mark', w2)) : '';
+    return link({ k: 'now', ev: 'R' }, '<span class="t"><span>' + (RB ? lbl('FF:R-BEFORE-X', 'now_row_mark') : reviewLbl(NE, 'row_mark', { ev: '<i style="color:' + cfg.R + '">R</i>' })) + candTag() + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' '));
   }
   // its levels at the price scale, always, no text: today's deepest point after the activation (dashed), and for the
   // sessions whose pullback went deeper the middle half of where it ended (a narrow bar) with its median (a tick); a thin

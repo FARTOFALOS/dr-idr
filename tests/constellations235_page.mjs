@@ -25,7 +25,7 @@ async function open(fragment){
 try{
  for(const [width,height]of [[1600,900],[1920,1000]]){
   await b.cdp.send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
-  await open('#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=weekday&trial=pullbacks&pbscale=1');
+  await open('#date=2025-12-17&inst=NQ&session=RDR&at=11:10&scope=weekday&trial=pullbacks&pbscale=1&tp=0');
   const s=await evaluate(b.cdp,()=>{
    const d=window.__d24,F=d.mapContext().F,p=d.pullbacks().packet.proof;
    window.__arcs=[];window.__rects=[];d.render(true);

@@ -80,7 +80,7 @@ def scene(inst,session,cut,date=None,view='auto',scope='weekday',trials=()):
                 continue
             if name=='pre':
                 import pre24
-                raw,B,pday=pre24._pre(inst,session,cut,date,scope)
+                raw,B,pday=pre24._pre(inst,session,cut,date,scope,'rpre' in view.split(':')[1:])   # 23.5: R before the extreme
                 value=gate.attach_pre(raw,inst,B,pday,dict(instrument=inst,session=session,at=cut,date=date,scope=scope))
             else:
                 import arrive24

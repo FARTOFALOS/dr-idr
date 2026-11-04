@@ -5351,6 +5351,28 @@
     ],
     "title_ru": "Локальные ядра 0,3 SD × 15 минут",
     "version": "1.0"
+   },
+   {
+    "density_rule": "n(cell) = the family's known events of one kind in the 15-minute x 0.1-SD cell; no smoothing; a star cell holds at least 2 sessions",
+    "diagnostics": [
+     "the same as ALG:ZONE-MAP-3, computed with this rule"
+    ],
+    "frozen": false,
+    "grid": "GRID:K10-J15-1",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "ALG:TABLE-CELLS-1",
+    "min_support_rule": "n_zone >= max(4, ceil(0.05 N)), the support of zone-map-3; otherwise its sessions stay in the residual; share = n_zone / N_base",
+    "order_rule": "by start time, then share, then nearness to u = 0; label E1, E2 … in that order",
+    "region_rule": "star cells at most 2 cells apart in both price and time are one constellation; it holds only star cells, never an empty cell",
+    "sc_ref": [
+     "P3"
+    ],
+    "seed_rule": "every random procedure seeded from the version, the family, the snapshot, the event and the test",
+    "source_refs": [
+     "SRC:TABLE-CELLS-3010"
+    ],
+    "title_ru": "созвездия из совместной таблицы",
+    "version": "table-cells-1"
    }
   ],
   "editions": [
@@ -13842,9 +13864,111 @@
       "surface": "PASSPORT",
       "text_ru": "самая глубокая точка против слома до экстремума сессии",
       "view": "BRK"
+     },
+     {
+      "key": "zone_final_R",
+      "surface": "INSPECTOR",
+      "text_ru": "Зона отката до вершины: {status}. Посещение — отдельный факт.",
+      "view": "ANY"
+     },
+     {
+      "key": "zone_final_X",
+      "surface": "INSPECTOR",
+      "text_ru": "Зона максимума хода: {status}. Посещение — отдельный факт.",
+      "view": "ANY"
+     },
+     {
+      "key": "phase_clock",
+      "surface": "PANEL",
+      "text_ru": "откат до вершины у семьи к {cut} был у {share} · нужно половина",
+      "view": "ANY"
+     },
+     {
+      "key": "phase_title",
+      "surface": "PANEL",
+      "text_ru": "Ваше правило от 08.10: «откат сделан», когда откат достиг −0,7 и у половины сессий семьи откат до вершины по часам уже был. Это правило, а не факт рынка и не сигнал; где кончится откат сегодня, до конца сессии неизвестно.",
+      "view": "ANY"
+     },
+     {
+      "key": "now_row",
+      "surface": "PANEL",
+      "text_ru": "В истории: цена позже уходила ниже сегодняшнего дна",
+      "view": "CONF"
+     },
+     {
+      "key": "now_row",
+      "surface": "PANEL",
+      "text_ru": "В истории: цена позже уходила против слома дальше сегодняшней точки",
+      "view": "BRK"
+     },
+     {
+      "key": "now_sub",
+      "surface": "PANEL",
+      "text_ru": "Если уходила: до {p50} · {p25}…{p75}",
+      "view": "ANY"
+     },
+     {
+      "key": "now_row_mark",
+      "surface": "PANEL",
+      "text_ru": "ниже сегодняшнего дна",
+      "view": "ANY"
+     },
+     {
+      "key": "now_title_mark",
+      "surface": "PANEL",
+      "text_ru": "После {cut} цена ушла ниже сегодняшней точки отката {today} у {pct} сессий семьи, живых к этому часу ({yes} из {D}; опора {n} из {N}). Это новый лой в любой момент, в том числе после хая дня, а не откат до вершины. История, не прогноз и не сделка.",
+      "view": "ANY"
+     },
+     {
+      "key": "now_if_title_mark",
+      "surface": "PANEL",
+      "text_ru": "У тех, у кого цена ушла ниже, — обычно до {p50}, у половины {lo}–{hi}{time}. Отметки у шкалы цены: пунктир — сегодняшняя точка отката, полоса — у половины, черта — обычно.",
+      "view": "ANY"
+     },
+     {
+      "key": "pre_title_R",
+      "surface": "PANEL",
+      "text_ru": "откат до вершины после подтверждения — обычно до {q50} SD, у половины {q25}…{q75}",
+      "view": "ANY"
+     },
+     {
+      "key": "zone_share",
+      "surface": "INSPECTOR",
+      "text_ru": "семьи — в самой плотной клетке созвездия: {band} SD × {window}",
+      "view": "ANY"
+     },
+     {
+      "key": "zone_row",
+      "surface": "PANEL",
+      "text_ru": "самая плотная клетка",
+      "view": "ANY"
+     },
+     {
+      "key": "q_band_R",
+      "surface": "INSPECTOR",
+      "text_ru": "дно отката до вершины в этой полосе · {from} до {end}",
+      "view": "ANY"
+     },
+     {
+      "key": "q_band_X",
+      "surface": "INSPECTOR",
+      "text_ru": "максимум хода в этой полосе · {from} до {end}",
+      "view": "ANY"
+     },
+     {
+      "key": "q_window",
+      "surface": "INSPECTOR",
+      "text_ru": "в эти 15 минут: R — дно отката до вершины, X — максимум хода",
+      "view": "ANY"
+     },
+     {
+      "key": "q_zone",
+      "surface": "INSPECTOR",
+      "text_ru": "в окне {window}: R — дно отката до вершины, X — максимум хода",
+      "view": "ANY"
      }
     ],
-    "note": "The object is the operator's decision of 29.10 (SRC:R-BEFORE-X-2910); the words are the executor's, for his acceptance.",
+    "note": "The object is the operator's decision of 29.10 (SRC:R-BEFORE-X-2910); the words are the executor's, for his acceptance. On 23.5 these words replace every line that called R «окончательный»: the zone status, the phase rule (08.10), «До подтверждения»; the «Сейчас» line of a new low below today's deepest point is named as its own event (a new low at any time, not R); and the number of a constellation is named as its densest cell (28.10).",
     "record_class": "OperatorNamedRule",
     "sc_ref": [
      "P0.1",
@@ -16421,6 +16545,17 @@
      "P0.1",
      "§12.6"
     ]
+   },
+   {
+    "document": "meaning/07-cepochka-reshenij.md",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "SRC:TABLE-CELLS-3010",
+    "locator": "node «30.10.2026 · 23.5: созвездия из таблицы в прежнем рисунке»: the operator, live chat 30.10, looking at the zones' drawing: «ничего не надо по-другому, просто этот смысл, который на бэкэнде, вставить для созвездий, которые были раньше… прикрути бэкэнд к фронтенду»",
+    "role": "DECISION",
+    "sc_ref": [
+     "P3",
+     "§12.6"
+    ]
    }
   ],
   "strategy_rules": [
@@ -16994,7 +17129,7 @@
   "document_sha256_lf": "783064fc5c1445b149300cf4b2d610ec1b9f4ef7bb58cd5311c89c20c0cb450a",
   "edition": "DR-LAB-CANDIDATES-1",
   "linkml": "1.11.1",
-  "registry_sha256": "ec44aa7e0aebeee4515a94ac96ebafd662df9cbc4362b1b836cfd8eff3602307",
+  "registry_sha256": "d89730346eb4099390a41ee43db1563d111daa062e1a964f6d806b903470ead4",
   "runtime_spec_sha256": "32f4df78431d890606a09e6f6cbafac88b6967e079342319bf57bee8f76857a0",
   "schema_sha256_lf": "98472283678606a509922e3891569552242eff17409600226db945baf6dcd173",
   "sources": {
@@ -17011,7 +17146,8 @@
    "integration/candidates/registry/80-continuations.yaml": "0adc669ab07b78921ba7e9911d5e80e26de85063f5ca93ae61bd79f60b95e1ed",
    "integration/candidates/registry/90-pullbacks.yaml": "0bcc119aef1355b385d8378e66fcd2866ccbb97f042dd576069052d64bb44536",
    "integration/candidates/registry/95-time-sd.yaml": "f3fefbcaf6ddfee7e07841991cc5360481ba90c2e5c6ecbc21a8e1f2951e5543",
-   "integration/candidates/registry/96-r-before-x.yaml": "dea4a33052ccbffc105d2b9cfcdc47a86cf8499450f4e83b93a9015340bc58b6",
+   "integration/candidates/registry/96-r-before-x.yaml": "01c08ad2bfcb63e3ee26fc6eff5315bb976b72a1fd5f1a45e3bcbf294c4fe2cb",
+   "integration/candidates/registry/98-table-cells.yaml": "43c759a9ec9bbb356ac36f4b2711d031cd80e977e25f235fd8ac44e891491172",
    "integration/candidates/schema.yaml": "98472283678606a509922e3891569552242eff17409600226db945baf6dcd173",
    "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"
   }

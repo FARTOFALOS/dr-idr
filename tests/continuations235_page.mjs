@@ -17,7 +17,7 @@ async function ready(cut){
 }
 async function go(at='11:10',seed=true){
  await B.cdp.send('Page.navigate',{url:'about:blank'});await sleep(80);
- await B.cdp.send('Page.navigate',{url:base+'/23-5/#date=2025-12-17&inst=NQ&session=RDR&at='+at+'&scope=all&trial=continuations&mode=continuations'+(seed?'&cont=17,19,685,700,670':'')});
+ await B.cdp.send('Page.navigate',{url:base+'/23-5/#date=2025-12-17&inst=NQ&session=RDR&at='+at+'&scope=all&trial=continuations&mode=continuations&tp=0'+(seed?'&cont=17,19,685,700,670':'')});
  if(seed)await ready(670);
  else for(let i=0;i<200;i++){if(await evaluate(B.cdp,()=>!!window.__d24?.cur().F)){await sleep(200);break;}await sleep(150);}
 }
