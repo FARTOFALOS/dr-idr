@@ -2,11 +2,31 @@
   const ICFG = window.DR_INTEGRATION || { enabled: false }, REVIEW = ICFG.registry;
   // phase / nowmarks: the operator's decisions of 2026-10-08 (meaning/17 §7) on the page only, over accepted bundles and the
   // candidate labels FF:PHASE-RULE, row_mark / title_mark (integration/candidates/registry/40-claims.yaml); no server call
-  const TRIAL = { pre: false, arrive: false, paths: false, continuations: !!ICFG.enabled, phase: false, nowmarks: false, pullbacks: !!ICFG.enabled };
+  // The old broad PB overlay is superseded by the explicitly approved time x SD profile of 23.5.
+  // Legacy flags cannot reinstate that overlay; the new profile is the normal bounds view.
+  // Operator 2026-10-26: on 23.5 the decisions of 08.10 are on by default (before confirmation, «Сейчас» as a number with
+  // marks, the phase rule as two facts); screen 24 keeps them off. «ON_0810» switches them on once over an older saved choice.
+  const TRIAL = { pre: !!ICFG.enabled, arrive: false, paths: false, continuations: !!ICFG.enabled, phase: !!ICFG.enabled, nowmarks: !!ICFG.enabled, pullbacks: false };
   // the viewer's own choice of trials is kept in this browser like every other setting (2026-10-19); the address still adds
-  const TRIAL_KEY = 'drlab.d235.trials';
-  if (ICFG.enabled) try { const kept = JSON.parse(localStorage.getItem(TRIAL_KEY) || '{}'); for (const k in TRIAL) if (typeof kept[k] === 'boolean') TRIAL[k] = kept[k]; } catch (e) { /* defaults */ }
-  if (ICFG.enabled) for (const k of (new URLSearchParams(location.hash.slice(1)).get('trial') || '').split(',')) if (k in TRIAL) TRIAL[k] = true;
+  const TRIAL_KEY = 'drlab.d235.trials', ON_0810 = 'drlab.d235.trials.on0810';
+  if (ICFG.enabled) try {
+    const kept = JSON.parse(localStorage.getItem(TRIAL_KEY) || '{}');
+    if (localStorage.getItem(ON_0810) == null) { for (const k of ['pre', 'phase', 'nowmarks']) delete kept[k]; localStorage.setItem(TRIAL_KEY, JSON.stringify(kept)); localStorage.setItem(ON_0810, '1'); }
+    for (const k in TRIAL) if (k !== 'pullbacks' && typeof kept[k] === 'boolean') TRIAL[k] = kept[k];
+    if (kept.pullbacks) {
+      if (localStorage.getItem(TRIAL_KEY+'.before-withdrawal') == null) localStorage.setItem(TRIAL_KEY+'.before-withdrawal',JSON.stringify(kept));
+      localStorage.setItem(TRIAL_KEY,JSON.stringify({...kept,pullbacks:false}));
+    }
+  } catch (e) { /* defaults */ }
+  if (ICFG.enabled) for (const k of (new URLSearchParams(location.hash.slice(1)).get('trial') || '').split(',')) if (k in TRIAL && k !== 'pullbacks') TRIAL[k] = true;
+  {
+    const q=new URLSearchParams(location.hash.slice(1)),before=q.toString();
+    const active=(q.get('trial')||'').split(',').filter(k=>k&&k!=='pullbacks');
+    if(active.length)q.set('trial',active.join(','));else q.delete('trial');
+    if(q.get('mode')==='pullbacks')q.delete('mode');
+    // The locality scale remains an explicit parameter of the new profile.
+    if(q.toString()!==before)history.replaceState(null,'',location.pathname+location.search+(q.toString()?'#'+q:''));
+  }
   if (ICFG.enabled) window.addEventListener('hashchange',()=>location.reload());
   const IS = { key: null, packet: null, pending: new Set(), cache: new Map(), error: null, discarded: 0, committed: 0, selection: null, epoch: 0 };
   function sceneRequest() {
@@ -24,7 +44,7 @@
     if (IS.key === q.key && IS.packet || IS.pending.has(q.key)) return;
     if (IS.key !== q.key) { IS.error = null; IS.key = q.key; IS.packet = null; }
     IS.pending.add(q.key);
-    const query = new URLSearchParams({ instrument: A.inst, session: q.s.k, at: q.cut, view: q.view, scope: st.scope, trials: q.trials.join(',') });
+    const query = new URLSearchParams({ instrument: A.inst, session: q.s.k, at: q.cut, view: q.view + RBX, scope: st.scope, trials: q.trials.join(',') });
     if (A.src === 'hist') query.set('date', A.date);
     fetch('/api/integration/scene?' + query).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(r => {
       if (q.key !== sceneRequest().key) { IS.discarded++; return; }
@@ -130,7 +150,9 @@
         const when=preBundle(r,'EST:P-WHEN',h.id),dr=preBundle(r,'EST:P-DR',h.id);
         if(when){const e=when.estimates[0],top=e.categories.reduce((a,b)=>a.count>=b.count?a:b);html+='<div class="is" title="'+esc(when.claim.statement_ru)+'">'+lbl('EST:P-WHEN','when',{window:top.category,k:top.count,n:e.denominator})+'</div>';}
         if(dr){const e=dr.estimates[0],held=e.categories.find(x=>x.category==='HELD');html+='<div class="is" title="'+esc(dr.claim.statement_ru)+'">'+lbl('EST:P-DR','dr',{held:held?.count||0,n:e.denominator})+'</div>';}
-        for(const ev of ['R','X']){const b=preBundle(r,'EST:P-'+ev,h.id),q=b?.estimates[0]?.quantiles?.find(x=>x.quantile===.5);if(q)html+='<div class="is" title="'+esc(b.claim.statement_ru)+'">'+lbl('EST:P-'+ev,ev==='R'?'r':'x',{q50:sd(q.value)})+'</div>';}
+        // 23.5 (29.10): with the family flag the server's R is the pullback before the top; its title says so
+        const qv=(b,x)=>b?.estimates[0]?.quantiles?.find(y=>y.quantile===x)?.value,rb=r.key?.r_event==='R_BEFORE_X';
+        for(const ev of ['R','X']){const b=preBundle(r,'EST:P-'+ev,h.id),q=b?.estimates[0]?.quantiles?.find(x=>x.quantile===.5);if(q)html+='<div class="is" title="'+esc(ev==='R'&&rb?lbl('FF:R-BEFORE-X','pre_title_R',{q50:sd(q.value),q25:sd(qv(b,.25)),q75:sd(qv(b,.75))}):b.claim.statement_ru)+'">'+lbl('EST:P-'+ev,ev==='R'?'r':'x',{q50:sd(q.value)})+'</div>';}
       }
       return html+'<div class="is">' + (r.few ? 'мало сессий · ' : '') + 'кандидат · приёмка не проведена</div>';
     }
@@ -171,8 +193,9 @@
   // retirement zone (−0.7) AND at least half of the family's sessions had their final R earlier than the cut by the common
   // clock (known, of N: EST:B-CLOCK-R over the whole price range, part EARLIER, a passport the server verifies). A rule
   // of the operator, not a statement about the market; only for the confirmation family (a break is another frame)
+  // Operator 2026-10-26: the screen shows what was, it does not switch sides by a rule. On 23.5 the rule is its two facts
+  // with today's values; no «откат сделан» verdict and no quieter side (phaseK = 1).
   function phaseOf(F, ctx) {
-    if (F?._pb) F = PB.model.base; // the existing phase trial is defined on FINAL-R, never on multiple local bottoms
     if (!TRIAL.phase || !F || F.brk || !F.N) return null;
     const rows = todayRows(F, ctx);
     if (!rows.length) return null;
@@ -185,15 +208,15 @@
   }
   // the zones of the side the rule points at stay as they are; the other side's haze and stars a little quieter
   // (operator 2026-10-06 «пока откат не сделан, зоны R чуть ярче, после — зоны X»; 2026-10-08 the rule); never a size
-  const phaseK = (ph, ev) => !ph ? 1 : ev === (ph.done ? 'X' : 'R') ? 1 : 0.72;
+  const phaseK = () => 1;
   // its one place in the panel: the state and both criteria with today's values
   function phasePanel(F, ctx) {
     const ph = phaseOf(F, ctx), P = 'FF:PHASE-RULE';
     if (!ph) return '';
-    const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true);
-    return '<div class="p24-phase" title="' + esc(lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + candTag() + '</span><span><b>' + lbl(P, ph.done ? 'done' : 'open') + '</b></span></div>' +
+    const ok = b => b ? '✓ ' : '', share = ppTxt(ph.pass, true), RB = F.rbx ? 'FF:R-BEFORE-X' : null;   // 23.5: the pullback before the top (29.10)
+    return '<div class="p24-phase" title="' + esc(RB ? lbl(RB, 'phase_title') : lbl(P, 'title')) + '"><div class="p21-h second"><span>' + lbl(P, 'head') + candTag() + '</span></div>' +
       '<div class="p21-note">' + ok(ph.deep) + lbl(P, 'depth', { r: sd(ph.r) }) + '</div>' +
-      link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + lbl(P, 'clock', { cut: clk(ph.cut), share }) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
+      link({ k: 'phase' }, '<span class="t"><span>' + ok(ph.half) + (RB ? lbl(RB, 'phase_clock', { cut: clk(ph.cut), share }) : lbl(P, 'clock', { cut: clk(ph.cut), share })) + '</span></span>', 'mc', ph.pass, lbl('EST:B-CLOCK-R', 'title')) + '</div>';
   }
   // the candidate edition's own words for the accepted «Сейчас» forms (row_mark / title_mark, operator 08.10), read only
   // here and only for the trial «nowmarks»: the general lbl() keeps refusing them (tests/integration_faults.mjs)
@@ -209,9 +232,12 @@
   function nowMarkRow(F, n, E, o) {
     const { val, bN, bI, bT, q, tm, sp, u0, sgn, lv } = o, NE = 'EST:N-NEW-R';
     const P = v => Math.round(F.u2p(u0 + sgn * v)), cnt = sp.N_match_unknown ? sp.N_new_yes + '–' + (sp.N_new_yes + sp.N_match_unknown) : String(sp.N_new_yes);
-    const t1 = bN ? reviewLbl(NE, 'title_mark', { ev: 'R', cut: n.cut.cut_clock_et, today: num(P(0), 0), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base }) : '';
-    const t2 = bI ? reviewLbl('EST:N-IF-NEW-R', 'title_mark', { p50: lv(q.q50), lo: num(Math.min(P(q.q25), P(q.q75)), 0), hi: num(Math.max(P(q.q25), P(q.q75)), 0), time: bT ? reviewLbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' }) : '';
-    return link({ k: 'now', ev: 'R' }, '<span class="t"><span>' + reviewLbl(NE, 'row_mark', { ev: '<i style="color:' + cfg.R + '">R</i>' }) + candTag() + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' '));
+    // 23.5 (29.10): a new low below today's point after the cut is its own event (it may come after the top), not R
+    const RB = F.rbx, w1 = { ev: 'R', cut: n.cut.cut_clock_et, today: num(P(0), 0), pct: val, yes: cnt, D: sp.N_match_total, n: sp.N_eligible, N: n.base.N_base };
+    const w2 = { p50: lv(q.q50), lo: num(Math.min(P(q.q25), P(q.q75)), 0), hi: num(Math.max(P(q.q25), P(q.q75)), 0), time: bT ? reviewLbl('EST:N-TIME-R', 'title_mark', { min: Math.round(tm.q50_min) }) : '' };
+    const t1 = bN ? (RB ? lbl('FF:R-BEFORE-X', 'now_title_mark', w1) : reviewLbl(NE, 'title_mark', w1)) : '';
+    const t2 = bI ? (RB ? lbl('FF:R-BEFORE-X', 'now_if_title_mark', w2) : reviewLbl('EST:N-IF-NEW-R', 'title_mark', w2)) : '';
+    return link({ k: 'now', ev: 'R' }, '<span class="t"><span>' + (RB ? lbl('FF:R-BEFORE-X', 'now_row_mark') : reviewLbl(NE, 'row_mark', { ev: '<i style="color:' + cfg.R + '">R</i>' })) + candTag() + (E.note ? ' <span class="p21-sub">' + esc(E.note) + '</span>' : '') + '</span></span><b>' + val + '</b>', 'mc', null, [t1, t2].filter(Boolean).join(' '));
   }
   // its levels at the price scale, always, no text: today's deepest point after the activation (dashed), and for the
   // sessions whose pullback went deeper the middle half of where it ended (a narrow bar) with its median (a tick); a thin
@@ -258,8 +284,7 @@
     if (!ICFG.enabled) return '';
     return '<details class="cgd"><summary class="cg">Испытание кандидатов</summary>' +
       [['pre', 'История до подтверждения'], ['arrive', 'Отсюда до места · Q1'], ['paths', 'Связанные пути в нижнем окне'], ['continuations', 'Продолжения · закреплённое окно'],
-        ['phase', 'Фаза по вашему правилу · 08.10'], ['nowmarks', '«Сейчас»: откат числом и отметками у шкалы · 08.10'], ['pullbacks', 'Откаты до обновления · кандидат 21.10']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
-      (TRIAL.pullbacks ? '<div class="p21-note">'+pbScaleSwitch()+'</div>' : '') +
+        ['phase', 'Фаза по вашему правилу · 08.10'], ['nowmarks', '«Сейчас»: откат числом и отметками у шкалы · 08.10']].map(([k,t]) => '<label class="cr"><span>' + t + '</span><input type="checkbox" data-trial="' + k + '"' + (TRIAL[k] ? ' checked' : '') + '></label>').join('') +
       '<button type="button" id="auditScene">Проверить происхождение и опору</button><div id="auditResult" class="p21-note"></div></details>';
   }
   async function auditScene() {
@@ -274,6 +299,7 @@
     }catch(e){el.textContent='Проверка не завершилась: '+e.message;}
   }
   function setTrial(k, on) {
+    if(k==='pullbacks')return false; // rejected bounds mapping; not a dormant checkbox that can undo the repair
     TRIAL[k] = !!on; IS.key = null; IS.packet = null; IS.error = null;
     try { localStorage.setItem(TRIAL_KEY, JSON.stringify(TRIAL)); } catch (e) { /* not kept */ }
     if(k==='continuations'&&!on){CS.seq++;CS.packet=null;CS.drawing=null;if(st.mode==='continuations')st.mode='bounds';}

@@ -73,6 +73,18 @@ class Handler(SimpleHTTPRequestHandler):
                     import integration_audit
                     packet=integration_audit.audit(packet,dict(instrument=params.get('instrument','NQ'),session=params.get('session','RDR'),date=date,scope=params.get('scope','weekday'),view=params.get('view','auto')))
                 return self.json(packet)
+            if url.path == '/api/integration/time-sd':
+                if not INTEGRATION:return self.json(dict(status='INTEGRATION_DISABLED'),403)
+                if START_SOURCE_REVISION!=runtime_identity.current() or START_DATA_REVISION!=runtime_identity.data_revision():
+                    return self.json(dict(status='SOURCE_CHANGED',message='Сборка или история обновилась: откройте DR Lab заново'),409)
+                date=params.get('date') or None
+                if date is not None and not re.fullmatch(r'20[0-2]\d-[01]\d-[0-3]\d',date):raise ValueError('date: YYYY-MM-DD')
+                import time_sd235
+                value=time_sd235.response(dict(instrument=params.get('instrument','NQ'),session=params.get('session','RDR'),at=params.get('at','0'),
+                    date=date,view=params.get('view','auto'),scope=params.get('scope','weekday'),scale=params.get('scale','1'),region=params.get('region'),link=params.get('link')))
+                if START_SOURCE_REVISION!=runtime_identity.current() or START_DATA_REVISION!=runtime_identity.data_revision():
+                    return self.json(dict(status='SOURCE_CHANGED',message='Во время расчёта обновились исходники или история'),409)
+                return self.json(value)
             if url.path == '/api/integration/pullbacks':
                 # DR-LAB-PB-0.1 (lab/pullbacks24.py): the candidate «Откаты перед обновлением экстремума» over the family on
                 # screen; its own envelope from the candidate registry, never the accepted map
@@ -166,10 +178,11 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.json({'text':path.read_text(encoding='utf-8') if path.exists() else 'Смысловая спецификация готовится вместе с интерфейсом.'})
             if url.path.startswith('/api/'):
                 return self.json({'error':'Неизвестный запрос'},404)
-            # the working screen is design 24 since 2026-10-01 night (operator): the root opens it; design 22 stays next to
-            # it at /22/ (its built page is /index.html, unchanged); the fragment of the address is kept by the browser
+            # the main screen is 23.5 since 2026-10-27 (operator: «23.5 стал основным экраном»): the root opens it; screen 24
+            # (the main screen from 2026-10-01 night) stays at /24/, design 22 at /22/ (its built page is /index.html);
+            # the fragment of the address is kept by the browser
             if url.path == '/':
-                return self.redirect('/24/')
+                return self.redirect('/23-5/')
             if url.path in ('/22', '/22/'):
                 return self.redirect('/index.html')
             return super().do_GET()

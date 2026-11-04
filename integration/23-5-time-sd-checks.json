@@ -1,0 +1,320 @@
+{
+  "date": "2026-10-23",
+  "base_commit": "b3d317e83f9ebc4e509f52f18473e3cbbec49bba",
+  "status": "ADDRESSED_CHECKS_PASS",
+  "profile": "DR-LAB-TIME-SD-1.0",
+  "authority": "Direct human REALIZUY after the 22.10 time-SD plan; subsequent PRODOLZHAY; earlier main push instruction belongs to this same unfinished task.",
+  "acceptance": {
+    "implementation": "AUTHORIZED",
+    "operator_visual": "PENDING",
+    "predictive": "NOT_ESTABLISHED",
+    "C2_C3": false
+  },
+  "registries": {
+    "accepted_estimands": 53,
+    "proposed_estimands": 72,
+    "new_time_sd_estimands": 9
+  },
+  "backend_checks": [
+    {
+      "test": "smoke",
+      "exit_code": 0,
+      "seconds": 20.29,
+      "log_sha256": "2338b90c0095d16ab76dc6b26d449b57d42ae7ec8b2bd00d8fd65ccfa694cbf4"
+    },
+    {
+      "test": "semantic_links",
+      "exit_code": 0,
+      "seconds": 1.12,
+      "log_sha256": "e4be8ed61614cf827af4aa85cb96a344d06918ff66f928dd36c3195cb5d8f1aa"
+    },
+    {
+      "test": "sem24",
+      "exit_code": 0,
+      "seconds": 14.4,
+      "log_sha256": "23b17bca28f1cb2f02a58c6c3388e11de816ea9e5824a070a5166e57e3ad5c42"
+    },
+    {
+      "test": "now24",
+      "exit_code": 0,
+      "seconds": 7.31,
+      "log_sha256": "777f41f5611c79728e068d47836891821dee0d6034befcac7ed8d973760a3934"
+    },
+    {
+      "test": "swpc11",
+      "exit_code": 0,
+      "seconds": 0.52,
+      "log_sha256": "9347e51334b10bbb89b76d5c1f29f203ab0de76493390cf73dd575d9346ad206"
+    },
+    {
+      "test": "profile235_bindings",
+      "exit_code": 0,
+      "seconds": 0.24,
+      "log_sha256": "1c5b012317d599b89ae6153d4eb03b6711570e7ce943b22bd0e5cb5195d26f28"
+    },
+    {
+      "test": "pullbacks24",
+      "exit_code": 0,
+      "seconds": 69.23,
+      "log_sha256": "40a53acd16a4ff1f7a221812b4fee04ce60c34e13c2c6dd81a35653d92a2889e"
+    },
+    {
+      "test": "continuity24",
+      "exit_code": 0,
+      "seconds": 2.11,
+      "log_sha256": "6a483d22794c24aaecf33d005eee1fd2bfc8e5d37d983f8d223186abd773e46c"
+    },
+    {
+      "test": "continuations_transfer",
+      "exit_code": 0,
+      "seconds": 17.32,
+      "log_sha256": "d52429c9555b71dfc11ca168bd8d411ea8f672e4f9b32eb377fdd6fd95b18768"
+    },
+    {
+      "test": "contract_sc11",
+      "exit_code": 0,
+      "seconds": 47.29,
+      "log_sha256": "3281a71f45c37d85a97529a4e612bd84e45f202b208452dd6ffcdab8110b5e55"
+    },
+    {
+      "test": "integration24",
+      "exit_code": 0,
+      "seconds": 25.94,
+      "log_sha256": "a947a41351a26d5fd9d01492bb13a3cf2ab59711a2e207b8a57d5c5e8c738df8"
+    },
+    {
+      "test": "continuations24",
+      "exit_code": 0,
+      "seconds": 18.91,
+      "log_sha256": "1bb8ff3abec08ed207bc0e39ead134362a7fa61d0414c6e6c41ac19b4b745b22"
+    },
+    {
+      "test": "run_candidate_checks",
+      "exit_code": 0,
+      "seconds": 344.92,
+      "log_sha256": "65ac43717ff82e47ec17f9c4103d203bebcad0894917f4ca31c0d01d97960472"
+    },
+    {
+      "test": "q1_prefix_metadata",
+      "exit_code": 0,
+      "seconds": 4.0,
+      "log_sha256": "9833c11ec133c82f85805d9fdb5989d73b75c0d047e2e03a2a22db3c2c5426ea"
+    },
+    {
+      "test": "q1_reveal",
+      "exit_code": 0,
+      "seconds": 3.55,
+      "log_sha256": "eeed941962849b59bd171b95f9f14c9fe9a6526b440bdcda896ca3a802bf7934"
+    },
+    {
+      "test": "q1_pilot",
+      "exit_code": 0,
+      "seconds": 7.16,
+      "log_sha256": "018e5de65dee8fd8b5f0d059c75be91ee651b7d97cdc776906ade0a0fd1ae3f8"
+    },
+    {
+      "test": "integration_baseline",
+      "exit_code": 0,
+      "seconds": 40.7,
+      "log_sha256": "64b4b04559233d746dad9dce43935fe56ca306c661a5063d6b4eb0208adf37d8"
+    }
+  ],
+  "additional_checks": [
+    {
+      "test": "time_sd235",
+      "result": "PASS",
+      "summary": "ALL GOOD 44 checks",
+      "log_sha256": "92ff2b68f5f2f258e22d2e60e80ef3c835437d904440c89f3d625dcec78e9470"
+    },
+    {
+      "test": "time_sd235_page",
+      "result": "PASS",
+      "summary": "ALL GOOD 44",
+      "log_sha256": "677f9a9b04d75f03b929048fc1b5804e28baa7c5d61583473209503dbf1b1682"
+    },
+    {
+      "test": "time_sd235_routes",
+      "result": "PASS",
+      "summary": "ALL GOOD 4",
+      "log_sha256": "0e5a86644d5d4fa091f39536fa91b9e9076668c06ab1e82c638825129cd0dbdf"
+    },
+    {
+      "test": "continuations235_page",
+      "result": "PASS",
+      "summary": "ALL GOOD 58",
+      "log_sha256": "a83592a4d46362ea1813a1031a26dc8a0724ab663c4a7b266e13138f64bf21ba"
+    },
+    {
+      "test": "smoke_final",
+      "result": "PASS",
+      "summary": "ALL GOOD",
+      "log_sha256": "2338b90c0095d16ab76dc6b26d449b57d42ae7ec8b2bd00d8fd65ccfa694cbf4"
+    },
+    {
+      "test": "swpc11_browser_m03_repeat",
+      "result": "PASS",
+      "summary": "ALL GOOD (3 checks)",
+      "log_sha256": "277916303b6704d374c0870b8d46ef99475b5de2973b03960790ea8109b92e53"
+    }
+  ],
+  "browser": {
+    "status": "PASS",
+    "checks": [
+      "1600: existing bounds layout and 116px price column retained",
+      "1600: displayed projections use peaks of joint cells, not the retired whole-session PB marginals",
+      "1600: price-bar early and late masses match the selected joint cell even when today makes FINAL-X impossible",
+      "1600: every constellation has exactly its declared local time and SD extent",
+      "1600: real canvas draws compact witnessed constellations, at most nine M5/SD representatives per core",
+      "1600: visible numbers use their own TS passports and preserve the full N",
+      "1600: final-extreme context is named and its phase cannot control the PB map",
+      "1600: R price hover lights only the same exact joint cell as its number",
+      "1600: R time hover identifies the same exact SD cell as its number",
+      "1600: R core pins into the existing inspector and six detail windows",
+      "1600: X price hover lights only the same exact joint cell as its number",
+      "1600: X time hover identifies the same exact SD cell as its number",
+      "1600: X core pins into the existing inspector and six detail windows",
+      "1600: compact star still opens its actual H/L/B episode witnesses",
+      "1600: X witness names its paired final R explicitly, without presenting it as local PB",
+      "1600: selected X area reaches its own TS region calculation",
+      "1600: next closed M5 preserves core identities and the pin",
+      "1600: family/BASE labels survive mode changes unchanged",
+      "1600: no accepted-contract mismatch after interactions",
+      "1920: existing bounds layout and 116px price column retained",
+      "1920: displayed projections use peaks of joint cells, not the retired whole-session PB marginals",
+      "1920: price-bar early and late masses match the selected joint cell even when today makes FINAL-X impossible",
+      "1920: every constellation has exactly its declared local time and SD extent",
+      "1920: real canvas draws compact witnessed constellations, at most nine M5/SD representatives per core",
+      "1920: visible numbers use their own TS passports and preserve the full N",
+      "1920: final-extreme context is named and its phase cannot control the PB map",
+      "1920: R price hover lights only the same exact joint cell as its number",
+      "1920: R time hover identifies the same exact SD cell as its number",
+      "1920: R core pins into the existing inspector and six detail windows",
+      "1920: X price hover lights only the same exact joint cell as its number",
+      "1920: X time hover identifies the same exact SD cell as its number",
+      "1920: X core pins into the existing inspector and six detail windows",
+      "1920: compact star still opens its actual H/L/B episode witnesses",
+      "1920: X witness names its paired final R explicitly, without presenting it as local PB",
+      "1920: selected X area reaches its own TS region calculation",
+      "1920: next closed M5 preserves core identities and the pin",
+      "1920: family/BASE labels survive mode changes unchanged",
+      "1920: no accepted-contract mismatch after interactions",
+      "ES ODR 2025-11-12 05:00: same finite geometry and contract in another frame",
+      "YM ADR 2025-10-08 22:00: same finite geometry and contract in another frame",
+      "NQ RDR 2025-12-10 14:30: same finite geometry and contract in another frame",
+      "NQ RDR 2025-12-17 11:10 all: same finite geometry and contract in another frame",
+      "corrupt response withdraws the new map and projections together, without substituting the old 24 map",
+      "no browser exceptions throughout both sizes, instruments, frames and interactions"
+    ],
+    "errors": []
+  },
+  "baseline": {
+    "result": "PASS",
+    "reference": "2672841",
+    "scenes": 5,
+    "scope": "same family, members, counts, zones, BASE/NOW estimates, supports and claims; source provenance intentionally different"
+  },
+  "screen24": {
+    "source_unchanged": true,
+    "built_difference": "embedded accepted registry hash for SERVICE route only",
+    "ui_check24": {
+      "result": "PASS",
+      "scenes": 10,
+      "viewports": [
+        [
+          1600,
+          900
+        ],
+        [
+          1920,
+          1000
+        ]
+      ]
+    },
+    "swpc": {
+      "initial_run": "one M03 fixture failed reading zones while F was null after asynchronous simulated-live refresh; other checks passed",
+      "successful_checks": 72,
+      "repeat": "same code, isolated M03: all three replay/timer/tick checks pass",
+      "first_log_sha256": "5888f5c9ccfead13fb5ae11267c4ad03ae75b31a902b47a0e18dff0756683435",
+      "limitation": "full run is not reported as unqualified PASS; no screen24 production change made to hide this fixture timing failure"
+    }
+  },
+  "performance": [
+    {
+      "scope": "weekday",
+      "seconds": 1.114,
+      "bytes": 8347835,
+      "status": "OK",
+      "N": 156,
+      "cores": {
+        "R": 9,
+        "X": 3
+      }
+    },
+    {
+      "scope": "all",
+      "seconds": 44.814,
+      "bytes": 22482401,
+      "status": "OK",
+      "N": 709,
+      "cores": {
+        "R": 6,
+        "X": 2
+      }
+    },
+    {
+      "scope": "all",
+      "cache": "repeat",
+      "seconds": 5.272,
+      "bytes": 22482401,
+      "status": "OK",
+      "N": 709,
+      "cores": {
+        "R": 6,
+        "X": 2
+      }
+    }
+  ],
+  "source_sha256_lf": {
+    "lab/time_sd235.py": "93cbe6003c2fbb1714aced1dee2ed0a8f42889bfc03a5f3ccc73cd7df7cc5cd3",
+    "lab/time_sd235_ref.py": "fcacb93604173fbefba206ac0ac9094c25c825b1d0ee84824fb50f1d61f8dca7",
+    "lab/pullbacks24.py": "5cf8d188625c9a70fcf3f50325f597f462cda55eca9e5baafbda5f6afca0fdd0",
+    "lab/pullbacks_ref.py": "00e8719908c77ca58d4886d160ba91a822a1ff4f9d82633b2416e1730e206df3",
+    "lab/server.py": "83b83415b4c854dd783bd8d9ebd7cb92f106cf781001afb0b9c1306a04cf743d",
+    "lab/contract.py": "66ae379e2568b4b19bd837f1f102ca53ef5b354e05a27db814630d7a9b092b64",
+    "design/sozvezdiya-23-5/src/app.js": "3d7d05bfa53e855fb10adc211b359f3bc91f9f43e44f0ce697ab996e67c917a1",
+    "design/sozvezdiya-23-5/src/panel.js": "f9d275bbb625ba07dd835715cc1bc7ad4e050657025421f069309bd16508c182",
+    "design/sozvezdiya-23-5/src/integration.js": "5a10d47ded2c1eb6d9e5b97851faf91e84976c5824f08b158e30b46727a9edde",
+    "design/sozvezdiya-23-5/src/pullbacks.js": "e4eb67f406e43631e9997eb36e758c7f2543c6719140554d32556775bc45cdbf",
+    "design/sozvezdiya-23-5/src/time_sd235.js": "08861d08c6240e30e01168019dfd5d3e6aada9f833248f7c393cd272530fbdcc",
+    "lab/dist/23-5/d24.js": "0897f1f528df34edc42ae3987e414243cbcdbebf0ff5305549d62238c6fe925d",
+    "lab/dist/24/d24.js": "750ef4324cd7d9bc25c642d3d51740b09ca47e0680694d21ae1cc99beea6a77f",
+    "integration/profile235-bindings.json": "17f76ffa44ae8f8bfcf557df7217977486fb13e01b4fc45af9d0a82412436c06",
+    "integration/candidates/registry/95-time-sd.yaml": "f3fefbcaf6ddfee7e07841991cc5360481ba90c2e5c6ecbc21a8e1f2951e5543",
+    "contract/registry/60-surfaces.yaml": "173c6385240db1a195301770b4dc28dc1c69a9ae372d65348801650cb2995b88",
+    "tests/time_sd235.py": "b6fe7597788cc43914066f6014eb6d03d6f532474a024280e72bff8cdc2c3cf0",
+    "tests/time_sd235_page.mjs": "6480ce9ea0a50015f6b005d4013ba316d14dd1e53fc0ce81c40e4e97db7ebbf6",
+    "tests/time_sd235_routes.py": "fe16d1eb089150582a50ed58ad5f009bb13a0cfc47490698158b16fe6f8025a3",
+    "start-dr-lab-23-5.ps1": "012fd9f5505b89c96c7f1f27f4826e8b810eec84a8f7e4a06963a048482a691a"
+  },
+  "screenshots": {
+    "spec/ekran-23-5/img/time-sd/1600-bounds.png": "669b562bb6ba293ac8ef1a01d6239142f5d207dbbb33246c0e4f2b6ab118b94d",
+    "spec/ekran-23-5/img/time-sd/1920-bounds.png": "5dba926fce03b4f28bfebce34dd38b3e2252f5ba85f804f4e554bdb5fe401675",
+    "spec/ekran-23-5/img/time-sd/1920-witness.png": "80ad1946fe6be79e45c992fdf6f925240fa12b2fab1c37d7c68119d4216b5106"
+  },
+  "protected": [
+    "localhost only",
+    "no Volume",
+    "2026 history closed",
+    "live not written into history",
+    "full F denominator and UNKNOWN",
+    "one case per region",
+    "same-event membership for number and highlight"
+  ],
+  "historical_checks_superseded": [
+    "profile235_page",
+    "pullbacks235_page",
+    "shading235_page",
+    "constellations235_page"
+  ],
+  "installation": "separate follow-up receipt records primary checkout, launcher and remote commit verification"
+}

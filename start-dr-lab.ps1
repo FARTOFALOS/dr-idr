@@ -5,8 +5,9 @@
 # opened without the port (its own icon, Windows autostart) is restarted with it, as before 2026-10-15: the live
 # candles need the port (operator 2026-10-19). -HistoryOnly never touches TradingView (agents' checks).
 # Everything stays on this computer.
-# The root / opens the working screen, design 24 since 2026-10-01 night (the server redirects / to /24/); design 22 is at
-# /22/. -Page 24/ opens design 24 directly (the shortcut "DR Lab 24", start-dr-lab-24.cmd).
+# The root / opens the main screen, 23.5 since 2026-10-27 (the server redirects / to /23-5/); screen 24 is at /24/ (the
+# main screen from 2026-10-01 night to 2026-10-27), design 22 at /22/. -Page 24/ opens screen 24 directly (the shortcut
+# "DR Lab 24", start-dr-lab-24.cmd).
 param([switch]$NoBrowser, [switch]$HistoryOnly, [string]$Page = '')
 
 $ErrorActionPreference = 'Stop'

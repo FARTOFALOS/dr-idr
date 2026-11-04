@@ -24,7 +24,7 @@ async function shot(name){
  const s=await B.cdp.send('Page.captureScreenshot',{format:'png'});
  fs.writeFileSync(shots+'/'+name+'.png',Buffer.from(s.data,'base64'));
 }
-const fragment='#date=2025-12-17&inst=NQ&session=RDR&at=11:10&mode=pullbacks&pbscale=1';
+const fragment='#date=2025-12-17&inst=NQ&session=RDR&at=11:10&mode=pullbacks&pbscale=1&tp=0';
 try{
  const launcher=fs.readFileSync('start-dr-lab-23-5.ps1','utf8');
  ck(launcher.includes("$Page = '23-5/#trial=pullbacks&pbscale=1'"),'desktop launcher opens the chosen scale-1 pullback view');

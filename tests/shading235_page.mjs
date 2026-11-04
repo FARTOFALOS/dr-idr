@@ -10,7 +10,7 @@ b.cdp.on('Runtime.exceptionThrown',e=>errors.push(e.exceptionDetails.exception?.
 await b.cdp.send('Page.addScriptToEvaluateOnNewDocument',{source:`window.__fills=[];const f=CanvasRenderingContext2D.prototype.fillRect;CanvasRenderingContext2D.prototype.fillRect=function(...a){if(this.canvas.id==='cv')window.__fills.push({a,fill:this.fillStyle,alpha:this.globalAlpha});return f.apply(this,a);};`});
 async function open(at){
  await b.cdp.send('Page.navigate',{url:'about:blank'});
- await b.cdp.send('Page.navigate',{url:base+view+'#date=2025-12-17&inst=NQ&session=RDR&at='+at+'&trial=pullbacks&pbscale=1'});
+ await b.cdp.send('Page.navigate',{url:base+view+'#date=2025-12-17&inst=NQ&session=RDR&at='+at+'&trial=pullbacks&pbscale=1&tp=0'});
  for(let i=0;i<300;i++){const s=await evaluate(b.cdp,()=>{const d=window.__d24,p=d?.pullbacks();return {ok:!!p?.packet&&d.V.bandBars?.length&&d.V.projBars?.some(q=>q.ev==='R'),error:p?.error};});if(s.error)throw Error(s.error);if(s.ok)return;await pause(200);}
  throw Error('screen did not settle');
 }
@@ -43,7 +43,7 @@ try{
   ck(r.hidden>0&&r.visible>0&&r.labels<r.visible&&r.noHiddenPaint&&r.noSmallLabels,width+': small rows are absent, supported peaks have a quiet label hierarchy');
   ck(r.alphas>2,width+': actual bars have graded shading, not a flat full-opacity fill');
   ck(r.curve,width+': time hills use every zone witness and at most one vote per session');
-  ck(r.invisibleTime>0&&r.shownTime>0,width+': time strip focuses on zones and retains residual bins in data');
+  ck(r.invisibleTime===0&&r.shownTime>0,width+': both colours retain every nonempty time bin, including those outside zones');
   await shot(width+'-bounds');
   const h=r.hiddenCell;
   const hover=await evaluate(b.cdp,h=>{const d=window.__d24;d.st.hover={k:'pbpcell',ev:'R',k0:h.k,k1:h.k+1,src:'proj'};d.render(true);return {row:d.V.projBars.find(v=>v.ev==='R'&&v.k===h.k),label:d.V.projLabels.some(v=>v.ev==='R'&&v.k===h.k),N:d.mapContext().F.N,text:document.getElementById('insp').innerText};},h);

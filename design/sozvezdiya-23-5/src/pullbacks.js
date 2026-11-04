@@ -14,15 +14,16 @@
   {
     const q = new URLSearchParams(location.hash.slice(1)), k = +q.get('pbscale');
     if (PB_SCALES.includes(k)) PB.scale = k;
-    if (ICFG.enabled && q.get('mode') === 'pullbacks') { TRIAL.pullbacks = true; st.mode = 'bounds'; }
+    // Superseded broad PB overlays cannot replace the approved finite time x SD map.
   }
-  const pullbackMode = () => ICFG.enabled && TRIAL.pullbacks && st.mode === 'bounds';
-  // The operator asked for constellations, not a star catalogue. The existing layer switch can reveal every point.
-  if (ICFG.enabled && TRIAL.pullbacks) st.L.pts = false;
+  // Operator 2026-10-26: the main map of 23.5 is again the final R / X of every session (one star per session, the
+  // zones of screen 24); local pullbacks are a separate overlay layer (sweeps235.js). The PB / time x SD map stays off.
+  const pullbackMode = () => false;
+  // Keep the original star layer on. Compact cell representatives below prevent a catalogue of overlapping episodes.
   function pbRequest(ctx) {
     if (!ctx.F || !ctx.F.N || !ctx.s.conf) return null;
-    const cut = sliceOf(ctx), view = st.view === 'conf' ? 'conf' : 'auto', a = st.area, region = a && a.ev !== 'X' ? [a.k0,a.k1,a.b0,a.b1].map(v=>Number.isFinite(v)?v:null) : null;
-    return { cut, view, region, key: [JSON.stringify(region),IS.epoch, A.inst, ctx.D.iso, ctx.s.k, cut, view, st.scope, ctx.F.r.snapshot_id].join('|') };
+    const cut = sliceOf(ctx), view = st.view === 'conf' ? 'conf' : 'auto', a = st.area, region = a ? [a.k0,a.k1,a.b0,a.b1].map(v=>Number.isFinite(v)?v:null) : null;
+    return { cut, view, region, key: [PB.scale,JSON.stringify(region),IS.epoch, A.inst, ctx.D.iso, ctx.s.k, cut, view, st.scope, ctx.F.r.snapshot_id].join('|') };
   }
   function pbPacket(ctx) { const q = pbRequest(ctx); return q && PB.key === q.key ? PB.packet : null; }
   function requestPullbacks(ctx) {
@@ -31,15 +32,16 @@
     if (!q || (q.key === PB.key && (PB.packet || PB.error)) || PB.pending === q.key) return;
     const token = ++PB.seq, F = ctx.F;
     PB.key = q.key; PB.packet = null; PB.error = null; PB.pending = q.key; PB.cl = null;
-    const args = new URLSearchParams({ instrument: A.inst, session: ctx.s.k, at: q.cut, view: q.view, scope: st.scope });
+    const args = new URLSearchParams({ instrument: A.inst, session: ctx.s.k, at: q.cut, view: q.view, scope: st.scope, scale: PB.scale });
     if (A.src === 'hist') args.set('date', A.date);
     if (q.region) args.set('region', JSON.stringify(q.region));
-    fetch('/api/integration/pullbacks?' + args).then(async res => {
+    fetch('/api/integration/time-sd?' + args).then(async res => {
       const r = await res.json();
       if (!res.ok) throw Error(r.message || r.error || 'Сервер не ответил');
       if (token !== PB.seq) return;
       if (r.status !== 'OK') throw Error(r.message || r.status);
       await pbVerify(r, q, ctx, F);
+      await tsVerify(r, q, ctx, F);
       if (token !== PB.seq) return;
       PB.packet = r; PB.verified++;
     }).catch(e => { if (token === PB.seq) { PB.error = e.message; PB.packet = null; } })
@@ -385,21 +387,25 @@
     PB.model={key,base:F,F:view};
     return {...ctx,F:view};
   }
-  // The existing zone-map-3 anchor is the density maximum, with its existing 3x3 neighbourhood.
-  // The old renderer receives a compact display of that peak, with one glyph per actual M5 x 0.1-IDR cell.
-  // This is presentation only: no new 80% cut, event detector, zone boundary, membership or percentage.
+  // Draw the WHOLE published zone, not just the anchor's 3x3 neighbourhood. The anchor names the zone; it is not its mask.
+  // One actual witness per occupied M5 x 0.1-IDR cell removes coincident stars without deleting a zone's other lobes.
+  // The representative is an observed bottom nearest the cell's mean, never an invented price/time coordinate.
   function pbCloudContext(ctx) {
     const F=ctx.F;
     if(!F?._pb?.proof)return ctx;
     if(PB.model.cloud)return {...ctx,F:PB.model.cloud};
     const points=[];
     F.zones.R.zones.forEach(z=>{
-      const [ak,ab]=z.anchor,groups=new Map();
+      const cells=new Set(z.cell_mask.map(c=>c.join('|'))),groups=new Map();
       for(const q of F.ev.R.pts){
-        if(Math.abs(q.k-ak)>1||Math.abs(q.b-ab)>1||!z.cell_mask.some(([k,b])=>q.k===k&&q.b===b))continue;
+        if(!cells.has(q.k+'|'+q.b))continue;
         const key=q.k+'|'+q.t;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(q);
       }
-      for(const qs of groups.values())points.push({...qs[0],p:qs.reduce((n,q)=>n+q.p,0)/qs.length});
+      for(const qs of groups.values()){
+        const mean=qs.reduce((n,q)=>n+q.p,0)/qs.length;
+        const q=qs.slice().sort((a,b)=>Math.abs(a.p-mean)-Math.abs(b.p-mean)||a.pbid.localeCompare(b.pbid))[0];
+        points.push(q);
+      }
     });
     PB.model.cloud={...F,_cl:null,ev:{...F.ev,R:{...F.ev.R,pts:points}}};
     return {...ctx,F:PB.model.cloud};
@@ -494,7 +500,7 @@
       const n=areaCount(ctx.F,'X',{k0:bounds?.[0]??-Infinity,k1:bounds?.[1]??Infinity,b0:h.b0,b1:h.b1}),x=evPass(ctx.F,'X','price_time',bounds,time,n);
       html+='<div class="is" style="color:'+cfg.X+'">X · конечное продолжение · '+ppTxt(x)+'</div>';
     }
-    return html+'<div class="is k">одна сессия — один голос в области; разные полосы могут делить сессии</div>';
+    return html+'<div class="is k">R — любой завершённый локальный откат, X — единственный конечный экстремум. Одна сессия может дать R в нескольких окнах; это не доли двух противоположных исходов.</div>';
   }
   function pbJointXTip(ctx,h) {
     const F=ctx.F,z=F.zones.X?.zones[h.i];

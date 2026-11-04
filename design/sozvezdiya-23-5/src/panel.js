@@ -23,6 +23,7 @@
     if (r.status === 'ok' && r._refused) return 'Числа не публикуются: ' + r._refused;
     if (r.status === 'ok' && !r.N) return 'В семье нет сессий: процентов нет';
     if (/^contract_/.test(r.status || '')) return r.message || 'нарушение контракта SC-1.1: числа не публикуются';
+    if (r.status === 'ok' && tpOn() && wantView(s) === 'conf') return tpStatus(ctx);      // TP-1.1: T or the window still coming
     return 'Семья не собрана' + (r.message ? ': ' + r.message : '');
   }
   // after today's DR break: the break family, or the original confirmation snapshot kept as it was (spec §9.3)
@@ -40,22 +41,26 @@
         (noFam ? '<button class="p24-btn" data-hist="1">' + (A.src === 'live' ? 'Открыть ' + st.session + ' на истории' : 'Ближайший день с подтверждением ' + st.session) + '</button>' : '') + candidatePanel(ctx);
       return;
     }
-    const out = [], sl = sliceOf(ctx), step = 100 / F.N, src = F.r.source || {};
-    const ttl = lbl('FF:SHARE-STEP', 'head_title', { event: lbl('FF:PASSPORT-VIEW', 'at_act_dr', null, VW(F)), t: clk(F.act0), step: pct(step), history: src.history || '2006–2025',
-      cutoff: F.r.key.cutoff, snapshot: F.r.snapshot_id, family: F.r.family_id, semantics: F.r.semantics });
-    out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F.cond) + '</span><span>' + (sl >= F.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
+    const out = [], sl = sliceOf(ctx), F0 = F._tp ? F._tp.A : F, step = 100 / F0.N, src = F0.r.source || {};   // TP-1.1: the head and the DR outcome of the whole family
+    const ttl = lbl('FF:SHARE-STEP', 'head_title', { event: lbl('FF:PASSPORT-VIEW', 'at_act_dr', null, VW(F0)), t: clk(F0.act0), step: pct(step), history: src.history || '2006–2025',
+      cutoff: F0.r.key.cutoff, snapshot: F0.r.snapshot_id, family: F0.r.family_id, semantics: F0.r.semantics });
+    out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F0.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F0.cond) + '</span><span>' + (sl >= F0.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
     if (s.failed) out.push(viewSwitch(s));
-    if (F.out) out.push(outcomeHtml(F));
-    out.push(phasePanel(F, ctx));
+    if (F0.out) out.push(outcomeHtml(F0));
+    if (F._tp) out.push(tpPanel(F, ctx));
+    const cellsFirst = st.mode === 'bounds' && F._mx && mxCellsOn();   // the layer «Клетки»: «какую клетку выбрать» stands first, under the DR
+    if (cellsFirst) out.push(zonesHtml(F, ctx));
+    out.push(phasePanel(F._tp ? F._tp.T : F, ctx));                  // TP-1.1: «half of the family» by the clock is half of T
+    out.push(swPanel(F, ctx));
     out.push(nowHtml(F, ctx));
     out.push(candidatePanel(ctx));
     if (st.mode === 'bounds') {
-      out.push(pullbackMode() ? pbCombinedZones(ctx) : zonesHtml(F, ctx));
+      out.push(pullbackMode() ? pbCombinedZones(ctx) : cellsFirst ? '' : zonesHtml(F, ctx));
       const tf = todayFacts(F, ctx);
       if (tf) out.push('<div class="p21-note" title="' + esc(lbl('FF:TODAY-PREFIX', 'title', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)) })) + '">' + tf + '</div>');
     }
     if (st.mode === 'path') out.push(columnHtml(F, ctx));
-    if (st.area && st.mode === 'bounds') out.push(pullbackMode() && st.area.ev !== 'X' ? pbAreaHtml(ctx) : areaHtml(F, ctx));
+    if (st.area && st.mode === 'bounds') out.push(pullbackMode() ? pbAreaHtml(ctx) : areaHtml(F, ctx));
     const h = st.pin;
     if (h && h.k === 'lvl' && h.l) out.push(levelHtml(F, ctx, h.l));
     if (h && h.k === 'pt' && F.M[h.i]) out.push(memberHtml(F, F.M[h.i]));
@@ -80,7 +85,9 @@
     }
     if (!rows.length && !zonesOf(F, 'R') && !zonesOf(F, 'X')) return '';
     rows.sort((a, b) => a.z.time_start - b.z.time_start || b.z.p_snapshot - a.z.p_snapshot);
-    const out = ['<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
+    // TP-1.1: the places of the window's pullbacks, each its share of the window (core §4.5)
+    const tw = F._tp && F._tp.w && F._tp.clock.windows[F._tp.w];
+    const out = [F._tp ? '<div class="p21-h second"><span title="Место = окно × полоса цены: полосы ищутся только среди сессий окна; доля — от сессий окна">Места отката · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
     if (!rows.length) out.push('<div class="p21-note">' + lbl('EST:B-ZONE-R', 'none') + '</div>');
     let sep = false;
     for (const r of rows) {
@@ -93,6 +100,7 @@
     if (!sep) out.push('<div class="p24-now"><span></span>' + (sl >= F.end ? 'блок закончен' : 'сейчас ' + clk(sl)) + '<span></span></div>');
     // the rest of each event's 100 %: outside the zones, and not determined (never drawn at any price)
     for (const ev of ['X', 'R']) {
+      if (F._tp && ev === 'X') continue;                               // TP-1.1: X has no constellation, so no «outside the zones» either
       const Zm = zonesOf(F, ev), D = F.ev[ev];
       const tag = '<i style="color:' + cfg[ev] + '">' + ev + '</i>';
       if (Zm) { const r = resPass(F, ev); out.push(link({ k: 'evrow', ev }, prow(lbl('EST:B-ZONE-RESIDUAL-' + ev, 'row', { ev: tag }), ppTxt(r)), 'dim', r, plainTitle(r))); }
@@ -130,11 +138,11 @@
       // with its bundle published by the server on this cut
       const C = E.continuation, p = C.p_new_extreme, b = C.p_new_bounds || [], sp = C.support, NE = 'EST:N-NEW-' + ev, bN = nowBundle(n, NE, 'MAIN', C);
       const val = !bN ? '—' : C.support.N_match_unknown ? pct(100 * b[0]) + '–' + pct(100 * b[1]) : p == null ? '—' : pct(100 * p);
-      const name = lbl(NE, 'row', { ev: '<i style="color:' + cfg[ev] + '">' + ev + '</i>' }, VW(F));
+      const name = F.rbx && ev === 'R' ? lbl('FF:R-BEFORE-X', 'now_row', null, VW(F)) : lbl(NE, 'row', { ev: '<i style="color:' + cfg[ev] + '">' + ev + '</i>' }, VW(F));
       const sgn = ev === 'R' ? -1 : 1, u0 = ev === 'R' ? E.state.r_seen : E.state.x_seen, q = C.delta_if_new || {}, tm = C.time_to_new || {};
       const lv = v => num(Math.round(F.u2p(u0 + sgn * v)), 0);   // whole points: a level to watch, not a quote
       const bI = bN && q.q50 != null && p ? nowBundle(n, 'EST:N-IF-NEW-' + ev, 'MAIN') : null, bT = bI && tm.q50_min != null ? nowBundle(n, 'EST:N-TIME-' + ev, 'MAIN') : null;
-      const sub = bI ? lbl('EST:N-IF-NEW-' + ev, 'sub', { p50: lv(q.q50), p25: lv(q.q25), p75: lv(q.q75) }) + (bT ? lbl('EST:N-TIME-' + ev, 'sub', { min: Math.round(tm.q50_min) }) : '') : '';
+      const sub = bI ? lbl(F.rbx && ev === 'R' ? 'FF:R-BEFORE-X' : 'EST:N-IF-NEW-' + ev, F.rbx && ev === 'R' ? 'now_sub' : 'sub', { p50: lv(q.q50), p25: lv(q.q25), p75: lv(q.q75) }) + (bT ? lbl('EST:N-TIME-' + ev, 'sub', { min: Math.round(tm.q50_min) }) : '') : '';
       const support = E.mode === 'PATH_CONDITIONED' ? lbl(NE, 'support_path', { m: sp.N_match_total, n: sp.N_eligible, matcher: E.matcher }) : lbl(NE, 'support_b0', { n: sp.N_eligible, N: n.base.N_base });
       // the trial «nowmarks» (operator 2026-10-08): the pullback line as only its number, the words in its title (integration.js)
       if (ev === 'R' && TRIAL.nowmarks && st.mode === 'bounds') { out.push(nowMarkRow(F, n, E, { val, bN, bI, bT, q, tm, sp, u0, sgn, lv })); continue; }
@@ -247,7 +255,7 @@
       dRow('семья', esc((z.family_scope === 'all' ? 'все дни недели' : 'день недели') + ' · ' + F.cond)) +
       dRow(lbl(E, 'area'), lbl(E, 'area_v', { n: z.cell_mask.length }) + ' <span class="k">' + lbl(E, 'area_k', { band: band(z.price_low, z.price_high), window: clk(z.time_start) + '–' + clk(z.time_end) }) + '</span>') +
       dRow(lbl(E, 'apex'), lbl(E, 'apex_v', { band: band(z.peak_anchor[0], z.peak_anchor[0] + 1), window: clk(F.f + 15 * z.peak_anchor[1]) + '–' + clk(F.f + 15 * z.peak_anchor[1] + 15) })) +
-      dRow(lbl(E, 'row'), ppTxt(zonePass(F, ev, z)) + ' <span class="k">' + lbl(E, 'k', { step: pct(100 / F.N), unknown: ppTxt(undPass(F, ev, 'UNKNOWN')), none: ppTxt(undPass(F, ev, 'NO_PERIOD')), residual: ppTxt(resPass(F, ev)) }) + '</span>') +
+      dRow(F._mx ? lbl('FF:R-BEFORE-X', 'zone_row') : lbl(E, 'row'), ppTxt(zonePass(F, ev, z)) + ' <span class="k">' + lbl(E, 'k', { step: pct(100 / F.N), unknown: ppTxt(undPass(F, ev, 'UNKNOWN')), none: ppTxt(undPass(F, ev, 'NO_PERIOD')), residual: ppTxt(resPass(F, ev)) }) + '</span>') +
       dRow(lbl('FF:TODAY-Z', 'row'), zstOf(F, ctx, z, s) + ' <span class="k">' + lbl('FF:TODAY-Z', 'k', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)) }) + '</span>') +
       dRow('слепок', esc(z.snapshot_id + ' · семья ' + z.family_id));
   }
@@ -298,6 +306,10 @@
       const ev = o.ev || st.ev;
       return { head: 'Полоса ' + band(o.k0, o.k1) + ' SD', body: passportRows(evPass(F, ev, 'price_cell', [o.k0, o.k1], null, areaCount(F, ev, { k0: o.k0, k1: o.k1 }))) };
     }
+    if (o.k === 'tcell' && F._tp) {                                  // TP-1.1: R of T (its clock), X of the window's sessions
+      const t0 = F.f + 15 * o.b0, t1 = F.f + 15 * o.b1, nX = [...F.ev.X.T.entries()].filter(([b]) => b >= o.b0 && b < o.b1).reduce((s_, q) => s_ + q[1], 0);
+      return { head: clk(t0) + '–' + clk(t1), body: passportRows(evPass(F, 'X', 'time_cell', null, [t0, t1], nX)) + '<div class="p24-sep"></div>' + passportRows(evPass(F._tp.T, 'R', 'time_cell', null, [t0, t1], tpCount(F._tp.clock, o.b0, o.b1))) };
+    }
     if (o.k === 'tcell') {
       const t0 = F.f + 15 * o.b0;
       return { head: clk(t0) + '–' + clk(t0 + 15), body: ['X', 'R'].map(ev => passportRows(evPass(F, ev, 'time_cell', null, [t0, t0 + 15], F.ev[ev].T.get(o.b0) || 0))).join('<div class="p24-sep"></div>') };
@@ -311,6 +323,7 @@
       }
       return { head: 'M5 ' + clk(cd.T - 5) + '–' + clk(cd.T), body: dRow(lbl('EST:B-CLOSE', 'col'), lbl('EST:B-CLOSE', 'col_v')) + dRow(lbl('EST:B-CLOSE-MISSING', 'win_row'), ppTxt(missPass(F, cd))) };
     }
+    if (o.k === 'out' && F._tp && F._tp.A) return detBody({ ...ctx, F: F._tp.A }, o);   // TP-1.1: the DR outcome is the whole family's
     if (o.k === 'out') {
       const D_ = 'EST:B-DR';
       return { head: lbl(D_, 'win_head'), body: dRow(lbl(D_, 'win_cat'), lbl(D_, o.cat)) + dRow(lbl(D_, 'win_share'), ppTxt(drPass(F, o.cat))) + dRow(lbl(D_, 'win_rule'), lbl(D_, 'win_rule_v')) +
@@ -320,6 +333,7 @@
       const z = zonesOf(F, o.ev).zones[o.i];
       return { head: 'Зона ' + z.label + ' · ' + zoneName(z), body: zoneRows(F, ctx, o.ev, o.i) + '<div class="p24-sep"></div>' + zoneDiag(F, o.ev, z) };
     }
+    if (o.k === 'evrow' && F._tp && (o.ev || st.ev) === 'R') return detBody({ ...ctx, F: F._tp.T }, o);   // TP-1.1: R of the panel is T's
     if (o.k === 'evrow') {
       const ev = o.ev || st.ev, D = F.ev[ev], U = 'EST:B-RX-UNDETERMINED-' + ev, KN = 'EST:B-RX-KNOWN-' + ev, PV = 'FF:PASSPORT-VIEW';
       const kn = pp(F, { estimand: KN, params: {}, event_id: ev, region_kind: 'known', start_rule: F.from, end_rule: 'до ' + clk(F.end), yes_count: D.known, unknown_count: D.unknown, no_event_count: D.none, display_scope: 'details' });
@@ -460,6 +474,7 @@
       const el = e.target.closest('[data-l21]');
       if (!el) return;
       const L = P24.links[+el.dataset.l21];
+      if (L.k === 'tpwin') { tpPinWindow(L.id); return; }           // TP-1.1: the row of a window fixes it (tp235.js)
       if (L.k === 'fcell') { st.col = L.j; render(true); return; }
       if (L.k === 'area') { pin({ k: 'area', part: L.part }); return; }
       pin(L);

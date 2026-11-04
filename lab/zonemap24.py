@@ -19,6 +19,18 @@ Diagnostics are properties of a zone, never a permission to exist: the same zone
 resampled sessions (Jaccard of member sets), and a path-null measured on sessions that did not shape the zone (the
 older half finds the region, the newer half is compared with sign-flipped copies of its own paths).
 Today's status of a zone (HOLDS / POSSIBLE / IMPOSSIBLE) follows the reachable set of the final event (§23-24 of V2).
+
+Screen 23.5 (operator 30.10.2026, «прикрути бэкэнд к фронтенду», the drawing unchanged): a family asked with the flag
+':tcells' takes its constellations from the joint table itself, `table-cells-1`: a star cell is a cell of the table holding
+at least 2 known sessions (one session is not a place); star cells at most 2 cells apart in both price and time (one cell
+between them at most) are one constellation; it needs the same support, max(4, ceil(0.05 N)) sessions. Nothing is smoothed:
+a constellation holds only cells where sessions really are, its peak anchor is its strongest cell. The same record as a
+zone, so the same diagnostics, statuses and drawing follow; the research table of zone-map-3 does not apply to it.
+
+Screen 23.5, the semantic core DR-LAB-TP-1.1 (operator 03.11.2026): a window family (':held:tw=W1' …, lab/tp11.py) takes
+its R constellations from the price bands of the window's sessions, `tp-bands-1` (key.zone_rule TP_BANDS): the places of
+the screen, each with the cells its sessions really occupy, its share n / N of the window family; X has no
+constellation there (the continuation is read by its levels and its time lines). The family T itself (TP_NONE) has none.
 """
 from __future__ import annotations
 
@@ -28,7 +40,11 @@ import math
 import numpy as np
 from scipy import ndimage
 
+import tp11
+
 VERSION = "zone-map-3"
+TABLE_RULE, TABLE_VERSION = "TABLE_CELLS", "table-cells-1"    # key.zone_rule of a family with ':tcells' and its algorithm
+TABLE_MIN_CELL, TABLE_GAP = 2, 2                              # sessions of a star cell; the farthest star cell of one constellation
 NULL_MODEL = "sign-flip-1"           # each M5 after the session's own activation reflected about the previous close
 RATIO = 0.5                          # the half height
 MIN_ABS, MIN_FRAC = 4, 0.05          # the minimum support
@@ -110,6 +126,35 @@ def zone_map(points, N, b_lo, b_hi):
     return dict(zones=zones, residual=sorted({s for _, _, s in points} - used), need=need)
 
 
+def table_map(points, N, b_lo, b_hi):
+    """The constellations of the joint table (module note): the same result as zone_map. points: [(k, b, session_id)]."""
+    need = max(MIN_ABS, math.ceil(MIN_FRAC * N))
+    where = {}
+    for k, b, sid in points:
+        if b_lo <= b <= b_hi: where.setdefault((k, b), []).append(sid)
+    stars = {c for c, v in where.items() if len(v) >= TABLE_MIN_CELL}
+    zones, seen = [], set()
+    for c0 in sorted(stars):
+        if c0 in seen: continue
+        comp, stack = [c0], [c0]
+        seen.add(c0)
+        while stack:
+            q = stack.pop()
+            for o in stars - seen:
+                if abs(o[0] - q[0]) <= TABLE_GAP and abs(o[1] - q[1]) <= TABLE_GAP:
+                    seen.add(o); comp.append(o); stack.append(o)
+        members = sorted({s for c in comp for s in where[c]})
+        if len(members) < need: continue
+        top = max(len(where[c]) for c in comp)
+        anchor = min((c for c in comp if len(where[c]) == top), key=lambda c: (c[1], abs(2 * c[0] + 1), c[0]))
+        zones.append(dict(cells=sorted(comp), members=members, n=len(members), apex_D=top, anchor=anchor,
+                          price=[min(c[0] for c in comp), max(c[0] for c in comp) + 1], time=[min(c[1] for c in comp), max(c[1] for c in comp) + 1]))
+    near0 = lambda z: 0 if z["price"][0] <= 0 < z["price"][1] else z["price"][0] if z["price"][0] > 0 else -z["price"][1]
+    zones.sort(key=lambda z: (z["time"][0], -z["n"], near0(z)))
+    used = {s for z in zones for s in z["members"]}
+    return dict(zones=zones, residual=sorted({s for _, _, s in points} - used), need=need)
+
+
 def _jaccard(a, b):
     a, b = set(a), set(b)
     return len(a & b) / len(a | b) if a | b else 0.0
@@ -123,9 +168,10 @@ def _match(zone, other):
     return best
 
 
-def _flip(path, act_i, rng, reps, e):
+def _flip(path, act_i, rng, reps, e, r_before_x=False):
     """Sign-flip copies of one session (the null of the synthesis §11): every M5 after the activation reflected with
-    p = 1/2 about the previous synthetic close. Returns (values, indices) of the R (min low) or X (max high) per copy."""
+    p = 1/2 about the previous synthetic close. Returns (values, indices) of the R (min low) or X (max high) per copy;
+    r_before_x: R over the M5 before the copy's first M5 of its high (inf: no M5 before it, no period)."""
     seg = path[act_i + 1:]
     c0 = path[act_i, 2]
     prev = np.concatenate([[c0], seg[:-1, 2]])
@@ -135,12 +181,15 @@ def _flip(path, act_i, rng, reps, e):
     pv = np.concatenate([np.full((reps, 1), c0), cl[:, :-1]], axis=1)
     lo = pv + np.where(eps > 0, dL, -dH)
     hi = pv + np.where(eps > 0, dH, -dL)
+    if e == "R" and r_before_x:
+        lo = np.where(np.arange(lo.shape[1])[None, :] < hi.argmax(1)[:, None], lo, np.inf)
     return (lo.min(1), lo.argmin(1)) if e == "R" else (hi.max(1), hi.argmax(1))
 
 
-def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None):
+def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None, rule=None):
     """The zone map of event e for snapshot members (scene24 records), optionally on a shifted grid or with resampling
-    weights (a session counted w times)."""
+    weights (a session counted w times); rule TABLE_RULE: the constellations of the joint table; tp11.BANDS_RULE: the
+    price bands of a window family (R only); tp11.NONE_RULE: none."""
     pts = []
     for i, m in enumerate(members):
         x = m[e]
@@ -148,7 +197,12 @@ def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None):
         k, b = cell_of(x["v"], m["w"], x["t"], formed, dk, dt)
         for _ in range(1 if weights is None else int(weights[i])): pts.append((k, b, ids[i]))
     t_first, t_last = formed + 15 * win + 5, end - 5
-    return zone_map(pts, len(members) if weights is None else int(sum(weights)), (t_first - formed - dt) // 15, (t_last - formed - dt) // 15)
+    n = len(members) if weights is None else int(sum(weights))
+    lo, hi = (t_first - formed - dt) // 15, (t_last - formed - dt) // 15
+    if rule == tp11.NONE_RULE or (rule == tp11.BANDS_RULE and e == "X"):
+        return dict(zones=[], residual=sorted({s for _, _, s in pts}), need=tp11.need(n))
+    if rule == tp11.BANDS_RULE: return tp11.bands(pts, n, lo, hi)
+    return (table_map if rule == TABLE_RULE else zone_map)(pts, n, lo, hi)
 
 
 def evaluate(snap, e):
@@ -158,24 +212,26 @@ def evaluate(snap, e):
     win = (snap["key"]["window"][0] - formed) // 15
     ids = [m["id"] for m in mem]
     N = len(mem)
-    zm = map_of(mem, e, formed, end, win, ids)
+    rule = snap["key"].get("zone_rule")
+    version = TABLE_VERSION if rule == TABLE_RULE else tp11.BANDS_VERSION if rule in (tp11.BANDS_RULE, tp11.NONE_RULE) else VERSION
+    zm = map_of(mem, e, formed, end, win, ids, rule=rule)
     unknown = sum(1 for m in mem if m[e]["s"] == "unknown")
     none = sum(1 for m in mem if m[e]["s"] == "none")
-    base = dict(algorithm_version=VERSION, family_scope=snap["key"].get("scope", "weekday"), family_id=snap["family_id"],
+    base = dict(algorithm_version=version, family_scope=snap["key"].get("scope", "weekday"), family_id=snap["family_id"],
                 snapshot_id=snap["snapshot_id"], event_id=e, N_family=N, n_residual_total=len(zm["residual"]),
-                unknown_count=unknown, no_event_count=none, min_support=zm["need"], study_refs=study_refs(snap["key"]["session"], e))
+                unknown_count=unknown, no_event_count=none, min_support=zm["need"], study_refs=None if rule is not None else study_refs(snap["key"]["session"], e))
     # diagnostics on the whole map (once per event)
-    shifted = [map_of(mem, e, formed, end, win, ids, dk, dt) for dk, dt in SHIFTS]
+    shifted = [map_of(mem, e, formed, end, win, ids, dk, dt, rule=rule) for dk, dt in SHIFTS]
     rng = np.random.default_rng(seed(snap["family_id"], snap["snapshot_id"], e, "bootstrap"))
-    boots = [map_of(mem, e, formed, end, win, ids, weights=rng.multinomial(N, np.full(N, 1 / N))) for _ in range(BOOT)] if N else []
+    boots = [map_of(mem, e, formed, end, win, ids, weights=rng.multinomial(N, np.full(N, 1 / N)), rule=rule) for _ in range(BOOT)] if N else []
     older = mem[:N // 2]
-    disc = map_of(older, e, formed, end, win, ids[:N // 2]) if len(older) else dict(zones=[])
+    disc = map_of(older, e, formed, end, win, ids[:N // 2], rule=rule) if len(older) else dict(zones=[])
     newer = [m for m in mem[N // 2:] if m[e]["s"] == "known"]
     grid = np.array(snap["grid"])
     zones = []
     for z_i, z in enumerate(zm["zones"]):
         label = f"{e}{z_i + 1}"
-        zid = hashlib.sha1("|".join(map(str, (snap["snapshot_id"], e, z["anchor"], VERSION))).encode()).hexdigest()[:12]
+        zid = hashlib.sha1("|".join(map(str, (snap["snapshot_id"], e, z["anchor"], version))).encode()).hexdigest()[:12]
         jac = [round(_match(z, s), 3) for s in shifted]
         rec = [_match(z, b) for b in boots]
         out = dict(base, zone_id=zid, label=label, peak_anchor=list(z["anchor"]), cell_mask=[list(c) for c in z["cells"]],
@@ -210,11 +266,12 @@ def _null(z, disc, newer, grid, formed, e, snap, z_i):
         real.append(cell_of(x["v"], m["w"], x["t"], formed) in frozen)
         P = np.array([q if q is not None else [np.nan] * 3 for q in m["path"]], dtype=float)
         ai = int(np.searchsorted(grid, m["act"]))
-        vals, idx = _flip(P, ai, rng, NULL_REPS, e)
+        vals, idx = _flip(P, ai, rng, NULL_REPS, e, snap["key"].get("r_event") == "R_BEFORE_X")
+        ok = np.isfinite(vals)
         t = grid[ai + 1 + idx] - 5
-        k = np.floor_divide(10 * vals.astype(np.int64), m["w"])
+        k = np.floor_divide(10 * np.where(ok, vals, 0).astype(np.int64), m["w"])
         b = (t - formed) // 15
-        H.append(np.array([(int(kk), int(bb)) in frozen for kk, bb in zip(k, b)]))
+        H.append(np.array([bool(o) and (int(kk), int(bb)) in frozen for o, kk, bb in zip(ok, k, b)]))
     real = np.array(real, dtype=float); H = np.array(H, dtype=float)
     q_null = H.mean(0)
     p_real, p_null = float(real.mean()), float(np.median(q_null))
@@ -241,6 +298,39 @@ def status(cells, e, q, v10, w, t_next, formed, last_open):
     for k, b in cs:
         if q is not None and not (k * w < v10 if e == "R" else (k + 1) * w > v10): continue      # no extreme yet: any price
         if formed + 15 * b + 10 >= t_next and formed + 15 * b <= last_open: return "POSSIBLE"
+    return "IMPOSSIBLE"
+
+
+def pre_today(rows):
+    """Today's R before the extreme (lab/scene24.py, module note) from closed M5 [(close, low, high)] after the
+    activation, directed ticks. Returns (candidate, past, low): candidate = (close, low) of the lowest low before the
+    first M5 of the running high (None when that high is on the first M5); past = every M5 from the running high on
+    whose low undercuts the candidate and all lows since the running high before it (each becomes R if a new high
+    follows); low = the lowest of these, which a later M5 must undercut to become R (None before any M5)."""
+    if not rows: return None, [], None
+    jh = 0
+    for i, r in enumerate(rows):
+        if r[2] > rows[jh][2]: jh = i
+    cand = None
+    for r in rows[:jh]:
+        if cand is None or r[1] < cand[1]: cand = (r[0], r[1])
+    past, low = [], None if cand is None else cand[1]
+    for r in rows[jh:]:
+        if low is None or r[1] < low: past.append((r[0], r[1])); low = r[1]
+    return cand, past, low
+
+
+def status_pre(cells, q, past, v10, w, t_next, formed, last_open):
+    """Today's status of one zone of R before the extreme: HOLDS when today's candidate cell q lies in it; POSSIBLE when
+    a new high on a later M5 can still make a past cell R in it, or a strictly lower low (cell k with k w < v10, any
+    price before the first M5) on a later M5 that leaves one more M5 for the new high; else IMPOSSIBLE."""
+    cs = set(map(tuple, cells))
+    if q is not None and tuple(q) in cs: return "HOLDS"
+    if t_next > last_open: return "IMPOSSIBLE"
+    if any(tuple(c) in cs for c in past): return "POSSIBLE"
+    for k, b in cs:
+        if v10 is not None and not k * w < v10: continue
+        if max(t_next, formed + 15 * b) <= min(formed + 15 * b + 10, last_open - 5): return "POSSIBLE"
     return "IMPOSSIBLE"
 
 

@@ -30,6 +30,19 @@ M5 closing at E included):
   equality is not a break, a later return does not undo it); held = fully observed without that; unknown; none;
 - order of the first times: R_before_X / X_before_R / same_M5 / unknown, with the repeats kept.
 The path: every common clock M5 of the block after the box, as directed low, high, close (None where absent).
+
+R before the extreme (operator 29.10, screen 23.5 only; STRATEGY §1.6 «откат до экстремума сессии», DRlens 2023): a
+family asked with the flag ':rpre' measures R over the M5 opening before the first M5 of the final X; the M5 of X itself
+is not looked into (no M1 inside an M5). No M5 before it: no period. An unknown X leaves R unknown, without a bound. The
+snapshot carries key.r_event = 'R_BEFORE_X' and its own semantics, so its identity differs from the final-R family.
+
+The semantic core DR-LAB-TP-1.1 (operator 03.11, screen 23.5 only; lab/tp11.py): a confirmation family asked with the
+flag ':held' keeps only its sessions whose DR held (T; key.cohort = 'HELD') and carries the clock of their R (bunches,
+median, 70 % mark, windows) in snap['tp']; with 'tw=W1' (W2, LATE, BEFORE) as well it keeps only the sessions of T whose R
+lies in that window (T_W; key.tp_window), and its places are the price bands of those sessions (zone rule TP_BANDS, no
+X constellations). The whole family stays the source of the DR outcome. Each is another snapshot with its own identity.
+The clock itself is not published (its numbers have no declared field meaning in SC-1.1): the page recounts it from T's
+members by the same rule, and the contract gate re-derives T and T_W by the reference definitions.
 """
 from __future__ import annotations
 
@@ -44,9 +57,11 @@ import numpy as np
 import cluster24  # noqa: F401  (main-cluster-1, kept for its archived studies; the screen shows the zone map)
 import contract
 import scene21
+import tp11
 import zonemap24
 
 SEM_VERSION = "DR-LAB-SEM-1.0"
+R_BEFORE_X = "R_BEFORE_X"      # key.r_event of a family whose R is the deepest point before the session's extreme
 SESS = scene21.SESS            # day minutes: (box start, box end = start of the trading window f, block end E)
 SHIFT = scene21.SHIFT          # history minute = day minute + shift (ADR after midnight +1440)
 ORDER = scene21.ORDER
@@ -80,12 +95,13 @@ def directed(row, d, e):
     return (l - e, h - e, c - e) if d == 1 else (e - h, e - l, e - c)
 
 
-def measure(rows, start, end, d, e, opp=None):
+def measure(rows, start, end, d, e, opp=None, r_before_x=False):
     """Spec §5.1-5.2 on one session.
 
     rows: {close minute: (close, o, h, l, c)} in ticks; start: the close minute of the activating M5 (excluded);
     end: E (the M5 closing at E included, one opening at E not); d, e: orientation and edge; opp: the directed
-    opposite DR (ticks) for the DR outcome, None when the outcome is not measured (break family)."""
+    opposite DR (ticks) for the DR outcome, None when the outcome is not measured (break family); r_before_x: R is the
+    deepest point before the first M5 of the final X (see the module note)."""
     expected = range(start + 5, end + 1, 5)
     obs, missing = [], []
     for T in expected:
@@ -108,14 +124,23 @@ def measure(rows, start, end, d, e, opp=None):
             ev = dict(s=status)
             if obs: ev["bound"] = int(pick(x[j] for _, x in obs))     # observed so far: a bound, never a final point
             out[name] = ev
-    if status == "known":
+    if r_before_x:
+        X = out["X"]
+        pre = [(T, x) for T, x in obs if T - 5 < X["t"]] if X["s"] == "known" else []
+        if pre:
+            v = min(x[0] for _, x in pre)
+            ties = [T - 5 for T, x in pre if x[0] == v]
+            out["R"] = dict(s="known", v=int(v), t=ties[0], ties=ties)
+        else:
+            out["R"] = dict(s="none" if X["s"] == "known" else X["s"])
+    if status == "known" and out["R"]["s"] == "known":
         rt, xt = out["R"]["ties"], out["X"]["ties"]
         out["order"] = "R_before_X" if rt[0] < xt[0] else "X_before_R" if xt[0] < rt[0] else "same_M5"
         out["order_detail"] = dict(all_x_before_all_r=max(xt) < min(rt), all_r_before_all_x=max(rt) < min(xt),
                                    x_again_after_r=any(t > rt[0] for t in xt), r_again_after_x=any(t > xt[0] for t in rt))
     else:
         # SC-1.1 P0.2 / E2: no period (no M5 on the horizon) is its own category of the order, never «unknown»
-        out["order"] = "no_period" if status == "none" else "unknown"
+        out["order"] = "no_period" if status == "none" or out["R"]["s"] == "none" else "unknown"
     return out
 
 
@@ -241,10 +266,14 @@ def dates(inst):
 
 
 # ---------- the snapshot of a family ----------
-def _snapshot(inst, B, session, weekday, side, view, win, cutoff, scope="weekday"):
+def _snapshot(inst, B, session, weekday, side, view, win, cutoff, scope="weekday", r_before_x=False, table_zones=False, held=False, tw=None):
     """The family of the key and its measurements; independent of today's slice (spec §9.2, §13.1). scope 'all' drops
-    the weekday from the key: another family, another N and snapshot (zone-map-3 §2.2), never a fallback."""
-    key = (inst, session, weekday, side, view, win, cutoff, scope, source_version(inst, B)["built"])
+    the weekday from the key: another family, another N and snapshot (zone-map-3 §2.2), never a fallback. r_before_x:
+    the same members with R before the extreme (module note), another snapshot and identity. table_zones: the same
+    members, measurements and identity, its constellations from the joint table (lab/zonemap24.py)."""
+    held = held and view == "conf"                       # TP-1.1 applies to the confirmation family only
+    tw = tw if held else None
+    key = (inst, session, weekday, side, view, win, cutoff, scope, r_before_x, table_zones, held, tw, source_version(inst, B)["built"])
     if key in _SNAP: return _SNAP[key]
     start, formed, end = SESS[session]
     shift = SHIFT[session]
@@ -288,7 +317,7 @@ def _snapshot(inst, B, session, weekday, side, view, win, cutoff, scope="weekday
         opp = None
         if view == "conf":
             opp = d * ((m["dr_low"] if side == 1 else m["dr_high"]) - e)
-        ev = measure(rows, act, end, d, e, opp)
+        ev = measure(rows, act, end, d, e, opp, r_before_x)
         path = [list(directed(rows[T], d, e)) if T in rows else None for T in grid]
         rec = dict(id=_sid(inst, m), date=m["date"], w=int(w), act=act, conf=conf, fail=fail, confWin=window_of(conf, formed),
                    R=ev["R"], X=ev["X"], order=ev["order"], orderDetail=ev.get("order_detail"), missing=ev["missing"], path=path)
@@ -297,6 +326,14 @@ def _snapshot(inst, B, session, weekday, side, view, win, cutoff, scope="weekday
                        drv=int(d * ((m["dr_high"] if side == 1 else m["dr_low"]) - e)))   # its own DR on the side of play
         members.append(rec)
     members.sort(key=lambda r: r["date"])
+    tp = None
+    if held:
+        # TP-1.1: T = the sessions whose DR held; the clock of their R is the same for every window family of the key
+        members = [r for r in members if r["outcome"] == "held"]
+        tp = tp11.windows(members, formed, win, end)
+        if tw:
+            W = tp["windows"].get(tw)
+            members = [r for r in members if tp11.in_window(r, W, formed)]
     N = len(members)
 
     def dist(name):
@@ -312,15 +349,20 @@ def _snapshot(inst, B, session, weekday, side, view, win, cutoff, scope="weekday
     if view == "conf": counts["outcome"] = {k: sum(1 for r in members if r["outcome"] == k) for k in ("held", "broken", "unknown", "none")}
     ids = [r["id"] for r in members]
     src = source_version(inst, B)
-    family_id = hashlib.sha1(json.dumps([SEM_VERSION, inst, session, weekday if scope == "weekday" else "all", side, view, win, cutoff, ids]).encode()).hexdigest()[:16]
+    sem = SEM_VERSION + ("+" + R_BEFORE_X if r_before_x else "") + ("+HELD" if held else "") + ("+TW:" + tw if tw else "")
+    family_id = hashlib.sha1(json.dumps([sem, inst, session, weekday if scope == "weekday" else "all", side, view, win, cutoff, ids]).encode()).hexdigest()[:16]
     measured = [[r["id"], r["R"], r["X"], r.get("outcome"), r["order"]] for r in members]
     snapshot_id = hashlib.sha1(json.dumps([family_id, src, measured], sort_keys=True).encode()).hexdigest()[:16]
     what = "подтверждение" if view == "conf" else "слом DR"
+    tp_cond = ""
+    if held:
+        Wc = tp["windows"].get(tw) if tw else None
+        tp_cond = " · DR удержали" + ("" if not tw else f" · откат в {tw} {clk(formed + 15 * Wc[0])}–{clk(formed + 15 * Wc[1])}" if Wc else f" · окна {tw} нет")
     snap = dict(
-        status="ok", semantics=SEM_VERSION, source=src, view=view, family_id=family_id, snapshot_id=snapshot_id,
+        status="ok", semantics=sem, source=src, view=view, family_id=family_id, snapshot_id=snapshot_id,
         key=dict(instrument=inst, session=session, weekday=weekday, direction="long" if side == 1 else "short",
                  event="confirmation" if view == "conf" else "break", window=[w_start, w_end], cutoff=cutoff, scope=scope),
-        cond=f"{session} · {DAYS[weekday] if scope == 'weekday' else 'все дни'} · {'лонг' if side == 1 else 'шорт'} · {what} {clk(w_start)}–{clk(w_end)}",
+        cond=f"{session} · {DAYS[weekday] if scope == 'weekday' else 'все дни'} · {'лонг' if side == 1 else 'шорт'} · {what} {clk(w_start)}–{clk(w_end)}{tp_cond}",
         N=N, ids=ids,
         scale=dict(orientation=side if view == "conf" else -side, edge="IDR на стороне подтверждения" if view == "conf" else "противоположный край IDR",
                    unit="ширина IDR", price_cell="1/10", time_cell=WINDOW, f=formed),
@@ -329,6 +371,15 @@ def _snapshot(inst, B, session, weekday, side, view, win, cutoff, scope="weekday
                    end="конец блока " + clk(end) + "; M5, закрывшаяся в " + clk(end) + ", входит",
                    time="открытие первой M5, достигшей цены", atom="существующая M5-свеча базы; дырка = целиком отсутствующая M5"),
         grid=grid, members=members, counts=counts, journal=dict(journal))
+    if table_zones: snap["key"]["zone_rule"] = zonemap24.TABLE_RULE
+    if held:
+        snap["key"]["cohort"] = "HELD"
+        snap["key"]["zone_rule"] = tp11.BANDS_RULE if tw else tp11.NONE_RULE
+        if tw: snap["key"]["tp_window"] = tw
+        snap["tp"] = dict(tp, selected=tw, x=tp11.x_marks(members, formed) if tw else None)
+    if r_before_x:
+        snap["key"]["r_event"] = R_BEFORE_X
+        snap["rules"]["R"] = "самая глубокая точка до первой M5 итогового X, M5 самого X не входит; нет M5 до неё — нет периода"
     if len(_SNAP) > 64: _SNAP.clear()
     _SNAP[key] = snap
     return snap
@@ -353,6 +404,14 @@ def _today_zones(snap, bars, tick, d, e_px, w_px, act, slice_, formed, end):
                  for z in zm["zones"]]
         if gap:
             out[ev] = dict(state="unknown", status=["STATUS_UNKNOWN"] * len(zm["zones"]), clock=clock)
+            continue
+        if ev == "R" and snap["key"].get("r_event") == R_BEFORE_X:
+            cand, past, low = zonemap24.pre_today(rows)
+            q = None if cand is None else zonemap24.cell_of(cand[1], w_t, cand[0] - 5, formed)
+            pc = [zonemap24.cell_of(v, w_t, T - 5, formed) for T, v in past]
+            v10 = None if low is None else 10 * low
+            out[ev] = dict(state="ok" if rows else "none", q=None if q is None else list(q), v10=v10, w=w_t, clock=clock,
+                           status=[zonemap24.status_pre(z["cell_mask"], q, pc, v10, w_t, slice_, formed, end - 5) for z in zm["zones"]])
             continue
         if rows:
             j = min(range(len(rows)), key=lambda i: (rows[i][1], i)) if ev == "R" else min(range(len(rows)), key=lambda i: (-rows[i][2], i))
@@ -380,8 +439,13 @@ def family(inst, session, at=None, date=None, view="auto"):
 
 
 def _family(inst, session, at=None, date=None, view="auto"):
-    view, _, sc = (view or "auto").partition(":")
-    scope = "all" if sc == "all" else "weekday"
+    view, *flags = (view or "auto").split(":")
+    scope = "all" if "all" in flags else "weekday"
+    r_before_x = "rpre" in flags          # R before the session's extreme (module note), screen 23.5
+    table_zones = "tcells" in flags       # the constellations of the joint table (lab/zonemap24.py), screen 23.5
+    held = "held" in flags                # TP-1.1: the sessions whose DR held (lab/tp11.py), screen 23.5
+    tw = next((f[3:] for f in flags if f.startswith("tw=")), None)
+    if tw is not None and tw not in tp11.WINDOWS: raise ValueError("Unknown window")
     if inst not in scene21.live.SYMBOLS: raise ValueError("Unknown instrument")
     if session not in SESS: raise ValueError("Unknown session")
     B = _base(inst)
@@ -402,10 +466,13 @@ def _family(inst, session, at=None, date=None, view="auto"):
     v = "brk" if (view in ("auto", "brk") and brk) else "conf"
     win = today["brkWindow"] if v == "brk" else today["window"]
     cutoff = day["date"]
-    snap = _snapshot(inst, B, session, day["weekday"], side, v, win, cutoff, scope)
+    snap = _snapshot(inst, B, session, day["weekday"], side, v, win, cutoff, scope, r_before_x, table_zones, held, tw)
     # the zone maps of R and X (zone-map-3, meaning/12): once per snapshot (kept in it), so the slice never moves them
     if "zones" not in snap: snap["zones"] = {e: zonemap24.evaluate(snap, e) for e in ("R", "X")}
     out = dict(snap)
+    # TP-1.1: the clock of T stays on the server (it selects T_W); the response publishes only declared numbers, the page
+    # recounts the clock from T's members (design/sozvezdiya-23-5/src/tp235.js)
+    out.pop("tp", None)
     d = side if v == "conf" else -side
     e_px = (s["idrH"] if d == 1 else s["idrL"])
     act = c0 if v == "conf" else brk

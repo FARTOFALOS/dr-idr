@@ -184,5 +184,8 @@
     "operator perceptual acceptance is not inferred from checks",
     "scale/clock/display alternatives are explicit in the decisions document",
     "market tape, full witnesses and runtime logs are not published"
-  ]
+  ],
+  "historical_record": "machine checks for the initial 22.10 release 2ceb7cb; not current visual acceptance",
+  "operator_visual_verdict": "REJECTED_AFTER_COMPARISON_2026-10-22",
+  "visual_correction_receipt": "integration/23-5-constellation-correction-checks.json"
 }

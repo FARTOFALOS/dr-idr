@@ -1,28 +1,113 @@
 # DR IDR — entry for agents
 
-## Working 23.5 alongside 24 · 2026-10-22
+## Screen 23.5 · 2026-11-04: the semantic core TP-1.2 (code and flags say tp-1.1; supersedes the table of 27–30.10 for the confirmation family)
 
-The operator explicitly authorized the 22.10 integration and push to main in the current chat. Start with
-[`docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md`](docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md): definitions, all existing facets,
-source dispositions, rejected substitutions and the genuinely uncertain decisions are recorded there.
+**Start here.** The meaning is [meaning/23-tp-smyslovoe-yadro.md](meaning/23-tp-smyslovoe-yadro.md) (DR-LAB-TP-1.2, the
+author's Time & Price on true sessions; operator 02–04.11); how it is built is [DR-LAB-23-5-TP](docs/DR-LAB-23-5-TP.md).
+Everything older in this file and in `meaning/` is history where it disagrees with the core: do not bring back the
+whole-family («honest») cohort as the base, the strongest table cell as a place, X constellations in time, final
+extremes as places, or C13. The confirmation family of 23.5 is shown by the core, on the 23.5 drawing as it was:
+- the DR outcome is the whole family's, one 100 %; everything else is T, the sessions whose DR held (flag `:held`);
+- the band: T's clock of R before the top, every bunch with its share, the median and 70 % lines, the windows `W1`
+  (first bunch → median), `W2` (median → 70 %), `до окна`, `позже`; X of the window's sessions, its lines, no X
+  constellation in time;
+- the price column and the constellations: one window's sessions T_W (flag `:held:tw=W1`, zone rule `TP_BANDS`); at
+  rest W1, a hovered window shows its sessions, a click fixes it.
+- No new estimand; the clock of T is not published (no declared field meaning in SC-1.1), the page counts it from T's
+  members (`tp235.js`), the contract re-derives T and T_W. NOW-1.0 stays on the whole family (moving it to T is open).
+- `#tp=0` (and `#cells=1`, the layer «Клетки» of 30.10) shows the table of 30.10 (the section below); the old 23.5 page
+  checks open `#tp=0`. Check of the core:
+  `node tests/tp235_page.mjs <23.5 base>`.
+- The stop test C13 (25.09, `docs/STRATEGY.md` §14) did not follow the author's method (true sessions only, every bunch
+  seen): the operator excluded it on 03.11, do not use its results.
 
-- Screen 24 remains `/24/`, source `design/sozvezdiya-24/src`, normal launcher/port 8767.
-- Working 23.5 is `/23-5/`, source `design/sozvezdiya-23-5/src`, `start-dr-lab-23-5.cmd`, port 8735.
-  Do not copy its source/build over 24. Browser settings use separate namespaces.
-- On 23.5 only, amber R is the display alias of candidate PB-L (local H→L→B); X stays FINAL-X. Accepted BASE/NOW,
-  final-R/X order, PRE/ARRIVE and fixed-target Continuations retain their own objects and supports.
-- Price/time projections count unique sessions per region. The time hill uses the full zone's witnesses, not compact
-  display nodes. A past PB window is dimmed by its clock, never by FINAL-R's monotone price constraint.
-- The operator requested the shading of 24 and no noise from small rows: visibility uses the existing support floor
-  and peaks; hidden rows remain inspectable, with unchanged N. New visible entities require discussion.
-- Accepted SC-1.1 stays at 53 estimands; the separate proposal now has 63. Publication does not grant C2/C3 or H acceptance.
+## HISTORY (the `#tp=0` view since 04.11) · Main screen 23.5 · 2026-10-27: one table time × SD
 
-Machine map: `integration/profile235-bindings.json`; evidence: `integration/23-5-release-checks.json`.
-Besides the required checks below, the addressed checks are `tests/profile235_bindings.py`, `pullbacks24.py`,
-`profile235_page.mjs`, `pullbacks235_page.mjs`, `shading235_page.mjs`, `visit_states_page.mjs`,
-`continuations235_page.mjs`. Build both pages independently after a shared contract build. Use `-HistoryOnly`
-for launcher checks; `-Port` permits an isolated test port without disturbing the operator's two screens.
+**23.5 is the main screen** (operator, 27.10: «23.5 стал основным экраном в репозитории… чтобы мы от этого
+отталкивались»). The root `http://127.0.0.1:8767/` opens `/23-5/`, and screen 24 stays at `/24/` (shortcut «DR Lab 24»).
+Start new work from 23.5. The sections below about screen 24 describe the main line from 01.10 to 27.10: they are
+history and the source of the protected BASE/NOW definitions.
 
+Read [DR-LAB-23-5-MATRIX](docs/DR-LAB-23-5-MATRIX.md) first: its last sections log every action and check of 27–28.10.
+On screen 23.5 the numbers come from one table 15 min × 0.1 SD of the final R / X (`matrix235.js`). The drawing is the
+23.5 drawing as it was (operator 28.10: «те же визуализации, просто с новым смыслом»): constellations of zone-map-3 with
+their stars, haze, threads and label, capsules and hills, the column's colours. Which stars form a constellation is
+that drawing, never a number.
+- At rest the price column and the time band show each row's / window's strongest cell. This is the operator's 27.10
+  rule: the strongest local condensation, not the row sum. Hover on a row / window of one event opens that event's full
+  row / column, and the other event stays at rest. Every number is `EST:B-RX-REGION` of SC-1.1.
+- A constellation's percentage (and its row in «Зоны по времени») is its strongest cell, the same kind of number as
+  the rectangle (operator 28.10). Equal maxima of a row are co-maxima: all lit and named.
+- **R on 23.5 is the pullback before the session's extreme** (operator 29.10, «Да, переведи R»): the deepest point against the
+  activation before the first M5 of the final X, not the deepest point to the block end. The page asks every family with the
+  flag `:rpre` (`key.r_event = R_BEFORE_X`); without the flag the server returns the final-R family of screen 24 unchanged.
+  Reference `lab/contract.py::ref_before_extreme_R`; candidate registry `OUT:R-BEFORE-X-1`. NOW-1.0 and PRE-24 still use the
+  final R (О30). X is unchanged; its pile at 16:00 is real (days that closed at their high).
+- Check: `node tests/matrix235_page.mjs <23.5 base>` (117). Screen 24's source and SC-1.1 are unchanged. The server
+  changed in one line: the root redirect.
+- Merged into `main` and pushed on the operator's word of 27.10. This is not his perceptual acceptance of the view
+  (О28). The local SEM-1.0 work of 27.10, uncommitted in the operator's checkout, is NOT in `main`: it was built on
+  the zone map and must be reconciled with the table before it lands.
+
+## Semantic reset созвездий · 2026-10-27
+
+**Перед любой новой работой над базовыми созвездиями R/X сначала прочитайте
+[meaning/22-time-price-constellation-reset.md](meaning/22-time-price-constellation-reset.md).**
+
+Новая операторская рамка: fixed F → один FINAL-R/FINAL-X на known session → одна матрица
+`15 min × 0.1 SD` с массой клетки `n/N` → две взаимно раскрывающиеся UI-проекции.
+Hover по SD показывает весь его профиль по времени; hover по времени — весь профиль по SD.
+Созвездие — frontend-визуализация сильной массы той же матрицы через representative real witnesses,
+дымку и нити, а не отдельный backend zone-object.
+
+Не импортировать по умолчанию `zone-map-3`, connected masks, half-height, fixed `0.3 SD` core,
+PB-L, SW или multi-event voting как базовую семантику. Из 23.5 разрешено переиспользовать joint-cell
+математику и witness compaction только после сохранения FINAL-R/X и общей F/N.
+
+## HISTORICAL / SUPERSEDED by the table time × SD of 27.10 — DO NOT IMPLEMENT AS CURRENT BASE · Working 23.5 · 2026-10-26 (supersedes the time × SD section below)
+
+Start with [DR-LAB-23-5-SWEEPS](docs/DR-LAB-23-5-SWEEPS.md) and the 26.10 node of `meaning/07-cepochka-reshenij.md`.
+The operator settled these in a round of questions on 26.10 and then said: «Собирай 23.5 по согласованному локально,
+24 не трогай, ничего не пушь без моего слова». Local build only; no publication, no visual acceptance.
+
+- The main map of 23.5 is again the final R / X of every **session** (one star per session, the zones and shares of
+  screen 24). Do not put local pullbacks or any multi-event object under the letter R, and do not replace the zone rule
+  by fixed 0.3 SD × 15-minute cores: on final R that rule finds no constellation in 3 of 4 families (check of 26.10).
+- The screen shows history and today's facts (reachability, clock, visit); it inserts no prediction logic (operator 26.10).
+  The phase rule of 08.10 is shown as its two facts, without a verdict or a quieter side.
+- The decisions of 08.10 are on by default in 23.5 only. Screen 24, its source, build, contract registries and the
+  server code are unchanged.
+- Local pullbacks are the overlay «Съёмы лоу» (SW-0.1), switched in «Слои ▾», off by default, computed by the page
+  (`sweeps235.js`) and recomputed by `lab/sweeps235_ref.py`. Not yet in the candidate registry (no SC passports).
+- Checks: `tests/sweeps235.py`, `tests/sweeps235_page.mjs` (+ shared checks). The older 23.5 page checks below assert
+  superseded variants.
+
+## HISTORICAL / SUPERSEDED by the table time × SD of 27.10 — DO NOT IMPLEMENT AS CURRENT BASE · Working 23.5: time × SD · 2026-10-23 (superseded on 26.10)
+
+Start with [DR-LAB-TIME-SD-1.0](docs/DR-LAB-23-5-TIME-SD.md) and the
+[approved implementation plan](meaning/lens/2026-10-22-plan-23-5-time-sd.md). The direct human «РЕАЛИЗУЙ»,
+followed by «ПРОДОЛЖАЙ», authorizes this implementation. The earlier main-publication instruction applies to this
+same task. This is not automatic perceptual or predictive acceptance.
+
+- Screen 24 and its accepted BASE/NOW definitions remain at `/24/`, port 8767. Its source is unchanged.
+- Screen 23.5 at `/23-5/`, port 8735, uses its own source, settings and `start-dr-lab-23-5.cmd` shortcut.
+- Bounds on 23.5 uses the time × SD profile by default. R is local PB-L, X is named FINAL-X context.
+  The old broad PB overlay and the temporary uncommitted rollback are not the intended working result.
+- Both maps use exact 0.3 SD × 15-minute local cores. M5/0.1 SD witnesses are compacted for drawing only.
+  Price and time rectangles show maxima of joint-cell support and retain their other coordinate. Full-band or
+  whole-window unions remain separately named area questions. Full F/N and unknown mass are preserved.
+- Post-L links use the same source episodes and subsequent M5 paths after L closes, never unrelated FINAL-X cases.
+- Today's clock, visit and completed PB episode remain different facts. FINAL-R phase cannot dim a local PB map.
+- Existing layout, opacity, font rules, 116px price column, hover/pin and six lower windows are retained.
+- Accepted SC-1.1 remains 53 estimands. The separate proposed registry has 72 (63 existing + 9 time-SD).
+  No new ontology stack; all ten existing facets are mapped in `integration/profile235-bindings.json`.
+
+Addressed checks: `tests/time_sd235.py`, `time_sd235_page.mjs`, `profile235_bindings.py`, `pullbacks24.py`,
+`continuations235_page.mjs`, plus the shared checks below. Current evidence: `integration/23-5-time-sd-checks.json`.
+The older `profile235_page`, `pullbacks235_page`, `shading235_page`, `constellations235_page` assert the superseded
+22.10 broad-zone/marginal profile; they are historical checks, not acceptance of the new formulas.
+Build both pages after a shared contract build. Use launchers with `-HistoryOnly` for verification; `-Port` allows
+an isolated test server. Never use an old check receipt as evidence for a changed release.
 
 ## Update · 2026-10-19
 

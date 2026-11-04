@@ -245,8 +245,8 @@ def faults():
         check(out["status"] == "REFERENCE_MISMATCH" and "proof" not in out and not out["contract"].get("bundles"),
               f"fault «{fault}»: the reference refuses, the number and the drawing are withdrawn together")
     check(P.response(dict(instrument="NQ", session="RDR", at=670, date="2026-01-02"))["status"] == "OUT_OF_SCOPE", "the closed 2026 tape cannot be opened through the candidate")
-    check(len(C.registry()["estimands"]) == 53 and len(gate.registry()["estimands"]) == 63,
-          "the accepted 53 estimands are untouched; the candidate edition holds 60 + 3 (zones, sessions, regional membership)")
+    check(len(C.registry()["estimands"]) == 53 and len([e for e in gate.registry()["estimands"] if not e['id'].startswith('EST:TS-')]) == 63,
+          "the accepted 53 estimands are untouched; original candidates hold 60 + 3 PB, with later time-SD isolated")
     for region in ("[true,2,0,3]", "[2,1,0,3]"):
         try:
             P.response(dict(instrument="NQ",session="RDR",at=670,date="2025-12-17",region=region))
