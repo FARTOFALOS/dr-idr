@@ -85,21 +85,38 @@ if ($health -and (-not $health.workspace -or [IO.Path]::GetFullPath($health.work
 }
 $expected = & $python -B (Join-Path $lab 'runtime_identity.py')
 if ($health -and ($health.source_revision -ne $expected -or $health.data_revision -ne $health.current_data_revision -or -not $health.integration)) {
-    foreach ($owner in @(Get-NetTCPConnection -LocalPort $port -State Listen | Select-Object -ExpandProperty OwningProcess -Unique)) {
-        $proc = Get-CimInstance Win32_Process -Filter "ProcessId = $owner"
-        if ($proc.CommandLine -notmatch 'server\.py') { Fail "Неподтверждённый процесс на $port" }
-        Stop-Process -Id $owner -ErrorAction Stop
+    # the old server of this working copy (its /api/health named this folder) is restarted. Windows may report the owner
+    # of the listening socket as PID 0 («System Idle Process»), so the server is found by its own command line
+    # (server.py --port <port>, as started below); a real owner of the socket is added if it is python. Anything that is
+    # not python is never stopped.
+    $procs = @(Get-CimInstance Win32_Process -Filter "Name LIKE 'python%'" | Where-Object { $_.CommandLine -match 'server\.py' -and $_.CommandLine -match "--port\s+$port(\s|$)" })
+    $owners = @(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | Where-Object { $_ -gt 4 })
+    foreach ($owner in $owners) {
+        if (@($procs | ForEach-Object { $_.ProcessId }) -contains $owner) { continue }
+        $p = Get-CimInstance Win32_Process -Filter "ProcessId = $owner"
+        if (-not $p) { continue }
+        if ($p.Name -notmatch '^python') { Fail "На порту $port чужой процесс (PID $owner, $($p.Name)); ничего не остановлено" }
+        $procs += $p
     }
+    if (-not $procs.Count) { Fail "Старый сервер 23.5 отвечает на $port, но его процесс не найден: закройте python в Диспетчере задач или перезагрузите компьютер" }
+    Write-Host '  [..] Останавливаю старый сервер 23.5 (код обновился)'
+    foreach ($p in $procs) { Stop-Process -Id $p.ProcessId -Force -ErrorAction SilentlyContinue }
+    $gone = $false
+    for ($i = 0; $i -lt 40 -and -not $gone; $i++) {
+        Start-Sleep -Milliseconds 250
+        try { Invoke-RestMethod "$base/api/health" -TimeoutSec 1 | Out-Null } catch { $gone = $true }
+    }
+    if (-not $gone) { Fail "Старый сервер 23.5 не остановился (PID $(@($procs | ForEach-Object { $_.ProcessId }) -join ', '))" }
     $health = $null
 }
 if ($health) {
     Write-Host '  [ok] Сервер 23.5 уже работает'
 } else {
     for ($i = 0; $i -lt 30; $i++) {
-        if (-not @(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue).Count) { break }
+        if (-not @(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.OwningProcess -gt 4 }).Count) { break }
         Start-Sleep -Milliseconds 100
     }
-    if (@(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue).Count) { Fail "Порт $port занят, но сервер не ответил" }
+    if (@(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.OwningProcess -gt 4 }).Count) { Fail "Порт $port занят, но сервер не ответил" }
     Write-Host '  [..] Запускаю сервер 23.5'
     Start-Process -FilePath $python -ArgumentList '-u', '-B', 'server.py', '--port', "$port", '--integration' -WorkingDirectory $lab -WindowStyle Hidden `
         -RedirectStandardOutput (Join-Path $runtime "server$port.out.log") -RedirectStandardError (Join-Path $runtime "server$port.err.log")
