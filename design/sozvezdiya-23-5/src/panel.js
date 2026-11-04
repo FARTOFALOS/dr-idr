@@ -87,7 +87,7 @@
     rows.sort((a, b) => a.z.time_start - b.z.time_start || b.z.p_snapshot - a.z.p_snapshot);
     // TP-1.1: the places of the window's pullbacks, each its share of the window (core §4.5)
     const tw = F._tp && F._tp.w && F._tp.clock.windows[F._tp.w];
-    const out = [F._tp ? '<div class="p21-h second"><span title="Место отката = окно × полоса цены среди сессий окна; место вершины = пучок вершин × полоса цены среди тех же сессий; доля — от сессий окна">Места отката и вершины · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
+    const out = [F._tp ? '<div class="p21-h second"><span title="Место отката = окно × полоса цены среди сессий окна; место вершины = полоса цены среди вершин тех же сессий (шаг 0,2 SD, без последних 15 минут); доля — от сессий окна">Места отката и вершины · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
     if (!rows.length) out.push('<div class="p21-note">' + lbl('EST:B-ZONE-R', 'none') + '</div>');
     let sep = false;
     for (const r of rows) {

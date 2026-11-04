@@ -6,11 +6,12 @@
   //   brighter with its share, the lines of the median and of the 70 % mark, and in the place of the zone capsules the
   //   windows: W1 (first bunch → median), W2 (median → 70 %), «позже» after 70 % and «до окна» before W1; X is the selected
   //   window's sessions in the same manner (operator 04.11: «так же самое можно и X показывать»): its bunches brighter with
-  //   their shares, its median and 70 % lines, the box «вершина» from its first bunch to its median (the author's «max
-  //   extension median time»), and its last 15 minutes apart («ход не кончился до закрытия», never a place);
+  //   their shares and its median and 70 % lines (the median is the author's «max extension median time»), its last 15
+  //   minutes apart («ход не кончился до закрытия», never a place);
   // - the price column and the constellations: the sessions of one window T_W (flag ':held:tw=W1'), its price bands as
-  //   the places of R, the bunch × band places of their tops as the places of X (zone rule TP_BANDS, tp-bands-2); at rest
-  //   W1, a window under the mouse on the band shows its sessions, a click fixes it.
+  //   the places of R, the price bands of all their tops over 0.2-SD cells as the places of X (the author's «cluster of
+  //   extension… next big cluster»; zone rule TP_BANDS, tp-bands-3; core 1.4), under the mouse «дошли до» its lower edge;
+  //   at rest W1, a window under the mouse on the band shows its sessions, a click fixes it.
   // The drawing and the colours of 23.5 stay as they were (operator 03.11: «все ценовые, все цветовые, как у нас были»).
   // «Сейчас» (NOW-1.0) stays on the whole family F: its move to T is a separate task (core §6).
   // '#tp=0' in the address shows the previous meaning (the table of 30.10) for comparison, and so does '#cells=1' (the layer
@@ -88,25 +89,21 @@
     if (G.N !== tpCount(T.tpc, W[0], W[1])) return 'число сессий окна ' + TP_NAME[w];
     return null;
   }
-  // the clock of the window's tops X (lab/tp11.py::xplaces, the same rule): bunches over the block without its last 15
-  // minutes, the median, the box «вершина» from the first bunch to the median, the tops of the last 15 minutes apart
+  // the clock of the window's tops X (the bunch rule of lab/tp11.py): bunches over the block without its last 15 minutes,
+  // the median, the tops of the last 15 minutes apart (a move cut by the close: never a bunch, never a place)
   function tpXClock(G) {
     const f = G.f, bLo = Math.floor((G.r.key.window[0] - f) / 15), bHi = Math.floor((G.end - 5 - f) / 15), m = tpMarks(G.M, 'X', f), at = new Map(m.cells), c = [];
     for (let b = bLo; b < bHi; b++) c.push(at.get(b) || 0);
     const bunches = [];
     for (const [lo, hi, top] of tpRegions(c)) { let n = 0; for (let j = lo; j <= hi; j++) n += c[j]; if (n >= tpNeed(G.N)) bunches.push({ b0: bLo + lo, b1: bLo + hi + 1, n, peak: bLo + top }); }
-    const median = tpQuant(m.ts, 1, 2);
-    let box = null;
-    if (median) { const bm = Math.floor((median.t - f) / 15), first = bunches.find(u => u.b0 <= bm); box = [first ? first.b0 : bLo, bm + 1]; }
-    return { cells: m.cells, bunches, median, box, close: at.get(bHi) || 0, bLo, bHi, need: tpNeed(G.N) };
+    return { cells: m.cells, bunches, median: tpQuant(m.ts, 1, 2), close: at.get(bHi) || 0, bLo, bHi, need: tpNeed(G.N) };
   }
-  // every place of X lies inside one bunch of the page's X clock and never in the last 15 minutes
+  // every place of X is a price band of the window's tops on the 0.2-SD grid (lab/tp11.py::xbands) and never holds a top
+  // of the last 15 minutes; the contract re-derives the bands themselves (ref_tp_xbands)
   function tpXCheck(G) {
     const xc = G.tpxc, Z = (G.zones.X || { zones: [] }).zones;
-    for (const z of Z) {
-      const bs = z.cell_mask.map(q => q[1]), u = xc.bunches.find(q => bs.every(b => b >= q.b0 && b < q.b1));
-      if (!u || bs.some(b => b >= xc.bHi)) return 'места вершины ' + z.label;
-    }
+    for (const z of Z)
+      if (z.cell_mask.some(q => q[1] >= xc.bHi || q[0] < z.price_low || q[0] >= z.price_high) || z.price_low % 2 || z.price_high % 2) return 'места вершины ' + z.label;
     return null;
   }
   function tpXMarks(G) { const m = tpMarks(G.M, 'X', G.f); return { median: tpQuant(m.ts, 1, 2), p70: tpQuant(m.ts, 7, 10), known: m.ts.length, unknown: m.unknown, none: m.none, cells: m.cells }; }
@@ -187,8 +184,8 @@
   function tpBand(c, ctx) {
     const F = ctx.F, P = F._tp, T = P.T, tp = P.clock, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
     const ov = V.bandOv = bandOverlay(ctx), B = { x: B0.x, y: B0.y - ov, w: B0.w, h: B0.h + ov };
-    // one lane of capsules on each side (where the zone capsules stood): the windows on R's, the box «вершина» on X's
-    const LH = 15, lane = { R: 1, X: P.xc ? 1 : 0 }, upEv = dir.X < 0 ? 'X' : 'R', dnEv = upEv === 'X' ? 'R' : 'X';
+    // one lane of capsules on R's side (where the zone capsules stood): the windows
+    const LH = 15, lane = { R: 1, X: 0 }, upEv = dir.X < 0 ? 'X' : 'R', dnEv = upEv === 'X' ? 'R' : 'X';
     const top = B.y + 3 + lane[upEv] * (LH + 2) + 2, bot = B.y + B.h - 3 - lane[dnEv] * (LH + 2) - 2;
     const cy = Math.round((top + bot) / 2) + 0.5, half = (bot - top) / 2 - 2;
     c.save(); c.beginPath(); c.rect(B.x, B.y, B.w, B.h); c.clip();
@@ -281,25 +278,6 @@
       c.restore();
       V.tpCaps.push({ id: w, box: [x0, y0, wd, LH] });
     }
-    // the box «вершина» on X's lane: from the first bunch of tops to their median (the author's max extension median time)
-    if (xc && xc.box) {
-      const p = tpXShare(F, xc.box[0], xc.box[1]), x0 = V.X(F.f + 15 * xc.box[0]) + 1, x1 = V.X(F.f + 15 * xc.box[1]) - 1, wd = x1 - x0, y0 = dir.X < 0 ? B.y + 3 : B.y + B.h - 3 - LH + 2;
-      if (x1 >= B.x && x0 <= B.x + B.w && wd >= 4) {
-        const hov = !!(h && h.k === 'tpxbox'), nm = 'вершина';
-        c.save();
-        c.fillStyle = rgba(cfg.X, Math.min(1, (0.22 + (hov ? 0.1 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
-        if (hov) { c.strokeStyle = rgba(cfg.X, 0.6); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
-        c.beginPath(); c.rect(x0 + 2, y0, wd - 4, LH); c.clip(); c.textBaseline = 'middle';
-        c.font = '700 10.5px ' + FONT;
-        const nw = c.measureText(nm).width, pw = pctW(c, ppTxt(p), '700 ', 10.5);
-        c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(mixW(cfg.X, 0.2), Math.min(1, 0.9 * cfg.capTxt / 100));
-        let x = x0 + 9;
-        if (wd >= nw + 14) { c.fillText(nm, x, y0 + LH / 2 + 0.5); x += nw + 6; }
-        if (wd >= nw + pw + 20) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5, rgba(mixW(cfg.X, 0.35), Math.min(1, 0.85 * cfg.capTxt / 100)));
-        c.restore();
-        V.tpCaps.push({ id: 'XBOX', box: [x0, y0, wd, LH] });
-      }
-    }
     // the centre line, the slice, the names of the halves, the unknown mass (R of T, X of the window), as drawBand
     const xF = V.X(F.f), xE = V.X(F.end);
     c.fillStyle = 'rgba(209,212,220,.14)'; c.fillRect(Math.max(B.x, xF), cy, Math.min(B.x + B.w, xE) - Math.max(B.x, xF), 1);
@@ -328,7 +306,7 @@
   function tpHit(x, y) {
     const inBox = a => x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3];
     const w = (V.tpCaps || []).find(inBox);
-    if (w) return w.id === 'XBOX' ? { k: 'tpxbox', ev: 'X', src: 'strip' } : { k: 'tpwin', id: w.id, src: 'strip' };
+    if (w) return { k: 'tpwin', id: w.id, src: 'strip' };
     const L = (V.tpLines || []).find(q => Math.abs(x - q.x) <= 3 && y >= q.y0 - 2 && y <= q.y1 + 2);
     if (L) return { k: 'tpline', ev: L.ev, id: L.id, src: 'strip' };
     return null;
@@ -342,13 +320,6 @@
     const p = tpShare(F, W[0], W[1]), on = F._tp.w === h.id;
     return '<div class="ih">' + TP_NAME[h.id] + ' · ' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '</div>' + sentence(p) +
       '<div class="if">' + (on ? 'Колонка цены и созвездия — сессии этого окна.' : 'Наведено: колонка цены и созвездия — сессии этого окна; щелчок закрепляет.') + ' Только true-сессии: DR удержали до ' + clk(F.end) + '.</div>';
-  }
-  function tpXBoxTip(F, h) {
-    const xc = F._tp.xc;
-    if (!xc || !xc.box) return '';
-    const p = tpXShare(F, xc.box[0], xc.box[1]), med = xc.median;
-    return '<div class="ih">Время вершины · ' + clk(F.f + 15 * xc.box[0]) + '–' + clk(F.f + 15 * xc.box[1]) + '</div>' + sentence(p) +
-      '<div class="if">От первого пучка вершин до их медианы у сессий окна ' + TP_NAME[F._tp.w] + (med ? ': к ' + clk(med.t + 5) + ' вершину сделала половина из них' : '') + '. Как у автора: max extension median time.</div>';
   }
   function tpLineTip(F, h) {
     const L = tpLines(F).find(q => q.ev === h.ev && q.id === h.id);
@@ -381,6 +352,16 @@
       yes_count: n, unknown_count: D.unknown, no_event_count: D.none, display_scope: 'inspector', phrase: lbl('EST:B-RX-BAND-R', 'phrase', { name: F.names.R.toLowerCase(), ev: 'R', what: F.what.R, band: '< ' + sd(h.k0 / 10) }), horizon: hzOf(F) });
     return '<div class="ir">глубже ' + sd(h.k0 / 10) + ' SD у сессий окна ' + TP_NAME[F._tp.w || 'W1'] + '<b>' + ppTxt(p) + '</b></div>';
   }
+  // the X-side ladder at a place of tops (core 1.4, the author's «targets»): of the window's sessions, those whose top
+  // reached this band's lower edge or went further (EST:B-RX-BAND-X from the edge up; a top of the last 15 minutes
+  // reached its level too, so it counts here though it is never a place)
+  function tpReachLine(F, z) {
+    if (!F._tp || !z) return '';
+    const D = F.ev.X, n = D.pts.filter(q => q.k >= z.price_low).length;
+    const p = pp(F, { estimand: 'EST:B-RX-BAND-X', params: { k0: z.price_low, k1: 100000 }, event_id: 'X', region_kind: 'price_band', exact_price_bounds: [z.price_low, 100000], time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end),
+      yes_count: n, unknown_count: D.unknown, no_event_count: D.none, display_scope: 'inspector', phrase: lbl('EST:B-RX-BAND-X', 'phrase', { name: F.names.X.toLowerCase(), ev: 'X', what: F.what.X, band: '≥ ' + sd(z.price_low / 10) }), horizon: hzOf(F) });
+    return '<div class="ir" style="color:' + cfg.X + '">дошли до ' + sd(z.price_low / 10) + ' SD у сессий окна ' + TP_NAME[F._tp.w || 'W1'] + '<b>' + ppTxt(p) + '</b></div>';
+  }
   // ---------- the panel: the clock of T, the windows (a row fixes its window), then the places of the window ----------
   function tpPanel(F, ctx) {
     const P = F._tp, T = P.T, tp = P.clock, out = [];
@@ -402,11 +383,10 @@
     // the continuation of the window's sessions: the time lines of their own top X (the ladder is on today's levels)
     const xl = tpLines(F).filter(L => L.ev === 'X'), xc = P.xc;
     if (P.w) {
-      out.push('<div class="p21-h second"><span title="Вершина хода X у сессий окна ' + TP_NAME[P.w] + ': пучки времени, их медиана и 70 %, места вершины на графике (синие созвездия); ступени «дошли до уровня» — на линиях уровней графика (наведите).">Продолжение · ' + TP_NAME[P.w] + '</span><span>доля от окна</span></div>');
+      out.push('<div class="p21-h second"><span title="Вершина хода X у сессий окна ' + TP_NAME[P.w] + ': пучки времени вершин, их медиана и 70 %; места вершины на графике (синие созвездия) — полосы цены, где ход чаще кончался; «дошли до» — под мышью у места и на линиях уровней графика.">Продолжение · ' + TP_NAME[P.w] + '</span><span>доля от окна</span></div>');
       if (xc) for (const u of xc.bunches) { const p = tpXShare(F, u.b0, u.b1); out.push(link({ k: 'tcell', ev: 'X', b0: u.b0, b1: u.b1, src: 'tpx' }, prow('пучок вершин ' + clk(F.f + 15 * u.b0) + '–' + clk(F.f + 15 * u.b1), ppTxt(p)), 'mc', p, plainTitle(p))); }
       if (xc && !xc.bunches.length) out.push('<div class="p21-note">Пучков вершин нет: ни один отрезок времени не набрал ' + xc.need + ' сессий окна.</div>');
       if (xl.length) out.push('<div class="p21-note">' + xl.map(L => '<span title="' + esc(lbl('EST:B-CLOCK-X', 'earlier', { t: clk(L.cut) }) + ': ' + ppTxt(L.p)) + '">' + (L.id === 'median' ? 'медиана вершины' : '70 % вершин') + ' <b style="color:' + cfg.X + '">' + clk(L.cut) + '</b></span>').join(' · ') + '</div>');
-      if (xc && xc.box) { const p = tpXShare(F, xc.box[0], xc.box[1]); out.push(link({ k: 'tpxbox', ev: 'X' }, prow('время вершины ' + clk(F.f + 15 * xc.box[0]) + '–' + clk(F.f + 15 * xc.box[1]), ppTxt(p)), 'mc', p, plainTitle(p))); }
       if (xc && xc.close) { const p = tpXShare(F, xc.bHi, xc.bHi + 1); out.push(link({ k: 'tcell', ev: 'X', b0: xc.bHi, b1: xc.bHi + 1, src: 'tpx' }, prow('ход не кончился до закрытия', ppTxt(p)), 'dim', p, plainTitle(p))); }
       if (F.ev.X.unknown + F.ev.X.none) { const u = undPass(F, 'X', 'BOTH'); out.push(link({ k: 'evrow', ev: 'X' }, prow(lbl('EST:B-RX-UNDETERMINED-X', 'row', { ev: '<i style="color:' + cfg.X + '">X</i>' }), ppTxt(u)), 'dim', u, plainTitle(u))); }
     }

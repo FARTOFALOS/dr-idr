@@ -4,8 +4,8 @@
 //
 // For a few history scenes: the confirmation family shows T (the sessions whose DR held) and one window's sessions T_W;
 // the DR outcome is the whole family's; every number on screen is a passport the server's reference re-derived (no
-// violation, none unchecked); the windows partition T's known pullbacks; the places of X lie in bunches of tops and never
-// in the last 15 minutes; a window under the mouse
+// violation, none unchecked); the windows partition T's known pullbacks; the places of X are 0.2-SD price bands of the
+// window's tops, never in the last 15 minutes, and tell «дошли до» under the mouse; a window under the mouse
 // switches the view and a click fixes it; '#tp=0' shows the table of 30.10 again. Exit code 0 = every check passed.
 import { startChrome, evaluate } from './trace_page.mjs';
 
@@ -62,10 +62,18 @@ try {
     ck(r.tN === r.tHeld, 'T is exactly the sessions whose DR held (' + r.tN + ' of ' + r.outN + ')');
     ck(r.heldAll, 'every session on screen held its DR');
     ck(r.sumW === r.known, 'the windows partition the known pullbacks of T (' + r.sumW + ' = ' + r.known + ')');
-    // X (operator 04.11): its places lie inside a bunch of the window's tops and never in the last 15 minutes of the block
-    const xc = r.t.xc, xin = z => z.cells.every(([, b]) => b < xc.bHi) && xc.bunches.some(u => z.cells.every(([, b]) => b >= u.b0 && b < u.b1));
-    ck(!!xc && r.t.xzones.every(xin), 'every place of X lies in a bunch of tops, none in the last 15 minutes (' + r.t.xzones.length + ' places, ' + (xc ? xc.bunches.length : 0) + ' bunches)');
-    ck(!xc || !xc.box || (xc.box[0] < xc.box[1] && r.t.caps.includes('XBOX')), 'the box «вершина» is drawn from the first bunch of tops to their median');
+    // X (core 1.4): its places are price bands of the window's tops on the 0.2-SD grid, never in the last 15 minutes
+    const xc = r.t.xc, xin = z => z.cells.every(([k, b]) => b < xc.bHi && k >= z.price[0] && k < z.price[1]) && z.price[0] % 2 === 0 && z.price[1] % 2 === 0;
+    ck(!!xc && r.t.xzones.every(xin), 'every place of X is a 0.2-SD band of tops, none in the last 15 minutes (' + r.t.xzones.length + ' places, ' + (xc ? xc.bunches.length : 0) + ' bunches of tops)');
+    ck(!r.caps.some(q => q.id === 'XBOX'), 'no capsule «вершина» on the band (core 1.4: the median line of the tops is the author\'s time)');
+    // a place of X under the mouse tells how many of the window's sessions got as far as its lower edge (EST:B-RX-BAND-X)
+    const xl = await evaluate(B.cdp, function () { const z = (window.__d24.V.zoneHit || []).find(q => q.ev === 'X'); return z ? z.box : null; });
+    if (xl) {
+      await hover(B.cdp, r.cv[0] + xl[0] + xl[2] / 2, r.cv[1] + xl[1] + xl[3] / 2); await sleep(300); await settle(B.cdp);
+      const tt = await evaluate(B.cdp, function () { const t = document.getElementById('insp'); return { shown: !!t && window.__d24.st.hover && window.__d24.st.hover.k === 'zone', text: t ? t.innerText : '', c: window.__d24.contract() }; });
+      ck(tt.shown && /дошли до [+−-]?\d,\d SD у сессий окна/.test(tt.text) && !tt.c.all.length && !tt.c.unchecked, 'a place of X under the mouse shows «дошли до» its lower edge, verified (' + (tt.c.all[0] || tt.c.unchecked || '') + ')');
+      await hover(B.cdp, 200, 200); await sleep(200);
+    }
     ck(r.nT && (r.nW !== false), 'every passport of T counts over |T|, of the window over |T_W|');
     ck(/Время отката · true-сессии/.test(r.panel) && /Места отката/.test(r.panel), 'the panel shows the clock of T and the places of the window');
     ck(r.t.lines.includes('R:median'), 'the median line of T is drawn');
