@@ -86,8 +86,11 @@ if ($health -and (-not $health.workspace -or [IO.Path]::GetFullPath($health.work
 $expected = & $python -B (Join-Path $lab 'runtime_identity.py')
 if ($health -and ($health.source_revision -ne $expected -or $health.data_revision -ne $health.current_data_revision -or -not $health.integration)) {
     foreach ($owner in @(Get-NetTCPConnection -LocalPort $port -State Listen | Select-Object -ExpandProperty OwningProcess -Unique)) {
+        # /api/health has just named this working copy as the owner of the port, so its python is ours even when Windows
+        # does not give its command line (a Python started through the launcher shim); a process that is not python is
+        # never stopped, and the refusal names it
         $proc = Get-CimInstance Win32_Process -Filter "ProcessId = $owner"
-        if ($proc.CommandLine -notmatch 'server\.py') { Fail "Неподтверждённый процесс на $port" }
+        if (-not ($proc -and ($proc.CommandLine -match 'server\.py' -or $proc.Name -match '^python'))) { Fail "Неподтверждённый процесс на $port (PID $owner, $($proc.Name), $($proc.CommandLine))" }
         Stop-Process -Id $owner -ErrorAction Stop
     }
     $health = $null
