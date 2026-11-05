@@ -56,6 +56,7 @@
     out.push(candidatePanel(ctx));
     if (st.mode === 'bounds') {
       out.push(pullbackMode() ? pbCombinedZones(ctx) : cellsFirst ? '' : zonesHtml(F, ctx));
+      if (F._tp && !pullbackMode()) out.push(tpGhostPanel(F, ctx));   // TP: the pullback places of the other windows (05.11)
       const tf = todayFacts(F, ctx);
       if (tf) out.push('<div class="p21-note" title="' + esc(lbl('FF:TODAY-PREFIX', 'title', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)) })) + '">' + tf + '</div>');
     }
@@ -474,6 +475,7 @@
       if (!el) return;
       const L = P24.links[+el.dataset.l21];
       if (L.k === 'tpwin') { tpPinWindow(L.id); return; }           // TP-1.1: the row of a window fixes it (tp235.js)
+      if (L.k === 'tpzone') { tpPinGhost(L); return; }              // a place of another window: that window on screen
       if (L.k === 'fcell') { st.col = L.j; render(true); return; }
       if (L.k === 'area') { pin({ k: 'area', part: L.part }); return; }
       pin(L);

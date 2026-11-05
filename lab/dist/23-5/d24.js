@@ -3130,6 +3130,7 @@
     if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, cloudCtx); drawMemberPath(c, mapCtx); }
     if (F && st.mode === 'bounds' && !continuationMode()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'under');
+    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);
@@ -3138,6 +3139,7 @@
     if (!continuationMode()) drawNow(c, ctx);
     if (F && !continuationMode()) drawLink(c, mapCtx);
     if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, cloudCtx);
+    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'over');
     if (F && st.mode === 'bounds') drawPair(c, mapCtx);
     if (F) drawSweeps(c, ctx);
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
@@ -3322,7 +3324,13 @@
     if (h.k === 'mcell') V.win = { t0: F.f + 15 * h.b0, t1: F.f + 15 * (h.b0 + 1), pA: F.u2p(h.k0 / 10), pB: F.u2p((h.k0 + 1) / 10), col };
     if (h.k === 'tpwin' && F._tp) {                                 // TP-1.1: the hovered window's hours over the chart
       const tt = tpWinT(F, h.id);
-      if (tt) { const x0 = V.X(tt[0]), x1 = V.X(tt[1]); c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h); V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R }; }
+      if (tt) {
+        const x0 = V.X(tt[0]), x1 = V.X(tt[1]), pk = tpWinPeak(F, h.id);
+        c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h);
+        // operator 05.11: the window's peak 15 minutes over the chart and on the time axis — when its pullback is most frequent
+        if (pk) { c.fillStyle = rgba(cfg.R, 0.08); c.fillRect(V.X(pk.t0), 0, V.X(pk.t1) - V.X(pk.t0), V.plot.h); }
+        V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R, peak: pk ? [pk.t0, pk.t1] : null };
+      }
     }
     if (h.k === 'tcell') {
       const x0 = V.X(F.f + 15 * h.b0), x1 = V.X(F.f + 15 * h.b1);
@@ -3487,6 +3495,7 @@
       if (h.k === 'area') return inArea(q, st.area);
       if (h.k === 'zone') return h.ev === q.ev && (F._ts ? tsMember(F.zones[h.ev].zones[h.i],q) : F.zcell[h.ev].get(q.k + '|' + q.b) === h.i);
       if (h.k === 'pt') return q.i === h.i;
+      if (h.k === 'tpzone') return false;                 // TP: a place of another window under the mouse
       if (h.k === 'out') return q.m.outcome === h.cat;
       if (h.k === 'evrow') return true;
       if (h.k === 'hcell') return h.ev === q.ev && q.k === h.kk && q.b === h.b;
@@ -3627,6 +3636,7 @@
     if (!h) return 1;
     if (h.k === 'zone') return h.ev === ev && h.i === i ? 1.5 : 0.45;
     if (h.k === 'pt') return 0.6;
+    if (h.k === 'tpzone') return 0.45;
     if (h.k === 'pcell') return h.ev === ev && z.cell_mask.some(([k]) => k >= h.k0 && k < h.k1) ? 1.15 : 0.6;
     if (h.k === 'tcell') return z.cell_mask.some(([, b]) => b >= h.b0 && b < h.b1) ? 1.1 : 0.55;
     return 0.8;
@@ -3694,6 +3704,7 @@
       return;
     }
     if (st.mode !== 'bounds') return;
+    if (h.k === 'tpzone') { if (F._tp) tpGhostLink(ctx, h); return; }   // TP: a place of another window, as a zone
     // operator 2026-10-06: «до какого времени этот кластер валидный?» — a hovered zone shows its WHOLE time window (the
     // 15-minute cells it covers) over its prices: the part already passed in the spent shade, the part still ahead in its
     // colour, the slice between them; the axis window names the whole window. No peak, no ring, no red: the zone's status
@@ -3932,6 +3943,7 @@
     const cost = r => 4 * live.filter(b => over(r, b)).length + 4 * pills.filter(b => over(r, b)).length + 3 * placed.filter(b => over(r, b)).length + bars.filter(b => over(r, b)).length;
     if (phase === 'under') V.zoneHit = [];
     const env = { placed, live, pills, bars, over };
+    if (phase === 'under') V.zoneEnv = env;
     for (const ev of ['X', 'R']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
       CL[ev].forEach((g, i) => {
@@ -3999,20 +4011,34 @@
   // after them), the confirmation pill or another name is led out to the LEFT — into the past, never over the time
   // ahead — on a thin dash-dot line from a small ring at the constellation's centre: X toward the side of the
   // confirmation, R away from it, each to the least crowded place. The others stay inside, as a background.
-  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env) {
-    const imp = expiredLook(s), zp = zonePass(F, ev, z), zt = ppTxt(zp), share = zp.pct || 0;
+  // o (TP, operator 05.11): a place of another window — its name, a smaller size, a quieter look, its own hit list
+  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env, o) {
+    o = o || {};
+    const imp = expiredLook(s), zp = zonePass(F, ev, z), zt = ppTxt(zp), share = zp.pct || 0, name = o.name || z.label;
     const ps = F.ev[ev].pts.filter(q => F._ts ? tsMember(z,q) : F.zcell[ev].get(q.k + '|' + q.b) === i);
     let cx = (g.bb[0] + g.bb[2]) / 2, cy = (g.bb[1] + g.bb[3]) / 2;
     if (ps.length) { cx = ps.reduce((a, q) => a + V.X(q.t + 2.5), 0) / ps.length; cy = ps.reduce((a, q) => a + V.Y(q.p), 0) / ps.length; }
-    const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
+    const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1) * (o.size || 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
     c.font = lw + nfs + 'px ' + FONT;
-    const wN = c.measureText(z.label).width, wS = pctW(c, zt, lw, fs), wT = wN + 4 + wS, hT = fs;
+    const wN = c.measureText(name).width, wS = pctW(c, zt, lw, fs), wT = wN + 4 + wS, hT = fs;
     let lx = clamp(cx - wT / 2, 4, V.plot.w - 64 - wT), ly = clamp(cy - fs / 2, 30, V.plot.h - hT - 4), out = false;
     const { placed, live, pills, bars, over } = env, R = (x, y) => [x - 2, y - 2, x + wT + 2, y + hT + 2];
     // any candle under the name counts too (operator 2026-10-06: the first constellations lie on the candles of the first
     // minutes after the confirmation, not only on the last ones)
     const hits = r => live.some(b => over(r, b)) || pills.some(b => over(r, b)) || placed.some(b => over(r, b)) || bars.some(b => over(r, b));
-    if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
+    if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly)) && o.stay) {
+      // a place of another window (TP, 05.11) keeps its name in its own hours: off the candles and the room after them
+      // up or down (and a little later), never into the past where the window on screen stands; a dash-dot line if far
+      const sgn = (ev === 'X' ? -1 : 1) * (F.d0 > 0 ? 1 : -1);
+      let best = null, bc = 1e9;
+      for (const dx of [0, 30, 60, 100]) for (const dy of [24, 48, 80, 120, 160].flatMap(v => [sgn * v, -sgn * v])) {
+        const x = clamp(cx - wT / 2 + dx, 4, V.plot.w - 64 - wT), y = cy + dy - hT / 2, r = R(x, y);
+        if (y < 30 || y + hT > V.plot.h - 4) continue;
+        const cc = 5 * (live.filter(b => over(r, b)).length + pills.filter(b => over(r, b)).length + placed.filter(b => over(r, b)).length) + bars.filter(b => over(r, b)).length + dx / 200 + Math.abs(dy) / 200;
+        if (cc < bc) { bc = cc; best = [x, y]; }
+      }
+      if (best) [lx, ly] = best;
+    } else if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
       const sgn = (ev === 'X' ? -1 : 1) * (F.d0 > 0 ? 1 : -1);
       let best = null, bc = 1e9;
       for (const dx of [80, 120, 170, 230, 300, 380]) for (const dy of [sgn * 40, sgn * 70, sgn * 100, sgn * 140, 0, -sgn * 40]) {
@@ -4027,7 +4053,7 @@
     // operator 2026-10-06: zoomed in, a constellation outside the frame keeps its name at the edge with a thin dash-dot
     // line toward it (as the earlier threads did); a name pushed far from its centre gets the same line
     const far = !out && (cx < 0 || cx > V.plot.w || cy < 0 || cy > V.plot.h || Math.hypot(clamp(cx, lx, lx + wT) - cx, clamp(cy, ly, ly + hT) - cy) > 24);
-    const k = cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1);
+    const k = o.k != null ? o.k : cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1) * (o.alpha || 1);
     const aName = out ? cfg.calloutA / 100 : cfg.zoneNameA / 100, aNum = out ? cfg.calloutA / 100 * 0.95 : cfg.zoneNumA / 100;
     c.save(); c.globalAlpha = Math.min(1, op);
     if (far) {
@@ -4043,10 +4069,11 @@
     }
     c.textBaseline = 'alphabetic';
     const yb = ly + fs * 0.86;
-    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, aName); c.fillText(z.label, lx, yb);
+    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, aName); c.fillText(name, lx, yb);
     pctDraw(c, zt, lx + wN + 4, yb, lw, fs, rgba(mixW(col, 0.35), aNum));
     c.restore();
-    V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 6], ev, i, loops: g.hit });
+    if (o.hit) o.hit([lx - 2, ly - 2, wT + 4, hT + 6]);
+    else V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 6], ev, i, loops: g.hit });
   }
   // ---------- the time band (variant «Окна времени», operator 2026-10-01) ----------
   const expiredLook = s => s === 'IMPOSSIBLE' || s === 'PAST';
@@ -4568,7 +4595,12 @@
     // slice tag; the cursor's own time tag is left out while a window is shown
     tag(ctx.obs, ctx.live && !ctx.D.hist ? '#2A2F38' : ctx.D.hist ? C.hist : C.replay, ctx.live && !ctx.D.hist ? '#fff' : '#0B0C10');
     if (!(wn && wn.t0 != null) && st.mx >= 0 && st.mx < W && st.my < V.plot.h) tag(snapT(V.T(st.mx)) - 2.5, '#363A45', '#fff');
-    if (wn && wn.t0 != null) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
+    if (wn && wn.t0 != null && wn.peak) {
+      // a window of TP (operator 05.11): its edges quiet, its peak 15 minutes in its colour, on top
+      const xp = V.X((wn.peak[0] + wn.peak[1]) / 2), clear = t => Math.abs(V.X(t) - xp) >= 76;
+      if (V.X(wn.t1) - V.X(wn.t0) >= 96) for (const t of [wn.t0, wn.t1]) if (clear(t)) tag(t, '#3A3F4A', '#D7DBE2');
+      tag((wn.peak[0] + wn.peak[1]) / 2, wn.col, '#0B0C10', clk(wn.peak[0]) + '–' + clk(wn.peak[1]));
+    } else if (wn && wn.t0 != null) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
     c.textAlign = 'left';
     void h;
   }
@@ -4626,6 +4658,8 @@
     const inBox = a => x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3];
     const zl = (V.zoneHit || []).find(inBox);
     if (zl) return { k: 'zone', ev: zl.ev, i: zl.i };
+    const gz = F._tp ? tpGhostAt(x, y, false) : null;           // TP: the name of another window's place
+    if (gz) return gz;
     if (st.mode === 'bounds') { const mc = mxCellHit(F, x, y); if (mc) return lvlHit(ctx, y) || mc; }   // the layer «Клетки»
     if (st.mode === 'bounds' && st.L.pts) {
       // a star of R or of X: the nearest within 5 px
@@ -4643,6 +4677,8 @@
     if (st.area && V.areaHit) for (const a of V.areaHit) if (a.part === 'frame' && x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3]) { const lv = lvlHit(ctx, y); if (lv) return lv; return { k: 'area', part: 'window' }; }
     // inside a constellation (its 0.2 iso-line): that zone
     for (const z of V.zoneHit || []) if (inLoops(z.loops, x, y)) return lvlHit(ctx, y) || { k: 'zone', ev: z.ev, i: z.i };
+    const gl = F._tp ? tpGhostAt(x, y, true) : null;            // inside another window's place
+    if (gl) return lvlHit(ctx, y) || gl;
     return lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y);
   }
   function lvlHit(ctx, y) {
@@ -4674,7 +4710,8 @@
     if (!h) return '';
     if (h.k === 'arrive' || h.k === 'pre') return candidateTip(h, ctx);
     if (h.k === 'mcell' && F && F._mx) return mxCellTip(F, h);
-    if (F && F._tp && h.k === 'tpwin') return tpWinTip(F, h);          // TP-1.1 (tp235.js)
+    if (F && F._tp && h.k === 'tpwin') return tpWinTip(F, h, ctx);     // TP-1.1 (tp235.js)
+    if (F && F._tp && h.k === 'tpzone') return tpGhostTip(F, ctx, h);
     if (F && F._tp && h.k === 'tpline') return tpLineTip(F, h);
     if (F && F._tp && h.k === 'tcell') return tpCellTip(F, ctx, h);
     if (h.k === 'pt' && F) {
@@ -6740,6 +6777,9 @@
   //   the places of R, the price bands of all their tops over 0.2-SD cells as the places of X (the author's «cluster of
   //   extension… next big cluster»; zone rule TP_BANDS, tp-bands-3; core 1.4), under the mouse «дошли до» its lower edge;
   //   at rest W1, a window under the mouse on the band shows its sessions, a click fixes it.
+  // - the other windows' places of R (operator 05.11), always on the chart in their own hours, quieter and named by their
+  //   window («W2 · R1»), each its share of its own window; a window under the mouse marks its peak 15 minutes and says
+  //   when inside it (tpWinPeak, tpWinTip).
   // The drawing and the colours of 23.5 stay as they were (operator 03.11: «все ценовые, все цветовые, как у нас были»).
   // «Сейчас» (NOW-1.0) stays on the whole family F: its move to T is a separate task (core §6).
   // '#tp=0' in the address shows the previous meaning (the table of 30.10) for comparison, and so does '#cells=1' (the layer
@@ -6990,7 +7030,7 @@
     for (const { w, W, p } of shares) {
       const x0 = V.X(F.f + 15 * W[0]) + 1, x1 = V.X(F.f + 15 * W[1]) - 1, wd = x1 - x0, y0 = dir.R < 0 ? B.y + 3 : B.y + B.h - 3 - LH + 2;
       if (x1 < B.x || x0 > B.x + B.w || wd < 4) continue;
-      const on = w === P.w, hov = !!(h && h.k === 'tpwin' && h.id === w), side = w === 'BEFORE' || w === 'LATE', r = Math.pow((p.pct || 0) / capMax, 0.7);
+      const on = w === P.w, hov = !!(h && (h.k === 'tpwin' || h.k === 'tpzone') && h.id === w), side = w === 'BEFORE' || w === 'LATE', r = Math.pow((p.pct || 0) / capMax, 0.7);
       c.save(); c.globalAlpha = on || hov ? 1 : 0.8;
       c.fillStyle = rgba(cfg.R, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
       if (on || hov) { c.strokeStyle = rgba(cfg.R, on ? 0.75 : 0.5); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
@@ -7041,13 +7081,129 @@
   }
   // a click on a window (on the band or its row in the panel) fixes it; a second click lets go (back to W1)
   function tpPinWindow(w) { TP.pin = TP.pin === w ? null : w; st.pin = null; st.hover = null; tip.hidden = true; render(true); }
+  // the window's peak 15 minutes: the cell of T's clock inside the window that holds most of its pullbacks (the earliest of
+  // equal ones), the time the trader reads off the window (operator 05.11: «в какое время будет этот максимальный откат…
+  // не просто как позже, а более уточнённый»)
+  function tpWinPeak(F, w) {
+    const tp = F._tp.clock, W = tp.windows[w];
+    if (!W) return null;
+    let best = null;
+    for (const [b, n] of tp.cells) if (b >= W[0] && b < W[1] && (!best || n > best.n)) best = { b, n };
+    return best && { b: best.b, n: best.n, t0: F.f + 15 * best.b, t1: F.f + 15 * best.b + 15 };
+  }
+  // ---------- the pullback places of the other windows, always on the chart (operator 05.11) ----------
+  // «Почему… на откат R я вижу только одно созвездие в W1… сделай так, чтобы я видел позже созвездие, тоже откаты, а не
+  // так, чтобы я на них наводил мышку… может быть, в другом оформлении». The windows split T's pullbacks by time, so the
+  // places of every window lie in its own hours: drawn together they are the whole map of T's pullbacks. The window on
+  // screen keeps the full drawing (and its X); every other window's places of R are drawn quieter — a lighter haze, smaller
+  // stars, the window's name before the place's — each with its share of ITS window's sessions (EST:B-ZONE-R on that
+  // window family, verified like the rest). Under the mouse: the place's words and its hours; a click puts the window on
+  // screen. X stays the window's on screen: its tops are the continuation of those sessions only.
+  const TPG = { haze: 0.85, thread: 0.8, star: 0.85, starA: 0.85, label: 0.95, size: 0.85 };
+  function tpOthers(ctx) {
+    const F = ctx.F, P = F && F._tp, out = [];
+    if (!P) return out;
+    for (const w of TP_WINDOWS) {
+      if (w === P.w || !P.clock.windows[w]) continue;
+      const G = tpSnap(ctx.D, ctx.s, w, P.T);
+      if (G && G.zones.R && G.zones.R.zones.length) out.push({ w, G });
+    }
+    return out;
+  }
+  // phase 'under' (before the candles): haze, threads and names; phase 'over' (after the candles): the stars and, under the
+  // mouse, the place's outline
+  function tpGhosts(c, ctx, phase) {
+    if (phase === 'under') V.tpGhostHit = [];
+    if (!ctx.F || !ctx.F._tp || !st.L.zones || st.mode !== 'bounds') return;
+    const h = hv(), env = V.zoneEnv, sl = sliceOf(ctx), R0 = 1.7 * cfg.ptSize / 100;
+    for (const { w, G } of tpOthers(ctx)) {
+      const CL = cloudsOf(G), S = zoneLook(G, ctx, 'R'), wl = !!(h && h.k === 'tpwin' && h.id === w);
+      CL.R.forEach((g, i) => {
+        if (!g || zoneHeld(G, 'R', i)) return;           // a withheld place's share is «—»: no haze asserts it
+        const on = !!(h && h.k === 'tpzone' && h.id === w && h.i === i), k = on || wl ? 1.5 : h && h.k !== 'stripBg' ? 0.6 : 1;
+        const col = stateCol(cfg.R, S[i]), imp = expiredLook(S[i]), dim = imp ? 0.6 * cfg.spentA / 100 : S[i] === 'QUIET' ? 0.7 : S[i] === 'HOLDS' ? 1.15 : 1;
+        if (phase === 'under') {
+          const fa = cfg.cloudA / 100 * TPG.haze, ta = cfg.threadA / 100 * TPG.thread;
+          c.save();
+          c.filter = 'blur(14px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
+          c.filter = 'blur(7px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.45, 0.13 * k * dim * fa)); loopsPath(c, g.g2); c.fill();
+          c.filter = 'none';
+          c.strokeStyle = rgba(col, Math.min(0.35, 0.13 * k * dim * ta)); c.lineWidth = 0.5;
+          c.beginPath(); for (const s of g.mst) { c.moveTo(s[0], s[1]); c.lineTo(s[2], s[3]); } c.stroke();
+          c.restore();
+          // the name «W2 · R1» and the share of the window's sessions, as the window on screen names its places (zoneMark),
+          // smaller and quieter; off the candles it moves up or down in its own hours, never left into the past ('stay')
+          if (env) zoneMark(c, ctx, G, 'R', i, g, g.z, S[i], col, h, env, { name: TP_NAME[w] + ' · ' + g.z.label, size: TPG.size, alpha: TPG.label, k, stay: true, hit: box => V.tpGhostHit.push({ box, w, i, loops: g.hit }) });
+          else V.tpGhostHit.push({ box: [0, 0, 0, 0], w, i, loops: g.hit });
+          return;
+        }
+        if (!st.L.pts) return;
+        c.save();
+        for (const q of G.ev.R.pts) {
+          if (pointZone(G, q) !== i) continue;
+          const x = V.X(q.t + 2.5), y = V.Y(q.p);
+          if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
+          const a = ((q.t + 5 <= sl ? cfg.pastA : cfg.ptA) / 100) * 1.1 * TPG.starA * (on ? 1.6 : k < 1 ? 0.6 : 1) * dim;
+          c.fillStyle = rgba(col, Math.min(1, a)); c.beginPath(); c.arc(x, y, R0 * TPG.star, 0, 6.2832); c.fill();
+        }
+        if (on) { c.strokeStyle = rgba(col, 0.55); c.lineWidth = 1; loopsPath(c, g.ln); c.stroke(); }
+        c.restore();
+      });
+    }
+  }
+  // the place of another window under the mouse: its name first, then inside its haze (as the window on screen)
+  function tpGhostAt(x, y, inside) {
+    for (const q of V.tpGhostHit || []) {
+      const ok = inside ? inLoops(q.loops, x, y) : x >= q.box[0] && x <= q.box[0] + q.box[2] && y >= q.box[1] && y <= q.box[1] + q.box[3];
+      if (ok) return { k: 'tpzone', ev: 'R', id: q.w, i: q.i };
+    }
+    return null;
+  }
+  // under the mouse its whole time window over its prices, as a place of the window on screen (linkOf, 'zone')
+  function tpGhostLink(ctx, h) {
+    const g = tpOthers(ctx).find(q => q.w === h.id), G = g && g.G, z = G && G.zones.R.zones[h.i];
+    if (!z || zoneHeld(G, 'R', h.i)) return;
+    const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = G.f + 15 * Math.min(...bs), t1 = G.f + 15 * (Math.max(...bs) + 1);
+    const look = zoneStatus(G, ctx, 'R')[h.i], spent = expiredLook(look);
+    V.lk = { ev: 'R', src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', marker: targetMarker(G, ctx, 'R', z) };
+    V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg.R, 'spent') : cfg.R });
+  }
+  // a click on such a place puts its window on screen and keeps the place under the inspector
+  function tpPinGhost(h) { TP.pin = h.id; st.ev = 'R'; st.pin = null; st.pinZone = h.i + 1; st.hover = null; tip.hidden = true; render(true); }
   // ---------- the words under the mouse ----------
-  function tpWinTip(F, h) {
-    const tp = F._tp.clock, W = tp.windows[h.id];
+  // the window under the mouse: its share of T, then WHEN inside it (operator 05.11): its peak 15 minutes and by when half
+  // of its sessions had their pullback, both over the window's sessions (EST:B-RX-WINDOW-R, EST:B-CLOCK-R on the window
+  // family), and its places of R with their shares
+  function tpWinTip(F, h, ctx) {
+    const P = F._tp, tp = P.clock, W = tp.windows[h.id];
     if (!W) return '';
-    const p = tpShare(F, W[0], W[1]), on = F._tp.w === h.id;
-    return '<div class="ih">' + TP_NAME[h.id] + ' · ' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '</div>' + sentence(p) +
-      '<div class="if">' + (on ? 'Колонка цены и созвездия — сессии этого окна.' : 'Наведено: колонка цены и созвездия — сессии этого окна; щелчок закрепляет.') + ' Только true-сессии: DR удержали до ' + clk(F.end) + '.</div>';
+    const p = tpShare(F, W[0], W[1]), on = P.w === h.id, G = ctx ? tpSnap(ctx.D, ctx.s, h.id, P.T) : null, set = 'сессий окна ' + TP_NAME[h.id];
+    let when = '';
+    const pk = tpWinPeak(F, h.id);
+    if (G && pk) {
+      const n = G.ev.R.T.get(pk.b) || 0, pP = evPass(G, 'R', 'time_cell', null, [pk.t0, pk.t1], n);
+      when += '<div class="il" style="color:' + cfg.R + '">Чаще всего откат в истории окна — ' + clk(pk.t0) + '–' + clk(pk.t1) + '</div>' +
+        '<div class="ir">в эти 15 минут — у ' + set + '<b>' + ppTxt(pP) + '</b></div>';
+      const m = tpMarks(G.M, 'R', G.f), q = tpQuant(m.ts, 1, 2);
+      if (q) {
+        const cut = q.t + 5, pM = clockPass(G, 'R', { k0: -100000, k1: 100000 }, 'EARLIER', cut, G.ev.R.pts.filter(r => r.t + 5 <= cut).length);
+        when += '<div class="ir" title="' + esc(lbl('EST:B-CLOCK-R', 'title')) + '">к ' + clk(cut) + ' (медиана окна) откат уже был — у ' + set + '<b>' + ppTxt(pM) + '</b></div>';
+      }
+      // its places of R (where in price), each its share of the window's sessions; their hours under the mouse at the place
+      (G.zones.R || { zones: [] }).zones.forEach((z, i) => {
+        if (!zoneHeld(G, 'R', i)) when += '<div class="ir">место <span style="color:' + cfg.R + '">' + z.label + '</span> ' + band(z.price_low, z.price_high) + ' SD<b>' + ppTxt(zonePass(G, 'R', z)) + '</b></div>';
+      });
+    }
+    return '<div class="ih">' + TP_NAME[h.id] + ' · ' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '</div>' + sentence(p) + when +
+      '<div class="if">' + (on ? 'Колонка цены и созвездия — сессии этого окна.' : h.src === 'strip' ? 'Наведено: колонка цены и созвездия — сессии этого окна; щелчок закрепляет.' : 'Щелчок — сессии этого окна на экране.') + ' Только true-сессии: DR удержали до ' + clk(F.end) + '.</div>';
+  }
+  // a place of another window under the mouse: the place's own words on its window family, which window, and the click
+  function tpGhostTip(F, ctx, h) {
+    const g = tpOthers(ctx).find(q => q.w === h.id), W = F._tp.clock.windows[h.id];
+    if (!g || !W) return '';
+    const z = g.G.zones.R.zones[h.i], head = '<div class="ih"><span style="color:' + cfg.R + '">';
+    return zoneTip(g.G, ctx, { k: 'zone', ev: 'R', i: h.i }).replace(head + (z ? z.label : '') + '</span>', head + TP_NAME[h.id] + ' · ' + (z ? z.label : '') + '</span>') +
+      '<div class="if">Место окна ' + TP_NAME[h.id] + ' (' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '): сессии, чей откат до вершины был в этом окне; доля — от них. Щелчок — окно ' + TP_NAME[h.id] + ' на экране целиком (колонка цены и места вершины его сессий).</div>';
   }
   function tpLineTip(F, h) {
     const L = tpLines(F).find(q => q.ev === h.ev && q.id === h.id);
@@ -7117,6 +7273,22 @@
       if (xl.length) out.push('<div class="p21-note">' + xl.map(L => '<span title="' + esc(lbl('EST:B-CLOCK-X', 'earlier', { t: clk(L.cut) }) + ': ' + ppTxt(L.p)) + '">' + (L.id === 'median' ? 'медиана вершины' : '70 % вершин') + ' <b style="color:' + cfg.X + '">' + clk(L.cut) + '</b></span>').join(' · ') + '</div>');
       if (xc && xc.close) { const p = tpXShare(F, xc.bHi, xc.bHi + 1); out.push(link({ k: 'tcell', ev: 'X', b0: xc.bHi, b1: xc.bHi + 1, src: 'tpx' }, prow('ход не кончился до закрытия', ppTxt(p)), 'dim', p, plainTitle(p))); }
       if (F.ev.X.unknown + F.ev.X.none) { const u = undPass(F, 'X', 'BOTH'); out.push(link({ k: 'evrow', ev: 'X' }, prow(lbl('EST:B-RX-UNDETERMINED-X', 'row', { ev: '<i style="color:' + cfg.X + '">X</i>' }), ppTxt(u)), 'dim', u, plainTitle(u))); }
+    }
+    return out.join('');
+  }
+  // the places of R of the other windows (operator 05.11), each its share of its own window; a row is the place on the chart
+  // and a click puts its window on screen
+  function tpGhostPanel(F, ctx) {
+    const gs = tpOthers(ctx), out = [];
+    if (!gs.length) return '';
+    out.push('<div class="p21-h second"><span title="Места отката сессий других окон: полосы цены, где у сессий окна был откат до вершины. Доля — от сессий своего окна. На графике — те же созвездия, тише, с именем окна; щелчок показывает окно целиком.">Откат в других окнах</span><span>доля от окна</span></div>');
+    for (const { w, G } of gs) {
+      const S = zoneStatus(G, ctx, 'R');
+      G.zones.R.zones.forEach((z, i) => {
+        const p = zonePass(G, 'R', z);
+        out.push(link({ k: 'tpzone', ev: 'R', id: w, i }, '<span class="t"><span><span class="zt">' + clk(z.time_start) + '–' + clk(z.time_end) + '</span> <i class="zn" style="color:' + cfg.R + '">' + TP_NAME[w] + ' · ' + z.label + '</i></span>' +
+          '<span class="p21-sub">' + lbl('EST:B-ZONE-R', 'sub', { band: band(z.price_low, z.price_high), status: zstOf(G, ctx, z, S[i]) }) + '</span></span><b class="zp">' + ppTxt(p) + '</b>', 'mc zst-' + S[i], p, plainTitle(p)));
+      });
     }
     return out.join('');
   }
@@ -7399,6 +7571,7 @@
     out.push(candidatePanel(ctx));
     if (st.mode === 'bounds') {
       out.push(pullbackMode() ? pbCombinedZones(ctx) : cellsFirst ? '' : zonesHtml(F, ctx));
+      if (F._tp && !pullbackMode()) out.push(tpGhostPanel(F, ctx));   // TP: the pullback places of the other windows (05.11)
       const tf = todayFacts(F, ctx);
       if (tf) out.push('<div class="p21-note" title="' + esc(lbl('FF:TODAY-PREFIX', 'title', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)) })) + '">' + tf + '</div>');
     }
@@ -7817,6 +7990,7 @@
       if (!el) return;
       const L = P24.links[+el.dataset.l21];
       if (L.k === 'tpwin') { tpPinWindow(L.id); return; }           // TP-1.1: the row of a window fixes it (tp235.js)
+      if (L.k === 'tpzone') { tpPinGhost(L); return; }              // a place of another window: that window on screen
       if (L.k === 'fcell') { st.col = L.j; render(true); return; }
       if (L.k === 'area') { pin({ k: 'area', part: L.part }); return; }
       pin(L);
@@ -7993,7 +8167,7 @@
     const was = key(st.hover);
     st.hover = h && !['paxis', 'taxis', 'stripBg'].includes(h.k) ? h : (h && h.k === 'stripBg' ? h : null);
     if (st.hover && st.hover.ev) st.ev = st.hover.ev;      // the event in focus: what the panel and the area speak of
-    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin'].includes(h.k) ? 'pointer' : 'crosshair';
+    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin', 'tpzone'].includes(h.k) ? 'pointer' : 'crosshair';
     if (alPlusAt(x, y)) cv.style.cursor = 'pointer';
     else { const al = alNear(x, y); if (al) cv.style.cursor = Math.abs(x - al.x) <= 8 ? 'pointer' : 'ns-resize'; }
     showTip(st.hover);
@@ -8036,6 +8210,7 @@
       render(true); return;
     }
     if (h && h.k === 'tpwin') { tpPinWindow(h.id); return; }           // TP-1.1: a window fixes the price column and constellations
+    if (h && h.k === 'tpzone') { tpPinGhost(h); return; }              // a place of another window: that window on screen
     if (h && h.k === 'tpline') return;
     if (h && ['pbzone','pbpcell','pbtcell','pbarea','pbunk'].includes(h.k)) { pin(h); return; }
     if (h && h.k === 'zone' && d.zone === 'strip') { pin(h); return; }
@@ -8338,7 +8513,10 @@
     // TP-1.1 (tp235.js): the state of the core on screen, for tests/tp235_page.mjs
     tp: () => { const F = V && V.ctx && V.ctx.F, P = F && F._tp; return { on: TP.on, pin: TP.pin, w: P ? P.w : null, N: P ? { F: P.A && P.A.N, T: P.T.N, W: F.N } : null, clock: P ? P.clock : null, x: P ? P.x : null, xc: P ? P.xc : null,
       xzones: F && F.zones && F.zones.X ? F.zones.X.zones.map(z => ({ label: z.label, cells: z.cell_mask, n: z.n_zone, price: [z.price_low, z.price_high] })) : [],
-      zones: F && F.zones ? { R: (F.zones.R || { zones: [] }).zones.length, X: (F.zones.X || { zones: [] }).zones.length } : null, caps: (V && V.tpCaps || []).map(q => q.id), lines: (V && V.tpLines || []).map(q => q.ev + ':' + q.id) }; },
+      zones: F && F.zones ? { R: (F.zones.R || { zones: [] }).zones.length, X: (F.zones.X || { zones: [] }).zones.length } : null, caps: (V && V.tpCaps || []).map(q => q.id), lines: (V && V.tpLines || []).map(q => q.ev + ':' + q.id),
+      // 05.11: the pullback places of the other windows on the chart, and the window peaks on the band
+      others: P ? tpOthers(V.ctx).map(q => ({ w: q.w, N: q.G.N, places: q.G.zones.R.zones.filter((z, i) => !zoneHeld(q.G, 'R', i)).length })) : [],
+      ghosts: (V && V.tpGhostHit || []).map(q => ({ w: q.w, i: q.i, box: q.box })), peaks: P ? TP_WINDOWS.filter(w => P.clock.windows[w]).map(w => ({ w, W: P.clock.windows[w], pk: tpWinPeak(F, w) })) : [] }; },
     tpHit: (x, y) => tpHit(x, y) };
   initPanel24();
   // the address: #date=2025-12-17 (a history day) &inst=NQ &session=RDR &at=11:50 (replay) &ev=X &mode=path
