@@ -28,13 +28,14 @@ browser page  <--HTTP 127.0.0.1:8767-->  lab/server.py (python)  --+--> lab/scen
 |---|---|---|---|
 | TradingView Desktop with `--remote-debugging-port=9222` | launcher via `tradingview-mcp` (`node <TV_MCP_DIR>/src/cli/index.js launch`) | until the operator closes it | a local copy of the MSIX package, logged in with the operator's account |
 | `python -B lab/server.py` | launcher, hidden window, logs to `lab/.runtime/server.{out,err}.log` | until `stop-dr-lab.cmd`, reboot or kill | loads the whole history base at start (~5 s) |
-| `node lab/tv_fetch.mjs <symbol> 500` | the server, on every live refresh | ~1–4 s | reads bars and exits |
+| `node lab/tv_fetch.mjs <symbol> 1500 [need5] [switch]` | the server, on a live refresh (one read serves every tab asking within 20 s) | ~1–4 s | reads bars and exits |
 
 ## Stack
 
 - **Python 3.14** (`%LOCALAPPDATA%\Python\bin\python.exe`): stdlib `http.server` + numpy + pandas. No framework.
-- **Node 24**: only for `tv_fetch.mjs`, which imports `connection.js` of the local
-  tradingview-mcp checkout (`TV_MCP_DIR`) and evaluates JavaScript inside TradingView's page.
+- **Node 24**: only for `tv_fetch.mjs`, which talks to TradingView over Chrome DevTools with Node's own WebSocket and
+  evaluates JavaScript inside every TradingView window; `chrome-remote-interface` and `connection.js` of the local
+  tradingview-mcp checkout (`TV_MCP_DIR`) are only fallbacks (an older Node; the latter sees the first window only).
 - **Front end**: static HTML/CSS/vanilla JS, SVG drawn by hand. No build step, no packages. The page is served from
   `lab/dist/`.
 - **Data**: the G3 minute spine `<DR_IDR_MARKET>/<inst>/{close_ts_utc_ns,open,high,low,close}.npy` (UTC close
@@ -76,7 +77,7 @@ Tick sizes: NQ, ES 0.25; YM 1. History bars carry the **close** minute of each M
 | `GET /api/day/refresh?instrument=NQ` | fetch from TradingView first, then the same as `/api/day` |
 | `GET /api/cohort?instrument=NQ&session=RDR[&at=<day minute>]` | design 22 (legacy): the similar sessions of 2006–2025 at the live minute or the replay minute `at` (used before a confirmation) |
 | `GET /api/family?instrument=NQ&session=RDR[&at=<day minute>]` | design 22 (legacy) since 2026-09-30: today's family (after a confirmation) or break family (after today's DR break) and its whole clock M5 film |
-| `GET /api/d24/day?instrument=NQ[&date=YYYY-MM-DD][&refresh=1]` | design 24: the live day (as `/api/day`, `source: live`; `refresh=1` fetches from TradingView first) or a trading date of 2006–2025 from the session base (`source: history`: its three blocks' M5, the previous RDR box, `now` = 17:00) |
+| `GET /api/d24/day?instrument=NQ[&date=YYYY-MM-DD][&refresh=1[&manual=1]]` | design 24 and 23.5: the live day (as `/api/day`, `source: live`; `refresh=1` fetches from TradingView first, from a 1- or 5-minute pane of any window and never switching a chart; `manual=1`, the «⟳ Обновить» button of 23.5, may switch the active chart; no such pane: `{status: 'error', code: 'NO_PANE', message}`) or a trading date of 2006–2025 from the session base (`source: history`: its three blocks' M5, the previous RDR box, `now` = 17:00) |
 | `GET /api/d24/family?instrument=NQ&session=RDR[&date=…][&at=<day minute>][&view=auto\|conf][:all]` | design 24: today's state at the slice `at` and the snapshot of its family per DR-LAB-SEM-1.0 (`lab/scene24.py`) with its zone maps (`lab/zonemap24.py`); `:all` = the all-weekdays family, an explicit choice |
 | `GET /api/d24/dates?instrument=NQ` | design 24: every trading date of the base with the sessions whose first confirmation is established that day (`[[date, "AOR"], …]`) |
 | `GET /api/d24/now?instrument=NQ&session=RDR[&date=…][&at=…][&view=…]` | design 24: the layer «Сейчас» of the family at the slice (DR-LAB-NOW-1.0, `lab/now24.py`) |
@@ -188,12 +189,17 @@ complete_n, median_retr, median_ext, median_rtime`.
 
 ## Live pipeline (`lab/live.py`)
 
-1. `fetch(inst)` runs `tv_fetch.mjs`: first it looks for a pane of the operator's layout that already shows the future
-   on 5 minutes (then 1 minute, aggregated to clock M5 and merged with older saved M5; the last 1500 bars, so the
-   trading day from 18:00 ET with the ADR box is covered); only if none, it switches the
-   active chart to `CME_MINI:NQ1!` / `CME_MINI:ES1!` / `CBOT_MINI:YM1!` on 5 minutes, waits for the series itself to
-   be ready (series `symbolInfo()` matches, not loading, bar count stable) and restores the chart. Saves
-   `lab/.runtime/live/<inst>.json`.
+1. `fetch(inst, manual=False)` runs `tv_fetch.mjs`: it looks in **every TradingView window** (each is its own page in
+   the DevTools list on 9222) for a pane that already shows the future on 5 minutes (then 1 minute, aggregated to clock
+   M5 and merged with older saved M5; the last 1500 bars, so the trading day from 18:00 ET with the ADR box is covered).
+   The pane's last bar is the forming M5, so a read every minute shows it growing. If no window has such a pane, the
+   minute refresh changes nothing and raises `live.NoPane` (the screen keeps its last bars and says why); only
+   `manual=True` («⟳ Обновить») switches the active chart of the first window to `CME_MINI:NQ1!` / `CME_MINI:ES1!` /
+   `CBOT_MINI:YM1!` on 5 minutes, waits for the series itself to be ready (series `symbolInfo()` matches, not loading,
+   bar count stable) and restores the chart. Until 05.11 the read looked into the first window only and switched the
+   chart on every refresh when the instrument was elsewhere (operator 30.10, 05.11: TradingView jumped to NQ and back
+   every 5 minutes). A read younger than 20 s is reused by the next tabs. Saves `lab/.runtime/live/<inst>.json`.
+   Checks: `tests/tv_fetch_windows.mjs` (headless Chrome playing two TradingView windows), `tests/live_fetch.py`.
 2. `state(inst, session, at=None)`: takes the latest instance of the session; the observed minute is the live minute
    (price = last trade of the forming M5) or the replay minute `at` (price = close of that candle; only bars closed by
    then are used). DR/IDR, confirmation, DR break: closed M5 only.
@@ -243,7 +249,7 @@ complete_n, median_retr, median_ext, median_rtime`.
 ## Performance
 
 History query 0.05–0.25 s; live state with overlay ~0.2–0.5 s; a passive TradingView read ~1–2 s, a switched read
-2–4 s. The server holds ~100 MB of history in memory.
+(«⟳ Обновить» only) 2–4 s. The server holds ~100 MB of history in memory.
 
 ## Launcher (`start-dr-lab.ps1`)
 

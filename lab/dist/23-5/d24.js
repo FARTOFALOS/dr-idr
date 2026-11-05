@@ -3130,6 +3130,7 @@
     if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, cloudCtx); drawMemberPath(c, mapCtx); }
     if (F && st.mode === 'bounds' && !continuationMode()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'under');
+    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);
@@ -3138,6 +3139,7 @@
     if (!continuationMode()) drawNow(c, ctx);
     if (F && !continuationMode()) drawLink(c, mapCtx);
     if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, cloudCtx);
+    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'over');
     if (F && st.mode === 'bounds') drawPair(c, mapCtx);
     if (F) drawSweeps(c, ctx);
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
@@ -3322,7 +3324,13 @@
     if (h.k === 'mcell') V.win = { t0: F.f + 15 * h.b0, t1: F.f + 15 * (h.b0 + 1), pA: F.u2p(h.k0 / 10), pB: F.u2p((h.k0 + 1) / 10), col };
     if (h.k === 'tpwin' && F._tp) {                                 // TP-1.1: the hovered window's hours over the chart
       const tt = tpWinT(F, h.id);
-      if (tt) { const x0 = V.X(tt[0]), x1 = V.X(tt[1]); c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h); V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R }; }
+      if (tt) {
+        const x0 = V.X(tt[0]), x1 = V.X(tt[1]), pk = tpWinPeak(F, h.id);
+        c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h);
+        // operator 05.11: the window's peak 15 minutes over the chart and on the time axis — when its pullback is most frequent
+        if (pk) { c.fillStyle = rgba(cfg.R, 0.08); c.fillRect(V.X(pk.t0), 0, V.X(pk.t1) - V.X(pk.t0), V.plot.h); }
+        V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R, peak: pk ? [pk.t0, pk.t1] : null };
+      }
     }
     if (h.k === 'tcell') {
       const x0 = V.X(F.f + 15 * h.b0), x1 = V.X(F.f + 15 * h.b1);
@@ -3487,6 +3495,7 @@
       if (h.k === 'area') return inArea(q, st.area);
       if (h.k === 'zone') return h.ev === q.ev && (F._ts ? tsMember(F.zones[h.ev].zones[h.i],q) : F.zcell[h.ev].get(q.k + '|' + q.b) === h.i);
       if (h.k === 'pt') return q.i === h.i;
+      if (h.k === 'tpzone') return false;                 // TP: a place of another window under the mouse
       if (h.k === 'out') return q.m.outcome === h.cat;
       if (h.k === 'evrow') return true;
       if (h.k === 'hcell') return h.ev === q.ev && q.k === h.kk && q.b === h.b;
@@ -3627,6 +3636,7 @@
     if (!h) return 1;
     if (h.k === 'zone') return h.ev === ev && h.i === i ? 1.5 : 0.45;
     if (h.k === 'pt') return 0.6;
+    if (h.k === 'tpzone') return 0.45;
     if (h.k === 'pcell') return h.ev === ev && z.cell_mask.some(([k]) => k >= h.k0 && k < h.k1) ? 1.15 : 0.6;
     if (h.k === 'tcell') return z.cell_mask.some(([, b]) => b >= h.b0 && b < h.b1) ? 1.1 : 0.55;
     return 0.8;
@@ -3694,6 +3704,7 @@
       return;
     }
     if (st.mode !== 'bounds') return;
+    if (h.k === 'tpzone') { if (F._tp) tpGhostLink(ctx, h); return; }   // TP: a place of another window, as a zone
     // operator 2026-10-06: «до какого времени этот кластер валидный?» — a hovered zone shows its WHOLE time window (the
     // 15-minute cells it covers) over its prices: the part already passed in the spent shade, the part still ahead in its
     // colour, the slice between them; the axis window names the whole window. No peak, no ring, no red: the zone's status
@@ -3932,6 +3943,7 @@
     const cost = r => 4 * live.filter(b => over(r, b)).length + 4 * pills.filter(b => over(r, b)).length + 3 * placed.filter(b => over(r, b)).length + bars.filter(b => over(r, b)).length;
     if (phase === 'under') V.zoneHit = [];
     const env = { placed, live, pills, bars, over };
+    if (phase === 'under') V.zoneEnv = env;
     for (const ev of ['X', 'R']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
       CL[ev].forEach((g, i) => {
@@ -3999,20 +4011,34 @@
   // after them), the confirmation pill or another name is led out to the LEFT — into the past, never over the time
   // ahead — on a thin dash-dot line from a small ring at the constellation's centre: X toward the side of the
   // confirmation, R away from it, each to the least crowded place. The others stay inside, as a background.
-  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env) {
-    const imp = expiredLook(s), zp = zonePass(F, ev, z), zt = ppTxt(zp), share = zp.pct || 0;
+  // o (TP, operator 05.11): a place of another window — its name, a smaller size, a quieter look, its own hit list
+  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env, o) {
+    o = o || {};
+    const imp = expiredLook(s), zp = zonePass(F, ev, z), zt = ppTxt(zp), share = zp.pct || 0, name = o.name || z.label;
     const ps = F.ev[ev].pts.filter(q => F._ts ? tsMember(z,q) : F.zcell[ev].get(q.k + '|' + q.b) === i);
     let cx = (g.bb[0] + g.bb[2]) / 2, cy = (g.bb[1] + g.bb[3]) / 2;
     if (ps.length) { cx = ps.reduce((a, q) => a + V.X(q.t + 2.5), 0) / ps.length; cy = ps.reduce((a, q) => a + V.Y(q.p), 0) / ps.length; }
-    const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
+    const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1) * (o.size || 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
     c.font = lw + nfs + 'px ' + FONT;
-    const wN = c.measureText(z.label).width, wS = pctW(c, zt, lw, fs), wT = wN + 4 + wS, hT = fs;
+    const wN = c.measureText(name).width, wS = pctW(c, zt, lw, fs), wT = wN + 4 + wS, hT = fs;
     let lx = clamp(cx - wT / 2, 4, V.plot.w - 64 - wT), ly = clamp(cy - fs / 2, 30, V.plot.h - hT - 4), out = false;
     const { placed, live, pills, bars, over } = env, R = (x, y) => [x - 2, y - 2, x + wT + 2, y + hT + 2];
     // any candle under the name counts too (operator 2026-10-06: the first constellations lie on the candles of the first
     // minutes after the confirmation, not only on the last ones)
     const hits = r => live.some(b => over(r, b)) || pills.some(b => over(r, b)) || placed.some(b => over(r, b)) || bars.some(b => over(r, b));
-    if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
+    if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly)) && o.stay) {
+      // a place of another window (TP, 05.11) keeps its name in its own hours: off the candles and the room after them
+      // up or down (and a little later), never into the past where the window on screen stands; a dash-dot line if far
+      const sgn = (ev === 'X' ? -1 : 1) * (F.d0 > 0 ? 1 : -1);
+      let best = null, bc = 1e9;
+      for (const dx of [0, 30, 60, 100]) for (const dy of [24, 48, 80, 120, 160].flatMap(v => [sgn * v, -sgn * v])) {
+        const x = clamp(cx - wT / 2 + dx, 4, V.plot.w - 64 - wT), y = cy + dy - hT / 2, r = R(x, y);
+        if (y < 30 || y + hT > V.plot.h - 4) continue;
+        const cc = 5 * (live.filter(b => over(r, b)).length + pills.filter(b => over(r, b)).length + placed.filter(b => over(r, b)).length) + bars.filter(b => over(r, b)).length + dx / 200 + Math.abs(dy) / 200;
+        if (cc < bc) { bc = cc; best = [x, y]; }
+      }
+      if (best) [lx, ly] = best;
+    } else if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
       const sgn = (ev === 'X' ? -1 : 1) * (F.d0 > 0 ? 1 : -1);
       let best = null, bc = 1e9;
       for (const dx of [80, 120, 170, 230, 300, 380]) for (const dy of [sgn * 40, sgn * 70, sgn * 100, sgn * 140, 0, -sgn * 40]) {
@@ -4027,7 +4053,7 @@
     // operator 2026-10-06: zoomed in, a constellation outside the frame keeps its name at the edge with a thin dash-dot
     // line toward it (as the earlier threads did); a name pushed far from its centre gets the same line
     const far = !out && (cx < 0 || cx > V.plot.w || cy < 0 || cy > V.plot.h || Math.hypot(clamp(cx, lx, lx + wT) - cx, clamp(cy, ly, ly + hT) - cy) > 24);
-    const k = cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1);
+    const k = o.k != null ? o.k : cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1) * (o.alpha || 1);
     const aName = out ? cfg.calloutA / 100 : cfg.zoneNameA / 100, aNum = out ? cfg.calloutA / 100 * 0.95 : cfg.zoneNumA / 100;
     c.save(); c.globalAlpha = Math.min(1, op);
     if (far) {
@@ -4043,10 +4069,11 @@
     }
     c.textBaseline = 'alphabetic';
     const yb = ly + fs * 0.86;
-    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, aName); c.fillText(z.label, lx, yb);
+    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, aName); c.fillText(name, lx, yb);
     pctDraw(c, zt, lx + wN + 4, yb, lw, fs, rgba(mixW(col, 0.35), aNum));
     c.restore();
-    V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 6], ev, i, loops: g.hit });
+    if (o.hit) o.hit([lx - 2, ly - 2, wT + 4, hT + 6]);
+    else V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 6], ev, i, loops: g.hit });
   }
   // ---------- the time band (variant «Окна времени», operator 2026-10-01) ----------
   const expiredLook = s => s === 'IMPOSSIBLE' || s === 'PAST';
@@ -4568,7 +4595,12 @@
     // slice tag; the cursor's own time tag is left out while a window is shown
     tag(ctx.obs, ctx.live && !ctx.D.hist ? '#2A2F38' : ctx.D.hist ? C.hist : C.replay, ctx.live && !ctx.D.hist ? '#fff' : '#0B0C10');
     if (!(wn && wn.t0 != null) && st.mx >= 0 && st.mx < W && st.my < V.plot.h) tag(snapT(V.T(st.mx)) - 2.5, '#363A45', '#fff');
-    if (wn && wn.t0 != null) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
+    if (wn && wn.t0 != null && wn.peak) {
+      // a window of TP (operator 05.11): its edges quiet, its peak 15 minutes in its colour, on top
+      const xp = V.X((wn.peak[0] + wn.peak[1]) / 2), clear = t => Math.abs(V.X(t) - xp) >= 76;
+      if (V.X(wn.t1) - V.X(wn.t0) >= 96) for (const t of [wn.t0, wn.t1]) if (clear(t)) tag(t, '#3A3F4A', '#D7DBE2');
+      tag((wn.peak[0] + wn.peak[1]) / 2, wn.col, '#0B0C10', clk(wn.peak[0]) + '–' + clk(wn.peak[1]));
+    } else if (wn && wn.t0 != null) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
     c.textAlign = 'left';
     void h;
   }
@@ -4626,6 +4658,8 @@
     const inBox = a => x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3];
     const zl = (V.zoneHit || []).find(inBox);
     if (zl) return { k: 'zone', ev: zl.ev, i: zl.i };
+    const gz = F._tp ? tpGhostAt(x, y, false) : null;           // TP: the name of another window's place
+    if (gz) return gz;
     if (st.mode === 'bounds') { const mc = mxCellHit(F, x, y); if (mc) return lvlHit(ctx, y) || mc; }   // the layer «Клетки»
     if (st.mode === 'bounds' && st.L.pts) {
       // a star of R or of X: the nearest within 5 px
@@ -4643,6 +4677,8 @@
     if (st.area && V.areaHit) for (const a of V.areaHit) if (a.part === 'frame' && x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3]) { const lv = lvlHit(ctx, y); if (lv) return lv; return { k: 'area', part: 'window' }; }
     // inside a constellation (its 0.2 iso-line): that zone
     for (const z of V.zoneHit || []) if (inLoops(z.loops, x, y)) return lvlHit(ctx, y) || { k: 'zone', ev: z.ev, i: z.i };
+    const gl = F._tp ? tpGhostAt(x, y, true) : null;            // inside another window's place
+    if (gl) return lvlHit(ctx, y) || gl;
     return lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y);
   }
   function lvlHit(ctx, y) {
@@ -4674,7 +4710,8 @@
     if (!h) return '';
     if (h.k === 'arrive' || h.k === 'pre') return candidateTip(h, ctx);
     if (h.k === 'mcell' && F && F._mx) return mxCellTip(F, h);
-    if (F && F._tp && h.k === 'tpwin') return tpWinTip(F, h);          // TP-1.1 (tp235.js)
+    if (F && F._tp && h.k === 'tpwin') return tpWinTip(F, h, ctx);     // TP-1.1 (tp235.js)
+    if (F && F._tp && h.k === 'tpzone') return tpGhostTip(F, ctx, h);
     if (F && F._tp && h.k === 'tpline') return tpLineTip(F, h);
     if (F && F._tp && h.k === 'tcell') return tpCellTip(F, ctx, h);
     if (h.k === 'pt' && F) {
@@ -5040,6 +5077,7 @@
     return '<div class="ih"><span style="color:' + cfg[h.ev] + '">' + z.label + '</span> · ' + F.names[h.ev].toLowerCase() + ' · ' + clk(z.time_start) + '–' + clk(z.time_end) + '<span class="zs zs-' + s + '">' + zstOf(F, ctx, z, s) + '</span></div>' +
       '<div class="is">' + band(z.price_low, z.price_high) + ' SD · ' + px(Math.min(q0, q1)) + '–' + px(Math.max(q0, q1)) + '</div>' +
       '<div class="ibig" style="color:#F0F5FF">' + ppTxt(p) + '<span>' + (F._mx ? zoneCellWords(F, h.ev, z) : lbl('EST:B-ZONE-' + h.ev, 'share')) + '</span></div>' +
+      (F._tp && h.ev === 'X' ? tpReachLine(F, z) : '') +                 // TP-1.4: how many of the window's sessions got this far
       (REVIEW ? '<div class="p24-visit-note"><span>' + (F.rbx ? lbl('FF:R-BEFORE-X', 'zone_final_' + h.ev, { status: zst(s) }) : lbl('FF:TODAY-VISIT', 'final', { ev: h.ev, status: zst(s) })) + '</span></div>' : '') +
       winLine(F, ctx, h.ev, s, F.f + 15 * b0, F.f + 15 * b1, ctx ? zoneClock(F, ctx, h.ev)[h.i] : null) +
       (pk ? '<div class="il" style="color:' + cfg[h.ev] + '">' + lbl(pk.estimand, 'zone_ahead', { window: clk(F.f + 15 * lkz.b) + '–' + clk(F.f + 15 * lkz.b + 15), pct: ppTxt(pk) }) + '</div>' : '') +
@@ -6732,9 +6770,16 @@
   // - the band (time): the clock of T's pullbacks R before the top (per 15 minutes, share of |T|), every bunch drawn
   //   brighter with its share, the lines of the median and of the 70 % mark, and in the place of the zone capsules the
   //   windows: W1 (first bunch → median), W2 (median → 70 %), «позже» after 70 % and «до окна» before W1; X is the selected
-  //   window's sessions, its columns and its own median and 70 % lines (no X constellation in time);
+  //   window's sessions in the same manner (operator 04.11: «так же самое можно и X показывать»): its bunches brighter with
+  //   their shares and its median and 70 % lines (the median is the author's «max extension median time»), its last 15
+  //   minutes apart («ход не кончился до закрытия», never a place);
   // - the price column and the constellations: the sessions of one window T_W (flag ':held:tw=W1'), its price bands as
-  //   the places (zone rule TP_BANDS); at rest W1, a window under the mouse on the band shows its sessions, a click fixes it.
+  //   the places of R, the price bands of all their tops over 0.2-SD cells as the places of X (the author's «cluster of
+  //   extension… next big cluster»; zone rule TP_BANDS, tp-bands-3; core 1.4), under the mouse «дошли до» its lower edge;
+  //   at rest W1, a window under the mouse on the band shows its sessions, a click fixes it.
+  // - the other windows' places of R (operator 05.11), always on the chart in their own hours, quieter and named by their
+  //   window («W2 · R1»), each its share of its own window; a window under the mouse marks its peak 15 minutes and says
+  //   when inside it (tpWinPeak, tpWinTip).
   // The drawing and the colours of 23.5 stay as they were (operator 03.11: «все ценовые, все цветовые, как у нас были»).
   // «Сейчас» (NOW-1.0) stays on the whole family F: its move to T is a separate task (core §6).
   // '#tp=0' in the address shows the previous meaning (the table of 30.10) for comparison, and so does '#cells=1' (the layer
@@ -6812,6 +6857,23 @@
     if (G.N !== tpCount(T.tpc, W[0], W[1])) return 'число сессий окна ' + TP_NAME[w];
     return null;
   }
+  // the clock of the window's tops X (the bunch rule of lab/tp11.py): bunches over the block without its last 15 minutes,
+  // the median, the tops of the last 15 minutes apart (a move cut by the close: never a bunch, never a place)
+  function tpXClock(G) {
+    const f = G.f, bLo = Math.floor((G.r.key.window[0] - f) / 15), bHi = Math.floor((G.end - 5 - f) / 15), m = tpMarks(G.M, 'X', f), at = new Map(m.cells), c = [];
+    for (let b = bLo; b < bHi; b++) c.push(at.get(b) || 0);
+    const bunches = [];
+    for (const [lo, hi, top] of tpRegions(c)) { let n = 0; for (let j = lo; j <= hi; j++) n += c[j]; if (n >= tpNeed(G.N)) bunches.push({ b0: bLo + lo, b1: bLo + hi + 1, n, peak: bLo + top }); }
+    return { cells: m.cells, bunches, median: tpQuant(m.ts, 1, 2), close: at.get(bHi) || 0, bLo, bHi, need: tpNeed(G.N) };
+  }
+  // every place of X is a price band of the window's tops on the 0.2-SD grid (lab/tp11.py::xbands) and never holds a top
+  // of the last 15 minutes; the contract re-derives the bands themselves (ref_tp_xbands)
+  function tpXCheck(G) {
+    const xc = G.tpxc, Z = (G.zones.X || { zones: [] }).zones;
+    for (const z of Z)
+      if (z.cell_mask.some(q => q[1] >= xc.bHi || q[0] < z.price_low || q[0] >= z.price_high) || z.price_low % 2 || z.price_high % 2) return 'места вершины ' + z.label;
+    return null;
+  }
   function tpXMarks(G) { const m = tpMarks(G.M, 'X', G.f); return { median: tpQuant(m.ts, 1, 2), p70: tpQuant(m.ts, 7, 10), known: m.ts.length, unknown: m.unknown, none: m.none, cells: m.cells }; }
   // one family of TP: its response checked like the family of the screen (snapOf), then built by the same buildSnap
   function tpSnap(D, s, w, T) {
@@ -6830,8 +6892,8 @@
       const G = buildSnap(r, s, 'conf');
       G.req.view = 'conf' + (r.key.scope === 'all' ? ':all' : '') + tpFlags(w);
       G.tpw = w || null;
-      if (w) G.tpx = tpXMarks(G); else G.tpc = tpClock(G);          // T: its clock; T_W: its X lines
-      const bad = G.held.has('family') ? 'счёт страницы не совпал с пакетом сервера (' + G.mismatch.join(', ') + ')' : tpCheck(G, w, T);
+      if (w) { G.tpx = tpXMarks(G); G.tpxc = tpXClock(G); } else G.tpc = tpClock(G);   // T: its clock; T_W: the clock of its tops
+      const bad = G.held.has('family') ? 'счёт страницы не совпал с пакетом сервера (' + G.mismatch.join(', ') + ')' : tpCheck(G, w, T) || (w ? tpXCheck(G) : null);
       if (bad) { r._refused = G.held.has('family') ? bad : 'страница пересчитала другое: ' + bad; kViolate(r._refused, null, r._ctx); return null; }
       r._F = G;
     }
@@ -6851,7 +6913,7 @@
     if (TP.last !== w) { TP.last = w; if (st.pin && ['pt', 'zone', 'mcell'].includes(st.pin.k)) st.pin = null; }
     const key = G.r.snapshot_id + '|' + T.r.snapshot_id + '|' + (F0 ? F0.r.snapshot_id : '');
     if (G._tpv && G._tpv._tpKey === key) return G._tpv;
-    return (G._tpv = Object.assign({}, G, { _tp: { T, A: F0, clock: tp, w, x: w ? G.tpx : null }, _tpKey: key }));
+    return (G._tpv = Object.assign({}, G, { _tp: { T, A: F0, clock: tp, w, x: w ? G.tpx : null, xc: w ? G.tpxc : null }, _tpKey: key }));
   }
   // what the panel says while a TP family is missing or refused
   function tpStatus(ctx) {
@@ -6869,6 +6931,8 @@
   const tpCount = (tp, b0, b1) => tp.cells.filter(([b]) => b >= b0 && b < b1).reduce((s, q) => s + q[1], 0);
   // the share of a stretch of T's clock: EST:B-RX-WINDOW-R on the family T (its N = |T|), verified by the server like any other
   const tpShare = (F, b0, b1) => evPass(F._tp.T, 'R', 'time_band', null, [F.f + 15 * b0, F.f + 15 * b1], tpCount(F._tp.clock, b0, b1));
+  // the share of a stretch of the window's tops: EST:B-RX-WINDOW-X on the window family (its N = |T_W|)
+  const tpXShare = (F, b0, b1) => { let n = 0; for (const [b, k] of F.ev.X.T) if (b >= b0 && b < b1) n += k; return evPass(F, 'X', 'time_band', null, [F.f + 15 * b0, F.f + 15 * b1], n); };
   // a line of the clock: by the close of its M5 the half (70 %) of the set's known events had happened; its number is the
   // E4 clock of the same family (EST:B-CLOCK, all prices, part EARLIER, cut = that close)
   function tpLines(F) {
@@ -6888,7 +6952,7 @@
   function tpBand(c, ctx) {
     const F = ctx.F, P = F._tp, T = P.T, tp = P.clock, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
     const ov = V.bandOv = bandOverlay(ctx), B = { x: B0.x, y: B0.y - ov, w: B0.w, h: B0.h + ov };
-    // one lane of window capsules on the side of R (where the zone capsules of R stood); X has none
+    // one lane of capsules on R's side (where the zone capsules stood): the windows
     const LH = 15, lane = { R: 1, X: 0 }, upEv = dir.X < 0 ? 'X' : 'R', dnEv = upEv === 'X' ? 'R' : 'X';
     const top = B.y + 3 + lane[upEv] * (LH + 2) + 2, bot = B.y + B.h - 3 - lane[dnEv] * (LH + 2) - 2;
     const cy = Math.round((top + bot) / 2) + 0.5, half = (bot - top) / 2 - 2;
@@ -6903,7 +6967,7 @@
     for (const n of nR.values()) mx = Math.max(mx, n / NR);
     for (const n of nX.values()) mx = Math.max(mx, n / NX);
     const yOf = (ev, s) => cy + dir[ev] * (1 + half * Math.min(1, Math.max(0, s) / mx));
-    const bunchOf = b => tp.bunches.find(u => b >= u.b0 && b < u.b1);
+    const bunchOf = b => tp.bunches.find(u => b >= u.b0 && b < u.b1), xc = P.xc, xBunchOf = b => xc && xc.bunches.find(u => b >= u.b0 && b < u.b1);
     const Wsel = P.w && tp.windows[P.w];
     V.bandCols = []; V.bandVals = []; V.caps = []; V.hills = []; V.tpCaps = []; V.tpLines = [];
     const labels = [];
@@ -6917,15 +6981,17 @@
         if (!n) continue;
         // a withheld share (its passport «—», SWPC-1.1 M14) draws no column; its place stays empty
         if (ppHeld(G, 'EST:B-RX-WINDOW-' + ev, { b0: b, b1: b + 1 })) { if (lit) labels.push({ x: (x0 + x1) / 2, y: cy + dir[ev] * 9, t: '—', col: cfg[ev] }); continue; }
-        const inW = ev === 'R' ? !!(Wsel && b >= Wsel[0] && b < Wsel[1]) : true, bu = ev === 'R' && bunchOf(b);
+        const inW = ev === 'R' ? !!(Wsel && b >= Wsel[0] && b < Wsel[1]) : true, bu = ev === 'R' ? bunchOf(b) : xBunchOf(b), closeX = ev === 'X' && xc && b === xc.bHi;
         let a = 0.12 + 0.26 * Math.pow(share / mx, 0.7);
         if (past) a *= 0.5;
         if (!inW) a *= 0.6;                                   // outside the selected window: quieter, never hidden
+        if (closeX) a *= 0.55;                                // the tops of the last 15 minutes: a move not ended before the close
         if (lit) a = Math.max(a, 0.5);
         if (bu) a = Math.max(a, (past ? 0.3 : 0.5) + 0.45 * share / mx);   // a bunch: brighter (the author's darker time mode)
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, share);
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
+        if (closeX && Math.abs(y - cy) > 3) { c.save(); c.strokeStyle = rgba(cfg.X, 0.55); c.lineWidth = 1; c.setLineDash([2, 2]); c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir.X, y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1)); c.restore(); }
         if (lit) labels.push({ x: (x0 + x1) / 2, y: dir[ev] < 0 ? y - 7 : y + 8, t: ppTxt(evPass(G, ev, 'time_cell', null, [t0, t0 + 15], n)).replace('%', ''), col: cfg[ev] });
       }
     }
@@ -6936,6 +7002,13 @@
       // beyond the apex column's end, or inside it when the column fills its half (the window lane stays clear)
       const n = nR.get(u.peak) || 0, x = (V.X(F.f + 15 * u.peak) + V.X(F.f + 15 * u.peak + 15)) / 2, y = yOf('R', n / NR), inside = Math.abs(y - cy) > half - 10;
       labels.push({ x, y: y + dir.R * (inside ? -8 : 9), t: ppTxt(p), col: inside ? '#F4F1EC' : mixW(cfg.R, 0.25), big: true });
+    }
+    // the same for the window's tops X (their share of T_W)
+    if (xc) for (const u of xc.bunches) {
+      const p = tpXShare(F, u.b0, u.b1);
+      if (p.pct == null) continue;
+      const n = nX.get(u.peak) || 0, x = (V.X(F.f + 15 * u.peak) + V.X(F.f + 15 * u.peak + 15)) / 2, y = yOf('X', n / NX), inside = Math.abs(y - cy) > half - 10;
+      labels.push({ x, y: y + dir.X * (inside ? -8 : 9), t: ppTxt(p), col: inside ? '#EEF5FF' : mixW(cfg.X, 0.25), big: true });
     }
     // the lines of the clock: the median solid, the 70 % mark dashed, each in its event's half
     for (const L of tpLines(F)) {
@@ -6957,7 +7030,7 @@
     for (const { w, W, p } of shares) {
       const x0 = V.X(F.f + 15 * W[0]) + 1, x1 = V.X(F.f + 15 * W[1]) - 1, wd = x1 - x0, y0 = dir.R < 0 ? B.y + 3 : B.y + B.h - 3 - LH + 2;
       if (x1 < B.x || x0 > B.x + B.w || wd < 4) continue;
-      const on = w === P.w, hov = !!(h && h.k === 'tpwin' && h.id === w), side = w === 'BEFORE' || w === 'LATE', r = Math.pow((p.pct || 0) / capMax, 0.7);
+      const on = w === P.w, hov = !!(h && (h.k === 'tpwin' || h.k === 'tpzone') && h.id === w), side = w === 'BEFORE' || w === 'LATE', r = Math.pow((p.pct || 0) / capMax, 0.7);
       c.save(); c.globalAlpha = on || hov ? 1 : 0.8;
       c.fillStyle = rgba(cfg.R, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
       if (on || hov) { c.strokeStyle = rgba(cfg.R, on ? 0.75 : 0.5); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
@@ -7008,13 +7081,129 @@
   }
   // a click on a window (on the band or its row in the panel) fixes it; a second click lets go (back to W1)
   function tpPinWindow(w) { TP.pin = TP.pin === w ? null : w; st.pin = null; st.hover = null; tip.hidden = true; render(true); }
+  // the window's peak 15 minutes: the cell of T's clock inside the window that holds most of its pullbacks (the earliest of
+  // equal ones), the time the trader reads off the window (operator 05.11: «в какое время будет этот максимальный откат…
+  // не просто как позже, а более уточнённый»)
+  function tpWinPeak(F, w) {
+    const tp = F._tp.clock, W = tp.windows[w];
+    if (!W) return null;
+    let best = null;
+    for (const [b, n] of tp.cells) if (b >= W[0] && b < W[1] && (!best || n > best.n)) best = { b, n };
+    return best && { b: best.b, n: best.n, t0: F.f + 15 * best.b, t1: F.f + 15 * best.b + 15 };
+  }
+  // ---------- the pullback places of the other windows, always on the chart (operator 05.11) ----------
+  // «Почему… на откат R я вижу только одно созвездие в W1… сделай так, чтобы я видел позже созвездие, тоже откаты, а не
+  // так, чтобы я на них наводил мышку… может быть, в другом оформлении». The windows split T's pullbacks by time, so the
+  // places of every window lie in its own hours: drawn together they are the whole map of T's pullbacks. The window on
+  // screen keeps the full drawing (and its X); every other window's places of R are drawn quieter — a lighter haze, smaller
+  // stars, the window's name before the place's — each with its share of ITS window's sessions (EST:B-ZONE-R on that
+  // window family, verified like the rest). Under the mouse: the place's words and its hours; a click puts the window on
+  // screen. X stays the window's on screen: its tops are the continuation of those sessions only.
+  const TPG = { haze: 0.85, thread: 0.8, star: 0.85, starA: 0.85, label: 0.95, size: 0.85 };
+  function tpOthers(ctx) {
+    const F = ctx.F, P = F && F._tp, out = [];
+    if (!P) return out;
+    for (const w of TP_WINDOWS) {
+      if (w === P.w || !P.clock.windows[w]) continue;
+      const G = tpSnap(ctx.D, ctx.s, w, P.T);
+      if (G && G.zones.R && G.zones.R.zones.length) out.push({ w, G });
+    }
+    return out;
+  }
+  // phase 'under' (before the candles): haze, threads and names; phase 'over' (after the candles): the stars and, under the
+  // mouse, the place's outline
+  function tpGhosts(c, ctx, phase) {
+    if (phase === 'under') V.tpGhostHit = [];
+    if (!ctx.F || !ctx.F._tp || !st.L.zones || st.mode !== 'bounds') return;
+    const h = hv(), env = V.zoneEnv, sl = sliceOf(ctx), R0 = 1.7 * cfg.ptSize / 100;
+    for (const { w, G } of tpOthers(ctx)) {
+      const CL = cloudsOf(G), S = zoneLook(G, ctx, 'R'), wl = !!(h && h.k === 'tpwin' && h.id === w);
+      CL.R.forEach((g, i) => {
+        if (!g || zoneHeld(G, 'R', i)) return;           // a withheld place's share is «—»: no haze asserts it
+        const on = !!(h && h.k === 'tpzone' && h.id === w && h.i === i), k = on || wl ? 1.5 : h && h.k !== 'stripBg' ? 0.6 : 1;
+        const col = stateCol(cfg.R, S[i]), imp = expiredLook(S[i]), dim = imp ? 0.6 * cfg.spentA / 100 : S[i] === 'QUIET' ? 0.7 : S[i] === 'HOLDS' ? 1.15 : 1;
+        if (phase === 'under') {
+          const fa = cfg.cloudA / 100 * TPG.haze, ta = cfg.threadA / 100 * TPG.thread;
+          c.save();
+          c.filter = 'blur(14px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
+          c.filter = 'blur(7px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.45, 0.13 * k * dim * fa)); loopsPath(c, g.g2); c.fill();
+          c.filter = 'none';
+          c.strokeStyle = rgba(col, Math.min(0.35, 0.13 * k * dim * ta)); c.lineWidth = 0.5;
+          c.beginPath(); for (const s of g.mst) { c.moveTo(s[0], s[1]); c.lineTo(s[2], s[3]); } c.stroke();
+          c.restore();
+          // the name «W2 · R1» and the share of the window's sessions, as the window on screen names its places (zoneMark),
+          // smaller and quieter; off the candles it moves up or down in its own hours, never left into the past ('stay')
+          if (env) zoneMark(c, ctx, G, 'R', i, g, g.z, S[i], col, h, env, { name: TP_NAME[w] + ' · ' + g.z.label, size: TPG.size, alpha: TPG.label, k, stay: true, hit: box => V.tpGhostHit.push({ box, w, i, loops: g.hit }) });
+          else V.tpGhostHit.push({ box: [0, 0, 0, 0], w, i, loops: g.hit });
+          return;
+        }
+        if (!st.L.pts) return;
+        c.save();
+        for (const q of G.ev.R.pts) {
+          if (pointZone(G, q) !== i) continue;
+          const x = V.X(q.t + 2.5), y = V.Y(q.p);
+          if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
+          const a = ((q.t + 5 <= sl ? cfg.pastA : cfg.ptA) / 100) * 1.1 * TPG.starA * (on ? 1.6 : k < 1 ? 0.6 : 1) * dim;
+          c.fillStyle = rgba(col, Math.min(1, a)); c.beginPath(); c.arc(x, y, R0 * TPG.star, 0, 6.2832); c.fill();
+        }
+        if (on) { c.strokeStyle = rgba(col, 0.55); c.lineWidth = 1; loopsPath(c, g.ln); c.stroke(); }
+        c.restore();
+      });
+    }
+  }
+  // the place of another window under the mouse: its name first, then inside its haze (as the window on screen)
+  function tpGhostAt(x, y, inside) {
+    for (const q of V.tpGhostHit || []) {
+      const ok = inside ? inLoops(q.loops, x, y) : x >= q.box[0] && x <= q.box[0] + q.box[2] && y >= q.box[1] && y <= q.box[1] + q.box[3];
+      if (ok) return { k: 'tpzone', ev: 'R', id: q.w, i: q.i };
+    }
+    return null;
+  }
+  // under the mouse its whole time window over its prices, as a place of the window on screen (linkOf, 'zone')
+  function tpGhostLink(ctx, h) {
+    const g = tpOthers(ctx).find(q => q.w === h.id), G = g && g.G, z = G && G.zones.R.zones[h.i];
+    if (!z || zoneHeld(G, 'R', h.i)) return;
+    const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = G.f + 15 * Math.min(...bs), t1 = G.f + 15 * (Math.max(...bs) + 1);
+    const look = zoneStatus(G, ctx, 'R')[h.i], spent = expiredLook(look);
+    V.lk = { ev: 'R', src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', marker: targetMarker(G, ctx, 'R', z) };
+    V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg.R, 'spent') : cfg.R });
+  }
+  // a click on such a place puts its window on screen and keeps the place under the inspector
+  function tpPinGhost(h) { TP.pin = h.id; st.ev = 'R'; st.pin = null; st.pinZone = h.i + 1; st.hover = null; tip.hidden = true; render(true); }
   // ---------- the words under the mouse ----------
-  function tpWinTip(F, h) {
-    const tp = F._tp.clock, W = tp.windows[h.id];
+  // the window under the mouse: its share of T, then WHEN inside it (operator 05.11): its peak 15 minutes and by when half
+  // of its sessions had their pullback, both over the window's sessions (EST:B-RX-WINDOW-R, EST:B-CLOCK-R on the window
+  // family), and its places of R with their shares
+  function tpWinTip(F, h, ctx) {
+    const P = F._tp, tp = P.clock, W = tp.windows[h.id];
     if (!W) return '';
-    const p = tpShare(F, W[0], W[1]), on = F._tp.w === h.id;
-    return '<div class="ih">' + TP_NAME[h.id] + ' · ' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '</div>' + sentence(p) +
-      '<div class="if">' + (on ? 'Колонка цены и созвездия — сессии этого окна.' : 'Наведено: колонка цены и созвездия — сессии этого окна; щелчок закрепляет.') + ' Только true-сессии: DR удержали до ' + clk(F.end) + '.</div>';
+    const p = tpShare(F, W[0], W[1]), on = P.w === h.id, G = ctx ? tpSnap(ctx.D, ctx.s, h.id, P.T) : null, set = 'сессий окна ' + TP_NAME[h.id];
+    let when = '';
+    const pk = tpWinPeak(F, h.id);
+    if (G && pk) {
+      const n = G.ev.R.T.get(pk.b) || 0, pP = evPass(G, 'R', 'time_cell', null, [pk.t0, pk.t1], n);
+      when += '<div class="il" style="color:' + cfg.R + '">Чаще всего откат в истории окна — ' + clk(pk.t0) + '–' + clk(pk.t1) + '</div>' +
+        '<div class="ir">в эти 15 минут — у ' + set + '<b>' + ppTxt(pP) + '</b></div>';
+      const m = tpMarks(G.M, 'R', G.f), q = tpQuant(m.ts, 1, 2);
+      if (q) {
+        const cut = q.t + 5, pM = clockPass(G, 'R', { k0: -100000, k1: 100000 }, 'EARLIER', cut, G.ev.R.pts.filter(r => r.t + 5 <= cut).length);
+        when += '<div class="ir" title="' + esc(lbl('EST:B-CLOCK-R', 'title')) + '">к ' + clk(cut) + ' (медиана окна) откат уже был — у ' + set + '<b>' + ppTxt(pM) + '</b></div>';
+      }
+      // its places of R (where in price), each its share of the window's sessions; their hours under the mouse at the place
+      (G.zones.R || { zones: [] }).zones.forEach((z, i) => {
+        if (!zoneHeld(G, 'R', i)) when += '<div class="ir">место <span style="color:' + cfg.R + '">' + z.label + '</span> ' + band(z.price_low, z.price_high) + ' SD<b>' + ppTxt(zonePass(G, 'R', z)) + '</b></div>';
+      });
+    }
+    return '<div class="ih">' + TP_NAME[h.id] + ' · ' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '</div>' + sentence(p) + when +
+      '<div class="if">' + (on ? 'Колонка цены и созвездия — сессии этого окна.' : h.src === 'strip' ? 'Наведено: колонка цены и созвездия — сессии этого окна; щелчок закрепляет.' : 'Щелчок — сессии этого окна на экране.') + ' Только true-сессии: DR удержали до ' + clk(F.end) + '.</div>';
+  }
+  // a place of another window under the mouse: the place's own words on its window family, which window, and the click
+  function tpGhostTip(F, ctx, h) {
+    const g = tpOthers(ctx).find(q => q.w === h.id), W = F._tp.clock.windows[h.id];
+    if (!g || !W) return '';
+    const z = g.G.zones.R.zones[h.i], head = '<div class="ih"><span style="color:' + cfg.R + '">';
+    return zoneTip(g.G, ctx, { k: 'zone', ev: 'R', i: h.i }).replace(head + (z ? z.label : '') + '</span>', head + TP_NAME[h.id] + ' · ' + (z ? z.label : '') + '</span>') +
+      '<div class="if">Место окна ' + TP_NAME[h.id] + ' (' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '): сессии, чей откат до вершины был в этом окне; доля — от них. Щелчок — окно ' + TP_NAME[h.id] + ' на экране целиком (колонка цены и места вершины его сессий).</div>';
   }
   function tpLineTip(F, h) {
     const L = tpLines(F).find(q => q.ev === h.ev && q.id === h.id);
@@ -7031,9 +7220,12 @@
     for (const [q, n] of F.ev.X.T) if (q >= b && q < b1) nX += n;
     const pR = evPass(T, 'R', 'time_cell', null, [t0, t1], nR), pX = evPass(F, 'X', 'time_cell', null, [t0, t1], nX);
     const u = P.clock.bunches.find(q => b >= q.b0 && b < q.b1), w = TP_WINDOWS.find(k => P.clock.windows[k] && b >= P.clock.windows[k][0] && b < P.clock.windows[k][1]);
+    const xu = P.xc && P.xc.bunches.find(q => b >= q.b0 && b < q.b1), close = P.xc && b1 > P.xc.bHi;
     const row = (ev, p, set) => '<div class="ib"><i style="color:' + cfg[ev] + '">' + lbl(p.estimand, 'two_row', { ev, name: (ev === 'R' ? T : F).names[ev].toLowerCase() }) + '</i><span class="k"> ' + set + ' </span><b>' + ppTxt(p) + '</b></div>';
     return '<div class="ih">' + clk(t0) + '–' + clk(t1) + (w ? ' · ' + TP_NAME[w] : '') + (u ? ' · пучок ' + clk(F.f + 15 * u.b0) + '–' + clk(F.f + 15 * u.b1) : '') + '</div>' +
-      '<div class="iq">' + lbl('FF:R-BEFORE-X', 'q_window') + '</div>' + row('R', pR, 'true') + row('X', pX, TP_NAME[P.w || 'W1']) + ifoot(T, lbl('FF:SHARE-STEP', 'foot_time'));
+      '<div class="iq">' + lbl('FF:R-BEFORE-X', 'q_window') + '</div>' + row('R', pR, 'true') + row('X', pX, TP_NAME[P.w || 'W1']) +
+      (xu ? '<div class="is" style="color:' + cfg.X + '">пучок вершин ' + clk(F.f + 15 * xu.b0) + '–' + clk(F.f + 15 * xu.b1) + '</div>' : '') +
+      (close ? '<div class="is">Вершина в последние 15 минут сессии: ход не кончился до закрытия — это не место вершины.</div>' : '') + ifoot(T, lbl('FF:SHARE-STEP', 'foot_time'));
   }
   // the R-side depth under the mouse in the price column (operator 03.11: not drawn, only a number when asked): of the
   // window's sessions, those whose pullback went deeper than this band's lower edge (EST:B-RX-BAND-R over the deeper cells)
@@ -7043,6 +7235,16 @@
     const p = pp(F, { estimand: 'EST:B-RX-BAND-R', params: { k0: -100000, k1: h.k0 }, event_id: 'R', region_kind: 'price_band', exact_price_bounds: [-100000, h.k0], time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end),
       yes_count: n, unknown_count: D.unknown, no_event_count: D.none, display_scope: 'inspector', phrase: lbl('EST:B-RX-BAND-R', 'phrase', { name: F.names.R.toLowerCase(), ev: 'R', what: F.what.R, band: '< ' + sd(h.k0 / 10) }), horizon: hzOf(F) });
     return '<div class="ir">глубже ' + sd(h.k0 / 10) + ' SD у сессий окна ' + TP_NAME[F._tp.w || 'W1'] + '<b>' + ppTxt(p) + '</b></div>';
+  }
+  // the X-side ladder at a place of tops (core 1.4, the author's «targets»): of the window's sessions, those whose top
+  // reached this band's lower edge or went further (EST:B-RX-BAND-X from the edge up; a top of the last 15 minutes
+  // reached its level too, so it counts here though it is never a place)
+  function tpReachLine(F, z) {
+    if (!F._tp || !z) return '';
+    const D = F.ev.X, n = D.pts.filter(q => q.k >= z.price_low).length;
+    const p = pp(F, { estimand: 'EST:B-RX-BAND-X', params: { k0: z.price_low, k1: 100000 }, event_id: 'X', region_kind: 'price_band', exact_price_bounds: [z.price_low, 100000], time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end),
+      yes_count: n, unknown_count: D.unknown, no_event_count: D.none, display_scope: 'inspector', phrase: lbl('EST:B-RX-BAND-X', 'phrase', { name: F.names.X.toLowerCase(), ev: 'X', what: F.what.X, band: '≥ ' + sd(z.price_low / 10) }), horizon: hzOf(F) });
+    return '<div class="ir" style="color:' + cfg.X + '">дошли до ' + sd(z.price_low / 10) + ' SD у сессий окна ' + TP_NAME[F._tp.w || 'W1'] + '<b>' + ppTxt(p) + '</b></div>';
   }
   // ---------- the panel: the clock of T, the windows (a row fixes its window), then the places of the window ----------
   function tpPanel(F, ctx) {
@@ -7063,9 +7265,31 @@
     }
     if (T.ev.R.unknown + T.ev.R.none) { const u = undPass(T, 'R', 'BOTH'); out.push(link({ k: 'evrow', ev: 'R' }, prow(lbl('EST:B-RX-UNDETERMINED-R', 'row', { ev: '<i style="color:' + cfg.R + '">R</i>' }), ppTxt(u)), 'dim', u, plainTitle(u))); }
     // the continuation of the window's sessions: the time lines of their own top X (the ladder is on today's levels)
-    const xl = tpLines(F).filter(L => L.ev === 'X');
-    if (P.w) out.push('<div class="p21-h second"><span title="Вершина хода X у сессий окна ' + TP_NAME[P.w] + '; ступени «дошли до уровня» — на линиях уровней графика (наведите).">Продолжение · ' + TP_NAME[P.w] + '</span><span>доля от окна</span></div>' +
-      (xl.length ? '<div class="p21-note">' + xl.map(L => '<span title="' + esc(lbl('EST:B-CLOCK-X', 'earlier', { t: clk(L.cut) }) + ': ' + ppTxt(L.p)) + '">' + (L.id === 'median' ? 'медиана вершины' : '70 % вершин') + ' <b style="color:' + cfg.X + '">' + clk(L.cut) + '</b></span>').join(' · ') + '</div>' : ''));
+    const xl = tpLines(F).filter(L => L.ev === 'X'), xc = P.xc;
+    if (P.w) {
+      out.push('<div class="p21-h second"><span title="Вершина хода X у сессий окна ' + TP_NAME[P.w] + ': пучки времени вершин, их медиана и 70 %; места вершины на графике (синие созвездия) — полосы цены, где ход чаще кончался; «дошли до» — под мышью у места и на линиях уровней графика.">Продолжение · ' + TP_NAME[P.w] + '</span><span>доля от окна</span></div>');
+      if (xc) for (const u of xc.bunches) { const p = tpXShare(F, u.b0, u.b1); out.push(link({ k: 'tcell', ev: 'X', b0: u.b0, b1: u.b1, src: 'tpx' }, prow('пучок вершин ' + clk(F.f + 15 * u.b0) + '–' + clk(F.f + 15 * u.b1), ppTxt(p)), 'mc', p, plainTitle(p))); }
+      if (xc && !xc.bunches.length) out.push('<div class="p21-note">Пучков вершин нет: ни один отрезок времени не набрал ' + xc.need + ' сессий окна.</div>');
+      if (xl.length) out.push('<div class="p21-note">' + xl.map(L => '<span title="' + esc(lbl('EST:B-CLOCK-X', 'earlier', { t: clk(L.cut) }) + ': ' + ppTxt(L.p)) + '">' + (L.id === 'median' ? 'медиана вершины' : '70 % вершин') + ' <b style="color:' + cfg.X + '">' + clk(L.cut) + '</b></span>').join(' · ') + '</div>');
+      if (xc && xc.close) { const p = tpXShare(F, xc.bHi, xc.bHi + 1); out.push(link({ k: 'tcell', ev: 'X', b0: xc.bHi, b1: xc.bHi + 1, src: 'tpx' }, prow('ход не кончился до закрытия', ppTxt(p)), 'dim', p, plainTitle(p))); }
+      if (F.ev.X.unknown + F.ev.X.none) { const u = undPass(F, 'X', 'BOTH'); out.push(link({ k: 'evrow', ev: 'X' }, prow(lbl('EST:B-RX-UNDETERMINED-X', 'row', { ev: '<i style="color:' + cfg.X + '">X</i>' }), ppTxt(u)), 'dim', u, plainTitle(u))); }
+    }
+    return out.join('');
+  }
+  // the places of R of the other windows (operator 05.11), each its share of its own window; a row is the place on the chart
+  // and a click puts its window on screen
+  function tpGhostPanel(F, ctx) {
+    const gs = tpOthers(ctx), out = [];
+    if (!gs.length) return '';
+    out.push('<div class="p21-h second"><span title="Места отката сессий других окон: полосы цены, где у сессий окна был откат до вершины. Доля — от сессий своего окна. На графике — те же созвездия, тише, с именем окна; щелчок показывает окно целиком.">Откат в других окнах</span><span>доля от окна</span></div>');
+    for (const { w, G } of gs) {
+      const S = zoneStatus(G, ctx, 'R');
+      G.zones.R.zones.forEach((z, i) => {
+        const p = zonePass(G, 'R', z);
+        out.push(link({ k: 'tpzone', ev: 'R', id: w, i }, '<span class="t"><span><span class="zt">' + clk(z.time_start) + '–' + clk(z.time_end) + '</span> <i class="zn" style="color:' + cfg.R + '">' + TP_NAME[w] + ' · ' + z.label + '</i></span>' +
+          '<span class="p21-sub">' + lbl('EST:B-ZONE-R', 'sub', { band: band(z.price_low, z.price_high), status: zstOf(G, ctx, z, S[i]) }) + '</span></span><b class="zp">' + ppTxt(p) + '</b>', 'mc zst-' + S[i], p, plainTitle(p)));
+      });
+    }
     return out.join('');
   }
 
@@ -7347,6 +7571,7 @@
     out.push(candidatePanel(ctx));
     if (st.mode === 'bounds') {
       out.push(pullbackMode() ? pbCombinedZones(ctx) : cellsFirst ? '' : zonesHtml(F, ctx));
+      if (F._tp && !pullbackMode()) out.push(tpGhostPanel(F, ctx));   // TP: the pullback places of the other windows (05.11)
       const tf = todayFacts(F, ctx);
       if (tf) out.push('<div class="p21-note" title="' + esc(lbl('FF:TODAY-PREFIX', 'title', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)) })) + '">' + tf + '</div>');
     }
@@ -7378,7 +7603,7 @@
     rows.sort((a, b) => a.z.time_start - b.z.time_start || b.z.p_snapshot - a.z.p_snapshot);
     // TP-1.1: the places of the window's pullbacks, each its share of the window (core §4.5)
     const tw = F._tp && F._tp.w && F._tp.clock.windows[F._tp.w];
-    const out = [F._tp ? '<div class="p21-h second"><span title="Место = окно × полоса цены: полосы ищутся только среди сессий окна; доля — от сессий окна">Места отката · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
+    const out = [F._tp ? '<div class="p21-h second"><span title="Место отката = окно × полоса цены среди сессий окна; место вершины = полоса цены среди вершин тех же сессий (шаг 0,2 SD, без последних 15 минут); доля — от сессий окна">Места отката и вершины · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
     if (!rows.length) out.push('<div class="p21-note">' + lbl('EST:B-ZONE-R', 'none') + '</div>');
     let sep = false;
     for (const r of rows) {
@@ -7391,7 +7616,6 @@
     if (!sep) out.push('<div class="p24-now"><span></span>' + (sl >= F.end ? 'блок закончен' : 'сейчас ' + clk(sl)) + '<span></span></div>');
     // the rest of each event's 100 %: outside the zones, and not determined (never drawn at any price)
     for (const ev of ['X', 'R']) {
-      if (F._tp && ev === 'X') continue;                               // TP-1.1: X has no constellation, so no «outside the zones» either
       const Zm = zonesOf(F, ev), D = F.ev[ev];
       const tag = '<i style="color:' + cfg[ev] + '">' + ev + '</i>';
       if (Zm) { const r = resPass(F, ev); out.push(link({ k: 'evrow', ev }, prow(lbl('EST:B-ZONE-RESIDUAL-' + ev, 'row', { ev: tag }), ppTxt(r)), 'dim', r, plainTitle(r))); }
@@ -7766,6 +7990,7 @@
       if (!el) return;
       const L = P24.links[+el.dataset.l21];
       if (L.k === 'tpwin') { tpPinWindow(L.id); return; }           // TP-1.1: the row of a window fixes it (tp235.js)
+      if (L.k === 'tpzone') { tpPinGhost(L); return; }              // a place of another window: that window on screen
       if (L.k === 'fcell') { st.col = L.j; render(true); return; }
       if (L.k === 'area') { pin({ k: 'area', part: L.part }); return; }
       pin(L);
@@ -7942,7 +8167,7 @@
     const was = key(st.hover);
     st.hover = h && !['paxis', 'taxis', 'stripBg'].includes(h.k) ? h : (h && h.k === 'stripBg' ? h : null);
     if (st.hover && st.hover.ev) st.ev = st.hover.ev;      // the event in focus: what the panel and the area speak of
-    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin'].includes(h.k) ? 'pointer' : 'crosshair';
+    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin', 'tpzone'].includes(h.k) ? 'pointer' : 'crosshair';
     if (alPlusAt(x, y)) cv.style.cursor = 'pointer';
     else { const al = alNear(x, y); if (al) cv.style.cursor = Math.abs(x - al.x) <= 8 ? 'pointer' : 'ns-resize'; }
     showTip(st.hover);
@@ -7985,6 +8210,7 @@
       render(true); return;
     }
     if (h && h.k === 'tpwin') { tpPinWindow(h.id); return; }           // TP-1.1: a window fixes the price column and constellations
+    if (h && h.k === 'tpzone') { tpPinGhost(h); return; }              // a place of another window: that window on screen
     if (h && h.k === 'tpline') return;
     if (h && ['pbzone','pbpcell','pbtcell','pbarea','pbunk'].includes(h.k)) { pin(h); return; }
     if (h && h.k === 'zone' && d.zone === 'strip') { pin(h); return; }
@@ -8056,7 +8282,7 @@
     else if (t.closest('#mode button')) { st.mode = t.closest('button').dataset.m; st.hover = null; st.pin = null; if(continuationMode()&&!CS.target)st.tool=true; render(true); }
     else if (t.closest('#ev button')) { if (st.mode === 'bounds') { st.ev = t.closest('button').dataset.e; st.hover = null; if (st.pin && st.pin.k === 'pt') st.pin = null; render(true); } }
     else if (t.id === 'areab') { st.tool = !st.tool; render(true); }
-    else if (t.id === 'refresh21') loadDay(true);
+    else if (t.id === 'refresh21') loadDay(true, true);
     else if (t.id === 'back') backLive();
     else if (t.id === 'lay') { st.menu = !st.menu; dom('menu').hidden = !st.menu; t.classList.toggle('on', st.menu); dom('cfgp').hidden = true; dom('cfgb').classList.remove('on'); dom('dayp').hidden = true; }
     else if (t.id === 'cfgb') { const o = dom('cfgp').hidden; dom('cfgp').hidden = !o; t.classList.toggle('on', o); st.menu = false; dom('menu').hidden = true; dom('lay').classList.remove('on'); dom('dayp').hidden = true; }
@@ -8124,12 +8350,25 @@
     const g = t => +p.find(x => x.type === t).value;
     return (g('hour') % 24) * 60 + g('minute') + g('second') / 60;
   }
-  function running() { const k = sessionNow(); return A.src === 'live' && A.day && A.day.status === 'ok' && NOW >= SESS[k].start && NOW < SESS[k].end; }
+  // the minute refresh (operator 05.11: «каждую минуту, чтобы он обновлялся»): 3 s after every minute while CME trades
+  // (Sunday 18:00 – Friday 17:00 ET, without the daily 17:00–18:00 pause), by the wall clock. It used to follow the minute
+  // of the last fetch, so it stopped for good when a session ended (08:30, 16:00, 02:00) and did not come back with the
+  // next one; and after a read that had to switch a TradingView chart it slowed to once in 5 minutes. Now the read never
+  // switches a chart (lab/tv_fetch.mjs: a pane of any TradingView window on 5 or 1 minutes), so the step is always one
+  // minute, and the forming M5 (the pane's last bar) grows on screen minute by minute.
+  function marketOpen() {
+    const p = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour12: false, weekday: 'short', hour: '2-digit', minute: '2-digit' }).formatToParts(new Date());
+    const g = t => (p.find(x => x.type === t) || {}).value, wd = g('weekday'), m = (+g('hour') % 24) * 60 + +g('minute');
+    if (wd === 'Sat' || (m >= 1020 && m < 1080)) return false;
+    if (wd === 'Sun') return m >= 1080;
+    if (wd === 'Fri') return m < 1020;
+    return true;
+  }
   function schedule() {
     clearTimeout(A.timer);
-    if (!A.auto || !running()) return;
-    const step = A.day.switched ? 5 : 1, m = etMinute(), wait = ((Math.floor(m / step) + 1) * step + (step === 1 ? 3 : 20) / 60 - m) * 60000;
-    A.timer = setTimeout(() => loadDay(true), Math.max(5000, wait));
+    if (!A.auto || A.src !== 'live') return;
+    const m = etMinute(), wait = (Math.floor(m) + 1 + 3 / 60 - m) * 60000;
+    A.timer = setTimeout(() => { if (marketOpen()) loadDay(true); else schedule(); }, Math.max(5000, wait));
   }
   function takeDay(x, first) {
     A.day = x;
@@ -8145,7 +8384,7 @@
   // another closed prefix up to the cut; a minute's refresh inside the same M5 keeps it (operator 2026-10-20)
   function prefixSig() { const D = day(), cut = Math.floor((A.src === 'hist' ? 1020 : NOW) / 5) * 5; return A.inst + '|' + (D.iso || '') + '|' + D.bars.filter(b => b.t + 5 <= cut).map(b => [b.t, b.o, b.h, b.l, b.c].join(',')).join(';'); }
   function freshScene() { if (!ICFG.enabled) return; const g = prefixSig(); if (g === IS.sig) return; IS.sig = g; IS.epoch++; IS.key = null; IS.packet = null; IS.error = null; }
-  async function loadDay(refresh) {
+  async function loadDay(refresh, manual) {
     if (ICFG.enabled && !A.day) { IS.epoch++; IS.key = null; IS.packet = null; IS.error = null; IS.sig = null; }
     // DR-LAB-SWPC-1.1 M02 (W01): only the answer to the latest request may become the day on screen — a late answer for
     // the day, instrument or minute asked before is dropped, never drawn under the new name
@@ -8160,9 +8399,10 @@
         const stale = x.status !== 'ok' || Date.now() - Date.parse(x.fetched_at) > 180000;
         if (refresh || stale) {
           if (x.status === 'ok' && first) { takeDay(x, true); render(true); }      // the saved day at once, the refresh after
-          const y = await (await fetch(q + '&refresh=1')).json();
+          // only the button (manual) may let the server switch a TradingView chart; the minute refresh never does
+          const y = await (await fetch(q + '&refresh=1' + (manual ? '&manual=1' : ''))).json();
           if (seq !== A.daySeq) return;
-          if (y.status === 'error') A.error = /CDP|9222|TradingView/.test(y.message || '') ? 'TradingView не отвечает: свечи последнего обновления' : (y.message || '').slice(0, 80); else x = y;
+          if (y.status === 'error') A.error = y.code === 'NO_PANE' ? (y.message || '').slice(0, 90) : /CDP|9222|TradingView/.test(y.message || '') ? 'TradingView не отвечает: свечи последнего обновления' : (y.message || '').slice(0, 80); else x = y;
         }
         takeDay(x, first && !A.day);
       } else A.day = x;
@@ -8187,7 +8427,7 @@
   }
   // ---------- price alerts (operator 2026-10-06): as in TradingView, a «+» at the price under the cursor sets a line; when
   // the price crosses it the screen chimes and shows a note (and a system notification if the tab is hidden). The price
-  // comes with the data (every minute with a 1- or 5-minute pane in TradingView, else every 5 minutes), so an alert may be
+  // comes with the data (every minute, from a 1- or 5-minute pane of any TradingView window), so an alert may be
   // late by that much: decisions are taken on the M5 close anyway. One-shot; a crossed line turns grey until moved or
   // removed. Kept in this browser, per instrument; drag a line to move it (re-arms), × at its right end removes it.
   const AL_KEY = 'drlab.d235.alerts';
@@ -8271,8 +8511,12 @@
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),
     verify: () => verifyNow(), lbl, cfg,
     // TP-1.1 (tp235.js): the state of the core on screen, for tests/tp235_page.mjs
-    tp: () => { const F = V && V.ctx && V.ctx.F, P = F && F._tp; return { on: TP.on, pin: TP.pin, w: P ? P.w : null, N: P ? { F: P.A && P.A.N, T: P.T.N, W: F.N } : null, clock: P ? P.clock : null, x: P ? P.x : null,
-      zones: F && F.zones ? { R: (F.zones.R || { zones: [] }).zones.length, X: (F.zones.X || { zones: [] }).zones.length } : null, caps: (V && V.tpCaps || []).map(q => q.id), lines: (V && V.tpLines || []).map(q => q.ev + ':' + q.id) }; },
+    tp: () => { const F = V && V.ctx && V.ctx.F, P = F && F._tp; return { on: TP.on, pin: TP.pin, w: P ? P.w : null, N: P ? { F: P.A && P.A.N, T: P.T.N, W: F.N } : null, clock: P ? P.clock : null, x: P ? P.x : null, xc: P ? P.xc : null,
+      xzones: F && F.zones && F.zones.X ? F.zones.X.zones.map(z => ({ label: z.label, cells: z.cell_mask, n: z.n_zone, price: [z.price_low, z.price_high] })) : [],
+      zones: F && F.zones ? { R: (F.zones.R || { zones: [] }).zones.length, X: (F.zones.X || { zones: [] }).zones.length } : null, caps: (V && V.tpCaps || []).map(q => q.id), lines: (V && V.tpLines || []).map(q => q.ev + ':' + q.id),
+      // 05.11: the pullback places of the other windows on the chart, and the window peaks on the band
+      others: P ? tpOthers(V.ctx).map(q => ({ w: q.w, N: q.G.N, places: q.G.zones.R.zones.filter((z, i) => !zoneHeld(q.G, 'R', i)).length })) : [],
+      ghosts: (V && V.tpGhostHit || []).map(q => ({ w: q.w, i: q.i, box: q.box })), peaks: P ? TP_WINDOWS.filter(w => P.clock.windows[w]).map(w => ({ w, W: P.clock.windows[w], pk: tpWinPeak(F, w) })) : [] }; },
     tpHit: (x, y) => tpHit(x, y) };
   initPanel24();
   // the address: #date=2025-12-17 (a history day) &inst=NQ &session=RDR &at=11:50 (replay) &ev=X &mode=path

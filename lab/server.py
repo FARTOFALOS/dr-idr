@@ -164,9 +164,13 @@ class Handler(SimpleHTTPRequestHandler):
                     return self.json(contract.finalize(url.path, scene24.dates(inst)))
                 if url.path == '/api/d24/day':
                     if not date and params.get('refresh'):
+                        # the minute refresh reads a 1- or 5-minute pane of any TradingView window and never switches a
+                        # chart; only «⟳ Обновить» (manual=1) may switch the active one for 2-4 s (lab/tv_fetch.mjs)
                         import live
                         try:
-                            live.fetch(inst)
+                            live.fetch(inst, manual=bool(params.get('manual')))
+                        except live.NoPane as exc:
+                            return self.json({'status': 'error', 'code': 'NO_PANE', 'message': str(exc)}, 200)
                         except Exception as exc:
                             return self.json({'status': 'error', 'message': str(exc)}, 200)
                     return self.json(contract.finalize(url.path, contract.attach_day(scene24.day_view(inst, date), dict(instrument=inst, date=date))))

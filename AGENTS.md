@@ -1,17 +1,22 @@
 # DR IDR — entry for agents
 
-## Screen 23.5 · 2026-11-04: the semantic core TP-1.2 (code and flags say tp-1.1; supersedes the table of 27–30.10 for the confirmation family)
+## Screen 23.5 · 2026-11-04: the semantic core TP-1.4 (code and flags say tp-1.1; supersedes the table of 27–30.10 for the confirmation family)
 
-**Start here.** The meaning is [meaning/23-tp-smyslovoe-yadro.md](meaning/23-tp-smyslovoe-yadro.md) (DR-LAB-TP-1.2, the
+**Start here.** The meaning is [meaning/23-tp-smyslovoe-yadro.md](meaning/23-tp-smyslovoe-yadro.md) (DR-LAB-TP-1.4, the
 author's Time & Price on true sessions; operator 02–04.11); how it is built is [DR-LAB-23-5-TP](docs/DR-LAB-23-5-TP.md).
 Everything older in this file and in `meaning/` is history where it disagrees with the core: do not bring back the
-whole-family («honest») cohort as the base, the strongest table cell as a place, X constellations in time, final
-extremes as places, or C13. The confirmation family of 23.5 is shown by the core, on the 23.5 drawing as it was:
+whole-family («honest») cohort as the base, the strongest table cell as a place, X stars outside the places of
+tops, final extremes (tops of the last 15 minutes) as places, bunch × band places of X or the capsule «вершина»
+(tried 04.11, no better than chance), or C13. The confirmation family of 23.5 is shown by the core, on the 23.5 drawing as it was:
 - the DR outcome is the whole family's, one 100 %; everything else is T, the sessions whose DR held (flag `:held`);
 - the band: T's clock of R before the top, every bunch with its share, the median and 70 % lines, the windows `W1`
-  (first bunch → median), `W2` (median → 70 %), `до окна`, `позже`; X of the window's sessions, its lines, no X
-  constellation in time;
-- the price column and the constellations: one window's sessions T_W (flag `:held:tw=W1`, zone rule `TP_BANDS`); at
+  (first bunch → median), `W2` (median → 70 %), `до окна`, `позже`; X of the window's sessions: its clock of tops
+  (bunches with shares, median and 70 % lines; the median is the author's max extension median time; no capsule);
+  tops of the last 15 minutes apart («ход не кончился до закрытия»), never a bunch or a place (operator 04.11, core 1.4);
+- the price column and the constellations: one window's sessions T_W (flag `:held:tw=W1`, zone rule `TP_BANDS`
+  `tp-bands-3`): places of R = price bands among T_W (0.1 SD); places of X = price bands of all the window's tops on
+  0.2-SD cells, blue, «дошли до» its lower edge under the mouse (`tp11.xbands`, reference `ref_tp_xbands`; the page
+  refuses a window whose X place holds a top of the last 15 minutes or leaves the 0.2 grid). At
   rest W1, a hovered window shows its sessions, a click fixes it.
 - No new estimand; the clock of T is not published (no declared field meaning in SC-1.1), the page counts it from T's
   members (`tp235.js`), the contract re-derives T and T_W. NOW-1.0 stays on the whole family (moving it to T is open).
@@ -282,7 +287,8 @@ lab/
   build_market.py         builds the history base from the G3 market tape (once; ~30 s per instrument)
   engine_market.py        history queries over the built base (legacy research dashboard, /api/query, /api/scene)
   live.py                 the live fetch from TradingView; the classic screen's live state (legacy /api/live)
-  tv_fetch.mjs            reads M5/M1 bars from TradingView Desktop via Chrome DevTools (tradingview-mcp internals)
+  tv_fetch.mjs            reads M5/M1 bars from every TradingView Desktop window via Chrome DevTools; never switches a
+                          chart unless «⟳ Обновить» asks (tradingview-mcp's connection only as a fallback)
   engine.py               synthetic demo engine (python lab/server.py --data demo); never mixed with market data
   dist/                   front end: 24/ (screen 24, built from design/sozvezdiya-24/src), index.html + sozvezdiya.js
                           (design 22, legacy, built from design/sozvezdiya-22/src), sem-v1/ (design 23, legacy),
@@ -410,9 +416,14 @@ Legacy surfaces: design 22 — edit `design/sozvezdiya-22/src`, run its `build.p
 - **Readiness of a switched chart.** After `setSymbol`, `chart.symbol()` changes before the bars do; old bars of the
   previous symbol can be read as the new one. `tv_fetch.mjs` waits for the series' own `symbolInfo()` to match,
   `isLoading()` false and a stable bar count. Keep that logic.
-- **Prefer reading an existing pane.** If the operator's layout has a pane of the future on 5 (or 1) minutes, bars
-  are read from it without switching anything, and the live data refresh every minute. Otherwise the active chart
-  is switched for 2–4 s and restored, and the cadence drops to 5 minutes. He currently has NQ 5m and NQ 1m panes.
+- **Never switch the operator's TradingView chart on the minute refresh** (fixed 05.11). `lab/tv_fetch.mjs` reads a pane
+  that already shows the future on 5 (or 1) minutes in **any** TradingView window (each window is its own DevTools
+  page); the 23.5 page refreshes every minute while CME trades, by the wall clock, and draws the forming M5 growing.
+  No such pane anywhere: nothing is touched, the toolbar says «… нет на 1 или 5 мин ни в одном окне TradingView».
+  Only «⟳ Обновить» (`manual=1`) may switch the active chart for 2–4 s and restore it. Before 05.11 the read looked into
+  the first window only: with ES/YM in the first window and NQ on 5m and 1m in the second (his layout of 30.10), it
+  switched his chart to NQ and back every 5 minutes, and the page then refreshed only every 5 minutes. Checks:
+  `node tests/tv_fetch_windows.mjs`, `python -B tests/live_fetch.py`.
 - **PowerShell 5.1 and Cyrillic.** `.ps1` files with Russian text must be saved as UTF-8 **with BOM** and CRLF.
 - **Python.** The operator's Python with numpy/pandas is `%LOCALAPPDATA%\Python\bin\python.exe` (3.14);
   `C:\Python313` has no numpy. The launcher probes candidates. LinkML lives only in `.venv-linkml`
