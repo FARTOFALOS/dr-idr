@@ -1,7 +1,8 @@
 """DR Lab — the live session: current M5 bars from TradingView Desktop + the historical probability overlay.
 
-Bars come from the local TradingView Desktop through the tradingview-mcp command line (Chrome DevTools, read-only
-chart data). The chart's symbol and timeframe are switched to fetch, then restored. Live bars are only displayed and
+Bars come from the local TradingView Desktop over Chrome DevTools (lab/tv_fetch.mjs, read-only chart data): a pane of any
+TradingView window that already shows the instrument on 5 or 1 minutes; only «⟳ Обновить» may switch the active chart for
+2-4 s and restore it, the minute refresh never touches the user's charts. Live bars are only displayed and
 matched against the 2006-2025 episodes; they are never written into the historical base or its statistics.
 
 Overlay = prefix-matched cohort from history: same instrument, session and confirmation direction, confirmation within
@@ -30,23 +31,45 @@ LEVELS = [round(x, 2) for x in np.arange(-1.5, 3.001, 0.25)]
 _lock = threading.Lock()
 
 
+_fetch_lock = threading.Lock()
+FRESH_S = 20          # several open tabs ask at the same minute: one read of TradingView serves them all
+
+
+class NoPane(RuntimeError):
+    """The instrument is not on a 1- or 5-minute pane in any TradingView window, and the read was not allowed to switch
+    the user's chart (the minute refresh never is): the screen keeps its last bars."""
+
+
 def _tv(inst, extra=()):
     with _lock:
         return subprocess.run(["node", str(ROOT / "tv_fetch.mjs"), SYMBOLS[inst], "1500", *extra], capture_output=True, text=True,
                               timeout=90, encoding="utf-8")
 
 
-def fetch(inst):
-    """Pull bars of the instrument from TradingView Desktop in one node process (tv_fetch.mjs). A pane of the user's
-    layout that already shows the future on 5 or 1 minute is read without switching anything; otherwise the active
-    chart is switched to 5 minutes for 2-4 s and restored."""
+def fetch(inst, manual=False):
+    """Pull bars of the instrument from TradingView Desktop in one node process (tv_fetch.mjs). Every TradingView window
+    is searched for a pane that already shows the future on 5 or 1 minutes; it is read without switching anything.
+    Only a manual refresh («⟳ Обновить», `manual=True`) may switch the active chart of the first window to 5 minutes for
+    2-4 s and restore it; the minute refresh never touches the user's charts (operator 30.10, 05.11: TradingView jumped
+    to NQ and back every 5 minutes because the old read looked into the first window only)."""
     if inst not in SYMBOLS: raise ValueError("Unknown instrument")
-    r = _tv(inst)
+    with _fetch_lock:
+        if not manual:
+            old = _load(inst)
+            if old and (pd.Timestamp.now(tz="UTC") - pd.Timestamp(old["fetched_at"])).total_seconds() < FRESH_S:
+                return old
+        return _fetch(inst, manual)
+
+
+def _fetch(inst, manual):
+    r = _tv(inst, ("switch",) if manual else ())
     try:
         d = json.loads(r.stdout.strip().splitlines()[-1])
     except (json.JSONDecodeError, IndexError):
         raise RuntimeError("TradingView не ответил: " + (r.stderr or r.stdout).strip()[:200])
     if not d.get("success"):
+        if d.get("code") == "NO_PANE":
+            raise NoPane(str(d.get("error"))[:200])
         raise RuntimeError("TradingView Desktop не отдал свечи (он должен быть запущен с CDP): " + str(d.get("error"))[:200])
     bars = [[int(b[0]), float(b[1]), float(b[2]), float(b[3]), float(b[4])] for b in d["bars"]]
     interval = int(d.get("interval") or 5)
@@ -64,13 +87,13 @@ def fetch(inst):
         first, keep_from = bars[0][0], bars[-1][0] - 4 * 86400
         bars = [b for b in old["bars"] if keep_from <= b[0] < first] + bars
     # once a day: when less than 22 hours are known (a 1-minute pane holds few bars), read 5-minute bars to reach back
-    # to the previous trading day's RDR (this may switch the active chart to 5 minutes for 2-4 s, as «Обновить» does)
+    # to the previous trading day's RDR: from a 5-minute pane of any window; only a manual refresh may switch the chart
     if bars and bars[-1][0] - bars[0][0] < 22 * 3600:
         flag, today = LIVE / f"{inst.lower()}_backfill.txt", pd.Timestamp.now(tz="UTC").strftime("%Y-%m-%d")
         if not flag.exists() or flag.read_text(encoding="utf-8").strip() != today:
             LIVE.mkdir(parents=True, exist_ok=True); flag.write_text(today, encoding="utf-8")
             try:
-                d5 = json.loads(_tv(inst, ("need5",)).stdout.strip().splitlines()[-1])
+                d5 = json.loads(_tv(inst, ("need5", "switch") if manual else ("need5",)).stdout.strip().splitlines()[-1])
                 if d5.get("success"):
                     first = bars[0][0]
                     bars = [[int(x[0]), float(x[1]), float(x[2]), float(x[3]), float(x[4])] for x in d5["bars"] if int(x[0]) < first] + bars

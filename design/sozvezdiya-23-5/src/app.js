@@ -3315,7 +3315,7 @@
     else if (t.closest('#mode button')) { st.mode = t.closest('button').dataset.m; st.hover = null; st.pin = null; if(continuationMode()&&!CS.target)st.tool=true; render(true); }
     else if (t.closest('#ev button')) { if (st.mode === 'bounds') { st.ev = t.closest('button').dataset.e; st.hover = null; if (st.pin && st.pin.k === 'pt') st.pin = null; render(true); } }
     else if (t.id === 'areab') { st.tool = !st.tool; render(true); }
-    else if (t.id === 'refresh21') loadDay(true);
+    else if (t.id === 'refresh21') loadDay(true, true);
     else if (t.id === 'back') backLive();
     else if (t.id === 'lay') { st.menu = !st.menu; dom('menu').hidden = !st.menu; t.classList.toggle('on', st.menu); dom('cfgp').hidden = true; dom('cfgb').classList.remove('on'); dom('dayp').hidden = true; }
     else if (t.id === 'cfgb') { const o = dom('cfgp').hidden; dom('cfgp').hidden = !o; t.classList.toggle('on', o); st.menu = false; dom('menu').hidden = true; dom('lay').classList.remove('on'); dom('dayp').hidden = true; }
@@ -3383,12 +3383,25 @@
     const g = t => +p.find(x => x.type === t).value;
     return (g('hour') % 24) * 60 + g('minute') + g('second') / 60;
   }
-  function running() { const k = sessionNow(); return A.src === 'live' && A.day && A.day.status === 'ok' && NOW >= SESS[k].start && NOW < SESS[k].end; }
+  // the minute refresh (operator 05.11: «каждую минуту, чтобы он обновлялся»): 3 s after every minute while CME trades
+  // (Sunday 18:00 – Friday 17:00 ET, without the daily 17:00–18:00 pause), by the wall clock. It used to follow the minute
+  // of the last fetch, so it stopped for good when a session ended (08:30, 16:00, 02:00) and did not come back with the
+  // next one; and after a read that had to switch a TradingView chart it slowed to once in 5 minutes. Now the read never
+  // switches a chart (lab/tv_fetch.mjs: a pane of any TradingView window on 5 or 1 minutes), so the step is always one
+  // minute, and the forming M5 (the pane's last bar) grows on screen minute by minute.
+  function marketOpen() {
+    const p = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour12: false, weekday: 'short', hour: '2-digit', minute: '2-digit' }).formatToParts(new Date());
+    const g = t => (p.find(x => x.type === t) || {}).value, wd = g('weekday'), m = (+g('hour') % 24) * 60 + +g('minute');
+    if (wd === 'Sat' || (m >= 1020 && m < 1080)) return false;
+    if (wd === 'Sun') return m >= 1080;
+    if (wd === 'Fri') return m < 1020;
+    return true;
+  }
   function schedule() {
     clearTimeout(A.timer);
-    if (!A.auto || !running()) return;
-    const step = A.day.switched ? 5 : 1, m = etMinute(), wait = ((Math.floor(m / step) + 1) * step + (step === 1 ? 3 : 20) / 60 - m) * 60000;
-    A.timer = setTimeout(() => loadDay(true), Math.max(5000, wait));
+    if (!A.auto || A.src !== 'live') return;
+    const m = etMinute(), wait = (Math.floor(m) + 1 + 3 / 60 - m) * 60000;
+    A.timer = setTimeout(() => { if (marketOpen()) loadDay(true); else schedule(); }, Math.max(5000, wait));
   }
   function takeDay(x, first) {
     A.day = x;
@@ -3404,7 +3417,7 @@
   // another closed prefix up to the cut; a minute's refresh inside the same M5 keeps it (operator 2026-10-20)
   function prefixSig() { const D = day(), cut = Math.floor((A.src === 'hist' ? 1020 : NOW) / 5) * 5; return A.inst + '|' + (D.iso || '') + '|' + D.bars.filter(b => b.t + 5 <= cut).map(b => [b.t, b.o, b.h, b.l, b.c].join(',')).join(';'); }
   function freshScene() { if (!ICFG.enabled) return; const g = prefixSig(); if (g === IS.sig) return; IS.sig = g; IS.epoch++; IS.key = null; IS.packet = null; IS.error = null; }
-  async function loadDay(refresh) {
+  async function loadDay(refresh, manual) {
     if (ICFG.enabled && !A.day) { IS.epoch++; IS.key = null; IS.packet = null; IS.error = null; IS.sig = null; }
     // DR-LAB-SWPC-1.1 M02 (W01): only the answer to the latest request may become the day on screen — a late answer for
     // the day, instrument or minute asked before is dropped, never drawn under the new name
@@ -3419,9 +3432,10 @@
         const stale = x.status !== 'ok' || Date.now() - Date.parse(x.fetched_at) > 180000;
         if (refresh || stale) {
           if (x.status === 'ok' && first) { takeDay(x, true); render(true); }      // the saved day at once, the refresh after
-          const y = await (await fetch(q + '&refresh=1')).json();
+          // only the button (manual) may let the server switch a TradingView chart; the minute refresh never does
+          const y = await (await fetch(q + '&refresh=1' + (manual ? '&manual=1' : ''))).json();
           if (seq !== A.daySeq) return;
-          if (y.status === 'error') A.error = /CDP|9222|TradingView/.test(y.message || '') ? 'TradingView не отвечает: свечи последнего обновления' : (y.message || '').slice(0, 80); else x = y;
+          if (y.status === 'error') A.error = y.code === 'NO_PANE' ? (y.message || '').slice(0, 90) : /CDP|9222|TradingView/.test(y.message || '') ? 'TradingView не отвечает: свечи последнего обновления' : (y.message || '').slice(0, 80); else x = y;
         }
         takeDay(x, first && !A.day);
       } else A.day = x;
@@ -3446,7 +3460,7 @@
   }
   // ---------- price alerts (operator 2026-10-06): as in TradingView, a «+» at the price under the cursor sets a line; when
   // the price crosses it the screen chimes and shows a note (and a system notification if the tab is hidden). The price
-  // comes with the data (every minute with a 1- or 5-minute pane in TradingView, else every 5 minutes), so an alert may be
+  // comes with the data (every minute, from a 1- or 5-minute pane of any TradingView window), so an alert may be
   // late by that much: decisions are taken on the M5 close anyway. One-shot; a crossed line turns grey until moved or
   // removed. Kept in this browser, per instrument; drag a line to move it (re-arms), × at its right end removes it.
   const AL_KEY = 'drlab.d235.alerts';
