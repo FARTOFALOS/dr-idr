@@ -329,8 +329,9 @@ def _snapshot(inst, B, session, weekday, side, view, win, cutoff, scope="weekday
     tp = None
     if held:
         # TP-1.1: T = the sessions whose DR held; the clock of their R is the same for every window family of the key
+        n_base = len(members)                # N of the whole family F: the base of the mass threshold (TP-2.0 §3)
         members = [r for r in members if r["outcome"] == "held"]
-        tp = tp11.windows(members, formed, win, end)
+        tp = tp11.windows(members, formed, win, end, n_base)
         if tw:
             W = tp["windows"].get(tw)
             members = [r for r in members if tp11.in_window(r, W, formed)]

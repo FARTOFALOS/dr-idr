@@ -954,6 +954,7 @@ fact_forms:
       - {surface: WINDOW, view: ANY, key: win_unknown, text_ru: "неизвестно"}
       - {surface: WINDOW, view: ANY, key: win_bound, text_ru: "граница: до {pct}"}
       - {surface: INSPECTOR, view: ANY, key: sentence, text_ru: "семьи — {phrase} · {horizon}"}
+      - {surface: INSPECTOR, view: ANY, key: sentence_c1, text_ru: "этих сессий — {phrase} · {horizon}"}
       - {surface: PASSPORT, view: ANY, key: horizon, text_ru: "{from} до {end}"}
       - {surface: PASSPORT, view: ANY, key: horizon_after, text_ru: "после {t} до {end}"}
       - {surface: PASSPORT, view: ANY, key: horizon_none, text_ru: "остатка блока нет"}

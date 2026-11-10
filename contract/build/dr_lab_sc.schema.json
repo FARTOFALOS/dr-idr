@@ -510,7 +510,14 @@
             "description": "The exact membership condition of a set of historical cases and its role. Roles never stand in for each other. The availability of the condition decides whether the set may be used live or for prediction; it does not decide whether a description of the set is conditional (a retrospective condition still yields C1).",
             "properties": {
                 "activation_kind": {
-                    "$ref": "#/$defs/ActivationKind"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ActivationKind"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
                 },
                 "comparison": {
                     "type": [
@@ -604,7 +611,14 @@
                     "type": "string"
                 },
                 "weekday_scope": {
-                    "$ref": "#/$defs/WeekdayScope"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/WeekdayScope"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
                 }
             },
             "required": [
@@ -5331,9 +5345,9 @@
     },
     "$id": "https://github.com/FARTOFALOS/dr-idr/contract/dr_lab_sc",
     "$schema": "https://json-schema.org/draft/2019-09/schema",
-    "additionalProperties": true,
+    "additionalProperties": false,
     "description": "One file (or the merged whole) of the contract registry. A container; it carries no meaning.",
-    "metamodel_version": "1.11.0",
+    "metamodel_version": "1.12.0",
     "properties": {
         "authorities": {
             "items": {

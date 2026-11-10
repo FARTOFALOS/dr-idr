@@ -31,9 +31,9 @@ Every quantity here is a count of real sessions; nothing is smoothed.
 from __future__ import annotations
 
 STEP = 15                          # minutes of a time cell (the operator's grid)
-VERSION = "tp-1.1"
+VERSION = "tp-2.0"              # 2.0 (10.11): the mass threshold from the size N of the whole family F
 BANDS_RULE, NONE_RULE = "TP_BANDS", "TP_NONE"     # key.zone_rule of a window family and of T itself
-BANDS_VERSION = "tp-bands-3"      # 2 (04.11): X places as bunch × band; 3 (04.11 evening): X places as price bands, 0.2 SD
+BANDS_VERSION = "tp-bands-4"      # 4 (10.11, DR-LAB-TP-2.0): the support from N of the whole family F; 2 (04.11): X places as bunch × band; 3 (04.11 evening): X places as price bands, 0.2 SD
 X_CELL = 2                         # an X band counts 0.2-SD cells: two cells of the 0.1 grid (core 1.4 [И])
 WINDOWS = ("BEFORE", "W1", "W2", "LATE")
 Q_MEDIAN, Q_70 = (1, 2), (7, 10)
@@ -91,16 +91,19 @@ def clock(members, ev, formed):
     return ts, cells, unknown, none
 
 
-def windows(members, formed, win, end):
-    """The clock of T's R, its bunches, marks and windows. members: T (the family's DR-held sessions)."""
+def windows(members, formed, win, end, n_base=None):
+    """The clock of T's R, its bunches, marks and windows. members: T (the family's DR-held sessions); n_base: the size N
+    of the whole family F, the base of the mass threshold (DR-LAB-TP-2.0 §3: a bunch needs max(4, ceil(0.05 N)) sessions
+    of the family, operator 10.11)."""
     N = len(members)
+    nb = N if n_base is None else int(n_base)
     ts, cells, unknown, none = clock(members, "R", formed)
     b_lo, b_hi = win, (end - 5 - formed) // STEP
     c = [cells.get(b, 0) for b in range(b_lo, b_hi + 1)]
     bunches = []
     for lo, hi, top in regions(c):
         n = sum(c[lo:hi + 1])
-        if n >= need(N): bunches.append(dict(b0=b_lo + lo, b1=b_lo + hi + 1, n=int(n), peak=b_lo + top))
+        if n >= need(nb): bunches.append(dict(b0=b_lo + lo, b1=b_lo + hi + 1, n=int(n), peak=b_lo + top))
     med, p70 = quantile_time(ts, Q_MEDIAN), quantile_time(ts, Q_70)
     W = dict.fromkeys(WINDOWS)
     if med:
@@ -112,7 +115,7 @@ def windows(members, formed, win, end):
         if bp > bm: W["W2"] = [bm + 1, bp + 1]
         if bp < b_hi: W["LATE"] = [bp + 1, b_hi + 1]
     return dict(version=VERSION, N=N, known=len(ts), unknown=unknown, none=none, cells=[[b, n] for b, n in sorted(cells.items())],
-                bunches=bunches, median=med, p70=p70, windows=W, need=need(N), step=STEP, range=[b_lo, b_hi + 1])
+                bunches=bunches, median=med, p70=p70, windows=W, need=need(nb), n_base=nb, step=STEP, range=[b_lo, b_hi + 1])
 
 
 def in_window(m, W, formed):

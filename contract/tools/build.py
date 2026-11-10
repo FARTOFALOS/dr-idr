@@ -107,11 +107,15 @@ def page_registry(merged, stamps):
         return out
     est = {e["id"]: dict(profile=e["profile"], q4=e["q4_case_set"], measure=e["q7_measure"], unknown=e["q8_unknown"],
                          params=[p["name"] for p in e.get("parameters") or []]) for e in merged.get("estimands", [])}
-    forms = {f["estimand"]: dict(id=f["id"], claim_class=f["claim_class"], value_form=f["value_form"], labels=labels(f))
-             for f in merged.get("claim_forms", [])}
+    # one form per estimand; a base estimand's C1 twin on the TP sets (id «CF:TP-…», 45-claims-tp.yaml, DR-LAB-TP-2.0 §7)
+    # goes to «cforms»: the page reads it on those sets (bindPassport, lbl)
+    one = lambda f: dict(id=f["id"], claim_class=f["claim_class"], value_form=f["value_form"], labels=labels(f))
+    twin = lambda f: f["id"].startswith("CF:TP-") and f["claim_class"] == "ConditionalDescriptiveClaim"
+    forms = {f["estimand"]: one(f) for f in merged.get("claim_forms", []) if not twin(f)}
+    cforms = {f["estimand"]: one(f) for f in merged.get("claim_forms", []) if twin(f)}
     facts = {f["id"]: dict(record=f["record_class"], labels=labels(f)) for f in merged.get("fact_forms", [])}
     roles = {c["id"]: c["role"] for c in merged.get("case_sets", [])}
-    return dict(edition=EDITION, registry_hash=stamps["registry_sha256"][:16], estimands=est, forms=forms, facts=facts, case_sets=roles)
+    return dict(edition=EDITION, registry_hash=stamps["registry_sha256"][:16], estimands=est, forms=forms, cforms=cforms, facts=facts, case_sets=roles)
 
 
 def load_registry():
@@ -172,10 +176,15 @@ def semantic_checks(merged, reg_file, spec_file):
     for f in merged.get("claim_forms", []): forms.setdefault(f["estimand"], []).append(f)
     for eid, e in est.items():
         fs = forms.get(eid, [])
-        if len(fs) != 1: errs.append(f"{eid}: {len(fs)} claim forms (exactly one required)"); continue
+        # exactly one base form; at most one C1 twin on the TP sets (id «CF:TP-…», DR-LAB-TP-2.0 §7), and on every case
+        # set of the estimand exactly one form whose class that set admits
+        base, twins = [f for f in fs if not f["id"].startswith("CF:TP-")], [f for f in fs if f["id"].startswith("CF:TP-")]
+        if len(base) != 1 or len(twins) > 1 or any(f["claim_class"] != "ConditionalDescriptiveClaim" for f in twins):
+            errs.append(f"{eid}: {len(base)} base claim forms and {len(twins)} TP twins (exactly one base, at most one C1 twin)"); continue
         for cs in e["q4_case_set"]:
             adm = C.admissible_claims(eid, cs)
-            if fs[0]["claim_class"] not in adm: errs.append(f"{eid} on {cs}: form class {fs[0]['claim_class']} not admissible ({sorted(adm)})")
+            ok = [f for f in fs if f["claim_class"] in adm]
+            if len(ok) != 1: errs.append(f"{eid} on {cs}: {len(ok)} admissible forms ({sorted(adm)})")
     for f in merged.get("claim_forms", []):
         if f["estimand"] not in est: errs.append(f"{f['id']}: unknown estimand")
     for f in merged.get("claim_forms", []) + merged.get("fact_forms", []):

@@ -34,7 +34,7 @@ estimands:
     q1_formalised_part_ru: "где и когда (клетка 0,1 SD × 15 минут) лежит окончательная точка R каждой сессии семьи"
     q2_target: FIXED_HISTORICAL_SET
     q3_unit: SESSION
-    q4_case_set: [CS:F-CONF-1, CS:F-CONF-ALL-1, CS:F-BREAK-1, CS:F-BREAK-ALL-1]
+    q4_case_set: [CS:F-CONF-1, CS:F-CONF-ALL-1, CS:F-BREAK-1, CS:F-BREAK-ALL-1, CS:TP-TRUE-1, CS:TP-WINDOW-1]
     q4_denominator: N_BASE_UNIQUE_MEMBERS
     q5_outcome: OUT:FINAL-R-1
     q5_region: REG:WHOLE-1
@@ -481,7 +481,7 @@ estimators:
     version: "1"
     sc_ref: ["V0", "V2.1"]
     grounds: DR_LAB_DECISION
-    estimands: [EST:B-RX-BAND-R, EST:B-RX-BAND-X, EST:B-RX-WINDOW-R, EST:B-RX-WINDOW-X, EST:B-RX-REGION-R, EST:B-RX-REGION-X, EST:B-RX-KNOWN-R, EST:B-RX-KNOWN-X, EST:B-RX-UNDETERMINED-R, EST:B-RX-UNDETERMINED-X, EST:B-RX-OUTFRAME-R, EST:B-RX-OUTFRAME-X, EST:B-CLOSE, EST:B-CLOSE-MISSING, EST:B-CLOSE-PREACT, EST:B-RANGE, EST:B-CLOCK-R, EST:B-CLOCK-X, EST:B-CLOCK-PEAK-R, EST:B-CLOCK-PEAK-X]
+    estimands: [EST:B-RX-BAND-R, EST:B-RX-BAND-X, EST:B-RX-WINDOW-R, EST:B-RX-WINDOW-X, EST:B-RX-REGION-R, EST:B-RX-REGION-X, EST:B-RX-KNOWN-R, EST:B-RX-KNOWN-X, EST:B-RX-UNDETERMINED-R, EST:B-RX-UNDETERMINED-X, EST:B-RX-OUTFRAME-R, EST:B-RX-OUTFRAME-X, EST:B-CLOSE, EST:B-CLOSE-MISSING, EST:B-CLOSE-PREACT, EST:B-RANGE, EST:B-CLOCK-R, EST:B-CLOCK-X, EST:B-CLOCK-PEAK-R, EST:B-CLOCK-PEAK-X, EST:TP-MASS-R]
     rule: COUNT_OVER_N
     unknown_handling_ru: "счёт / N_base; неизвестные и «нет периода» остаются в N; N = 0 — оценки нет (прочерк, не 0 %)"
     rounding_ru: "как ESTR:JOINT-CELLS-1"
@@ -501,7 +501,7 @@ estimators:
     version: "1"
     sc_ref: ["V0", "V2.1"]
     grounds: DR_LAB_DECISION
-    estimands: [EST:B-DR, EST:B-ORDER]
+    estimands: [EST:B-DR, EST:B-ORDER, EST:TP-DR-AT-DEPTH]
     rule: CATEGORY_COUNTS_OVER_N
     unknown_handling_ru: "категории вместе = N_base; UNKNOWN и NO_PERIOD — свои категории"
     rounding_ru: "как ESTR:JOINT-CELLS-1"

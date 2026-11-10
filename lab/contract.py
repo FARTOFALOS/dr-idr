@@ -414,7 +414,7 @@ def ref_table_map(points, n_family, b_lo, b_hi):
     return dict(zones=zones, residual=sorted({s for _, _, s in points} - used), need=need)
 
 
-TP_BANDS_VERSION = "tp-bands-3"       # DR-LAB-TP-1.1 on screen 23.5: the bands of a window family (03.11), its X places (04.11: price bands, 0.2 SD)
+TP_BANDS_VERSION = "tp-bands-4"       # 4 (10.11, DR-LAB-TP-2.0): support max(4, ceil(0.05 N)) from N of the whole family F; DR-LAB-TP-1.1 on screen 23.5: the bands of a window family (03.11), its X places (04.11: price bands, 0.2 SD)
 TP_X_CELL = 2                          # the X bands count 0.2-SD cells: two cells of the 0.1 grid (core 1.4)
 
 
@@ -460,15 +460,16 @@ def ref_tp_quantile(ts, num, den):
     return dict(t=int(sorted(ts)[k - 1]), k=int(k), K=len(ts))
 
 
-def ref_tp_clock(events, formed, win, end):
-    """The clock of T (lab/tp11.py::windows) from the reference R of its members: cells, bunches, median, 70 %, windows."""
+def ref_tp_clock(events, formed, win, end, n_base):
+    """The clock of T (lab/tp11.py::windows) from the reference R of its members: cells, bunches, median, 70 %, windows.
+    n_base: N of the whole re-derived family F, the base of the mass threshold (DR-LAB-TP-2.0 §3)."""
     N = len(events)
     ts = [x["t"] for x in events if x["s"] == "known"]
     cells = Counter((t - formed) // 15 for t in ts)
     b_lo, b_hi = win, (end - 5 - formed) // 15
     c = [cells.get(b, 0) for b in range(b_lo, b_hi + 1)]
     bunches = [dict(b0=b_lo + lo, b1=b_lo + hi + 1, n=sum(c[lo:hi + 1]), peak=b_lo + top) for lo, hi, top in ref_tp_regions(c)
-               if sum(c[lo:hi + 1]) >= ref_tp_need(N)]
+               if sum(c[lo:hi + 1]) >= ref_tp_need(n_base)]
     med, p70 = ref_tp_quantile(ts, 1, 2), ref_tp_quantile(ts, 7, 10)
     W = dict(BEFORE=None, W1=None, W2=None, LATE=None)
     if med:
@@ -480,7 +481,7 @@ def ref_tp_clock(events, formed, win, end):
         if bp > bm: W["W2"] = [bm + 1, bp + 1]
         if bp < b_hi: W["LATE"] = [bp + 1, b_hi + 1]
     return dict(N=N, known=len(ts), unknown=sum(1 for x in events if x["s"] == "unknown"), none=sum(1 for x in events if x["s"] == "none"),
-                cells=[[b, n] for b, n in sorted(cells.items())], bunches=bunches, median=med, p70=p70, windows=W, need=ref_tp_need(N))
+                cells=[[b, n] for b, n in sorted(cells.items())], bunches=bunches, median=med, p70=p70, windows=W, need=ref_tp_need(n_base), n_base=n_base)
 
 
 def ref_tp_bands(points, n_family, b_lo, b_hi):
@@ -835,6 +836,7 @@ def verify_snapshot(inst, B, snap):
     mem, journal, base_errs = ref_family(inst, B, session, key["weekday"], side, view, win, key["cutoff"], key.get("scope", "weekday"))
     for e in base_errs[:5]: v.append(("BASE_DERIVATION", ["O1", "S1", "S2"], e))
     tp_ref = None
+    n_base = len(mem)                     # N of the whole family F: the base of TP's mass threshold (DR-LAB-TP-2.0 §3)
     if key.get("cohort") is not None or "tp" in snap:
         # DR-LAB-TP-1.1: T = the re-derived members whose reference DR outcome is HELD; T_W = those of T whose reference R
         # lies in the window of T's reference clock
@@ -849,7 +851,7 @@ def verify_snapshot(inst, B, snap):
             if ref_dr_outcome(path0, grid0, act, end, dd * ((box["dr_low"] if side == 1 else box["dr_high"]) - e0))[0] != "held": continue
             held.append((i, act, dd))
             rr[i] = ref_before_extreme_R(path0, grid0, act, end) if ref_r_before_x(snap) else ref_final_extreme(path0, grid0, act, end, "R")
-        tp_ref = ref_tp_clock([rr[i] for i, _, _ in held], formed, win, end)
+        tp_ref = ref_tp_clock([rr[i] for i, _, _ in held], formed, win, end, n_base)
         mem = held
         tw = key.get("tp_window")
         if tw is not None:
@@ -878,7 +880,7 @@ def verify_snapshot(inst, B, snap):
     sem_base = sem0[:len(sem0) - len(tp_sfx)] if sem0.endswith(tp_sfx) else None
     if key.get("r_event", "R_BEFORE_X") != "R_BEFORE_X" or sem_base is None or (sem_base == "DR-LAB-SEM-1.0+R_BEFORE_X") != rbx:
         v.append(("OUTCOME", ["P0.1", "K09"], f"the R definition {key.get('r_event')} and the semantics {snap.get('semantics')} disagree"))
-    ref = dict(R=Counter(), X=Counter(), unknown=Counter(), none=Counter(), outcome=Counter(), order=Counter(), members={})
+    ref = dict(R=Counter(), X=Counter(), unknown=Counter(), none=Counter(), outcome=Counter(), order=Counter(), members={}, n_base=n_base)
     for m in snap["members"]:
         if m["id"] not in by_id: continue
         i, act, dd = by_id[m["id"]]
@@ -969,8 +971,9 @@ def _verify_zones(snap, zm, ev, ref):
     alg = dict(version=TABLE_CELLS_VERSION) if table else dict(version=TP_BANDS_VERSION) if tp else get("ALG:ZONE-MAP-3")
     t_first, t_last = formed + 15 * win + 5, end - 5
     b_lo, b_hi = (t_first - formed) // 15, (t_last - formed) // 15
-    if tp and rule == "TP_NONE": R = dict(zones=[], residual=sorted({sid for _, _, sid in pts}), need=ref_tp_need(snap["N"]))
-    elif tp: R = (ref_tp_xbands if ev == "X" else ref_tp_bands)(pts, snap["N"], b_lo, b_hi)
+    nb = ref.get("n_base", snap["N"])     # TP-2.0: the support of a TP map is counted from N of the whole family F
+    if tp and rule == "TP_NONE": R = dict(zones=[], residual=sorted({sid for _, _, sid in pts}), need=ref_tp_need(nb))
+    elif tp: R = (ref_tp_xbands if ev == "X" else ref_tp_bands)(pts, nb, b_lo, b_hi)
     else: R = (ref_table_map if table else ref_zone_map)(pts, snap["N"], b_lo, b_hi)
     if zm.get("algorithm_version") != alg["version"]: v.append(("ALGORITHM", ["P3"], f"{ev}: algorithm {zm.get('algorithm_version')} is not the registry's {alg['version']}"))
     if zm.get("min_support") != R["need"]: v.append(("SUPPORT", ["P3"], f"{ev}: minimum support differs"))
@@ -1083,8 +1086,16 @@ def admissible_claims(estimand_id, case_set_id):
     return out
 
 
-def claim_form_of(estimand_id):
+def claim_form_of(estimand_id, case_set_id=None, form_id=None):
+    """The one claim form of an estimand. A base estimand may also have a C1 twin for the TP sets (CS:TP-TRUE-1,
+    CS:TP-WINDOW-1; registry 45-claims-tp.yaml, DR-LAB-TP-2.0 §7): on a case set the form whose class that set admits;
+    by id the named form; with neither the base form (the twin's id starts with «CF:TP-»)."""
     forms = [c for c in (registry() or {}).get("claim_forms", []) if c["estimand"] == estimand_id]
+    if form_id is not None: forms = [c for c in forms if c["id"] == form_id]
+    elif case_set_id is not None:
+        adm = admissible_claims(estimand_id, case_set_id)
+        forms = [c for c in forms if c["claim_class"] in adm] or forms[:0]
+    elif len(forms) > 1: forms = [c for c in forms if not c["id"].startswith("CF:TP-")]
     return forms[0] if len(forms) == 1 else None
 
 
@@ -1138,7 +1149,9 @@ class Envelope:
                parameters=None, verification="VERIFIED_BY_REFERENCE", claim_extra=None, validations=None):
         """One published statistic. Its claim is the registry's explicit form, published only if its class is
         admissible for this evidence; otherwise the statistic is withheld with the reason."""
-        est, form = get(estimand_id), claim_form_of(estimand_id)
+        est, form = get(estimand_id), claim_form_of(estimand_id, case_set_id)
+        if est is not None and form is None and claim_form_of(estimand_id) is not None:
+            self.violate("CLAIM_NOT_ADMISSIBLE", ["§10.1", "C1", "H1"], f"{estimand_id}: no claim form admissible on {case_set_id}", withheld=[estimand_id]); return None
         if est is None or form is None:
             self.violate("UNREGISTERED_ESTIMAND", ["T1", "§12.3"], f"{estimand_id} has no estimand or no single claim form", withheld=[estimand_id]); return None
         adm = admissible_claims(estimand_id, case_set_id)
@@ -1213,6 +1226,9 @@ def _code_hash():
 
 def case_set_spec_of(snap):
     k = snap["key"]
+    # DR-LAB-TP-2.0 §2.3, §7: T (DR held) and T_W (and R before the top in the window) are subgroups selected by the
+    # future of their sessions, never the base family (SC-1.1 H1: no hidden DR-true filter in the base family)
+    if k.get("cohort") == "HELD": return "CS:TP-WINDOW-1" if k.get("tp_window") else "CS:TP-TRUE-1"
     return {("confirmation", "weekday"): "CS:F-CONF-1", ("confirmation", "all"): "CS:F-CONF-ALL-1",
             ("break", "weekday"): "CS:F-BREAK-1", ("break", "all"): "CS:F-BREAK-ALL-1"}[(k["event"], k.get("scope", "weekday"))]
 
@@ -1273,7 +1289,7 @@ def attach_family(out, inst, B, day, params):
         env.bundle(f"EST:B-RX-JOINT-{ev}", cs_id, sid, "lab/scene24.py::_snapshot", inputs, [est],
                    [dict(case_set=sid, n_base=N, components=[dict(component="ENDPOINT", of=N, known=c["known"], unknown=c["unknown"], no_period=c["none"])])],
                    dict(known=c["known"], N=N, unknown=c["unknown"], no_period=c["none"]))
-    if view == "conf":
+    if view == "conf" and snap["key"].get("cohort") is None:       # T / T_W: every session held, the outcome is their condition
         o = snap["counts"]["outcome"]
         cats = {"held": "HELD", "broken": "BROKEN", "unknown": "UNKNOWN", "none": "NO_PERIOD"}
         env.bundle("EST:B-DR", cs_id, sid, "lab/scene24.py::measure", inputs,
@@ -2135,6 +2151,43 @@ def finalize(route, body):
 # =====================================================================================================================
 # verification of page passports (/api/d24/verify): the page's own statistics recomputed by the reference
 # =====================================================================================================================
+def ref_tp_mass(M, formed, a):
+    """EST:TP-MASS-R (DR-LAB-TP-2.0 §4): the sessions of the whole family whose DR held and whose R (screen 23.5: the R
+    before the top) is KNOWN in the region [k0, k1) x [b0, b1) (a None bound is open), or, part NO_R, whose DR held and
+    whose R is not KNOWN. One vote per session; a session with an unknown DR outcome is not counted and stays in N."""
+    inb = lambda x, lo, hi: (lo is None or x >= lo) and (hi is None or x < hi)
+    if a.get("part", "KNOWN") == "NO_R":
+        return sum(1 for m in M if m.get("outcome") == "held" and m["R"]["s"] != "known")
+    return sum(1 for m in M if m.get("outcome") == "held" and m["R"]["s"] == "known"
+               and inb(ref_cell(m["R"]["v"], m["w"]), a.get("k0"), a.get("k1")) and inb((m["R"]["t"] - formed) // 15, a.get("b0"), a.get("b1")))
+
+
+def ref_tp_depth_set(fam, bars, tick, cut):
+    """CS:TP-DEPTH-AT-CUT-1 (DR-LAB-TP-2.0 §2.3): the members of the confirmation family eligible at the common clock cut
+    (own activation before it, no whole M5 missing up to it, no close beyond the own opposite DR up to it) whose deepest
+    point against the activation up to the cut is as deep as today's or deeper, in IDR widths, exactly in integers.
+    Today's point is re-derived from today's closed M5 after its activation; an incomplete prefix has no set (None)."""
+    today, grid = fam["today"], fam["grid"]
+    if fam["view"] != "conf" or today.get("c0") is None: return None
+    d, act = today["side"], today["c0"]
+    tk = lambda p: int(round(p / tick))
+    e_t, w_t = tk(today["idrH"] if d == 1 else today["idrL"]), tk(today["idrH"] - today["idrL"])
+    have = {int(b[0]) + 5: b for b in bars}
+    lows = []
+    for T in range(act + 5, cut + 1, 5):
+        b = have.get(T)
+        if b is None: return None
+        lows.append(d * (tk(b[3] if d == 1 else b[2]) - e_t))
+    if not lows or w_t <= 0: return None
+    r_t = min(lows)
+    out = []
+    for m in fam["members"]:
+        pre = [q for T, q in zip(grid, m["path"]) if m["act"] < T <= cut]
+        if not pre or any(q is None for q in pre) or any(q[2] < m["oppv"] for q in pre): continue
+        if min(q[0] for q in pre) * w_t <= r_t * m["w"]: out.append(m)
+    return out
+
+
 def verify_passports(fam, bars, tick, passports):
     """Each page passport {estimand, params, yes_count, unknown_count, no_event_count, N} recomputed from the family
     members by the reference definitions. Returns the mismatches."""
@@ -2171,6 +2224,13 @@ def verify_passports(fam, bars, tick, passports):
                 z = next((z for z in zm["zones"] if z["zone_id"] == a.get("zone_id")), None)
                 cells = {tuple(c) for c in z["cell_mask"]} if z else set()
                 want = (sum(1 for k, b, _, _ in points(ev) if (k, b) in cells),)
+            elif e == "EST:TP-MASS-R":
+                want = (ref_tp_mass(M, formed, a),)
+            elif e == "EST:TP-DR-AT-DEPTH":
+                Dt = ref_tp_depth_set(fam, bars, tick, int(a["cut"]))
+                if Dt is None: out.append(dict(id=p.get("id"), estimand=e, error="no set at this cut (incomplete prefix or no activation)")); continue
+                cat = {"HELD": "held", "BROKEN": "broken", "UNKNOWN": "unknown"}.get(a["category"])
+                want = (len(Dt) if a["category"] == "ALL" else sum(1 for m in Dt if m.get("outcome") == cat),)
             elif e == "EST:B-DR":
                 want = (sum(1 for m in M if m.get("outcome") == a["category"]),)
             elif e == "EST:B-ORDER":

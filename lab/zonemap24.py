@@ -186,7 +186,7 @@ def _flip(path, act_i, rng, reps, e, r_before_x=False):
     return (lo.min(1), lo.argmin(1)) if e == "R" else (hi.max(1), hi.argmax(1))
 
 
-def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None, rule=None):
+def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None, rule=None, n_need=None):
     """The zone map of event e for snapshot members (scene24 records), optionally on a shifted grid or with resampling
     weights (a session counted w times); rule TABLE_RULE: the constellations of the joint table; tp11.BANDS_RULE: the
     price bands of a window family (R) and the price bands of its tops over 0.2-SD cells (X); tp11.NONE_RULE: none."""
@@ -198,6 +198,7 @@ def map_of(members, e, formed, end, win, ids, dk=0, dt=0, weights=None, rule=Non
         for _ in range(1 if weights is None else int(weights[i])): pts.append((k, b, ids[i]))
     t_first, t_last = formed + 15 * win + 5, end - 5
     n = len(members) if weights is None else int(sum(weights))
+    if n_need is not None and rule in (tp11.BANDS_RULE, tp11.NONE_RULE): n = int(n_need)    # TP-2.0: support from N of F
     lo, hi = (t_first - formed - dt) // 15, (t_last - formed - dt) // 15
     if rule == tp11.NONE_RULE:
         return dict(zones=[], residual=sorted({s for _, _, s in pts}), need=tp11.need(n))
@@ -214,18 +215,19 @@ def evaluate(snap, e):
     N = len(mem)
     rule = snap["key"].get("zone_rule")
     version = TABLE_VERSION if rule == TABLE_RULE else tp11.BANDS_VERSION if rule in (tp11.BANDS_RULE, tp11.NONE_RULE) else VERSION
-    zm = map_of(mem, e, formed, end, win, ids, rule=rule)
+    nb = (snap.get("tp") or {}).get("n_base")     # TP-2.0: a TP map takes its support from N of the whole family F
+    zm = map_of(mem, e, formed, end, win, ids, rule=rule, n_need=nb)
     unknown = sum(1 for m in mem if m[e]["s"] == "unknown")
     none = sum(1 for m in mem if m[e]["s"] == "none")
     base = dict(algorithm_version=version, family_scope=snap["key"].get("scope", "weekday"), family_id=snap["family_id"],
                 snapshot_id=snap["snapshot_id"], event_id=e, N_family=N, n_residual_total=len(zm["residual"]),
                 unknown_count=unknown, no_event_count=none, min_support=zm["need"], study_refs=None if rule is not None else study_refs(snap["key"]["session"], e))
     # diagnostics on the whole map (once per event)
-    shifted = [map_of(mem, e, formed, end, win, ids, dk, dt, rule=rule) for dk, dt in SHIFTS]
+    shifted = [map_of(mem, e, formed, end, win, ids, dk, dt, rule=rule, n_need=nb) for dk, dt in SHIFTS]
     rng = np.random.default_rng(seed(snap["family_id"], snap["snapshot_id"], e, "bootstrap"))
-    boots = [map_of(mem, e, formed, end, win, ids, weights=rng.multinomial(N, np.full(N, 1 / N)), rule=rule) for _ in range(BOOT)] if N else []
+    boots = [map_of(mem, e, formed, end, win, ids, weights=rng.multinomial(N, np.full(N, 1 / N)), rule=rule, n_need=nb) for _ in range(BOOT)] if N else []
     older = mem[:N // 2]
-    disc = map_of(older, e, formed, end, win, ids[:N // 2], rule=rule) if len(older) else dict(zones=[])
+    disc = map_of(older, e, formed, end, win, ids[:N // 2], rule=rule, n_need=None if nb is None else nb // 2) if len(older) else dict(zones=[])
     newer = [m for m in mem[N // 2:] if m[e]["s"] == "known"]
     grid = np.array(snap["grid"])
     zones = []
