@@ -8051,7 +8051,7 @@
     if (!d) return '';
     const held = ['ALL', 'HELD', 'BROKEN', 'UNKNOWN'].some(k => d.pass[k].violation) ? '—' : null, cut = clk(d.cut);
     if (!d.D) return '<div class="p21-note" title="' + esc(lbl('EST:TP-DR-AT-DEPTH', 'title')) + '">' + lbl('EST:TP-DR-AT-DEPTH', 'none', { cut }) + '</div>';
-    const txt = held || lbl('EST:TP-DR-AT-DEPTH', 'row', { cut, u: sd(Math.floor(10 * d.u) / 10), D: d.D, held: d.held, broken: d.broken }) + (d.unknown ? lbl('EST:TP-DR-AT-DEPTH', 'row_unknown', { unknown: d.unknown }) : '');
+    const txt = held || lbl('EST:TP-DR-AT-DEPTH', 'row', { cut, u: sd(Math.round(100 * d.u) / 100), D: d.D, held: d.held, broken: d.broken }) + (d.unknown ? lbl('EST:TP-DR-AT-DEPTH', 'row_unknown', { unknown: d.unknown }) : '');
     const pct = held ? '—' : pct(100 * d.held / d.D);
     return '<div class="p21-h second"><span title="' + esc(lbl('EST:TP-DR-AT-DEPTH', 'title')) + '">' + txt + (d.D < 20 ? ' · ' + lbl('EST:TP-DR-AT-DEPTH', 'few', { n: d.D }) : '') + '</span><span>устоял ' + pct + '</span></div>';
   }
@@ -8399,7 +8399,7 @@
     // the continuation of the window's sessions: the time lines of their own top X (the ladder is on today's levels)
     const xl = tpLines(F).filter(L => L.ev === 'X'), xc = P.xc;
     if (P.w) {
-      const W = tp.windows[P.w], why = P.why === 'today' && P.today ? 'сегодня самая глубокая точка — ' + sd(Math.floor(10 * P.today.u) / 10) + ' SD в ' + clk(P.today.t) : P.why === 'pin' ? 'закреплено' : 'отката ещё не было';
+      const W = tp.windows[P.w], why = P.why === 'today' && P.today ? 'сегодня самая глубокая точка — ' + sd(Math.round(100 * P.today.u) / 100) + ' SD в ' + clk(P.today.t) : P.why === 'pin' ? 'закреплено' : 'отката ещё не было';
       out.push('<div class="p21-h second"><span title="Продолжение сессий с откатом ' + (W ? clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) : '') + ' (' + why + '): пучки времени вершин, их медиана и 70 %; на графике места вершины — подпись «дошли»: сколько сессий окна дошли до ближнего края; на колонке цены — уровни, до которых дошли 70 % и 50 %.">Продолжение · ' + TP_NAME[P.w] + ' · из сессий окна</span><span>доля окна</span></div>');
       out.push('<div class="p21-note">Продолжение сессий с откатом ' + (W ? clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) : '') + ' · ' + why + (F.N < 20 ? ' · мало сессий: n=' + F.N : '') + '</div>');
       if (xc) for (const u of xc.bunches) { const p = tpXShare(F, u.b0, u.b1); out.push(link({ k: 'tcell', ev: 'X', b0: u.b0, b1: u.b1, src: 'tpx' }, prow('пучок вершин ' + clk(F.f + 15 * u.b0) + '–' + clk(F.f + 15 * u.b1), ppTxt(p)), 'mc', p, plainTitle(p))); }
