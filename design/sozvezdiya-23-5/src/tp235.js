@@ -177,7 +177,8 @@
   // incomplete or before the first M5 after the activation
   function tpToday(F0, ctx, tp) {
     if (!ctx.D || ctx.obs == null) return null;
-    const rows = todayRows(F0, ctx), sl = sliceOf(ctx);
+    // only the M5 of the block: after its end nothing belongs to the session (the cut stops at the block end)
+    const sl = Math.min(sliceOf(ctx), F0.end), rows = todayRows(F0, ctx).filter(r => r.T <= sl);
     if (!rows.length || rows.length !== Math.max(0, (sl - F0.act0) / 5)) return null;
     let j = 0;
     for (let i = 1; i < rows.length; i++) if (rows[i].lo < rows[j].lo) j = i;
