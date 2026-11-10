@@ -124,7 +124,7 @@
   function tpXMarks(G) { const m = tpMarks(G.M, 'X', G.f); return { median: tpQuant(m.ts, 1, 2), p70: tpQuant(m.ts, 7, 10), known: m.ts.length, unknown: m.unknown, none: m.none, cells: m.cells }; }
   // one family of TP: its response checked like the family of the screen (snapOf), then built by the same buildSnap
   const TP_KEY = ['instrument', 'session', 'weekday', 'direction', 'event', 'window', 'cutoff', 'scope'];
-  function tpSnap(D, s, w, T, A) {
+  function tpSnap(D, s, w, T, Fb) {          // Fb: the family of the screen (never name it A: A is the page's state)
     const fk = tpKey(D, s, w), r = A.fams.get(fk);
     if (!r) { tpRequest(fk, s, w); return null; }
     if (r.status !== 'ok' || r.view !== 'conf' || (r.key.scope || 'weekday') !== st.scope || r.key.r_event !== 'R_BEFORE_X' || r.key.cohort !== 'HELD' ||
@@ -136,14 +136,14 @@
     }
     if (r._refused) return null;
     if (w && !T) return null;
-    if (!w && !A) return null;                                   // T's threshold is counted from N of the whole family
+    if (!w && !Fb) return null;                                  // T's threshold is counted from N of the whole family
     if (!r._F) {
-      const B = w ? T : A;
+      const B = w ? T : Fb;
       if (TP_KEY.some(k => JSON.stringify(r.key[k]) !== JSON.stringify(B.r.key[k]))) { r._refused = 'набор не из той же семьи'; kViolate(r._refused, null, r._ctx); return null; }
       const G = buildSnap(r, s, 'conf');
       G.req.view = 'conf' + (r.key.scope === 'all' ? ':all' : '') + tpFlags(w);
       G.tpw = w || null;
-      const NB = w ? T.tpc.n_base : A.N;                      // TP-2.0 §3: the mass threshold from N of the whole family
+      const NB = w ? T.tpc.n_base : Fb.N;                      // TP-2.0 §3: the mass threshold from N of the whole family
       if (w) { G.tpx = tpXMarks(G); G.tpxc = tpXClock(G, NB); } else G.tpc = tpClock(G, NB);   // T: its clock; T_W: the clock of its tops
       const bad = G.held.has('family') ? 'счёт страницы не совпал с пакетом сервера (' + G.mismatch.join(', ') + ')' : tpCheck(G, w, T) || (w ? tpXCheck(G) : null);
       if (bad) { r._refused = G.held.has('family') ? bad : 'страница пересчитала другое: ' + bad; kViolate(r._refused, null, r._ctx); return null; }
@@ -202,17 +202,17 @@
   // the family's sessions whose DR held and whose R before the top lies in the region (cells; null = open); part NO_R: DR
   // held, R before the top not determined. Verified by the server (lab/contract.py::ref_tp_mass) like any passport.
   function tpMass(F, o) {
-    const A = F._tp && F._tp.A;
-    if (!A) return { pct: null, N: 0, yes_count: 0, unknown_count: 0 };
+    const Fb = F._tp && F._tp.A;
+    if (!Fb) return { pct: null, N: 0, yes_count: 0, unknown_count: 0 };
     const inb = (x, lo, hi) => (lo == null || x >= lo) && (hi == null || x < hi), nb = o.not_bands || [];
     const part = o.part || 'KNOWN', params = { k0: o.k0 == null ? null : o.k0, k1: o.k1 == null ? null : o.k1, b0: o.b0 == null ? null : o.b0, b1: o.b1 == null ? null : o.b1, part, not_bands: nb };
-    const n = part === 'NO_R' ? A.M.filter(m => m.outcome === 'held' && m.R.s !== 'known').length
-      : A.ev.R.pts.filter(q => q.m.outcome === 'held' && inb(q.k, params.k0, params.k1) && inb(q.b, params.b0, params.b1) && !nb.some(z => q.k >= z[0] && q.k < z[1])).length;
-    const where = part === 'NO_R' ? '' : (params.b0 != null ? 'в ' + clk(A.f + 15 * params.b0) + '–' + clk(A.f + 15 * params.b1) : '') + (params.k0 != null ? ' · ' + band(params.k0, params.k1) + ' SD' : '') + (nb.length ? ' · вне мест' : '');
-    return pp(A, { estimand: 'EST:TP-MASS-R', params, event_id: 'R', region_kind: part === 'NO_R' ? 'unknown' : params.k0 != null ? 'joint' : 'time_band',
-      exact_price_bounds: params.k0 != null ? [params.k0, params.k1] : null, time_bounds: params.b0 != null ? [A.f + 15 * params.b0, A.f + 15 * params.b1] : null,
-      start_rule: A.from, end_rule: 'до ' + clk(A.end), yes_count: n, display_scope: 'tp',
-      phrase: lbl('EST:TP-MASS-R', part === 'NO_R' ? 'phrase_none' : 'phrase', { where }), horizon: hzOf(A) });
+    const n = part === 'NO_R' ? Fb.M.filter(m => m.outcome === 'held' && m.R.s !== 'known').length
+      : Fb.ev.R.pts.filter(q => q.m.outcome === 'held' && inb(q.k, params.k0, params.k1) && inb(q.b, params.b0, params.b1) && !nb.some(z => q.k >= z[0] && q.k < z[1])).length;
+    const where = part === 'NO_R' ? '' : (params.b0 != null ? 'в ' + clk(Fb.f + 15 * params.b0) + '–' + clk(Fb.f + 15 * params.b1) : '') + (params.k0 != null ? ' · ' + band(params.k0, params.k1) + ' SD' : '') + (nb.length ? ' · вне мест' : '');
+    return pp(Fb, { estimand: 'EST:TP-MASS-R', params, event_id: 'R', region_kind: part === 'NO_R' ? 'unknown' : params.k0 != null ? 'joint' : 'time_band',
+      exact_price_bounds: params.k0 != null ? [params.k0, params.k1] : null, time_bounds: params.b0 != null ? [Fb.f + 15 * params.b0, Fb.f + 15 * params.b1] : null,
+      start_rule: Fb.from, end_rule: 'до ' + clk(Fb.end), yes_count: n, display_scope: 'tp',
+      phrase: lbl('EST:TP-MASS-R', part === 'NO_R' ? 'phrase_none' : 'phrase', { where }), horizon: hzOf(Fb) });
   }
   // the share of a stretch of T's clock: the family's sessions whose DR held and whose R before the top was in it (TP-2.0
   // Ч2, Ч3); the same count as T's clock or the number is withheld
@@ -286,20 +286,20 @@
   // whole) and their deepest point against the activation up to the cut at today's or deeper (exact, integers);
   // EST:TP-DR-AT-DEPTH, one passport per category, re-derived by the server (lab/contract.py::ref_tp_depth_set)
   function tpDepth(F, ctx) {
-    const A = F._tp.A, today = F._tp.today;
-    if (!A || !today || !A.grid) return null;
-    const sl = today.sl, rt = today.lo, wt = A.w0t, set = [];
-    for (const m of A.M) {
+    const Fb = F._tp.A, today = F._tp.today;
+    if (!Fb || !today || !Fb.grid) return null;
+    const sl = today.sl, rt = today.lo, wt = Fb.w0t, set = [];
+    for (const m of Fb.M) {
       const pre = [];
-      for (let j = 0; j < A.grid.length; j++) if (A.grid[j] > m.act && A.grid[j] <= sl) pre.push(m.path[j]);
+      for (let j = 0; j < Fb.grid.length; j++) if (Fb.grid[j] > m.act && Fb.grid[j] <= sl) pre.push(m.path[j]);
       if (!pre.length || pre.some(q => q == null) || pre.some(q => q[2] < m.oppv)) continue;
       if (Math.min(...pre.map(q => q[0])) * wt <= rt * m.w) set.push(m);
     }
     const cnt = { HELD: set.filter(m => m.outcome === 'held').length, BROKEN: set.filter(m => m.outcome === 'broken').length, UNKNOWN: set.filter(m => m.outcome === 'unknown').length, ALL: set.length };
     const pass = {};
     for (const cat of ['ALL', 'HELD', 'BROKEN', 'UNKNOWN'])
-      pass[cat] = pp(A, { estimand: 'EST:TP-DR-AT-DEPTH', case_set: 'CS:TP-DEPTH-AT-CUT-1', params: { cut: sl, category: cat }, event_id: 'DR', region_kind: 'category', start_rule: A.from, end_rule: 'до ' + clk(A.end),
-        yes_count: cnt[cat], display_scope: 'panel', phrase: '', horizon: hzOf(A) });
+      pass[cat] = pp(Fb, { estimand: 'EST:TP-DR-AT-DEPTH', case_set: 'CS:TP-DEPTH-AT-CUT-1', params: { cut: sl, category: cat }, event_id: 'DR', region_kind: 'category', start_rule: Fb.from, end_rule: 'до ' + clk(Fb.end),
+        yes_count: cnt[cat], display_scope: 'panel', phrase: '', horizon: hzOf(Fb) });
     return { cut: sl, u: today.u, D: cnt.ALL, held: cnt.HELD, broken: cnt.BROKEN, unknown: cnt.UNKNOWN, pass };
   }
   function tpDepthRow(F, ctx) {
