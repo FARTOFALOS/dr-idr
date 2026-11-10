@@ -16,6 +16,7 @@ engine = None
 ROOT = Path(__file__).resolve().parent
 DATA_KIND = 'SYNTHETIC'
 INTEGRATION = False
+PASSIVE_LIVE_REFRESH = False
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -102,7 +103,8 @@ class Handler(SimpleHTTPRequestHandler):
             if url.path == '/api/health':
                 return self.json({'status':'ok','data_kind':DATA_KIND,'version':engine.VERSION,'integration':INTEGRATION,'workspace':str(ROOT.parent),
                                   'source_revision':START_SOURCE_REVISION,'current_source_revision':runtime_identity.current(),
-                                  'data_revision':START_DATA_REVISION,'current_data_revision':runtime_identity.data_revision()})
+                                  'data_revision':START_DATA_REVISION,'current_data_revision':runtime_identity.data_revision(),
+                                  'passive_live_refresh':PASSIVE_LIVE_REFRESH})
             if url.path == '/api/query':
                 return self.json(engine.query(params))
             if url.path == '/api/scene':
@@ -237,18 +239,26 @@ if __name__ == '__main__':
     parser.add_argument('--port', type=int, default=8767)
     parser.add_argument('--data', choices=['market', 'demo'], default='market')
     parser.add_argument('--integration',action='store_true')
+    parser.add_argument('--passive-live-refresh', action='store_true')
     args = parser.parse_args()
+    if args.passive_live_refresh and args.data != 'market':
+        parser.error('--passive-live-refresh requires market data')
     if args.integration and args.data != 'market':
         parser.error('--integration requires --data market; synthetic and market scenes stay separate')
     INTEGRATION = args.integration
+    PASSIVE_LIVE_REFRESH = args.passive_live_refresh
     engine = importlib.import_module('engine' if args.data == 'demo' else 'engine_market')
     DATA_KIND = 'SYNTHETIC' if args.data == 'demo' else 'MARKET'
     engine.initialize()
     server = ThreadingHTTPServer(('127.0.0.1',args.port),Handler)
+    if PASSIVE_LIVE_REFRESH:
+        import live
+        live.start_minute_refresh()
     print(f'DR Lab ready: http://127.0.0.1:{args.port} · {DATA_KIND}',flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         pass
     finally:
+        if PASSIVE_LIVE_REFRESH: live.stop_minute_refresh()
         server.server_close()

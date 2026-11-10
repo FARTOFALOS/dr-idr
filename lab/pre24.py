@@ -79,7 +79,7 @@ def pre(inst, session, at=None, date=None, scope="weekday"):
     return contract.attach_pre(out, inst, B, day, dict(instrument=inst, session=session, at=at, date=date, scope=scope))
 
 
-def _pre(inst, session, at=None, date=None, scope="weekday"):
+def _pre(inst, session, at=None, date=None, scope="weekday", r_before_x=False):
     if inst not in scene21.live.SYMBOLS: raise ValueError("Unknown instrument")
     if session not in SESS: raise ValueError("Unknown session")
     if scope not in scene24.SCOPES: raise ValueError("scope: weekday | all")
@@ -111,6 +111,8 @@ def _pre(inst, session, at=None, date=None, scope="weekday"):
     src = scene24.source_version(inst, B)
     key = dict(instrument=inst, session=session, weekday=day["weekday"], scope=scope, cutoff=day["date"], cut=cut, box=s["box"],
                models=[bool(models_t[0]), bool(models_t[1])], pos=[a_t, w_t], band=list(BAND))
+    # screen 23.5 (operator 29.10): R is the pullback before the session's extreme (lab/scene24.py, module note)
+    if r_before_x: key["r_event"] = scene24.R_BEFORE_X
     ck = json.dumps([key, src["built"]], sort_keys=True)
     snap = _SNAP.get(ck)
     if snap is None:
@@ -155,7 +157,7 @@ def _snapshot(inst, B, key, models_t, src):
         if first in SIDES:
             d = 1 if first == "LONG" else -1
             e = m["idr_high"] if d == 1 else m["idr_low"]
-            ev = scene24.measure(rows, conf, end, d, e, d * ((m["dr_low"] if d == 1 else m["dr_high"]) - e))
+            ev = scene24.measure(rows, conf, end, d, e, d * ((m["dr_low"] if d == 1 else m["dr_high"]) - e), key.get("r_event") == scene24.R_BEFORE_X)
             rec.update(R=ev["R"], X=ev["X"], outcome=ev["outcome"])
         members.append(rec)
     members.sort(key=lambda r: r["date"])

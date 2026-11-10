@@ -45,7 +45,7 @@ try {
   for (const [inst, sess, date, at] of scenes) {
     const tag = `${inst} ${sess} ${date} ${at}`;
     await b.cdp.send('Page.navigate', { url: 'about:blank' });
-    await b.cdp.send('Page.navigate', { url: `${base}/23-5/#date=${date}&inst=${inst}&session=${sess}&at=${at}` });
+    await b.cdp.send('Page.navigate', { url: `${base}/23-5/#date=${date}&inst=${inst}&session=${sess}&at=${at}&tp=0` });
     await ready();
     const s = await evaluate(b.cdp, async SIGsrc => {
       const SIG = eval('(' + SIGsrc + ')');

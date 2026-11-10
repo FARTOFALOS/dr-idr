@@ -8,7 +8,7 @@ const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const ck=(ok,name)=>{if(!ok)throw Error(name);checks.push(name);console.log('PASS '+name);};
 b.cdp.on('Runtime.exceptionThrown',e=>errors.push(e.exceptionDetails.exception?.description||e.exceptionDetails.text));
 await b.cdp.send('Page.addScriptToEvaluateOnNewDocument',{source:`window.__arcs=[];const original=CanvasRenderingContext2D.prototype.arc;CanvasRenderingContext2D.prototype.arc=function(...p){if(this.canvas.id==='cv')window.__arcs.push(p);return original.apply(this,p);};`});
-const fragment='#date=2025-12-17&inst=NQ&session=RDR&at=11:10';
+const fragment='#date=2025-12-17&inst=NQ&session=RDR&at=11:10&tp=0';
 async function ready(){
  for(let i=0;i<400;i++){
   const s=await evaluate(b.cdp,()=>{const d=window.__d24,p=d?.pullbacks?.();return {ready:!!d?.timeSd?.().data&&p&&!p.pending&&d.V.projBars?.length&&!d.contract().unchecked,error:p?.error};});
@@ -81,7 +81,7 @@ try{
   const errs=await evaluate(b.cdp,()=>window.__d24.contract().violations);ck(!errs.length,width+': no accepted-contract mismatch after interactions');
  }
  for(const scene of [['ES','ODR','2025-11-12','05:00'],['YM','ADR','2025-10-08','22:00'],['NQ','RDR','2025-12-10','14:30'],['NQ','RDR','2025-12-17','11:10','all']]){
-  const [inst,session,date,at,scope='weekday']=scene;await open(base+`/23-5/#inst=${inst}&session=${session}&date=${date}&at=${at}&scope=${scope}`);
+  const [inst,session,date,at,scope='weekday']=scene;await open(base+`/23-5/#inst=${inst}&session=${session}&date=${date}&at=${at}&scope=${scope}&tp=0`);
   const s=await evaluate(b.cdp,()=>{const d=window.__d24,t=d.timeSd().data;return {ok:['R','X'].every(e=>t.maps[e].cores.every(z=>z.b1-z.b0===1&&z.k1-z.k0===3)),error:d.pullbacks().error,violations:d.contract().violations};});
   ck(s.ok&&!s.error&&!s.violations.length,scene.join(' ')+': same finite geometry and contract in another frame');
  }

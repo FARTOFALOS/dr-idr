@@ -1,9 +1,8 @@
 ﻿# DR Lab: one-click start for the operator (the desktop shortcut "DR Lab" points to start-dr-lab.cmd).
 # 1) TradingView Desktop with the debugging port 9222 (live candles), 2) the history base (built once),
 # 3) the local server on 127.0.0.1:8767 (hidden, logs in lab/.runtime), 4) the page.
-# Idempotent: a running server of the current build and a TradingView with the port are left as is. A TradingView
-# opened without the port (its own icon, Windows autostart) is restarted with it, as before 2026-10-15: the live
-# candles need the port (operator 2026-10-19). -HistoryOnly never touches TradingView (agents' checks).
+# Idempotent: a current server and a TradingView with the port are left as is. Existing TradingView without the
+# candle channel is left intact too (operator 2026-11-06). -HistoryOnly never touches TradingView.
 # Everything stays on this computer.
 # The root / opens the main screen, 23.5 since 2026-10-27 (the server redirects / to /23-5/); screen 24 is at /24/ (the
 # main screen from 2026-10-01 night to 2026-10-27), design 22 at /22/. -Page 24/ opens screen 24 directly (the shortcut
@@ -40,12 +39,10 @@ if ($HistoryOnly) {
     Write-Host '  [ok] TradingView уже запущен с каналом для свечей'
 } elseif (-not (Test-Path $tvCli)) {
     Write-Host "  [!] Не найден tradingview-mcp ($mcp): живое окно работать не будет, история работает" -ForegroundColor Yellow
+} elseif (Get-Process TradingView -ErrorAction SilentlyContinue) {
+    Write-Host '  [!] TradingView открыт без канала свечей. Оставляю его без изменений; живые данные пока недоступны' -ForegroundColor Yellow
 } else {
-    if (Get-Process TradingView -ErrorAction SilentlyContinue) {
-        Write-Host '  [..] TradingView открыт без канала для свечей: перезапускаю его с каналом (окно откроется заново)'
-    } else {
-        Write-Host '  [..] Запускаю TradingView с каналом для свечей'
-    }
+    Write-Host '  [..] Запускаю TradingView с каналом для свечей'
     & node $tvCli launch | Out-Null
     $ready = $false
     for ($i = 0; $i -lt 60; $i++) {
@@ -85,7 +82,7 @@ $taskHealth = $null
 try { $taskHealth = Invoke-RestMethod 'http://127.0.0.1:8767/api/health' -TimeoutSec 3 } catch {}
 $taskExpectedRevision = & $python -B (Join-Path $lab 'runtime_identity.py')
 if ($taskHealth -and $taskHealth.workspace -and [IO.Path]::GetFullPath($taskHealth.workspace) -ne [IO.Path]::GetFullPath($root)) { Fail 'Порт 8767 занят другой рабочей копией' }
-if ($taskHealth -and ($taskHealth.source_revision -ne $taskExpectedRevision -or $taskHealth.data_revision -ne $taskHealth.current_data_revision -or -not $taskHealth.integration)) {
+if ($taskHealth -and ($taskHealth.source_revision -ne $taskExpectedRevision -or $taskHealth.data_revision -ne $taskHealth.current_data_revision -or -not $taskHealth.integration -or (-not $HistoryOnly -and -not $taskHealth.passive_live_refresh))) {
     $taskOwners = @(Get-NetTCPConnection -LocalPort 8767 -State Listen | Select-Object -ExpandProperty OwningProcess -Unique)
     foreach ($taskOwner in $taskOwners) {
         $taskProcess = Get-CimInstance Win32_Process -Filter "ProcessId = $taskOwner"
@@ -104,7 +101,9 @@ if ($taskHealth) {
     }
     if (@(Get-NetTCPConnection -LocalPort 8767 -State Listen -ErrorAction SilentlyContinue).Count) { Fail 'Порт 8767 занят, но сервер не ответил. Второй процесс не запущен.' }
     New-Item -ItemType Directory -Force -Path $runtime | Out-Null
-    Start-Process -FilePath $python -ArgumentList '-B', 'server.py', '--integration' -WorkingDirectory $lab -WindowStyle Hidden `
+    $serverArgs = @('-B', 'server.py', '--integration')
+    if (-not $HistoryOnly) { $serverArgs += '--passive-live-refresh' }
+    Start-Process -FilePath $python -ArgumentList $serverArgs -WorkingDirectory $lab -WindowStyle Hidden `
         -RedirectStandardOutput (Join-Path $runtime 'server.out.log') -RedirectStandardError (Join-Path $runtime 'server.err.log')
     $ok = $false
     for ($i = 0; $i -lt 60; $i++) { Start-Sleep -Seconds 1; if (Test-Url 'http://127.0.0.1:8767/api/health') { $ok = $true; break } }
