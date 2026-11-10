@@ -157,7 +157,8 @@
     if (!F0) return null;
     const T = tpSnap(D, s, null, null, F0);
     if (!T) return null;
-    const tp = T.tpc, h = st.hover, has = w => !!(w && tp.windows[w]);
+    // a window is shown only with sessions in it (a window of the clock may hold none: a tiny family, today's point late)
+    const tp = T.tpc, h = st.hover, has = w => !!(w && tp.windows[w] && tpCount(tp, tp.windows[w][0], tp.windows[w][1]));
     for (const w of TP_WINDOWS) if (has(w)) tpSnap(D, s, w, T);            // every window's family at once: a hover switches without waiting
     // TP-2.0 §6.3: a pinned window; else the window of today's deepest point so far (it becomes the pullback before the
     // top if the move makes a new top); else W1
@@ -191,6 +192,7 @@
     if (!rT) return 'Собираю true-сессии семьи…';
     if (rT.status !== 'ok') return (rT.message || rT.status) + '';
     if (rT._refused) return 'Числа не публикуются: ' + rT._refused;
+    if (!rT.N) return 'Ни у одной сессии семьи DR не устоял до конца: часов отката и мест нет.';
     const w = TP.last || 'W1', rW = A.fams.get(tpKey(ctx.D, s, w));
     if (!rW) return 'Собираю сессии окна ' + TP_NAME[w] + '…';
     if (rW.status !== 'ok') return (rW.message || rW.status) + '';
