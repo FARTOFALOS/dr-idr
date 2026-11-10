@@ -25,6 +25,7 @@
 // never used).
 (function () {
   'use strict';
+  const LBLC1 = { on: false };     // DR-LAB-TP-2.0: labels of the C1 twin forms while the screen family is a TP set (lbl)
   // One-time migration from the old worktree view on its original port. Never writes screen 24's keys.
   if(location.port==='8735')try{for(const key of Object.keys(localStorage))if(key.startsWith('drlab.d24.')){const to=key.replace('drlab.d24.','drlab.d235.');if(localStorage.getItem(to)==null)localStorage.setItem(to,localStorage.getItem(key));}}catch(e){/* optional local preferences */}
 
@@ -3704,7 +3705,6 @@
   }
   const VW = F => F && F.brk ? 'BRK' : 'CONF';
   // the registered words: a claim form (by its estimand, EST:…) or a fact form (FF:…), one key, the view's variant if any
-  const LBLC1 = { on: false };
   function lbl(id, key, vars, view) {
     // DR-LAB-TP-2.0 §7: while the screen family is a TP set (T or T_W, a subgroup chosen by its own future) a base
     // estimand speaks in the words of its C1 twin (SC11.cforms): «этих сессий», never «семьи»
