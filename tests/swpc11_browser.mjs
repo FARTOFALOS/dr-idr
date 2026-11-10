@@ -329,7 +329,7 @@ const S = {
   // its family context, and a binding of §9 found by its exact id (no similar name gets a presentation)
   async m01(B) {
     const routes = swpcRoutes();
-    check('M01', Object.keys(routes).filter(k => k.startsWith('EST:')).length === 53 && Object.keys(routes).filter(k => k.startsWith('FF:')).length === 8,
+    check('M01', Object.keys(routes).filter(k => k.startsWith('EST:') && !k.startsWith('EST:TP-')).length === 53 && Object.keys(routes).filter(k => k.startsWith('FF:')).length === 8,
       '§9 of the document routes 53 estimands and 8 fact forms (read from the document)', Object.keys(routes).length);
     await open(B, DAY + '&at=11:40');
     const r = await evaluate(B.cdp, async () => {
