@@ -1,6 +1,25 @@
 # DR IDR — entry for agents
 
-## Screen 23.5 · 2026-11-04: the semantic core TP-1.4 (code and flags say tp-1.1; supersedes the table of 27–30.10 for the confirmation family)
+## Screen 23.5 · 2026-11-10: TP-2.0 (operator accepted; supersedes TP-1.4 where they differ)
+
+**Start here.** The meaning and the engineer's map: [meaning/25-tp-2-0-specifikaciya.md](meaning/25-tp-2-0-specifikaciya.md)
+(§2 ontology, §3 parameters, §4 every number with its set and denominator, §5 facets, §6 the exact screen words, §13 how
+it is implemented, §14 where each piece lives and the rules not to break). Changes against the 1.4 section below:
+- an amber number (bunch, window, place of R, «вне мест», «без отката до вершины») is a share of the WHOLE family N —
+  `EST:TP-MASS-R` on the family of the screen; the share inside a window is shown only in the inspector;
+- a bunch or place exists only with at least max(4, ceil(0.05 N)) sessions, N of the whole family (`tp-bands-4`, clock
+  `tp-2.0`; server `tp11`, contract reference and page alike);
+- a blue place reads «X1 · дошли P %» at rest (reach from its near edge); the price column marks the levels 70 % and
+  50 % of the window reached; «кончили здесь» only in the inspector;
+- the window on screen: a pinned one, else the window of today's deepest point after the confirmation (within the
+  block), else W1; a window without sessions is never on screen;
+- the panel's first row: how the DR ended for the family's sessions that by this clock had gone as deep
+  (`EST:TP-DR-AT-DEPTH` on `CS:TP-DEPTH-AT-CUT-1`);
+- T and T_W are named in the contract as what they are: `CS:TP-TRUE-1`, `CS:TP-WINDOW-1` (OUTCOME_SUBGROUP, C1 only;
+  the base estimands speak there through their C1 twins `CF:TP-…`, `contract/registry/45-claims-tp.yaml`). The
+  accepted registry has 55 estimands (53 of SC-1.1 + 2 of TP-2.0).
+
+## HISTORY where TP-2.0 differs · Screen 23.5 · 2026-11-04: the semantic core TP-1.4 (code and flags say tp-1.1; supersedes the table of 27–30.10 for the confirmation family)
 
 **Start here.** The meaning is [meaning/23-tp-smyslovoe-yadro.md](meaning/23-tp-smyslovoe-yadro.md) (DR-LAB-TP-1.4, the
 author's Time & Price on true sessions; operator 02–04.11); how it is built is [DR-LAB-23-5-TP](docs/DR-LAB-23-5-TP.md).

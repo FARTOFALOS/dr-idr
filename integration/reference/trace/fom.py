@@ -93,7 +93,7 @@ def ancestors(g, start):
 
 def facets(st):
     reg=registry_objects(st)
-    forms={f['estimand']:f for f in st['reg']['claim_forms']}
+    forms={f['estimand']:f for f in st['reg']['claim_forms'] if not f['id'].startswith('CF:TP-')}   # the base form; C1 twins on the TP sets: 45-claims-tp.yaml
     bindings=defaultdict(set)
     for b in records(st,'bindings'):
         if b.get('estimand'): bindings[b['estimand']].add(b['binding'])
