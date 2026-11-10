@@ -904,7 +904,11 @@
     const D = day(), obs = st.rp != null ? st.rp : NOW, live = st.rp == null;
     // DR-LAB-TP-1.1 (tp235.js, operator 03.11): the confirmation family shows T and its window's sessions; the break family
     // and '#tp=0' keep the table of 30.10 (matrix235.js: the numbers from the table, reset 27.10)
-    const s = sess(D, st.session, obs, live), F0 = snapOf(D, s), F = tpOn() && F0 && !F0.brk ? tpView(D, s, F0, { live, obs }) : mxView(F0);
+    // the base family is built in the family's own words; T and T_W (tpView) in the C1 words of their sets (lbl)
+    LBLC1.on = false;
+    const s = sess(D, st.session, obs, live), F0 = snapOf(D, s), tp = tpOn() && F0 && !F0.brk;
+    LBLC1.on = !!tp;
+    const F = tp ? tpView(D, s, F0, { live, obs }) : mxView(F0);
     LBLC1.on = !!(F && F._tp);
     return { D, obs, live, s, F };
   }

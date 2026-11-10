@@ -2153,13 +2153,16 @@ def finalize(route, body):
 # =====================================================================================================================
 def ref_tp_mass(M, formed, a):
     """EST:TP-MASS-R (DR-LAB-TP-2.0 §4): the sessions of the whole family whose DR held and whose R (screen 23.5: the R
-    before the top) is KNOWN in the region [k0, k1) x [b0, b1) (a None bound is open), or, part NO_R, whose DR held and
+    before the top) is KNOWN in the region [k0, k1) x [b0, b1) (a None bound is open) and outside the bands not_bands, or,
+    part NO_R, whose DR held and
     whose R is not KNOWN. One vote per session; a session with an unknown DR outcome is not counted and stays in N."""
     inb = lambda x, lo, hi: (lo is None or x >= lo) and (hi is None or x < hi)
     if a.get("part", "KNOWN") == "NO_R":
         return sum(1 for m in M if m.get("outcome") == "held" and m["R"]["s"] != "known")
+    out = lambda k: any(lo <= k < hi for lo, hi in (a.get("not_bands") or []))       # «вне мест»: the window minus its places
     return sum(1 for m in M if m.get("outcome") == "held" and m["R"]["s"] == "known"
-               and inb(ref_cell(m["R"]["v"], m["w"]), a.get("k0"), a.get("k1")) and inb((m["R"]["t"] - formed) // 15, a.get("b0"), a.get("b1")))
+               and inb(ref_cell(m["R"]["v"], m["w"]), a.get("k0"), a.get("k1")) and inb((m["R"]["t"] - formed) // 15, a.get("b0"), a.get("b1"))
+               and not out(ref_cell(m["R"]["v"], m["w"])))
 
 
 def ref_tp_depth_set(fam, bars, tick, cut):

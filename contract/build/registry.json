@@ -8785,10 +8785,15 @@
       "meaning_ru": "KNOWN — откат в области; NO_R — DR устоял, откат до вершины не определён",
       "name": "part",
       "parameter_kind": "CATEGORY"
+     },
+     {
+      "meaning_ru": "полосы [k0, k1), исключённые из области (строка «вне мест» окна); пустой список — без исключений",
+      "name": "not_bands",
+      "parameter_kind": "PRICE_BAND_CELLS"
      }
     ],
     "profile": "PROFILE:BASE-24",
-    "q1_formalised_part_ru": "доля всей семьи (N), у которой DR устоял и откат до вершины лежит в полосе [k0/10; k1/10) и в окне [b0; b1) (пустая граница — без ограничения); part NO_R — DR устоял, а откат до вершины не определён",
+    "q1_formalised_part_ru": "доля всей семьи (N), у которой DR устоял и откат до вершины лежит в полосе [k0/10; k1/10) и в окне [b0; b1) (пустая граница — без ограничения), вне полос not_bands; part NO_R — DR устоял, а откат до вершины не определён",
     "q2_target": "FIXED_HISTORICAL_SET",
     "q3_unit": "SESSION",
     "q4_case_set": [
@@ -12926,7 +12931,7 @@
   "document_sha256_lf": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b",
   "edition": "DR-LAB-SC-1.1",
   "linkml": "1.12.1",
-  "registry_sha256": "0ad51fddaecebc42de846bf6319546b1057ce762b03f1fefbcfa1f528d33d9a7",
+  "registry_sha256": "fc9831da55bdcb2dd477f68bacdcca661a0c0e997e123474cd23117ad7999dbd",
   "runtime_spec_sha256": "9795540070e3c2d2e04f06013481334397c5afe792f18fcb11f9417237d533b7",
   "schema_sha256_lf": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
   "sources": {
@@ -12934,7 +12939,7 @@
    "contract/registry/10-observation-strategy-measurement.yaml": "2155cdd6dd659aad58c6c4bb5a218e037a5bac51bb0420cca9c19bce2b72fd29",
    "contract/registry/20-cases-outcomes.yaml": "1a8744c10aa763f21b0e7c419bf7b889388a801b6a4a9fcdd6024d6a674a7d69",
    "contract/registry/30-questions-estimands.yaml": "8d8dcd4f9f26089732060594372096a884cf96d1ba98f4147b569e340c0173a0",
-   "contract/registry/35-tp-2.yaml": "ddcd7830f2ac1dcd3337923e251285ba232c00ca2a816d9eee32965da4be18c5",
+   "contract/registry/35-tp-2.yaml": "dc68e4d30ba4485eb3a92eeb428e8cea735f1546da1ecd0fcf331026dc6b9211",
    "contract/registry/40-claims.yaml": "392b75a5463f8d29a7938b6b79f2f1f10d8b0ef48df4589e39a1408091db2490",
    "contract/registry/45-claims-tp.yaml": "040d87bef97116e8051ca098b2bd44b57c441a8ea305bc1dc39b9b5944ba1486",
    "contract/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",

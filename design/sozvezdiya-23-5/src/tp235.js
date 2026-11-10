@@ -279,7 +279,6 @@
       c.font = '700 9.5px ' + FONT; c.textBaseline = 'bottom'; c.fillStyle = rgba(cfg.X, 0.95);
       const t = 'дошли ' + L.q + ' % · ' + sd(L.k / 10);
       c.fillText(t, A_.x + A_.w - c.measureText(t).width - 6, y - 1);
-      V.projLbl.push({ ev: 'X', k: L.k, est: L.p.estimand, yes: L.p.yes_count, N: L.p.N, reach: L.q });
     }
   }
   // ---------- TP-2.0 Ч13: how the DR ended for the family's sessions that by this clock had gone as deep ----------

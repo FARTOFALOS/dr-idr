@@ -2177,7 +2177,8 @@
     "k1",
     "b0",
     "b1",
-    "part"
+    "part",
+    "not_bands"
    ],
    "profile": "PROFILE:BASE-24",
    "q4": [
@@ -3653,7 +3654,7 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "0ad51fddaecebc42"
+ "registry_hash": "fc9831da55bdcb2d"
 };
   // A violation belongs to the scene it was found in (DR-LAB-SWPC-1.1 M16): a passport's snapshot, one family response or
   // one NOW response (each its own number: a new answer to the same request starts clean), or the page itself ('*': a page without its registry,
@@ -3946,7 +3947,11 @@
     const D = day(), obs = st.rp != null ? st.rp : NOW, live = st.rp == null;
     // DR-LAB-TP-1.1 (tp235.js, operator 03.11): the confirmation family shows T and its window's sessions; the break family
     // and '#tp=0' keep the table of 30.10 (matrix235.js: the numbers from the table, reset 27.10)
-    const s = sess(D, st.session, obs, live), F0 = snapOf(D, s), F = tpOn() && F0 && !F0.brk ? tpView(D, s, F0, { live, obs }) : mxView(F0);
+    // the base family is built in the family's own words; T and T_W (tpView) in the C1 words of their sets (lbl)
+    LBLC1.on = false;
+    const s = sess(D, st.session, obs, live), F0 = snapOf(D, s), tp = tpOn() && F0 && !F0.brk;
+    LBLC1.on = !!tp;
+    const F = tp ? tpView(D, s, F0, { live, obs }) : mxView(F0);
     LBLC1.on = !!(F && F._tp);
     return { D, obs, live, s, F };
   }
@@ -8018,7 +8023,6 @@
       c.font = '700 9.5px ' + FONT; c.textBaseline = 'bottom'; c.fillStyle = rgba(cfg.X, 0.95);
       const t = 'дошли ' + L.q + ' % · ' + sd(L.k / 10);
       c.fillText(t, A_.x + A_.w - c.measureText(t).width - 6, y - 1);
-      V.projLbl.push({ ev: 'X', k: L.k, est: L.p.estimand, yes: L.p.yes_count, N: L.p.N, reach: L.q });
     }
   }
   // ---------- TP-2.0 Ч13: how the DR ended for the family's sessions that by this clock had gone as deep ----------

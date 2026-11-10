@@ -1562,7 +1562,8 @@
     "k1",
     "b0",
     "b1",
-    "part"
+    "part",
+    "not_bands"
    ],
    "profile": "PROFILE:BASE-24",
    "q4": [
@@ -3038,5 +3039,5 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "0ad51fddaecebc42"
+ "registry_hash": "fc9831da55bdcb2d"
 }
