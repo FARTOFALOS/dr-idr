@@ -276,7 +276,23 @@
       if (b.c > res.drH) { conf = { t: b.t + 5, side: 1 }; break; }
       if (b.c < res.drL) { conf = { t: b.t + 5, side: -1 }; break; }
     }
-    if (!conf) { res.status = obs >= S.end ? 'noconf' : 'waiting'; return (D.S[key] = res); }
+    const taken = (sd_, edge, from, to) => {
+      const out = [];
+      for (const j of STD_STEPS) {
+        const L = edge + sd_ * j * w / 2, b = inSess.find(q => q.t + 5 > from && q.t + 5 <= to && (sd_ === 1 ? q.h >= L : q.l <= L));
+        if (!b) { out.push({ j, t: null, name: stepName(j, sd_ === 1) }); break; }
+        out.push({ j, t: b.t + 5, name: stepName(j, sd_ === 1) });
+      }
+      return out;
+    };
+    // operator 11.11: the grid stands from the end of the box hour, oriented by the box colour (green: the levels up,
+    // red: down); the confirmation only settles the side (gridSide). A flat box keeps both sides.
+    res.bside = res.close > res.open ? 1 : res.close < res.open ? -1 : 0;
+    if (!conf) {
+      res.status = obs >= S.end ? 'noconf' : 'waiting';
+      if (res.bside) res.taken = taken(res.bside, res.bside === 1 ? res.idrH : res.idrL, S.formed, lim);
+      return (D.S[key] = res);
+    }
     const side = conf.side;
     Object.assign(res, { conf: conf.t, side, edge: side === 1 ? res.idrH : res.idrL, opp: side === 1 ? res.drL : res.drH });
     res.coord = v => side * (v - res.edge) / w;
@@ -297,15 +313,6 @@
       if (hi > far) { far = hi; fart = b.t + 5; }
     }
     if (fart != null) Object.assign(res, { farSoFar: far, farT: fart, farP: res.price(far) });
-    const taken = (sd_, edge, from, to) => {
-      const out = [];
-      for (const j of STD_STEPS) {
-        const L = edge + sd_ * j * w / 2, b = inSess.find(q => q.t + 5 > from && q.t + 5 <= to && (sd_ === 1 ? q.h >= L : q.l <= L));
-        if (!b) { out.push({ j, t: null, name: stepName(j, sd_ === 1) }); break; }
-        out.push({ j, t: b.t + 5, name: stepName(j, sd_ === 1) });
-      }
-      return out;
-    };
     res.taken = taken(side, res.edge, conf.t, res.failed || lim);
     if (res.failed) {
       res.nside = -side; res.nedge = side === 1 ? res.idrL : res.idrH;
@@ -333,6 +340,8 @@
   }
   // the side in play: the confirmation's, after a break the break's, none before the confirmation
   const playSide = s => (s.status === 'broken' || (s.status === 'done' && s.failed) ? s.nside : s.side) || 0;
+  // the side of the STD grid: the side in play once confirmed, before that the box colour's (operator 11.11)
+  const gridSide = s => playSide(s) || (s.status === 'waiting' || s.status === 'noconf' ? s.bside || 0 : 0);
   // operator 2026-10-06: an STD level is shown only while it is valid, on the side in play (both sides before the
   // confirmation); the levels against it (−0,5, −1 … for a long) are not drawn, named or hoverable
   // operator 2026-10-06: today's DR / IDR take the colour of the side in play (green for a long, red for a short, the
@@ -343,12 +352,12 @@
   // the confirmation (or the break), no longer a question: quiet round dots (not dashes, which are IDR's); 'next' — the
   // first one not reached yet, the trader's question «will it get there?»: the strongest; 'far' — the ones beyond it
   function stdState(s, l) {
-    const p = playSide(s);
+    const p = gridSide(s);
     if (l.type !== 'std' || !p || l.dir !== p) return 'plain';
     const e = ((s.failed ? s.takenN : s.taken) || []).find(z => z.j === l.j);
     return e && e.t ? 'taken' : e ? 'next' : 'far';
   }
-  const stdShown = (s, l) => l.type !== 'std' || (st.L.std && (!playSide(s) || l.dir === playSide(s)));
+  const stdShown = (s, l) => l.type !== 'std' || (st.L.std && (!gridSide(s) || l.dir === gridSide(s)));
   function where(s, p) {
     const L = levels(s).filter(l => l.type !== 'open').sort((a, b) => a.p - b.p), w = s.idrH - s.idrL;
     let best = null;
@@ -1275,7 +1284,7 @@
     if (s.drH == null) return;
     const x0 = V.X(s.start), x1 = V.plot.w, h = hv();
     if (x1 <= x0) return;
-    const play = s.status === 'broken' || (s.status === 'done' && s.failed) ? s.nside : s.side || 0;
+    const play = gridSide(s);
     const line = (p, col, a, w, dash) => { const y = Math.round(V.Y(p)) + 0.5; c.strokeStyle = rgba(col, a); c.lineWidth = w; c.setLineDash(dash); c.beginPath(); c.moveTo(Math.max(x0, 0), y); c.lineTo(x1, y); c.stroke(); c.setLineDash([]); };
     for (const l of levels(s)) {
       const on = h && h.k === 'lvl' && h.id === l.id;
@@ -2227,7 +2236,7 @@
   function drawTags(c, ctx) {
     const items = [], s = ctx.s, xr = V.plot.w - 6;
     if (s.drH != null) {
-      const play = s.status === 'broken' ? s.nside : s.side || 0;
+      const play = gridSide(s);
       for (const l of levels(s)) {
         if (l.type === 'std' && !stdShown(s, l)) continue;   // every drawn line is named (operator 2026-10-06)
         // today's DR / IDR named on their own lines, not as wide tags on the price scale (operator 2026-10-06)
