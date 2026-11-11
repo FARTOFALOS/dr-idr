@@ -208,6 +208,8 @@ def main(write):
     check(set(M) <= {m for v in B.values() for m in v["m"]} | {"M01", "M18"}, "every M is the check of some binding (M01 and M18 are general)")
     print("§9 against the compiled SC-1.1 registry and the page")
     est, ff = {k for k in ROUTES if k.startswith("EST:")}, {k for k in ROUTES if k.startswith("FF:")}
+    # the estimands of screen 23.5 only (EST:TP-*, DR-LAB-TP-2.0, operator 10.11.2026) are not routed by screen 24's §9
+    page = dict(page, estimands={k: v for k, v in page["estimands"].items() if not k.startswith("EST:TP-")})
     check(est == set(page["estimands"]) and len(est) == 53, f"§9 routes exactly the {len(page['estimands'])} estimands of the registry by exact ids{': ' + str(sorted(est ^ set(page['estimands']))) if est != set(page['estimands']) else ''}")
     check(ff == set(page["facts"]) and len(ff) == 8, f"§9 routes exactly the {len(page['facts'])} fact forms{': ' + str(sorted(ff ^ set(page['facts']))) if ff != set(page['facts']) else ''}")
     check(all(set(v) <= set(B) for v in ROUTES.values()), "every route names existing bindings")

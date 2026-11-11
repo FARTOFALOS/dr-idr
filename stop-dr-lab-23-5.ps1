@@ -6,5 +6,7 @@ if (-not $health) { Write-Host '  Сервер 23.5 не запущен'; exit 0
 if (-not $health.workspace -or [IO.Path]::GetFullPath($health.workspace) -ne [IO.Path]::GetFullPath($PSScriptRoot)) {
     Write-Host '  На 8735 другая рабочая копия; она не остановлена'; exit 1
 }
-Get-NetTCPConnection -LocalPort 8735 -State Listen | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ }
+# by its command line: Windows may report the socket's owner as PID 0
+Get-CimInstance Win32_Process -Filter "Name LIKE 'python%'" | Where-Object { $_.CommandLine -match 'server\.py' -and $_.CommandLine -match '--port\s+8735(\s|$)' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+Get-NetTCPConnection -LocalPort 8735 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | Where-Object { $_ -gt 4 } | ForEach-Object { $q = Get-CimInstance Win32_Process -Filter "ProcessId = $_"; if ($q -and $q.Name -match '^python') { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue } }
 Write-Host '  Сервер 23.5 остановлен'

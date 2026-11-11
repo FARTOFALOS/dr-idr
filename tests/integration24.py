@@ -18,7 +18,7 @@ def scene(cut,date='2025-12-10',scope='all',view='auto',trials=('pre','arrive'))
     return I.scene('NQ','RDR',cut,date,view,scope,trials)
 
 def main():
-    check(C.EDITION=='DR-LAB-SC-1.1' and len(C.registry()['estimands'])==53,'normal contract is the accepted 53-estimand edition')
+    check(C.EDITION=='DR-LAB-SC-1.1' and len(C.registry()['estimands'])==55,'normal contract is the accepted edition: 53 estimands + 2 of TP-2.0 (operator 10.11)')
     g=I.review_gate()
     ed=next(e for e in g.registry()['editions'] if e['id']==g.EDITION)
     check(g is not C and ed['edition_status']=='PROPOSED' and not ed.get('acceptances') and len([e for e in g.registry()['estimands'] if not e['id'].startswith(('EST:PB-','EST:TS-'))])==60,'candidate gate preserves the original continuation set separately from later PB/TS; no acceptance is inferred')

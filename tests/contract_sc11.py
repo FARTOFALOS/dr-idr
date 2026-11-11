@@ -540,7 +540,7 @@ def k32():
           "K32 future guard: generic admission / policy / authority records cannot silently open C2 or C3 in SC-1.1")
 
     real = C.claim_form_of
-    C.claim_form_of = lambda e: dict(real(e), claim_class="DecisionClaim", id="CF:FORGED") if e == "EST:B-RX-BAND-R" else real(e)
+    C.claim_form_of = lambda e, *a, **k: dict(real(e, *a, **k), claim_class="DecisionClaim", id="CF:FORGED") if e == "EST:B-RX-BAND-R" else real(e, *a, **k)
     try:
         env = C.Envelope("/api/d24/family", "PROFILE:BASE-24", {})
         b = env.bundle("EST:B-RX-BAND-R", "CS:F-CONF-1", "x", "forged", [], [], [], {})
@@ -628,8 +628,9 @@ def test_page_contract():
     pnl = (ROOT / "design/sozvezdiya-24/src/panel.js").read_text(encoding="utf-8")
     both = app + pnl
     proposed = json.loads((ROOT / "integration/candidates/build/page_registry.json").read_text(encoding="utf-8"))
-    check(proposed["edition"] != PAGE["edition"] and len(PAGE["estimands"]) == 53,
-          "the page keeps the accepted 53-estimand registry distinct from its proposed candidate namespace")
+    # 53 of SC-1.1 + EST:TP-MASS-R and EST:TP-DR-AT-DEPTH (DR-LAB-TP-2.0, operator 10.11.2026)
+    check(proposed["edition"] != PAGE["edition"] and len(PAGE["estimands"]) == 55,
+          "the page keeps the accepted 55-estimand registry distinct from its proposed candidate namespace")
     EV = r"(?:ev|h\.ev|r\.ev|e|I\.ev|g\.ev)"
     calls = re.findall(r"lbl\('((?:EST|FF):[A-Z0-9:-]+)', '([A-Za-z0-9_]+)'(?=\s*[,)])", both)
     dyn = re.findall(r"lbl\('(EST:[A-Z0-9-]+-)' \+ " + EV + r", '([A-Za-z0-9_]+)'(?=\s*[,)])", both)

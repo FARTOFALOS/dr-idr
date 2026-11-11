@@ -24,6 +24,7 @@
 // never used).
 (function () {
   'use strict';
+  const LBLC1 = { on: false };     // DR-LAB-TP-2.0: labels of the C1 twin forms while the screen family is a TP set (lbl)
   // One-time migration from the old worktree view on its original port. Never writes screen 24's keys.
   if(location.port==='8735')try{for(const key of Object.keys(localStorage))if(key.startsWith('drlab.d24.')){const to=key.replace('drlab.d24.','drlab.d235.');if(localStorage.getItem(to)==null)localStorage.setItem(to,localStorage.getItem(key));}}catch(e){/* optional local preferences */}
 
@@ -662,7 +663,9 @@
   const VW = F => F && F.brk ? 'BRK' : 'CONF';
   // the registered words: a claim form (by its estimand, EST:…) or a fact form (FF:…), one key, the view's variant if any
   function lbl(id, key, vars, view) {
-    const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : SC11.forms[id];
+    // DR-LAB-TP-2.0 §7: while the screen family is a TP set (T or T_W, a subgroup chosen by its own future) a base
+    // estimand speaks in the words of its C1 twin (SC11.cforms): «этих сессий», never «семьи»
+    const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : (LBLC1.on && SC11.cforms && SC11.cforms[id]) || SC11.forms[id];
     // FF:PHASE-RULE exists only in the candidate edition (08.10); the candidate words of the accepted «Сейчас» forms are
     // never reached from here (tests/integration_faults.mjs), only by reviewLbl for the trial «nowmarks»
     const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id.startsWith('EST:PB-')||id.startsWith('EST:TS-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:CANDIDATE-STATUS','FF:TODAY-Z-PASSED','FF:TODAY-VISIT','FF:PB-TODAY','FF:PB-EPISODE','FF:R-BEFORE-X'].includes(id);
@@ -700,7 +703,8 @@
       const Zm = F.zones[ev];
       if (Zm) for (const z of Zm.zones) { const zb = one('EST:B-ZONE-' + ev, x => parOf(x).zone_id === z.zone_id); if (!zb || zb.estimates[0].numerator !== z.n_zone) F.miss('the bundle of zone ' + ev + ' ' + z.label, 'zones.' + ev); }
     }
-    if (F.out) { const c = cats(one('EST:B-DR')); if (c.HELD !== F.out.held || c.BROKEN !== F.out.broken || c.UNKNOWN !== F.out.unknown || c.NO_PERIOD !== F.out.none) F.miss('the bundle of the DR outcome', 'family'); }
+    // T / T_W publish no DR outcome: it is their condition (TP-2.0)
+    if (F.out && !F.r.key.cohort) { const c = cats(one('EST:B-DR')); if (c.HELD !== F.out.held || c.BROKEN !== F.out.broken || c.UNKNOWN !== F.out.unknown || c.NO_PERIOD !== F.out.none) F.miss('the bundle of the DR outcome', 'family'); }
     const c = cats(one('EST:B-ORDER')), n = orderCounts(F);
     if (ORDER_CATS.some(k => (c[ORDER_TOK[k]] || 0) !== n[k])) F.miss('the bundle of the order', 'family');
   }
@@ -755,13 +759,17 @@
   // admits the descriptive claim C0, lab/contract.py::admissible_claims), every declared parameter given, counts within N;
   // the value form decides how unknown mass is shown (BOUNDS_IF_UNKNOWN: «a–b %»)
   function bindPassport(F, p) {
-    const e = SC11 && SC11.estimands[p.estimand], f = SC11 && SC11.forms[p.estimand], miss = e && e.params.find(k => !(k in p.params));
+    // the case set of the passport: the family's own, or a set selected from it (CS:TP-DEPTH-AT-CUT-1, TP-2.0 §2.3); a
+    // base family admits the descriptive C0, a TP set (OUTCOME_SUBGROUP) and a matched set the conditional C1 only —
+    // a base estimand there takes its C1 twin (SC11.cforms; lab/contract.py::admissible_claims, claim_form_of)
+    const cs = p.case_set || F.cs, role = SC11 && SC11.case_sets[cs], c0 = role === 'BASE_FAMILY';
+    const e = SC11 && SC11.estimands[p.estimand], f = SC11 && (c0 ? SC11.forms[p.estimand] : (SC11.cforms && SC11.cforms[p.estimand]) || SC11.forms[p.estimand]), miss = e && e.params.find(k => !(k in p.params));
     const sum = p.yes_count + p.unknown_count + p.no_event_count, diff = e && e.measure === 'SHARE_DIFFERENCE';
     const bad = !SC11 ? 'страница собрана без реестра контракта'
       : !e || !f ? 'an unregistered estimand ' + p.estimand
       : e.profile !== 'PROFILE:BASE-24' ? p.estimand + ' is not of the base profile'
-      : !e.q4.includes(F.cs) ? p.estimand + ' is not defined on ' + F.cs
-      : SC11.case_sets[F.cs] !== 'BASE_FAMILY' || f.claim_class !== 'DescriptiveClaim' ? p.estimand + ': its claim ' + f.claim_class + ' is not admissible on ' + F.cs
+      : !e.q4.includes(cs) ? p.estimand + ' is not defined on ' + cs
+      : (c0 ? f.claim_class !== 'DescriptiveClaim' : !['OUTCOME_SUBGROUP', 'MATCHED_AT_CUT'].includes(role) || f.claim_class !== 'ConditionalDescriptiveClaim') ? p.estimand + ': its claim ' + f.claim_class + ' is not admissible on ' + cs
       : miss ? p.estimand + ': parameter ' + miss + ' missing'
       : !Number.isInteger(p.yes_count) || !Number.isInteger(p.unknown_count) || !Number.isInteger(p.no_event_count) || (diff ? Math.abs(p.yes_count) > F.N : p.yes_count < 0 || sum > F.N) ? p.estimand + ': counts outside N'
       : null;
@@ -771,7 +779,7 @@
   const ppTxt = (p, range) => p.pct == null ? '—' : range && p.pctHi != null ? pct(p.pct) + '–' + pct(p.pctHi) : pct(p.pct);
   // the reading of a number in one sentence (spec §14): such a share of this family had THIS event, IN THIS area, OVER
   // THIS horizon (and ON THIS M5)
-  function sentence(p) { return '<b>' + ppTxt(p, p.binary) + '</b> ' + lbl('FF:PASSPORT-VIEW', 'sentence', { phrase: p.phrase, horizon: '<span class="k">' + p.horizon + '</span>' }); }
+  function sentence(p) { return '<b>' + ppTxt(p, p.binary) + '</b> ' + lbl('FF:PASSPORT-VIEW', p.claim_class === 'ConditionalDescriptiveClaim' ? 'sentence_c1' : 'sentence', { phrase: p.phrase, horizon: '<span class="k">' + p.horizon + '</span>' }); }
   const hzOf = F => lbl('FF:PASSPORT-VIEW', 'horizon', { from: F.from, end: clk(F.end) });
   // a share of R or X in an area: a price band (B-RX-BAND), a time window (B-RX-WINDOW) or both (B-RX-REGION)
   function evPass(F, ev, region, bounds, time, yes) {
@@ -896,7 +904,12 @@
     const D = day(), obs = st.rp != null ? st.rp : NOW, live = st.rp == null;
     // DR-LAB-TP-1.1 (tp235.js, operator 03.11): the confirmation family shows T and its window's sessions; the break family
     // and '#tp=0' keep the table of 30.10 (matrix235.js: the numbers from the table, reset 27.10)
-    const s = sess(D, st.session, obs, live), F0 = snapOf(D, s), F = tpOn() && F0 && !F0.brk ? tpView(D, s, F0) : mxView(F0);
+    // the base family is built in the family's own words; T and T_W (tpView) in the C1 words of their sets (lbl)
+    LBLC1.on = false;
+    const s = sess(D, st.session, obs, live), F0 = snapOf(D, s), tp = tpOn() && F0 && !F0.brk;
+    LBLC1.on = !!tp;
+    const F = tp ? tpView(D, s, F0, { live, obs }) : mxView(F0);
+    LBLC1.on = !!(F && F._tp);
     return { D, obs, live, s, F };
   }
   // the right edge of the time axis is anchored at the session end + rightPad minutes (12; was 45 until 2026-10-06) (design 22's wheel; operator 2026-10-06:
@@ -1049,6 +1062,7 @@
     if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, cloudCtx); drawMemberPath(c, mapCtx); }
     if (F && st.mode === 'bounds' && !continuationMode()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'under');
+    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);
@@ -1057,6 +1071,7 @@
     if (!continuationMode()) drawNow(c, ctx);
     if (F && !continuationMode()) drawLink(c, mapCtx);
     if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, cloudCtx);
+    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'over');
     if (F && st.mode === 'bounds') drawPair(c, mapCtx);
     if (F) drawSweeps(c, ctx);
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
@@ -1241,7 +1256,13 @@
     if (h.k === 'mcell') V.win = { t0: F.f + 15 * h.b0, t1: F.f + 15 * (h.b0 + 1), pA: F.u2p(h.k0 / 10), pB: F.u2p((h.k0 + 1) / 10), col };
     if (h.k === 'tpwin' && F._tp) {                                 // TP-1.1: the hovered window's hours over the chart
       const tt = tpWinT(F, h.id);
-      if (tt) { const x0 = V.X(tt[0]), x1 = V.X(tt[1]); c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h); V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R }; }
+      if (tt) {
+        const x0 = V.X(tt[0]), x1 = V.X(tt[1]), pk = tpWinPeak(F, h.id);
+        c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h);
+        // operator 05.11: the window's peak 15 minutes over the chart and on the time axis — when its pullback is most frequent
+        if (pk) { c.fillStyle = rgba(cfg.R, 0.08); c.fillRect(V.X(pk.t0), 0, V.X(pk.t1) - V.X(pk.t0), V.plot.h); }
+        V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R, peak: pk ? [pk.t0, pk.t1] : null };
+      }
     }
     if (h.k === 'tcell') {
       const x0 = V.X(F.f + 15 * h.b0), x1 = V.X(F.f + 15 * h.b1);
@@ -1406,6 +1427,7 @@
       if (h.k === 'area') return inArea(q, st.area);
       if (h.k === 'zone') return h.ev === q.ev && (F._ts ? tsMember(F.zones[h.ev].zones[h.i],q) : F.zcell[h.ev].get(q.k + '|' + q.b) === h.i);
       if (h.k === 'pt') return q.i === h.i;
+      if (h.k === 'tpzone') return false;                 // TP: a place of another window under the mouse
       if (h.k === 'out') return q.m.outcome === h.cat;
       if (h.k === 'evrow') return true;
       if (h.k === 'hcell') return h.ev === q.ev && q.k === h.kk && q.b === h.b;
@@ -1546,6 +1568,7 @@
     if (!h) return 1;
     if (h.k === 'zone') return h.ev === ev && h.i === i ? 1.5 : 0.45;
     if (h.k === 'pt') return 0.6;
+    if (h.k === 'tpzone') return 0.45;
     if (h.k === 'pcell') return h.ev === ev && z.cell_mask.some(([k]) => k >= h.k0 && k < h.k1) ? 1.15 : 0.6;
     if (h.k === 'tcell') return z.cell_mask.some(([, b]) => b >= h.b0 && b < h.b1) ? 1.1 : 0.55;
     return 0.8;
@@ -1613,6 +1636,7 @@
       return;
     }
     if (st.mode !== 'bounds') return;
+    if (h.k === 'tpzone') { if (F._tp) tpGhostLink(ctx, h); return; }   // TP: a place of another window, as a zone
     // operator 2026-10-06: «до какого времени этот кластер валидный?» — a hovered zone shows its WHOLE time window (the
     // 15-minute cells it covers) over its prices: the part already passed in the spent shade, the part still ahead in its
     // colour, the slice between them; the axis window names the whole window. No peak, no ring, no red: the zone's status
@@ -1851,6 +1875,7 @@
     const cost = r => 4 * live.filter(b => over(r, b)).length + 4 * pills.filter(b => over(r, b)).length + 3 * placed.filter(b => over(r, b)).length + bars.filter(b => over(r, b)).length;
     if (phase === 'under') V.zoneHit = [];
     const env = { placed, live, pills, bars, over };
+    if (phase === 'under') V.zoneEnv = env;
     for (const ev of ['X', 'R']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
       CL[ev].forEach((g, i) => {
@@ -1918,20 +1943,37 @@
   // after them), the confirmation pill or another name is led out to the LEFT — into the past, never over the time
   // ahead — on a thin dash-dot line from a small ring at the constellation's centre: X toward the side of the
   // confirmation, R away from it, each to the least crowded place. The others stay inside, as a background.
-  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env) {
-    const imp = expiredLook(s), zp = zonePass(F, ev, z), zt = ppTxt(zp), share = zp.pct || 0;
+  // o (TP, operator 05.11): a place of another window — its name, a smaller size, a quieter look, its own hit list
+  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env, o) {
+    o = o || {};
+    // TP-2.0: a place of R reads its share of the whole family, a place of X how many of the window's sessions got this
+    // far (tp235.js::tpMarkPass); elsewhere the zone's own share
+    const tpm = !o.pass && F._tp ? tpMarkPass(F, ev, z) : null;
+    const imp = expiredLook(s), zp = o.pass || (tpm && tpm.p) || zonePass(F, ev, z), zt = ppTxt(zp), share = zp.pct || 0, name = o.name || (tpm && tpm.name) || z.label;
     const ps = F.ev[ev].pts.filter(q => F._ts ? tsMember(z,q) : F.zcell[ev].get(q.k + '|' + q.b) === i);
     let cx = (g.bb[0] + g.bb[2]) / 2, cy = (g.bb[1] + g.bb[3]) / 2;
     if (ps.length) { cx = ps.reduce((a, q) => a + V.X(q.t + 2.5), 0) / ps.length; cy = ps.reduce((a, q) => a + V.Y(q.p), 0) / ps.length; }
-    const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
+    const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1) * (o.size || 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
     c.font = lw + nfs + 'px ' + FONT;
-    const wN = c.measureText(z.label).width, wS = pctW(c, zt, lw, fs), wT = wN + 4 + wS, hT = fs;
+    const wN = c.measureText(name).width, wS = pctW(c, zt, lw, fs), wT = wN + 4 + wS, hT = fs;
     let lx = clamp(cx - wT / 2, 4, V.plot.w - 64 - wT), ly = clamp(cy - fs / 2, 30, V.plot.h - hT - 4), out = false;
     const { placed, live, pills, bars, over } = env, R = (x, y) => [x - 2, y - 2, x + wT + 2, y + hT + 2];
     // any candle under the name counts too (operator 2026-10-06: the first constellations lie on the candles of the first
     // minutes after the confirmation, not only on the last ones)
     const hits = r => live.some(b => over(r, b)) || pills.some(b => over(r, b)) || placed.some(b => over(r, b)) || bars.some(b => over(r, b));
-    if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
+    if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly)) && o.stay) {
+      // a place of another window (TP, 05.11) keeps its name in its own hours: off the candles and the room after them
+      // up or down (and a little later), never into the past where the window on screen stands; a dash-dot line if far
+      const sgn = (ev === 'X' ? -1 : 1) * (F.d0 > 0 ? 1 : -1);
+      let best = null, bc = 1e9;
+      for (const dx of [0, 30, 60, 100]) for (const dy of [24, 48, 80, 120, 160].flatMap(v => [sgn * v, -sgn * v])) {
+        const x = clamp(cx - wT / 2 + dx, 4, V.plot.w - 64 - wT), y = cy + dy - hT / 2, r = R(x, y);
+        if (y < 30 || y + hT > V.plot.h - 4) continue;
+        const cc = 5 * (live.filter(b => over(r, b)).length + pills.filter(b => over(r, b)).length + placed.filter(b => over(r, b)).length) + bars.filter(b => over(r, b)).length + dx / 200 + Math.abs(dy) / 200;
+        if (cc < bc) { bc = cc; best = [x, y]; }
+      }
+      if (best) [lx, ly] = best;
+    } else if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
       const sgn = (ev === 'X' ? -1 : 1) * (F.d0 > 0 ? 1 : -1);
       let best = null, bc = 1e9;
       for (const dx of [80, 120, 170, 230, 300, 380]) for (const dy of [sgn * 40, sgn * 70, sgn * 100, sgn * 140, 0, -sgn * 40]) {
@@ -1946,7 +1988,7 @@
     // operator 2026-10-06: zoomed in, a constellation outside the frame keeps its name at the edge with a thin dash-dot
     // line toward it (as the earlier threads did); a name pushed far from its centre gets the same line
     const far = !out && (cx < 0 || cx > V.plot.w || cy < 0 || cy > V.plot.h || Math.hypot(clamp(cx, lx, lx + wT) - cx, clamp(cy, ly, ly + hT) - cy) > 24);
-    const k = cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1);
+    const k = o.k != null ? o.k : cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1) * (o.alpha || 1);
     const aName = out ? cfg.calloutA / 100 : cfg.zoneNameA / 100, aNum = out ? cfg.calloutA / 100 * 0.95 : cfg.zoneNumA / 100;
     c.save(); c.globalAlpha = Math.min(1, op);
     if (far) {
@@ -1962,10 +2004,11 @@
     }
     c.textBaseline = 'alphabetic';
     const yb = ly + fs * 0.86;
-    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, aName); c.fillText(z.label, lx, yb);
+    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, aName); c.fillText(name, lx, yb);
     pctDraw(c, zt, lx + wN + 4, yb, lw, fs, rgba(mixW(col, 0.35), aNum));
     c.restore();
-    V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 6], ev, i, loops: g.hit });
+    if (o.hit) o.hit([lx - 2, ly - 2, wT + 4, hT + 6]);
+    else V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 6], ev, i, loops: g.hit });
   }
   // ---------- the time band (variant «Окна времени», operator 2026-10-01) ----------
   const expiredLook = s => s === 'IMPOSSIBLE' || s === 'PAST';
@@ -2414,6 +2457,7 @@
       const [ya, yb] = cellY(F, o.k0, o.k1), y0 = Math.max(top0, ya), y1 = Math.min(bot0, yb);
       if (y1 > y0) { c.fillStyle = rgba(cfg[o.ev], o.hot ? 1 : 0.7); c.fillRect(A_.x + A_.w - 4 - 3 * ln, y0, 2, y1 - y0); }
     });
+    if (F._tp) tpReachMarks(c, F, A_, top0, bot0);                   // TP-2.0 Ч12: the levels 70 % and 50 % of the window reached
     // the heads (R on the left, X on the right, as their percentages) and the shares beyond the frame
     c.textBaseline = 'top'; c.font = '700 10.5px ' + FONT;
     c.fillStyle = cfg.R; c.fillText('R откат', A_.x + 5, 3);
@@ -2487,7 +2531,12 @@
     // slice tag; the cursor's own time tag is left out while a window is shown
     tag(ctx.obs, ctx.live && !ctx.D.hist ? '#2A2F38' : ctx.D.hist ? C.hist : C.replay, ctx.live && !ctx.D.hist ? '#fff' : '#0B0C10');
     if (!(wn && wn.t0 != null) && st.mx >= 0 && st.mx < W && st.my < V.plot.h) tag(snapT(V.T(st.mx)) - 2.5, '#363A45', '#fff');
-    if (wn && wn.t0 != null) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
+    if (wn && wn.t0 != null && wn.peak) {
+      // a window of TP (operator 05.11): its edges quiet, its peak 15 minutes in its colour, on top
+      const xp = V.X((wn.peak[0] + wn.peak[1]) / 2), clear = t => Math.abs(V.X(t) - xp) >= 76;
+      if (V.X(wn.t1) - V.X(wn.t0) >= 96) for (const t of [wn.t0, wn.t1]) if (clear(t)) tag(t, '#3A3F4A', '#D7DBE2');
+      tag((wn.peak[0] + wn.peak[1]) / 2, wn.col, '#0B0C10', clk(wn.peak[0]) + '–' + clk(wn.peak[1]));
+    } else if (wn && wn.t0 != null) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
     c.textAlign = 'left';
     void h;
   }
@@ -2545,6 +2594,8 @@
     const inBox = a => x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3];
     const zl = (V.zoneHit || []).find(inBox);
     if (zl) return { k: 'zone', ev: zl.ev, i: zl.i };
+    const gz = F._tp ? tpGhostAt(x, y, false) : null;           // TP: the name of another window's place
+    if (gz) return gz;
     if (st.mode === 'bounds') { const mc = mxCellHit(F, x, y); if (mc) return lvlHit(ctx, y) || mc; }   // the layer «Клетки»
     if (st.mode === 'bounds' && st.L.pts) {
       // a star of R or of X: the nearest within 5 px
@@ -2562,6 +2613,8 @@
     if (st.area && V.areaHit) for (const a of V.areaHit) if (a.part === 'frame' && x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3]) { const lv = lvlHit(ctx, y); if (lv) return lv; return { k: 'area', part: 'window' }; }
     // inside a constellation (its 0.2 iso-line): that zone
     for (const z of V.zoneHit || []) if (inLoops(z.loops, x, y)) return lvlHit(ctx, y) || { k: 'zone', ev: z.ev, i: z.i };
+    const gl = F._tp ? tpGhostAt(x, y, true) : null;            // inside another window's place
+    if (gl) return lvlHit(ctx, y) || gl;
     return lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y);
   }
   function lvlHit(ctx, y) {
@@ -2593,7 +2646,8 @@
     if (!h) return '';
     if (h.k === 'arrive' || h.k === 'pre') return candidateTip(h, ctx);
     if (h.k === 'mcell' && F && F._mx) return mxCellTip(F, h);
-    if (F && F._tp && h.k === 'tpwin') return tpWinTip(F, h);          // TP-1.1 (tp235.js)
+    if (F && F._tp && h.k === 'tpwin') return tpWinTip(F, h, ctx);     // TP-1.1 (tp235.js)
+    if (F && F._tp && h.k === 'tpzone') return tpGhostTip(F, ctx, h);
     if (F && F._tp && h.k === 'tpline') return tpLineTip(F, h);
     if (F && F._tp && h.k === 'tcell') return tpCellTip(F, ctx, h);
     if (h.k === 'pt' && F) {
@@ -2958,7 +3012,8 @@
     const pk = lkz && !lkz.past && s !== 'IMPOSSIBLE' ? peakPass(F, h.ev, { zone_id: z.zone_id }, lkz.b, false, sliceOf(ctx), lkz.n) : null;
     return '<div class="ih"><span style="color:' + cfg[h.ev] + '">' + z.label + '</span> · ' + F.names[h.ev].toLowerCase() + ' · ' + clk(z.time_start) + '–' + clk(z.time_end) + '<span class="zs zs-' + s + '">' + zstOf(F, ctx, z, s) + '</span></div>' +
       '<div class="is">' + band(z.price_low, z.price_high) + ' SD · ' + px(Math.min(q0, q1)) + '–' + px(Math.max(q0, q1)) + '</div>' +
-      '<div class="ibig" style="color:#F0F5FF">' + ppTxt(p) + '<span>' + (F._mx ? zoneCellWords(F, h.ev, z) : lbl('EST:B-ZONE-' + h.ev, 'share')) + '</span></div>' +
+      (F._tp || F._tpg ? tpZoneHead(F, h.ev, z, p) :                                // TP-2.0: the family share of R's place, the reach of X's
+      '<div class="ibig" style="color:#F0F5FF">' + ppTxt(p) + '<span>' + (F._mx ? zoneCellWords(F, h.ev, z) : lbl('EST:B-ZONE-' + h.ev, 'share')) + '</span></div>') +
       (REVIEW ? '<div class="p24-visit-note"><span>' + (F.rbx ? lbl('FF:R-BEFORE-X', 'zone_final_' + h.ev, { status: zst(s) }) : lbl('FF:TODAY-VISIT', 'final', { ev: h.ev, status: zst(s) })) + '</span></div>' : '') +
       winLine(F, ctx, h.ev, s, F.f + 15 * b0, F.f + 15 * b1, ctx ? zoneClock(F, ctx, h.ev)[h.i] : null) +
       (pk ? '<div class="il" style="color:' + cfg[h.ev] + '">' + lbl(pk.estimand, 'zone_ahead', { window: clk(F.f + 15 * lkz.b) + '–' + clk(F.f + 15 * lkz.b + 15), pct: ppTxt(pk) }) + '</div>' : '') +
@@ -3201,7 +3256,7 @@
     const was = key(st.hover);
     st.hover = h && !['paxis', 'taxis', 'stripBg'].includes(h.k) ? h : (h && h.k === 'stripBg' ? h : null);
     if (st.hover && st.hover.ev) st.ev = st.hover.ev;      // the event in focus: what the panel and the area speak of
-    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin'].includes(h.k) ? 'pointer' : 'crosshair';
+    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin', 'tpzone'].includes(h.k) ? 'pointer' : 'crosshair';
     if (alPlusAt(x, y)) cv.style.cursor = 'pointer';
     else { const al = alNear(x, y); if (al) cv.style.cursor = Math.abs(x - al.x) <= 8 ? 'pointer' : 'ns-resize'; }
     showTip(st.hover);
@@ -3244,6 +3299,7 @@
       render(true); return;
     }
     if (h && h.k === 'tpwin') { tpPinWindow(h.id); return; }           // TP-1.1: a window fixes the price column and constellations
+    if (h && h.k === 'tpzone') { tpPinGhost(h); return; }              // a place of another window: that window on screen
     if (h && h.k === 'tpline') return;
     if (h && ['pbzone','pbpcell','pbtcell','pbarea','pbunk'].includes(h.k)) { pin(h); return; }
     if (h && h.k === 'zone' && d.zone === 'strip') { pin(h); return; }
@@ -3386,8 +3442,8 @@
   function running() { const k = sessionNow(); return A.src === 'live' && A.day && A.day.status === 'ok' && NOW >= SESS[k].start && NOW < SESS[k].end; }
   function schedule() {
     clearTimeout(A.timer);
-    if (!A.auto || !running()) return;
-    const step = A.day.switched ? 5 : 1, m = etMinute(), wait = ((Math.floor(m / step) + 1) * step + (step === 1 ? 3 : 20) / 60 - m) * 60000;
+    if (!A.auto || A.src !== 'live') return;
+    const m = etMinute(), wait = (Math.floor(m) + 1 + 3 / 60 - m) * 60000;
     A.timer = setTimeout(() => loadDay(true), Math.max(5000, wait));
   }
   function takeDay(x, first) {
@@ -3530,8 +3586,12 @@
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),
     verify: () => verifyNow(), lbl, cfg,
     // TP-1.1 (tp235.js): the state of the core on screen, for tests/tp235_page.mjs
-    tp: () => { const F = V && V.ctx && V.ctx.F, P = F && F._tp; return { on: TP.on, pin: TP.pin, w: P ? P.w : null, N: P ? { F: P.A && P.A.N, T: P.T.N, W: F.N } : null, clock: P ? P.clock : null, x: P ? P.x : null,
-      zones: F && F.zones ? { R: (F.zones.R || { zones: [] }).zones.length, X: (F.zones.X || { zones: [] }).zones.length } : null, caps: (V && V.tpCaps || []).map(q => q.id), lines: (V && V.tpLines || []).map(q => q.ev + ':' + q.id) }; },
+    tp: () => { const F = V && V.ctx && V.ctx.F, P = F && F._tp; return { on: TP.on, pin: TP.pin, w: P ? P.w : null, N: P ? { F: P.A && P.A.N, T: P.T.N, W: F.N } : null, clock: P ? P.clock : null, x: P ? P.x : null, xc: P ? P.xc : null,
+      xzones: F && F.zones && F.zones.X ? F.zones.X.zones.map(z => ({ label: z.label, cells: z.cell_mask, n: z.n_zone, price: [z.price_low, z.price_high] })) : [],
+      zones: F && F.zones ? { R: (F.zones.R || { zones: [] }).zones.length, X: (F.zones.X || { zones: [] }).zones.length } : null, caps: (V && V.tpCaps || []).map(q => q.id), lines: (V && V.tpLines || []).map(q => q.ev + ':' + q.id),
+      // 05.11: the pullback places of the other windows on the chart, and the window peaks on the band
+      others: P ? tpOthers(V.ctx).map(q => ({ w: q.w, N: q.G.N, places: q.G.zones.R.zones.filter((z, i) => !zoneHeld(q.G, 'R', i)).length })) : [],
+      ghosts: (V && V.tpGhostHit || []).map(q => ({ w: q.w, i: q.i, box: q.box })), peaks: P ? TP_WINDOWS.filter(w => P.clock.windows[w]).map(w => ({ w, W: P.clock.windows[w], pk: tpWinPeak(F, w) })) : [] }; },
     tpHit: (x, y) => tpHit(x, y) };
   initPanel24();
   // the address: #date=2025-12-17 (a history day) &inst=NQ &session=RDR &at=11:50 (replay) &ev=X &mode=path

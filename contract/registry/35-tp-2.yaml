@@ -1,0 +1,191 @@
+# DR-LAB-SC-1.1 registry · DR-LAB-TP-2.0 (screen 23.5): the sets of the semantic core named as what they are, the mass
+# of the whole family, and the DR outcome of the sessions that went as deep by the same clock time.
+# Operator 10.11.2026 on the specification DR-LAB-TP-2.0: «реализуй спецификацию (на все шесть вопросов — ответ — да».
+# The C1 claim forms of the base estimands on the two TP sets are in 45-claims-tp.yaml.
+registry_part: tp-2.0
+
+source_references:
+  - id: SRC:TP-2.0
+    sc_ref: ["H1", "C1"]
+    grounds: OPERATOR_REQUIREMENT
+    role: DECISION
+    document: "meaning/25-tp-2-0-specifikaciya.md"
+    locator: "DR-LAB-TP-2.0 §2-§7, §10 (R1-R6 accepted by the operator 10.11.2026)"
+
+questions:
+  - {id: Q:TP-MASS, version: "1", sc_ref: ["T0", "C1"], grounds: OPERATOR_REQUIREMENT, text_ru: "Какая часть всей семьи так сделала?", scene_ru: "у скольких сессий всей семьи DR устоял и откат до вершины был в этом времени и на этой глубине"}
+  - {id: Q:TP-DR-AT-DEPTH, version: "1", sc_ref: ["T0", "C1"], grounds: OPERATOR_REQUIREMENT, text_ru: "Устояли ли те, кто заходил так же глубоко?", scene_ru: "чем кончился DR у сессий семьи, которые к этому же часу заходили в коробку так же глубоко или глубже"}
+
+case_sets:
+  - id: CS:TP-TRUE-1
+    version: "1"
+    sc_ref: ["H1", "C1"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: сессии семьи, где DR устоял (набор T ядра TP)
+    role: OUTCOME_SUBGROUP
+    parent: [CS:F-CONF-1, CS:F-CONF-ALL-1]
+    history_rule: "the members of the confirmation family whose DR held to the block end"
+    condition_ru: "DR устоял до конца блока (ни одно закрытие M5 не ушло за противоположный DR) — условие на будущее этих сессий"
+    condition_availability: RETROSPECTIVE
+    live_use: FORBIDDEN
+    profile: PROFILE:BASE-24
+    source_refs: [SRC:TP-2.0]
+  - id: CS:TP-WINDOW-1
+    version: "1"
+    sc_ref: ["H1", "C1"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: сессии семьи, где DR устоял и откат до вершины был в окне (набор T_W ядра TP)
+    role: OUTCOME_SUBGROUP
+    parent: [CS:TP-TRUE-1]
+    history_rule: "the members of CS:TP-TRUE-1 whose R before the top is known and lies in the window (W1, W2, LATE, BEFORE) of T's clock"
+    condition_ru: "DR устоял до конца блока, и откат до вершины был в часах окна — условие на будущее этих сессий"
+    condition_availability: RETROSPECTIVE
+    live_use: FORBIDDEN
+    profile: PROFILE:BASE-24
+    source_refs: [SRC:TP-2.0]
+  - id: CS:TP-DEPTH-AT-CUT-1
+    version: "1"
+    sc_ref: ["H1", "H3", "C1"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: сессии семьи, которые к этому часу заходили так же глубоко
+    role: MATCHED_AT_CUT
+    parent: [CS:F-CONF-1, CS:F-CONF-ALL-1]
+    history_rule: "the members of the confirmation family eligible at the common clock cut t (own activation before t, no whole M5 missing up to t, no close beyond the own opposite DR up to t) whose deepest point against the activation up to t is as deep as today's or deeper"
+    condition_ru: "к часу t: своя активация раньше, нет пропущенных M5, DR ещё цел, а самая глубокая точка против активации — не выше сегодняшней (в ширинах IDR)"
+    condition_availability: PREFIX_AT_CUT
+    live_use: PERMITTED
+    comparison: CMP:TP-DEPTH-1
+    profile: PROFILE:BASE-24
+    source_refs: [SRC:TP-2.0]
+
+comparisons:
+  - id: CMP:TP-DEPTH-1
+    version: "1"
+    sc_ref: ["H3", "C1"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: так же глубоко к тому же часу
+    alignment: COMMON_SESSION_CLOCK
+    features: ["r(t): the minimum directed low after the own activation over the M5 closed by t, in IDR widths; member r_s(t) * w_today <= r_today(t) * w_s (exact, integers)"]
+    feature_availability: PREFIX_AT_CUT
+    frozen: true
+    weights: NONE
+    source_refs: [SRC:TP-2.0]
+
+outcomes:
+  - id: OUT:TP-HELD-R-1
+    version: "1"
+    sc_ref: ["P0.1", "P0.2", "C1"]
+    grounds: OPERATOR_REQUIREMENT
+    title_ru: DR устоял и откат до вершины лежит в области
+    projection: FINAL_EXTREME
+    event: R
+    contribution: ONE_BINARY_VOTE
+    horizon_start: OWN_ACTIVATION_CLOSE_EXCLUSIVE
+    horizon_end: BLOCK_END_CLOSE_INCLUSIVE
+    tie_rule: ONE_VOTE_PER_CASE
+    components: [CATEGORY, ENDPOINT, FIRST_TIME]
+    uses_case_future_as_label: true
+    reference_definition: "lab/contract.py::ref_tp_mass"
+    implementations: ["design/sozvezdiya-23-5/src/tp235.js::tpMass"]
+    statuses: "YES: DR HELD and R (the deepest point before the first M5 of the final X, the R of screen 23.5) KNOWN with its 0.1-SD cell and 15-minute cell inside the region (part KNOWN), or DR HELD and R not KNOWN (part NO_R); every other session NO; a session with an unknown DR outcome is NO and stays in N"
+    source_refs: [SRC:TP-2.0]
+
+estimands:
+  - id: EST:TP-MASS-R
+    version: "1"
+    sc_ref: ["T1", "C1", "H1"]
+    grounds: OPERATOR_REQUIREMENT
+    question: Q:TP-MASS
+    q1_formalised_part_ru: "доля всей семьи (N), у которой DR устоял и откат до вершины лежит в полосе [k0/10; k1/10) и в окне [b0; b1) (пустая граница — без ограничения), вне полос not_bands; part NO_R — DR устоял, а откат до вершины не определён"
+    q2_target: FIXED_HISTORICAL_SET
+    q3_unit: SESSION
+    q4_case_set: [CS:F-CONF-1, CS:F-CONF-ALL-1]
+    q4_denominator: N_BASE_UNIQUE_MEMBERS
+    q5_outcome: OUT:TP-HELD-R-1
+    q5_region: REG:JOINT-1
+    q6_time_ru: "от закрытия собственной активации (её M5 не входит) до конца блока H; время отката — открытие первой M5 с этой ценой"
+    q6_cut: CUT:LAST-CLOSED-M5-1
+    q7_measure: SHARE
+    q8_unknown: UNKNOWN_KEPT_IN_N_NO_COORDINATE
+    q8_weights: NONE
+    q8_order_ru: "окна, «без отката до вершины» и сломанные / неизвестные делят всю семью без остатка; места и «вне мест» делят окно"
+    parameters:
+      - {name: k0, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "нижняя клетка полосы (null — без ограничения)"}
+      - {name: k1, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "верхняя клетка полосы, исключительно (null — без ограничения)"}
+      - {name: b0, parameter_kind: TIME_WINDOW_CELLS, meaning_ru: "первая 15-минутная клетка (null — без ограничения)"}
+      - {name: b1, parameter_kind: TIME_WINDOW_CELLS, meaning_ru: "клетка после окна (null — без ограничения)"}
+      - {name: part, parameter_kind: CATEGORY, meaning_ru: "KNOWN — откат в области; NO_R — DR устоял, откат до вершины не определён"}
+      - {name: not_bands, parameter_kind: PRICE_BAND_CELLS, meaning_ru: "полосы [k0, k1), исключённые из области (строка «вне мест» окна); пустой список — без исключений"}
+    profile: PROFILE:BASE-24
+  - id: EST:TP-DR-AT-DEPTH
+    version: "1"
+    sc_ref: ["T1", "C1", "H3"]
+    grounds: OPERATOR_REQUIREMENT
+    question: Q:TP-DR-AT-DEPTH
+    q1_formalised_part_ru: "среди сессий семьи, которые к общему часовому срезу t заходили против активации так же глубоко, как сегодня, или глубже (DR к t ещё цел), — сколько в каждой категории исхода DR до конца блока; ALL — их число"
+    q2_target: FIXED_HISTORICAL_SET
+    q3_unit: SESSION_AT_CUT
+    q4_case_set: [CS:TP-DEPTH-AT-CUT-1]
+    q4_denominator: N_MATCH_AT_CUT
+    q5_outcome: OUT:DR-OUTCOME-1
+    q5_region: REG:NONE-1
+    q6_time_ru: "отбор — по M5, закрытым к срезу t (общие часы ET); исход — до конца блока H"
+    q6_cut: CUT:LAST-CLOSED-M5-1
+    q7_measure: CATEGORY_SHARES
+    q8_unknown: UNKNOWN_KEPT_IN_N_NO_COORDINATE
+    q8_weights: NONE
+    q8_order_ru: "устоял + сломан + неизвестно = число сопоставимых; при наборе меньше 20 — пометка «мало сессий: n=…», набор не расширяется"
+    parameters:
+      - {name: cut, parameter_kind: CUT, meaning_ru: "общий часовой срез t — закрытие последней закрытой M5"}
+      - {name: category, parameter_kind: CATEGORY, meaning_ru: "HELD, BROKEN, UNKNOWN или ALL (всё множество)"}
+    profile: PROFILE:BASE-24
+
+claim_forms:
+  - id: CF:MASS-R-TP
+    version: "1"
+    sc_ref: ["C0", "H1"]
+    grounds: OPERATOR_REQUIREMENT
+    estimand: EST:TP-MASS-R
+    claim_class: DescriptiveClaim
+    subject_ru: "сессии этой семьи (F, один N)"
+    statement_ru: "У {yes} из {N} сессий семьи DR устоял, и откат до вершины был {where}."
+    labels:
+      - {surface: PASSPORT, view: ANY, key: phrase, text_ru: "DR устоял, откат до вершины {where}"}
+      - {surface: PASSPORT, view: ANY, key: phrase_none, text_ru: "DR устоял, откат до вершины не определён (вершина сразу или нет данных)"}
+      - {surface: CANVAS, view: ANY, key: other, text_ru: "{w} · {name} {pct}"}
+      - {surface: INSPECTOR, view: ANY, key: place, text_ru: "{n} из {N} сессий семьи ({pct}): DR устоял, откат до вершины был здесь — {t0}–{t1} · {band} SD"}
+      - {surface: INSPECTOR, view: ANY, key: window, text_ru: "{n} из {N} сессий семьи: DR устоял, откат до вершины в {t0}–{t1}"}
+      - {surface: PANEL, view: ANY, key: head, text_ru: "Время отката · доля семьи"}
+      - {surface: PANEL, view: ANY, key: head_title, text_ru: "Доля всей семьи (N): DR устоял до конца сессии, и откат до вершины был в этом времени. Окна и «без отката до вершины» вместе дают долю «устоял»."}
+      - {surface: PANEL, view: ANY, key: head_r, text_ru: "доля семьи"}
+      - {surface: PANEL, view: ANY, key: bunch, text_ru: "пучок {t0}–{t1}"}
+      - {surface: PANEL, view: ANY, key: no_r, text_ru: "без отката до вершины"}
+      - {surface: PANEL, view: ANY, key: outside, text_ru: "вне мест"}
+      - {surface: PANEL, view: ANY, key: others, text_ru: "Откат в других окнах · доля семьи"}
+      - {surface: PANEL, view: ANY, key: others_title, text_ru: "Места отката сессий других окон. Доля — от всей семьи. На графике — те же созвездия, тише, с именем окна; щелчок показывает окно целиком."}
+      - {surface: PANEL, view: ANY, key: none, text_ru: "Пучков нет: ни один отрезок времени не набрал {need} сессий (5 % семьи, не меньше 4)."}
+    value_form: POINT
+    price_transfer: M0_TODAY_EDGE
+    forbidden_readings_ru: ["вероятность отката здесь сегодня", "доля устоявших или доля окна", "место входа", "стоп удержится"]
+    acceptance: ACCEPTED_BY_OPERATOR
+    note: "DR-LAB-TP-2.0 R1, R2: operator 10.11.2026 «реализуй спецификацию (на все шесть вопросов — ответ — да»"
+  - id: CF:DR-AT-DEPTH-TP
+    version: "1"
+    sc_ref: ["C1", "H3", "K33"]
+    grounds: OPERATOR_REQUIREMENT
+    estimand: EST:TP-DR-AT-DEPTH
+    claim_class: ConditionalDescriptiveClaim
+    subject_ru: "сессии семьи, которые к этому же часу заходили так же глубоко или глубже"
+    condition_ru: "к общему часовому срезу t: своя активация раньше, префикс полный, DR ещё цел, самая глубокая точка против активации не выше сегодняшней"
+    statement_ru: "Из {D} сессий семьи, которые к {cut} заходили так же глубоко или глубже, DR устоял у {held}, сломан у {broken}, неизвестно у {unknown}. Это история, не прогноз сегодняшнего дня."
+    labels:
+      - {surface: PANEL, view: ANY, key: row, text_ru: "к {cut} так же глубоко ({u} SD или глубже) заходили {D}: DR устоял у {held}, сломан у {broken}"}
+      - {surface: PANEL, view: ANY, key: row_unknown, text_ru: ", неизвестно у {unknown}"}
+      - {surface: PANEL, view: ANY, key: title, text_ru: "Сессии этой семьи, которые к этому же часу уже заходили в коробку так же глубоко или глубже, а DR у них к этому часу был цел. Чем у них кончился DR. История, не прогноз."}
+      - {surface: PANEL, view: ANY, key: few, text_ru: "мало сессий: n={n}"}
+      - {surface: PANEL, view: ANY, key: none, text_ru: "к {cut} так же глубоко не заходила ни одна сессия семьи"}
+    value_form: CATEGORY_SHARES
+    price_transfer: NONE
+    forbidden_readings_ru: ["вероятность, что DR сегодня устоит", "стоп удержится", "сигнал выхода"]
+    acceptance: ACCEPTED_BY_OPERATOR
+    note: "DR-LAB-TP-2.0 R6: operator 10.11.2026 «реализуй спецификацию (на все шесть вопросов — ответ — да»"

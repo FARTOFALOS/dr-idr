@@ -25,6 +25,7 @@
 // never used).
 (function () {
   'use strict';
+  const LBLC1 = { on: false };     // DR-LAB-TP-2.0: labels of the C1 twin forms while the screen family is a TP set (lbl)
   // One-time migration from the old worktree view on its original port. Never writes screen 24's keys.
   if(location.port==='8735')try{for(const key of Object.keys(localStorage))if(key.startsWith('drlab.d24.')){const to=key.replace('drlab.d24.','drlab.d235.');if(localStorage.getItem(to)==null)localStorage.setItem(to,localStorage.getItem(key));}}catch(e){/* optional local preferences */}
 
@@ -626,8 +627,789 @@
   "CS:NOW-MATCH-M3-1": "MATCHED_AT_CUT",
   "CS:NOW-NEW-YES-DELTA-1": "OUTCOME_SUBGROUP",
   "CS:NOW-NEW-YES-TAU-1": "OUTCOME_SUBGROUP",
+  "CS:TP-DEPTH-AT-CUT-1": "MATCHED_AT_CUT",
+  "CS:TP-TRUE-1": "OUTCOME_SUBGROUP",
+  "CS:TP-WINDOW-1": "OUTCOME_SUBGROUP",
   "CS:UNIVERSE-1": "HISTORICAL_UNIVERSE",
   "CS:ZM3-STUDY-1": "RETROSPECTIVE_RESEARCH"
+ },
+ "cforms": {
+  "EST:B-CLOCK-PEAK-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-CLOCK-PEAK-R",
+   "labels": {
+    "band_ahead": {
+     "ANY": "у этих сессий впереди · пик {ev} в полосе: {window} · {pct} этих сессий"
+    },
+    "band_past": {
+     "ANY": "уже прошло · пик {ev} в полосе: {window} · {pct} этих сессий"
+    },
+    "zone_ahead": {
+     "ANY": "у этих сессий впереди · пиковые 15 минут {window} · {pct} этих сессий"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CLOCK-PEAK-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-CLOCK-PEAK-X",
+   "labels": {
+    "band_ahead": {
+     "ANY": "у этих сессий впереди · пик {ev} в полосе: {window} · {pct} этих сессий"
+    },
+    "band_past": {
+     "ANY": "уже прошло · пик {ev} в полосе: {window} · {pct} этих сессий"
+    },
+    "zone_ahead": {
+     "ANY": "у этих сессий впереди · пиковые 15 минут {window} · {pct} этих сессий"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CLOCK-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-CLOCK-R",
+   "labels": {
+    "earlier": {
+     "ANY": "у этих сессий раньше {t}"
+    },
+    "later": {
+     "ANY": "у этих сессий позже {t}"
+    },
+    "title": {
+     "ANY": "История похожих сессий по часам дня, не сегодняшний путь цены"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CLOCK-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-CLOCK-X",
+   "labels": {
+    "earlier": {
+     "ANY": "у этих сессий раньше {t}"
+    },
+    "later": {
+     "ANY": "у этих сессий позже {t}"
+    },
+    "title": {
+     "ANY": "История похожих сессий по часам дня, не сегодняшний путь цены"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CLOSE": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-CLOSE",
+   "labels": {
+    "col": {
+     "ANY": "колонка"
+    },
+    "col_v": {
+     "ANY": "закрытия этих сессий на этой M5; своя сотня процентов"
+    },
+    "horizon": {
+     "ANY": "на пятиминутке {m5}"
+    },
+    "legend_a": {
+     "ANY": "впереди: реже"
+    },
+    "legend_b": {
+     "ANY": "чаще   ·   {min}…{max} из {N} на M5"
+    },
+    "phrase": {
+     "ANY": "закрытие M5 в полосе {band} SD"
+    },
+    "profile_n": {
+     "ANY": "{n} из {N} · {pct}"
+    },
+    "profile_past": {
+     "ANY": "было "
+    },
+    "profile_t": {
+     "ANY": "{past}{window}"
+    },
+    "row": {
+     "ANY": "закрылись в {band} SD"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CLOSE-MISSING": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-CLOSE-MISSING",
+   "labels": {
+    "col": {
+     "ANY": "нет свечи у {pct} этих сессий"
+    },
+    "phrase": {
+     "ANY": "нет свечи на этой M5 (неизвестно / рынок закрыт)"
+    },
+    "row": {
+     "ANY": "нет свечи · неизвестно"
+    },
+    "unk": {
+     "ANY": "этих сессий — нет свечи на M5 {m5} (неизвестно / рынок закрыт)"
+    },
+    "win_row": {
+     "ANY": "нет свечи"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CLOSE-PREACT": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-CLOSE-PREACT",
+   "labels": {
+    "note": {
+     "ANY": "из них ещё до своего {act}: {pct}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-CROSS-FULL": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-CROSS-FULL",
+   "labels": {
+    "phrase": {
+     "ANY": "пересекали {name} свечой M5 (минимум ≤ уровня ≤ максимум)"
+    },
+    "win_k": {
+     "ANY": "другое событие: минимум ≤ уровня ≤ максимум одной M5"
+    },
+    "win_row": {
+     "ANY": "пересекали свечой"
+    }
+   },
+   "value_form": "BOUNDS_IF_UNKNOWN"
+  },
+  "EST:B-LEVEL-FULL": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-LEVEL-FULL",
+   "labels": {
+    "ladder_head": {
+     "ANY": "вся сессия"
+    },
+    "phrase": {
+     "ANY": "были на {name} ({sd} SD) или дальше {dir} (свеча M5 дошла до уровня или дальше)"
+    },
+    "row": {
+     "ANY": "дальше {dir} · вся сессия"
+    }
+   },
+   "value_form": "BOUNDS_IF_UNKNOWN"
+  },
+  "EST:B-LEVEL-REST": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-LEVEL-REST",
+   "labels": {
+    "horizon_none": {
+     "ANY": "остатка блока нет"
+    },
+    "ladder_head": {
+     "ANY": "после {t}"
+    },
+    "phrase": {
+     "ANY": "были на {name} ({sd} SD) или дальше {dir} (свеча M5 дошла до уровня или дальше)"
+    },
+    "row": {
+     "ANY": "дальше {dir} · после {t}"
+    },
+    "row_none": {
+     "ANY": "дальше {dir} · остатка нет"
+    },
+    "win_row": {
+     "ANY": "после среза"
+    }
+   },
+   "value_form": "BOUNDS_IF_UNKNOWN"
+  },
+  "EST:B-ORDER": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-ORDER",
+   "labels": {
+    "R_before_X": {
+     "ANY": "сначала глубочайший R, потом максимум X"
+    },
+    "X_before_R": {
+     "ANY": "сначала максимум X, потом глубочайший R"
+    },
+    "no_period": {
+     "ANY": "нет периода: после активации не было ни одной M5"
+    },
+    "phrase": {
+     "ANY": "порядок первых R и X: {t}"
+    },
+    "same_M5": {
+     "ANY": "в одной M5: порядок внутри свечи неизвестен"
+    },
+    "unknown": {
+     "ANY": "неизвестно: событие не определено"
+    }
+   },
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:B-RANGE": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RANGE",
+   "labels": {
+    "insp": {
+     "ANY": "свеча M5 задевала эту полосу у {pct} этих сессий (диапазон, не закрытие)"
+    },
+    "win_k": {
+     "ANY": "поле диапазонов V: свеча M5 задевала полосу; не закрытие"
+    },
+    "win_row": {
+     "ANY": "задевали диапазоном"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-BAND-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-BAND-R",
+   "labels": {
+    "area_row": {
+     "ANY": "{ev} в полосе за всю сессию"
+    },
+    "area_tip": {
+     "ANY": "в полосе за всю сессию"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} ({what}) в полосе {band} SD"
+    },
+    "question": {
+     "ANY": "свой экстремум в этой полосе · {from} до {end}"
+    },
+    "two_row": {
+     "ANY": "{ev} · {name}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-BAND-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-BAND-X",
+   "labels": {
+    "area_row": {
+     "ANY": "{ev} в полосе за всю сессию"
+    },
+    "area_tip": {
+     "ANY": "в полосе за всю сессию"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} ({what}) в полосе {band} SD"
+    },
+    "question": {
+     "ANY": "свой экстремум в этой полосе · {from} до {end}"
+    },
+    "two_row": {
+     "ANY": "{ev} · {name}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-DIFF": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-DIFF",
+   "labels": {
+    "close": {
+     "ANY": "R- и X-время близки"
+    },
+    "k_parts": {
+     "ANY": "две отдельные доли N, не части одной сотни"
+    },
+    "k_sum": {
+     "ANY": "две отдельные доли N, не складываются в 100 %"
+    },
+    "more_R": {
+     "ANY": "R-время встречалось в этом окне чаще на {gap} п.п."
+    },
+    "more_X": {
+     "ANY": "X-время встречалось в этом окне чаще на {gap} п.п."
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-JOINT-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-JOINT-R",
+   "labels": {},
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:B-RX-JOINT-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-JOINT-X",
+   "labels": {},
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:B-RX-KNOWN-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-KNOWN-R",
+   "labels": {
+    "row": {
+     "ANY": "определено"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-KNOWN-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-KNOWN-X",
+   "labels": {
+    "row": {
+     "ANY": "определено"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-OUTFRAME-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-OUTFRAME-R",
+   "labels": {},
+   "value_form": "POINT"
+  },
+  "EST:B-RX-OUTFRAME-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-OUTFRAME-X",
+   "labels": {},
+   "value_form": "POINT"
+  },
+  "EST:B-RX-REGION-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-REGION-R",
+   "labels": {
+    "area_row": {
+     "ANY": "{ev} в выбранном окне"
+    },
+    "area_tip": {
+     "ANY": "в выбранном окне"
+    },
+    "mode_cell": {
+     "ANY": "{ev} чаще всего в {band} SD"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} ({what}) в полосе {band} SD в {window}"
+    },
+    "win_row": {
+     "ANY": "в окне"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-REGION-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-REGION-X",
+   "labels": {
+    "area_row": {
+     "ANY": "{ev} в выбранном окне"
+    },
+    "area_tip": {
+     "ANY": "в выбранном окне"
+    },
+    "mode_cell": {
+     "ANY": "{ev} чаще всего в {band} SD"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} ({what}) в полосе {band} SD в {window}"
+    },
+    "win_row": {
+     "ANY": "в окне"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-UNDETERMINED-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-UNDETERMINED-R",
+   "labels": {
+    "insp_none": {
+     "ANY": "нет периода измерения ({pct})"
+    },
+    "insp_unknown": {
+     "ANY": "нет свечи M5 на горизонте ({pct})"
+    },
+    "note": {
+     "ANY": "не рисуется ни по какой цене и времени"
+    },
+    "or_none": {
+     "ANY": " или нет периода"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} не определено (нет свечи M5 на горизонте{or_none}); на графике не рисуется"
+    },
+    "row": {
+     "ANY": "{ev} не определено · нет свечи M5"
+    },
+    "total": {
+     "ANY": "этих сессий — {name} {ev} не определено"
+    },
+    "win_none": {
+     "ANY": "нет периода"
+    },
+    "win_unknown": {
+     "ANY": "неизвестно"
+    },
+    "win_unknown_k": {
+     "ANY": "нет свечи M5 на горизонте"
+    },
+    "zone_none": {
+     "ANY": "нет периода у {pct}"
+    },
+    "zone_unknown": {
+     "ANY": "неизвестно у {pct}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-UNDETERMINED-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-UNDETERMINED-X",
+   "labels": {
+    "insp_none": {
+     "ANY": "нет периода измерения ({pct})"
+    },
+    "insp_unknown": {
+     "ANY": "нет свечи M5 на горизонте ({pct})"
+    },
+    "note": {
+     "ANY": "не рисуется ни по какой цене и времени"
+    },
+    "or_none": {
+     "ANY": " или нет периода"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} не определено (нет свечи M5 на горизонте{or_none}); на графике не рисуется"
+    },
+    "row": {
+     "ANY": "{ev} не определено · нет свечи M5"
+    },
+    "total": {
+     "ANY": "этих сессий — {name} {ev} не определено"
+    },
+    "win_none": {
+     "ANY": "нет периода"
+    },
+    "win_unknown": {
+     "ANY": "неизвестно"
+    },
+    "win_unknown_k": {
+     "ANY": "нет свечи M5 на горизонте"
+    },
+    "zone_none": {
+     "ANY": "нет периода у {pct}"
+    },
+    "zone_unknown": {
+     "ANY": "неизвестно у {pct}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-WINDOW-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-WINDOW-R",
+   "labels": {
+    "area_row": {
+     "ANY": "{ev} в выбранном окне"
+    },
+    "area_tip": {
+     "ANY": "в выбранном окне"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} ({what}) в {window}"
+    },
+    "question": {
+     "ANY": "в эти 15 минут свой экстремум поставили"
+    },
+    "two_row": {
+     "ANY": "{ev} · {name}"
+    },
+    "win_row": {
+     "ANY": "в окне"
+    },
+    "zone_question": {
+     "ANY": "в окне {window} свой экстремум поставили"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-RX-WINDOW-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-RX-WINDOW-X",
+   "labels": {
+    "area_row": {
+     "ANY": "{ev} в выбранном окне"
+    },
+    "area_tip": {
+     "ANY": "в выбранном окне"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} ({what}) в {window}"
+    },
+    "question": {
+     "ANY": "в эти 15 минут свой экстремум поставили"
+    },
+    "two_row": {
+     "ANY": "{ev} · {name}"
+    },
+    "win_row": {
+     "ANY": "в окне"
+    },
+    "zone_question": {
+     "ANY": "в окне {window} свой экстремум поставили"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-VISIT-FULL": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-VISIT-FULL",
+   "labels": {
+    "insp": {
+     "ANY": "заходили в полосу · вся сессия"
+    },
+    "phrase": {
+     "ANY": "заходили в полосу {band} SD (свеча M5 задевала её)"
+    },
+    "row": {
+     "ANY": "заходили в полосу · вся сессия"
+    },
+    "win_full": {
+     "ANY": "вся сессия"
+    },
+    "win_row": {
+     "ANY": "заходили"
+    }
+   },
+   "value_form": "BOUNDS_IF_UNKNOWN"
+  },
+  "EST:B-VISIT-REST": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-VISIT-REST",
+   "labels": {
+    "insp": {
+     "ANY": "заходили · после {t}"
+    },
+    "phrase": {
+     "ANY": "заходили в полосу {band} SD (свеча M5 задевала её)"
+    },
+    "row": {
+     "ANY": "заходили в полосу · после {t}"
+    },
+    "row_none": {
+     "ANY": "заходили в полосу · остатка нет"
+    }
+   },
+   "value_form": "BOUNDS_IF_UNKNOWN"
+  },
+  "EST:B-ZONE-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-ZONE-R",
+   "labels": {
+    "apex": {
+     "ANY": "вершина"
+    },
+    "apex_v": {
+     "ANY": "клетка {band} SD × {window}"
+    },
+    "area": {
+     "ANY": "область"
+    },
+    "area_k": {
+     "ANY": "рамка {band} SD × {window}; членство — сами клетки"
+    },
+    "area_v": {
+     "ANY": "{n} клеток 0,1 SD × 15 мин"
+    },
+    "k": {
+     "ANY": "шаг доли {step}; неизвестно у {unknown}, нет периода у {none}; вне зон {residual}"
+    },
+    "none": {
+     "ANY": "зон нет: ни одна область не набрала минимальной поддержки"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} в зоне {label} (её точная область в {band} SD × {window}, не весь прямоугольник)"
+    },
+    "row": {
+     "ANY": "доля этих сессий"
+    },
+    "share": {
+     "ANY": "этих сессий в этой зоне"
+    },
+    "sub": {
+     "ANY": "{band} SD · {status}"
+    },
+    "zone": {
+     "ANY": "зона"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-ZONE-RESIDUAL-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-ZONE-RESIDUAL-R",
+   "labels": {
+    "phrase": {
+     "ANY": "{name} {ev} вне зон (остаток распределения)"
+    },
+    "row": {
+     "ANY": "{ev} вне зон"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-ZONE-RESIDUAL-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-ZONE-RESIDUAL-X",
+   "labels": {
+    "phrase": {
+     "ANY": "{name} {ev} вне зон (остаток распределения)"
+    },
+    "row": {
+     "ANY": "{ev} вне зон"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:B-ZONE-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-B-ZONE-X",
+   "labels": {
+    "apex": {
+     "ANY": "вершина"
+    },
+    "apex_v": {
+     "ANY": "клетка {band} SD × {window}"
+    },
+    "area": {
+     "ANY": "область"
+    },
+    "area_k": {
+     "ANY": "рамка {band} SD × {window}; членство — сами клетки"
+    },
+    "area_v": {
+     "ANY": "{n} клеток 0,1 SD × 15 мин"
+    },
+    "k": {
+     "ANY": "шаг доли {step}; неизвестно у {unknown}, нет периода у {none}; вне зон {residual}"
+    },
+    "none": {
+     "ANY": "зон нет: ни одна область не набрала минимальной поддержки"
+    },
+    "phrase": {
+     "ANY": "{name} {ev} в зоне {label} (её точная область в {band} SD × {window}, не весь прямоугольник)"
+    },
+    "row": {
+     "ANY": "доля этих сессий"
+    },
+    "share": {
+     "ANY": "этих сессий в этой зоне"
+    },
+    "sub": {
+     "ANY": "{band} SD · {status}"
+    },
+    "zone": {
+     "ANY": "зона"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ZD-BOOT-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-ZD-BOOT-R",
+   "labels": {
+    "row": {
+     "ANY": "пересэмплирование"
+    },
+    "text": {
+     "ANY": "в среднем {mean}, не меньше 0,5 — в {share} из {of} повторов"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ZD-BOOT-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-ZD-BOOT-X",
+   "labels": {
+    "row": {
+     "ANY": "пересэмплирование"
+    },
+    "text": {
+     "ANY": "в среднем {mean}, не меньше 0,5 — в {share} из {of} повторов"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ZD-GRID-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-ZD-GRID-R",
+   "labels": {
+    "k": {
+     "ANY": "Жаккар множеств сессий; 1 — та же зона"
+    },
+    "row": {
+     "ANY": "сдвиг сетки"
+    },
+    "text": {
+     "ANY": "те же сессии на 0,05 SD — {g1}, на 5 мин — {g2}, на 10 мин — {g3}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ZD-GRID-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-ZD-GRID-X",
+   "labels": {
+    "k": {
+     "ANY": "Жаккар множеств сессий; 1 — та же зона"
+    },
+    "row": {
+     "ANY": "сдвиг сетки"
+    },
+    "text": {
+     "ANY": "те же сессии на 0,05 SD — {g1}, на 5 мин — {g2}, на 10 мин — {g3}"
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ZD-NULL-R": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-ZD-NULL-R",
+   "labels": {
+    "k": {
+     "ANY": "различим с {mde} п.п."
+    },
+    "na": {
+     "ANY": "не считается: {reason}"
+    },
+    "row": {
+     "ANY": "путь без направления"
+    },
+    "text": {
+     "ANY": "реальные {p_real}, без направления {p_null} · избыток {excess} п.п."
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ZD-NULL-X": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:TP-ZD-NULL-X",
+   "labels": {
+    "k": {
+     "ANY": "различим с {mde} п.п."
+    },
+    "na": {
+     "ANY": "не считается: {reason}"
+    },
+    "row": {
+     "ANY": "путь без направления"
+    },
+    "text": {
+     "ANY": "реальные {p_real}, без направления {p_null} · избыток {excess} п.п."
+    }
+   },
+   "value_form": "POINT"
+  }
  },
  "edition": "DR-LAB-SC-1.1",
  "estimands": {
@@ -646,7 +1428,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -665,7 +1449,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -683,7 +1469,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -701,7 +1489,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -717,7 +1507,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -731,7 +1523,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -745,7 +1539,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -761,7 +1557,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "BINARY_BOUNDS_OVER_D"
   },
@@ -789,7 +1587,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "BINARY_BOUNDS_OVER_D"
   },
@@ -806,7 +1606,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "BINARY_BOUNDS_OVER_D"
   },
@@ -820,7 +1622,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -835,7 +1639,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -850,7 +1656,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -865,7 +1673,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -882,7 +1692,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -894,7 +1706,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -906,7 +1720,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -918,7 +1734,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -930,7 +1748,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -946,7 +1766,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -962,7 +1784,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -979,7 +1803,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -996,7 +1822,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -1010,7 +1838,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -1024,7 +1854,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -1039,7 +1871,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -1054,7 +1888,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -1069,7 +1905,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "BINARY_BOUNDS_OVER_D"
   },
@@ -1085,7 +1923,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "BINARY_BOUNDS_OVER_D"
   },
@@ -1099,7 +1939,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -1111,7 +1953,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -1123,7 +1967,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -1137,7 +1983,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
   },
@@ -1311,6 +2159,35 @@
    ],
    "unknown": "AMONG_KNOWN_COMPONENT_WITH_COUNTS"
   },
+  "EST:TP-DR-AT-DEPTH": {
+   "measure": "CATEGORY_SHARES",
+   "params": [
+    "cut",
+    "category"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:TP-DEPTH-AT-CUT-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:TP-MASS-R": {
+   "measure": "SHARE",
+   "params": [
+    "k0",
+    "k1",
+    "b0",
+    "b1",
+    "part",
+    "not_bands"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:F-CONF-1",
+    "CS:F-CONF-ALL-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
   "EST:ZD-BOOT-R": {
    "measure": "STABILITY_INDEX",
    "params": [
@@ -1322,7 +2199,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "NOT_APPLICABLE"
   },
@@ -1337,7 +2216,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "NOT_APPLICABLE"
   },
@@ -1352,7 +2233,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "NOT_APPLICABLE"
   },
@@ -1367,7 +2250,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "NOT_APPLICABLE"
   },
@@ -1382,7 +2267,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "NOT_APPLICABLE"
   },
@@ -1397,7 +2284,9 @@
     "CS:F-CONF-1",
     "CS:F-CONF-ALL-1",
     "CS:F-BREAK-1",
-    "CS:F-BREAK-ALL-1"
+    "CS:F-BREAK-ALL-1",
+    "CS:TP-TRUE-1",
+    "CS:TP-WINDOW-1"
    ],
    "unknown": "NOT_APPLICABLE"
   },
@@ -1554,6 +2443,9 @@
     },
     "sentence": {
      "ANY": "семьи — {phrase} · {horizon}"
+    },
+    "sentence_c1": {
+     "ANY": "этих сессий — {phrase} · {horizon}"
     },
     "title_unknown": {
      "ANY": " · неизвестно у {pct} семьи"
@@ -2585,6 +3477,77 @@
    },
    "value_form": "QUANTILES"
   },
+  "EST:TP-DR-AT-DEPTH": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:DR-AT-DEPTH-TP",
+   "labels": {
+    "few": {
+     "ANY": "мало сессий: n={n}"
+    },
+    "none": {
+     "ANY": "к {cut} так же глубоко не заходила ни одна сессия семьи"
+    },
+    "row": {
+     "ANY": "к {cut} так же глубоко ({u} SD или глубже) заходили {D}: DR устоял у {held}, сломан у {broken}"
+    },
+    "row_unknown": {
+     "ANY": ", неизвестно у {unknown}"
+    },
+    "title": {
+     "ANY": "Сессии этой семьи, которые к этому же часу уже заходили в коробку так же глубоко или глубже, а DR у них к этому часу был цел. Чем у них кончился DR. История, не прогноз."
+    }
+   },
+   "value_form": "CATEGORY_SHARES"
+  },
+  "EST:TP-MASS-R": {
+   "claim_class": "DescriptiveClaim",
+   "id": "CF:MASS-R-TP",
+   "labels": {
+    "bunch": {
+     "ANY": "пучок {t0}–{t1}"
+    },
+    "head": {
+     "ANY": "Время отката · доля семьи"
+    },
+    "head_r": {
+     "ANY": "доля семьи"
+    },
+    "head_title": {
+     "ANY": "Доля всей семьи (N): DR устоял до конца сессии, и откат до вершины был в этом времени. Окна и «без отката до вершины» вместе дают долю «устоял»."
+    },
+    "no_r": {
+     "ANY": "без отката до вершины"
+    },
+    "none": {
+     "ANY": "Пучков нет: ни один отрезок времени не набрал {need} сессий (5 % семьи, не меньше 4)."
+    },
+    "other": {
+     "ANY": "{w} · {name} {pct}"
+    },
+    "others": {
+     "ANY": "Откат в других окнах · доля семьи"
+    },
+    "others_title": {
+     "ANY": "Места отката сессий других окон. Доля — от всей семьи. На графике — те же созвездия, тише, с именем окна; щелчок показывает окно целиком."
+    },
+    "outside": {
+     "ANY": "вне мест"
+    },
+    "phrase": {
+     "ANY": "DR устоял, откат до вершины {where}"
+    },
+    "phrase_none": {
+     "ANY": "DR устоял, откат до вершины не определён (вершина сразу или нет данных)"
+    },
+    "place": {
+     "ANY": "{n} из {N} сессий семьи ({pct}): DR устоял, откат до вершины был здесь — {t0}–{t1} · {band} SD"
+    },
+    "window": {
+     "ANY": "{n} из {N} сессий семьи: DR устоял, откат до вершины в {t0}–{t1}"
+    }
+   },
+   "value_form": "POINT"
+  },
   "EST:ZD-BOOT-R": {
    "claim_class": "DescriptiveClaim",
    "id": "CF:ZD-BOOT-R",
@@ -2692,7 +3655,7 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "c49e2cf5e06206ad"
+ "registry_hash": "fc9831da55bdcb2d"
 };
   // A violation belongs to the scene it was found in (DR-LAB-SWPC-1.1 M16): a passport's snapshot, one family response or
   // one NOW response (each its own number: a new answer to the same request starts clean), or the page itself ('*': a page without its registry,
@@ -2743,7 +3706,9 @@
   const VW = F => F && F.brk ? 'BRK' : 'CONF';
   // the registered words: a claim form (by its estimand, EST:…) or a fact form (FF:…), one key, the view's variant if any
   function lbl(id, key, vars, view) {
-    const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : SC11.forms[id];
+    // DR-LAB-TP-2.0 §7: while the screen family is a TP set (T or T_W, a subgroup chosen by its own future) a base
+    // estimand speaks in the words of its C1 twin (SC11.cforms): «этих сессий», never «семьи»
+    const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : (LBLC1.on && SC11.cforms && SC11.cforms[id]) || SC11.forms[id];
     // FF:PHASE-RULE exists only in the candidate edition (08.10); the candidate words of the accepted «Сейчас» forms are
     // never reached from here (tests/integration_faults.mjs), only by reviewLbl for the trial «nowmarks»
     const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id.startsWith('EST:PB-')||id.startsWith('EST:TS-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:CANDIDATE-STATUS','FF:TODAY-Z-PASSED','FF:TODAY-VISIT','FF:PB-TODAY','FF:PB-EPISODE','FF:R-BEFORE-X'].includes(id);
@@ -2781,7 +3746,8 @@
       const Zm = F.zones[ev];
       if (Zm) for (const z of Zm.zones) { const zb = one('EST:B-ZONE-' + ev, x => parOf(x).zone_id === z.zone_id); if (!zb || zb.estimates[0].numerator !== z.n_zone) F.miss('the bundle of zone ' + ev + ' ' + z.label, 'zones.' + ev); }
     }
-    if (F.out) { const c = cats(one('EST:B-DR')); if (c.HELD !== F.out.held || c.BROKEN !== F.out.broken || c.UNKNOWN !== F.out.unknown || c.NO_PERIOD !== F.out.none) F.miss('the bundle of the DR outcome', 'family'); }
+    // T / T_W publish no DR outcome: it is their condition (TP-2.0)
+    if (F.out && !F.r.key.cohort) { const c = cats(one('EST:B-DR')); if (c.HELD !== F.out.held || c.BROKEN !== F.out.broken || c.UNKNOWN !== F.out.unknown || c.NO_PERIOD !== F.out.none) F.miss('the bundle of the DR outcome', 'family'); }
     const c = cats(one('EST:B-ORDER')), n = orderCounts(F);
     if (ORDER_CATS.some(k => (c[ORDER_TOK[k]] || 0) !== n[k])) F.miss('the bundle of the order', 'family');
   }
@@ -2836,13 +3802,17 @@
   // admits the descriptive claim C0, lab/contract.py::admissible_claims), every declared parameter given, counts within N;
   // the value form decides how unknown mass is shown (BOUNDS_IF_UNKNOWN: «a–b %»)
   function bindPassport(F, p) {
-    const e = SC11 && SC11.estimands[p.estimand], f = SC11 && SC11.forms[p.estimand], miss = e && e.params.find(k => !(k in p.params));
+    // the case set of the passport: the family's own, or a set selected from it (CS:TP-DEPTH-AT-CUT-1, TP-2.0 §2.3); a
+    // base family admits the descriptive C0, a TP set (OUTCOME_SUBGROUP) and a matched set the conditional C1 only —
+    // a base estimand there takes its C1 twin (SC11.cforms; lab/contract.py::admissible_claims, claim_form_of)
+    const cs = p.case_set || F.cs, role = SC11 && SC11.case_sets[cs], c0 = role === 'BASE_FAMILY';
+    const e = SC11 && SC11.estimands[p.estimand], f = SC11 && (c0 ? SC11.forms[p.estimand] : (SC11.cforms && SC11.cforms[p.estimand]) || SC11.forms[p.estimand]), miss = e && e.params.find(k => !(k in p.params));
     const sum = p.yes_count + p.unknown_count + p.no_event_count, diff = e && e.measure === 'SHARE_DIFFERENCE';
     const bad = !SC11 ? 'страница собрана без реестра контракта'
       : !e || !f ? 'an unregistered estimand ' + p.estimand
       : e.profile !== 'PROFILE:BASE-24' ? p.estimand + ' is not of the base profile'
-      : !e.q4.includes(F.cs) ? p.estimand + ' is not defined on ' + F.cs
-      : SC11.case_sets[F.cs] !== 'BASE_FAMILY' || f.claim_class !== 'DescriptiveClaim' ? p.estimand + ': its claim ' + f.claim_class + ' is not admissible on ' + F.cs
+      : !e.q4.includes(cs) ? p.estimand + ' is not defined on ' + cs
+      : (c0 ? f.claim_class !== 'DescriptiveClaim' : !['OUTCOME_SUBGROUP', 'MATCHED_AT_CUT'].includes(role) || f.claim_class !== 'ConditionalDescriptiveClaim') ? p.estimand + ': its claim ' + f.claim_class + ' is not admissible on ' + cs
       : miss ? p.estimand + ': parameter ' + miss + ' missing'
       : !Number.isInteger(p.yes_count) || !Number.isInteger(p.unknown_count) || !Number.isInteger(p.no_event_count) || (diff ? Math.abs(p.yes_count) > F.N : p.yes_count < 0 || sum > F.N) ? p.estimand + ': counts outside N'
       : null;
@@ -2852,7 +3822,7 @@
   const ppTxt = (p, range) => p.pct == null ? '—' : range && p.pctHi != null ? pct(p.pct) + '–' + pct(p.pctHi) : pct(p.pct);
   // the reading of a number in one sentence (spec §14): such a share of this family had THIS event, IN THIS area, OVER
   // THIS horizon (and ON THIS M5)
-  function sentence(p) { return '<b>' + ppTxt(p, p.binary) + '</b> ' + lbl('FF:PASSPORT-VIEW', 'sentence', { phrase: p.phrase, horizon: '<span class="k">' + p.horizon + '</span>' }); }
+  function sentence(p) { return '<b>' + ppTxt(p, p.binary) + '</b> ' + lbl('FF:PASSPORT-VIEW', p.claim_class === 'ConditionalDescriptiveClaim' ? 'sentence_c1' : 'sentence', { phrase: p.phrase, horizon: '<span class="k">' + p.horizon + '</span>' }); }
   const hzOf = F => lbl('FF:PASSPORT-VIEW', 'horizon', { from: F.from, end: clk(F.end) });
   // a share of R or X in an area: a price band (B-RX-BAND), a time window (B-RX-WINDOW) or both (B-RX-REGION)
   function evPass(F, ev, region, bounds, time, yes) {
@@ -2977,7 +3947,12 @@
     const D = day(), obs = st.rp != null ? st.rp : NOW, live = st.rp == null;
     // DR-LAB-TP-1.1 (tp235.js, operator 03.11): the confirmation family shows T and its window's sessions; the break family
     // and '#tp=0' keep the table of 30.10 (matrix235.js: the numbers from the table, reset 27.10)
-    const s = sess(D, st.session, obs, live), F0 = snapOf(D, s), F = tpOn() && F0 && !F0.brk ? tpView(D, s, F0) : mxView(F0);
+    // the base family is built in the family's own words; T and T_W (tpView) in the C1 words of their sets (lbl)
+    LBLC1.on = false;
+    const s = sess(D, st.session, obs, live), F0 = snapOf(D, s), tp = tpOn() && F0 && !F0.brk;
+    LBLC1.on = !!tp;
+    const F = tp ? tpView(D, s, F0, { live, obs }) : mxView(F0);
+    LBLC1.on = !!(F && F._tp);
     return { D, obs, live, s, F };
   }
   // the right edge of the time axis is anchored at the session end + rightPad minutes (12; was 45 until 2026-10-06) (design 22's wheel; operator 2026-10-06:
@@ -3130,6 +4105,7 @@
     if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, cloudCtx); drawMemberPath(c, mapCtx); }
     if (F && st.mode === 'bounds' && !continuationMode()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'under');
+    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);
@@ -3138,6 +4114,7 @@
     if (!continuationMode()) drawNow(c, ctx);
     if (F && !continuationMode()) drawLink(c, mapCtx);
     if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, cloudCtx);
+    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'over');
     if (F && st.mode === 'bounds') drawPair(c, mapCtx);
     if (F) drawSweeps(c, ctx);
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
@@ -3322,7 +4299,13 @@
     if (h.k === 'mcell') V.win = { t0: F.f + 15 * h.b0, t1: F.f + 15 * (h.b0 + 1), pA: F.u2p(h.k0 / 10), pB: F.u2p((h.k0 + 1) / 10), col };
     if (h.k === 'tpwin' && F._tp) {                                 // TP-1.1: the hovered window's hours over the chart
       const tt = tpWinT(F, h.id);
-      if (tt) { const x0 = V.X(tt[0]), x1 = V.X(tt[1]); c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h); V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R }; }
+      if (tt) {
+        const x0 = V.X(tt[0]), x1 = V.X(tt[1]), pk = tpWinPeak(F, h.id);
+        c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h);
+        // operator 05.11: the window's peak 15 minutes over the chart and on the time axis — when its pullback is most frequent
+        if (pk) { c.fillStyle = rgba(cfg.R, 0.08); c.fillRect(V.X(pk.t0), 0, V.X(pk.t1) - V.X(pk.t0), V.plot.h); }
+        V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R, peak: pk ? [pk.t0, pk.t1] : null };
+      }
     }
     if (h.k === 'tcell') {
       const x0 = V.X(F.f + 15 * h.b0), x1 = V.X(F.f + 15 * h.b1);
@@ -3487,6 +4470,7 @@
       if (h.k === 'area') return inArea(q, st.area);
       if (h.k === 'zone') return h.ev === q.ev && (F._ts ? tsMember(F.zones[h.ev].zones[h.i],q) : F.zcell[h.ev].get(q.k + '|' + q.b) === h.i);
       if (h.k === 'pt') return q.i === h.i;
+      if (h.k === 'tpzone') return false;                 // TP: a place of another window under the mouse
       if (h.k === 'out') return q.m.outcome === h.cat;
       if (h.k === 'evrow') return true;
       if (h.k === 'hcell') return h.ev === q.ev && q.k === h.kk && q.b === h.b;
@@ -3627,6 +4611,7 @@
     if (!h) return 1;
     if (h.k === 'zone') return h.ev === ev && h.i === i ? 1.5 : 0.45;
     if (h.k === 'pt') return 0.6;
+    if (h.k === 'tpzone') return 0.45;
     if (h.k === 'pcell') return h.ev === ev && z.cell_mask.some(([k]) => k >= h.k0 && k < h.k1) ? 1.15 : 0.6;
     if (h.k === 'tcell') return z.cell_mask.some(([, b]) => b >= h.b0 && b < h.b1) ? 1.1 : 0.55;
     return 0.8;
@@ -3694,6 +4679,7 @@
       return;
     }
     if (st.mode !== 'bounds') return;
+    if (h.k === 'tpzone') { if (F._tp) tpGhostLink(ctx, h); return; }   // TP: a place of another window, as a zone
     // operator 2026-10-06: «до какого времени этот кластер валидный?» — a hovered zone shows its WHOLE time window (the
     // 15-minute cells it covers) over its prices: the part already passed in the spent shade, the part still ahead in its
     // colour, the slice between them; the axis window names the whole window. No peak, no ring, no red: the zone's status
@@ -3932,6 +4918,7 @@
     const cost = r => 4 * live.filter(b => over(r, b)).length + 4 * pills.filter(b => over(r, b)).length + 3 * placed.filter(b => over(r, b)).length + bars.filter(b => over(r, b)).length;
     if (phase === 'under') V.zoneHit = [];
     const env = { placed, live, pills, bars, over };
+    if (phase === 'under') V.zoneEnv = env;
     for (const ev of ['X', 'R']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
       CL[ev].forEach((g, i) => {
@@ -3999,20 +4986,37 @@
   // after them), the confirmation pill or another name is led out to the LEFT — into the past, never over the time
   // ahead — on a thin dash-dot line from a small ring at the constellation's centre: X toward the side of the
   // confirmation, R away from it, each to the least crowded place. The others stay inside, as a background.
-  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env) {
-    const imp = expiredLook(s), zp = zonePass(F, ev, z), zt = ppTxt(zp), share = zp.pct || 0;
+  // o (TP, operator 05.11): a place of another window — its name, a smaller size, a quieter look, its own hit list
+  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env, o) {
+    o = o || {};
+    // TP-2.0: a place of R reads its share of the whole family, a place of X how many of the window's sessions got this
+    // far (tp235.js::tpMarkPass); elsewhere the zone's own share
+    const tpm = !o.pass && F._tp ? tpMarkPass(F, ev, z) : null;
+    const imp = expiredLook(s), zp = o.pass || (tpm && tpm.p) || zonePass(F, ev, z), zt = ppTxt(zp), share = zp.pct || 0, name = o.name || (tpm && tpm.name) || z.label;
     const ps = F.ev[ev].pts.filter(q => F._ts ? tsMember(z,q) : F.zcell[ev].get(q.k + '|' + q.b) === i);
     let cx = (g.bb[0] + g.bb[2]) / 2, cy = (g.bb[1] + g.bb[3]) / 2;
     if (ps.length) { cx = ps.reduce((a, q) => a + V.X(q.t + 2.5), 0) / ps.length; cy = ps.reduce((a, q) => a + V.Y(q.p), 0) / ps.length; }
-    const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
+    const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1) * (o.size || 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
     c.font = lw + nfs + 'px ' + FONT;
-    const wN = c.measureText(z.label).width, wS = pctW(c, zt, lw, fs), wT = wN + 4 + wS, hT = fs;
+    const wN = c.measureText(name).width, wS = pctW(c, zt, lw, fs), wT = wN + 4 + wS, hT = fs;
     let lx = clamp(cx - wT / 2, 4, V.plot.w - 64 - wT), ly = clamp(cy - fs / 2, 30, V.plot.h - hT - 4), out = false;
     const { placed, live, pills, bars, over } = env, R = (x, y) => [x - 2, y - 2, x + wT + 2, y + hT + 2];
     // any candle under the name counts too (operator 2026-10-06: the first constellations lie on the candles of the first
     // minutes after the confirmation, not only on the last ones)
     const hits = r => live.some(b => over(r, b)) || pills.some(b => over(r, b)) || placed.some(b => over(r, b)) || bars.some(b => over(r, b));
-    if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
+    if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly)) && o.stay) {
+      // a place of another window (TP, 05.11) keeps its name in its own hours: off the candles and the room after them
+      // up or down (and a little later), never into the past where the window on screen stands; a dash-dot line if far
+      const sgn = (ev === 'X' ? -1 : 1) * (F.d0 > 0 ? 1 : -1);
+      let best = null, bc = 1e9;
+      for (const dx of [0, 30, 60, 100]) for (const dy of [24, 48, 80, 120, 160].flatMap(v => [sgn * v, -sgn * v])) {
+        const x = clamp(cx - wT / 2 + dx, 4, V.plot.w - 64 - wT), y = cy + dy - hT / 2, r = R(x, y);
+        if (y < 30 || y + hT > V.plot.h - 4) continue;
+        const cc = 5 * (live.filter(b => over(r, b)).length + pills.filter(b => over(r, b)).length + placed.filter(b => over(r, b)).length) + bars.filter(b => over(r, b)).length + dx / 200 + Math.abs(dy) / 200;
+        if (cc < bc) { bc = cc; best = [x, y]; }
+      }
+      if (best) [lx, ly] = best;
+    } else if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
       const sgn = (ev === 'X' ? -1 : 1) * (F.d0 > 0 ? 1 : -1);
       let best = null, bc = 1e9;
       for (const dx of [80, 120, 170, 230, 300, 380]) for (const dy of [sgn * 40, sgn * 70, sgn * 100, sgn * 140, 0, -sgn * 40]) {
@@ -4027,7 +5031,7 @@
     // operator 2026-10-06: zoomed in, a constellation outside the frame keeps its name at the edge with a thin dash-dot
     // line toward it (as the earlier threads did); a name pushed far from its centre gets the same line
     const far = !out && (cx < 0 || cx > V.plot.w || cy < 0 || cy > V.plot.h || Math.hypot(clamp(cx, lx, lx + wT) - cx, clamp(cy, ly, ly + hT) - cy) > 24);
-    const k = cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1);
+    const k = o.k != null ? o.k : cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1) * (o.alpha || 1);
     const aName = out ? cfg.calloutA / 100 : cfg.zoneNameA / 100, aNum = out ? cfg.calloutA / 100 * 0.95 : cfg.zoneNumA / 100;
     c.save(); c.globalAlpha = Math.min(1, op);
     if (far) {
@@ -4043,10 +5047,11 @@
     }
     c.textBaseline = 'alphabetic';
     const yb = ly + fs * 0.86;
-    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, aName); c.fillText(z.label, lx, yb);
+    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, aName); c.fillText(name, lx, yb);
     pctDraw(c, zt, lx + wN + 4, yb, lw, fs, rgba(mixW(col, 0.35), aNum));
     c.restore();
-    V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 6], ev, i, loops: g.hit });
+    if (o.hit) o.hit([lx - 2, ly - 2, wT + 4, hT + 6]);
+    else V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 6], ev, i, loops: g.hit });
   }
   // ---------- the time band (variant «Окна времени», operator 2026-10-01) ----------
   const expiredLook = s => s === 'IMPOSSIBLE' || s === 'PAST';
@@ -4495,6 +5500,7 @@
       const [ya, yb] = cellY(F, o.k0, o.k1), y0 = Math.max(top0, ya), y1 = Math.min(bot0, yb);
       if (y1 > y0) { c.fillStyle = rgba(cfg[o.ev], o.hot ? 1 : 0.7); c.fillRect(A_.x + A_.w - 4 - 3 * ln, y0, 2, y1 - y0); }
     });
+    if (F._tp) tpReachMarks(c, F, A_, top0, bot0);                   // TP-2.0 Ч12: the levels 70 % and 50 % of the window reached
     // the heads (R on the left, X on the right, as their percentages) and the shares beyond the frame
     c.textBaseline = 'top'; c.font = '700 10.5px ' + FONT;
     c.fillStyle = cfg.R; c.fillText('R откат', A_.x + 5, 3);
@@ -4568,7 +5574,12 @@
     // slice tag; the cursor's own time tag is left out while a window is shown
     tag(ctx.obs, ctx.live && !ctx.D.hist ? '#2A2F38' : ctx.D.hist ? C.hist : C.replay, ctx.live && !ctx.D.hist ? '#fff' : '#0B0C10');
     if (!(wn && wn.t0 != null) && st.mx >= 0 && st.mx < W && st.my < V.plot.h) tag(snapT(V.T(st.mx)) - 2.5, '#363A45', '#fff');
-    if (wn && wn.t0 != null) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
+    if (wn && wn.t0 != null && wn.peak) {
+      // a window of TP (operator 05.11): its edges quiet, its peak 15 minutes in its colour, on top
+      const xp = V.X((wn.peak[0] + wn.peak[1]) / 2), clear = t => Math.abs(V.X(t) - xp) >= 76;
+      if (V.X(wn.t1) - V.X(wn.t0) >= 96) for (const t of [wn.t0, wn.t1]) if (clear(t)) tag(t, '#3A3F4A', '#D7DBE2');
+      tag((wn.peak[0] + wn.peak[1]) / 2, wn.col, '#0B0C10', clk(wn.peak[0]) + '–' + clk(wn.peak[1]));
+    } else if (wn && wn.t0 != null) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
     c.textAlign = 'left';
     void h;
   }
@@ -4626,6 +5637,8 @@
     const inBox = a => x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3];
     const zl = (V.zoneHit || []).find(inBox);
     if (zl) return { k: 'zone', ev: zl.ev, i: zl.i };
+    const gz = F._tp ? tpGhostAt(x, y, false) : null;           // TP: the name of another window's place
+    if (gz) return gz;
     if (st.mode === 'bounds') { const mc = mxCellHit(F, x, y); if (mc) return lvlHit(ctx, y) || mc; }   // the layer «Клетки»
     if (st.mode === 'bounds' && st.L.pts) {
       // a star of R or of X: the nearest within 5 px
@@ -4643,6 +5656,8 @@
     if (st.area && V.areaHit) for (const a of V.areaHit) if (a.part === 'frame' && x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3]) { const lv = lvlHit(ctx, y); if (lv) return lv; return { k: 'area', part: 'window' }; }
     // inside a constellation (its 0.2 iso-line): that zone
     for (const z of V.zoneHit || []) if (inLoops(z.loops, x, y)) return lvlHit(ctx, y) || { k: 'zone', ev: z.ev, i: z.i };
+    const gl = F._tp ? tpGhostAt(x, y, true) : null;            // inside another window's place
+    if (gl) return lvlHit(ctx, y) || gl;
     return lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y);
   }
   function lvlHit(ctx, y) {
@@ -4674,7 +5689,8 @@
     if (!h) return '';
     if (h.k === 'arrive' || h.k === 'pre') return candidateTip(h, ctx);
     if (h.k === 'mcell' && F && F._mx) return mxCellTip(F, h);
-    if (F && F._tp && h.k === 'tpwin') return tpWinTip(F, h);          // TP-1.1 (tp235.js)
+    if (F && F._tp && h.k === 'tpwin') return tpWinTip(F, h, ctx);     // TP-1.1 (tp235.js)
+    if (F && F._tp && h.k === 'tpzone') return tpGhostTip(F, ctx, h);
     if (F && F._tp && h.k === 'tpline') return tpLineTip(F, h);
     if (F && F._tp && h.k === 'tcell') return tpCellTip(F, ctx, h);
     if (h.k === 'pt' && F) {
@@ -5039,7 +6055,8 @@
     const pk = lkz && !lkz.past && s !== 'IMPOSSIBLE' ? peakPass(F, h.ev, { zone_id: z.zone_id }, lkz.b, false, sliceOf(ctx), lkz.n) : null;
     return '<div class="ih"><span style="color:' + cfg[h.ev] + '">' + z.label + '</span> · ' + F.names[h.ev].toLowerCase() + ' · ' + clk(z.time_start) + '–' + clk(z.time_end) + '<span class="zs zs-' + s + '">' + zstOf(F, ctx, z, s) + '</span></div>' +
       '<div class="is">' + band(z.price_low, z.price_high) + ' SD · ' + px(Math.min(q0, q1)) + '–' + px(Math.max(q0, q1)) + '</div>' +
-      '<div class="ibig" style="color:#F0F5FF">' + ppTxt(p) + '<span>' + (F._mx ? zoneCellWords(F, h.ev, z) : lbl('EST:B-ZONE-' + h.ev, 'share')) + '</span></div>' +
+      (F._tp || F._tpg ? tpZoneHead(F, h.ev, z, p) :                                // TP-2.0: the family share of R's place, the reach of X's
+      '<div class="ibig" style="color:#F0F5FF">' + ppTxt(p) + '<span>' + (F._mx ? zoneCellWords(F, h.ev, z) : lbl('EST:B-ZONE-' + h.ev, 'share')) + '</span></div>') +
       (REVIEW ? '<div class="p24-visit-note"><span>' + (F.rbx ? lbl('FF:R-BEFORE-X', 'zone_final_' + h.ev, { status: zst(s) }) : lbl('FF:TODAY-VISIT', 'final', { ev: h.ev, status: zst(s) })) + '</span></div>' : '') +
       winLine(F, ctx, h.ev, s, F.f + 15 * b0, F.f + 15 * b1, ctx ? zoneClock(F, ctx, h.ev)[h.i] : null) +
       (pk ? '<div class="il" style="color:' + cfg[h.ev] + '">' + lbl(pk.estimand, 'zone_ahead', { window: clk(F.f + 15 * lkz.b) + '–' + clk(F.f + 15 * lkz.b + 15), pct: ppTxt(pk) }) + '</div>' : '') +
@@ -6732,11 +7749,30 @@
   // - the band (time): the clock of T's pullbacks R before the top (per 15 minutes, share of |T|), every bunch drawn
   //   brighter with its share, the lines of the median and of the 70 % mark, and in the place of the zone capsules the
   //   windows: W1 (first bunch → median), W2 (median → 70 %), «позже» after 70 % and «до окна» before W1; X is the selected
-  //   window's sessions, its columns and its own median and 70 % lines (no X constellation in time);
+  //   window's sessions in the same manner (operator 04.11: «так же самое можно и X показывать»): its bunches brighter with
+  //   their shares and its median and 70 % lines (the median is the author's «max extension median time»), its last 15
+  //   minutes apart («ход не кончился до закрытия», never a place);
   // - the price column and the constellations: the sessions of one window T_W (flag ':held:tw=W1'), its price bands as
-  //   the places (zone rule TP_BANDS); at rest W1, a window under the mouse on the band shows its sessions, a click fixes it.
+  //   the places of R, the price bands of all their tops over 0.2-SD cells as the places of X (the author's «cluster of
+  //   extension… next big cluster»; zone rule TP_BANDS, tp-bands-3; core 1.4), under the mouse «дошли до» its lower edge;
+  //   at rest W1, a window under the mouse on the band shows its sessions, a click fixes it.
+  // - the other windows' places of R (operator 05.11), always on the chart in their own hours, quieter and named by their
+  //   window («W2 · R1»), each its share of its own window; a window under the mouse marks its peak 15 minutes and says
+  //   when inside it (tpWinPeak, tpWinTip).
   // The drawing and the colours of 23.5 stay as they were (operator 03.11: «все ценовые, все цветовые, как у нас были»).
   // «Сейчас» (NOW-1.0) stays on the whole family F: its move to T is a separate task (core §6).
+  // DR-LAB-TP-2.0 (operator 10.11: «реализуй спецификацию (на все шесть вопросов — ответ — да»; meaning/25-tp-2-0-specifikaciya.md):
+  // - one measure per colour: an amber number (a bunch, a window, a place of R, the rows «без отката до вершины» and «вне
+  //   мест») is the share of the WHOLE family F (EST:TP-MASS-R on the family of the screen: DR held and R before the top in
+  //   the region); the share inside the window is in the inspector (C1); a blue number is «дошли до» among the window's
+  //   sessions (EST:B-RX-BAND-X from the place's near edge), «кончили здесь» in the inspector;
+  // - only mass: a bunch or a place needs max(4, ceil(0.05 N)) sessions, N of the whole family (server and page alike);
+  // - the price column marks the levels 70 % and 50 % of the window's sessions reached (tpReachMarks);
+  // - the window on screen follows today: a pinned window, else the window of today's deepest point so far (tpToday),
+  //   else W1;
+  // - the summary says how the DR ended for the family's sessions that by this clock had gone as deep (tpDepthRow,
+  //   EST:TP-DR-AT-DEPTH on CS:TP-DEPTH-AT-CUT-1).
+  // T and T_W are named as what they are (CS:TP-TRUE-1, CS:TP-WINDOW-1: subgroups chosen by their future; C1 words).
   // '#tp=0' in the address shows the previous meaning (the table of 30.10) for comparison, and so does '#cells=1' (the layer
   // «Клетки» of 30.10 is a view of that table: its shortcut «DR Lab 23.5 · клетки» keeps opening it); '#tpw=W2' fixes a window.
   const TP = { on: !/(?:^|[#&])(?:tp=0|cells=1)(?:&|$)/.test(location.hash), pin: (/(?:^|[#&])tpw=(BEFORE|W1|W2|LATE)(?:&|$)/.exec(location.hash) || [])[1] || null, last: null };
@@ -6787,12 +7823,12 @@
     for (const t of ts) { const b = Math.floor((t - f) / 15); cells.set(b, (cells.get(b) || 0) + 1); }
     return { ts, cells: [...cells.entries()].sort((a, b) => a[0] - b[0]), unknown: M.filter(m => m[ev].s === 'unknown').length, none: M.filter(m => m[ev].s === 'none').length };
   }
-  function tpClock(F) {
+  function tpClock(F, NB) {
     const f = F.f, win = Math.floor((F.r.key.window[0] - f) / 15), bLo = win, bHi = Math.floor((F.end - 5 - f) / 15), N = F.N, m = tpMarks(F.M, 'R', f);
     const at = new Map(m.cells), c = [];
     for (let b = bLo; b <= bHi; b++) c.push(at.get(b) || 0);
     const bunches = [];
-    for (const [lo, hi, top] of tpRegions(c)) { let n = 0; for (let j = lo; j <= hi; j++) n += c[j]; if (n >= tpNeed(N)) bunches.push({ b0: bLo + lo, b1: bLo + hi + 1, n, peak: bLo + top }); }
+    for (const [lo, hi, top] of tpRegions(c)) { let n = 0; for (let j = lo; j <= hi; j++) n += c[j]; if (n >= tpNeed(NB)) bunches.push({ b0: bLo + lo, b1: bLo + hi + 1, n, peak: bLo + top }); }
     const median = tpQuant(m.ts, 1, 2), p70 = tpQuant(m.ts, 7, 10), W = { BEFORE: null, W1: null, W2: null, LATE: null };
     if (median) {
       const bm = Math.floor((median.t - f) / 15), bp = Math.floor((p70.t - f) / 15), first = bunches.find(u => u.b0 <= bm), s0 = first ? first.b0 : bLo;
@@ -6801,7 +7837,7 @@
       if (bp > bm) W.W2 = [bm + 1, bp + 1];
       if (bp < bHi) W.LATE = [bp + 1, bHi + 1];
     }
-    return { version: 'tp-1.1', N, known: m.ts.length, unknown: m.unknown, none: m.none, cells: m.cells, bunches, median, p70, windows: W, need: tpNeed(N), step: 15, range: [bLo, bHi + 1] };
+    return { version: 'tp-2.0', N, known: m.ts.length, unknown: m.unknown, none: m.none, cells: m.cells, bunches, median, p70, windows: W, need: tpNeed(NB), n_base: NB, step: 15, range: [bLo, bHi + 1] };
   }
   // the family of a window: every member's R in the window that the page counted on T, as many as T has there; its own X
   // marks counted here (the response publishes no clock, lab/scene24.py: its numbers have no declared meaning in SC-1.1)
@@ -6812,9 +7848,27 @@
     if (G.N !== tpCount(T.tpc, W[0], W[1])) return 'число сессий окна ' + TP_NAME[w];
     return null;
   }
+  // the clock of the window's tops X (the bunch rule of lab/tp11.py): bunches over the block without its last 15 minutes,
+  // the median, the tops of the last 15 minutes apart (a move cut by the close: never a bunch, never a place)
+  function tpXClock(G, NB) {
+    const f = G.f, bLo = Math.floor((G.r.key.window[0] - f) / 15), bHi = Math.floor((G.end - 5 - f) / 15), m = tpMarks(G.M, 'X', f), at = new Map(m.cells), c = [];
+    for (let b = bLo; b < bHi; b++) c.push(at.get(b) || 0);
+    const bunches = [];
+    for (const [lo, hi, top] of tpRegions(c)) { let n = 0; for (let j = lo; j <= hi; j++) n += c[j]; if (n >= tpNeed(NB)) bunches.push({ b0: bLo + lo, b1: bLo + hi + 1, n, peak: bLo + top }); }
+    return { cells: m.cells, bunches, median: tpQuant(m.ts, 1, 2), close: at.get(bHi) || 0, bLo, bHi, need: tpNeed(NB) };
+  }
+  // every place of X is a price band of the window's tops on the 0.2-SD grid (lab/tp11.py::xbands) and never holds a top
+  // of the last 15 minutes; the contract re-derives the bands themselves (ref_tp_xbands)
+  function tpXCheck(G) {
+    const xc = G.tpxc, Z = (G.zones.X || { zones: [] }).zones;
+    for (const z of Z)
+      if (z.cell_mask.some(q => q[1] >= xc.bHi || q[0] < z.price_low || q[0] >= z.price_high) || z.price_low % 2 || z.price_high % 2) return 'места вершины ' + z.label;
+    return null;
+  }
   function tpXMarks(G) { const m = tpMarks(G.M, 'X', G.f); return { median: tpQuant(m.ts, 1, 2), p70: tpQuant(m.ts, 7, 10), known: m.ts.length, unknown: m.unknown, none: m.none, cells: m.cells }; }
   // one family of TP: its response checked like the family of the screen (snapOf), then built by the same buildSnap
-  function tpSnap(D, s, w, T) {
+  const TP_KEY = ['instrument', 'session', 'weekday', 'direction', 'event', 'window', 'cutoff', 'scope'];
+  function tpSnap(D, s, w, T, Fb) {          // Fb: the family of the screen (never name it A: A is the page's state)
     const fk = tpKey(D, s, w), r = A.fams.get(fk);
     if (!r) { tpRequest(fk, s, w); return null; }
     if (r.status !== 'ok' || r.view !== 'conf' || (r.key.scope || 'weekday') !== st.scope || r.key.r_event !== 'R_BEFORE_X' || r.key.cohort !== 'HELD' ||
@@ -6826,12 +7880,16 @@
     }
     if (r._refused) return null;
     if (w && !T) return null;
+    if (!w && !Fb) return null;                                  // T's threshold is counted from N of the whole family
     if (!r._F) {
+      const B = w ? T : Fb;
+      if (TP_KEY.some(k => JSON.stringify(r.key[k]) !== JSON.stringify(B.r.key[k]))) { r._refused = 'набор не из той же семьи'; kViolate(r._refused, null, r._ctx); return null; }
       const G = buildSnap(r, s, 'conf');
       G.req.view = 'conf' + (r.key.scope === 'all' ? ':all' : '') + tpFlags(w);
       G.tpw = w || null;
-      if (w) G.tpx = tpXMarks(G); else G.tpc = tpClock(G);          // T: its clock; T_W: its X lines
-      const bad = G.held.has('family') ? 'счёт страницы не совпал с пакетом сервера (' + G.mismatch.join(', ') + ')' : tpCheck(G, w, T);
+      const NB = w ? T.tpc.n_base : Fb.N;                      // TP-2.0 §3: the mass threshold from N of the whole family
+      if (w) { G.tpx = tpXMarks(G); G.tpxc = tpXClock(G, NB); } else G.tpc = tpClock(G, NB);   // T: its clock; T_W: the clock of its tops
+      const bad = G.held.has('family') ? 'счёт страницы не совпал с пакетом сервера (' + G.mismatch.join(', ') + ')' : tpCheck(G, w, T) || (w ? tpXCheck(G) : null);
       if (bad) { r._refused = G.held.has('family') ? bad : 'страница пересчитала другое: ' + bad; kViolate(r._refused, null, r._ctx); return null; }
       r._F = G;
     }
@@ -6839,19 +7897,38 @@
   }
   // the view of the screen: the window family T_W with T and F at hand. A window under the mouse on the band (or its row in
   // the panel is clicked) shows its sessions; at rest the fixed window, else W1
-  function tpView(D, s, F0) {
-    const T = tpSnap(D, s, null);
+  function tpView(D, s, F0, cx) {
+    if (!F0) return null;
+    const T = tpSnap(D, s, null, null, F0);
     if (!T) return null;
-    const tp = T.tpc, h = st.hover, has = w => !!(w && tp.windows[w]);
+    // a window is shown only with sessions in it (a window of the clock may hold none: a tiny family, today's point late)
+    const tp = T.tpc, h = st.hover, has = w => !!(w && tp.windows[w] && tpCount(tp, tp.windows[w][0], tp.windows[w][1]));
     for (const w of TP_WINDOWS) if (has(w)) tpSnap(D, s, w, T);            // every window's family at once: a hover switches without waiting
-    const want = h && h.k === 'tpwin' && h.src === 'strip' && has(h.id) ? h.id : has(TP.pin) ? TP.pin : has('W1') ? 'W1' : TP_WINDOWS.find(has) || null;
+    // TP-2.0 §6.3: a pinned window; else the window of today's deepest point so far (it becomes the pullback before the
+    // top if the move makes a new top); else W1
+    const today = tpToday(F0, Object.assign({ D }, cx || {}), tp), rest = has(TP.pin) ? TP.pin : today && has(today.w) ? today.w : has('W1') ? 'W1' : TP_WINDOWS.find(has) || null;
+    const want = h && h.k === 'tpwin' && h.src === 'strip' && has(h.id) ? h.id : rest;
     let w = want, G = w ? tpSnap(D, s, w, T) : T;
-    if (!G && w !== (has(TP.pin) ? TP.pin : 'W1')) { w = has(TP.pin) ? TP.pin : has('W1') ? 'W1' : null; G = w ? tpSnap(D, s, w, T) : T; }
+    if (!G && w !== rest) { w = rest; G = w ? tpSnap(D, s, w, T) : T; }
     if (!G) return null;
     if (TP.last !== w) { TP.last = w; if (st.pin && ['pt', 'zone', 'mcell'].includes(st.pin.k)) st.pin = null; }
-    const key = G.r.snapshot_id + '|' + T.r.snapshot_id + '|' + (F0 ? F0.r.snapshot_id : '');
+    const why = has(TP.pin) && w === TP.pin ? 'pin' : today && w === today.w ? 'today' : 'none';
+    const key = G.r.snapshot_id + '|' + T.r.snapshot_id + '|' + F0.r.snapshot_id + '|' + why + '|' + (today ? today.T + ':' + today.lo : '');
     if (G._tpv && G._tpv._tpKey === key) return G._tpv;
-    return (G._tpv = Object.assign({}, G, { _tp: { T, A: F0, clock: tp, w, x: w ? G.tpx : null }, _tpKey: key }));
+    return (G._tpv = Object.assign({}, G, { _tp: { T, A: F0, clock: tp, w, x: w ? G.tpx : null, xc: w ? G.tpxc : null, today, why }, _tpKey: key }));
+  }
+  // today's deepest point against the activation so far, from today's closed M5 after it (TP-2.0 §2.6, point D): its
+  // level u, the open of the first M5 that reached it and the window of T's clock it falls in; none while the prefix is
+  // incomplete or before the first M5 after the activation
+  function tpToday(F0, ctx, tp) {
+    if (!ctx.D || ctx.obs == null) return null;
+    // only the M5 of the block: after its end nothing belongs to the session (the cut stops at the block end)
+    const sl = Math.min(sliceOf(ctx), F0.end), rows = todayRows(F0, ctx).filter(r => r.T <= sl);
+    if (!rows.length || rows.length !== Math.max(0, (sl - F0.act0) / 5)) return null;
+    let j = 0;
+    for (let i = 1; i < rows.length; i++) if (rows[i].lo < rows[j].lo) j = i;
+    const t = rows[j].T - 5, b = Math.floor((t - F0.f) / 15), w = tp ? TP_WINDOWS.find(k => tp.windows[k] && b >= tp.windows[k][0] && b < tp.windows[k][1]) || null : null;
+    return { lo: rows[j].lo, T: rows[j].T, t, u: rows[j].lo / F0.w0t, w, sl, rows };
   }
   // what the panel says while a TP family is missing or refused
   function tpStatus(ctx) {
@@ -6859,6 +7936,7 @@
     if (!rT) return 'Собираю true-сессии семьи…';
     if (rT.status !== 'ok') return (rT.message || rT.status) + '';
     if (rT._refused) return 'Числа не публикуются: ' + rT._refused;
+    if (!rT.N) return 'Ни у одной сессии семьи DR не устоял до конца: часов отката и мест нет.';
     const w = TP.last || 'W1', rW = A.fams.get(tpKey(ctx.D, s, w));
     if (!rW) return 'Собираю сессии окна ' + TP_NAME[w] + '…';
     if (rW.status !== 'ok') return (rW.message || rW.status) + '';
@@ -6867,8 +7945,121 @@
   }
   const tpWinT = (F, w) => { const W = F._tp.clock.windows[w]; return W ? [F.f + 15 * W[0], F.f + 15 * W[1]] : null; };
   const tpCount = (tp, b0, b1) => tp.cells.filter(([b]) => b >= b0 && b < b1).reduce((s, q) => s + q[1], 0);
-  // the share of a stretch of T's clock: EST:B-RX-WINDOW-R on the family T (its N = |T|), verified by the server like any other
-  const tpShare = (F, b0, b1) => evPass(F._tp.T, 'R', 'time_band', null, [F.f + 15 * b0, F.f + 15 * b1], tpCount(F._tp.clock, b0, b1));
+  // ---------- TP-2.0: the mass of the whole family (EST:TP-MASS-R on the family of the screen F, its N) ----------
+  // the family's sessions whose DR held and whose R before the top lies in the region (cells; null = open); part NO_R: DR
+  // held, R before the top not determined. Verified by the server (lab/contract.py::ref_tp_mass) like any passport.
+  function tpMass(F, o) {
+    const Fb = F._tp && F._tp.A;
+    if (!Fb) return { pct: null, N: 0, yes_count: 0, unknown_count: 0 };
+    const inb = (x, lo, hi) => (lo == null || x >= lo) && (hi == null || x < hi), nb = o.not_bands || [];
+    const part = o.part || 'KNOWN', params = { k0: o.k0 == null ? null : o.k0, k1: o.k1 == null ? null : o.k1, b0: o.b0 == null ? null : o.b0, b1: o.b1 == null ? null : o.b1, part, not_bands: nb };
+    const n = part === 'NO_R' ? Fb.M.filter(m => m.outcome === 'held' && m.R.s !== 'known').length
+      : Fb.ev.R.pts.filter(q => q.m.outcome === 'held' && inb(q.k, params.k0, params.k1) && inb(q.b, params.b0, params.b1) && !nb.some(z => q.k >= z[0] && q.k < z[1])).length;
+    const where = part === 'NO_R' ? '' : (params.b0 != null ? 'в ' + clk(Fb.f + 15 * params.b0) + '–' + clk(Fb.f + 15 * params.b1) : '') + (params.k0 != null ? ' · ' + band(params.k0, params.k1) + ' SD' : '') + (nb.length ? ' · вне мест' : '');
+    return pp(Fb, { estimand: 'EST:TP-MASS-R', params, event_id: 'R', region_kind: part === 'NO_R' ? 'unknown' : params.k0 != null ? 'joint' : 'time_band',
+      exact_price_bounds: params.k0 != null ? [params.k0, params.k1] : null, time_bounds: params.b0 != null ? [Fb.f + 15 * params.b0, Fb.f + 15 * params.b1] : null,
+      start_rule: Fb.from, end_rule: 'до ' + clk(Fb.end), yes_count: n, display_scope: 'tp',
+      phrase: lbl('EST:TP-MASS-R', part === 'NO_R' ? 'phrase_none' : 'phrase', { where }), horizon: hzOf(Fb) });
+  }
+  // the share of a stretch of T's clock: the family's sessions whose DR held and whose R before the top was in it (TP-2.0
+  // Ч2, Ч3); the same count as T's clock or the number is withheld
+  function tpShare(F, b0, b1) {
+    const p = tpMass(F, { b0, b1 });
+    if (p.pct != null && p.yes_count !== tpCount(F._tp.clock, b0, b1)) kViolate('the family mass of ' + clk(F.f + 15 * b0) + '–' + clk(F.f + 15 * b1) + ' is not T\'s count', p);
+    return p;
+  }
+  // a place of R of window w: its share of the whole family (TP-2.0 Ч4); the same sessions as the place or withheld
+  function tpMassPlace(F, w, z) {
+    const W = F._tp.clock.windows[w];
+    if (!W) return { pct: null, N: 0, yes_count: 0, unknown_count: 0 };
+    const p = tpMass(F, { k0: z.price_low, k1: z.price_high, b0: W[0], b1: W[1] });
+    if (p.pct != null && p.yes_count !== z.n_zone) kViolate('the family mass of the place ' + z.label + ' is not its sessions', p);
+    return p;
+  }
+  // the reach of a place of X: of the window's sessions, those whose top got to its near edge or further (EST:B-RX-BAND-X
+  // from the edge up; a top of the last 15 minutes reached its level too)
+  function tpReachPass(F, z) {
+    const D = F.ev.X, n = D.pts.filter(q => q.k >= z.price_low).length;
+    return pp(F, { estimand: 'EST:B-RX-BAND-X', params: { k0: z.price_low, k1: 100000 }, event_id: 'X', region_kind: 'price_band', exact_price_bounds: [z.price_low, 100000], time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end),
+      yes_count: n, unknown_count: D.unknown, no_event_count: D.none, display_scope: 'inspector', phrase: lbl('EST:B-RX-BAND-X', 'phrase', { name: F.names.X.toLowerCase(), ev: 'X', what: F.what.X, band: '≥ ' + sd(z.price_low / 10) }), horizon: hzOf(F) });
+  }
+  // the number and the name a place carries on the chart (app.js::zoneMark): R — the family share; X — «дошли»
+  function tpMarkPass(F, ev, z) {
+    if (ev === 'R') return { p: tpMassPlace(F, F._tp.w, z), name: z.label };
+    return { p: tpReachPass(F, z), name: z.label + ' · дошли' };
+  }
+  // the inspector's head of a place (app.js::zoneTip): F is the family on screen (or another window's, tagged _tpg)
+  function tpZoneHead(F, ev, z, pw) {
+    const S = F._tp ? F : F._tpg.F, w = F._tp ? S._tp.w : F._tpg.w, W = S._tp.clock.windows[w], nw = F.N;
+    const win = W ? clk(S.f + 15 * W[0]) + '–' + clk(S.f + 15 * W[1]) : '', inW = 'из ' + nw + ' сессий с откатом в ' + win + ' (DR устоял)';
+    if (ev === 'R') {
+      const p = tpMassPlace(S, w, z);
+      return '<div class="ibig" style="color:#F0F5FF">' + ppTxt(p) + '<span>семьи</span></div>' +
+        '<div class="is">' + lbl('EST:TP-MASS-R', 'place', { n: p.yes_count, N: p.N, pct: ppTxt(p), t0: win.split('–')[0], t1: win.split('–')[1], band: band(z.price_low, z.price_high) }) + '</div>' +
+        '<div class="ir">' + inW + ' — в этой полосе ' + z.n_zone + '<b>' + ppTxt(pw) + '</b></div>';
+    }
+    const r = tpReachPass(F, z);
+    return '<div class="ibig" style="color:#F0F5FF">' + ppTxt(r) + '<span>дошли до ' + sd(z.price_low / 10) + ' SD</span></div>' +
+      '<div class="is" style="color:' + cfg.X + '">дошли до ' + sd(z.price_low / 10) + ' SD: ' + r.yes_count + ' ' + inW + '</div>' +
+      '<div class="ir">ход кончился в этой полосе: ' + z.n_zone + ' из ' + nw + '<b>' + ppTxt(pw) + '</b></div>';
+  }
+  // ---------- TP-2.0 Ч12: the levels the window's sessions reached, 70 % and 50 % ----------
+  // L_q: the highest level of the 0.1-SD grid that at least ceil(q |T_W|) of the window's sessions reached (their top at it
+  // or further; EST:B-RX-BAND-X from L up)
+  function tpLevels(F) {
+    const N = F.N, ks = F.ev.X.pts.map(q => q.k).sort((a, b) => b - a), out = [];
+    if (!N) return out;
+    for (const [q, den] of [[70, 100], [50, 100]]) {
+      const need = Math.ceil(q * N / den);
+      if (ks.length < need) continue;
+      const k = ks[need - 1];                                      // the need-th highest cell: that many tops at k or above
+      out.push({ q, k, p: tpReachPass(F, { price_low: k }) });
+    }
+    return out;
+  }
+  function tpReachMarks(c, F, A_, top0, bot0) {
+    for (const L of tpLevels(F)) {
+      const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;
+      if (y < top0 || y > bot0) continue;
+      c.save(); c.strokeStyle = rgba(cfg.X, 0.8); c.lineWidth = 1; c.setLineDash(L.q === 70 ? [] : [3, 3]);
+      c.beginPath(); c.moveTo(A_.x + 2, y); c.lineTo(A_.x + A_.w - 2, y); c.stroke(); c.restore();
+      c.font = '700 9.5px ' + FONT; c.textBaseline = 'bottom'; c.fillStyle = rgba(cfg.X, 0.95);
+      const t = 'дошли ' + L.q + ' % · ' + sd(L.k / 10);
+      c.fillText(t, A_.x + A_.w - c.measureText(t).width - 6, y - 1);
+    }
+  }
+  // ---------- TP-2.0 Ч13: how the DR ended for the family's sessions that by this clock had gone as deep ----------
+  // CS:TP-DEPTH-AT-CUT-1: eligible at the cut as in «Сейчас» (own activation before it, a complete prefix, the DR still
+  // whole) and their deepest point against the activation up to the cut at today's or deeper (exact, integers);
+  // EST:TP-DR-AT-DEPTH, one passport per category, re-derived by the server (lab/contract.py::ref_tp_depth_set)
+  function tpDepth(F, ctx) {
+    const Fb = F._tp.A, today = F._tp.today;
+    if (!Fb || !today || !Fb.grid) return null;
+    const sl = today.sl, rt = today.lo, wt = Fb.w0t, set = [];
+    for (const m of Fb.M) {
+      const pre = [];
+      for (let j = 0; j < Fb.grid.length; j++) if (Fb.grid[j] > m.act && Fb.grid[j] <= sl) pre.push(m.path[j]);
+      if (!pre.length || pre.some(q => q == null) || pre.some(q => q[2] < m.oppv)) continue;
+      if (Math.min(...pre.map(q => q[0])) * wt <= rt * m.w) set.push(m);
+    }
+    const cnt = { HELD: set.filter(m => m.outcome === 'held').length, BROKEN: set.filter(m => m.outcome === 'broken').length, UNKNOWN: set.filter(m => m.outcome === 'unknown').length, ALL: set.length };
+    const pass = {};
+    for (const cat of ['ALL', 'HELD', 'BROKEN', 'UNKNOWN'])
+      pass[cat] = pp(Fb, { estimand: 'EST:TP-DR-AT-DEPTH', case_set: 'CS:TP-DEPTH-AT-CUT-1', params: { cut: sl, category: cat }, event_id: 'DR', region_kind: 'category', start_rule: Fb.from, end_rule: 'до ' + clk(Fb.end),
+        yes_count: cnt[cat], display_scope: 'panel', phrase: '', horizon: hzOf(Fb) });
+    return { cut: sl, u: today.u, D: cnt.ALL, held: cnt.HELD, broken: cnt.BROKEN, unknown: cnt.UNKNOWN, pass };
+  }
+  function tpDepthRow(F, ctx) {
+    const d = tpDepth(F, ctx);
+    if (!d) return '';
+    const held = ['ALL', 'HELD', 'BROKEN', 'UNKNOWN'].some(k => d.pass[k].violation) ? '—' : null, cut = clk(d.cut);
+    if (!d.D) return '<div class="p21-note" title="' + esc(lbl('EST:TP-DR-AT-DEPTH', 'title')) + '">' + lbl('EST:TP-DR-AT-DEPTH', 'none', { cut }) + '</div>';
+    const txt = held || lbl('EST:TP-DR-AT-DEPTH', 'row', { cut, u: sd(Math.round(100 * d.u) / 100), D: d.D, held: d.held, broken: d.broken }) + (d.unknown ? lbl('EST:TP-DR-AT-DEPTH', 'row_unknown', { unknown: d.unknown }) : '');
+    const hp = held ? '—' : pct(100 * d.held / d.D);
+    return '<div class="p21-h second"><span title="' + esc(lbl('EST:TP-DR-AT-DEPTH', 'title')) + '">' + txt + (d.D < 20 ? ' · ' + lbl('EST:TP-DR-AT-DEPTH', 'few', { n: d.D }) : '') + '</span><span>устоял ' + hp + '</span></div>';
+  }
+  // the share of a stretch of the window's tops: EST:B-RX-WINDOW-X on the window family (its N = |T_W|)
+  const tpXShare = (F, b0, b1) => { let n = 0; for (const [b, k] of F.ev.X.T) if (b >= b0 && b < b1) n += k; return evPass(F, 'X', 'time_band', null, [F.f + 15 * b0, F.f + 15 * b1], n); };
   // a line of the clock: by the close of its M5 the half (70 %) of the set's known events had happened; its number is the
   // E4 clock of the same family (EST:B-CLOCK, all prices, part EARLIER, cut = that close)
   function tpLines(F) {
@@ -6888,7 +8079,7 @@
   function tpBand(c, ctx) {
     const F = ctx.F, P = F._tp, T = P.T, tp = P.clock, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
     const ov = V.bandOv = bandOverlay(ctx), B = { x: B0.x, y: B0.y - ov, w: B0.w, h: B0.h + ov };
-    // one lane of window capsules on the side of R (where the zone capsules of R stood); X has none
+    // one lane of capsules on R's side (where the zone capsules stood): the windows
     const LH = 15, lane = { R: 1, X: 0 }, upEv = dir.X < 0 ? 'X' : 'R', dnEv = upEv === 'X' ? 'R' : 'X';
     const top = B.y + 3 + lane[upEv] * (LH + 2) + 2, bot = B.y + B.h - 3 - lane[dnEv] * (LH + 2) - 2;
     const cy = Math.round((top + bot) / 2) + 0.5, half = (bot - top) / 2 - 2;
@@ -6897,13 +8088,14 @@
     if (ov > 0) { const gr = c.createLinearGradient(0, B.y, 0, B0.y); gr.addColorStop(0, 'rgba(10,11,15,0)'); gr.addColorStop(1, 'rgba(10,11,15,.72)'); c.fillStyle = gr; c.fillRect(B.x, B.y, B.w, ov); }
     c.fillStyle = C.grid; c.fillRect(B0.x, B0.y, B0.w, 1);
     drawMidnight(c, B0.y, B0.y + B0.h);
-    // R: T's clock, share of |T|; X: the window's sessions, share of |T_W|. One linear scale of shares for both halves.
-    const nR = new Map(tp.cells), nX = F.ev.X.T, NR = T.N, NX = F.N;
-    let mx = 1e-9;
-    for (const n of nR.values()) mx = Math.max(mx, n / NR);
-    for (const n of nX.values()) mx = Math.max(mx, n / NX);
-    const yOf = (ev, s) => cy + dir[ev] * (1 + half * Math.min(1, Math.max(0, s) / mx));
-    const bunchOf = b => tp.bunches.find(u => b >= u.b0 && b < u.b1);
+    // TP-2.0: R — T's clock as a share of the whole family (N); X — the window's sessions, share of |T_W|. One scale per
+    // colour (rule 3): each half has its own maximum, the halves are never compared by height.
+    const nR = new Map(tp.cells), nX = F.ev.X.T, NR = (P.A && P.A.N) || T.N, NX = F.N;
+    const mxE = { R: 1e-9, X: 1e-9 };
+    for (const n of nR.values()) mxE.R = Math.max(mxE.R, n / NR);
+    for (const n of nX.values()) mxE.X = Math.max(mxE.X, n / NX);
+    const mx = Math.max(mxE.R, mxE.X), yOf = (ev, s) => cy + dir[ev] * (1 + half * Math.min(1, Math.max(0, s) / mxE[ev]));
+    const bunchOf = b => tp.bunches.find(u => b >= u.b0 && b < u.b1), xc = P.xc, xBunchOf = b => xc && xc.bunches.find(u => b >= u.b0 && b < u.b1);
     const Wsel = P.w && tp.windows[P.w];
     V.bandCols = []; V.bandVals = []; V.caps = []; V.hills = []; V.tpCaps = []; V.tpLines = [];
     const labels = [];
@@ -6917,16 +8109,18 @@
         if (!n) continue;
         // a withheld share (its passport «—», SWPC-1.1 M14) draws no column; its place stays empty
         if (ppHeld(G, 'EST:B-RX-WINDOW-' + ev, { b0: b, b1: b + 1 })) { if (lit) labels.push({ x: (x0 + x1) / 2, y: cy + dir[ev] * 9, t: '—', col: cfg[ev] }); continue; }
-        const inW = ev === 'R' ? !!(Wsel && b >= Wsel[0] && b < Wsel[1]) : true, bu = ev === 'R' && bunchOf(b);
-        let a = 0.12 + 0.26 * Math.pow(share / mx, 0.7);
+        const inW = ev === 'R' ? !!(Wsel && b >= Wsel[0] && b < Wsel[1]) : true, bu = ev === 'R' ? bunchOf(b) : xBunchOf(b), closeX = ev === 'X' && xc && b === xc.bHi;
+        let a = 0.12 + 0.26 * Math.pow(share / mxE[ev], 0.7);
         if (past) a *= 0.5;
         if (!inW) a *= 0.6;                                   // outside the selected window: quieter, never hidden
+        if (closeX) a *= 0.55;                                // the tops of the last 15 minutes: a move not ended before the close
         if (lit) a = Math.max(a, 0.5);
-        if (bu) a = Math.max(a, (past ? 0.3 : 0.5) + 0.45 * share / mx);   // a bunch: brighter (the author's darker time mode)
+        if (bu) a = Math.max(a, (past ? 0.3 : 0.5) + 0.45 * share / mxE[ev]);   // a bunch: brighter (the author's darker time mode)
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, share);
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
-        if (lit) labels.push({ x: (x0 + x1) / 2, y: dir[ev] < 0 ? y - 7 : y + 8, t: ppTxt(evPass(G, ev, 'time_cell', null, [t0, t0 + 15], n)).replace('%', ''), col: cfg[ev] });
+        if (closeX && Math.abs(y - cy) > 3) { c.save(); c.strokeStyle = rgba(cfg.X, 0.55); c.lineWidth = 1; c.setLineDash([2, 2]); c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir.X, y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1)); c.restore(); }
+        if (lit) labels.push({ x: (x0 + x1) / 2, y: dir[ev] < 0 ? y - 7 : y + 8, t: ppTxt(ev === 'R' ? tpShare(F, b, b + 1) : evPass(G, ev, 'time_cell', null, [t0, t0 + 15], n)).replace('%', ''), col: cfg[ev] });
       }
     }
     // each bunch's share of T at its apex column, always (core §4.2: every bunch with its share)
@@ -6936,6 +8130,13 @@
       // beyond the apex column's end, or inside it when the column fills its half (the window lane stays clear)
       const n = nR.get(u.peak) || 0, x = (V.X(F.f + 15 * u.peak) + V.X(F.f + 15 * u.peak + 15)) / 2, y = yOf('R', n / NR), inside = Math.abs(y - cy) > half - 10;
       labels.push({ x, y: y + dir.R * (inside ? -8 : 9), t: ppTxt(p), col: inside ? '#F4F1EC' : mixW(cfg.R, 0.25), big: true });
+    }
+    // the same for the window's tops X (their share of T_W)
+    if (xc) for (const u of xc.bunches) {
+      const p = tpXShare(F, u.b0, u.b1);
+      if (p.pct == null) continue;
+      const n = nX.get(u.peak) || 0, x = (V.X(F.f + 15 * u.peak) + V.X(F.f + 15 * u.peak + 15)) / 2, y = yOf('X', n / NX), inside = Math.abs(y - cy) > half - 10;
+      labels.push({ x, y: y + dir.X * (inside ? -8 : 9), t: ppTxt(p), col: inside ? '#EEF5FF' : mixW(cfg.X, 0.25), big: true });
     }
     // the lines of the clock: the median solid, the 70 % mark dashed, each in its event's half
     for (const L of tpLines(F)) {
@@ -6957,7 +8158,7 @@
     for (const { w, W, p } of shares) {
       const x0 = V.X(F.f + 15 * W[0]) + 1, x1 = V.X(F.f + 15 * W[1]) - 1, wd = x1 - x0, y0 = dir.R < 0 ? B.y + 3 : B.y + B.h - 3 - LH + 2;
       if (x1 < B.x || x0 > B.x + B.w || wd < 4) continue;
-      const on = w === P.w, hov = !!(h && h.k === 'tpwin' && h.id === w), side = w === 'BEFORE' || w === 'LATE', r = Math.pow((p.pct || 0) / capMax, 0.7);
+      const on = w === P.w, hov = !!(h && (h.k === 'tpwin' || h.k === 'tpzone') && h.id === w), side = w === 'BEFORE' || w === 'LATE', r = Math.pow((p.pct || 0) / capMax, 0.7);
       c.save(); c.globalAlpha = on || hov ? 1 : 0.8;
       c.fillStyle = rgba(cfg.R, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
       if (on || hov) { c.strokeStyle = rgba(cfg.R, on ? 0.75 : 0.5); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
@@ -6982,7 +8183,7 @@
     if (xF - 60 > B.x) {
       c.font = '700 10px ' + FONT;
       c.fillStyle = cfg.X; c.fillText('X ' + F.names.X.toLowerCase() + ' · ' + TP_NAME[P.w || 'W1'], Math.max(B.x + 6, xF - 150), cy + dir.X * 9);
-      c.fillStyle = cfg.R; c.fillText('R ' + F.names.R.toLowerCase() + ' · true', Math.max(B.x + 6, xF - 150), cy + dir.R * 9);
+      c.fillStyle = cfg.R; c.fillText('R ' + F.names.R.toLowerCase() + ' · доля семьи', Math.max(B.x + 6, xF - 150), cy + dir.R * 9);
     }
     V.stripUnk = null;
     const uX = F.ev.X.unknown + F.ev.X.none, uR = T.ev.R.unknown + T.ev.R.none;
@@ -7008,13 +8209,130 @@
   }
   // a click on a window (on the band or its row in the panel) fixes it; a second click lets go (back to W1)
   function tpPinWindow(w) { TP.pin = TP.pin === w ? null : w; st.pin = null; st.hover = null; tip.hidden = true; render(true); }
+  // the window's peak 15 minutes: the cell of T's clock inside the window that holds most of its pullbacks (the earliest of
+  // equal ones), the time the trader reads off the window (operator 05.11: «в какое время будет этот максимальный откат…
+  // не просто как позже, а более уточнённый»)
+  function tpWinPeak(F, w) {
+    const tp = F._tp.clock, W = tp.windows[w];
+    if (!W) return null;
+    let best = null;
+    for (const [b, n] of tp.cells) if (b >= W[0] && b < W[1] && (!best || n > best.n)) best = { b, n };
+    return best && { b: best.b, n: best.n, t0: F.f + 15 * best.b, t1: F.f + 15 * best.b + 15 };
+  }
+  // ---------- the pullback places of the other windows, always on the chart (operator 05.11) ----------
+  // «Почему… на откат R я вижу только одно созвездие в W1… сделай так, чтобы я видел позже созвездие, тоже откаты, а не
+  // так, чтобы я на них наводил мышку… может быть, в другом оформлении». The windows split T's pullbacks by time, so the
+  // places of every window lie in its own hours: drawn together they are the whole map of T's pullbacks. The window on
+  // screen keeps the full drawing (and its X); every other window's places of R are drawn quieter — a lighter haze, smaller
+  // stars, the window's name before the place's — each with its share of ITS window's sessions (EST:B-ZONE-R on that
+  // window family, verified like the rest). Under the mouse: the place's words and its hours; a click puts the window on
+  // screen. X stays the window's on screen: its tops are the continuation of those sessions only.
+  const TPG = { haze: 0.85, thread: 0.8, star: 0.85, starA: 0.85, label: 0.95, size: 0.85 };
+  function tpOthers(ctx) {
+    const F = ctx.F, P = F && F._tp, out = [];
+    if (!P) return out;
+    for (const w of TP_WINDOWS) {
+      if (w === P.w || !P.clock.windows[w]) continue;
+      const G = tpSnap(ctx.D, ctx.s, w, P.T);
+      if (G) G._tpg = { F, w };                                        // TP-2.0: its places read the family share of the screen's F
+      if (G && G.zones.R && G.zones.R.zones.length) out.push({ w, G });
+    }
+    return out;
+  }
+  // phase 'under' (before the candles): haze, threads and names; phase 'over' (after the candles): the stars and, under the
+  // mouse, the place's outline
+  function tpGhosts(c, ctx, phase) {
+    if (phase === 'under') V.tpGhostHit = [];
+    if (!ctx.F || !ctx.F._tp || !st.L.zones || st.mode !== 'bounds') return;
+    const h = hv(), env = V.zoneEnv, sl = sliceOf(ctx), R0 = 1.7 * cfg.ptSize / 100;
+    for (const { w, G } of tpOthers(ctx)) {
+      const CL = cloudsOf(G), S = zoneLook(G, ctx, 'R'), wl = !!(h && h.k === 'tpwin' && h.id === w);
+      CL.R.forEach((g, i) => {
+        if (!g || zoneHeld(G, 'R', i)) return;           // a withheld place's share is «—»: no haze asserts it
+        const on = !!(h && h.k === 'tpzone' && h.id === w && h.i === i), k = on || wl ? 1.5 : h && h.k !== 'stripBg' ? 0.6 : 1;
+        const col = stateCol(cfg.R, S[i]), imp = expiredLook(S[i]), dim = imp ? 0.6 * cfg.spentA / 100 : S[i] === 'QUIET' ? 0.7 : S[i] === 'HOLDS' ? 1.15 : 1;
+        if (phase === 'under') {
+          const fa = cfg.cloudA / 100 * TPG.haze, ta = cfg.threadA / 100 * TPG.thread;
+          c.save();
+          c.filter = 'blur(14px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
+          c.filter = 'blur(7px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.45, 0.13 * k * dim * fa)); loopsPath(c, g.g2); c.fill();
+          c.filter = 'none';
+          c.strokeStyle = rgba(col, Math.min(0.35, 0.13 * k * dim * ta)); c.lineWidth = 0.5;
+          c.beginPath(); for (const s of g.mst) { c.moveTo(s[0], s[1]); c.lineTo(s[2], s[3]); } c.stroke();
+          c.restore();
+          // the name «W2 · R1» and the share of the window's sessions, as the window on screen names its places (zoneMark),
+          // smaller and quieter; off the candles it moves up or down in its own hours, never left into the past ('stay')
+          if (env) zoneMark(c, ctx, G, 'R', i, g, g.z, S[i], col, h, env, { name: TP_NAME[w] + ' · ' + g.z.label, pass: tpMassPlace(ctx.F, w, g.z), size: TPG.size, alpha: TPG.label, k, stay: true, hit: box => V.tpGhostHit.push({ box, w, i, loops: g.hit }) });
+          else V.tpGhostHit.push({ box: [0, 0, 0, 0], w, i, loops: g.hit });
+          return;
+        }
+        if (!st.L.pts) return;
+        c.save();
+        for (const q of G.ev.R.pts) {
+          if (pointZone(G, q) !== i) continue;
+          const x = V.X(q.t + 2.5), y = V.Y(q.p);
+          if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
+          const a = ((q.t + 5 <= sl ? cfg.pastA : cfg.ptA) / 100) * 1.1 * TPG.starA * (on ? 1.6 : k < 1 ? 0.6 : 1) * dim;
+          c.fillStyle = rgba(col, Math.min(1, a)); c.beginPath(); c.arc(x, y, R0 * TPG.star, 0, 6.2832); c.fill();
+        }
+        if (on) { c.strokeStyle = rgba(col, 0.55); c.lineWidth = 1; loopsPath(c, g.ln); c.stroke(); }
+        c.restore();
+      });
+    }
+  }
+  // the place of another window under the mouse: its name first, then inside its haze (as the window on screen)
+  function tpGhostAt(x, y, inside) {
+    for (const q of V.tpGhostHit || []) {
+      const ok = inside ? inLoops(q.loops, x, y) : x >= q.box[0] && x <= q.box[0] + q.box[2] && y >= q.box[1] && y <= q.box[1] + q.box[3];
+      if (ok) return { k: 'tpzone', ev: 'R', id: q.w, i: q.i };
+    }
+    return null;
+  }
+  // under the mouse its whole time window over its prices, as a place of the window on screen (linkOf, 'zone')
+  function tpGhostLink(ctx, h) {
+    const g = tpOthers(ctx).find(q => q.w === h.id), G = g && g.G, z = G && G.zones.R.zones[h.i];
+    if (!z || zoneHeld(G, 'R', h.i)) return;
+    const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = G.f + 15 * Math.min(...bs), t1 = G.f + 15 * (Math.max(...bs) + 1);
+    const look = zoneStatus(G, ctx, 'R')[h.i], spent = expiredLook(look);
+    V.lk = { ev: 'R', src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', marker: targetMarker(G, ctx, 'R', z) };
+    V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg.R, 'spent') : cfg.R });
+  }
+  // a click on such a place puts its window on screen and keeps the place under the inspector
+  function tpPinGhost(h) { TP.pin = h.id; st.ev = 'R'; st.pin = null; st.pinZone = h.i + 1; st.hover = null; tip.hidden = true; render(true); }
   // ---------- the words under the mouse ----------
-  function tpWinTip(F, h) {
-    const tp = F._tp.clock, W = tp.windows[h.id];
+  // the window under the mouse: its share of T, then WHEN inside it (operator 05.11): its peak 15 minutes and by when half
+  // of its sessions had their pullback, both over the window's sessions (EST:B-RX-WINDOW-R, EST:B-CLOCK-R on the window
+  // family), and its places of R with their shares
+  function tpWinTip(F, h, ctx) {
+    const P = F._tp, tp = P.clock, W = tp.windows[h.id];
     if (!W) return '';
-    const p = tpShare(F, W[0], W[1]), on = F._tp.w === h.id;
-    return '<div class="ih">' + TP_NAME[h.id] + ' · ' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '</div>' + sentence(p) +
-      '<div class="if">' + (on ? 'Колонка цены и созвездия — сессии этого окна.' : 'Наведено: колонка цены и созвездия — сессии этого окна; щелчок закрепляет.') + ' Только true-сессии: DR удержали до ' + clk(F.end) + '.</div>';
+    const p = tpShare(F, W[0], W[1]), on = P.w === h.id, G = ctx ? tpSnap(ctx.D, ctx.s, h.id, P.T) : null, set = 'сессий окна ' + TP_NAME[h.id];
+    let when = '';
+    const pk = tpWinPeak(F, h.id);
+    if (G && pk) {
+      const n = G.ev.R.T.get(pk.b) || 0, pP = evPass(G, 'R', 'time_cell', null, [pk.t0, pk.t1], n);
+      when += '<div class="il" style="color:' + cfg.R + '">Чаще всего откат в истории окна — ' + clk(pk.t0) + '–' + clk(pk.t1) + '</div>' +
+        '<div class="ir">в эти 15 минут — у ' + set + '<b>' + ppTxt(pP) + '</b></div>';
+      const m = tpMarks(G.M, 'R', G.f), q = tpQuant(m.ts, 1, 2);
+      if (q) {
+        const cut = q.t + 5, pM = clockPass(G, 'R', { k0: -100000, k1: 100000 }, 'EARLIER', cut, G.ev.R.pts.filter(r => r.t + 5 <= cut).length);
+        when += '<div class="ir" title="' + esc(lbl('EST:B-CLOCK-R', 'title')) + '">к ' + clk(cut) + ' (медиана окна) откат уже был — у ' + set + '<b>' + ppTxt(pM) + '</b></div>';
+      }
+      // its places of R (where in price), each its share of the window's sessions; their hours under the mouse at the place
+      (G.zones.R || { zones: [] }).zones.forEach((z, i) => {
+        if (!zoneHeld(G, 'R', i)) when += '<div class="ir">место <span style="color:' + cfg.R + '">' + z.label + '</span> ' + band(z.price_low, z.price_high) + ' SD · семьи<b>' + ppTxt(tpMassPlace(F, h.id, z)) + '</b></div>';
+      });
+    }
+    return '<div class="ih">' + TP_NAME[h.id] + ' · ' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '</div>' + sentence(p) + when +
+      '<div class="if">' + (on ? 'Колонка цены и созвездия — сессии этого окна.' : h.src === 'strip' ? 'Наведено: колонка цены и созвездия — сессии этого окна; щелчок закрепляет.' : 'Щелчок — сессии этого окна на экране.') + ' Доля окна — от всей семьи (DR устоял до ' + clk(F.end) + ', откат до вершины в окне).</div>';
+  }
+  // a place of another window under the mouse: the place's own words on its window family, which window, and the click
+  function tpGhostTip(F, ctx, h) {
+    const g = tpOthers(ctx).find(q => q.w === h.id), W = F._tp.clock.windows[h.id];
+    if (!g || !W) return '';
+    const z = g.G.zones.R.zones[h.i], head = '<div class="ih"><span style="color:' + cfg.R + '">';
+    return zoneTip(g.G, ctx, { k: 'zone', ev: 'R', i: h.i }).replace(head + (z ? z.label : '') + '</span>', head + TP_NAME[h.id] + ' · ' + (z ? z.label : '') + '</span>') +
+      '<div class="if">Место окна ' + TP_NAME[h.id] + ' (' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '): крупное число — доля всей семьи; в строке ниже — доля среди сессий окна. Щелчок — окно ' + TP_NAME[h.id] + ' на экране целиком (колонка цены и места вершины его сессий).</div>';
   }
   function tpLineTip(F, h) {
     const L = tpLines(F).find(q => q.ev === h.ev && q.id === h.id);
@@ -7031,9 +8349,12 @@
     for (const [q, n] of F.ev.X.T) if (q >= b && q < b1) nX += n;
     const pR = evPass(T, 'R', 'time_cell', null, [t0, t1], nR), pX = evPass(F, 'X', 'time_cell', null, [t0, t1], nX);
     const u = P.clock.bunches.find(q => b >= q.b0 && b < q.b1), w = TP_WINDOWS.find(k => P.clock.windows[k] && b >= P.clock.windows[k][0] && b < P.clock.windows[k][1]);
+    const xu = P.xc && P.xc.bunches.find(q => b >= q.b0 && b < q.b1), close = P.xc && b1 > P.xc.bHi;
     const row = (ev, p, set) => '<div class="ib"><i style="color:' + cfg[ev] + '">' + lbl(p.estimand, 'two_row', { ev, name: (ev === 'R' ? T : F).names[ev].toLowerCase() }) + '</i><span class="k"> ' + set + ' </span><b>' + ppTxt(p) + '</b></div>';
     return '<div class="ih">' + clk(t0) + '–' + clk(t1) + (w ? ' · ' + TP_NAME[w] : '') + (u ? ' · пучок ' + clk(F.f + 15 * u.b0) + '–' + clk(F.f + 15 * u.b1) : '') + '</div>' +
-      '<div class="iq">' + lbl('FF:R-BEFORE-X', 'q_window') + '</div>' + row('R', pR, 'true') + row('X', pX, TP_NAME[P.w || 'W1']) + ifoot(T, lbl('FF:SHARE-STEP', 'foot_time'));
+      '<div class="iq">' + lbl('FF:R-BEFORE-X', 'q_window') + '</div>' + row('R', pR, 'true') + row('X', pX, TP_NAME[P.w || 'W1']) +
+      (xu ? '<div class="is" style="color:' + cfg.X + '">пучок вершин ' + clk(F.f + 15 * xu.b0) + '–' + clk(F.f + 15 * xu.b1) + '</div>' : '') +
+      (close ? '<div class="is">Вершина в последние 15 минут сессии: ход не кончился до закрытия — это не место вершины.</div>' : '') + ifoot(T, lbl('FF:SHARE-STEP', 'foot_time'));
   }
   // the R-side depth under the mouse in the price column (operator 03.11: not drawn, only a number when asked): of the
   // window's sessions, those whose pullback went deeper than this band's lower edge (EST:B-RX-BAND-R over the deeper cells)
@@ -7044,28 +8365,70 @@
       yes_count: n, unknown_count: D.unknown, no_event_count: D.none, display_scope: 'inspector', phrase: lbl('EST:B-RX-BAND-R', 'phrase', { name: F.names.R.toLowerCase(), ev: 'R', what: F.what.R, band: '< ' + sd(h.k0 / 10) }), horizon: hzOf(F) });
     return '<div class="ir">глубже ' + sd(h.k0 / 10) + ' SD у сессий окна ' + TP_NAME[F._tp.w || 'W1'] + '<b>' + ppTxt(p) + '</b></div>';
   }
+  // the X-side ladder at a place of tops (core 1.4, the author's «targets»): of the window's sessions, those whose top
+  // reached this band's lower edge or went further (EST:B-RX-BAND-X from the edge up; a top of the last 15 minutes
+  // reached its level too, so it counts here though it is never a place)
+  function tpReachLine(F, z) {
+    if (!F._tp || !z) return '';
+    return '<div class="ir" style="color:' + cfg.X + '">дошли до ' + sd(z.price_low / 10) + ' SD у сессий окна ' + TP_NAME[F._tp.w || 'W1'] + '<b>' + ppTxt(tpReachPass(F, z)) + '</b></div>';
+  }
   // ---------- the panel: the clock of T, the windows (a row fixes its window), then the places of the window ----------
   function tpPanel(F, ctx) {
     const P = F._tp, T = P.T, tp = P.clock, out = [];
-    out.push('<div class="p21-h second"><span title="Только true-сессии семьи: DR удержали до ' + clk(F.end) + '. Время — открытие M5 самого глубокого отката до вершины; доля — от всех true-сессий.">Время отката · true-сессии</span><span>доля от true</span></div>');
+    out.push(tpDepthRow(F, ctx));                                       // TP-2.0 Ч13: the frame by today's depth
+    // TP-2.0: every amber number here is a share of the whole family (EST:TP-MASS-R); windows + «без отката до вершины» =
+    // the share «устоял»
+    out.push('<div class="p21-h second"><span title="' + esc(lbl('EST:TP-MASS-R', 'head_title')) + '">' + lbl('EST:TP-MASS-R', 'head') + '</span><span>' + lbl('EST:TP-MASS-R', 'head_r') + '</span></div>');
     for (const u of tp.bunches) {
       const p = tpShare(F, u.b0, u.b1);
-      out.push(link({ k: 'tcell', b0: u.b0, b1: u.b1, src: 'tp' }, prow('пучок ' + clk(F.f + 15 * u.b0) + '–' + clk(F.f + 15 * u.b1), ppTxt(p)), 'mc', p, plainTitle(p)));
+      out.push(link({ k: 'tcell', b0: u.b0, b1: u.b1, src: 'tp' }, prow(lbl('EST:TP-MASS-R', 'bunch', { t0: clk(F.f + 15 * u.b0), t1: clk(F.f + 15 * u.b1) }), ppTxt(p)), 'mc', p, plainTitle(p)));
     }
-    if (!tp.bunches.length) out.push('<div class="p21-note">Пучков нет: ни один отрезок времени не набрал ' + tp.need + ' сессий.</div>');
+    if (!tp.bunches.length) out.push('<div class="p21-note">' + lbl('EST:TP-MASS-R', 'none', { need: tp.need }) + '</div>');
     const lines = tpLines(F).filter(L => L.ev === 'R');
-    if (lines.length) out.push('<div class="p21-note">' + lines.map(L => '<span title="' + esc(lbl('EST:B-CLOCK-R', 'earlier', { t: clk(L.cut) }) + ': ' + ppTxt(L.p)) + '">' + (L.id === 'median' ? 'медиана' : '70 %') + ' <b style="color:' + cfg.R + '">' + clk(L.cut) + '</b></span>').join(' · ') + '</div>');
+    if (lines.length) out.push('<div class="p21-note">' + lines.map(L => '<span title="' + esc(lbl('EST:B-CLOCK-R', 'earlier', { t: clk(L.cut) }) + ': ' + ppTxt(L.p) + ' (из устоявших)') + '">' + (L.id === 'median' ? 'медиана' : '70 %') + ' <b style="color:' + cfg.R + '">' + clk(L.cut) + '</b></span>').join(' · ') + '</div>');
     for (const w of TP_WINDOWS) {
       const W = tp.windows[w];
       if (!W) continue;
       const p = tpShare(F, W[0], W[1]), on = P.w === w;
-      out.push(link({ k: 'tpwin', id: w }, '<span class="t"><span><span class="zt">' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '</span> <i class="zn" style="color:' + (w === 'BEFORE' || w === 'LATE' ? '#B8BEC9' : cfg.R) + '">' + TP_NAME[w] + '</i>' + (on ? ' <span class="p21-sub">на экране</span>' : '') + '</span></span><b>' + ppTxt(p) + '</b>', 'mc' + (on ? ' pinned' : ''), p, plainTitle(p)));
+      out.push(link({ k: 'tpwin', id: w }, '<span class="t"><span><span class="zt">' + clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) + '</span> <i class="zn" style="color:' + (w === 'BEFORE' || w === 'LATE' ? '#B8BEC9' : cfg.R) + '">' + TP_NAME[w] + '</i>' + (on ? ' <span class="p21-sub">на экране' + (P.why === 'today' ? ' · сегодняшний откат' : P.why === 'pin' ? ' · закреплено' : '') + '</span>' : '') + '</span></span><b>' + ppTxt(p) + '</b>', 'mc' + (on ? ' pinned' : ''), p, plainTitle(p)));
+      if (on && F.zones.R) {
+        // «вне мест»: the window's sessions whose pullback lies outside its places, a share of the family too
+        const nb = F.zones.R.zones.filter((z, i) => !zoneHeld(F, 'R', i)).map(z => [z.price_low, z.price_high]), q = tpMass(F, { b0: W[0], b1: W[1], not_bands: nb });
+        out.push('<div class="mc dim" title="' + esc(plainTitle(q)) + '"><span class="t"><span>&nbsp;&nbsp;' + lbl('EST:TP-MASS-R', 'outside') + '</span></span><b>' + ppTxt(q) + '</b></div>');
+      }
     }
-    if (T.ev.R.unknown + T.ev.R.none) { const u = undPass(T, 'R', 'BOTH'); out.push(link({ k: 'evrow', ev: 'R' }, prow(lbl('EST:B-RX-UNDETERMINED-R', 'row', { ev: '<i style="color:' + cfg.R + '">R</i>' }), ppTxt(u)), 'dim', u, plainTitle(u))); }
+    const nr = tpMass(F, { part: 'NO_R' });
+    if (nr.yes_count) out.push(link({ k: 'evrow', ev: 'R' }, prow(lbl('EST:TP-MASS-R', 'no_r'), ppTxt(nr)), 'dim', nr, plainTitle(nr)));
     // the continuation of the window's sessions: the time lines of their own top X (the ladder is on today's levels)
-    const xl = tpLines(F).filter(L => L.ev === 'X');
-    if (P.w) out.push('<div class="p21-h second"><span title="Вершина хода X у сессий окна ' + TP_NAME[P.w] + '; ступени «дошли до уровня» — на линиях уровней графика (наведите).">Продолжение · ' + TP_NAME[P.w] + '</span><span>доля от окна</span></div>' +
-      (xl.length ? '<div class="p21-note">' + xl.map(L => '<span title="' + esc(lbl('EST:B-CLOCK-X', 'earlier', { t: clk(L.cut) }) + ': ' + ppTxt(L.p)) + '">' + (L.id === 'median' ? 'медиана вершины' : '70 % вершин') + ' <b style="color:' + cfg.X + '">' + clk(L.cut) + '</b></span>').join(' · ') + '</div>' : ''));
+    const xl = tpLines(F).filter(L => L.ev === 'X'), xc = P.xc;
+    if (P.w) {
+      const W = tp.windows[P.w], why = P.why === 'today' && P.today ? 'сегодня самая глубокая точка — ' + sd(Math.round(100 * P.today.u) / 100) + ' SD в ' + clk(P.today.t) : P.why === 'pin' ? 'закреплено' : 'отката ещё не было';
+      out.push('<div class="p21-h second"><span title="Продолжение сессий с откатом ' + (W ? clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) : '') + ' (' + why + '): пучки времени вершин, их медиана и 70 %; на графике места вершины — подпись «дошли»: сколько сессий окна дошли до ближнего края; на колонке цены — уровни, до которых дошли 70 % и 50 %.">Продолжение · ' + TP_NAME[P.w] + ' · из сессий окна</span><span>доля окна</span></div>');
+      out.push('<div class="p21-note">Продолжение сессий с откатом ' + (W ? clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) : '') + ' · ' + why + (F.N < 20 ? ' · мало сессий: n=' + F.N : '') + '</div>');
+      if (xc) for (const u of xc.bunches) { const p = tpXShare(F, u.b0, u.b1); out.push(link({ k: 'tcell', ev: 'X', b0: u.b0, b1: u.b1, src: 'tpx' }, prow('пучок вершин ' + clk(F.f + 15 * u.b0) + '–' + clk(F.f + 15 * u.b1), ppTxt(p)), 'mc', p, plainTitle(p))); }
+      if (xc && !xc.bunches.length) out.push('<div class="p21-note">Пучков вершин нет: ни один отрезок времени не набрал ' + xc.need + ' сессий (5 % семьи, не меньше 4).</div>');
+      for (const L of tpLevels(F)) out.push('<div class="mc" title="' + esc(plainTitle(L.p)) + '"><span class="t"><span>дошли до <b style="color:' + cfg.X + '">' + sd(L.k / 10) + ' SD</b> — ' + L.q + ' % окна</span></span><b>' + ppTxt(L.p) + '</b></div>');
+      if (xl.length) out.push('<div class="p21-note">' + xl.map(L => '<span title="' + esc(lbl('EST:B-CLOCK-X', 'earlier', { t: clk(L.cut) }) + ': ' + ppTxt(L.p)) + '">' + (L.id === 'median' ? 'медиана вершины' : '70 % вершин') + ' <b style="color:' + cfg.X + '">' + clk(L.cut) + '</b></span>').join(' · ') + '</div>');
+      if (xc && xc.close) { const p = tpXShare(F, xc.bHi, xc.bHi + 1); out.push(link({ k: 'tcell', ev: 'X', b0: xc.bHi, b1: xc.bHi + 1, src: 'tpx' }, prow('ход не кончился до закрытия', ppTxt(p)), 'dim', p, plainTitle(p))); }
+      if (F.ev.X.unknown + F.ev.X.none) { const u = undPass(F, 'X', 'BOTH'); out.push(link({ k: 'evrow', ev: 'X' }, prow(lbl('EST:B-RX-UNDETERMINED-X', 'row', { ev: '<i style="color:' + cfg.X + '">X</i>' }), ppTxt(u)), 'dim', u, plainTitle(u))); }
+    }
+    return out.join('');
+  }
+  // the places of R of the other windows (operator 05.11), each its share of its own window; a row is the place on the chart
+  // and a click puts its window on screen
+  function tpGhostPanel(F, ctx) {
+    const gs = tpOthers(ctx), out = [];
+    if (!gs.length) return '';
+    out.push('<div class="p21-h second"><span title="' + esc(lbl('EST:TP-MASS-R', 'others_title')) + '">' + lbl('EST:TP-MASS-R', 'others') + '</span><span>' + lbl('EST:TP-MASS-R', 'head_r') + '</span></div>');
+    for (const { w, G } of gs) {
+      const S = zoneStatus(G, ctx, 'R');
+      G.zones.R.zones.forEach((z, i) => {
+        if (zoneHeld(G, 'R', i)) return;
+        const p = tpMassPlace(F, w, z);
+        out.push(link({ k: 'tpzone', ev: 'R', id: w, i }, '<span class="t"><span><span class="zt">' + clk(z.time_start) + '–' + clk(z.time_end) + '</span> <i class="zn" style="color:' + cfg.R + '">' + TP_NAME[w] + ' · ' + z.label + '</i></span>' +
+          '<span class="p21-sub">' + lbl('EST:B-ZONE-R', 'sub', { band: band(z.price_low, z.price_high), status: zstOf(G, ctx, z, S[i]) }) + '</span></span><b class="zp">' + ppTxt(p) + '</b>', 'mc zst-' + S[i], p, plainTitle(p)));
+      });
+    }
     return out.join('');
   }
 
@@ -7347,6 +8710,7 @@
     out.push(candidatePanel(ctx));
     if (st.mode === 'bounds') {
       out.push(pullbackMode() ? pbCombinedZones(ctx) : cellsFirst ? '' : zonesHtml(F, ctx));
+      if (F._tp && !pullbackMode()) out.push(tpGhostPanel(F, ctx));   // TP: the pullback places of the other windows (05.11)
       const tf = todayFacts(F, ctx);
       if (tf) out.push('<div class="p21-note" title="' + esc(lbl('FF:TODAY-PREFIX', 'title', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)) })) + '">' + tf + '</div>');
     }
@@ -7378,7 +8742,7 @@
     rows.sort((a, b) => a.z.time_start - b.z.time_start || b.z.p_snapshot - a.z.p_snapshot);
     // TP-1.1: the places of the window's pullbacks, each its share of the window (core §4.5)
     const tw = F._tp && F._tp.w && F._tp.clock.windows[F._tp.w];
-    const out = [F._tp ? '<div class="p21-h second"><span title="Место = окно × полоса цены: полосы ищутся только среди сессий окна; доля — от сессий окна">Места отката · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
+    const out = [F._tp ? '<div class="p21-h second"><span title="Место отката = окно × полоса цены среди сессий окна; место вершины = полоса цены среди вершин тех же сессий (шаг 0,2 SD, без последних 15 минут); доля — от сессий окна">Места отката и вершины · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
     if (!rows.length) out.push('<div class="p21-note">' + lbl('EST:B-ZONE-R', 'none') + '</div>');
     let sep = false;
     for (const r of rows) {
@@ -7391,7 +8755,6 @@
     if (!sep) out.push('<div class="p24-now"><span></span>' + (sl >= F.end ? 'блок закончен' : 'сейчас ' + clk(sl)) + '<span></span></div>');
     // the rest of each event's 100 %: outside the zones, and not determined (never drawn at any price)
     for (const ev of ['X', 'R']) {
-      if (F._tp && ev === 'X') continue;                               // TP-1.1: X has no constellation, so no «outside the zones» either
       const Zm = zonesOf(F, ev), D = F.ev[ev];
       const tag = '<i style="color:' + cfg[ev] + '">' + ev + '</i>';
       if (Zm) { const r = resPass(F, ev); out.push(link({ k: 'evrow', ev }, prow(lbl('EST:B-ZONE-RESIDUAL-' + ev, 'row', { ev: tag }), ppTxt(r)), 'dim', r, plainTitle(r))); }
@@ -7766,6 +9129,7 @@
       if (!el) return;
       const L = P24.links[+el.dataset.l21];
       if (L.k === 'tpwin') { tpPinWindow(L.id); return; }           // TP-1.1: the row of a window fixes it (tp235.js)
+      if (L.k === 'tpzone') { tpPinGhost(L); return; }              // a place of another window: that window on screen
       if (L.k === 'fcell') { st.col = L.j; render(true); return; }
       if (L.k === 'area') { pin({ k: 'area', part: L.part }); return; }
       pin(L);
@@ -7942,7 +9306,7 @@
     const was = key(st.hover);
     st.hover = h && !['paxis', 'taxis', 'stripBg'].includes(h.k) ? h : (h && h.k === 'stripBg' ? h : null);
     if (st.hover && st.hover.ev) st.ev = st.hover.ev;      // the event in focus: what the panel and the area speak of
-    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin'].includes(h.k) ? 'pointer' : 'crosshair';
+    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin', 'tpzone'].includes(h.k) ? 'pointer' : 'crosshair';
     if (alPlusAt(x, y)) cv.style.cursor = 'pointer';
     else { const al = alNear(x, y); if (al) cv.style.cursor = Math.abs(x - al.x) <= 8 ? 'pointer' : 'ns-resize'; }
     showTip(st.hover);
@@ -7985,6 +9349,7 @@
       render(true); return;
     }
     if (h && h.k === 'tpwin') { tpPinWindow(h.id); return; }           // TP-1.1: a window fixes the price column and constellations
+    if (h && h.k === 'tpzone') { tpPinGhost(h); return; }              // a place of another window: that window on screen
     if (h && h.k === 'tpline') return;
     if (h && ['pbzone','pbpcell','pbtcell','pbarea','pbunk'].includes(h.k)) { pin(h); return; }
     if (h && h.k === 'zone' && d.zone === 'strip') { pin(h); return; }
@@ -8127,8 +9492,8 @@
   function running() { const k = sessionNow(); return A.src === 'live' && A.day && A.day.status === 'ok' && NOW >= SESS[k].start && NOW < SESS[k].end; }
   function schedule() {
     clearTimeout(A.timer);
-    if (!A.auto || !running()) return;
-    const step = A.day.switched ? 5 : 1, m = etMinute(), wait = ((Math.floor(m / step) + 1) * step + (step === 1 ? 3 : 20) / 60 - m) * 60000;
+    if (!A.auto || A.src !== 'live') return;
+    const m = etMinute(), wait = (Math.floor(m) + 1 + 3 / 60 - m) * 60000;
     A.timer = setTimeout(() => loadDay(true), Math.max(5000, wait));
   }
   function takeDay(x, first) {
@@ -8271,8 +9636,12 @@
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),
     verify: () => verifyNow(), lbl, cfg,
     // TP-1.1 (tp235.js): the state of the core on screen, for tests/tp235_page.mjs
-    tp: () => { const F = V && V.ctx && V.ctx.F, P = F && F._tp; return { on: TP.on, pin: TP.pin, w: P ? P.w : null, N: P ? { F: P.A && P.A.N, T: P.T.N, W: F.N } : null, clock: P ? P.clock : null, x: P ? P.x : null,
-      zones: F && F.zones ? { R: (F.zones.R || { zones: [] }).zones.length, X: (F.zones.X || { zones: [] }).zones.length } : null, caps: (V && V.tpCaps || []).map(q => q.id), lines: (V && V.tpLines || []).map(q => q.ev + ':' + q.id) }; },
+    tp: () => { const F = V && V.ctx && V.ctx.F, P = F && F._tp; return { on: TP.on, pin: TP.pin, w: P ? P.w : null, N: P ? { F: P.A && P.A.N, T: P.T.N, W: F.N } : null, clock: P ? P.clock : null, x: P ? P.x : null, xc: P ? P.xc : null,
+      xzones: F && F.zones && F.zones.X ? F.zones.X.zones.map(z => ({ label: z.label, cells: z.cell_mask, n: z.n_zone, price: [z.price_low, z.price_high] })) : [],
+      zones: F && F.zones ? { R: (F.zones.R || { zones: [] }).zones.length, X: (F.zones.X || { zones: [] }).zones.length } : null, caps: (V && V.tpCaps || []).map(q => q.id), lines: (V && V.tpLines || []).map(q => q.ev + ':' + q.id),
+      // 05.11: the pullback places of the other windows on the chart, and the window peaks on the band
+      others: P ? tpOthers(V.ctx).map(q => ({ w: q.w, N: q.G.N, places: q.G.zones.R.zones.filter((z, i) => !zoneHeld(q.G, 'R', i)).length })) : [],
+      ghosts: (V && V.tpGhostHit || []).map(q => ({ w: q.w, i: q.i, box: q.box })), peaks: P ? TP_WINDOWS.filter(w => P.clock.windows[w]).map(w => ({ w, W: P.clock.windows[w], pk: tpWinPeak(F, w) })) : [] }; },
     tpHit: (x, y) => tpHit(x, y) };
   initPanel24();
   // the address: #date=2025-12-17 (a history day) &inst=NQ &session=RDR &at=11:50 (replay) &ev=X &mode=path

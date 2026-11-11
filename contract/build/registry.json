@@ -354,9 +354,244 @@
      "SRC:ZM3-STUDY"
     ],
     "version": "1"
+   },
+   {
+    "condition_availability": "RETROSPECTIVE",
+    "condition_ru": "DR устоял до конца блока (ни одно закрытие M5 не ушло за противоположный DR) — условие на будущее этих сессий",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "history_rule": "the members of the confirmation family whose DR held to the block end",
+    "id": "CS:TP-TRUE-1",
+    "live_use": "FORBIDDEN",
+    "parent": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1"
+    ],
+    "profile": "PROFILE:BASE-24",
+    "role": "OUTCOME_SUBGROUP",
+    "sc_ref": [
+     "H1",
+     "C1"
+    ],
+    "source_refs": [
+     "SRC:TP-2.0"
+    ],
+    "title_ru": "сессии семьи, где DR устоял (набор T ядра TP)",
+    "version": "1"
+   },
+   {
+    "condition_availability": "RETROSPECTIVE",
+    "condition_ru": "DR устоял до конца блока, и откат до вершины был в часах окна — условие на будущее этих сессий",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "history_rule": "the members of CS:TP-TRUE-1 whose R before the top is known and lies in the window (W1, W2, LATE, BEFORE) of T's clock",
+    "id": "CS:TP-WINDOW-1",
+    "live_use": "FORBIDDEN",
+    "parent": [
+     "CS:TP-TRUE-1"
+    ],
+    "profile": "PROFILE:BASE-24",
+    "role": "OUTCOME_SUBGROUP",
+    "sc_ref": [
+     "H1",
+     "C1"
+    ],
+    "source_refs": [
+     "SRC:TP-2.0"
+    ],
+    "title_ru": "сессии семьи, где DR устоял и откат до вершины был в окне (набор T_W ядра TP)",
+    "version": "1"
+   },
+   {
+    "comparison": "CMP:TP-DEPTH-1",
+    "condition_availability": "PREFIX_AT_CUT",
+    "condition_ru": "к часу t: своя активация раньше, нет пропущенных M5, DR ещё цел, а самая глубокая точка против активации — не выше сегодняшней (в ширинах IDR)",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "history_rule": "the members of the confirmation family eligible at the common clock cut t (own activation before t, no whole M5 missing up to t, no close beyond the own opposite DR up to t) whose deepest point against the activation up to t is as deep as today's or deeper",
+    "id": "CS:TP-DEPTH-AT-CUT-1",
+    "live_use": "PERMITTED",
+    "parent": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1"
+    ],
+    "profile": "PROFILE:BASE-24",
+    "role": "MATCHED_AT_CUT",
+    "sc_ref": [
+     "H1",
+     "H3",
+     "C1"
+    ],
+    "source_refs": [
+     "SRC:TP-2.0"
+    ],
+    "title_ru": "сессии семьи, которые к этому часу заходили так же глубоко",
+    "version": "1"
    }
   ],
   "claim_forms": [
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "DescriptiveClaim",
+    "estimand": "EST:TP-MASS-R",
+    "forbidden_readings_ru": [
+     "вероятность отката здесь сегодня",
+     "доля устоявших или доля окна",
+     "место входа",
+     "стоп удержится"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:MASS-R-TP",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "DR устоял, откат до вершины {where}",
+      "view": "ANY"
+     },
+     {
+      "key": "phrase_none",
+      "surface": "PASSPORT",
+      "text_ru": "DR устоял, откат до вершины не определён (вершина сразу или нет данных)",
+      "view": "ANY"
+     },
+     {
+      "key": "other",
+      "surface": "CANVAS",
+      "text_ru": "{w} · {name} {pct}",
+      "view": "ANY"
+     },
+     {
+      "key": "place",
+      "surface": "INSPECTOR",
+      "text_ru": "{n} из {N} сессий семьи ({pct}): DR устоял, откат до вершины был здесь — {t0}–{t1} · {band} SD",
+      "view": "ANY"
+     },
+     {
+      "key": "window",
+      "surface": "INSPECTOR",
+      "text_ru": "{n} из {N} сессий семьи: DR устоял, откат до вершины в {t0}–{t1}",
+      "view": "ANY"
+     },
+     {
+      "key": "head",
+      "surface": "PANEL",
+      "text_ru": "Время отката · доля семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "head_title",
+      "surface": "PANEL",
+      "text_ru": "Доля всей семьи (N): DR устоял до конца сессии, и откат до вершины был в этом времени. Окна и «без отката до вершины» вместе дают долю «устоял».",
+      "view": "ANY"
+     },
+     {
+      "key": "head_r",
+      "surface": "PANEL",
+      "text_ru": "доля семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "bunch",
+      "surface": "PANEL",
+      "text_ru": "пучок {t0}–{t1}",
+      "view": "ANY"
+     },
+     {
+      "key": "no_r",
+      "surface": "PANEL",
+      "text_ru": "без отката до вершины",
+      "view": "ANY"
+     },
+     {
+      "key": "outside",
+      "surface": "PANEL",
+      "text_ru": "вне мест",
+      "view": "ANY"
+     },
+     {
+      "key": "others",
+      "surface": "PANEL",
+      "text_ru": "Откат в других окнах · доля семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "others_title",
+      "surface": "PANEL",
+      "text_ru": "Места отката сессий других окон. Доля — от всей семьи. На графике — те же созвездия, тише, с именем окна; щелчок показывает окно целиком.",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "PANEL",
+      "text_ru": "Пучков нет: ни один отрезок времени не набрал {need} сессий (5 % семьи, не меньше 4).",
+      "view": "ANY"
+     }
+    ],
+    "note": "DR-LAB-TP-2.0 R1, R2: operator 10.11.2026 «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C0",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий семьи DR устоял, и откат до вершины был {where}.",
+    "subject_ru": "сессии этой семьи (F, один N)",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "к общему часовому срезу t: своя активация раньше, префикс полный, DR ещё цел, самая глубокая точка против активации не выше сегодняшней",
+    "estimand": "EST:TP-DR-AT-DEPTH",
+    "forbidden_readings_ru": [
+     "вероятность, что DR сегодня устоит",
+     "стоп удержится",
+     "сигнал выхода"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:DR-AT-DEPTH-TP",
+    "labels": [
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "к {cut} так же глубоко ({u} SD или глубже) заходили {D}: DR устоял у {held}, сломан у {broken}",
+      "view": "ANY"
+     },
+     {
+      "key": "row_unknown",
+      "surface": "PANEL",
+      "text_ru": ", неизвестно у {unknown}",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "PANEL",
+      "text_ru": "Сессии этой семьи, которые к этому же часу уже заходили в коробку так же глубоко или глубже, а DR у них к этому часу был цел. Чем у них кончился DR. История, не прогноз.",
+      "view": "ANY"
+     },
+     {
+      "key": "few",
+      "surface": "PANEL",
+      "text_ru": "мало сессий: n={n}",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "PANEL",
+      "text_ru": "к {cut} так же глубоко не заходила ни одна сессия семьи",
+      "view": "ANY"
+     }
+    ],
+    "note": "DR-LAB-TP-2.0 R6: operator 10.11.2026 «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H3",
+     "K33"
+    ],
+    "statement_ru": "Из {D} сессий семьи, которые к {cut} заходили так же глубоко или глубже, DR устоял у {held}, сломан у {broken}, неизвестно у {unknown}. Это история, не прогноз сегодняшнего дня.",
+    "subject_ru": "сессии семьи, которые к этому же часу заходили так же глубоко или глубже",
+    "value_form": "CATEGORY_SHARES",
+    "version": "1"
+   },
    {
     "acceptance": "INHERITED_FROM_ACCEPTED_SCREEN",
     "claim_class": "DescriptiveClaim",
@@ -2773,6 +3008,2047 @@
     "subject_ru": "исторические сессии семьи, у которых после среза был новый X",
     "value_form": "QUANTILES",
     "version": "1.1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-JOINT-R",
+    "forbidden_readings_ru": [
+     "частота посещений",
+     "шанс разворота сегодня",
+     "где цена окажется сегодня",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-JOINT-R",
+    "labels": [],
+    "note": "C1 twin of CF:B-RX-JOINT-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Окончательный R у {known} из {N} сессий набора лежит в клетках таблицы цена × время; у {unknown} неизвестен, у {no_period} нет периода. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "CATEGORY_SHARES",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-JOINT-X",
+    "forbidden_readings_ru": [
+     "частота посещений",
+     "шанс продолжения сегодня",
+     "где цена окажется сегодня",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-JOINT-X",
+    "labels": [],
+    "note": "C1 twin of CF:B-RX-JOINT-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Окончательный X у {known} из {N} сессий набора лежит в клетках таблицы цена × время; у {unknown} неизвестен, у {no_period} нет периода. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "CATEGORY_SHARES",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-BAND-R",
+    "forbidden_readings_ru": [
+     "сила уровня",
+     "сколько раз заходили в полосу",
+     "доля зоны или окна",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-BAND-R",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "{name} {ev} ({what}) в полосе {band} SD",
+      "view": "ANY"
+     },
+     {
+      "key": "area_row",
+      "surface": "PANEL",
+      "text_ru": "{ev} в полосе за всю сессию",
+      "view": "ANY"
+     },
+     {
+      "key": "area_tip",
+      "surface": "INSPECTOR",
+      "text_ru": "в полосе за всю сессию",
+      "view": "ANY"
+     },
+     {
+      "key": "question",
+      "surface": "INSPECTOR",
+      "text_ru": "свой экстремум в этой полосе · {from} до {end}",
+      "view": "ANY"
+     },
+     {
+      "key": "two_row",
+      "surface": "INSPECTOR",
+      "text_ru": "{ev} · {name}",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-RX-BAND-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный R лежит в полосе {band} SD за весь свой горизонт; неизвестно у {unknown}. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-BAND-X",
+    "forbidden_readings_ru": [
+     "сила уровня",
+     "сколько раз заходили в полосу",
+     "доля зоны или окна",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-BAND-X",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "{name} {ev} ({what}) в полосе {band} SD",
+      "view": "ANY"
+     },
+     {
+      "key": "area_row",
+      "surface": "PANEL",
+      "text_ru": "{ev} в полосе за всю сессию",
+      "view": "ANY"
+     },
+     {
+      "key": "area_tip",
+      "surface": "INSPECTOR",
+      "text_ru": "в полосе за всю сессию",
+      "view": "ANY"
+     },
+     {
+      "key": "question",
+      "surface": "INSPECTOR",
+      "text_ru": "свой экстремум в этой полосе · {from} до {end}",
+      "view": "ANY"
+     },
+     {
+      "key": "two_row",
+      "surface": "INSPECTOR",
+      "text_ru": "{ev} · {name}",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-RX-BAND-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный X лежит в полосе {band} SD за весь свой горизонт; неизвестно у {unknown}. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-WINDOW-R",
+    "forbidden_readings_ru": [
+     "когда будет разворот сегодня",
+     "время входа",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-WINDOW-R",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "{name} {ev} ({what}) в {window}",
+      "view": "ANY"
+     },
+     {
+      "key": "area_row",
+      "surface": "PANEL",
+      "text_ru": "{ev} в выбранном окне",
+      "view": "ANY"
+     },
+     {
+      "key": "area_tip",
+      "surface": "INSPECTOR",
+      "text_ru": "в выбранном окне",
+      "view": "ANY"
+     },
+     {
+      "key": "question",
+      "surface": "INSPECTOR",
+      "text_ru": "в эти 15 минут свой экстремум поставили",
+      "view": "ANY"
+     },
+     {
+      "key": "zone_question",
+      "surface": "INSPECTOR",
+      "text_ru": "в окне {window} свой экстремум поставили",
+      "view": "ANY"
+     },
+     {
+      "key": "two_row",
+      "surface": "INSPECTOR",
+      "text_ru": "{ev} · {name}",
+      "view": "ANY"
+     },
+     {
+      "key": "win_row",
+      "surface": "WINDOW",
+      "text_ru": "в окне",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-RX-WINDOW-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный R впервые достигнут в окне {window}. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-WINDOW-X",
+    "forbidden_readings_ru": [
+     "когда будет продолжение сегодня",
+     "время входа",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-WINDOW-X",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "{name} {ev} ({what}) в {window}",
+      "view": "ANY"
+     },
+     {
+      "key": "area_row",
+      "surface": "PANEL",
+      "text_ru": "{ev} в выбранном окне",
+      "view": "ANY"
+     },
+     {
+      "key": "area_tip",
+      "surface": "INSPECTOR",
+      "text_ru": "в выбранном окне",
+      "view": "ANY"
+     },
+     {
+      "key": "question",
+      "surface": "INSPECTOR",
+      "text_ru": "в эти 15 минут свой экстремум поставили",
+      "view": "ANY"
+     },
+     {
+      "key": "zone_question",
+      "surface": "INSPECTOR",
+      "text_ru": "в окне {window} свой экстремум поставили",
+      "view": "ANY"
+     },
+     {
+      "key": "two_row",
+      "surface": "INSPECTOR",
+      "text_ru": "{ev} · {name}",
+      "view": "ANY"
+     },
+     {
+      "key": "win_row",
+      "surface": "WINDOW",
+      "text_ru": "в окне",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-RX-WINDOW-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный X впервые достигнут в окне {window}. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-REGION-R",
+    "forbidden_readings_ru": [
+     "доля всей полосы",
+     "кластер, найденный системой",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-REGION-R",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "{name} {ev} ({what}) в полосе {band} SD в {window}",
+      "view": "ANY"
+     },
+     {
+      "key": "area_row",
+      "surface": "PANEL",
+      "text_ru": "{ev} в выбранном окне",
+      "view": "ANY"
+     },
+     {
+      "key": "area_tip",
+      "surface": "INSPECTOR",
+      "text_ru": "в выбранном окне",
+      "view": "ANY"
+     },
+     {
+      "key": "mode_cell",
+      "surface": "INSPECTOR",
+      "text_ru": "{ev} чаще всего в {band} SD",
+      "view": "ANY"
+     },
+     {
+      "key": "win_row",
+      "surface": "WINDOW",
+      "text_ru": "в окне",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-RX-REGION-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный R лежит в полосе {band} SD и в окне {window} одновременно. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-REGION-X",
+    "forbidden_readings_ru": [
+     "доля всей полосы",
+     "кластер, найденный системой",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-REGION-X",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "{name} {ev} ({what}) в полосе {band} SD в {window}",
+      "view": "ANY"
+     },
+     {
+      "key": "area_row",
+      "surface": "PANEL",
+      "text_ru": "{ev} в выбранном окне",
+      "view": "ANY"
+     },
+     {
+      "key": "area_tip",
+      "surface": "INSPECTOR",
+      "text_ru": "в выбранном окне",
+      "view": "ANY"
+     },
+     {
+      "key": "mode_cell",
+      "surface": "INSPECTOR",
+      "text_ru": "{ev} чаще всего в {band} SD",
+      "view": "ANY"
+     },
+     {
+      "key": "win_row",
+      "surface": "WINDOW",
+      "text_ru": "в окне",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-RX-REGION-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный X лежит в полосе {band} SD и в окне {window} одновременно. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-KNOWN-R",
+    "forbidden_readings_ru": [
+     "остальные сессии без R",
+     "неизвестные выбыли из семьи",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-KNOWN-R",
+    "labels": [
+     {
+      "key": "row",
+      "surface": "WINDOW",
+      "text_ru": "определено",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-RX-KNOWN-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный R определён (весь собственный горизонт наблюдён). Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-KNOWN-X",
+    "forbidden_readings_ru": [
+     "остальные сессии без X",
+     "неизвестные выбыли из семьи",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-KNOWN-X",
+    "labels": [
+     {
+      "key": "row",
+      "surface": "WINDOW",
+      "text_ru": "определено",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-RX-KNOWN-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный X определён (весь собственный горизонт наблюдён). Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-UNDETERMINED-R",
+    "forbidden_readings_ru": [
+     "ноль",
+     "R не было",
+     "сессия выбыла из семьи",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-UNDETERMINED-R",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "{name} {ev} не определено (нет свечи M5 на горизонте{or_none}); на графике не рисуется",
+      "view": "ANY"
+     },
+     {
+      "key": "or_none",
+      "surface": "PASSPORT",
+      "text_ru": " или нет периода",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "{ev} не определено · нет свечи M5",
+      "view": "ANY"
+     },
+     {
+      "key": "total",
+      "surface": "INSPECTOR",
+      "text_ru": "этих сессий — {name} {ev} не определено",
+      "view": "ANY"
+     },
+     {
+      "key": "insp_unknown",
+      "surface": "INSPECTOR",
+      "text_ru": "нет свечи M5 на горизонте ({pct})",
+      "view": "ANY"
+     },
+     {
+      "key": "insp_none",
+      "surface": "INSPECTOR",
+      "text_ru": "нет периода измерения ({pct})",
+      "view": "ANY"
+     },
+     {
+      "key": "note",
+      "surface": "INSPECTOR",
+      "text_ru": "не рисуется ни по какой цене и времени",
+      "view": "ANY"
+     },
+     {
+      "key": "win_unknown",
+      "surface": "WINDOW",
+      "text_ru": "неизвестно",
+      "view": "ANY"
+     },
+     {
+      "key": "win_unknown_k",
+      "surface": "WINDOW",
+      "text_ru": "нет свечи M5 на горизонте",
+      "view": "ANY"
+     },
+     {
+      "key": "win_none",
+      "surface": "WINDOW",
+      "text_ru": "нет периода",
+      "view": "ANY"
+     },
+     {
+      "key": "zone_unknown",
+      "surface": "WINDOW",
+      "text_ru": "неизвестно у {pct}",
+      "view": "ANY"
+     },
+     {
+      "key": "zone_none",
+      "surface": "WINDOW",
+      "text_ru": "нет периода у {pct}",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-RX-UNDETERMINED-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный R не определён (нет свечи M5 на горизонте или нет периода); по цене и времени не рисуется. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-UNDETERMINED-X",
+    "forbidden_readings_ru": [
+     "ноль",
+     "X не было",
+     "сессия выбыла из семьи",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-UNDETERMINED-X",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "{name} {ev} не определено (нет свечи M5 на горизонте{or_none}); на графике не рисуется",
+      "view": "ANY"
+     },
+     {
+      "key": "or_none",
+      "surface": "PASSPORT",
+      "text_ru": " или нет периода",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "{ev} не определено · нет свечи M5",
+      "view": "ANY"
+     },
+     {
+      "key": "total",
+      "surface": "INSPECTOR",
+      "text_ru": "этих сессий — {name} {ev} не определено",
+      "view": "ANY"
+     },
+     {
+      "key": "insp_unknown",
+      "surface": "INSPECTOR",
+      "text_ru": "нет свечи M5 на горизонте ({pct})",
+      "view": "ANY"
+     },
+     {
+      "key": "insp_none",
+      "surface": "INSPECTOR",
+      "text_ru": "нет периода измерения ({pct})",
+      "view": "ANY"
+     },
+     {
+      "key": "note",
+      "surface": "INSPECTOR",
+      "text_ru": "не рисуется ни по какой цене и времени",
+      "view": "ANY"
+     },
+     {
+      "key": "win_unknown",
+      "surface": "WINDOW",
+      "text_ru": "неизвестно",
+      "view": "ANY"
+     },
+     {
+      "key": "win_unknown_k",
+      "surface": "WINDOW",
+      "text_ru": "нет свечи M5 на горизонте",
+      "view": "ANY"
+     },
+     {
+      "key": "win_none",
+      "surface": "WINDOW",
+      "text_ru": "нет периода",
+      "view": "ANY"
+     },
+     {
+      "key": "zone_unknown",
+      "surface": "WINDOW",
+      "text_ru": "неизвестно у {pct}",
+      "view": "ANY"
+     },
+     {
+      "key": "zone_none",
+      "surface": "WINDOW",
+      "text_ru": "нет периода у {pct}",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-RX-UNDETERMINED-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный X не определён (нет свечи M5 на горизонте или нет периода); по цене и времени не рисуется. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-OUTFRAME-R",
+    "forbidden_readings_ru": [
+     "выброс",
+     "невозможное сегодня",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-OUTFRAME-R",
+    "labels": [],
+    "note": "C1 twin of CF:B-RX-OUTFRAME-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный R лежит за краем кадра ({side}). Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-OUTFRAME-X",
+    "forbidden_readings_ru": [
+     "выброс",
+     "невозможное сегодня",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-OUTFRAME-X",
+    "labels": [],
+    "note": "C1 twin of CF:B-RX-OUTFRAME-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный X лежит за краем кадра ({side}). Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RX-DIFF",
+    "forbidden_readings_ru": [
+     "вероятнее откат или продолжение",
+     "части одной сотни",
+     "сумма — доля сессий с любым событием",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RX-DIFF",
+    "labels": [
+     {
+      "key": "more_X",
+      "surface": "INSPECTOR",
+      "text_ru": "X-время встречалось в этом окне чаще на {gap} п.п.",
+      "view": "ANY"
+     },
+     {
+      "key": "more_R",
+      "surface": "INSPECTOR",
+      "text_ru": "R-время встречалось в этом окне чаще на {gap} п.п.",
+      "view": "ANY"
+     },
+     {
+      "key": "close",
+      "surface": "INSPECTOR",
+      "text_ru": "R- и X-время близки",
+      "view": "ANY"
+     },
+     {
+      "key": "k_parts",
+      "surface": "INSPECTOR",
+      "text_ru": "две отдельные доли N, не части одной сотни",
+      "view": "ANY"
+     },
+     {
+      "key": "k_sum",
+      "surface": "INSPECTOR",
+      "text_ru": "две отдельные доли N, не складываются в 100 %",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-RX-DIFF on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "В {region} свой X поставили {x_pct} этих сессий, свой R — {r_pct}; разница {diff} п.п. Это две отдельные доли одного N. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-ZONE-R",
+    "forbidden_readings_ru": [
+     "шанс попадания или разворота сегодня",
+     "качество входа",
+     "здесь разворачивается рынок",
+     "площадь свечения — членство",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-ZONE-R",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "{name} {ev} в зоне {label} (её точная область в {band} SD × {window}, не весь прямоугольник)",
+      "view": "ANY"
+     },
+     {
+      "key": "sub",
+      "surface": "PANEL",
+      "text_ru": "{band} SD · {status}",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "PANEL",
+      "text_ru": "зон нет: ни одна область не набрала минимальной поддержки",
+      "view": "ANY"
+     },
+     {
+      "key": "share",
+      "surface": "INSPECTOR",
+      "text_ru": "этих сессий в этой зоне",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "WINDOW",
+      "text_ru": "доля этих сессий",
+      "view": "ANY"
+     },
+     {
+      "key": "k",
+      "surface": "WINDOW",
+      "text_ru": "шаг доли {step}; неизвестно у {unknown}, нет периода у {none}; вне зон {residual}",
+      "view": "ANY"
+     },
+     {
+      "key": "zone",
+      "surface": "WINDOW",
+      "text_ru": "зона",
+      "view": "ANY"
+     },
+     {
+      "key": "area",
+      "surface": "WINDOW",
+      "text_ru": "область",
+      "view": "ANY"
+     },
+     {
+      "key": "area_v",
+      "surface": "WINDOW",
+      "text_ru": "{n} клеток 0,1 SD × 15 мин",
+      "view": "ANY"
+     },
+     {
+      "key": "area_k",
+      "surface": "WINDOW",
+      "text_ru": "рамка {band} SD × {window}; членство — сами клетки",
+      "view": "ANY"
+     },
+     {
+      "key": "apex",
+      "surface": "WINDOW",
+      "text_ru": "вершина",
+      "view": "ANY"
+     },
+     {
+      "key": "apex_v",
+      "surface": "WINDOW",
+      "text_ru": "клетка {band} SD × {window}",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-ZONE-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора известный окончательный R находится в зоне {label} (zone-map-3, точная маска); исход неизвестен у {unknown}. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-ZONE-X",
+    "forbidden_readings_ru": [
+     "шанс попадания или продолжения сегодня",
+     "качество входа",
+     "цель",
+     "площадь свечения — членство",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-ZONE-X",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "{name} {ev} в зоне {label} (её точная область в {band} SD × {window}, не весь прямоугольник)",
+      "view": "ANY"
+     },
+     {
+      "key": "sub",
+      "surface": "PANEL",
+      "text_ru": "{band} SD · {status}",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "PANEL",
+      "text_ru": "зон нет: ни одна область не набрала минимальной поддержки",
+      "view": "ANY"
+     },
+     {
+      "key": "share",
+      "surface": "INSPECTOR",
+      "text_ru": "этих сессий в этой зоне",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "WINDOW",
+      "text_ru": "доля этих сессий",
+      "view": "ANY"
+     },
+     {
+      "key": "k",
+      "surface": "WINDOW",
+      "text_ru": "шаг доли {step}; неизвестно у {unknown}, нет периода у {none}; вне зон {residual}",
+      "view": "ANY"
+     },
+     {
+      "key": "zone",
+      "surface": "WINDOW",
+      "text_ru": "зона",
+      "view": "ANY"
+     },
+     {
+      "key": "area",
+      "surface": "WINDOW",
+      "text_ru": "область",
+      "view": "ANY"
+     },
+     {
+      "key": "area_v",
+      "surface": "WINDOW",
+      "text_ru": "{n} клеток 0,1 SD × 15 мин",
+      "view": "ANY"
+     },
+     {
+      "key": "area_k",
+      "surface": "WINDOW",
+      "text_ru": "рамка {band} SD × {window}; членство — сами клетки",
+      "view": "ANY"
+     },
+     {
+      "key": "apex",
+      "surface": "WINDOW",
+      "text_ru": "вершина",
+      "view": "ANY"
+     },
+     {
+      "key": "apex_v",
+      "surface": "WINDOW",
+      "text_ru": "клетка {band} SD × {window}",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-ZONE-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора известный окончательный X находится в зоне {label} (zone-map-3, точная маска); исход неизвестен у {unknown}. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-ZONE-RESIDUAL-R",
+    "forbidden_readings_ru": [
+     "шум",
+     "невозможное",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-ZONE-RESIDUAL-R",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "{name} {ev} вне зон (остаток распределения)",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "{ev} вне зон",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-ZONE-RESIDUAL-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный R известен и лежит вне всех зон (остаток распределения). Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-ZONE-RESIDUAL-X",
+    "forbidden_readings_ru": [
+     "шум",
+     "невозможное",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-ZONE-RESIDUAL-X",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "{name} {ev} вне зон (остаток распределения)",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "{ev} вне зон",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-ZONE-RESIDUAL-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора окончательный X известен и лежит вне всех зон (остаток распределения). Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-ORDER",
+    "forbidden_readings_ru": [
+     "маршрут сделки",
+     "порядок повторных достижений",
+     "порядок внутри свечи по её цвету",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-ORDER",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "порядок первых R и X: {t}",
+      "view": "ANY"
+     },
+     {
+      "key": "X_before_R",
+      "surface": "WINDOW",
+      "text_ru": "сначала максимум X, потом глубочайший R",
+      "view": "ANY"
+     },
+     {
+      "key": "R_before_X",
+      "surface": "WINDOW",
+      "text_ru": "сначала глубочайший R, потом максимум X",
+      "view": "ANY"
+     },
+     {
+      "key": "same_M5",
+      "surface": "WINDOW",
+      "text_ru": "в одной M5: порядок внутри свечи неизвестен",
+      "view": "ANY"
+     },
+     {
+      "key": "unknown",
+      "surface": "WINDOW",
+      "text_ru": "неизвестно: событие не определено",
+      "view": "ANY"
+     },
+     {
+      "key": "no_period",
+      "surface": "WINDOW",
+      "text_ru": "нет периода: после активации не было ни одной M5",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-ORDER on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Из {N} сессий набора первый окончательный X раньше первого R у {X_BEFORE_R}, R раньше X у {R_BEFORE_X}, в одной M5 у {SAME_M5}, неизвестно у {UNKNOWN}, без периода у {NO_PERIOD}. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "CATEGORY_SHARES",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-CLOSE",
+    "forbidden_readings_ru": [
+     "путь одной сессии",
+     "вероятность перехода от сегодняшней цены",
+     "длительность пребывания",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-CLOSE",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "закрытие M5 в полосе {band} SD",
+      "view": "ANY"
+     },
+     {
+      "key": "horizon",
+      "surface": "PASSPORT",
+      "text_ru": "на пятиминутке {m5}",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "закрылись в {band} SD",
+      "view": "ANY"
+     },
+     {
+      "key": "col",
+      "surface": "WINDOW",
+      "text_ru": "колонка",
+      "view": "ANY"
+     },
+     {
+      "key": "col_v",
+      "surface": "WINDOW",
+      "text_ru": "закрытия этих сессий на этой M5; своя сотня процентов",
+      "view": "ANY"
+     },
+     {
+      "key": "profile_n",
+      "surface": "CANVAS",
+      "text_ru": "{n} из {N} · {pct}",
+      "view": "ANY"
+     },
+     {
+      "key": "profile_t",
+      "surface": "CANVAS",
+      "text_ru": "{past}{window}",
+      "view": "ANY"
+     },
+     {
+      "key": "profile_past",
+      "surface": "CANVAS",
+      "text_ru": "было ",
+      "view": "ANY"
+     },
+     {
+      "key": "legend_a",
+      "surface": "CANVAS",
+      "text_ru": "впереди: реже",
+      "view": "ANY"
+     },
+     {
+      "key": "legend_b",
+      "surface": "CANVAS",
+      "text_ru": "чаще   ·   {min}…{max} из {N} на M5",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-CLOSE on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "На M5 {m5} у {yes} из {N} сессий набора закрытие было в полосе {band} SD. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-CLOSE-MISSING",
+    "forbidden_readings_ru": [
+     "рынок точно закрыт",
+     "ноль",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-CLOSE-MISSING",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "нет свечи на этой M5 (неизвестно / рынок закрыт)",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "нет свечи · неизвестно",
+      "view": "ANY"
+     },
+     {
+      "key": "unk",
+      "surface": "INSPECTOR",
+      "text_ru": "этих сессий — нет свечи на M5 {m5} (неизвестно / рынок закрыт)",
+      "view": "ANY"
+     },
+     {
+      "key": "col",
+      "surface": "INSPECTOR",
+      "text_ru": "нет свечи у {pct} этих сессий",
+      "view": "ANY"
+     },
+     {
+      "key": "win_row",
+      "surface": "WINDOW",
+      "text_ru": "нет свечи",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-CLOSE-MISSING on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "На M5 {m5} у {yes} из {N} сессий набора нет свечи (неизвестно; календарь ранних закрытий не удостоверен). Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-CLOSE-PREACT",
+    "forbidden_readings_ru": [
+     "исключены из семьи",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-CLOSE-PREACT",
+    "labels": [
+     {
+      "key": "note",
+      "surface": "PANEL",
+      "text_ru": "из них ещё до своего {act}: {pct}",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-CLOSE-PREACT on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "На M5 {m5} у {yes} из {N} сессий набора своя активация ещё впереди (фаза пути, сессии остаются в N). Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-RANGE",
+    "forbidden_readings_ru": [
+     "закрытие в полосе",
+     "время пребывания",
+     "доли полос делят сотню",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-RANGE",
+    "labels": [
+     {
+      "key": "insp",
+      "surface": "INSPECTOR",
+      "text_ru": "свеча M5 задевала эту полосу у {pct} этих сессий (диапазон, не закрытие)",
+      "view": "ANY"
+     },
+     {
+      "key": "win_row",
+      "surface": "WINDOW",
+      "text_ru": "задевали диапазоном",
+      "view": "ANY"
+     },
+     {
+      "key": "win_k",
+      "surface": "WINDOW",
+      "text_ru": "поле диапазонов V: свеча M5 задевала полосу; не закрытие",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-RANGE on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "На M5 {m5} свеча {yes} из {N} сессий набора задевала полосу {band} SD диапазоном high–low. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-LEVEL-FULL",
+    "forbidden_readings_ru": [
+     "цель",
+     "будет",
+     "буквальное пересечение",
+     "цель раньше стопа",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-LEVEL-FULL",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "были на {name} ({sd} SD) или дальше {dir} (свеча M5 дошла до уровня или дальше)",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "дальше {dir} · вся сессия",
+      "view": "ANY"
+     },
+     {
+      "key": "ladder_head",
+      "surface": "WINDOW",
+      "text_ru": "вся сессия",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-LEVEL-FULL on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора хотя бы одна M5 от собственной активации до конца блока дошла до уровня {level} или дальше {side}; неизвестно у {unknown}. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "BOUNDS_IF_UNKNOWN",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-LEVEL-REST",
+    "forbidden_readings_ru": [
+     "цель",
+     "будет",
+     "шанс дойти сегодня",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-LEVEL-REST",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "были на {name} ({sd} SD) или дальше {dir} (свеча M5 дошла до уровня или дальше)",
+      "view": "ANY"
+     },
+     {
+      "key": "horizon_none",
+      "surface": "PASSPORT",
+      "text_ru": "остатка блока нет",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "дальше {dir} · после {t}",
+      "view": "ANY"
+     },
+     {
+      "key": "row_none",
+      "surface": "PANEL",
+      "text_ru": "дальше {dir} · остатка нет",
+      "view": "ANY"
+     },
+     {
+      "key": "win_row",
+      "surface": "WINDOW",
+      "text_ru": "после среза",
+      "view": "ANY"
+     },
+     {
+      "key": "ladder_head",
+      "surface": "WINDOW",
+      "text_ru": "после {t}",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-LEVEL-REST on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "На общих часах после {cut} у {yes} из {N} сессий набора M5 дошла до уровня {level} или дальше {side}; неизвестно у {unknown}. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "BOUNDS_IF_UNKNOWN",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-CROSS-FULL",
+    "forbidden_readings_ru": [
+     "на уровне или дальше (гэп за уровень — «дальше» без пересечения)",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-CROSS-FULL",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "пересекали {name} свечой M5 (минимум ≤ уровня ≤ максимум)",
+      "view": "ANY"
+     },
+     {
+      "key": "win_row",
+      "surface": "WINDOW",
+      "text_ru": "пересекали свечой",
+      "view": "ANY"
+     },
+     {
+      "key": "win_k",
+      "surface": "WINDOW",
+      "text_ru": "другое событие: минимум ≤ уровня ≤ максимум одной M5",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-CROSS-FULL on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора была M5, пересекавшая уровень {level} (минимум ≤ уровня ≤ максимум); неизвестно у {unknown}. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "BOUNDS_IF_UNKNOWN",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-VISIT-FULL",
+    "forbidden_readings_ru": [
+     "окончательный R / X в полосе",
+     "подтверждённый новый вход",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-VISIT-FULL",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "заходили в полосу {band} SD (свеча M5 задевала её)",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "заходили в полосу · вся сессия",
+      "view": "ANY"
+     },
+     {
+      "key": "insp",
+      "surface": "INSPECTOR",
+      "text_ru": "заходили в полосу · вся сессия",
+      "view": "ANY"
+     },
+     {
+      "key": "win_row",
+      "surface": "WINDOW",
+      "text_ru": "заходили",
+      "view": "ANY"
+     },
+     {
+      "key": "win_full",
+      "surface": "WINDOW",
+      "text_ru": "вся сессия",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-VISIT-FULL on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "У {yes} из {N} сессий набора хотя бы одна M5 задела полосу {band} SD за весь свой горизонт; неизвестно у {unknown}. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "BOUNDS_IF_UNKNOWN",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-VISIT-REST",
+    "forbidden_readings_ru": [
+     "окончательный R / X в полосе",
+     "шанс зайти сегодня",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-VISIT-REST",
+    "labels": [
+     {
+      "key": "phrase",
+      "surface": "PASSPORT",
+      "text_ru": "заходили в полосу {band} SD (свеча M5 задевала её)",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "заходили в полосу · после {t}",
+      "view": "ANY"
+     },
+     {
+      "key": "row_none",
+      "surface": "PANEL",
+      "text_ru": "заходили в полосу · остатка нет",
+      "view": "ANY"
+     },
+     {
+      "key": "insp",
+      "surface": "INSPECTOR",
+      "text_ru": "заходили · после {t}",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-VISIT-REST on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "На общих часах после {cut} у {yes} из {N} сессий набора M5 задела полосу {band} SD; неизвестно у {unknown}. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "BOUNDS_IF_UNKNOWN",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-CLOCK-R",
+    "forbidden_readings_ru": [
+     "шанс на сегодня",
+     "удаление «отработанных» дней",
+     "сегодняшний экстремум окончательный",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-CLOCK-R",
+    "labels": [
+     {
+      "key": "later",
+      "surface": "INSPECTOR",
+      "text_ru": "у этих сессий позже {t}",
+      "view": "ANY"
+     },
+     {
+      "key": "earlier",
+      "surface": "INSPECTOR",
+      "text_ru": "у этих сессий раньше {t}",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "INSPECTOR",
+      "text_ru": "История похожих сессий по часам дня, не сегодняшний путь цены",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-CLOCK-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Из окончательных R этих сессий в {region} у {yes} из {N} сессий M5 события закрылась {part} {cut} по часам; обе части — доли того же N. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-CLOCK-X",
+    "forbidden_readings_ru": [
+     "шанс на сегодня",
+     "удаление «отработанных» дней",
+     "сегодняшний экстремум окончательный",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-CLOCK-X",
+    "labels": [
+     {
+      "key": "later",
+      "surface": "INSPECTOR",
+      "text_ru": "у этих сессий позже {t}",
+      "view": "ANY"
+     },
+     {
+      "key": "earlier",
+      "surface": "INSPECTOR",
+      "text_ru": "у этих сессий раньше {t}",
+      "view": "ANY"
+     },
+     {
+      "key": "title",
+      "surface": "INSPECTOR",
+      "text_ru": "История похожих сессий по часам дня, не сегодняшний путь цены",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-CLOCK-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Из окончательных X этих сессий в {region} у {yes} из {N} сессий M5 события закрылась {part} {cut} по часам; обе части — доли того же N. Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-CLOCK-PEAK-R",
+    "forbidden_readings_ru": [
+     "время разворота сегодня",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-CLOCK-PEAK-R",
+    "labels": [
+     {
+      "key": "band_ahead",
+      "surface": "INSPECTOR",
+      "text_ru": "у этих сессий впереди · пик {ev} в полосе: {window} · {pct} этих сессий",
+      "view": "ANY"
+     },
+     {
+      "key": "band_past",
+      "surface": "INSPECTOR",
+      "text_ru": "уже прошло · пик {ev} в полосе: {window} · {pct} этих сессий",
+      "view": "ANY"
+     },
+     {
+      "key": "zone_ahead",
+      "surface": "INSPECTOR",
+      "text_ru": "у этих сессий впереди · пиковые 15 минут {window} · {pct} этих сессий",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-CLOCK-PEAK-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Пиковые 15 минут {region}: {window}, у {yes} из {N} сессий набора там окончательный R ({past}). Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:B-CLOCK-PEAK-X",
+    "forbidden_readings_ru": [
+     "время продолжения сегодня",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-B-CLOCK-PEAK-X",
+    "labels": [
+     {
+      "key": "band_ahead",
+      "surface": "INSPECTOR",
+      "text_ru": "у этих сессий впереди · пик {ev} в полосе: {window} · {pct} этих сессий",
+      "view": "ANY"
+     },
+     {
+      "key": "band_past",
+      "surface": "INSPECTOR",
+      "text_ru": "уже прошло · пик {ev} в полосе: {window} · {pct} этих сессий",
+      "view": "ANY"
+     },
+     {
+      "key": "zone_ahead",
+      "surface": "INSPECTOR",
+      "text_ru": "у этих сессий впереди · пиковые 15 минут {window} · {pct} этих сессий",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:B-CLOCK-PEAK-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Пиковые 15 минут {region}: {window}, у {yes} из {N} сессий набора там окончательный X ({past}). Это доля набора, не всей семьи.",
+    "subject_ru": "сессии набора: DR устоял (у набора окна — и откат до вершины в его часах); условие на будущее этих сессий",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:ZD-GRID-R",
+    "forbidden_readings_ru": [
+     "разрешение зоне существовать",
+     "шанс на сегодня",
+     "торговое преимущество",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-ZD-GRID-R",
+    "labels": [
+     {
+      "key": "row",
+      "surface": "WINDOW",
+      "text_ru": "сдвиг сетки",
+      "view": "ANY"
+     },
+     {
+      "key": "text",
+      "surface": "WINDOW",
+      "text_ru": "те же сессии на 0,05 SD — {g1}, на 5 мин — {g2}, на 10 мин — {g3}",
+      "view": "ANY"
+     },
+     {
+      "key": "k",
+      "surface": "WINDOW",
+      "text_ru": "Жаккар множеств сессий; 1 — та же зона",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:ZD-GRID-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Зона {label}: на сдвинутых сетках Жаккар множеств сессий {value} (1 — та же зона). Это доля набора, не всей семьи.",
+    "subject_ru": "зона этого набора (zone-map-3)",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:ZD-GRID-X",
+    "forbidden_readings_ru": [
+     "разрешение зоне существовать",
+     "шанс на сегодня",
+     "торговое преимущество",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-ZD-GRID-X",
+    "labels": [
+     {
+      "key": "row",
+      "surface": "WINDOW",
+      "text_ru": "сдвиг сетки",
+      "view": "ANY"
+     },
+     {
+      "key": "text",
+      "surface": "WINDOW",
+      "text_ru": "те же сессии на 0,05 SD — {g1}, на 5 мин — {g2}, на 10 мин — {g3}",
+      "view": "ANY"
+     },
+     {
+      "key": "k",
+      "surface": "WINDOW",
+      "text_ru": "Жаккар множеств сессий; 1 — та же зона",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:ZD-GRID-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Зона {label}: на сдвинутых сетках Жаккар множеств сессий {value} (1 — та же зона). Это доля набора, не всей семьи.",
+    "subject_ru": "зона этого набора (zone-map-3)",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:ZD-BOOT-R",
+    "forbidden_readings_ru": [
+     "разрешение зоне существовать",
+     "шанс на сегодня",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-ZD-BOOT-R",
+    "labels": [
+     {
+      "key": "row",
+      "surface": "WINDOW",
+      "text_ru": "пересэмплирование",
+      "view": "ANY"
+     },
+     {
+      "key": "text",
+      "surface": "WINDOW",
+      "text_ru": "в среднем {mean}, не меньше 0,5 — в {share} из {of} повторов",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:ZD-BOOT-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Зона {label}: при пересэмплировании сессий средний Жаккар {value}, не меньше 0,5 — в {share} повторов. Это доля набора, не всей семьи.",
+    "subject_ru": "зона этого набора (zone-map-3)",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:ZD-BOOT-X",
+    "forbidden_readings_ru": [
+     "разрешение зоне существовать",
+     "шанс на сегодня",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-ZD-BOOT-X",
+    "labels": [
+     {
+      "key": "row",
+      "surface": "WINDOW",
+      "text_ru": "пересэмплирование",
+      "view": "ANY"
+     },
+     {
+      "key": "text",
+      "surface": "WINDOW",
+      "text_ru": "в среднем {mean}, не меньше 0,5 — в {share} из {of} повторов",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:ZD-BOOT-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Зона {label}: при пересэмплировании сессий средний Жаккар {value}, не меньше 0,5 — в {share} повторов. Это доля набора, не всей семьи.",
+    "subject_ru": "зона этого набора (zone-map-3)",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:ZD-NULL-R",
+    "forbidden_readings_ru": [
+     "разрешение зоне существовать",
+     "торговое преимущество",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-ZD-NULL-R",
+    "labels": [
+     {
+      "key": "row",
+      "surface": "WINDOW",
+      "text_ru": "путь без направления",
+      "view": "ANY"
+     },
+     {
+      "key": "text",
+      "surface": "WINDOW",
+      "text_ru": "реальные {p_real}, без направления {p_null} · избыток {excess} п.п.",
+      "view": "ANY"
+     },
+     {
+      "key": "k",
+      "surface": "WINDOW",
+      "text_ru": "различим с {mde} п.п.",
+      "view": "ANY"
+     },
+     {
+      "key": "na",
+      "surface": "WINDOW",
+      "text_ru": "не считается: {reason}",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:ZD-NULL-R on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Зона {label}: в отложенной половине набора реальные события в области {p_real}, у копий без направления {p_null}, избыток {excess}. Это доля набора, не всей семьи.",
+    "subject_ru": "зона этого набора (zone-map-3)",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "ACCEPTED_BY_OPERATOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "набор отобран по будущему своих сессий: DR устоял до конца блока; у набора окна — ещё и откат до вершины в часах окна",
+    "estimand": "EST:ZD-NULL-X",
+    "forbidden_readings_ru": [
+     "разрешение зоне существовать",
+     "торговое преимущество",
+     "доля всей семьи",
+     "вероятность сегодня"
+    ],
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CF:TP-ZD-NULL-X",
+    "labels": [
+     {
+      "key": "row",
+      "surface": "WINDOW",
+      "text_ru": "путь без направления",
+      "view": "ANY"
+     },
+     {
+      "key": "text",
+      "surface": "WINDOW",
+      "text_ru": "реальные {p_real}, без направления {p_null} · избыток {excess} п.п.",
+      "view": "ANY"
+     },
+     {
+      "key": "k",
+      "surface": "WINDOW",
+      "text_ru": "различим с {mde} п.п.",
+      "view": "ANY"
+     },
+     {
+      "key": "na",
+      "surface": "WINDOW",
+      "text_ru": "не считается: {reason}",
+      "view": "ANY"
+     }
+    ],
+    "note": "C1 twin of CF:ZD-NULL-X on CS:TP-TRUE-1 / CS:TP-WINDOW-1 (DR-LAB-TP-2.0 §7; SC-1.1 H1, C1: a subgroup's share is never the parent's). Operator 10.11.2026: «реализуй спецификацию (на все шесть вопросов — ответ — да»",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H1"
+    ],
+    "statement_ru": "Зона {label}: в отложенной половине набора реальные события в области {p_real}, у копий без направления {p_null}, избыток {excess}. Это доля набора, не всей семьи.",
+    "subject_ru": "зона этого набора (zone-map-3)",
+    "value_form": "POINT",
+    "version": "1"
    }
   ],
   "comparisons": [
@@ -2860,6 +5136,26 @@
     "title_ru": "M3 — тот же недавний путь",
     "tolerance": "mean |close difference| <= 0.20 and max <= 0.35 IDR width, exact in integers",
     "version": "1.0",
+    "weights": "NONE"
+   },
+   {
+    "alignment": "COMMON_SESSION_CLOCK",
+    "feature_availability": "PREFIX_AT_CUT",
+    "features": [
+     "r(t): the minimum directed low after the own activation over the M5 closed by t, in IDR widths; member r_s(t) * w_today <= r_today(t) * w_s (exact, integers)"
+    ],
+    "frozen": true,
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "CMP:TP-DEPTH-1",
+    "sc_ref": [
+     "H3",
+     "C1"
+    ],
+    "source_refs": [
+     "SRC:TP-2.0"
+    ],
+    "title_ru": "так же глубоко к тому же часу",
+    "version": "1",
     "weights": "NONE"
    }
   ],
@@ -4089,7 +6385,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-R-1",
@@ -4119,7 +6417,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-X-1",
@@ -4161,7 +6461,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-R-1",
@@ -4203,7 +6505,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-X-1",
@@ -4245,7 +6549,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-R-1",
@@ -4287,7 +6593,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-X-1",
@@ -4339,7 +6647,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-R-1",
@@ -4391,7 +6701,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-X-1",
@@ -4428,7 +6740,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-R-1",
@@ -4465,7 +6779,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-X-1",
@@ -4496,7 +6812,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-R-1",
@@ -4527,7 +6845,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-X-1",
@@ -4574,7 +6894,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-R-1",
@@ -4621,7 +6943,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-X-1",
@@ -4673,7 +6997,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FINAL-X-1",
@@ -4710,7 +7036,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:ZONE-MEMBERSHIP-1",
@@ -4748,7 +7076,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:ZONE-MEMBERSHIP-1",
@@ -4780,7 +7110,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:ZONE-MEMBERSHIP-1",
@@ -4812,7 +7144,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:ZONE-MEMBERSHIP-1",
@@ -4884,7 +7218,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:FIRST-ORDER-1",
@@ -4932,7 +7268,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:CLOSE-AT-M5-1",
@@ -4968,7 +7306,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:CLOSE-AT-M5-1",
@@ -5004,7 +7344,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:CLOSE-AT-M5-1",
@@ -5045,7 +7387,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:RANGE-AT-M5-1",
@@ -5091,7 +7435,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:REACH-FULL-1",
@@ -5144,7 +7490,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:REACH-REST-1",
@@ -5192,7 +7540,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:CROSS-FULL-1",
@@ -5234,7 +7584,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:VISIT-FULL-1",
@@ -5281,7 +7633,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:VISIT-REST-1",
@@ -5338,7 +7692,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:CLOCK-SPLIT-1",
@@ -5395,7 +7751,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:CLOCK-SPLIT-1",
@@ -5457,7 +7815,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:CLOCK-SPLIT-1",
@@ -5519,7 +7879,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:CLOCK-SPLIT-1",
@@ -5561,7 +7923,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:ZONE-STABILITY-1",
@@ -5603,7 +7967,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:ZONE-STABILITY-1",
@@ -5645,7 +8011,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:ZONE-STABILITY-1",
@@ -5687,7 +8055,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:ZONE-STABILITY-1",
@@ -5729,7 +8099,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:ZONE-STABILITY-1",
@@ -5771,7 +8143,9 @@
      "CS:F-CONF-1",
      "CS:F-CONF-ALL-1",
      "CS:F-BREAK-1",
-     "CS:F-BREAK-ALL-1"
+     "CS:F-BREAK-ALL-1",
+     "CS:TP-TRUE-1",
+     "CS:TP-WINDOW-1"
     ],
     "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
     "q5_outcome": "OUT:ZONE-STABILITY-1",
@@ -6382,6 +8756,105 @@
      "V2.2"
     ],
     "version": "1.0"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "EST:TP-MASS-R",
+    "parameters": [
+     {
+      "meaning_ru": "нижняя клетка полосы (null — без ограничения)",
+      "name": "k0",
+      "parameter_kind": "PRICE_BAND_CELLS"
+     },
+     {
+      "meaning_ru": "верхняя клетка полосы, исключительно (null — без ограничения)",
+      "name": "k1",
+      "parameter_kind": "PRICE_BAND_CELLS"
+     },
+     {
+      "meaning_ru": "первая 15-минутная клетка (null — без ограничения)",
+      "name": "b0",
+      "parameter_kind": "TIME_WINDOW_CELLS"
+     },
+     {
+      "meaning_ru": "клетка после окна (null — без ограничения)",
+      "name": "b1",
+      "parameter_kind": "TIME_WINDOW_CELLS"
+     },
+     {
+      "meaning_ru": "KNOWN — откат в области; NO_R — DR устоял, откат до вершины не определён",
+      "name": "part",
+      "parameter_kind": "CATEGORY"
+     },
+     {
+      "meaning_ru": "полосы [k0, k1), исключённые из области (строка «вне мест» окна); пустой список — без исключений",
+      "name": "not_bands",
+      "parameter_kind": "PRICE_BAND_CELLS"
+     }
+    ],
+    "profile": "PROFILE:BASE-24",
+    "q1_formalised_part_ru": "доля всей семьи (N), у которой DR устоял и откат до вершины лежит в полосе [k0/10; k1/10) и в окне [b0; b1) (пустая граница — без ограничения), вне полос not_bands; part NO_R — DR устоял, а откат до вершины не определён",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION",
+    "q4_case_set": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1"
+    ],
+    "q4_denominator": "N_BASE_UNIQUE_MEMBERS",
+    "q5_outcome": "OUT:TP-HELD-R-1",
+    "q5_region": "REG:JOINT-1",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "от закрытия собственной активации (её M5 не входит) до конца блока H; время отката — открытие первой M5 с этой ценой",
+    "q7_measure": "SHARE",
+    "q8_order_ru": "окна, «без отката до вершины» и сломанные / неизвестные делят всю семью без остатка; места и «вне мест» делят окно",
+    "q8_unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE",
+    "q8_weights": "NONE",
+    "question": "Q:TP-MASS",
+    "sc_ref": [
+     "T1",
+     "C1",
+     "H1"
+    ],
+    "version": "1"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "EST:TP-DR-AT-DEPTH",
+    "parameters": [
+     {
+      "meaning_ru": "общий часовой срез t — закрытие последней закрытой M5",
+      "name": "cut",
+      "parameter_kind": "CUT"
+     },
+     {
+      "meaning_ru": "HELD, BROKEN, UNKNOWN или ALL (всё множество)",
+      "name": "category",
+      "parameter_kind": "CATEGORY"
+     }
+    ],
+    "profile": "PROFILE:BASE-24",
+    "q1_formalised_part_ru": "среди сессий семьи, которые к общему часовому срезу t заходили против активации так же глубоко, как сегодня, или глубже (DR к t ещё цел), — сколько в каждой категории исхода DR до конца блока; ALL — их число",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION_AT_CUT",
+    "q4_case_set": [
+     "CS:TP-DEPTH-AT-CUT-1"
+    ],
+    "q4_denominator": "N_MATCH_AT_CUT",
+    "q5_outcome": "OUT:DR-OUTCOME-1",
+    "q5_region": "REG:NONE-1",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "отбор — по M5, закрытым к срезу t (общие часы ET); исход — до конца блока H",
+    "q7_measure": "CATEGORY_SHARES",
+    "q8_order_ru": "устоял + сломан + неизвестно = число сопоставимых; при наборе меньше 20 — пометка «мало сессий: n=…», набор не расширяется",
+    "q8_unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE",
+    "q8_weights": "NONE",
+    "question": "Q:TP-DR-AT-DEPTH",
+    "sc_ref": [
+     "T1",
+     "C1",
+     "H3"
+    ],
+    "version": "1"
    }
   ],
   "estimators": [
@@ -6427,7 +8900,8 @@
      "EST:B-CLOCK-R",
      "EST:B-CLOCK-X",
      "EST:B-CLOCK-PEAK-R",
-     "EST:B-CLOCK-PEAK-X"
+     "EST:B-CLOCK-PEAK-X",
+     "EST:TP-MASS-R"
     ],
     "grounds": "DR_LAB_DECISION",
     "id": "ESTR:COUNT-OVER-N-1",
@@ -6469,7 +8943,8 @@
    {
     "estimands": [
      "EST:B-DR",
-     "EST:B-ORDER"
+     "EST:B-ORDER",
+     "EST:TP-DR-AT-DEPTH"
     ],
     "grounds": "DR_LAB_DECISION",
     "id": "ESTR:CATEGORY-COUNTS-1",
@@ -7519,6 +9994,12 @@
       "key": "sentence",
       "surface": "INSPECTOR",
       "text_ru": "семьи — {phrase} · {horizon}",
+      "view": "ANY"
+     },
+     {
+      "key": "sentence_c1",
+      "surface": "INSPECTOR",
+      "text_ru": "этих сессий — {phrase} · {horizon}",
       "view": "ANY"
      },
      {
@@ -9088,6 +11569,37 @@
     "title_ru": "время до первого нового X",
     "uses_case_future_as_label": true,
     "version": "1.0"
+   },
+   {
+    "components": [
+     "CATEGORY",
+     "ENDPOINT",
+     "FIRST_TIME"
+    ],
+    "contribution": "ONE_BINARY_VOTE",
+    "event": "R",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "horizon_end": "BLOCK_END_CLOSE_INCLUSIVE",
+    "horizon_start": "OWN_ACTIVATION_CLOSE_EXCLUSIVE",
+    "id": "OUT:TP-HELD-R-1",
+    "implementations": [
+     "design/sozvezdiya-23-5/src/tp235.js::tpMass"
+    ],
+    "projection": "FINAL_EXTREME",
+    "reference_definition": "lab/contract.py::ref_tp_mass",
+    "sc_ref": [
+     "P0.1",
+     "P0.2",
+     "C1"
+    ],
+    "source_refs": [
+     "SRC:TP-2.0"
+    ],
+    "statuses": "YES: DR HELD and R (the deepest point before the first M5 of the final X, the R of screen 23.5) KNOWN with its 0.1-SD cell and 15-minute cell inside the region (part KNOWN), or DR HELD and R not KNOWN (part NO_R); every other session NO; a session with an unknown DR outcome is NO and stays in N",
+    "tie_rule": "ONE_VOTE_PER_CASE",
+    "title_ru": "DR устоял и откат до вершины лежит в области",
+    "uses_case_future_as_label": true,
+    "version": "1"
    }
   ],
   "profiles": [
@@ -9319,6 +11831,28 @@
     ],
     "scene_ru": "разведка 2018–2025: доля зон со статусом «держится» / «возможна» / «невозможна», в которых потом лёг окончательный экстремум",
     "text_ru": "Как часто зоны такого статуса сбывались в исследовании?",
+    "version": "1"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "Q:TP-MASS",
+    "sc_ref": [
+     "T0",
+     "C1"
+    ],
+    "scene_ru": "у скольких сессий всей семьи DR устоял и откат до вершины был в этом времени и на этой глубине",
+    "text_ru": "Какая часть всей семьи так сделала?",
+    "version": "1"
+   },
+   {
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "Q:TP-DR-AT-DEPTH",
+    "sc_ref": [
+     "T0",
+     "C1"
+    ],
+    "scene_ru": "чем кончился DR у сессий семьи, которые к этому же часу заходили в коробку так же глубоко или глубже",
+    "text_ru": "Устояли ли те, кто заходил так же глубоко?",
     "version": "1"
    }
   ],
@@ -9842,6 +12376,17 @@
     "role": "IMPLEMENTATION",
     "sc_ref": [
      "§14.4"
+    ]
+   },
+   {
+    "document": "meaning/25-tp-2-0-specifikaciya.md",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "SRC:TP-2.0",
+    "locator": "DR-LAB-TP-2.0 §2-§7, §10 (R1-R6 accepted by the operator 10.11.2026)",
+    "role": "DECISION",
+    "sc_ref": [
+     "H1",
+     "C1"
     ]
    }
   ],
@@ -10385,16 +12930,18 @@
   "document": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
   "document_sha256_lf": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b",
   "edition": "DR-LAB-SC-1.1",
-  "linkml": "1.11.1",
-  "registry_sha256": "c49e2cf5e06206ad8aafe145f4861eda949660fbbec16d4b60e87d272582aa50",
+  "linkml": "1.12.1",
+  "registry_sha256": "fc9831da55bdcb2dd477f68bacdcca661a0c0e997e123474cd23117ad7999dbd",
   "runtime_spec_sha256": "9795540070e3c2d2e04f06013481334397c5afe792f18fcb11f9417237d533b7",
   "schema_sha256_lf": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
   "sources": {
    "contract/registry/00-editions.yaml": "037d3768da710e3004d8bbc0b21856ad337121b64dcdbdf7b8f2acec07616ee3",
    "contract/registry/10-observation-strategy-measurement.yaml": "2155cdd6dd659aad58c6c4bb5a218e037a5bac51bb0420cca9c19bce2b72fd29",
    "contract/registry/20-cases-outcomes.yaml": "1a8744c10aa763f21b0e7c419bf7b889388a801b6a4a9fcdd6024d6a674a7d69",
-   "contract/registry/30-questions-estimands.yaml": "3de31f3c4d9a85990738558c800aab481d968c7f26695ca70d304ca36eafa6cd",
-   "contract/registry/40-claims.yaml": "199d0c0ac73819fd6f4659297f91f8fb8a7ff80bfb296ebe342fbdda12027b23",
+   "contract/registry/30-questions-estimands.yaml": "8d8dcd4f9f26089732060594372096a884cf96d1ba98f4147b569e340c0173a0",
+   "contract/registry/35-tp-2.yaml": "dc68e4d30ba4485eb3a92eeb428e8cea735f1546da1ecd0fcf331026dc6b9211",
+   "contract/registry/40-claims.yaml": "392b75a5463f8d29a7938b6b79f2f1f10d8b0ef48df4589e39a1408091db2490",
+   "contract/registry/45-claims-tp.yaml": "040d87bef97116e8051ca098b2bd44b57c441a8ea305bc1dc39b9b5944ba1486",
    "contract/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
    "contract/registry/60-surfaces.yaml": "173c6385240db1a195301770b4dc28dc1c69a9ae372d65348801650cb2995b88",
    "contract/registry/70-obligations.yaml": "c5baded1777e25e259c687bdb72c0fb707ec966bfd53d1439691e8db3dbc5174",

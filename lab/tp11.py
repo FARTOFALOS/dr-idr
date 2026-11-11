@@ -11,10 +11,17 @@ What it measures, in the author's order (time → price → continuation):
   from the left … up until the median»), W2 from the median to the 70 % mark (the author's second window), LATE after
   it, BEFORE ahead of W1;
 - the price bands of one window's sessions (the author's «the data automatically adjusts»): a window family T_W is the
-  sessions of T whose R lies in the window, and its bands are the places of the screen.
+  sessions of T whose R lies in the window, and its bands are the places of the screen;
+- the places of the same sessions' top X (operator 04.11: X shown like R; core 1.4, 04.11 evening): the price bands of
+  all the window's tops, as the author's «cluster of extension… next big cluster» targets, over 0.2-SD cells (X spreads
+  over ~3 SD: at 0.1 the rule split it into fragile bands of 4-6 sessions; at 0.2 the bands are found in more families
+  and hold better on a held-out session and on later years, the check of 04.11). The time of the tops is their own
+  clock (bunches, median, 70 %), not a place: bunch × band places were tried on 04.11 and held no better than chance. A
+  top in the last 15 minutes of the block is a move that had not ended before the close: it is counted apart («ход не
+  кончился до закрытия») and never forms a place (the old pile of X at 16:00); it still counts in N and in the ladder.
 
 The bunch and band rule (executor's provisional choice, [И]; the numbers are the operator's next stage, core §12): over
-raw counts of one axis (15-minute cells, or 0.1-SD cells), an apex is a cell at least as high as its neighbours; an
+raw counts of one axis (15-minute cells, or 0.1-SD cells; 0.2-SD cells for X), an apex is a cell at least as high as its neighbours; an
 apex is a bunch / band when its prominence (its height above the higher of the two lowest points separating it from a
 higher apex, or from the edge) is at least half its height; neighbouring accepted apexes split the axis at the lowest
 cell between them; the region of an apex is the run around it, inside its part, where the count is at least half the
@@ -24,9 +31,10 @@ Every quantity here is a count of real sessions; nothing is smoothed.
 from __future__ import annotations
 
 STEP = 15                          # minutes of a time cell (the operator's grid)
-VERSION = "tp-1.1"
+VERSION = "tp-2.0"              # 2.0 (10.11): the mass threshold from the size N of the whole family F
 BANDS_RULE, NONE_RULE = "TP_BANDS", "TP_NONE"     # key.zone_rule of a window family and of T itself
-BANDS_VERSION = "tp-bands-1"
+BANDS_VERSION = "tp-bands-4"      # 4 (10.11, DR-LAB-TP-2.0): the support from N of the whole family F; 2 (04.11): X places as bunch × band; 3 (04.11 evening): X places as price bands, 0.2 SD
+X_CELL = 2                         # an X band counts 0.2-SD cells: two cells of the 0.1 grid (core 1.4 [И])
 WINDOWS = ("BEFORE", "W1", "W2", "LATE")
 Q_MEDIAN, Q_70 = (1, 2), (7, 10)
 
@@ -83,16 +91,19 @@ def clock(members, ev, formed):
     return ts, cells, unknown, none
 
 
-def windows(members, formed, win, end):
-    """The clock of T's R, its bunches, marks and windows. members: T (the family's DR-held sessions)."""
+def windows(members, formed, win, end, n_base=None):
+    """The clock of T's R, its bunches, marks and windows. members: T (the family's DR-held sessions); n_base: the size N
+    of the whole family F, the base of the mass threshold (DR-LAB-TP-2.0 §3: a bunch needs max(4, ceil(0.05 N)) sessions
+    of the family, operator 10.11)."""
     N = len(members)
+    nb = N if n_base is None else int(n_base)
     ts, cells, unknown, none = clock(members, "R", formed)
     b_lo, b_hi = win, (end - 5 - formed) // STEP
     c = [cells.get(b, 0) for b in range(b_lo, b_hi + 1)]
     bunches = []
     for lo, hi, top in regions(c):
         n = sum(c[lo:hi + 1])
-        if n >= need(N): bunches.append(dict(b0=b_lo + lo, b1=b_lo + hi + 1, n=int(n), peak=b_lo + top))
+        if n >= need(nb): bunches.append(dict(b0=b_lo + lo, b1=b_lo + hi + 1, n=int(n), peak=b_lo + top))
     med, p70 = quantile_time(ts, Q_MEDIAN), quantile_time(ts, Q_70)
     W = dict.fromkeys(WINDOWS)
     if med:
@@ -104,7 +115,7 @@ def windows(members, formed, win, end):
         if bp > bm: W["W2"] = [bm + 1, bp + 1]
         if bp < b_hi: W["LATE"] = [bp + 1, b_hi + 1]
     return dict(version=VERSION, N=N, known=len(ts), unknown=unknown, none=none, cells=[[b, n] for b, n in sorted(cells.items())],
-                bunches=bunches, median=med, p70=p70, windows=W, need=need(N), step=STEP, range=[b_lo, b_hi + 1])
+                bunches=bunches, median=med, p70=p70, windows=W, need=need(nb), n_base=nb, step=STEP, range=[b_lo, b_hi + 1])
 
 
 def in_window(m, W, formed):
@@ -143,6 +154,31 @@ def bands(points, n_family, b_lo, b_hi):
         cs = sorted(occ)
         zones.append(dict(cells=cs, members=members, n=len(members), apex_D=top, anchor=anchor,
                           price=[k_lo + lo, k_lo + hi + 1], time=[min(q[1] for q in cs), max(q[1] for q in cs) + 1]))
+    near0 = lambda z: 0 if z["price"][0] <= 0 < z["price"][1] else z["price"][0] if z["price"][0] > 0 else -z["price"][1]
+    zones.sort(key=lambda z: (z["time"][0], -z["n"], near0(z)))
+    used = {s for z in zones for s in z["members"]}
+    return dict(zones=zones, residual=sorted({s for _, _, s in pts} - used), need=req)
+
+
+def xbands(points, n_family, b_lo, b_hi):
+    """The places of the top X of one window family (module note, core 1.4): the price bands of every known top of the
+    window's sessions by the band rule over 0.2-SD cells (X_CELL cells of the 0.1 grid), without the tops of the block's
+    last 15-minute cell (a move cut by the close); each place with the 0.1 cells its sessions really occupy, its price
+    bounds on the 0.1 grid. points: [(k, b, session_id)] on the 0.1 grid. The record has the shape of bands /
+    lab/zonemap24.py::zone_map; the residual holds every known top outside a place, those of the last cell included."""
+    pts = [p for p in points if b_lo <= p[1] <= b_hi]
+    req = need(n_family)
+    body = [p for p in pts if p[1] < b_hi]
+    at = {s: (k, b) for k, b, s in body}                                 # one top per session
+    zones = []
+    for z in bands([(k // X_CELL, b, s) for k, b, s in body], n_family, b_lo, b_hi - 1)["zones"]:
+        occ = {}
+        for s in z["members"]: occ.setdefault(at[s], []).append(s)
+        top = max(len(v) for v in occ.values())
+        anchor = min((q for q, v in occ.items() if len(v) == top), key=lambda q: (q[1], abs(2 * q[0] + 1), q[0]))
+        cs = sorted(occ)
+        zones.append(dict(cells=cs, members=z["members"], n=z["n"], apex_D=top, anchor=anchor,
+                          price=[X_CELL * z["price"][0], X_CELL * z["price"][1]], time=[min(q[1] for q in cs), max(q[1] for q in cs) + 1]))
     near0 = lambda z: 0 if z["price"][0] <= 0 < z["price"][1] else z["price"][0] if z["price"][0] > 0 else -z["price"][1]
     zones.sort(key=lambda z: (z["time"][0], -z["n"], near0(z)))
     used = {s for z in zones for s in z["members"]}

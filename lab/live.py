@@ -1,7 +1,7 @@
 """DR Lab — the live session: current M5 bars from TradingView Desktop + the historical probability overlay.
 
 Bars come from the local TradingView Desktop through the tradingview-mcp command line (Chrome DevTools, read-only
-chart data). The chart's symbol and timeframe are switched to fetch, then restored. Live bars are only displayed and
+chart data). Existing matching panes across all windows are read without chart changes. Live bars are only displayed and
 matched against the 2006-2025 episodes; they are never written into the historical base or its statistics.
 
 Overlay = prefix-matched cohort from history: same instrument, session and confirmation direction, confirmation within
@@ -12,8 +12,10 @@ is measured strictly after the observed minute.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import threading
+import time
 from pathlib import Path
 
 import numpy as np
@@ -28,6 +30,43 @@ TICK = {"NQ": 0.25, "ES": 0.25, "YM": 1.0}
 SESSIONS = H.SESSIONS
 LEVELS = [round(x, 2) for x in np.arange(-1.5, 3.001, 0.25)]
 _lock = threading.Lock()
+_fetch_locks = {inst: threading.Lock() for inst in SYMBOLS}
+_minute_stop = threading.Event()
+_minute_thread = None
+
+
+def start_minute_refresh():
+    """Opt-in worker. Isolate source failures; never claim a failed cache is fresh."""
+    global _minute_thread
+    if _minute_thread and _minute_thread.is_alive(): return
+    import dr_voice
+    dr_voice.start()
+    _minute_stop.clear()
+    def run():
+        while not _minute_stop.is_set():
+            status = {}
+            for inst in SYMBOLS:
+                if _minute_stop.is_set(): break
+                try:
+                    data = fetch(inst)
+                    status[inst] = dict(ok=True, fetched_at=data['fetched_at'], switched=False)
+                    try:
+                        dr_voice.observe(inst, data)
+                    except Exception as exc:
+                        status[inst]['voice_error'] = str(exc)
+                except Exception as exc:
+                    status[inst] = dict(ok=False, error=str(exc), checked_at=pd.Timestamp.now(tz='UTC').isoformat())
+            LIVE.mkdir(parents=True, exist_ok=True)
+            tmp = LIVE / f'refresh_status.{os.getpid()}.tmp'
+            tmp.write_text(json.dumps(status, ensure_ascii=False), encoding='utf-8')
+            tmp.replace(LIVE / 'refresh_status.json')
+            _minute_stop.wait(max(1, 63 - time.time() % 60))
+    _minute_thread = threading.Thread(target=run, name='passive-live-minute', daemon=True)
+    _minute_thread.start()
+
+
+def stop_minute_refresh():
+    _minute_stop.set()
 
 
 def _tv(inst, extra=()):
@@ -37,9 +76,30 @@ def _tv(inst, extra=()):
 
 
 def fetch(inst):
+    if inst not in SYMBOLS: raise ValueError("Unknown instrument")
+    with _fetch_locks[inst]:
+        return _fetch(inst)
+
+
+def aggregate_m1(bars, now):
+    """Never publish a partial/gapped M1 group as a complete historical M5."""
+    groups = {}
+    for bar in bars:
+        groups.setdefault(bar[0] - bar[0] % 300, {})[bar[0]] = bar
+    out = []
+    for start, members in sorted(groups.items()):
+        last = start + 240 if start + 300 <= now else max(members)
+        expected = list(range(start, last + 1, 60))
+        if not all(t in members for t in expected): continue
+        rows = [members[t] for t in expected]
+        out.append([start, rows[0][1], max(b[2] for b in rows), min(b[3] for b in rows), rows[-1][4]])
+    return out
+
+
+def _fetch(inst):
     """Pull bars of the instrument from TradingView Desktop in one node process (tv_fetch.mjs). A pane of the user's
-    layout that already shows the future on 5 or 1 minute is read without switching anything; otherwise the active
-    chart is switched to 5 minutes for 2-4 s and restored."""
+    layout that already shows the future on 5 or 1 minute is read across all windows without switching anything.
+    If none is ready, keep the old cache/timestamp and fail explicitly."""
     if inst not in SYMBOLS: raise ValueError("Unknown instrument")
     r = _tv(inst)
     try:
@@ -51,12 +111,8 @@ def fetch(inst):
     bars = [[int(b[0]), float(b[1]), float(b[2]), float(b[3]), float(b[4])] for b in d["bars"]]
     interval = int(d.get("interval") or 5)
     if interval == 1:                                   # aggregate to clock M5; keep older M5 from the previous file
-        m5 = {}
-        for t, o, h, l, c in bars:
-            k = t - t % 300
-            if k not in m5: m5[k] = [k, o, h, l, c]
-            else: m5[k][2] = max(m5[k][2], h); m5[k][3] = min(m5[k][3], l); m5[k][4] = c
-        bars = [m5[k] for k in sorted(m5)]
+        bars = aggregate_m1(bars, time.time())
+    if not bars: raise RuntimeError('Нет полных M5 или корректной формирующейся M5')
     # operator 2026-10-06: the screen shows the previous trading day back to its RDR, so older M5 are never dropped: the
     # previous file's bars before the new window are kept whatever the interval of this fetch (four days at most)
     old = _load(inst)
@@ -64,22 +120,24 @@ def fetch(inst):
         first, keep_from = bars[0][0], bars[-1][0] - 4 * 86400
         bars = [b for b in old["bars"] if keep_from <= b[0] < first] + bars
     # once a day: when less than 22 hours are known (a 1-minute pane holds few bars), read 5-minute bars to reach back
-    # to the previous trading day's RDR (this may switch the active chart to 5 minutes for 2-4 s, as «Обновить» does)
+    # to the previous trading day's RDR, only from an existing M5 pane, never by switching a chart.
     if bars and bars[-1][0] - bars[0][0] < 22 * 3600:
         flag, today = LIVE / f"{inst.lower()}_backfill.txt", pd.Timestamp.now(tz="UTC").strftime("%Y-%m-%d")
         if not flag.exists() or flag.read_text(encoding="utf-8").strip() != today:
-            LIVE.mkdir(parents=True, exist_ok=True); flag.write_text(today, encoding="utf-8")
             try:
                 d5 = json.loads(_tv(inst, ("need5",)).stdout.strip().splitlines()[-1])
                 if d5.get("success"):
                     first = bars[0][0]
                     bars = [[int(x[0]), float(x[1]), float(x[2]), float(x[3]), float(x[4])] for x in d5["bars"] if int(x[0]) < first] + bars
+                    LIVE.mkdir(parents=True, exist_ok=True); flag.write_text(today, encoding="utf-8")
             except Exception:
                 pass
     out = dict(instrument=inst, symbol=SYMBOLS[inst], feed=d.get("feed"), switched=bool(d.get("switched")), source_interval=interval,
                fetched_at=pd.Timestamp.now(tz="UTC").isoformat(), bars=bars)
     LIVE.mkdir(parents=True, exist_ok=True)
-    (LIVE / f"{inst.lower()}.json").write_text(json.dumps(out), encoding="utf-8")
+    tmp = LIVE / f"{inst.lower()}.{os.getpid()}.tmp"
+    tmp.write_text(json.dumps(out), encoding="utf-8")
+    tmp.replace(LIVE / f"{inst.lower()}.json")
     return out
 
 

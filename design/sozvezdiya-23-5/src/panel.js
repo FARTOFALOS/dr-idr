@@ -56,6 +56,7 @@
     out.push(candidatePanel(ctx));
     if (st.mode === 'bounds') {
       out.push(pullbackMode() ? pbCombinedZones(ctx) : cellsFirst ? '' : zonesHtml(F, ctx));
+      if (F._tp && !pullbackMode()) out.push(tpGhostPanel(F, ctx));   // TP: the pullback places of the other windows (05.11)
       const tf = todayFacts(F, ctx);
       if (tf) out.push('<div class="p21-note" title="' + esc(lbl('FF:TODAY-PREFIX', 'title', { act: lbl('FF:PASSPORT-VIEW', 'act_gen', null, VW(F)) })) + '">' + tf + '</div>');
     }
@@ -87,7 +88,7 @@
     rows.sort((a, b) => a.z.time_start - b.z.time_start || b.z.p_snapshot - a.z.p_snapshot);
     // TP-1.1: the places of the window's pullbacks, each its share of the window (core §4.5)
     const tw = F._tp && F._tp.w && F._tp.clock.windows[F._tp.w];
-    const out = [F._tp ? '<div class="p21-h second"><span title="Место = окно × полоса цены: полосы ищутся только среди сессий окна; доля — от сессий окна">Места отката · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
+    const out = [F._tp ? '<div class="p21-h second"><span title="Место отката = окно × полоса цены среди сессий окна; место вершины = полоса цены среди вершин тех же сессий (шаг 0,2 SD, без последних 15 минут); доля — от сессий окна">Места отката и вершины · ' + (tw ? TP_NAME[F._tp.w] + ' ' + clk(F.f + 15 * tw[0]) + '–' + clk(F.f + 15 * tw[1]) : 'окна нет') + '</span>' + scopeSwitch() + '</div>' : '<div class="p21-h second">Зоны по времени' + scopeSwitch() + '</div>'];
     if (!rows.length) out.push('<div class="p21-note">' + lbl('EST:B-ZONE-R', 'none') + '</div>');
     let sep = false;
     for (const r of rows) {
@@ -100,7 +101,6 @@
     if (!sep) out.push('<div class="p24-now"><span></span>' + (sl >= F.end ? 'блок закончен' : 'сейчас ' + clk(sl)) + '<span></span></div>');
     // the rest of each event's 100 %: outside the zones, and not determined (never drawn at any price)
     for (const ev of ['X', 'R']) {
-      if (F._tp && ev === 'X') continue;                               // TP-1.1: X has no constellation, so no «outside the zones» either
       const Zm = zonesOf(F, ev), D = F.ev[ev];
       const tag = '<i style="color:' + cfg[ev] + '">' + ev + '</i>';
       if (Zm) { const r = resPass(F, ev); out.push(link({ k: 'evrow', ev }, prow(lbl('EST:B-ZONE-RESIDUAL-' + ev, 'row', { ev: tag }), ppTxt(r)), 'dim', r, plainTitle(r))); }
@@ -475,6 +475,7 @@
       if (!el) return;
       const L = P24.links[+el.dataset.l21];
       if (L.k === 'tpwin') { tpPinWindow(L.id); return; }           // TP-1.1: the row of a window fixes it (tp235.js)
+      if (L.k === 'tpzone') { tpPinGhost(L); return; }              // a place of another window: that window on screen
       if (L.k === 'fcell') { st.col = L.j; render(true); return; }
       if (L.k === 'area') { pin({ k: 'area', part: L.part }); return; }
       pin(L);

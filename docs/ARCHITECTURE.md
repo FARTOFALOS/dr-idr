@@ -172,7 +172,7 @@ POSSIBLE | IMPOSSIBLE | STATUS_UNKNOWN per zone]}` at the request's slice; the p
 `status`: `no_data` | `no_session` | `forming` (DR window not closed) | `waiting` (DR formed, no confirmation) |
 `confirmed` | `error` (`message`).
 
-Always: `instrument, session, day, feed, switched (bool: the chart had to be switched), source_interval (5|1),
+Always: `instrument, session, day, feed, switched (legacy bool; passive collector always returns false), source_interval (5|1),
 fetched_at, running, tick, start, formed, end, observed, replay, bars` — `bars` are `[open-minute, o, h, l, c,
 closed]` of **M5** (live bars carry the **open** minute; history bars carry the close minute).
 
@@ -188,12 +188,18 @@ complete_n, median_retr, median_ext, median_rtime`.
 
 ## Live pipeline (`lab/live.py`)
 
-1. `fetch(inst)` runs `tv_fetch.mjs`: first it looks for a pane of the operator's layout that already shows the future
-   on 5 minutes (then 1 minute, aggregated to clock M5 and merged with older saved M5; the last 1500 bars, so the
-   trading day from 18:00 ET with the ADR box is covered); only if none, it switches the
-   active chart to `CME_MINI:NQ1!` / `CME_MINI:ES1!` / `CBOT_MINI:YM1!` on 5 minutes, waits for the series itself to
-   be ready (series `symbolInfo()` matches, not loading, bar count stable) and restores the chart. Saves
-   `lab/.runtime/live/<inst>.json`.
+1. `fetch(inst)` runs `tv_fetch.mjs` / `tv_passive.mjs`: reads existing matching panes across **all** TradingView
+   chart targets without activating a window or changing a symbol, interval or layout. M5 is preferred; M1 can be
+   aggregated to clock M5. Missing/loading panes fail explicitly and leave the prior cache and timestamp intact.
+   Backfill also only reads existing M5 panes. Cache files in `lab/.runtime/live/` are replaced atomically.
+   Normal launchers pass `--passive-live-refresh`: the server reads NQ, ES and YM every minute, irrespective of
+   the selected page instrument. Per-instrument failures are isolated; local `refresh_status.json` records each result.
+   `/api/health.passive_live_refresh` identifies this mode. `-HistoryOnly` does not enable this worker or touch TradingView.
+   The 23.5 shortcut reuses an active TradingView CDP channel. If TradingView Desktop is open without it, this
+   shortcut requests the installed app's normal exit, waits for it to finish, then reopens the same Store executable
+   with CDP and its existing profile (operator, 10.11). It does not force an exit if TradingView stays open.
+   The other launchers leave an already running TradingView intact (operator, 06.11).
+   For the full direct-M5 feed keep NQ1!, ES1!, YM1! M5 panes open; they may be in separate windows.
 2. `state(inst, session, at=None)`: takes the latest instance of the session; the observed minute is the live minute
    (price = last trade of the forming M5) or the replay minute `at` (price = close of that candle; only bars closed by
    then are used). DR/IDR, confirmation, DR break: closed M5 only.
@@ -242,8 +248,7 @@ complete_n, median_retr, median_ext, median_rtime`.
 
 ## Performance
 
-History query 0.05–0.25 s; live state with overlay ~0.2–0.5 s; a passive TradingView read ~1–2 s, a switched read
-2–4 s. The server holds ~100 MB of history in memory.
+History query 0.05–0.25 s; live state with overlay ~0.2–0.5 s; a passive TradingView read across all chart windows ~0.6–2 s; no switching. The server holds ~100 MB of history in memory.
 
 ## Launcher (`start-dr-lab.ps1`)
 
@@ -377,3 +382,53 @@ release_id. Сохраняются отдельные исходные PB-bundle
 
 Смысл/фасеты/условия: [единый разбор](DR-LAB-23-5-TIME-SD.md).
 Тесты изоляции и реальной отрисовки работают на обеих страницах, не меняя TradingView.
+
+### 2026-11-06: passive 23.5 refresh
+
+23.5 polls every minute, including when a previous cached fetch had `switched=true`. The currently forming M5 is
+redrawn from the latest feed; confirmation, DR break and statistical selection retain their closed-M5 knowledge cut.
+No historical/TP-1.4 formula or screen-24 visual source changed. A successful read is not proof of a new market tick;
+bar timestamps remain the feed's timestamps, including market closures.
+
+### 2026-11-06: female DR activation speech
+
+The minute worker calls `lab/dr_voice.py` for NQ/ES/YM, regardless of the selected/visible page.
+`session_events()` reuses `scene21._state` for the first strict M5 close beyond DR and additionally requires
+an uninterrupted M5 prefix from box start through confirmation. It observes ADR, ODR and RDR only within their
+own windows; equality/wicks/forming M5 do not trigger. No forecast, statistic or order is created.
+Only confirmations after worker startup and at most 180 seconds old may enter the queue. The unique session-event
+key is claimed transactionally in private `lab/.runtime/live/dr_voice_seen.sqlite3`, preventing repeated speech
+on polls and concurrent servers. Startup/replay/past events are silent. Polling adds up to about one minute of latency.
+`dr_speak.ps1` uses Windows System.Speech, enabled English female voice (Microsoft Zira Desktop preferred),
+the default Windows audio output, and says `Activation D R, N Q` (or E S / Y M). No melody or browser permission
+is required; speech is serialized on a separate worker. Last playback result/error is in private `dr_voice_status.json`.
+The normal launchers enable this along with minute refresh; `-HistoryOnly` does not. Windows must remain awake,
+TradingView/CDP and the three source panes available, the local live server running, and audio output audible.
+
+Validation of 06.11: passive collector fixture tests, source-failure/atomic-cache/three-instrument worker checks,
+DR voice tests (strict close, complete prefix, both sides, per-instrument uniqueness, startup suppression),
+JavaScript/PowerShell syntax and `tests/smoke.py` passed. Actual live NQ/ES/YM caches advanced on successive minute
+cycles with M5 source and `switched=false`; pane symbol/interval inventories stayed unchanged. The Zira NQ test phrase
+completed with exit 0. A new market confirmation after installation has not yet occurred in this validation.
+Broader `tests/tp235_page.mjs` remains non-green for its ES 18.12.2025 12:30 fixture (eight derived assertions):
+the actual state is `broken`, while the fixture waits for confirmation-family TP places (window remains null).
+NQ RDR, NQ ODR, YM ADR and the legacy-table toggle passed. This live/speech change does not alter that historical
+family, its auto-break selection or the TP core; that separate fixture/expectation mismatch remains open.
+
+During final validation the operator's NQ pane was on M15 with a separate M1 pane still open. The collector left
+that layout intact and the NQ M5 endpoint continued from M1; ES/YM remained direct M5. M1 aggregation now excludes
+leading incomplete groups and closed groups with missing minutes; forming groups require their actual clock start.
+The corresponding regression checks passed.
+
+### 2026-11-09: SD reach speech
+
+The same voice worker announces the first reach of +0.5 and +1 IDR widths from the confirmed-side IDR edge
+for NQ, ES and YM in each ADR/ODR/RDR block. The high for a long or low for a short of a **closed** M5
+establishes the reach, including equality. The confirming M5 can establish both activation and a reach.
+Missing M5 bars stop the first-reach scan, and the first break candle and later candles cannot trigger it.
+Both levels may be announced at the same close, in level order. A level is keyed by instrument, trading day,
+block and SD, so it speaks once. Only fresh events on whole M5 candles after startup are announced.
+The speaker says the instrument, the SD value, “standard deviation”, then “Tuk”. The existing activation phrase
+and live-source requirements are unchanged. These are local observations, not historical estimands.
+On this Windows installation Zira is the available English female voice. The speaker uses a higher pitch and
+rate 5, measured at about 1.96 times the previous speech speed on the activation and both SD phrases.

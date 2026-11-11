@@ -1247,7 +1247,7 @@ def check_bundle_claim(st, route, body, bundle):
     reg = st["reg"]
     v = []
     est = C.get(bundle["estimand"])
-    form = C.claim_form_of(bundle["estimand"])
+    form = C.claim_form_of(bundle["estimand"], form_id=bundle.get("claim_form"))
     where = f"bundle {bundle.get('id')} {bundle['estimand']}"
     if est is None:
         return _result("BUNDLE-CLAIM", False, 1, [_viol("UNREGISTERED", ["ENT-16"], "estimand not in the registry", where)])
@@ -1799,7 +1799,7 @@ def trace_scene(st, g, scene, screen=None, reps=None, mutations=True, body=None,
     body = body if body is not None else compute(scene)
     bundle = pick_bundle(body, est_id, sel)
     est = C.get(est_id)
-    form = C.claim_form_of(est_id)
+    form = C.claim_form_of(est_id, form_id=(bundle or {}).get("claim_form"))
     env = body.get("contract") or {}
     checks, ev = [], []
     # ---- the checks of this run
