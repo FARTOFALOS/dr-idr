@@ -131,7 +131,8 @@ def claim_classes():
     """The share of a constellation is C0 (DescriptiveClaim, an unconditional share of F), «Сейчас» is C1
     (ConditionalDescriptiveClaim); the audit of 18.10 called the zone share C1 (review of 19.10, point 5)."""
     reg = registry('contract/build/registry.json')
-    form = {f['estimand']: f['claim_class'] for f in reg['claim_forms']}
+    # the TP-2.0 twins CF:TP-… speak C1 on the subgroups T / T_W (contract/registry/45-claims-tp.yaml); the base forms are meant here
+    form = {f['estimand']: f['claim_class'] for f in reg['claim_forms'] if not f['id'].startswith('CF:TP-')}
     check(form['EST:B-ZONE-R'] == form['EST:B-ZONE-X'] == 'DescriptiveClaim'
           and form['EST:N-NEW-R'] == 'ConditionalDescriptiveClaim',
           'claim classes: the zone share is C0, the NOW share is C1')
