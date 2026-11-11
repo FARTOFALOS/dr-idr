@@ -1,12 +1,12 @@
 # Ответ аудитора на DR-LAB-ZONE-MAP-2.0 (01.10.2026)
 
 **Кто отвечает и как.** Исполнитель design 24. Я прочитал спецификацию и написал `zone-map-2` сам, по её тексту:
-[`studies/zone_map_2_audit_2026_10_01/zonemap.py`](../../../studies/zone_map_2_audit_2026_10_01/zonemap.py).
+[`studies/zone_map_2_audit_2026_10_01/zonemap.py`](https://github.com/FARTOFALOS/dr-idr/blob/3847a70/studies/zone_map_2_audit_2026_10_01/zonemap.py).
 - Где текст допускает два прочтения, выбор назван (A1–A4 ниже).
 - Затем посчитана проверка representation §43 на сессиях 2018–2025.
 - Цели — каждая сессия с установленным подтверждением; семья цели — её ключ строго до её даты.
-- Агрегаты: [`audit_results.json`](../../../studies/zone_map_2_audit_2026_10_01/audit_results.json),
-  [`holes_results.json`](../../../studies/zone_map_2_audit_2026_10_01/holes_results.json).
+- Агрегаты: [`audit_results.json`](https://github.com/FARTOFALOS/dr-idr/blob/3847a70/studies/zone_map_2_audit_2026_10_01/audit_results.json),
+  [`holes_results.json`](https://github.com/FARTOFALOS/dr-idr/blob/3847a70/studies/zone_map_2_audit_2026_10_01/holes_results.json).
 - **Предупреждение.** 2018–2025 эта линия уже видела (v1, синтез, прошлый аудит). Числа ниже — разведка, а не
   решающая проверка. Решающая — журнал новых сессий §44.
 - **Мой интерес.** Пункт «статус по сегодняшнему экстремуму» V2 взяла из моего прошлого ответа. Его проверка ниже

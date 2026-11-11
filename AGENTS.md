@@ -1,5 +1,11 @@
 # DR IDR — entry for agents
 
+**State of this file: 11.11.2026, after the repository cleanup.** Everything here is current. What used to be layered
+history in this file (TP-1.4, the table time × SD, the 15–21.10 integration updates, the 07.10 baseline) is in the
+decision chain [`meaning/07-cepochka-reshenij.md`](meaning/07-cepochka-reshenij.md), in `docs/DECISIONS.md` and in the
+commit `3847a70` (the last `main` before the cleanup: old designs 1–21, the 29.09–15.10 lenses and studies, the
+superseded docs). Links to removed files point there. Do not bring removed material back as a current base.
+
 ## Screen 23.5 · 2026-11-10: TP-2.0 (operator accepted; supersedes TP-1.4 where they differ)
 
 **Start here.** The meaning and the engineer's map: [meaning/25-tp-2-0-specifikaciya.md](meaning/25-tp-2-0-specifikaciya.md)
@@ -19,200 +25,50 @@ it is implemented, §14 where each piece lives and the rules not to break). Chan
   the base estimands speak there through their C1 twins `CF:TP-…`, `contract/registry/45-claims-tp.yaml`). The
   accepted registry has 55 estimands (53 of SC-1.1 + 2 of TP-2.0).
 
-## HISTORY where TP-2.0 differs · Screen 23.5 · 2026-11-04: the semantic core TP-1.4 (code and flags say tp-1.1; supersedes the table of 27–30.10 for the confirmation family)
+## Screen 23.5: its layers and where each is described
 
-**Start here.** The meaning is [meaning/23-tp-smyslovoe-yadro.md](meaning/23-tp-smyslovoe-yadro.md) (DR-LAB-TP-1.4, the
-author's Time & Price on true sessions; operator 02–04.11); how it is built is [DR-LAB-23-5-TP](docs/DR-LAB-23-5-TP.md).
-Everything older in this file and in `meaning/` is history where it disagrees with the core: do not bring back the
-whole-family («honest») cohort as the base, the strongest table cell as a place, X stars outside the places of
-tops, final extremes (tops of the last 15 minutes) as places, bunch × band places of X or the capsule «вершина»
-(tried 04.11, no better than chance), or C13. The confirmation family of 23.5 is shown by the core, on the 23.5 drawing as it was:
-- the DR outcome is the whole family's, one 100 %; everything else is T, the sessions whose DR held (flag `:held`);
-- the band: T's clock of R before the top, every bunch with its share, the median and 70 % lines, the windows `W1`
-  (first bunch → median), `W2` (median → 70 %), `до окна`, `позже`; X of the window's sessions: its clock of tops
-  (bunches with shares, median and 70 % lines; the median is the author's max extension median time; no capsule);
-  tops of the last 15 minutes apart («ход не кончился до закрытия»), never a bunch or a place (operator 04.11, core 1.4);
-- the price column and the constellations: one window's sessions T_W (flag `:held:tw=W1`, zone rule `TP_BANDS`
-  `tp-bands-3`): places of R = price bands among T_W (0.1 SD); places of X = price bands of all the window's tops on
-  0.2-SD cells, blue, «дошли до» its lower edge under the mouse (`tp11.xbands`, reference `ref_tp_xbands`; the page
-  refuses a window whose X place holds a top of the last 15 minutes or leaves the 0.2 grid). At
-  rest W1, a hovered window shows its sessions, a click fixes it.
-- No new estimand; the clock of T is not published (no declared field meaning in SC-1.1), the page counts it from T's
-  members (`tp235.js`), the contract re-derives T and T_W. NOW-1.0 stays on the whole family (moving it to T is open).
-- `#tp=0` (and `#cells=1`, the layer «Клетки» of 30.10) shows the table of 30.10 (the section below); the old 23.5 page
-  checks open `#tp=0`. Check of the core:
-  `node tests/tp235_page.mjs <23.5 base>`.
-- The stop test C13 (25.09, `docs/STRATEGY.md` §14) did not follow the author's method (true sessions only, every bunch
-  seen): the operator excluded it on 03.11, do not use its results.
+| Layer (how to open) | Status | Described in | Code | Check |
+|---|---|---|---|---|
+| The confirmation family, TP-2.0 (default) | **current base** | [meaning/25](meaning/25-tp-2-0-specifikaciya.md), [docs/DR-LAB-23-5-TP](docs/DR-LAB-23-5-TP.md) | `tp235.js`, `lab/tp11.py`, `lab/contract.py::ref_tp_*` | `tests/tp235_page.mjs`, `tests/contract_sc11.py` |
+| Stops and true sessions | current | [meaning/24](meaning/24-stopy-true-sessiy.md) | — | — |
+| The table time × SD of 27.10 (`#tp=0`, `#cells=1`) | kept view, not the base | [meaning/22](meaning/22-time-price-constellation-reset.md), [docs/DR-LAB-23-5-MATRIX](docs/DR-LAB-23-5-MATRIX.md) | `matrix235.js` | `tests/matrix235_page.mjs` |
+| «Съёмы лоу» (Слои ▾, off by default) | candidate | [docs/DR-LAB-23-5-SWEEPS](docs/DR-LAB-23-5-SWEEPS.md) | `sweeps235.js`, `lab/sweeps235_ref.py` | `tests/sweeps235.py`, `tests/sweeps235_page.mjs` |
+| «Продолжения», «Откаты до обновления» (⚙ → Испытание кандидатов) | candidates, off by default | [integration/README](integration/README.md), [spec/ekran-24/15-otkaty](spec/ekran-24/15-otkaty.md) | `continuations.js`, `pullbacks.js`, `lab/continuations24.py`, `lab/pullbacks24.py` | `tests/continuations24.py`, `tests/pullbacks24.py` |
+| time × SD route (`/api/integration/time-sd`) | superseded 26.10, route kept | [docs/DR-LAB-23-5-TIME-SD](docs/DR-LAB-23-5-TIME-SD.md) | `time_sd235.js`, `lab/time_sd235.py` | `tests/time_sd235.py` |
+| The STD grid | current (operator 11.11) | below | `app.js::gridSide` | — |
 
-## HISTORY (the `#tp=0` view since 04.11) · Main screen 23.5 · 2026-10-27: one table time × SD
-
-**23.5 is the main screen** (operator, 27.10: «23.5 стал основным экраном в репозитории… чтобы мы от этого
-отталкивались»). The root `http://127.0.0.1:8767/` opens `/23-5/`, and screen 24 stays at `/24/` (shortcut «DR Lab 24»).
-Start new work from 23.5. The sections below about screen 24 describe the main line from 01.10 to 27.10: they are
-history and the source of the protected BASE/NOW definitions.
-
-Read [DR-LAB-23-5-MATRIX](docs/DR-LAB-23-5-MATRIX.md) first: its last sections log every action and check of 27–28.10.
-On screen 23.5 the numbers come from one table 15 min × 0.1 SD of the final R / X (`matrix235.js`). The drawing is the
-23.5 drawing as it was (operator 28.10: «те же визуализации, просто с новым смыслом»): constellations of zone-map-3 with
-their stars, haze, threads and label, capsules and hills, the column's colours. Which stars form a constellation is
-that drawing, never a number.
-- At rest the price column and the time band show each row's / window's strongest cell. This is the operator's 27.10
-  rule: the strongest local condensation, not the row sum. Hover on a row / window of one event opens that event's full
-  row / column, and the other event stays at rest. Every number is `EST:B-RX-REGION` of SC-1.1.
-- A constellation's percentage (and its row in «Зоны по времени») is its strongest cell, the same kind of number as
-  the rectangle (operator 28.10). Equal maxima of a row are co-maxima: all lit and named.
-- **R on 23.5 is the pullback before the session's extreme** (operator 29.10, «Да, переведи R»): the deepest point against the
-  activation before the first M5 of the final X, not the deepest point to the block end. The page asks every family with the
-  flag `:rpre` (`key.r_event = R_BEFORE_X`); without the flag the server returns the final-R family of screen 24 unchanged.
-  Reference `lab/contract.py::ref_before_extreme_R`; candidate registry `OUT:R-BEFORE-X-1`. NOW-1.0 and PRE-24 still use the
-  final R (О30). X is unchanged; its pile at 16:00 is real (days that closed at their high).
-- Check: `node tests/matrix235_page.mjs <23.5 base>` (117). Screen 24's source and SC-1.1 are unchanged. The server
-  changed in one line: the root redirect.
-- Merged into `main` and pushed on the operator's word of 27.10. This is not his perceptual acceptance of the view
-  (О28). The local SEM-1.0 work of 27.10, uncommitted in the operator's checkout, is NOT in `main`: it was built on
-  the zone map and must be reconciled with the table before it lands.
-
-## Semantic reset созвездий · 2026-10-27
-
-**Перед любой новой работой над базовыми созвездиями R/X сначала прочитайте
-[meaning/22-time-price-constellation-reset.md](meaning/22-time-price-constellation-reset.md).**
-
-Новая операторская рамка: fixed F → один FINAL-R/FINAL-X на known session → одна матрица
-`15 min × 0.1 SD` с массой клетки `n/N` → две взаимно раскрывающиеся UI-проекции.
-Hover по SD показывает весь его профиль по времени; hover по времени — весь профиль по SD.
-Созвездие — frontend-визуализация сильной массы той же матрицы через representative real witnesses,
-дымку и нити, а не отдельный backend zone-object.
-
-Не импортировать по умолчанию `zone-map-3`, connected masks, half-height, fixed `0.3 SD` core,
-PB-L, SW или multi-event voting как базовую семантику. Из 23.5 разрешено переиспользовать joint-cell
-математику и witness compaction только после сохранения FINAL-R/X и общей F/N.
-
-## HISTORICAL / SUPERSEDED by the table time × SD of 27.10 — DO NOT IMPLEMENT AS CURRENT BASE · Working 23.5 · 2026-10-26 (supersedes the time × SD section below)
-
-Start with [DR-LAB-23-5-SWEEPS](docs/DR-LAB-23-5-SWEEPS.md) and the 26.10 node of `meaning/07-cepochka-reshenij.md`.
-The operator settled these in a round of questions on 26.10 and then said: «Собирай 23.5 по согласованному локально,
-24 не трогай, ничего не пушь без моего слова». Local build only; no publication, no visual acceptance.
-
-- The main map of 23.5 is again the final R / X of every **session** (one star per session, the zones and shares of
-  screen 24). Do not put local pullbacks or any multi-event object under the letter R, and do not replace the zone rule
-  by fixed 0.3 SD × 15-minute cores: on final R that rule finds no constellation in 3 of 4 families (check of 26.10).
-- The screen shows history and today's facts (reachability, clock, visit); it inserts no prediction logic (operator 26.10).
-  The phase rule of 08.10 is shown as its two facts, without a verdict or a quieter side.
-- The decisions of 08.10 are on by default in 23.5 only. Screen 24, its source, build, contract registries and the
-  server code are unchanged.
-- Local pullbacks are the overlay «Съёмы лоу» (SW-0.1), switched in «Слои ▾», off by default, computed by the page
-  (`sweeps235.js`) and recomputed by `lab/sweeps235_ref.py`. Not yet in the candidate registry (no SC passports).
-- Checks: `tests/sweeps235.py`, `tests/sweeps235_page.mjs` (+ shared checks). The older 23.5 page checks below assert
-  superseded variants.
-
-## HISTORICAL / SUPERSEDED by the table time × SD of 27.10 — DO NOT IMPLEMENT AS CURRENT BASE · Working 23.5: time × SD · 2026-10-23 (superseded on 26.10)
-
-Start with [DR-LAB-TIME-SD-1.0](docs/DR-LAB-23-5-TIME-SD.md) and the
-[approved implementation plan](meaning/lens/2026-10-22-plan-23-5-time-sd.md). The direct human «РЕАЛИЗУЙ»,
-followed by «ПРОДОЛЖАЙ», authorizes this implementation. The earlier main-publication instruction applies to this
-same task. This is not automatic perceptual or predictive acceptance.
-
-- Screen 24 and its accepted BASE/NOW definitions remain at `/24/`, port 8767. Its source is unchanged.
-- Screen 23.5 at `/23-5/`, port 8735, uses its own source, settings and `start-dr-lab-23-5.cmd` shortcut.
-- Bounds on 23.5 uses the time × SD profile by default. R is local PB-L, X is named FINAL-X context.
-  The old broad PB overlay and the temporary uncommitted rollback are not the intended working result.
-- Both maps use exact 0.3 SD × 15-minute local cores. M5/0.1 SD witnesses are compacted for drawing only.
-  Price and time rectangles show maxima of joint-cell support and retain their other coordinate. Full-band or
-  whole-window unions remain separately named area questions. Full F/N and unknown mass are preserved.
-- Post-L links use the same source episodes and subsequent M5 paths after L closes, never unrelated FINAL-X cases.
-- Today's clock, visit and completed PB episode remain different facts. FINAL-R phase cannot dim a local PB map.
-- Existing layout, opacity, font rules, 116px price column, hover/pin and six lower windows are retained.
-- Accepted SC-1.1 remains 53 estimands. The separate proposed registry has 72 (63 existing + 9 time-SD).
-  No new ontology stack; all ten existing facets are mapped in `integration/profile235-bindings.json`.
-
-Addressed checks: `tests/time_sd235.py`, `time_sd235_page.mjs`, `profile235_bindings.py`, `pullbacks24.py`,
-`continuations235_page.mjs`, plus the shared checks below. Current evidence: `integration/23-5-time-sd-checks.json`.
-The older `profile235_page`, `pullbacks235_page`, `shading235_page`, `constellations235_page` assert the superseded
-22.10 broad-zone/marginal profile; they are historical checks, not acceptance of the new formulas.
-Build both pages after a shared contract build. Use launchers with `-HistoryOnly` for verification; `-Port` allows
-an isolated test server. Never use an old check receipt as evidence for a changed release.
-
-## Update · 2026-10-19
-
-Read [`meaning/21-svodnaya-karta-24.md`](meaning/21-svodnaya-karta-24.md) first. It is one map of every lens, the
-external review of 19.10 and PR #15. It covers each layer of screen 24 by object, set, condition, horizon, denominator
-and claim, with its status (accepted or candidate), the gaps, and how to check them on the screen.
-
-What changed on 19.10. No number changed its object, set or denominator.
-- **The launcher restarts again a TradingView opened without port 9222**, as before 2026-10-15 and as
-  `docs/ARCHITECTURE.md` says. Without the port the screen had no live candles. Agents' checks run the launcher with
-  `-HistoryOnly`, which never touches TradingView.
-- **Registry words = executable definitions**, pinned by `tests/semantic_links.py`:
-  - `EST:B-LEVEL-REST` / `EST:B-VISIT-REST` count the common remainder (t, H];
-  - `CMP:C-POS` / `CF:C-WINDOW` describe POS_GEO as computed: earlier visits of the place do not exclude a case, and the
-    set G is not F.
-- **The operator's decisions of 08.10 reach the screen** as two candidate trials in «⚙ → Испытание кандидатов»: the
-  phase rule (`FF:PHASE-RULE`) and the «Сейчас» pullback line as a number with marks at the price scale. The code lives
-  in `integration.js`. The viewer's trial choice is kept in `localStorage`.
-- Run `tests/semantic_links.py` with the other required checks.
-
-## Implementation update · 2026-10-21
-
-Screen 24 has one more separate candidate, **«Откаты до обновления»** (DR-LAB-PB-0.1): for the family F on screen,
-every historical episode vertex H → pullback bottom L → first exceedance B, at scales of locality 1 / 2 / 3 / 6, and
-their constellations (zone-map-3 geometry, one vote per session). Definition with the provenance of every rule:
-`meaning/lens/2026-10-21-otkaty-do-obnovleniya/03-opredelenie-PB-0.1.md`; screen passport `spec/ekran-24/15-otkaty.md`.
-Code `lab/pullbacks24.py` (route `GET /api/integration/pullbacks`, `--integration` only), independent reference
-`lab/pullbacks_ref.py`, page `design/sozvezdiya-24/src/pullbacks.js`, registry part
-`integration/candidates/registry/90-pullbacks.yaml` (the proposed registry now has 62 estimands; accepted SC-1.1 still
-53, plus one SERVICE entry for the route). It reads the accepted family snapshot and never changes BASE/NOW or R/X.
-Check: `tests/pullbacks24.py`. The rule «exceedance by one tick, wick and gap included; a touch is not an update» is
-the operator's (chat 21.10); M1 candles are not used for the order inside an M5 (operator, 21.10). The candidate is
-off by default and not accepted. Audit of this work, the full check run on Windows and the verdict:
-`meaning/lens/2026-10-21-otkaty-do-obnovleniya/05-audit-i-resheniya.md`.
-
-## Implementation update · 2026-10-15
-
-Start with [the integrated working result](integration/DELIVERY.md) and the latest node of
-`meaning/07-cepochka-reshenij.md`. The dated 2026-10-07 baseline below remains the source of the protected
-BASE/NOW definitions. The current build adds a separate **Continuations** candidate to screen 24: fixed physical
-target/window, closed-M5 POS_GEO releases, real paths including cases outside F, explicit residual question and fact.
-It does not rematch F or replace final R/X. Accepted SC-1.1 still has 53 estimands; the separately proposed registry
-has 60. Implementation in main is not C2/C3 or operator perceptual acceptance. Full FOM/Trace are preserved references
-with explicit scoped runtime checks, not a claim of full catalog rebinding.
-
-The normal launcher starts `server.py --integration` on 8767; the ordinary default view remains the accepted map.
-It checks loaded source/data versions, replaces its own stale server, restarts a TradingView opened without 9222
-(since 2026-10-19 again; from 15.10 to 19.10 it left such a window alone and the screen had no live candles), and
-supports `-HistoryOnly`, which leaves TradingView untouched. The historical base stops in 2025. Candidate toggles are independent.
-New checks: `tests/continuity24.py`, `continuations24.py`, `continuations_page.mjs`, `q1_prefix_metadata.py`,
-`q1_reveal.py`. Run them along with the existing required checks below. `integration/pr-dispositions.json` records
-the current fate of every source unit; old PR closure is not blanket adoption. No new ontology stack was added.
-
-You are entering a working trading tool, not a demo. Read this file fully, then the documents it points to, before
-changing anything. It is written so that an agent arriving cold (Claude Code, Codex, a designer agent) can work
-safely on the first try. State of this file: **2026-10-07, after design 24 and the machine contract were merged into
-`main`**.
+- **R on 23.5** is the pullback before the session's extreme (operator 29.10): every family request carries `:rpre`
+  (`OUT:R-BEFORE-X-1`, reference `lab/contract.py::ref_before_extreme_R`). NOW-1.0 stays on the final R.
+- **The STD grid** (operator 11.11): from the end of the box hour the STD levels stand on the side of the box colour
+  (green up, red down; a flat box keeps both sides); the confirmation only settles the side, a break moves it to the
+  break's side. The DR / IDR lines keep their own colour until the confirmation. The TradingView script «90» draws the
+  same grid (his Fibonacci template −10 … 10) by the same rule.
+- Do not use: the whole-family cohort as the base, a table cell as a place, tops of the last 15 minutes as places,
+  bunch × band places of X, the capsule «вершина», the stop test C13 (excluded by the operator on 03.11).
 
 ## What this is, in one paragraph
 
 **DR Lab** replicates the DR/IDR method (defining range and implied defining range of TheMas7er / M7DR: a one-hour
 window, its wick range DR and body range IDR, a confirmation by an M5 close outside DR) on our own 20-year minute tape
-of **NQ, ES and YM (2006–2025)**, and shows it live next to the operator's TradingView. The working screen is
-**screen 24 «Границы хода»** (`http://127.0.0.1:8767/`, which opens `/24/`): today's session on M5 candles with the
-author's DR / IDR lines and, from the **family** of similar historical sessions (same instrument, session, weekday,
-direction and 15-minute activation window, fixed at today's confirmation), where and when each session's **final
-retracement R** and **final extension X** lay, as zones with their share of the family and today's status; the DR
-outcome of the family; «Путь семьи» (the family's M5 closes on the common clock); level and area questions; and the
-conditional layer **«Сейчас»** (what remained ahead for comparable sessions at this clock time). Every number on it is
-a passport of an estimand of the **machine contract DR-LAB-SC-1.1** and is checked against a reference before it is
-shown. Any date of 2006–2025 opens as if it were today («История»); clicking a candle replays the screen at its close.
+of **NQ, ES and YM (2006–2025)**, and shows it live next to the operator's TradingView. **The main screen is 23.5**
+(`http://127.0.0.1:8735/23-5/` from the shortcut «DR Lab 23.5»; the root of `:8767` opens `/23-5/` too): today's
+session on M5 candles with the author's DR / IDR / STD lines and, from the family of similar historical sessions fixed
+at today's confirmation, the author's Time & Price read on the sessions whose DR held (TP-2.0, above). **Screen 24**
+«Границы хода» stays at `/24/` as it works (the operator's decision of 19.10: «keep 24 as it works»); 23.5 grew out of
+it and shares its server, contract and drawing. Every number on both is a passport of an estimand of the machine
+contract DR-LAB-SC-1.1, checked against a reference before it is shown. Any date of 2006–2025 opens as if it were
+today («История»). **Legacy surfaces** still served but outside the contract: design 22 (`/22/`), the classic screen
+(`/classic.html`), design 23 (`/sem-v1/`), the research dashboard (`/api/query`, `/api/scene`); do not develop them.
 
 ## Who you work for
 
 - **The operator is a trader, not a programmer.** He speaks Russian, by voice, in trader language. Answer in Russian:
   first what is on the prices, then why, then what he decides. No jargon, no English terms without need.
-- **He only double-clicks the desktop shortcut "DR Lab"** (or «DR Lab 24», the same screen). Never ask him to run
+- **He only double-clicks the desktop shortcuts** «DR Lab 23.5» (`start-dr-lab-23-5.cmd`, his daily screen) and «DR Lab» (`start-dr-lab.cmd`). Never ask him to run
   commands, edit files or open terminals. Any change you make must keep that shortcut working from a cold start (PC
   reboot). Verify it yourself.
 - He judges the product by the screen. His interface requirements are binding: `docs/UI_RULES.md` and, for screen 24,
-  the journal of every visual rule with its reason, **`meaning/13-zhurnal-vizualizacii.md`** (read it before any visual
+  the journal of every visual rule with its reason, **`meaning/13-zhurnal-vizualizacii.md`** (written for screen 24; 23.5 keeps that drawing) (read it before any visual
   change; add an entry for every visual change). No new labels or numbers over the chart unless he asks; never replace
   an agreed hover behaviour.
 - **A semantic agent works with us through this repository** (his decision, 2026-09-29): it reads `meaning/` (no code)
@@ -229,108 +85,63 @@ shown. Any date of 2006–2025 opens as if it were today («История»); c
 
 1. **The operator's decisions** (`docs/DECISIONS.md`, nodes of `meaning/07-cepochka-reshenij.md`). A record is evidence
    of a decision, not the decision: if a record and the operator disagree, the operator wins.
-2. **DR-LAB-SC-1.1** — `spec/DR-LAB-Semantic-Contract-1.1-(patched).md`, accepted by the operator on 2026-10-07 as the
-   normative semantic contract of the working profile DR Lab 24 (**BASE-24** and **NOW-1.0**) and of every further
-   change of these profiles. Its machine form: **`contract/`** (start at `contract/README.md`), enforced by
-   `lab/contract.py` and by screen 24. The text is the source of truth; where `contract/` disagrees with it,
-   `contract/` is the defect. Do not edit the contract file (it is pinned by SHA-256); a new edition is the operator's.
-3. **DR-LAB-SWPC-1.1** — `spec/DR-LAB-SWPC-1.1.md`, the operator-authorized implementation target for the visual presentation of screen 24. It sits between SC-1.1 meaning and the frontend: required operator discriminations, PresentationBindings, permitted/forbidden visual channels, M01–M18 machine obligations and H01–H12 perceptual acceptance tasks. It does **not** create C2/C3 or pre-accept the future UI; after implementation the operator performs the H tasks and accepts/rejects the view.
-4. **The profile definitions it formalises:** DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`), the zone map
-   zone-map-3 (`meaning/12-karta-zon.md`), today's two axes (`meaning/14-vperedi-i-proshlo.md`), DR-LAB-NOW-1.0
-   (`meaning/lens/2026-10-06-now-1.0/`, `meaning/15-sloj-seichas.md`; matchers, thresholds and gates frozen). Summaries:
-   `meaning/10-dizajn-24.md`, `docs/SEMANTICS.md` (section «Дизайн 24»), `spec/ekran-24/` (every element of the screen).
-5. **Legacy surfaces stay outside SC-1.1 for now** (operator, 2026-10-07): design 22 at `/22/`, the classic screen
-   `/classic.html`, the research dashboard (`/api/query`, `/api/scene`), design 23 at `/sem-v1/`. Their own
-   definitions are in `docs/SEMANTICS.md` (earlier sections); every response of theirs is marked
-   `X-DR-Lab-Contract: …status=OUTSIDE_SC11`, and no SC-1.1 estimand may take their numbers as input.
+2. **DR-LAB-SC-1.1** — `spec/DR-LAB-Semantic-Contract-1.1-(patched).md`, accepted on 2026-10-07. Its machine form is
+   **`contract/`** (start at `contract/README.md`), enforced by `lab/contract.py` and by the pages. The text is the
+   source of truth; where `contract/` disagrees with it, `contract/` is the defect. Do not edit the contract text (it is
+   pinned by SHA-256); a new edition is the operator's. The accepted registry has 55 estimands (53 of SC-1.1 + 2 of
+   TP-2.0); the separate proposed registry of candidates is `integration/candidates/`.
+3. **TP-2.0** for screen 23.5 — [meaning/25](meaning/25-tp-2-0-specifikaciya.md), on the core
+   [meaning/23](meaning/23-tp-smyslovoe-yadro.md) (DR-LAB-TP-1.4) where 25 does not change it.
+4. **DR-LAB-SWPC-1.1** — `spec/DR-LAB-SWPC-1.1.md`, the visual implementation target of screen 24.
+5. **The profile definitions SC-1.1 formalises:** DR-LAB-SEM-1.0 (`meaning/lens/2026-10-01-spec-v1/`), zone-map-3
+   (`meaning/12-karta-zon.md`), today's two axes (`meaning/14-vperedi-i-proshlo.md`), DR-LAB-NOW-1.0
+   (`meaning/lens/2026-10-06-now-1.0/`, `meaning/15-sloj-seichas.md`). Summaries: `meaning/10-dizajn-24.md`,
+   `spec/ekran-24/` (every element of screen 24).
 
 ## Read in this order
 
-0. `meaning/README.md` — the semantic layer (Russian, no code): what the numbers mean, the evidence, open questions.
-1. `AGENTS.md` — this file: what is normative, map, hard rules, how to verify, gotchas.
-2. `contract/README.md` — the machine contract: what it enforces, how to change it without breaking the screen.
-3. `spec/DR-LAB-SWPC-1.1.md` — current visual implementation target: what the trader must distinguish, what may attract attention, and how the result must be tested.
-4. `meaning/10-dizajn-24.md`, then `spec/ekran-24/README.md` — screen 24: where every percentage comes from.
-5. `docs/ARCHITECTURE.md` — the stack, processes, data flow, API, the contract gate.
-6. `docs/SEMANTICS.md` — exact definitions of every object and number (section «Дизайн 24» for the working screen).
-7. `docs/UI_RULES.md` and `meaning/13-zhurnal-vizualizacii.md` — the operator's interface requirements.
-8. `docs/DECISIONS.md` — dated decisions and where they came from.
-9. `docs/RESEARCH.md` — what has been measured, what is not established.
-10. `docs/STRATEGY.md` — the DR/IDR method itself, formalized from the author's 156 videos and streams (Russian), what
-   our tape confirms (`studies/m7_claims.py`) and the decisions still open. `docs/DR_RULES_WEB.md` is an independent
-   cross-check against public sources only.
-
-## Where the work stands (2026-10-07)
-
-- **`main` is the line of DR Lab.** Design 24 (PR #1, branch `design-24`) was merged on 2026-10-07 by the operator's
-  decision; the operator's checkout is on `main`. Work on `main`; for a change he wants to review first, use a branch
-  and a pull request. `design-24` is kept as history, not as a working branch.
-- **Screen 24** (since 2026-10-01 night the working screen): design 22's interface (candles, DR / IDR, ADR / ODR /
-  RDR, replay and live, the right panel, hover / pin / layers, settings) with the statistical layer of DR-LAB-SEM-1.0,
-  the zone map zone-map-3 (2026-10-01 evening), the look «Окна времени» (R and X together as constellations «дымка и
-  нити», amber R / sky X, the time band, the inspector at the bottom right, six windows sliding up from the bottom), the
-  trader's reading of 2026-10-06 (`meaning/13` entries 1–45), today's two axes and the layer «Сейчас» (2026-10-06,
-  DR-LAB-NOW-1.0: the path did not beat the time baseline, so the screen shows «по времени» with its support).
-- **The machine contract DR-LAB-SC-1.1** (2026-10-07): LinkML schema and registry (`contract/`), the runtime gate
-  (`lab/contract.py`), the page's contract layer, `tests/contract_sc11.py`. On screen only the words of «Сейчас»
-  changed — the operator's: «В истории: R позже углублялся… / Если углублялся…», symmetric for X (K33: a historical
-  share never speaks of today in forecast grammar) — and the order window got its «нет периода» row.
-- **Visual implementation target DR-LAB-SWPC-1.1** (2026-10-07): the operator authorized the next stage — implement the closed PresentationBindings and M01–M18 on the existing screen 24. Until H01–H12 are run with the operator, the resulting view is `PERCEPTUALLY_UNVERIFIED`; implementation permission is not perceptual acceptance.
-- **Open** (`meaning/05-otkrytye-voprosy.md`): what to develop next (О20: sequences, conditional forecasts, design);
-  NOW-1.1 (a distance-from-extreme matcher, the operator decides); the zone map's prospective acceptance on sessions
-  after 2025 (О23, О24: the 2026 tape stays closed); SC-1.1 for the legacy surfaces.
-- **How we got here** (2026-09-24 … 10-07): `docs/DECISIONS.md` and `meaning/07-cepochka-reshenij.md`. In short: the
-  classic screen → design 21 «Созвездия» (09-28) → the semantic audit and design 22 «смысл числа» (09-29) → lenses 4–15
-  on what a cluster is (09-30 … 10-01; `meaning/08`, `meaning/lens/`) → DR-LAB-SEM-1.0 and design 24 (10-01) → the zone
-  map (10-01) → the trader's reading, today's axes, NOW (10-06) → SC-1.1 and its machine form, merge into `main` (10-07).
+0. `meaning/README.md` — the semantic layer (Russian, no code).
+1. This file.
+2. `meaning/25-tp-2-0-specifikaciya.md` — the current base of 23.5, with the engineer's map (§13–§14).
+3. `contract/README.md` — the machine contract: what it enforces, how to change it without breaking the pages.
+4. `docs/ARCHITECTURE.md` — the stack, processes, data flow, API, the contract gate.
+5. `docs/UI_RULES.md` and `meaning/13-zhurnal-vizualizacii.md` — the operator's interface requirements.
+6. `docs/STRATEGY.md` — the DR/IDR method itself (Russian); `docs/DR_RULES_WEB.md`, `docs/DR_RULES_CROSSCHECK.md` — its
+   cross-checks; `docs/RESEARCH.md` — what is measured and what is not.
 
 ## Map
 
 ```
-start-dr-lab.cmd / .ps1   the operator's shortcut target: TradingView (port 9222) -> history -> server -> page
-start-dr-lab-24.cmd       the shortcut «DR Lab 24»: the same start, then the page /24/ (the root / opens it too)
-stop-dr-lab.cmd / .ps1    stop the local server
-contract/                 the machine contract of DR-LAB-SC-1.1: LinkML schema, registry, build tool, products;
-                          start at contract/README.md (.venv-linkml/ = its LinkML environment, git-ignored)
+start-dr-lab-23-5.cmd/.ps1  shortcut «DR Lab 23.5» (the daily screen): TradingView (9222) -> server :8735 -> /23-5/
+start-dr-lab-23-5-kletki.cmd  the same with the layer «Клетки» (#cells=1)
+start-dr-lab.cmd/.ps1      shortcut «DR Lab»: server :8767 (--integration), / opens /23-5/; start-dr-lab-24.cmd opens /24/
+start-dr-lab-integration.* the isolated candidate stand :8773 (15.10); stop-*.cmd/.ps1 stop the matching server
+contract/                  DR-LAB-SC-1.1 in machine form: LinkML schema, registry (+ 35-tp-2.yaml, 45-claims-tp.yaml),
+                           build tool and products; start at contract/README.md (.venv-linkml/ is git-ignored)
 lab/
-  server.py               local HTTP server 127.0.0.1:8767 (stdlib): static pages + JSON API; / -> /24/, /22/ -> design 22
-  contract.py             the DR-LAB-SC-1.1 gate (stdlib): reference definitions, re-derivation at publication,
-                          envelopes and bundles, admissible claims, undeclared numbers, CONTRACT_STALE, /api/d24/verify
-  scene24.py              screen 24's data (/api/d24/day, family, dates): families, R / X, DR outcome, order, path
-  zonemap24.py            screen 24's zone map zone-map-3 (meaning/12): zones, diagnostics, today's two axes
-  now24.py                screen 24's layer «Сейчас» (/api/d24/now, DR-LAB-NOW-1.0); now24_validate.py: walk-forward
-  scene21.py              the trading day from TradingView (used by 24), design 22's data (legacy: /api/day, /api/cohort,
-                          /api/family), design 23's /api/family-v1
-  cluster24.py            main-cluster-1 (meaning/11): kept for its archived studies, not on the screen
-  build_boxes.py          builds every session box (confirmed or not) with its M5 bars (once; ~20 s per instrument)
-  build_market.py         builds the history base from the G3 market tape (once; ~30 s per instrument)
-  engine_market.py        history queries over the built base (legacy research dashboard, /api/query, /api/scene)
-  live.py                 the live fetch from TradingView; the classic screen's live state (legacy /api/live)
-  tv_fetch.mjs            reads M5/M1 bars from TradingView Desktop via Chrome DevTools (tradingview-mcp internals)
-  engine.py               synthetic demo engine (python lab/server.py --data demo); never mixed with market data
-  dist/                   front end: 24/ (screen 24, built from design/sozvezdiya-24/src), index.html + sozvezdiya.js
-                          (design 22, legacy, built from design/sozvezdiya-22/src), sem-v1/ (design 23, legacy),
-                          classic.html + app.js + live.js + styles.css (the classic screen, legacy)
-  .runtime/               git-ignored: built history, live candles, server logs, NOW validation
-design/sozvezdiya-24/src  screen 24's source (app.js, panel.js, page.html, panel.css; build.py embeds the contract)
-spec/                     DR-LAB-SC-1.1 (normative) and 1.0 (previous edition); DR-LAB-SWPC-1.1 (current visual
-                          implementation target) and SWPC-1.0 (predecessor); deep-research-report (16).md as its
-                          analytical input;
-                          ekran-24/: every element of screen 24 on annotated screenshots, its meaning, count, code
-meaning/                  the semantic layer for agents without code (Russian): start at meaning/README.md; lenses and
-                          answers in meaning/lens/
-docs/                     architecture, definitions, UI rules, decisions, research, the method
-design/                   mockups on synthetic data, designs 1-24 (start at design/README.md)
-studies/                  research scripts with their results (aggregates only)
-tests/smoke.py            offline checks; run after every change
-tests/contract_sc11.py    DR-LAB-SC-1.1: products = sources, the enforcement map, K01-K33 executed, routes, live
-                          envelopes (LinkML in a temporary folder), the stale state, the page's contract layer
-tests/sem24.py            screen 24: the specification's 32 reference checks, integration on the base, the zone map
-tests/now24.py            screen 24: the acceptance tests of «Сейчас» (DR-LAB-NOW-1.0)
-tests/ui_check24.js       screen 24: in-page check (passports, page = server, one table, film columns, slices, zones,
-                          the contract layer: every passport recomputed by the reference, K16, K30, K33)
-tests/ui_check21.js       design 22 (legacy) in-page check; ui_check.js: the classic screen
-README.md                 the front page on GitHub
+  server.py                local HTTP server (stdlib): static pages of dist/ + JSON API
+  contract.py              the SC-1.1 gate: reference definitions, re-derivation at publication, envelopes, stale state
+  scene24.py, zonemap24.py, tp11.py   families, R / X, DR outcome, zone and table maps, TP-2.0 bands and windows
+  cluster24.py             main-cluster-1 (meaning/11), read by scene24, not on screen
+  now24.py, pre24.py, arrive24.py, continuity*.py, continuations24.py, pullbacks24.py, time_sd235.py   layers and candidates
+  integration24.py, integration_audit.py, revisions24.py, runtime_identity.py   candidate trials, audit, versions
+  scene21.py               today's trading day from TradingView (used by 24 and 23.5) and design 22's legacy data
+  live.py, tv_fetch.mjs, tv_passive.mjs   live candles from TradingView Desktop over CDP (never written to history)
+  build_market.py, build_boxes.py   the history base from the G3 tape (once); engine_market.py, engine.py: legacy, demo
+  dr_voice.py, dr_speak.ps1 the spoken reading of the screen
+  q1/                      the Q1 historical pilot of 12.10 (own server, kept with its checks)
+  dist/                    built pages: 23-5/ and 24/ (built from design/), legacy index.html, classic.html, sem-v1/
+  .runtime/                git-ignored: history, live candles, logs, NOW validation — market data, never committed
+design/sozvezdiya-23-5/src the source of 23.5 (build.py -> lab/dist/23-5); design/sozvezdiya-24/src the source of 24
+design/sozvezdiya-22, -23  sources of the legacy pages /22/ and /sem-v1/
+meaning/                   the semantic layer (Russian): README, numbered documents, the lenses that are still sources
+spec/                      SC-1.0/1.1, SWPC-1.1, INTEGRATION-1.0, the deep-research inputs; ekran-24/ and ekran-23-5/:
+                           screens element by element with screenshots
+docs/                      architecture, decisions, UI rules, the method, research, the 23.5 layer documents
+integration/               the 15.10 integration: candidate registry (candidates/), the preserved Trace/FOM reference
+                           (reference/), scripts and receipts
+studies/                   the studies that code or current documents still use (aggregates only)
+tests/                     checks (below)
 ```
 
 ## Hard rules (do not break; if a task seems to need it, ask the operator first)
@@ -356,7 +167,7 @@ README.md                 the front page on GitHub
      a complete own prefix; only what was available at the cut selects, the remainder is the label.
    - Legacy screens keep their older statement of this rule in `docs/SEMANTICS.md`.
 7. **Descriptive numbers.** Frequencies are the history of a set of sessions, not a forecast, not a trade. The UI does
-   not print disclaimers (operator's decision), so the discipline lives in the code. On screen 24 a number exists only
+   not print disclaimers (operator's decision), so the discipline lives in the code. On screens 23.5 and 24 a number exists only
    as a passport of an estimand registered in `contract/registry/` with an admissible claim form, and its words are that
    form's registered labels; no number of this tool admits a forecast (C2) or a decision (C3) claim. On legacy screens:
    never add a number whose meaning is not defined in `docs/SEMANTICS.md`.
@@ -382,35 +193,37 @@ README.md                 the front page on GitHub
 
 ## How to verify your change (always, before saying "done")
 
+Market data lives only on the operator's computer, so the data checks run there (his working copy
+`C:\Users\Admin\Claude\dr-idr`).
+
 ```bash
 python -B tests/smoke.py                 # offline: history, the screens' data, the contract state, JS syntax
+python -B tests/contract_sc11.py         # the contract: expect ALL GOOD
 ```
 
-If you touched the server or `lab/*.py`: **restart the server** (it caches Python modules). Stop every listener on 8767
-first (see «Two servers» below), then start it from PowerShell, never through a pipe:
+- **23.5:** `python design/sozvezdiya-23-5/src/build.py`; then with a server on the history
+  (`start-dr-lab-23-5.cmd -NoBrowser -HistoryOnly`) `node tests/tp235_page.mjs http://127.0.0.1:8735/23-5/` and the
+  layer checks of the table above. Open a history day (`#date=2025-12-17&inst=NQ&session=RDR`) and a live day in a
+  browser tool; read the console. Never press «⟳ Обновить».
+- **Screen 24:** `python design/sozvezdiya-24/src/build.py`, `python -B tests/sem24.py`, `python -B tests/now24.py`,
+  `tests/ui_check24.js` in the page at `/24/` (1600×900 and 1920×1000, expect `problems: []`).
+- **The contract** (`contract/`, `lab/contract.py`, a route): `.venv-linkml\Scripts\python.exe contract/tools/build.py`
+  (`PYTHONUTF8=1`), then rebuild both pages, then `tests/contract_sc11.py`, `tests/swpc11.py`.
+- **Server or `lab/*.py` touched:** restart the server (it caches modules): `stop-dr-lab-23-5.cmd`, then
+  `start-dr-lab-23-5.cmd -NoBrowser`; the same for `:8767` with `stop-dr-lab.cmd` / `start-dr-lab.cmd`. Run them from
+  PowerShell directly, never through a pipe.
+- Links between documents: `python -B tests/semantic_links.py`.
 
-```bash
-stop-dr-lab.cmd
-start-dr-lab.cmd -NoBrowser              # the same path the operator's shortcut takes
-```
+## Repository rules
 
-If you touched the machine contract (`contract/`), `lab/contract.py`, a route or how screen 24 shows a number:
-
-```bash
-.venv-linkml\Scripts\python.exe contract/tools/build.py   # after editing contract/ (PYTHONUTF8=1); then rebuild screen 24
-python -B tests/contract_sc11.py                            # expect ALL GOOD
-```
-
-If you touched screen 24: run `python design/sozvezdiya-24/src/build.py`, `python -B tests/sem24.py` and
-`python -B tests/now24.py`; open http://127.0.0.1:8767/24/ (a history day, e.g. `#date=2025-12-17&inst=NQ&session=RDR`)
-in a browser tool at 1600×900 and 1920×1000, evaluate `tests/ui_check24.js` and expect `problems: []` (one known
-exception: the toolbar is 2–11 px wider than 1600 px in «История» mode, since before 2026-10-07). Check that
-http://127.0.0.1:8767/ still opens /24/ and /22/ opens design 22. If an element changed, update its row in
-`spec/ekran-24/`, add an entry to `meaning/13`, and re-shoot (`spec/ekran-24/tools/shots.py`, then `annotate.py`).
-
-Legacy surfaces: design 22 — edit `design/sozvezdiya-22/src`, run its `build.py` (it writes `lab/dist/index.html` and
-`sozvezdiya.js`; never build `design/sozvezdiya-21`), evaluate `tests/ui_check21.js` at `/22/`. The classic screen —
-`tests/ui_check.js` at `/classic.html`. Never touch their files for screen 24.
+- **`main` is the line.** Work on a branch, push to `main` only on the operator's word. Every commit carries the chain
+  of decisions (what changed in meaning, who decided, on what basis, what stays open); the same node goes into
+  `meaning/07-cepochka-reshenij.md`.
+- **Pull requests #15–#18 and #26–#28 are superseded by `main`** (decision of 11.11): close them, never merge them; their
+  branches stay as history. #29 (the agent trading stack for NinjaTrader) is a separate open draft. A new PR is opened
+  only for a change the operator wants to review before it lands.
+- Keep the repository clean: a document or study that no code and no current document needs does not stay in `main`.
+  A superseded document is removed (it remains in git history), not kept with a «HISTORICAL» banner.
 
 ## Gotchas already paid for
 

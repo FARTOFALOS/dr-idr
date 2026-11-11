@@ -1,10 +1,13 @@
 # Architecture
 
 Everything runs on the operator's Windows PC. No cloud, no database server, no LLM at run time: the numbers come from
-plain arithmetic over the history base, so the same candles always give the same screen. The main line is screen 24
-(`/24/`, the root redirects there) with its routes `/api/d24/*` behind the contract gate of DR-LAB-SC-1.1
-(`lab/contract.py`, `contract/README.md`); the other routes serve legacy surfaces (design 22, the classic screen, the
-research dashboard, design 23) and are marked `OUTSIDE_SC11`.
+plain arithmetic over the history base, so the same candles always give the same screen. **The main screen is 23.5**
+(`/23-5/`; its own server on 8735 from the shortcut «DR Lab 23.5», and the root of 8767 redirects there); screen 24
+stays at `/24/`. Both use the routes `/api/d24/*` (and the candidate routes `/api/integration/*` with `--integration`)
+behind the contract gate of DR-LAB-SC-1.1 (`lab/contract.py`, `contract/README.md`); 23.5 shows the confirmation
+family by TP-2.0 (`meaning/25-tp-2-0-specifikaciya.md` §13–§14). The other routes serve legacy surfaces (design 22,
+the classic screen, the research dashboard, design 23) and are marked `OUTSIDE_SC11`. Sections below dated before
+27.10 describe screen 24 when it was the main screen.
 
 **Presentation layer status (07.10.2026):** `spec/DR-LAB-SWPC-1.1.md` is the current implementation target between
 SC-1.1 semantic truth and the screen-24 frontend. It is not a runtime service yet: the engineer must bind existing

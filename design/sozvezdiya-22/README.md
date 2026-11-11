@@ -1,7 +1,7 @@
 # Design 22 «Созвездия · смысл числа» — the working screen since 2026-09-29 (operator's go-ahead)
 
 Design 21 changed by the semantic audit of 2026-09-29. **The meaning of every change, with numbered pictures, is in
-[`meaning/04-dizajn-22.md`](../../meaning/04-dizajn-22.md)**; this file is about the code. Synthetic data only: the two
+[`meaning/04-dizajn-22.md`](https://github.com/FARTOFALOS/dr-idr/blob/3847a70/meaning/04-dizajn-22.md)**; this file is about the code. Synthetic data only: the two
 invented days of `design/clusters-2026-09-28` (day A: RDR confirms ↑ 10:55 and holds; day B: confirms ↑ 10:45, then
 «Слом DR ↓ 11:45»), similar sessions simulated in `src/app.js`. The broken scene simulates a thin cohort whose price
 could not be matched, on purpose (that is what the tape shows after most DR breaks).

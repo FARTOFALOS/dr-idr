@@ -1,7 +1,7 @@
 # 23.5 · актуальная реализация
 
 22.10.2026. Сохранённый адрес документа; действующий вход —
-[смысл, все фасеты, решения и границы](../../docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md),
+[смысл, все фасеты, решения и границы](https://github.com/FARTOFALOS/dr-idr/blob/3847a70/docs/DR-LAB-23-5-SEMANTIC-DECISIONS.md),
 [паспорт отдельной страницы](../ekran-23-5/README.md).
 
 23.5 находится в main отдельно от 24: `design/sozvezdiya-23-5/src` → `lab/dist/23-5`, URL `/23-5/`,
