@@ -1,3 +1,6 @@
+// DR Lab 23.5 (operator 2026-10-26): the main map is the final R / X of every session, the zones of screen 24; the
+// decisions of 08.10 are on; local pullbacks are the overlay «Съёмы лоу» (sweeps235.js). Screen 24 keeps its own source.
+// Meaning, decisions and checks: docs/DR-LAB-23-5-SWEEPS.md (the time x SD variant of 23.10: docs/DR-LAB-23-5-TIME-SD.md).
 // ================= DR Lab · design 24 «Границы хода» =================
 // Design 22's working screen (candles of the day, the three sessions' DR / IDR, replay, the right panel, hover / pin,
 // layers, settings) with its statistical layer replaced by the semantic specification DR-LAB-SEM-1.0
@@ -21,6 +24,10 @@
 // never used).
 (function () {
   'use strict';
+  const LBLC1 = { on: false };     // DR-LAB-TP-2.0: labels of the C1 twin forms while the screen family is a TP set (lbl)
+  // One-time migration from the old worktree view on its original port. Never writes screen 24's keys.
+  if(location.port==='8735')try{for(const key of Object.keys(localStorage))if(key.startsWith('drlab.d24.')){const to=key.replace('drlab.d24.','drlab.d235.');if(localStorage.getItem(to)==null)localStorage.setItem(to,localStorage.getItem(key));}}catch(e){/* optional local preferences */}
+
   let NOW = 788;                   // the live minute (day minutes, ET); a history day: 17:00, the whole day closed
   const SESS = {
     ADR: { k: 'ADR', start: -270, formed: -210, end: 120 },
@@ -37,7 +44,7 @@
   };
   // everything a viewer can tune in «Настройки»; kept in this browser (localStorage), «Сбросить» restores these
   const DEF = {
-    R: '#EBA06C', X: '#72A9EC', path: '#9FB3D1',
+    R: '#EBA06C', X: '#72A9EC', path: '#9FB3D1', visitC: '#8BE7A1', visitMissC: '#FF7B86', projR: '#EBA06C', projX: '#72A9EC', projDoneC: '#5FA886',
     ptA: 80, ptSize: 100, pastA: 35, cloudA: 100, threadA: 100, projA: 90, stripA: 80, heatA: 200,
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
@@ -47,7 +54,7 @@
   };
   const BOXFILL = { grad: 'Градиент', solid: 'Сплошная', none: 'Без цвета' };
   const DASH = { solid: [], dash: [7, 4], dots: [1.5, 3.5], dashdot: [9, 3, 2, 3] };
-  const CFG_KEY = 'drlab.d24.cfg';
+  const CFG_KEY = 'drlab.d235.cfg';
   const cfg = Object.assign({}, DEF);
   try { Object.assign(cfg, JSON.parse(localStorage.getItem(CFG_KEY) || '{}')); } catch (e) { /* no storage: defaults */ }
   // the event colours chosen by the operator on 2026-10-01 (amber R, sky X) replace the earlier defaults kept in a browser
@@ -63,6 +70,34 @@
   // names by the price led out to the left (set once)
   if (!cfg.z4) { cfg.rightPad = DEF.rightPad; cfg.z4 = 1; }
   if (!cfg.z3) { cfg.bandH = DEF.bandH; cfg.bandRise = DEF.bandRise; cfg.bandRoom = DEF.bandRoom; cfg.zoneLblPos = DEF.zoneLblPos; cfg.z3 = 1; }
+  // 23.5, operator 2026-10-20: readable states rather than disappearing history. Only this origin's old palette migrates.
+  if (!cfg.contrast235) {
+    if (cfg.visitC === '#FF5B65') cfg.visitC = DEF.visitC;
+    cfg.projA = 100; cfg.passedA = 90; cfg.colSize = Math.max(100, cfg.colSize);
+    cfg.contrast235 = 1;
+    try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* optional storage */ }
+  }
+  // Operator 2026-10-20: restore the original constellations exactly; the column keeps its separate contrast theme.
+  if (!cfg.constellationRestore235) {
+    try { localStorage.setItem(CFG_KEY + '.before-constellation-restore', JSON.stringify(cfg)); } catch (e) { /* optional backup */ }
+    for (const key of ['R','X','doneC','zoneNumA','zoneNameA','zoneSpentA','calloutA','capTxt']) cfg[key] = DEF[key];
+    cfg.constellationRestore235 = 1;
+    try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* optional storage */ }
+  }
+  // Operator 2026-10-20: keep the familiar green CLOCK segment, distinct from the visit check by its filled shape.
+  if (!cfg.clockGreen235) {
+    cfg.projDoneC = DEF.projDoneC;
+    cfg.clockGreen235 = 1;
+    try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* optional storage */ }
+  }
+  // Operator 22.10: use screen 24's shading, not the former flat high-contrast column of this origin.
+  if (!cfg.shading24_235) {
+    try { localStorage.setItem(CFG_KEY + '.before-shading24', JSON.stringify(cfg)); } catch (e) { /* optional backup */ }
+    cfg.projA = 90; cfg.passedA = 30; cfg.colSize = 100;
+    cfg.projR = cfg.R; cfg.projX = cfg.X;
+    cfg.shading24_235 = 1;
+    try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* optional storage */ }
+  }
   const saveCfg = () => { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* not kept */ } };
   // operator 2026-10-06: the settings grouped by the element of the screen, each group folds (its state kept in the
   // browser), so the trader finds a setting by what he sees
@@ -75,10 +110,9 @@
       ['calloutA', 'Выноски · непрозрачность, %', 'range', 20, 100, 5]]],
     ['Точки сессий', [['ptA', 'Яркость', 'range', 10, 100], ['ptSize', 'Размер', 'range', 50, 200], ['pastA', 'Прошедшие по часам · яркость', 'range', 5, 100],
       ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10]]],
-    ['Колонка у цены', [['doneC', 'Уже проторговано по часам · цвет', 'color'], ['projA', 'Яркость', 'range', 10, 100], ['colSize', 'Размер цифр, %', 'range', 60, 160, 5], ['passedA', 'Прошедшее и невозможное · яркость', 'range', 5, 80]]],
+    ['Колонка у цены', [['projR', 'Откат R · цвет колонки', 'color'], ['projX', 'Продолжение X · цвет колонки', 'color'], ['projDoneC', 'История раньше среза · цвет колонки', 'color'], ['visitC', 'Приход сегодня · галочка и кружок', 'color'], ['visitMissC', 'Окно без прихода · крестик и кружок', 'color'], ['projA', 'Яркость', 'range', 10, 100], ['colSize', 'Размер цифр, %', 'range', 60, 160, 5], ['passedA', 'История раньше среза · яркость', 'range', 30, 100]]],
     ['Лента времени', [['stripA', 'Столбики · яркость', 'range', 10, 100], ['bandA', 'Вся лента · непрозрачность, %', 'range', 20, 100],
       ['bandH', 'Высота, % экрана', 'range', 8, 30], ['bandRise', 'Подъём в пустое место, % графика', 'range', 0, 50],
-      ['domK', 'Контраст перевеса X/R, %', 'range', 0, 400, 10], ['domLine', 'Контур перевеса, %', 'range', 0, 200, 10],
       ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5],
       ['capPct', 'Капсулы зон · доля', 'sel', { 0: 'только имя', 1: 'имя и доля' }], ['hillA', 'Холмы зон · заливка, %', 'range', 0, 150, 5]]],
     ['Масштаб «↺»', [['rightPad', 'Правый край после конца сессии, мин', 'range', 0, 45], ['padTop', 'Запас сверху, %', 'range', 0, 8, 0.5], ['padBot', 'Запас снизу, %', 'range', 0, 8, 0.5], ['bandRoom', 'Место под лентой, % диапазона', 'range', 0, 20]]],
@@ -102,8 +136,10 @@
   const FONT = '-apple-system,BlinkMacSystemFont,"Trebuchet MS",Roboto,Ubuntu,sans-serif';
   const LAYERS = [
     ['pts', 'Точки: одна сессия — одно событие', '#EBA06C'], ['zones', 'Созвездия: зоны R / X (карта зон)', '#72A9EC'],
+    ['cells', 'Клетки: 15 мин × 0,1 SD как есть, без зон (кандидат 30.10)', '#C9B27A'],   // matrix235.js, off by default
     ['proj', 'Гистограммы цены справа', '#EBA06C'], ['strip', 'Лента времени снизу', '#72A9EC'], ['std', 'STD', C.stdOn],
-    ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VI (volume imbalance)', C.vib], ['det', 'Шесть окон семьи (снизу)', C.text2]
+    ['prev', 'DR и IDR прошлых сессий', C.dr], ['vib', 'VI (volume imbalance)', C.vib], ['det', 'Шесть окон семьи (снизу)', C.text2],
+    ['sweep', 'Съёмы лоу · локальный слой (кандидат)', '#B89CFF']   // 23.5 only, off by default (operator 2026-10-26; sweeps235.js)
   ];
 
   // ---------- small helpers ----------
@@ -123,9 +159,10 @@
   //   active (a zone still possible, a band still ahead, the next level) — the event's own colour (R amber, X sky);
   //   HOLDS (today's extreme lies in the zone) — the same colour, lighter;
   //   spent (an IMPOSSIBLE zone, a band passed or impossible today, a reached level) — a slate shade of its colour, quiet;
-  //   red — only the time pointer «уже прошло» (ring and window of a past peak); nowhere else
+  //   23.5-color-1: visitPaint describes a named visit-window annotation, never a full-horizon band.
+  //   bandPaint / COLOR235 separately own the column; markerPaint owns exact-target outcomes.
   const SPENT = '#59606C';
-  const stateCol = (col, state) => state === 'IMPOSSIBLE' || state === 'spent' ? mixHex(col, SPENT, 0.55) : state === 'HOLDS' ? mixW(col, 0.25) : state === 'QUIET' ? mixHex(col, cfg.doneC, 0.5) : col;
+  const stateCol = (col, state) => state === 'IMPOSSIBLE' || state === 'PAST' || state === 'spent' ? mixHex(col, SPENT, 0.55) : state === 'HOLDS' ? mixW(col, 0.25) : state === 'QUIET' ? mixHex(col, cfg.doneC, 0.5) : col;
   const rgba = (hex, a) => { const c = rgb(hex); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   // a percentage on the canvas: the number in its font, the «%» after it small and dim (operator 2026-10-06)
@@ -137,6 +174,45 @@
     if (!t.includes('%')) return;
     const wn = c.measureText(num).width;
     c.save(); c.globalAlpha *= 0.55; c.font = '600 ' + (fs * 0.58).toFixed(1) + 'px ' + FONT; c.fillText('%', x + wn + 1, y); c.restore();
+  }
+  const columnPctW = (c, t, wt, fs) => { c.font = wt + fs.toFixed(1) + 'px ' + FONT; const a = c.measureText(t.replace('%', '')).width; if (!t.includes('%')) return a; c.font = '600 ' + Math.max(8.5, fs * 0.7).toFixed(1) + 'px ' + FONT; return a + 1 + c.measureText('%').width; };
+  function columnPctDraw(c, t, x, y, wt, fs, col) {
+    const num = t.replace('%', '');
+    c.font = wt + fs.toFixed(1) + 'px ' + FONT; c.fillStyle = col; c.fillText(num, x, y);
+    if (!t.includes('%')) return;
+    const wn = c.measureText(num).width;
+    c.save(); c.globalAlpha *= 0.85; c.font = '600 ' + Math.max(8.5, fs * 0.7).toFixed(1) + 'px ' + FONT; c.fillText('%', x + wn + 1, y); c.restore();
+  }
+  // Contrast is independent of historical mass. Width/font weight carry n/N; colour and a distinct symbol carry state.
+  function visitPaint(ev, v, ahead, possible, cut) {
+    let state = v.state;
+    if (state === 'PENDING' || state === 'UNMARKED') state = !possible ? 'PRICE_CLOSED' : ahead <= 0 ? 'PAST' : v.start != null && cut < v.start ? 'FUTURE' : 'OPEN';
+    const active = state === 'OPEN' || state === 'FUTURE', success = state === 'VISITED';
+    const col = cfg['proj' + ev];
+    return { state, active, fill: active ? col : '#70809D', text: active ? mixW(col, 0.55) : '#D9E2F0',
+      edge: active ? col : '#A8B5CB', mark: success ? '✓' : state === 'MISSED' ? '×' : state === 'PAST' ? '◷' : state === 'FUTURE' && v.state === 'PENDING' ? '○' : state === 'OPEN' && v.state === 'PENDING' ? '●' : state === 'UNKNOWN' ? '?' : '',
+      markColor: success ? cfg.visitC : state === 'MISSED' ? cfg.visitMissC : active ? col : '#C0CBDC' };
+  }
+  // Executable ownership map, specified in spec/ekran-24/16-cveta-i-fasety-23-5.md.
+  // A full-horizon band NEVER inherits a narrower zone's visit outcome.
+  const COLOR235 = Object.freeze({
+    version: '23.5-color-1',
+    band: { binding: 'PB235:BAND', refs: ['EST:B-RX-BAND-R', 'EST:B-RX-BAND-X', 'FF:TODAY-Z'], scope: 'price_band/full_horizon', facets: ['FACET:CATEGORY', 'FACET:PRICE', 'FACET:TIME', 'FACET:DENOMINATOR'] },
+    clock: { binding: 'PB235:CLOCK', refs: ['EST:B-CLOCK-R', 'EST:B-CLOCK-X'], scope: 'same_band/same_N', facets: ['FACET:TIME', 'FACET:SET_ROLE', 'FACET:DENOMINATOR'] },
+    marker: { binding: 'PB235:VISIT-MARKER', refs: ['FF:TODAY-VISIT'], scope: 'exact_price_time_target', facets: ['FACET:PRICE', 'FACET:TIME', 'FACET:KNOWLEDGE'] },
+    peak: { binding: 'PB235:PEAK', refs: ['EST:B-CLOCK-PEAK-R', 'EST:B-CLOCK-PEAK-X'], scope: 'selected_band/15min', facets: ['FACET:TIME', 'FACET:CLAIM'] }
+  });
+  function bandPaint(ev, possible, known) {
+    const col = cfg['proj' + ev];
+    return { binding: COLOR235.band.binding, state: !known ? 'UNKNOWN' : possible ? 'POSSIBLE' : 'IMPOSSIBLE',
+      active: !known || possible, fill: known && !possible ? '#70809D' : col,
+      text: known && !possible ? '#D9E2F0' : mixW(col, 0.55), edge: col, mark: '', markColor: col };
+  }
+  function markerPaint(ev, visit) {
+    const state = visit.state;
+    return { binding: COLOR235.marker.binding, state,
+      color: state === 'VISITED' ? cfg.visitC : state === 'MISSED' ? cfg.visitMissC : cfg[ev],
+      dashed: state === 'UNKNOWN' || state === 'WITHHELD', mark: state === 'VISITED' ? '✓' : state === 'MISSED' ? '×' : '' };
   }
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   // the STD steps on the chart (operator 2026-10-06): 0,5 … 4,0 every half IDR, then 10 — in half-IDR steps j
@@ -200,7 +276,23 @@
       if (b.c > res.drH) { conf = { t: b.t + 5, side: 1 }; break; }
       if (b.c < res.drL) { conf = { t: b.t + 5, side: -1 }; break; }
     }
-    if (!conf) { res.status = obs >= S.end ? 'noconf' : 'waiting'; return (D.S[key] = res); }
+    const taken = (sd_, edge, from, to) => {
+      const out = [];
+      for (const j of STD_STEPS) {
+        const L = edge + sd_ * j * w / 2, b = inSess.find(q => q.t + 5 > from && q.t + 5 <= to && (sd_ === 1 ? q.h >= L : q.l <= L));
+        if (!b) { out.push({ j, t: null, name: stepName(j, sd_ === 1) }); break; }
+        out.push({ j, t: b.t + 5, name: stepName(j, sd_ === 1) });
+      }
+      return out;
+    };
+    // operator 11.11: the grid stands from the end of the box hour, oriented by the box colour (green: the levels up,
+    // red: down); the confirmation only settles the side (gridSide). A flat box keeps both sides.
+    res.bside = res.close > res.open ? 1 : res.close < res.open ? -1 : 0;
+    if (!conf) {
+      res.status = obs >= S.end ? 'noconf' : 'waiting';
+      if (res.bside) res.taken = taken(res.bside, res.bside === 1 ? res.idrH : res.idrL, S.formed, lim);
+      return (D.S[key] = res);
+    }
     const side = conf.side;
     Object.assign(res, { conf: conf.t, side, edge: side === 1 ? res.idrH : res.idrL, opp: side === 1 ? res.drL : res.drH });
     res.coord = v => side * (v - res.edge) / w;
@@ -221,15 +313,6 @@
       if (hi > far) { far = hi; fart = b.t + 5; }
     }
     if (fart != null) Object.assign(res, { farSoFar: far, farT: fart, farP: res.price(far) });
-    const taken = (sd_, edge, from, to) => {
-      const out = [];
-      for (const j of STD_STEPS) {
-        const L = edge + sd_ * j * w / 2, b = inSess.find(q => q.t + 5 > from && q.t + 5 <= to && (sd_ === 1 ? q.h >= L : q.l <= L));
-        if (!b) { out.push({ j, t: null, name: stepName(j, sd_ === 1) }); break; }
-        out.push({ j, t: b.t + 5, name: stepName(j, sd_ === 1) });
-      }
-      return out;
-    };
     res.taken = taken(side, res.edge, conf.t, res.failed || lim);
     if (res.failed) {
       res.nside = -side; res.nedge = side === 1 ? res.idrL : res.idrH;
@@ -257,6 +340,8 @@
   }
   // the side in play: the confirmation's, after a break the break's, none before the confirmation
   const playSide = s => (s.status === 'broken' || (s.status === 'done' && s.failed) ? s.nside : s.side) || 0;
+  // the side of the STD grid: the side in play once confirmed, before that the box colour's (operator 11.11)
+  const gridSide = s => playSide(s) || (s.status === 'waiting' || s.status === 'noconf' ? s.bside || 0 : 0);
   // operator 2026-10-06: an STD level is shown only while it is valid, on the side in play (both sides before the
   // confirmation); the levels against it (−0,5, −1 … for a long) are not drawn, named or hoverable
   // operator 2026-10-06: today's DR / IDR take the colour of the side in play (green for a long, red for a short, the
@@ -267,12 +352,12 @@
   // the confirmation (or the break), no longer a question: quiet round dots (not dashes, which are IDR's); 'next' — the
   // first one not reached yet, the trader's question «will it get there?»: the strongest; 'far' — the ones beyond it
   function stdState(s, l) {
-    const p = playSide(s);
+    const p = gridSide(s);
     if (l.type !== 'std' || !p || l.dir !== p) return 'plain';
     const e = ((s.failed ? s.takenN : s.taken) || []).find(z => z.j === l.j);
     return e && e.t ? 'taken' : e ? 'next' : 'far';
   }
-  const stdShown = (s, l) => l.type !== 'std' || (st.L.std && (!playSide(s) || l.dir === playSide(s)));
+  const stdShown = (s, l) => l.type !== 'std' || (st.L.std && (!gridSide(s) || l.dir === gridSide(s)));
   function where(s, p) {
     const L = levels(s).filter(l => l.type !== 'open').sort((a, b) => a.p - b.p), w = s.idrH - s.idrL;
     let best = null;
@@ -290,14 +375,22 @@
   // open t, ties), DR outcome, order, the path per common clock M5 (directed low, high, close). The page maps a member's
   // u = v / w to today's price through today's IDR (spec §9.1: a coordinate transfer, not a forecast of prices).
   const wantView = s => s.failed && st.view !== 'conf' ? 'brk' : 'conf';
-  const famKey = (D, s, view) => D.d + '|' + s.k + '|' + s.conf + '|' + s.side + '|' + view + '|' + (view === 'brk' ? s.failed : '') + '|' + st.scope;
+  // the family is fixed at its activation: its key is the trading day, never the moment the live candles were fetched
+  // (D.d changes with every minute's refresh; keyed by it, the page asked for the same family again each minute and
+  // showed «Собираю семью…» until the server answered — operator 2026-10-20)
+  // operator 29.10: on 23.5 R is the deepest point before the session's extreme (OUT:R-BEFORE-X-1, FF:R-BEFORE-X), not
+  // the final R to the block end; every family request carries the flag ':rpre' and a family without it is not shown
+  // since 30.10 also ':tcells': the constellations come from the joint table on the server (lab/zonemap24.py::table_map), the
+  // drawing is the same
+  const RBX = ':rpre:tcells';
+  const famKey = (D, s, view) => A.inst + '|' + (D.iso || D.d) + '|' + s.k + '|' + s.conf + '|' + s.side + '|' + view + '|' + (view === 'brk' ? s.failed : '') + '|' + st.scope;
   const sliceOf = ctx => ctx.live ? Math.floor(NOW / 5) * 5 : ctx.obs;      // the last closed M5 (AGENTS.md rule 6)
   function requestFamily(fk, s, view) {
     if (ICFG.enabled) { requestScene(); return; }
     if (A.pending.has(fk)) return;
     A.pending.add(fk);
     const at = s.live ? Math.floor(NOW / 5) * 5 : s.obs;
-    fetch('/api/d24/family?instrument=' + A.inst + '&session=' + s.k + '&at=' + at + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + view + (st.scope === 'all' ? ':all' : ''))
+    fetch('/api/d24/family?instrument=' + A.inst + '&session=' + s.k + '&at=' + at + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + view + (st.scope === 'all' ? ':all' : '') + RBX)
       .then(r => r.json()).then(r => { r._fk = fk; r._ctx = 'fam|' + (A.respSeq = (A.respSeq || 0) + 1); A.fams.set(fk, r); if (A.fams.size > 40) A.fams.delete(A.fams.keys().next().value); })
       .catch(() => A.fams.set(fk, { status: 'error', message: 'Локальный сервер не ответил' }))
       .finally(() => { A.pending.delete(fk); redraw(true); });
@@ -313,7 +406,7 @@
     if (r) return r;
     if (!A.nowPending.has(key)) {
       A.nowPending.add(key);
-      fetch('/api/d24/now?instrument=' + A.inst + '&session=' + ctx.s.k + '&at=' + sl + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + F.view + (st.scope === 'all' ? ':all' : ''))
+      fetch('/api/d24/now?instrument=' + A.inst + '&session=' + ctx.s.k + '&at=' + sl + (A.src === 'hist' ? '&date=' + A.date : '') + '&view=' + F.view + (st.scope === 'all' ? ':all' : '') + RBX)
         .then(x => x.json()).then(x => { x._ctx = 'now|' + (A.respSeq = (A.respSeq || 0) + 1); A.now.set(key, x); if (A.now.size > 80) A.now.delete(A.now.keys().next().value); })
         // SWPC-1.1 W13: a request that did not arrive says so in the block's place (not «нет данных», which reads as an
         // answer); the base map stays as it is
@@ -326,7 +419,7 @@
     if (!s.conf || !['confirmed', 'broken', 'done'].includes(s.status) || D.d === 'none') return null;
     const view = wantView(s), fk = famKey(D, s, view), r = A.fams.get(fk);
     if (!r) { requestFamily(fk, s, view); return null; }
-    if (r.status !== 'ok' || r.view !== view || (r.key.scope || 'weekday') !== st.scope || !r.today || r.today.c0 !== s.conf || r.today.side !== s.side) return null;
+    if (r.status !== 'ok' || r.view !== view || (r.key.scope || 'weekday') !== st.scope || r.key.r_event !== 'R_BEFORE_X' || r.key.zone_rule !== 'TABLE_CELLS' || !r.today || r.today.c0 !== s.conf || r.today.side !== s.side) return null;
     // DR-LAB-SC-1.1: a family without its envelope or from another registry is refused (no statistic, the reason in the
     // panel); one the server published with a violation (a withheld zone) is shown and the violation surfaced
     if (r._refused === undefined) {
@@ -352,13 +445,13 @@
       d0, e0, w0, tick, e0t: Math.round(e0 / tick), w0t: Math.round(w0 / tick), act0: brk ? s.failed : s.conf, side,
       // the words of the view (operator 2026-10-06; X = the author's max extension): registered labels (FF:PASSPORT-VIEW)
       names: { R: lbl('FF:PASSPORT-VIEW', 'name_R', null, vw), X: lbl('FF:PASSPORT-VIEW', 'name_X', null, vw) },
-      what: { R: lbl('FF:PASSPORT-VIEW', 'what_R', null, vw), X: lbl('FF:PASSPORT-VIEW', 'what_X', null, vw) },
+      what: { R: lbl('FF:R-BEFORE-X', 'what_R', null, vw), X: lbl('FF:PASSPORT-VIEW', 'what_X', null, vw) }, rbx: r.key.r_event === 'R_BEFORE_X',
       from: lbl('FF:PASSPORT-VIEW', 'from', null, vw), nb: (r.schedule.end - r.schedule.formed) / 15,
       // DR-LAB-SC-1.1: the family's case-set rule (CS:F-CONF-1 …) and its envelope (bundles, records, checks)
       cs: r.contract.case_sets && r.contract.case_sets[0] ? r.contract.case_sets[0].spec : null, env: r.contract,
       // the request of this family, so its passports are recomputed by the reference on their own family whatever is on
       // screen later (another slice, the break family, another day)
-      req: { instrument: r.key.instrument, session: r.key.session, at: r.today.slice, date: r.today.source === 'history' ? r.today.date : null, view: view + (r.key.scope === 'all' ? ':all' : '') }
+      req: { instrument: r.key.instrument, session: r.key.session, at: r.today.slice, date: r.today.source === 'history' ? r.today.date : null, view: view + (r.key.scope === 'all' ? ':all' : '') + RBX }
     };
     F.u2p = u => F.e0 + F.d0 * u * F.w0;
     F.p2u = p => F.d0 * (p - F.e0) / F.w0;
@@ -464,6 +557,7 @@
   const visitCount = (F, k0, k1, from) => tally(F, m => visitOne(F, m, k0, k1, from == null ? m.act : from));
   // the events of an area: a price band [k0, k1) of cells, optionally a time window [b0, b1) of 15-minute cells
   function areaCount(F, ev, a) {
+    if (F._pb && ev === 'R') return new Set(F.ev.R.pts.filter(q => inArea(q, a)).map(q => q.m.id)).size;
     let n = 0;
     for (const q of F.ev[ev].pts) if (q.k >= a.k0 && q.k < a.k1 && (a.b0 == null || (q.b >= a.b0 && q.b < a.b1))) n++;
     return n;
@@ -554,6 +648,8 @@
       if (r && r.snapshot_id) out.add(r.snapshot_id);
       const n = ctx.F ? A.now.get(nowKey(ctx)) : null;
       if (n && n._ctx) out.add(n._ctx);
+      // TP-1.1: the families T and T_W of this scene are part of it (their own responses and snapshots)
+      if (tpOn() && wantView(s) === 'conf') for (const w of [null, TP.last]) { const q = A.fams.get(tpKey(ctx.D, s, w)); if (q && q._ctx) out.add(q._ctx); if (q && q.snapshot_id) out.add(q.snapshot_id); }
     }
     return out;
   }
@@ -566,6 +662,7 @@
     if (s.conf && ['confirmed', 'broken', 'done'].includes(s.status) && ctx.D.d !== 'none') {
       const r = A.fams.get(famKey(ctx.D, s, wantView(s)));
       if (r && /^contract_/.test(r.status || '')) out.push(r.message || r.status);
+      if (tpOn() && wantView(s) === 'conf') for (const w of [null, TP.last]) { const q = A.fams.get(tpKey(ctx.D, s, w)); if (q && /^contract_/.test(q.status || '')) out.push(q.message || q.status); }
     }
     const n = ctx.F ? A.now.get(nowKey(ctx)) : null;
     if (n && /^CONTRACT_/.test(n.status || '')) out.push(n.note || n.message || n.status);
@@ -575,10 +672,12 @@
   const VW = F => F && F.brk ? 'BRK' : 'CONF';
   // the registered words: a claim form (by its estimand, EST:…) or a fact form (FF:…), one key, the view's variant if any
   function lbl(id, key, vars, view) {
-    const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : SC11.forms[id];
+    // DR-LAB-TP-2.0 §7: while the screen family is a TP set (T or T_W, a subgroup chosen by its own future) a base
+    // estimand speaks in the words of its C1 twin (SC11.cforms): «этих сессий», never «семьи»
+    const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : (LBLC1.on && SC11.cforms && SC11.cforms[id]) || SC11.forms[id];
     // FF:PHASE-RULE exists only in the candidate edition (08.10); the candidate words of the accepted «Сейчас» forms are
     // never reached from here (tests/integration_faults.mjs), only by reviewLbl for the trial «nowmarks»
-    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id.startsWith('EST:PB-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:PB-TODAY','FF:PB-EPISODE'].includes(id);
+    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id.startsWith('EST:PB-')||id.startsWith('EST:TS-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:CANDIDATE-STATUS','FF:TODAY-Z-PASSED','FF:TODAY-VISIT','FF:PB-TODAY','FF:PB-EPISODE','FF:R-BEFORE-X'].includes(id);
     const extra = candidateId && REVIEW && (id.startsWith('FF:') ? REVIEW.facts[id] : REVIEW.forms[id]);
     const box = own && own.labels[key] ? own : extra || own;
     const set = box && box.labels[key], t = set && (view && set[view] != null ? set[view] : set.ANY);
@@ -613,7 +712,8 @@
       const Zm = F.zones[ev];
       if (Zm) for (const z of Zm.zones) { const zb = one('EST:B-ZONE-' + ev, x => parOf(x).zone_id === z.zone_id); if (!zb || zb.estimates[0].numerator !== z.n_zone) F.miss('the bundle of zone ' + ev + ' ' + z.label, 'zones.' + ev); }
     }
-    if (F.out) { const c = cats(one('EST:B-DR')); if (c.HELD !== F.out.held || c.BROKEN !== F.out.broken || c.UNKNOWN !== F.out.unknown || c.NO_PERIOD !== F.out.none) F.miss('the bundle of the DR outcome', 'family'); }
+    // T / T_W publish no DR outcome: it is their condition (TP-2.0)
+    if (F.out && !F.r.key.cohort) { const c = cats(one('EST:B-DR')); if (c.HELD !== F.out.held || c.BROKEN !== F.out.broken || c.UNKNOWN !== F.out.unknown || c.NO_PERIOD !== F.out.none) F.miss('the bundle of the DR outcome', 'family'); }
     const c = cats(one('EST:B-ORDER')), n = orderCounts(F);
     if (ORDER_CATS.some(k => (c[ORDER_TOK[k]] || 0) !== n[k])) F.miss('the bundle of the order', 'family');
   }
@@ -626,8 +726,8 @@
   // DR-LAB-SWPC-1.1 M14: a carrier drawn from a number follows that number's passport — withheld («—»), it no longer
   // asserts its share by length, fill or glow. The passport is the one of the same estimand and parameters made on this
   // snapshot (no passport = the number was never shown alone; its count is then proven by the reconciled table)
-  const ppHeld = (F, est, params) => { const p = P24.byKey.get(F.r.snapshot_id + '|' + est + '|' + JSON.stringify(params)); return !!(p && p.violation); };
-  const zoneHeld = (F, ev, i) => { const z = F.zones[ev] && F.zones[ev].zones[i]; return !!z && ppHeld(F, 'EST:B-ZONE-' + ev, { zone_id: z.zone_id }); };
+  const ppHeld = (F, est, params) => { if(F._ts && /^EST:B-RX-(BAND|WINDOW)-[RX]$/.test(est))return tsProjectionHeld(F,est,params); if (F._pb && /^EST:B-RX-(BAND|WINDOW)-R$/.test(est)) return pbRegionPass(F, 'k0' in params ? [params.k0, params.k1] : null, 'b0' in params ? [F.f + 15 * params.b0, F.f + 15 * params.b1] : null).pct == null; const p = P24.byKey.get(F.r.snapshot_id + '|' + est + '|' + JSON.stringify(params)); return !!(p && p.violation); };
+  const zoneHeld = (F, ev, i) => { if(F._ts)return tsZoneHeld(F,ev,i); if (F._pb && ev === 'R') return !pbBundle(F._pb, 'EST:PB-ZONE', p => p.scale === PB.scale && p.zone_id === F.zones.R.zones[i]?.zone_id); const z = F.zones[ev] && F.zones[ev].zones[i]; return !!z && ppHeld(F, 'EST:B-ZONE-' + ev, { zone_id: z.zone_id }); };
   // a NOW number (lab/contract.py::attach_now, all C1) is shown only with its bundle on this cut, under the registered
   // claim form admissible there; the shown values must be the bundle's
   function nowBundle(n, est, role, C) {
@@ -668,13 +768,17 @@
   // admits the descriptive claim C0, lab/contract.py::admissible_claims), every declared parameter given, counts within N;
   // the value form decides how unknown mass is shown (BOUNDS_IF_UNKNOWN: «a–b %»)
   function bindPassport(F, p) {
-    const e = SC11 && SC11.estimands[p.estimand], f = SC11 && SC11.forms[p.estimand], miss = e && e.params.find(k => !(k in p.params));
+    // the case set of the passport: the family's own, or a set selected from it (CS:TP-DEPTH-AT-CUT-1, TP-2.0 §2.3); a
+    // base family admits the descriptive C0, a TP set (OUTCOME_SUBGROUP) and a matched set the conditional C1 only —
+    // a base estimand there takes its C1 twin (SC11.cforms; lab/contract.py::admissible_claims, claim_form_of)
+    const cs = p.case_set || F.cs, role = SC11 && SC11.case_sets[cs], c0 = role === 'BASE_FAMILY';
+    const e = SC11 && SC11.estimands[p.estimand], f = SC11 && (c0 ? SC11.forms[p.estimand] : (SC11.cforms && SC11.cforms[p.estimand]) || SC11.forms[p.estimand]), miss = e && e.params.find(k => !(k in p.params));
     const sum = p.yes_count + p.unknown_count + p.no_event_count, diff = e && e.measure === 'SHARE_DIFFERENCE';
     const bad = !SC11 ? 'страница собрана без реестра контракта'
       : !e || !f ? 'an unregistered estimand ' + p.estimand
       : e.profile !== 'PROFILE:BASE-24' ? p.estimand + ' is not of the base profile'
-      : !e.q4.includes(F.cs) ? p.estimand + ' is not defined on ' + F.cs
-      : SC11.case_sets[F.cs] !== 'BASE_FAMILY' || f.claim_class !== 'DescriptiveClaim' ? p.estimand + ': its claim ' + f.claim_class + ' is not admissible on ' + F.cs
+      : !e.q4.includes(cs) ? p.estimand + ' is not defined on ' + cs
+      : (c0 ? f.claim_class !== 'DescriptiveClaim' : !['OUTCOME_SUBGROUP', 'MATCHED_AT_CUT'].includes(role) || f.claim_class !== 'ConditionalDescriptiveClaim') ? p.estimand + ': its claim ' + f.claim_class + ' is not admissible on ' + cs
       : miss ? p.estimand + ': parameter ' + miss + ' missing'
       : !Number.isInteger(p.yes_count) || !Number.isInteger(p.unknown_count) || !Number.isInteger(p.no_event_count) || (diff ? Math.abs(p.yes_count) > F.N : p.yes_count < 0 || sum > F.N) ? p.estimand + ': counts outside N'
       : null;
@@ -684,10 +788,12 @@
   const ppTxt = (p, range) => p.pct == null ? '—' : range && p.pctHi != null ? pct(p.pct) + '–' + pct(p.pctHi) : pct(p.pct);
   // the reading of a number in one sentence (spec §14): such a share of this family had THIS event, IN THIS area, OVER
   // THIS horizon (and ON THIS M5)
-  function sentence(p) { return '<b>' + ppTxt(p, p.binary) + '</b> ' + lbl('FF:PASSPORT-VIEW', 'sentence', { phrase: p.phrase, horizon: '<span class="k">' + p.horizon + '</span>' }); }
+  function sentence(p) { return '<b>' + ppTxt(p, p.binary) + '</b> ' + lbl('FF:PASSPORT-VIEW', p.claim_class === 'ConditionalDescriptiveClaim' ? 'sentence_c1' : 'sentence', { phrase: p.phrase, horizon: '<span class="k">' + p.horizon + '</span>' }); }
   const hzOf = F => lbl('FF:PASSPORT-VIEW', 'horizon', { from: F.from, end: clk(F.end) });
   // a share of R or X in an area: a price band (B-RX-BAND), a time window (B-RX-WINDOW) or both (B-RX-REGION)
   function evPass(F, ev, region, bounds, time, yes) {
+    if(F._ts)return tsRegionPass(F,ev,region,bounds,time);
+    if (F._pb && ev === 'R') return pbRegionPass(F, bounds, time);
     const D = F.ev[ev], est = 'EST:B-RX-' + (bounds && time ? 'REGION' : bounds ? 'BAND' : 'WINDOW') + '-' + ev, params = {};
     if (bounds) Object.assign(params, { k0: bounds[0], k1: bounds[1] });
     if (time) Object.assign(params, { b0: (time[0] - F.f) / 15, b1: (time[1] - F.f) / 15 });
@@ -710,6 +816,8 @@
   }
   // the share of the family beyond the frame of the price column (B-RX-OUTFRAME): the cells [k0, k1) out of view
   function outPass(F, ev, i, kr, n) {
+    if(F._ts)return tsRegionPass(F,ev,'region',[kr[0],kr[1]+1],null,true);
+    if (F._pb && ev === 'R') return pbRegionPass(F, [kr[0], kr[1] + 1], null, true);
     const D = F.ev[ev];
     return pp(F, { estimand: 'EST:B-RX-OUTFRAME-' + ev, params: { side: i ? 'BELOW' : 'ABOVE', k0: kr[0], k1: kr[1] + 1 }, event_id: ev, region_kind: 'out_of_frame', start_rule: F.from, end_rule: 'до ' + clk(F.end),
       yes_count: n, unknown_count: D.unknown, no_event_count: D.none, display_scope: 'column' });
@@ -791,7 +899,7 @@
   // ---------- view state ----------
   const st = {
     session: 'RDR', rp: null, v0: 545, v1: 975, p0: null, p1: null, auto: true,
-    L: { pts: true, zones: true, proj: true, strip: true, std: true, prev: true, vib: true, det: true },
+    L: { pts: true, zones: true, proj: true, strip: true, std: true, prev: true, vib: true, det: true, sweep: false, cells: false },
     ev: 'R', mode: 'bounds', view: 'auto', scope: 'weekday', area: null, tool: false, col: null,
     hover: null, pin: null, mx: -1, my: -1, drag: null, stripH: 46, stripPin: false, menu: false,
     detH: 22, detPin: false, detOver: false, navHover: false
@@ -803,7 +911,14 @@
 
   function cur() {
     const D = day(), obs = st.rp != null ? st.rp : NOW, live = st.rp == null;
-    const s = sess(D, st.session, obs, live), F = snapOf(D, s);
+    // DR-LAB-TP-1.1 (tp235.js, operator 03.11): the confirmation family shows T and its window's sessions; the break family
+    // and '#tp=0' keep the table of 30.10 (matrix235.js: the numbers from the table, reset 27.10)
+    // the base family is built in the family's own words; T and T_W (tpView) in the C1 words of their sets (lbl)
+    LBLC1.on = false;
+    const s = sess(D, st.session, obs, live), F0 = snapOf(D, s), tp = tpOn() && F0 && !F0.brk;
+    LBLC1.on = !!tp;
+    const F = tp ? tpView(D, s, F0, { live, obs }) : mxView(F0);
+    LBLC1.on = !!(F && F._tp);
     return { D, obs, live, s, F };
   }
   // the right edge of the time axis is anchored at the session end + rightPad minutes (12; was 45 until 2026-10-06) (design 22's wheel; operator 2026-10-06:
@@ -851,7 +966,7 @@
     const bounds = !!(ctx.F && ctx.F.N) && st.mode === 'bounds';
     // the price column holds R and X in one column in «Границы хода» (each its own 100 %; operator 2026-10-06: one
     // column, not two), one M5 column in «Путь семьи»
-    const projW = !continuationMode() && !pullbackMode() && st.L.proj && ctx.F && ctx.F.N ? (bounds ? 116 : 96) : 0;
+    const projW = !continuationMode() && st.L.proj && ctx.F && ctx.F.N ? (bounds ? 116 : 96) : 0;
     // the time band under the chart (variant «Окна времени»): capsules, hills, columns; operator 2026-10-06: the candles
     // take the height, the band about an eighth of it (84-118 px)
     const bandH = bounds && st.L.strip ? Math.round(clamp((H - handleH - timeH) * cfg.bandH / 100, 60, (H - handleH - timeH) * 0.4)) : 0;
@@ -883,13 +998,27 @@
     // R and X: the constellations the trader looks at next); scattered points and impossible zones do not widen it,
     // the points beyond the frame are named by ▲ / ▼ in the price column
     if (pullbackMode() && isFinite(lo)) [lo, hi] = pbRange(ctx, lo, hi);       // the candidate's own constellations (DR-LAB-PB-0.1)
-    else if (ctx.F && isFinite(lo)) for (const ev of ['R', 'X']) {
+    if (ctx.F && isFinite(lo)) for (const ev of (pullbackMode() ? [] : ['R', 'X'])) {
       const Zm = ctx.F.zones[ev], S = Zm ? zoneStatus(ctx.F, ctx, ev) : [];
       if (Zm) Zm.zones.forEach((z, i) => {
         if (S[i] === 'IMPOSSIBLE') return;
         const ks = z.cell_mask.map(q => q[0]), a = ctx.F.u2p(Math.min(...ks) / 10), b = ctx.F.u2p((Math.max(...ks) + 1) / 10);
         lo = Math.min(lo, a, b); hi = Math.max(hi, a, b);
       });
+    }
+    // the layer «Клетки»: the event's strong key cells still possible today (4+ sessions, more than half of its best live
+    // cell) are in the frame, as the zones still ahead are; a far weak one does not shrink the candles, ▲ / ▼ in the price
+    // column name it
+    if (ctx.F && ctx.F._mx && mxCellsOn() && isFinite(lo)) {
+      const Rch = reachOf(ctx.F, ctx);
+      for (const ev of ['R', 'X']) {
+        const live = ctx.F._mx[ev].key.filter(q => mxCellState(Rch, ev, q.k, q.b) !== 'IMPOSSIBLE'), best = Math.max(0, ...live.map(q => q.n));
+        for (const q of live) {
+          if (q.n < 4 || 2 * q.n <= best) continue;
+          const a = ctx.F.u2p(q.k / 10), b = ctx.F.u2p((q.k + 1) / 10);
+          lo = Math.min(lo, a, b); hi = Math.max(hi, a, b);
+        }
+      }
     }
     // operator 2026-10-06: the next STD not reached yet on the side in play is the trader's question («will it get
     // there?»), so it is always in the frame
@@ -927,42 +1056,47 @@
     Object.assign(C, { dr: cfg.dr, idr: cfg.idr, mid: cfg.mid, std: cfg.std, stdOn: cfg.std, vib: cfg.viC, up: cfg.upC, dn: cfg.dnC, bg: cfg.bg });
     c.fillStyle = C.bg; c.fillRect(0, 0, W, H);
     c.save(); c.beginPath(); c.rect(V.plot.x, V.plot.y, V.plot.w, V.plot.h); c.clip();
-    const F = ctx.F;
+    const F = ctx.F, mapCtx = pbMapContext(ctx), cloudCtx = pbCloudContext(mapCtx);
+    PB.paint = !!mapCtx.F?._pb;
     drawBoxes(c, ctx);
     drawMidnight(c, 0, V.plot.h);
     if (st.L.prev) drawPrev(c, ctx);
     if (st.L.vib) drawVib(c, ctx);
     // the corridor of a hovered band first (its prices on the scale), then the link (its time on the axis), then the film
-    if (F && !continuationMode() && !pullbackMode()) { drawHighlight(c, ctx); linkOf(ctx); }
+    if (F && !continuationMode()) { drawHighlight(c, mapCtx); linkOf(mapCtx); }
     if (continuationMode()) continuationDraw(c,ctx);
-    if (pullbackMode()) pbDraw(c, ctx, 'under');
     if (F && st.mode === 'path') drawFilm(c, ctx);
     drawLevels(c, ctx);
     drawReference(c, ctx);
-    if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, ctx); drawMemberPath(c, ctx); }
-    if (F && !continuationMode()) drawZones(c, ctx, 'under');
+    if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, cloudCtx); drawMemberPath(c, mapCtx); }
+    if (F && st.mode === 'bounds' && !continuationMode()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
+    if (F && !continuationMode()) drawZones(c, cloudCtx, 'under');
+    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);
     if (F && !continuationMode()) drawNowMarks(c, ctx);
     drawPills(c, ctx);
     if (!continuationMode()) drawNow(c, ctx);
-    if (F && !continuationMode() && !pullbackMode()) drawLink(c, ctx);
-    if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, ctx);
-    if (F && st.mode === 'bounds') drawPair(c, ctx);
-    if (pullbackMode()) pbDraw(c, ctx, 'over');
-    if (F && !continuationMode()) drawZones(c, ctx, 'over');
-    if (F && !continuationMode() && !pullbackMode()) drawArea(c, ctx);
+    if (F && !continuationMode()) drawLink(c, mapCtx);
+    if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, cloudCtx);
+    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'over');
+    if (F && st.mode === 'bounds') drawPair(c, mapCtx);
+    if (F) drawSweeps(c, ctx);
+    if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
+    if (F && F._tp && st.mode === 'bounds' && !continuationMode()) tpLevelLines(c, mapCtx);   // screen 24: 70 % / 50 % across the chart
+    if (F && !continuationMode()) drawArea(c, mapCtx);
     if (F && st.mini) drawMini(c, ctx);
     drawTags(c, ctx);
     drawAlerts(c);
     drawCross(c);
     c.restore();
-    if (F && V.stripOn) { c.save(); c.globalAlpha = cfg.bandA / 100; drawBand(c, ctx); c.restore(); }   // operator 2026-10-06: the band quieter
+    if (F && V.stripOn) { c.save(); c.globalAlpha = cfg.bandA / 100; drawBand(c, mapCtx); c.restore(); }   // full zone events, never the compact cloud's display nodes
     drawPriceAxis(c, ctx);
-    if (F && V.projW) drawProj(c, ctx);
+    if (F && V.projW) drawProj(c, pbProjectionContext(mapCtx));
     drawTimeAxis(c, ctx);
     drawLegend(c, ctx);
+    PB.paint = false;
     if (full) { toolbar(ctx); panelHtml(ctx); }
     else panelMarks();
     showTip(st.hover);
@@ -971,7 +1105,7 @@
     placeNav();
     if (ctx.F) verifySoon();
   }
-  const hv = () => st.hover || st.pin;
+  const hv = () => PB.paint ? pbVisualHover(st.hover || st.pin) : st.hover || st.pin;
 
   function drawBoxes(c, ctx) {
     V.boxLbl = [];   // the boxes' names, kept clear of the zone names (drawZones)
@@ -1129,6 +1263,17 @@
       c.beginPath(); c.moveTo(0, Math.round(ya) + 0.5); c.lineTo(V.plot.w, Math.round(ya) + 0.5); c.moveTo(0, Math.round(yb) + 0.5); c.lineTo(V.plot.w, Math.round(yb) + 0.5); c.stroke(); c.setLineDash([]);
       V.win = { t0: null, t1: null, pA: F.u2p(h.k0 / 10), pB: F.u2p(h.k1 / 10), col };
     }
+    if (h.k === 'mcell') V.win = { t0: F.f + 15 * h.b0, t1: F.f + 15 * (h.b0 + 1), pA: F.u2p(h.k0 / 10), pB: F.u2p((h.k0 + 1) / 10), col };
+    if (h.k === 'tpwin' && F._tp) {                                 // TP-1.1: the hovered window's hours over the chart
+      const tt = tpWinT(F, h.id);
+      if (tt) {
+        const x0 = V.X(tt[0]), x1 = V.X(tt[1]), pk = tpWinPeak(F, h.id);
+        c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h);
+        // operator 05.11: the window's peak 15 minutes over the chart and on the time axis — when its pullback is most frequent
+        if (pk) { c.fillStyle = rgba(cfg.R, 0.08); c.fillRect(V.X(pk.t0), 0, V.X(pk.t1) - V.X(pk.t0), V.plot.h); }
+        V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R, peak: pk ? [pk.t0, pk.t1] : null };
+      }
+    }
     if (h.k === 'tcell') {
       const x0 = V.X(F.f + 15 * h.b0), x1 = V.X(F.f + 15 * h.b1);
       c.fillStyle = 'rgba(209,212,220,.05)'; c.fillRect(x0, 0, x1 - x0, V.plot.h);
@@ -1140,7 +1285,7 @@
     if (s.drH == null) return;
     const x0 = V.X(s.start), x1 = V.plot.w, h = hv();
     if (x1 <= x0) return;
-    const play = s.status === 'broken' || (s.status === 'done' && s.failed) ? s.nside : s.side || 0;
+    const play = gridSide(s);
     const line = (p, col, a, w, dash) => { const y = Math.round(V.Y(p)) + 0.5; c.strokeStyle = rgba(col, a); c.lineWidth = w; c.setLineDash(dash); c.beginPath(); c.moveTo(Math.max(x0, 0), y); c.lineTo(x1, y); c.stroke(); c.setLineDash([]); };
     for (const l of levels(s)) {
       const on = h && h.k === 'lvl' && h.id === l.id;
@@ -1282,11 +1427,17 @@
   function emphOf(q, h, F, ctx) {
     if (h) {
       if (h.k === 'arrive') return candidateEmphasis(q, h, F, ctx);
+      if (F._ts && (h.k === 'pcell' || h.k === 'tcell')) {
+        const ev=h.ev||st.ev,axis=h.k==='pcell'?'price':'time',index=h.k==='pcell'?h.k0:h.b0;
+        const cell=F._ts.maps?.[ev]?.[axis+'_peaks'].find(v=>v.index===index);
+        return q.ev===ev && !!cell && tsInside(q,cell);
+      }
       if (h.k === 'pcell') return (!h.ev || h.ev === q.ev) && q.k >= h.k0 && q.k < h.k1;
-      if (h.k === 'tcell') return q.b >= h.b0 && q.b < h.b1;
+      if (h.k === 'tcell') return (!h.ev || h.ev === q.ev) && q.b >= h.b0 && q.b < h.b1;
       if (h.k === 'area') return inArea(q, st.area);
-      if (h.k === 'zone') return h.ev === q.ev && F.zcell[h.ev].get(q.k + '|' + q.b) === h.i;
+      if (h.k === 'zone') return h.ev === q.ev && (F._ts ? tsMember(F.zones[h.ev].zones[h.i],q) : F.zcell[h.ev].get(q.k + '|' + q.b) === h.i);
       if (h.k === 'pt') return q.i === h.i;
+      if (h.k === 'tpzone') return false;                 // TP: a place of another window under the mouse
       if (h.k === 'out') return q.m.outcome === h.cat;
       if (h.k === 'evrow') return true;
       if (h.k === 'hcell') return h.ev === q.ev && q.k === h.kk && q.b === h.b;
@@ -1306,14 +1457,16 @@
   }
   function drawPoints(c, ctx) {
     const F = ctx.F, sl = sliceOf(ctx), h = hv(), R0 = 1.7 * cfg.ptSize / 100, ph = phaseOf(F, ctx);
+    V.stars = [];
     for (const ev of ['R', 'X']) {
       const pk = phaseK(ph, ev), col0 = cfg[ev], look = F.zones[ev] ? zoneLook(F, ctx, ev) : [], spent = stateCol(col0, 'spent');
       for (const q of F.ev[ev].pts) {
         const zi = pointZone(F, q);
         if (zi == null) continue;
-        const col = look[zi] === 'IMPOSSIBLE' ? spent : look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
+        const col = expiredLook(look[zi]) ? spent : look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
         const x = V.X(q.t + 2.5), y = V.Y(q.p);
         if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
+        V.stars.push({ev,zi,x,y,q});
         const past = q.t + 5 <= sl, e = emphOf(q, h, F, ctx);
         let a = (past ? cfg.pastA : cfg.ptA) / 100 * 1.1, r = R0;
         if (e === true) { a = Math.min(1, Math.max(a, 0.55) + 0.3); r = R0 * 1.3; } else if (e === false) a *= 0.28;
@@ -1327,7 +1480,7 @@
   function drawPair(c, ctx) {
     const F = ctx.F, m = pinnedMember(ctx);
     if (!m) return;
-    for (const ev of ['R', 'X']) {
+    for (const ev of (F._pb ? ['X'] : ['R', 'X'])) {
       const e = m[ev];
       if (e.s !== 'known') continue;
       const x = V.X(e.t + 2.5), y = V.Y(F.u2p(e.v / m.w)), col = cfg[ev];
@@ -1408,7 +1561,7 @@
       const Zm = F.zones[ev];
       if (!Zm) continue;
       Zm.zones.forEach((z, i) => {
-        const pts = F.ev[ev].pts.filter(q => F.zcell[ev].get(q.k + '|' + q.b) === i).map(q => [V.X(q.t + 2.5), V.Y(q.p), q.b]);
+        const pts = F.ev[ev].pts.filter(q => F._ts ? tsMember(z,q) : F.zcell[ev].get(q.k + '|' + q.b) === i).map(q => [V.X(q.t + 2.5), V.Y(q.p), q.b]);
         if (!pts.length) { out[ev].push(null); return; }
         const kd = kde(pts, 18), pb = new Map();
         for (const p of pts) pb.set(p[2], (pb.get(p[2]) || 0) + 1);
@@ -1425,6 +1578,7 @@
     if (!h) return 1;
     if (h.k === 'zone') return h.ev === ev && h.i === i ? 1.5 : 0.45;
     if (h.k === 'pt') return 0.6;
+    if (h.k === 'tpzone') return 0.45;
     if (h.k === 'pcell') return h.ev === ev && z.cell_mask.some(([k]) => k >= h.k0 && k < h.k1) ? 1.15 : 0.6;
     if (h.k === 'tcell') return z.cell_mask.some(([, b]) => b >= h.b0 && b < h.b1) ? 1.1 : 0.55;
     return 0.8;
@@ -1437,7 +1591,7 @@
         if (!g || zoneHeld(F, ev, i)) return;        // a withheld zone's share is «—»: its haze and threads do not assert it
         const col = stateCol(col0, S[i]);
         // a spent constellation stays readable as history (operator 2026-10-06: «чуть-чуть ярче»), setting «spentA»
-        const k = cloudK(F, ev, i, h, g.z), dim = S[i] === 'IMPOSSIBLE' ? 0.6 * cfg.spentA / 100 : S[i] === 'QUIET' ? 0.7 : S[i] === 'HOLDS' ? 1.15 : 1;
+        const k = cloudK(F, ev, i, h, g.z), dim = expiredLook(S[i]) ? 0.6 * cfg.spentA / 100 : S[i] === 'QUIET' ? 0.7 : S[i] === 'HOLDS' ? 1.15 : 1;
         c.save();
         c.filter = 'blur(14px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
         c.filter = 'blur(7px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.45, 0.13 * k * dim * fa)); loopsPath(c, g.g2); c.fill();
@@ -1457,7 +1611,8 @@
   function peakAhead(F, ctx, qs, ev, yc) {
     const Rch = reachOf(F, ctx), ahead = qs.filter(q => q.t + 5 > Rch.sl && Rch.okCell(ev, q.k, q.b));
     const past = !ahead.length, use = past ? qs : ahead, cnt = new Map();
-    for (const q of use) cnt.set(q.b, (cnt.get(q.b) || 0) + 1);
+    if(F._pb && ev === 'R'){const cases=new Map();for(const q of use){if(!cases.has(q.b))cases.set(q.b,new Set());cases.get(q.b).add(q.m.id);}for(const [b,ids] of cases)cnt.set(b,ids.size);}
+    else for (const q of use) cnt.set(q.b, (cnt.get(q.b) || 0) + 1);
     let b = null;
     for (const [bb, n] of cnt) if (b == null || n > cnt.get(b) || (n === cnt.get(b) && bb < b)) b = bb;
     if (b == null) return null;
@@ -1491,6 +1646,7 @@
       return;
     }
     if (st.mode !== 'bounds') return;
+    if (h.k === 'tpzone') { if (F._tp) tpGhostLink(ctx, h); return; }   // TP: a place of another window, as a zone
     // operator 2026-10-06: «до какого времени этот кластер валидный?» — a hovered zone shows its WHOLE time window (the
     // 15-minute cells it covers) over its prices: the part already passed in the spent shade, the part still ahead in its
     // colour, the slice between them; the axis window names the whole window. No peak, no ring, no red: the zone's status
@@ -1499,17 +1655,21 @@
       const z = F.zones[h.ev] && F.zones[h.ev].zones[h.i];
       if (z && !zoneHeld(F, h.ev, h.i)) {          // a withheld zone draws no window (its inspector says «—»)
         const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = F.f + 15 * Math.min(...bs), t1 = F.f + 15 * (Math.max(...bs) + 1);
-        const look = zoneStatus(F, ctx, h.ev)[h.i], spent = look === 'IMPOSSIBLE';
-        V.lk = { ev: h.ev, src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS' };
+        const look = (F._pb && h.ev === 'R' ? zoneLook(F,ctx,h.ev) : zoneStatus(F,ctx,h.ev))[h.i], spent = expiredLook(look);
+        V.lk = { ev: h.ev, src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', marker: targetMarker(F, ctx, h.ev, z) };
         V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg[h.ev], 'spent') : cfg[h.ev] });
       }
       return;
-    } else if (h.k === 'pcell' && h.ev) {
+    } else if (h.k === 'pcell' && h.ev && F._mx) mxLink(F, ctx, h);
+    else if (h.k === 'pcell' && h.ev) {
       const yc = (V.Y(F.u2p(h.k0 / 10)) + V.Y(F.u2p(h.k1 / 10))) / 2;
       const pk = peakAhead(F, ctx, F.ev[h.ev].pts.filter(q => q.k >= h.k0 && q.k < h.k1), h.ev, yc);
-      if (pk) V.lk = { ev: h.ev, x: pk.x, y: yc, b: pk.b, n: pk.n, past: pk.past, k0: h.k0, k1: h.k1, src: 'pcell' };
+      if (pk) {
+        const target = { event_id: h.ev, cell_mask: Array.from({ length: h.k1 - h.k0 }, (_, i) => [h.k0 + i, pk.b]), time_end: F.f + 15 * (pk.b + 1) };
+        V.lk = { ev: h.ev, x: pk.x, y: yc, b: pk.b, n: pk.n, past: pk.past, k0: h.k0, k1: h.k1, src: 'pcell', marker: targetMarker(F, ctx, h.ev, target) };
+      }
     }
-    if (V.lk && V.lk.b != null) { const t0 = F.f + 15 * V.lk.b; V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1: t0 + 15, col: V.lk.past ? '#F23645' : cfg[V.lk.ev] }); }
+    if (V.lk && V.lk.b != null) { const t0 = F.f + 15 * V.lk.b; V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1: t0 + 15, col: REVIEW ? V.lk.marker.paint.color : V.lk.past ? '#F23645' : cfg[V.lk.ev] }); }
   }
   // a cell of the six windows under the mouse, framed on the main chart: its price band × its time (operator 2026-10-06)
   function drawMini(c, ctx) {
@@ -1602,7 +1762,7 @@
     if (!lk) return;
     // operator 2026-10-06: the time × price cluster shows on the constellation itself — a soft box over the zone's (or
     // band's) prices on its peak 15 minutes, its time written above — instead of a column down to the time band
-    const F = ctx.F, col = lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
+    const F = ctx.F, col = REVIEW && lk.marker ? lk.marker.paint.color : lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
     if (lk.src === 'zone') {
       const [y0, y1] = cellY(F, lk.k0, lk.k1), ya = Math.min(y0, y1), yb = Math.max(y0, y1), xs = clamp(V.X(lk.sl), xa, xb);
       // a zone that holds today's extreme is today's answer so far, whatever the clock: its whole window in its (lighter)
@@ -1621,6 +1781,7 @@
       c.strokeStyle = rgba(cs, 0.55); c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xa) - 1), Math.max(2, Math.round(yb - ya) - 1));
       if (live) { c.strokeStyle = rgba(cz, 0.75); c.strokeRect(Math.round(xl) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xl) - 1), Math.max(2, Math.round(yb - ya) - 1)); }
       c.setLineDash([]);
+      if (REVIEW && lk.marker && visitSettled(lk.marker.visit)) drawVisitRing(c, F, lk.marker);
       return;
     }
     if (lk.row && lk.k0 != null) { drawBandProfile(c, ctx, lk, 'top'); return; }
@@ -1628,11 +1789,14 @@
     // price column hovered → its peak 15 minutes as a soft column with two dashed edges down to the time band (as it was
     // before entry 33); a hovered zone keeps its soft box on the constellation
     if (lk.src === 'pcell') {
-      const yb = V.plot.h, g = c.createLinearGradient(0, lk.y, 0, yb);
-      g.addColorStop(0, rgba(col, 0.03)); g.addColorStop(1, rgba(col, 0.15));
-      c.fillStyle = g; c.fillRect(xa, lk.y, xb - xa, yb - lk.y);
-      c.strokeStyle = rgba(col, 0.45); c.lineWidth = 1; c.setLineDash([3, 3]);
-      c.beginPath(); for (const x of [xa, xb]) { c.moveTo(Math.round(x) + 0.5, lk.y); c.lineTo(Math.round(x) + 0.5, yb); } c.stroke(); c.setLineDash([]);
+      // with the table every co-maximum of the row gets the same soft column: none stands for another
+      for (const b of lk.ties && lk.ties.length ? lk.ties : [null]) {
+        const xa = b == null ? V.X(t0) : V.X(F.f + 15 * b), xb = b == null ? V.X(t1) : V.X(F.f + 15 * b + 15), yb = V.plot.h, g = c.createLinearGradient(0, lk.y, 0, yb);
+        g.addColorStop(0, rgba(col, 0.03)); g.addColorStop(1, rgba(col, 0.15));
+        c.fillStyle = g; c.fillRect(xa, lk.y, xb - xa, yb - lk.y);
+        c.strokeStyle = rgba(col, 0.45); c.lineWidth = 1; c.setLineDash([3, 3]);
+        c.beginPath(); for (const x of [xa, xb]) { c.moveTo(Math.round(x) + 0.5, lk.y); c.lineTo(Math.round(x) + 0.5, yb); } c.stroke(); c.setLineDash([]);
+      }
     } else if (lk.k0 != null) {
       const [ya, yb] = cellY(F, lk.k0, lk.k1);
       const g = c.createLinearGradient(xa, 0, xb, 0);
@@ -1641,8 +1805,20 @@
       c.strokeStyle = rgba(col, 0.55); c.lineWidth = 1; c.setLineDash([3, 3]);
       c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xa) - 1), Math.max(2, Math.round(yb - ya) - 1)); c.setLineDash([]);
     }
-    c.save(); c.shadowColor = rgba(col, 0.7); c.shadowBlur = 8; c.strokeStyle = col; c.lineWidth = 1.6;
-    c.beginPath(); c.arc(lk.x, lk.y, 7, 0, 6.2832); c.stroke(); c.restore();
+    if (REVIEW && lk.marker) drawVisitRing(c, F, lk.marker, lk.x, lk.y);
+    else {
+      c.save(); c.shadowColor = rgba(col, 0.7); c.shadowBlur = 8; c.strokeStyle = col; c.lineWidth = 1.6;
+      c.beginPath(); c.arc(lk.x, lk.y, 7, 0, 6.2832); c.stroke(); c.restore();
+    }
+  }
+  function drawVisitRing(c, F, marker, x, y) {
+    const p = marker.paint;
+    if (marker.time != null) { x = V.X(marker.time); y = V.Y(F.u2p(marker.u)); }
+    if (x == null || y == null || marker.visit.state === 'WITHHELD' || marker.visit.state === 'NO_PERIOD') return;
+    c.save(); c.shadowColor = rgba(p.color, 0.7); c.shadowBlur = 8; c.strokeStyle = p.color; c.lineWidth = 1.8;
+    c.setLineDash(p.dashed ? [2, 2] : []); c.beginPath(); c.arc(x, y, 7, 0, 6.2832); c.stroke();
+    if (p.mark) { c.shadowBlur = 0; c.font = '700 10px ' + FONT; c.fillStyle = p.color; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(p.mark, x, y); }
+    c.restore();
   }
 
   // the selected area (spec §7.1): the bracket right of the block end spans the WHOLE price band and carries the band's
@@ -1709,12 +1885,13 @@
     const cost = r => 4 * live.filter(b => over(r, b)).length + 4 * pills.filter(b => over(r, b)).length + 3 * placed.filter(b => over(r, b)).length + bars.filter(b => over(r, b)).length;
     if (phase === 'under') V.zoneHit = [];
     const env = { placed, live, pills, bars, over };
+    if (phase === 'under') V.zoneEnv = env;
     for (const ev of ['X', 'R']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
       CL[ev].forEach((g, i) => {
         if (!g) return;
         const col = stateCol(col0, S[i]);
-        const z = g.z, s = S[i], imp = s === 'IMPOSSIBLE', on = !!(h && h.k === 'zone' && h.ev === ev && h.i === i);
+        const z = g.z, s = S[i], imp = expiredLook(s), on = !!(h && h.k === 'zone' && h.ev === ev && h.i === i);
         if (phase === 'under') { if (inside) zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env); return; }
         if ((on || imp) && !zoneHeld(F, ev, i)) { c.save(); c.strokeStyle = rgba(col, on ? 0.6 : 0.3); c.lineWidth = 1; c.setLineDash(imp ? [4, 3] : []); loopsPath(c, g.ln); c.stroke(); c.restore(); }
         if (on && false) {
@@ -1776,20 +1953,37 @@
   // after them), the confirmation pill or another name is led out to the LEFT — into the past, never over the time
   // ahead — on a thin dash-dot line from a small ring at the constellation's centre: X toward the side of the
   // confirmation, R away from it, each to the least crowded place. The others stay inside, as a background.
-  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env) {
-    const imp = s === 'IMPOSSIBLE', zp = zonePass(F, ev, z), zt = ppTxt(zp), share = zp.pct || 0;
-    const ps = F.ev[ev].pts.filter(q => F.zcell[ev].get(q.k + '|' + q.b) === i);
+  // o (TP, operator 05.11): a place of another window — its name, a smaller size, a quieter look, its own hit list
+  function zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env, o) {
+    o = o || {};
+    // TP-2.0: a place of R reads its share of the whole family, a place of X how many of the window's sessions got this
+    // far (tp235.js::tpMarkPass); elsewhere the zone's own share
+    const tpm = !o.pass && F._tp ? tpMarkPass(F, ev, z) : null;
+    const imp = expiredLook(s), zp = o.pass || (tpm && tpm.p) || zonePass(F, ev, z), zt = ppTxt(zp), share = zp.pct || 0, name = o.name || (tpm && tpm.name) || z.label;
+    const ps = F.ev[ev].pts.filter(q => F._ts ? tsMember(z,q) : F.zcell[ev].get(q.k + '|' + q.b) === i);
     let cx = (g.bb[0] + g.bb[2]) / 2, cy = (g.bb[1] + g.bb[3]) / 2;
     if (ps.length) { cx = ps.reduce((a, q) => a + V.X(q.t + 2.5), 0) / ps.length; cy = ps.reduce((a, q) => a + V.Y(q.p), 0) / ps.length; }
-    const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
+    const fs = Math.round(clamp(12 + 0.45 * share, 15, 21) * cfg.zoneLbl / 100 * (imp ? 0.8 : 1) * (o.size || 1)), nfs = Math.round(fs * 0.6), lw = imp ? '500 ' : '700 ';
     c.font = lw + nfs + 'px ' + FONT;
-    const wN = c.measureText(z.label).width, wS = pctW(c, zt, lw, fs), wT = wN + 4 + wS, hT = fs;
+    const wN = c.measureText(name).width, wS = pctW(c, zt, lw, fs), wT = wN + 4 + wS, hT = fs;
     let lx = clamp(cx - wT / 2, 4, V.plot.w - 64 - wT), ly = clamp(cy - fs / 2, 30, V.plot.h - hT - 4), out = false;
     const { placed, live, pills, bars, over } = env, R = (x, y) => [x - 2, y - 2, x + wT + 2, y + hT + 2];
     // any candle under the name counts too (operator 2026-10-06: the first constellations lie on the candles of the first
     // minutes after the confirmation, not only on the last ones)
     const hits = r => live.some(b => over(r, b)) || pills.some(b => over(r, b)) || placed.some(b => over(r, b)) || bars.some(b => over(r, b));
-    if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
+    if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly)) && o.stay) {
+      // a place of another window (TP, 05.11) keeps its name in its own hours: off the candles and the room after them
+      // up or down (and a little later), never into the past where the window on screen stands; a dash-dot line if far
+      const sgn = (ev === 'X' ? -1 : 1) * (F.d0 > 0 ? 1 : -1);
+      let best = null, bc = 1e9;
+      for (const dx of [0, 30, 60, 100]) for (const dy of [24, 48, 80, 120, 160].flatMap(v => [sgn * v, -sgn * v])) {
+        const x = clamp(cx - wT / 2 + dx, 4, V.plot.w - 64 - wT), y = cy + dy - hT / 2, r = R(x, y);
+        if (y < 30 || y + hT > V.plot.h - 4) continue;
+        const cc = 5 * (live.filter(b => over(r, b)).length + pills.filter(b => over(r, b)).length + placed.filter(b => over(r, b)).length) + bars.filter(b => over(r, b)).length + dx / 200 + Math.abs(dy) / 200;
+        if (cc < bc) { bc = cc; best = [x, y]; }
+      }
+      if (best) [lx, ly] = best;
+    } else if (cfg.zoneLblPos === 'auto' && hits(R(lx, ly))) {
       const sgn = (ev === 'X' ? -1 : 1) * (F.d0 > 0 ? 1 : -1);
       let best = null, bc = 1e9;
       for (const dx of [80, 120, 170, 230, 300, 380]) for (const dy of [sgn * 40, sgn * 70, sgn * 100, sgn * 140, 0, -sgn * 40]) {
@@ -1804,7 +1998,7 @@
     // operator 2026-10-06: zoomed in, a constellation outside the frame keeps its name at the edge with a thin dash-dot
     // line toward it (as the earlier threads did); a name pushed far from its centre gets the same line
     const far = !out && (cx < 0 || cx > V.plot.w || cy < 0 || cy > V.plot.h || Math.hypot(clamp(cx, lx, lx + wT) - cx, clamp(cy, ly, ly + hT) - cy) > 24);
-    const k = cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1);
+    const k = o.k != null ? o.k : cloudK(F, ev, i, h, z), op = (k < 1 ? 0.4 + 0.5 * k : 1) * (imp ? cfg.zoneSpentA / 100 : 1) * (o.alpha || 1);
     const aName = out ? cfg.calloutA / 100 : cfg.zoneNameA / 100, aNum = out ? cfg.calloutA / 100 * 0.95 : cfg.zoneNumA / 100;
     c.save(); c.globalAlpha = Math.min(1, op);
     if (far) {
@@ -1820,22 +2014,45 @@
     }
     c.textBaseline = 'alphabetic';
     const yb = ly + fs * 0.86;
-    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, aName); c.fillText(z.label, lx, yb);
+    c.font = lw + nfs + 'px ' + FONT; c.fillStyle = rgba(col, aName); c.fillText(name, lx, yb);
     pctDraw(c, zt, lx + wN + 4, yb, lw, fs, rgba(mixW(col, 0.35), aNum));
     c.restore();
-    V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 6], ev, i, loops: g.hit });
+    if (o.hit) o.hit([lx - 2, ly - 2, wT + 4, hT + 6]);
+    else V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 6], ev, i, loops: g.hit });
   }
   // ---------- the time band (variant «Окна времени», operator 2026-10-01) ----------
+  const expiredLook = s => s === 'IMPOSSIBLE' || s === 'PAST';
+  // PRICE-column attention uses the existing zone-map-3 support floor. Time columns keep every nonempty bin, as on 24.
+  // Presentation never removes a case or changes n/N.
+  // A supported zone keeps its strongest projected row even when its mass is distributed over several cells.
+  function projectionFocus(F,ev,axis) {
+    const D=F.ev[ev][axis],need=Math.max(4,Math.ceil(F.N/20)),peaks=new Set(),zoneKeys=new Set();
+    for(const z of F.zones[ev]?.zones||[]){
+      const keys=[...new Set(z.cell_mask.map(c=>c[axis==='P'?0:1]))].sort((a,b)=>a-b);
+      keys.forEach(k=>zoneKeys.add(k));
+      const peak=keys.reduce((best,k)=>best==null||(D.get(k)||0)>(D.get(best)||0)?k:best,null);
+      if(peak!=null&&D.get(peak))peaks.add(peak);
+    }
+    const shown=new Set(peaks),labels=new Set(peaks);
+    for(const [k,n] of D)if(n>=need&&(axis==='P'||zoneKeys.has(k))){
+      shown.add(k);
+      if(n>(D.get(k-1)||0)&&n>=(D.get(k+1)||0))labels.add(k);
+    }
+    return {need,peaks,shown,labels};
+  }
   // X above the centre, R below, in three layers:
   // - the capsules (outer lanes): every zone over its whole time window (the 15-minute cells it covers), with its share
   //   of the family and today's status: the zone as a cluster in time;
   // - the hills: the shape of each zone's sessions in time (a Gaussian of 7 minutes); one height scale per event, its
   //   tallest hill filling the half: where in its window the zone is densest, a drawing without a number (X and R hills
   //   are not compared by height; the capsules and the columns carry the numbers);
-  // - the columns: R and X of the family by 15 minutes on one square-root scale, each its own 100 % (with «?» at the
-  //   right), both shares of the same N, so the taller of the two is the event more of the family set in that window.
+  // - the columns: shares of the same family N by 15 minutes on one linear scale (with «?» at the right).
+  //   PB-L may occur in several windows of one session; FINAL-X is one point. Their heights are frequencies of
+  //   DIFFERENT named events, never probabilities of two opposite next moves. Do not apply a winner/loser contrast.
   // Passed windows are dimmer.
   function bandHills(F, ctx, ev) {
+    if(F._ts?.maps)return tsHills(F,ev);
+    if (F._pb?.proof && ev === 'R') return pbBandHills(F);
     const Zm = F.zones[ev];
     if (!Zm) return [];
     return Zm.zones.map((z, i) => {
@@ -1863,7 +2080,7 @@
     for (const ev of ['R', 'X']) {
       const Zm = F.zones[ev], S = Zm ? zoneStatus(F, ctx, ev) : [];
       if (Zm) Zm.zones.forEach((z, i) => {
-        if (S[i] === 'IMPOSSIBLE') return;
+        if (expiredLook(S[i])) return;
         const ks = z.cell_mask.map(q => q[0]);
         yLow = Math.max(yLow, V.Y(F.u2p(Math.min(...ks) / 10)), V.Y(F.u2p((Math.max(...ks) + 1) / 10)));
       });
@@ -1871,6 +2088,7 @@
     return Math.round(clamp(V.plot.h - yLow - 10, 0, V.plot.h * cfg.bandRise / 100));
   }
   function drawBand(c, ctx) {
+    if (ctx.F && ctx.F._tp) return tpBand(c, ctx);                 // TP-1.1: the clock of T and its windows (tp235.js)
     const F = ctx.F, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, N = F.N, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
     // the band's drawing area: its own strip plus the free height above it (operator 2026-10-06: the columns of X and R
     // must be tall enough to compare, without covering the chart)
@@ -1898,39 +2116,47 @@
     if (ov > 0) { const gr = c.createLinearGradient(0, B.y, 0, B0.y); gr.addColorStop(0, 'rgba(10,11,15,0)'); gr.addColorStop(1, 'rgba(10,11,15,.72)'); c.fillStyle = gr; c.fillRect(B.x, B.y, B.w, ov); }
     c.fillStyle = C.grid; c.fillRect(B0.x, B0.y, B0.w, 1);
     drawMidnight(c, B0.y, B0.y + B0.h);
-    const T = { R: F.ev.R.T, X: F.ev.X.T }, mx = Math.max(1, ...T.R.values(), ...T.X.values());
+    // the reset of 27.10 (matrix235.js): a column is one cell of the table — at rest the window's strongest cell, with a
+    // row of one event open that row's cell (the other event at rest, dimmed); capsules, hills and the drawing unchanged
+    const sec = F._mx ? mxSection(h, 'time') : null, mval = (ev, b) => F._mx ? mxBandVal(F, ev, b, sec) : null;
+    const T = { R: F.ev.R.T, X: F.ev.X.T }, mx = F._mx ? F._mx.max : Math.max(1, ...T.R.values(), ...T.X.values());
     // operator 2026-10-06: the height is LINEAR in the share (the square root hid the difference: 4,8 against 3,2 looked
     // like 1,22 instead of 1,5); the counts are unchanged
     const yOf = (ev, n) => cy + dir[ev] * (1 + half * Math.min(1, Math.max(0, n) / mx));
     // the columns
-    V.bandCols = [];
+    V.bandCols = []; V.bandVals = [];
     const labels = [];
     for (let b = 0; b < F.nb; b++) {
       const t0 = F.f + 15 * b, x0 = V.X(t0) + 1, x1 = V.X(t0 + 15) - 1;
       if (x1 < B.x || x0 > B.x + B.w) continue;
       V.bandCols.push({ b, x0, x1 });
-      const nX = T.X.get(b) || 0, nR = T.R.get(b) || 0, past = t0 + 15 <= sl;
-      const lit = (h && h.k === 'tcell' && b >= h.b0 && b < h.b1) || (lk && lk.b === b), zl = h && h.k === 'zone' && F.zones[h.ev] && F.zones[h.ev].zones[h.i] && F.zones[h.ev].zones[h.i].cell_mask.some(([, bb]) => bb === b);
+      const vX = mval('X', b), vR = mval('R', b), nX = F._mx ? (vX ? vX.n : 0) : T.X.get(b) || 0, nR = F._mx ? (vR ? vR.n : 0) : T.R.get(b) || 0, past = t0 + 15 <= sl;
+      const litOf = ev => (h && h.k === 'tcell' && (!h.ev || h.ev === ev) && b >= h.b0 && b < h.b1) || (h && h.k === 'mcell' && h.ev === ev && b === h.b0) || (lk && (lk.b === b || (lk.ties && lk.ties.includes(b))) && (!F._mx || lk.ev === ev));
+      const keyB = ev => !sec && F._mx && mxCellsOn() && F._mx[ev].key.some(q => q.b === b);   // the layer «Клетки»: this window's rectangle stands for a key cell
+      const lit = litOf('X') || litOf('R'), zl = h && h.k === 'zone' && F.zones[h.ev] && F.zones[h.ev].zones[h.i] && F.zones[h.ev].zones[h.i].cell_mask.some(([, bb]) => bb === b);
       for (const ev of ['X', 'R']) {
-        const n = ev === 'X' ? nX : nR, o = ev === 'X' ? nR : nX;
+        const n = ev === 'X' ? nX : nR, o = ev === 'X' ? nR : nX, mv = ev === 'X' ? vX : vR, litE = F._mx ? litOf(ev) : lit;
+        if (mv && mv.n) V.bandVals.push({ ev, b, k: mv.k, n: mv.n, ans: mv.ans });
         // a withheld window share (its passport «—», SWPC-1.1 M14) draws no column; its place stays empty
-        if (n && ppHeld(F, 'EST:B-RX-WINDOW-' + ev, { b0: b, b1: b + 1 })) { if (lit) labels.push({ x: (x0 + x1) / 2, y: cy + dir[ev] * 9, t: '—', col: cfg[ev] }); continue; }
+        if (n && (mv ? ppHeld(F, 'EST:B-RX-REGION-' + ev, { k0: mv.k, k1: mv.k + 1, b0: b, b1: b + 1 }) : ppHeld(F, 'EST:B-RX-WINDOW-' + ev, { b0: b, b1: b + 1 }))) { if (litE) labels.push({ x: (x0 + x1) / 2, y: cy + dir[ev] * 9, t: '—', col: cfg[ev] }); continue; }
         // the balance inside the 15 minutes (operator 2026-10-06): the larger side brighter, the smaller dimmer, the more
         // so the stronger the tilt (setting «контраст перевеса»); a drawing of the same two shares, not a new number
-        const dom = n + o > 0 ? (n - o) / (n + o) : 0;
+        const dom = 0;   // 23.5, 29.10: no R/X tilt (meaning/13 entry 61): two different events, never a balance
         let a = (0.12 + 0.26 * Math.pow(n / mx, 0.7)) * Math.max(0.15, 1 + cfg.domK / 100 * dom);
         if (past) a *= 0.5;
-        if (lit || zl) a = Math.max(a, 0.5);
+        if (mv && !mv.ans) a *= 0.35;
+        if (litE || zl) a = Math.max(a, 0.5);
+        if (keyB(ev)) a = Math.max(a, (past ? 0.3 : 0.5) + 0.45 * n / F._mx.max);
         c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, n);
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
         // a thin outline on the side that outweighs, even for a small tilt (3,8 against 3,2), stronger with the tilt but
         // always quiet (operator 2026-10-06: an outline takes the eye, so only the winner and only lightly)
-        if (n > o && cfg.domLine > 0 && Math.abs(y - cy) > 3) {
+        if (false && n > o && cfg.domLine > 0 && Math.abs(y - cy) > 3) {   // the winner's outline is off with the tilt (29.10)
           c.strokeStyle = rgba(cfg[ev], Math.min(0.9, (0.12 + 0.18 * Math.min(1, 3 * dom)) * (past ? 0.6 : 1) * cfg.domLine / 100)); c.lineWidth = 1;   // barely visible (operator 2026-10-06)
           c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir[ev], y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1));
         }
-        if (lit && n) labels.push({ x: (x0 + x1) / 2, y: dir[ev] < 0 ? y - 7 : y + 8, t: ppTxt(evPass(F, ev, 'time_cell', null, [t0, t0 + 15], n)).replace('%', ''), col: cfg[ev] });
+        if (n && (F._mx ? litE || (sec && sec.ev === ev) || keyB(ev) : lit)) labels.push({ x: (x0 + x1) / 2, y: dir[ev] < 0 ? y - 7 : y + 8, t: ppTxt(mv ? mxCellPass(F, ev, mv) : evPass(F, ev, 'time_cell', null, [t0, t0 + 15], n)).replace('%', ''), col: cfg[ev] });
       }
     }
     // the hills: one height scale per event, its tallest hill filling its half (a shape, not a number)
@@ -1951,7 +2177,7 @@
       c.beginPath(); scr.forEach((p, j) => j ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.stroke(); c.setLineDash([]);
       V.hills.push({ ev, i: o.i, scr, cy, up: dir[ev] < 0 });
     });
-    for (const L of labels) { c.font = '700 10.5px ' + FONT; c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, L.y); c.textAlign = 'left'; }
+    for (const L of labels) { c.font = '700 10.5px ' + FONT; c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, Math.max(B.y + 7, Math.min(B.y + B.h - 7, L.y))); c.textAlign = 'left'; }
     // the capsules: the zone over its whole time window, its share and status inside. Operator 2026-10-06: no outline on a
     // live zone, only a soft fill whose saturation follows the zone's share (one scale for R and X); a hovered or pinned
     // zone gets a hairline; a zone that is already IMPOSSIBLE today is a faint dashed trace with dim text, so the eye
@@ -2011,7 +2237,7 @@
   function drawTags(c, ctx) {
     const items = [], s = ctx.s, xr = V.plot.w - 6;
     if (s.drH != null) {
-      const play = s.status === 'broken' ? s.nside : s.side || 0;
+      const play = gridSide(s);
       for (const l of levels(s)) {
         if (l.type === 'std' && !stdShown(s, l)) continue;   // every drawn line is named (operator 2026-10-06)
         // today's DR / IDR named on their own lines, not as wide tags on the price scale (operator 2026-10-06)
@@ -2149,8 +2375,13 @@
     V.projBars = []; V.projCols = { X: [A_.x, A_.x + A_.w], R: [A_.x, A_.x + A_.w] }; V.projUnk = null; V.projEdge = null;
     c.save(); c.beginPath(); c.rect(A_.x, 0, A_.w, A_.h); c.clip();
     const info = {}, lanes = [], out = { X: [0, 0], R: [0, 0] }, outK = { X: [null, null], R: [null, null] };
+    // the reset of 27.10 (matrix235.js): a segment is one cell of the table — at rest the row's strongest cell, with a
+    // window of one event open that window's cell (the other event at rest, dimmed); the drawing is unchanged
+    const sec = F._mx ? mxSection(h, 'price') : null, PV = F._mx ? mxProjVals(F, sec) : null, PR = F._mx ? mxProjVals(F, null) : null;
+    const PP = (ev, rest) => F._mx ? new Map([...(rest ? PR : PV)[ev]].map(([k, v]) => [k, v.n])) : F.ev[ev].P;
+    V.projLbl = [];
     for (const ev of ['R', 'X']) {
-      const D = F.ev[ev], Zm = F.zones[ev], hzi = h && h.k === 'zone' && h.ev === ev ? h.i : null, zr = new Map(), peak = new Set();
+      const D = Object.assign({}, F.ev[ev], { P: PP(ev, false) }), Zm = F.zones[ev], hzi = h && h.k === 'zone' && h.ev === ev ? h.i : null, zr = new Map(), peak = new Set();
       if (Zm) Zm.zones.forEach((z, i) => {
         if (zoneHeld(F, ev, i)) return;                // a withheld zone (SWPC-1.1 M14): its rows are drawn as rows outside zones
         const ks = z.cell_mask.map(q => q[0]), k0 = Math.min(...ks), k1 = Math.max(...ks) + 1;
@@ -2159,47 +2390,52 @@
         if (bk != null && D.P.get(bk)) peak.add(bk);
         lanes.push({ i, k0, k1, ev, hot: hzi === i });
       });
+      if (F._mx && mxCellsOn()) for (const q of F._mx[ev].key) { zr.set(q.k, 0); peak.add(q.k); }   // the layer «Клетки»: a key cell's row reads as a zone's row did
       info[ev] = { D, zr, peak, hzi };
     }
-    const keys = [...new Set([...F.ev.R.P.keys(), ...F.ev.X.P.keys()])];
-    const mx = Math.max(1, ...keys.map(k => (F.ev.R.P.get(k) || 0) + (F.ev.X.P.get(k) || 0)));
-    const m1 = Math.max(1, ...F.ev.R.P.values(), ...F.ev.X.P.values()), str = n => Math.pow(n / m1, 0.75);   // 0..1, one scale
+    const PRr = PP('R', true), PRx = PP('X', true), keys = [...new Set([...PRr.keys(), ...PRx.keys()])];
+    const mx = Math.max(1, ...keys.map(k => (PRr.get(k) || 0) + (PRx.get(k) || 0)));
+    const m1 = Math.max(1, ...PRr.values(), ...PRx.values()), str = n => Math.pow(n / m1, 0.75);   // 0..1, one scale (the rest)
     // operator 2026-10-06: a band's sessions whose event is already behind today's slice (by the clock) vs still ahead;
     // the segment keeps its whole length (the band's share), the passed part is faded, so «what is still ahead» reads
     const Rch = reachOf(F, ctx), sl = Rch.sl, gone = { R: new Map(), X: new Map() };
-    for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) if (q.t + 5 <= sl) gone[ev].set(q.k, (gone[ev].get(q.k) || 0) + 1);
+    if (F._mx) { for (const ev of ['R', 'X']) for (const [k, v] of PV[ev]) if (F.f + 15 * (v.b + 1) <= sl) gone[ev].set(k, v.n); }   // a cell whose window has passed
+    else for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) if (q.t + 5 <= sl) gone[ev].set(q.k, (gone[ev].get(q.k) || 0) + 1);
+    const okRow = (ev, k) => F._mx && PV[ev].get(k) ? Rch.okCell(ev, k, PV[ev].get(k).b) : Rch.okK(ev, k);
     // audit 2026-10-06: a band where today's final event can no longer lie (today's R is already deeper, today's X already
     // further) is faded whole and its label grey: this is what «the level has traded today» means
     const labels = [];
     for (const k of keys) {
       const [top, bot] = cellY(F, k, k + 1);
       if (bot < top0 || top > bot0) {
-        for (const ev of ['R', 'X']) { const n = info[ev].D.P.get(k) || 0, i = bot < top0 ? 0 : 1, r = outK[ev][i]; if (!n) continue; out[ev][i] += n; outK[ev][i] = r ? [Math.min(r[0], k), Math.max(r[1], k)] : [k, k]; }
+        for (const ev of ['R', 'X']) { const n = (F._mx ? F.ev[ev].P : info[ev].D.P).get(k) || 0, i = bot < top0 ? 0 : 1, r = outK[ev][i]; if (!n) continue; out[ev][i] += n; outK[ev][i] = r ? [Math.min(r[0], k), Math.max(r[1], k)] : [k, k]; }
         continue;
       }
       let x = x0;
       for (const ev of ['R', 'X']) {
-        const I = info[ev], n = I.D.P.get(k) || 0;
+        const I = info[ev], n = I.D.P.get(k) || 0, mv = F._mx ? PV[ev].get(k) : null;
         if (!n) continue;
-        const z = I.zr.get(k), on = !!(h && h.k === 'pcell' && h.ev === ev && k >= h.k0 && k < h.k1);
+        const z = I.zr.get(k), on = !!(h && ((h.k === 'pcell' && h.ev === ev && k >= h.k0 && k < h.k1) || (h.k === 'mcell' && h.ev === ev && k === h.k0)));
         const inA = !!(st.area && st.area.ev === ev && isFinite(st.area.k0) && k >= st.area.k0 && k < st.area.k1);
         const r = str(n);
         let a = z != null ? 0.22 + 0.78 * r : 0.1 + 0.32 * r;     // a zone row from faint to full, a residual row stays quiet
         if (I.hzi != null) a = z === I.hzi ? Math.max(a, 0.6) : a * 0.4;
+        if (mv && !mv.ans) a *= 0.3;
         if (on || inA) a = 1;
-        const len = Math.max(2, blen * n / mx), g = Rch.okK(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
+        const len = Math.max(2, blen * n / mx), g = F._ts || okRow(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
         // a withheld band share (its passport «—», SWPC-1.1 M14): no bar; the next segment keeps its place, the label says «—»
-        if (ppHeld(F, 'EST:B-RX-BAND-' + ev, { k0: k, k1: k + 1 })) { labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk: false, on, z, rowH: bot - top, ok: Rch.okK(ev, k) }); x += len; continue; }
-        c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
+        if (mv ? ppHeld(F, 'EST:B-RX-REGION-' + ev, { k0: k, k1: k + 1, b0: mv.b, b1: mv.b + 1 }) : ppHeld(F, 'EST:B-RX-BAND-' + ev, { k0: k, k1: k + 1 })) { labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk: false, on, z, rowH: bot - top, ok: okRow(ev, k), mv }); x += len; continue; }
+        const spent=F._ts&&!okRow(ev,k);
+        c.fillStyle = spent ? rgba(stateCol(cfg[ev], 'spent'),Math.min(1,a*cfg.projA/90)*cfg.passedA/100*1.8) : rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
         if (g) {
-          const dead = !Rch.okK(ev, k);
+          const dead = !okRow(ev, k);
           c.fillStyle = dead ? rgba(stateCol(cfg[ev], 'spent'), Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8))
             : rgba(cfg.doneC, Math.min(1, Math.max(0.2, 0.75 * a * cfg.projA / 90 * cfg.passedA / 30)));
           c.fillRect(x + la, top + 0.5, len - la, hh);
         }
-        V.projBars.push({ ev, k, top, bot, x0: x, x1: x + len });
+        V.projBars.push({ ev, k, b: mv ? mv.b : null, ans: mv ? mv.ans : true, top, bot, x0: x, x1: x + len, n, earlier:g, later:n-g });
         const pk = I.peak.has(k);
-        if (on || pk || z != null || 100 * n / F.N >= 3) labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top, ok: Rch.okK(ev, k) });
+        if ((!mv || mv.ans) && (on || pk || z != null || 100 * n / F.N >= 3 || (mv && sec))) labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top, ok: okRow(ev, k), mv });
         x += len;
       }
     }
@@ -2212,12 +2448,13 @@
       // with nothing ahead is grey and small: it has played out today (operator 2026-10-06)
       // grey only when today's final event can no longer lie in the band (reachability); a band whose family events are
       // all behind the clock but still reachable today is green (history clock) — DR-LAB-NOW-1.0 F2, the audit's D4
-      const dead = !L.on && L.ahead <= 0, gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
+      const dead = !L.on && (L.ahead <= 0 || (F._ts && !L.ok)), gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
       if (used[L.ev].some(u => Math.abs(u[0] - L.y) < (u[1] + fs) / 2 + 1)) continue;
       used[L.ev].push([L.y, fs]);
       const col = cfg[L.ev], wt = L.on || (!dead && q > 0.7) ? '700 ' : L.z != null && !dead ? '600 ' : '';
       c.textBaseline = 'middle';
-      const t = ppTxt(evPass(F, L.ev, 'price_cell', [L.k, L.k + 1], null, L.n)), tw = pctW(c, t, wt, fs);
+      const p = L.mv ? mxCellPass(F, L.ev, L.mv) : evPass(F, L.ev, 'price_cell', [L.k, L.k + 1], null, L.n), t = ppTxt(p), tw = pctW(c, t, wt, fs);
+      if (L.mv) V.projLbl.push({ ev: L.ev, k: L.k, b: L.mv.b, n: L.mv.n, est: p.estimand, yes: p.yes_count, N: p.N });
       pctDraw(c, t, L.ev === 'R' ? Math.max(A_.x + 3, x0 - 3 - tw) : Math.min(L.xe + 3, A_.x + A_.w - tw - 6), L.y + 0.5, wt, fs,
         L.on ? '#FFFFFF' : gone ? rgba(cfg.doneC, 0.75) : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(col, 0.45 * r), 0.5 + 0.5 * r) : C.text3);
     }
@@ -2230,6 +2467,7 @@
       const [ya, yb] = cellY(F, o.k0, o.k1), y0 = Math.max(top0, ya), y1 = Math.min(bot0, yb);
       if (y1 > y0) { c.fillStyle = rgba(cfg[o.ev], o.hot ? 1 : 0.7); c.fillRect(A_.x + A_.w - 4 - 3 * ln, y0, 2, y1 - y0); }
     });
+    if (F._tp) tpReachMarks(c, F, A_, top0, bot0);                   // TP-2.0 Ч12: the levels 70 % and 50 % of the window reached
     // the heads (R on the left, X on the right, as their percentages) and the shares beyond the frame
     c.textBaseline = 'top'; c.font = '700 10.5px ' + FONT;
     c.fillStyle = cfg.R; c.fillText('R откат', A_.x + 5, 3);
@@ -2245,8 +2483,137 @@
     if (out.X[1] + out.R[1]) shares(1, A_.h - 3, 'bottom');
     c.restore();
   }
+
+  // ---------- screen 24 (15.11.2026, meaning/27 §13, R9 «профиль со скобами»): the price column of TP-2.0 ----------
+  // One quantitative geometry: the length of a row is its share on one constant scale (amber — of the family N, blue — of
+  // the window's sessions). Every row of the window stays; only the brightness moves: bright = a row of a place that can
+  // still be today's (reachOf, the contract's rule), quiet = the rest. A place = a thin bracket that counts nothing + one
+  // number (R: the family share, TP-2.0 Ч4; X: «кончили здесь», Ч9). Tops of the last 15 minutes are outlined: they reach,
+  // they are not places. The author's depth marks ½ / 70-й and the edge of the window's history; white ticks = today's
+  // cells. The levels 70 % / 50 % are not drawn here: they cross the chart (tpLevelLines).
+  function drawColR9(c, ctx) {
+    const F = ctx.F, A_ = V.proj, top0 = 40, bot0 = A_.h - 16, P = F._tp, Fb = P.A || F, w = P.w;
+    c.fillStyle = C.axis; c.fillRect(A_.x, 0, A_.w, A_.h);
+    c.fillStyle = C.grid; c.fillRect(A_.x, 0, 1, A_.h);
+    V.projBars = []; V.projCols = { X: [A_.x, A_.x + A_.w], R: [A_.x, A_.x + A_.w] }; V.projUnk = null; V.projEdge = null; V.projLbl = [];
+    c.save(); c.beginPath(); c.rect(A_.x, 0, A_.w, A_.h); c.clip();
+    const Rch = reachOf(F, ctx), sl = Rch.sl, BX = A_.x + A_.w - 44, x0 = A_.x + 9, S = Math.min(3.2, (BX - 8 - x0) / 22);
+    const base = { R: Fb.N || F.N, X: F.N }, last15 = F.end - 15, Wt = w ? tpWinT(F, w) : null, wOver = !!(Wt && sl >= Wt[1]);
+    const rows = { R: new Map(), X: new Map() }, close = new Map();
+    for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) {
+      if (ev === 'X' && q.t >= last15) close.set(q.k, (close.get(q.k) || 0) + 1); else rows[ev].set(q.k, (rows[ev].get(q.k) || 0) + 1);
+    }
+    const places = { R: [], X: [] };
+    for (const ev of ['R', 'X']) { const Zm = F.zones[ev]; if (Zm) Zm.zones.forEach((z, i) => { if (!zoneHeld(F, ev, i)) places[ev].push(z); }); }
+    const placeOf = (ev, k) => places[ev].find(z => k >= z.price_low && k < z.price_high) || null;
+    const alive = (ev, z) => { for (let k = z.price_low; k < z.price_high; k++) if ((rows[ev].get(k) || (ev === 'X' && close.get(k))) && Rch.okK(ev, k)) return true; return false; };
+    const mainX = places.X.filter(z => alive('X', z)).sort((a, b) => a.price_low - b.price_low)[0] || null;
+    const len = (n, ev) => Math.max(2, S * 100 * n / base[ev]);
+    const out = { X: [0, 0], R: [0, 0] }, outK = { X: [null, null], R: [null, null] };
+    const keys = [...new Set([...rows.R.keys(), ...rows.X.keys(), ...close.keys()])];
+    for (const k of keys) {
+      const [top, bot] = cellY(F, k, k + 1), hh = Math.max(1, bot - top - 1);
+      if (bot < top0 || top > bot0) {
+        for (const ev of ['R', 'X']) { const n = (rows[ev].get(k) || 0) + (ev === 'X' ? close.get(k) || 0 : 0), i = bot < top0 ? 0 : 1, r = outK[ev][i]; if (!n) continue; out[ev][i] += n; outK[ev][i] = r ? [Math.min(r[0], k), Math.max(r[1], k)] : [k, k]; }
+        continue;
+      }
+      let x = x0;
+      for (const ev of ['X', 'R']) {
+        const n = rows[ev].get(k) || 0, nc = ev === 'X' ? close.get(k) || 0 : 0;
+        if (!n && !nc) continue;
+        if (x > x0) x += 3.5;                                        // a pullback sharing the move's row: after it, apart
+        const z = placeOf(ev, k), ok = Rch.okK(ev, k);
+        const a = z ? (ev === 'R' && wOver ? 0.18 : !ok ? 0.24 : ev === 'X' && z !== mainX ? 0.55 : 0.92) : (ev === 'R' && wOver ? 0.12 : 0.2);
+        const l1 = n ? len(n, ev) : 0;
+        if (n) { c.fillStyle = rgba(cfg[ev], a); c.fillRect(x, top + 0.5, l1, hh); }
+        let x1 = x + l1;
+        if (nc) {
+          const l2 = len(nc, ev), xs = x + l1 + (n ? 1 : 0);
+          c.save(); c.strokeStyle = rgba(cfg.X, z ? 0.75 : 0.5); c.lineWidth = 1; c.setLineDash([2, 1.5]);
+          c.strokeRect(Math.round(xs) + 0.5, Math.round(top) + 1, Math.max(1, Math.round(l2) - 1), Math.max(1, Math.round(hh) - 1)); c.restore();
+          x1 = xs + l2;
+        }
+        V.projBars.push({ ev, k, b: null, ans: true, top, bot, x0: x, x1, n: n + nc, earlier: 0, later: n + nc });
+        x = x1;
+      }
+    }
+    // the brackets: they group a place's rows and count nothing; one number beside, a played place keeps only its name
+    c.textBaseline = 'middle';
+    for (const ev of ['R', 'X']) for (const z of places[ev]) {
+      const [ya, yb] = cellY(F, z.price_low, z.price_high), y0 = Math.max(top0, ya + 1), y1 = Math.min(bot0, yb - 1);
+      if (y1 <= y0) continue;
+      const played = ev === 'R' ? wOver || !alive('R', z) : !alive('X', z), minor = ev === 'X' && z !== mainX, hot = !played && !minor;
+      c.strokeStyle = played ? 'rgba(111,118,132,.5)' : rgba(cfg[ev], minor ? 0.45 : 0.95); c.lineWidth = hot ? 1.5 : 1;
+      c.beginPath(); c.moveTo(BX - 4, y0 + 0.5); c.lineTo(BX + 0.5, y0 + 0.5); c.lineTo(BX + 0.5, y1 - 0.5); c.lineTo(BX - 4, y1 - 0.5); c.stroke();
+      if (ya + 1 < top0) { c.beginPath(); c.moveTo(BX - 2.5, y0 + 5); c.lineTo(BX + 0.5, y0 + 1); c.lineTo(BX + 3.5, y0 + 5); c.stroke(); }
+      const yc = (y0 + y1) / 2;
+      if (played) { c.font = '600 10px ' + FONT; c.fillStyle = 'rgba(139,147,163,.65)'; c.fillText(z.label, BX + 5, yc); continue; }
+      const p = ev === 'R' ? tpMassPlace(F, w, z) : zonePass(F, 'X', z), fs = hot ? 13.5 : 11.5;
+      pctDraw(c, ppTxt(p), BX + 5, yc - 4, '800 ', fs, rgba(ev === 'R' ? '#F6C9A6' : '#B7D2F5', hot ? 1 : 0.65));
+      c.font = '9px ' + FONT; c.fillStyle = rgba(ev === 'R' ? '#F6C9A6' : '#B7D2F5', hot ? 0.85 : 0.55);
+      c.fillText(ev === 'R' ? 'семьи' : 'кончили', BX + 5, yc + 7);
+    }
+    // the author's reading of the window's pullbacks: ½ and 70-й of their depth, and the edge below which there were none
+    const ks = F.ev.R.pts.map(q => q.k).sort((a, b) => b - a);
+    if (ks.length >= 5 && w) {
+      const op = wOver ? 0.3 : 0.95, kMed = ks[Math.ceil(ks.length / 2) - 1], k70 = ks[Math.ceil(0.7 * ks.length) - 1], kMin = ks[ks.length - 1];
+      const mark = (k, t, dash) => {
+        const y = Math.round(cellY(F, k, k + 1)[1]) + 0.5;
+        if (y < top0 || y > bot0) return null;
+        c.save(); c.strokeStyle = 'rgba(201,206,216,' + op + ')'; c.lineWidth = 1.2; c.setLineDash(dash ? [3, 2] : []); c.beginPath(); c.moveTo(BX - 26, y); c.lineTo(BX - 4, y); c.stroke(); c.restore();
+        c.font = '700 9px ' + FONT; c.fillStyle = 'rgba(201,206,216,' + op + ')'; c.textAlign = 'right'; c.fillText(t, BX - 28, y); c.textAlign = 'left';
+        return y;
+      };
+      mark(kMed, '½', false);
+      const y7 = mark(k70, '70-й', true);
+      if (y7 != null) { c.font = '8.5px ' + FONT; c.fillStyle = 'rgba(201,206,216,' + op * 0.85 + ')'; c.textAlign = 'right'; c.fillText('глубина ' + TP_NAME[w], BX - 4, y7 + 9); c.textAlign = 'left'; }
+      const ye = Math.round(cellY(F, kMin, kMin + 1)[1]) + 1;
+      if (ye > top0 && ye < bot0 - 20) {
+        const oe = wOver ? 0.3 : 0.85;
+        c.fillStyle = rgba('#F6C9A6', oe); c.fillRect(x0 - 4, ye, 30, 1.6);
+        c.font = '700 9.5px ' + FONT; c.fillText('ниже ' + sd(kMin / 10), x0 + 30, ye + 1);
+        c.font = '9.5px ' + FONT; c.fillText('у ' + TP_NAME[w] + ' откатов не было', x0 - 2, ye + 12);
+      }
+    }
+    // today's cells: the pullback before the top so far and today's top
+    for (const ev of ['R', 'X']) {
+      const q = Rch.cur[ev]; if (!q) continue;
+      const [t, b] = cellY(F, q.k, q.k + 1); if (b < top0 || t > bot0) continue;
+      c.fillStyle = '#FFFFFF'; c.fillRect(x0 - 6, t + 0.5, 3, Math.max(1, b - t - 1));
+    }
+    // the head: which hundred each colour counts
+    c.textBaseline = 'top'; c.font = '700 10px ' + FONT;
+    c.fillStyle = cfg.R; c.fillText('R · семья ' + (Fb.N || F.N), A_.x + 5, 3);
+    c.fillStyle = cfg.X; c.fillText('X · вершины · ' + (w ? TP_NAME[w] + ' ' : '') + F.N, A_.x + 5, 15);
+    const shares = (i, y, bl) => {
+      c.font = '10px ' + FONT; c.textBaseline = bl;
+      if (out.X[i]) { const t = (i ? '▼ ' : '▲ ') + ppTxt(outPass(F, 'X', i, outK.X[i], out.X[i])); c.fillStyle = cfg.X; c.fillText(t, A_.x + 5, y); }
+      if (out.R[i]) { const t = (i ? '▼ ' : '▲ ') + ppTxt(outPass(F, 'R', i, outK.R[i], out.R[i])); c.fillStyle = cfg.R; c.fillText(t, A_.x + A_.w - c.measureText(t).width - 5, y); }
+    };
+    if (out.X[0] + out.R[0]) shares(0, 28, 'top');
+    if (out.X[1] + out.R[1]) shares(1, A_.h - 3, 'bottom');
+    c.restore();
+  }
+  // the levels 70 % and 50 % of the window of today's low across the chart, ending at the price scale (screen 24): the next
+  // one not yet reached white, the other blue dashed, a reached one quiet with ✓; the name on the left
+  function tpLevelLines(c, ctx) {
+    const F = ctx.F;
+    if (!F || !F._tp || !F._tp.w) return;
+    const Rch = reachOf(F, ctx), topK = Rch.cur.X ? Rch.cur.X.k : null, Ls = tpLevels(F), W = V.plot.w;
+    const next = Ls.find(L => topK == null || topK < L.k);
+    for (const L of Ls) {
+      const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;
+      if (y < 0 || y > V.plot.h) continue;
+      const taken = topK != null && topK >= L.k, main = L === next;
+      c.save(); c.strokeStyle = main ? 'rgba(255,255,255,.95)' : rgba(cfg.X, taken ? 0.35 : 0.75); c.lineWidth = main ? 1.8 : 1.2; c.setLineDash(main ? [] : [7, 5]);
+      c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); c.restore();
+      c.font = (main ? '800 13px ' : '700 11.5px ') + FONT; c.textBaseline = 'bottom';
+      c.fillStyle = main ? '#FFFFFF' : rgba('#9CC3F3', taken ? 0.5 : 1);
+      c.fillText((taken ? '✓ ' : '') + 'дошли ' + L.q + ' % · ' + sd(L.k / 10) + ' SD', 74, y - 4);
+    }
+  }
   function drawProj(c, ctx) {
-    if (st.mode === 'bounds') return drawProjRX(c, ctx);
+    if (st.mode === 'bounds') return ctx.F && ctx.F._tp ? drawColR9(c, ctx) : drawProjRX(c, ctx);
     const F = ctx.F, A_ = V.proj, W = A_.w - 40, h = hv(), d = projData(ctx);
     c.fillStyle = C.axis; c.fillRect(A_.x, 0, A_.w, A_.h);
     c.fillStyle = C.grid; c.fillRect(A_.x, 0, 1, A_.h);
@@ -2303,7 +2670,12 @@
     // slice tag; the cursor's own time tag is left out while a window is shown
     tag(ctx.obs, ctx.live && !ctx.D.hist ? '#2A2F38' : ctx.D.hist ? C.hist : C.replay, ctx.live && !ctx.D.hist ? '#fff' : '#0B0C10');
     if (!(wn && wn.t0 != null) && st.mx >= 0 && st.mx < W && st.my < V.plot.h) tag(snapT(V.T(st.mx)) - 2.5, '#363A45', '#fff');
-    if (wn && wn.t0 != null) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
+    if (wn && wn.t0 != null && wn.peak) {
+      // a window of TP (operator 05.11): its edges quiet, its peak 15 minutes in its colour, on top
+      const xp = V.X((wn.peak[0] + wn.peak[1]) / 2), clear = t => Math.abs(V.X(t) - xp) >= 76;
+      if (V.X(wn.t1) - V.X(wn.t0) >= 96) for (const t of [wn.t0, wn.t1]) if (clear(t)) tag(t, '#3A3F4A', '#D7DBE2');
+      tag((wn.peak[0] + wn.peak[1]) / 2, wn.col, '#0B0C10', clk(wn.peak[0]) + '–' + clk(wn.peak[1]));
+    } else if (wn && wn.t0 != null) { if (V.X(wn.t1) - V.X(wn.t0) < 96) tag((wn.t0 + wn.t1) / 2, wn.col, '#0B0C10', clk(wn.t0) + '–' + clk(wn.t1)); else { tag(wn.t0, wn.col, '#0B0C10'); tag(wn.t1, wn.col, '#0B0C10'); } }
     c.textAlign = 'left';
     void h;
   }
@@ -2316,8 +2688,9 @@
   }
 
   // ---------- hit test ----------
-  function hit(x, y) {
-    const ctx = V.ctx, F = ctx.F;
+  function hit(x, y) { return swHit(x, y) || pbSemanticHit(hitMap(x, y)); }
+  function hitMap(x, y) {
+    const ctx = pbMapContext(V.ctx), F = ctx.F;
     if (F && V.projW && x >= V.proj.x && y < V.plot.h) {
       if (V.projUnk && y >= V.projUnk[1]) return { k: 'unk', src: 'proj' };
       if (st.mode === 'bounds') {
@@ -2334,12 +2707,13 @@
     }
     if (x > V.plot.w) return y < V.plot.h ? { k: 'paxis' } : null;
     if (y > V.taxisY) return { k: 'taxis' };
-    if (pullbackMode()) { const pb = pbHit(x, y); if (pb) return pb; if (!F) return null; return lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y); }
     if (!F) return y > V.plot.h ? null : lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y);
     if (y > V.plot.h - (V.stripOn ? V.bandOv || 0 : 0) && x <= V.plot.w) {
       // the time band (with its raised part over the free bottom of the chart): a zone's hill (its label first), else a 15-minute column (both events), «?» at the right
       if (!V.stripOn) return { k: 'taxis' };
       const inBox = a => x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3];
+      const tw = F._tp ? tpHit(x, y) : null;                       // TP-1.1: a window capsule or a line of the clock
+      if (tw) return tw;
       const cp = (V.caps || []).find(inBox);
       if (cp) return { k: 'zone', ev: cp.ev, i: cp.i, src: 'strip' };
       if (V.stripUnk && x >= V.stripUnk[0] && x <= V.stripUnk[0] + V.stripUnk[2]) return { k: 'unk', src: 'strip' };
@@ -2352,17 +2726,20 @@
         if (H.up ? y < cy && y >= yh - 2 : y > cy && y <= yh + 2) return { k: 'zone', ev: H.ev, i: H.i, src: 'strip' };
       }
       const q = (V.bandCols || []).find(z => x >= z.x0 - 1 && x <= z.x1 + 1);
-      if (q) return { k: 'tcell', b0: q.b, b1: q.b + 1, src: 'strip' };
+      if (q) return F._mx ? { k: 'tcell', b0: q.b, b1: q.b + 1, src: 'strip', ev: (y < cy) === (F.d0 > 0) ? 'X' : 'R' } : { k: 'tcell', b0: q.b, b1: q.b + 1, src: 'strip' };
       return { k: 'stripBg' };
     }
     if (st.area && V.areaHit) for (const a of V.areaHit) if (a.part !== 'frame' && x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3]) return { k: 'area', part: a.part };
     const inBox = a => x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3];
     const zl = (V.zoneHit || []).find(inBox);
     if (zl) return { k: 'zone', ev: zl.ev, i: zl.i };
+    const gz = F._tp ? tpGhostAt(x, y, false) : null;           // TP: the name of another window's place
+    if (gz) return gz;
+    if (st.mode === 'bounds') { const mc = mxCellHit(F, x, y); if (mc) return lvlHit(ctx, y) || mc; }   // the layer «Клетки»
     if (st.mode === 'bounds' && st.L.pts) {
       // a star of R or of X: the nearest within 5 px
       let best = null, bd = 5;
-      for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) { if (pointZone(F,q) == null) continue; const d = Math.hypot(V.X(q.t + 2.5) - x, V.Y(q.p) - y); if (d < bd) { bd = d; best = q; } }
+      for (const star of V.stars || []) { const d = Math.hypot(star.x - x, star.y - y); if (d < bd) { bd = d; best = star.q; } }
       if (best) {
         const all = F.ev[best.ev].pts.filter(q => pointZone(F,q) != null && Math.hypot(V.X(q.t + 2.5) - V.X(best.t + 2.5), V.Y(q.p) - V.Y(best.p)) < 2.5);
         return { k: 'pt', ev: best.ev, i: best.i, q: best, same: all.map(q => q.i) };
@@ -2375,6 +2752,8 @@
     if (st.area && V.areaHit) for (const a of V.areaHit) if (a.part === 'frame' && x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3]) { const lv = lvlHit(ctx, y); if (lv) return lv; return { k: 'area', part: 'window' }; }
     // inside a constellation (its 0.2 iso-line): that zone
     for (const z of V.zoneHit || []) if (inLoops(z.loops, x, y)) return lvlHit(ctx, y) || { k: 'zone', ev: z.ev, i: z.i };
+    const gl = F._tp ? tpGhostAt(x, y, true) : null;            // inside another window's place
+    if (gl) return lvlHit(ctx, y) || gl;
     return lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y);
   }
   function lvlHit(ctx, y) {
@@ -2405,6 +2784,11 @@
     const F = ctx.F, s = ctx.s;
     if (!h) return '';
     if (h.k === 'arrive' || h.k === 'pre') return candidateTip(h, ctx);
+    if (h.k === 'mcell' && F && F._mx) return mxCellTip(F, h);
+    if (F && F._tp && h.k === 'tpwin') return tpWinTip(F, h, ctx);     // TP-1.1 (tp235.js)
+    if (F && F._tp && h.k === 'tpzone') return tpGhostTip(F, ctx, h);
+    if (F && F._tp && h.k === 'tpline') return tpLineTip(F, h);
+    if (F && F._tp && h.k === 'tcell') return tpCellTip(F, ctx, h);
     if (h.k === 'pt' && F) {
       const m = F.M[h.i], ev = h.ev || st.ev, e = m[ev], other = ev === 'R' ? 'X' : 'R', o = m[other], M_ = 'FF:MEMBER';
       const lines = ['<b>' + lbl(M_, 'head', { date: memberLine(F, m) }) + '</b>' + (h.same && h.same.length > 1 ? ' <span class="k">' + lbl(M_, 'same', { n: h.same.length - 1 }) + '</span>' : '')];
@@ -2421,15 +2805,17 @@
       const ev = h.ev || st.ev, a = { k0: h.k0, k1: h.k1 }, nX = areaCount(F, 'X', a), nR = areaCount(F, 'R', a), lk = V && V.lk, sl = sliceOf(ctx), rg = { k0: h.k0, k1: h.k1 };
       const pX = evPass(F, 'X', 'price_cell', [h.k0, h.k1], null, nX), pR = evPass(F, 'R', 'price_cell', [h.k0, h.k1], null, nR);
       const vf = visitPass(F, h.k0, h.k1, null), vr = visitPass(F, h.k0, h.k1, sl), p0 = F.u2p(h.k0 / 10), p1 = F.u2p(h.k1 / 10);
-      const pk = lk && lk.src === 'pcell' && lk.ev === ev && lk.k0 === h.k0 ? peakPass(F, ev, rg, lk.b, lk.past, sl, lk.n) : null;
-      return '<div class="ih">Полоса ' + band(h.k0, h.k1) + ' SD</div><div class="is">' + px(Math.min(p0, p1)) + '–' + px(Math.max(p0, p1)) + ' · ' + where(s, F.u2p((h.k0 + h.k1) / 20)) + '</div>' +
-        '<div class="iq">' + lbl('EST:B-RX-BAND-' + ev, 'question', { from: F.from, end: clk(F.end) }) + '</div>' + twoBars(F, pX, pR, ev, { k0: h.k0, k1: h.k1, b0: null, b1: null }) +
-        (pk ? '<div class="il" style="color:' + (lk.past ? '#F23645' : cfg[ev]) + '">' + lbl(pk.estimand, lk.past ? 'band_past' : 'band_ahead', { ev, window: clk(F.f + 15 * lk.b) + '–' + clk(F.f + 15 * lk.b + 15), pct: ppTxt(pk) }) + '</div>' : '') +
+      const pk = !F._mx && lk && lk.src === 'pcell' && lk.ev === ev && lk.k0 === h.k0 ? peakPass(F, ev, rg, lk.b, lk.past, sl, lk.n) : null;
+      const selectedVisit = lk && lk.src === 'pcell' && lk.marker ? { ...lk.marker.visit, peakWindow: clk(F.f + 15 * lk.b) + '–' + clk(F.f + 15 * (lk.b + 1)) } : null;
+      return '<div class="ih">Полоса ' + band(h.k0, h.k1) + ' SD</div><div class="is">' + px(Math.min(p0, p1)) + '–' + px(Math.max(p0, p1)) + ' · ' + where(s, F.u2p((h.k0 + h.k1) / 20)) + '</div>' + (F._mx ? mxTip(F, h) : '') + (selectedVisit ? visitNote(F, ctx, h.k0, h.k1, null, selectedVisit) : '') +
+        '<div class="iq">' + (F.rbx ? lbl('FF:R-BEFORE-X', 'q_band_' + ev, { from: F.from, end: clk(F.end) }) : lbl('EST:B-RX-BAND-' + ev, 'question', { from: F.from, end: clk(F.end) })) + '</div>' + twoBars(F, pX, pR, ev, { k0: h.k0, k1: h.k1, b0: null, b1: null }) +
+        (pk ? '<div class="il" style="color:' + (REVIEW ? cfg[ev] : lk.past ? '#F23645' : cfg[ev]) + '">' + lbl(pk.estimand, lk.past ? 'band_past' : 'band_ahead', { ev, window: clk(F.f + 15 * lk.b) + '–' + clk(F.f + 15 * lk.b + 15), pct: ppTxt(pk) }) + '</div>' : '') +
         (() => { const Rch = reachOf(F, ctx), gn = e => F.ev[e].pts.filter(q => q.k >= h.k0 && q.k < h.k1 && q.t + 5 <= sl).length, gX = gn('X'), gR = gn('R');
           const off = e => !Rch.okK(e, h.k0), E = 'EST:B-CLOCK-' + ev, ttl = ' title="' + esc(lbl(E, 'title')) + '"';
-          return (off(ev) ? '<div class="il" style="color:#F23645">' + lbl('FF:TODAY-Z', 'band_dead', { ev, why: lbl('FF:TODAY-Z', 'why_' + ev) }) + '</div>' : '') +
+          return (off(ev) ? '<div class="il" style="color:' + (REVIEW ? '#A8B5CB' : '#F23645') + '">' + lbl('FF:TODAY-Z', 'band_dead', { ev, why: lbl('FF:TODAY-Z', 'why_' + ev) }) + '</div>' : '') +
             (sl >= F.end ? '' : '<div class="ir"' + ttl + '>' + lbl(E, 'later', { t: clk(sl) }) + '<b><span style="color:' + cfg.R + '">R ' + ppTxt(clockPass(F, 'R', rg, 'LATER', sl, nR - gR)) + '</span> · <span style="color:' + cfg.X + '">X ' + ppTxt(clockPass(F, 'X', rg, 'LATER', sl, nX - gX)) + '</span></b></div>' +
             '<div class="ir dim"' + ttl + '>' + lbl(E, 'earlier', { t: clk(sl) }) + '<b>R ' + ppTxt(clockPass(F, 'R', rg, 'EARLIER', sl, gR)) + ' · X ' + ppTxt(clockPass(F, 'X', rg, 'EARLIER', sl, gX)) + '</b></div>'); })() +
+        (REVIEW ? '<div class="p24-clock-note" style="color:' + cfg.projDoneC + '">' + lbl('FF:TODAY-VISIT', 'clock', { time: clk(sl) }) + '</div>' : '') + (F._tp ? tpDepthLine(F, h) : '') +
         '<div class="ir">' + lbl('EST:B-VISIT-FULL', 'insp') + '<b>' + ppTxt(vf, true) + '</b></div><div class="ir">' + lbl('EST:B-VISIT-REST', 'insp', { t: clk(sl) }) + '<b>' + ppTxt(vr, true) + '</b></div>' + ifoot(F);
     }
     if (h.k === 'tcell' && F) {
@@ -2443,12 +2829,13 @@
         evPass(F, ev, 'price_time', [bk, bk + 1], [t0, t0 + 15], bc);                  // the named cell is a passport too (B-RX-REGION)
         return '<div class="ir">' + lbl('EST:B-RX-REGION-' + ev, 'mode_cell', { ev, band: band(bk, bk + 1) }) + '<b>' + px(F.u2p((bk + 0.5) / 10)) + '</b></div>';
       };
-      return '<div class="ih">' + clk(t0) + '–' + clk(t0 + 15) + '</div><div class="iq">' + lbl('EST:B-RX-WINDOW-X', 'question') + '</div>' + twoBars(F, pX, pR, 'X', { k0: null, k1: null, b0: b, b1: b + 1 }) + peakK('X') + peakK('R') + ifoot(F, lbl('FF:SHARE-STEP', 'foot_time'));
+      return '<div class="ih">' + clk(t0) + '–' + clk(t0 + 15) + '</div>' + (F._mx ? mxTip(F, h) : '') + '<div class="iq">' + (F.rbx ? lbl('FF:R-BEFORE-X', 'q_window') : lbl('EST:B-RX-WINDOW-X', 'question')) + '</div>' + twoBars(F, pX, pR, 'X', { k0: null, k1: null, b0: b, b1: b + 1 }) + peakK('X') + peakK('R') + ifoot(F, lbl('FF:SHARE-STEP', 'foot_time'));
     }
     if (h.k === 'unk' && F) {
       const cd = st.mode === 'path' ? colFor(ctx) : null;
-      if (st.mode === 'bounds') return ['X', 'R'].map(ev => { const D = F.ev[ev], E = 'EST:B-RX-UNDETERMINED-' + ev;
-        return '<b>' + ppTxt(undPass(F, ev, 'BOTH')) + '</b> ' + lbl(E, 'total', { name: F.names[ev].toLowerCase(), ev }) + (D.unknown ? ': ' + lbl(E, 'insp_unknown', { pct: ppTxt(undPass(F, ev, 'UNKNOWN')) }) : '') + (D.none ? (D.unknown ? ', ' : ': ') + lbl(E, 'insp_none', { pct: ppTxt(undPass(F, ev, 'NO_PERIOD')) }) : ''); }).join('<br>') + '<br><span class="k">' + lbl('EST:B-RX-UNDETERMINED-R', 'note') + '</span>';
+      // TP-1.1: the band's R is T's (its «?» too), its X the window's
+      if (st.mode === 'bounds') return ['X', 'R'].map(ev => { const G = ev === 'R' && F._tp ? F._tp.T : F, D = G.ev[ev], E = 'EST:B-RX-UNDETERMINED-' + ev;
+        return '<b>' + ppTxt(undPass(G, ev, 'BOTH')) + '</b> ' + lbl(E, 'total', { name: G.names[ev].toLowerCase(), ev }) + (D.unknown ? ': ' + lbl(E, 'insp_unknown', { pct: ppTxt(undPass(G, ev, 'UNKNOWN')) }) : '') + (D.none ? (D.unknown ? ', ' : ': ') + lbl(E, 'insp_none', { pct: ppTxt(undPass(G, ev, 'NO_PERIOD')) }) : ''); }).join('<br>') + '<br><span class="k">' + lbl('EST:B-RX-UNDETERMINED-R', 'note') + '</span>';
       if (cd) return '<b>' + ppTxt(missPass(F, cd)) + '</b> ' + lbl('EST:B-CLOSE-MISSING', 'unk', { m5: clk(cd.T - 5) + '–' + clk(cd.T) });
     }
     if (h.k === 'fcell' && F) {
@@ -2522,7 +2909,16 @@
   // ---------- the zone map (zone-map-3, meaning/12): the server's zones, today's status, the passport ----------
   const zonesOf = (F, ev) => F && F.zones ? F.zones[ev || st.ev] || null : null;
   const zoneName = z => band(z.price_low, z.price_high) + ' SD × ' + clk(z.time_start) + '–' + clk(z.time_end);
+  // the words under a constellation's number on 23.5: it is the share of its densest cell (28.10), named with that cell
+  function zoneCellWords(F, ev, z) {
+    const c = mxZoneCell(F, ev, z);
+    return c ? lbl('FF:R-BEFORE-X', 'zone_share', { band: band(c.k, c.k + 1), window: clk(F.f + 15 * c.b) + '–' + clk(F.f + 15 * c.b + 15) }) : lbl('EST:B-ZONE-' + ev, 'share');
+  }
   function zonePass(F, ev, z) {
+    if(F._ts)return tsPass(F,ev,'CORE',z);
+    // the reset of 27.10: a constellation's number is its strongest cell (operator: the same number as the rectangle)
+    if (F._mx) { const c = mxZoneCell(F, ev, z); return c ? mxCellPass(F, ev, c) : { pct: null, phrase: '', horizon: '', N: F.N, yes_count: 0, unknown_count: 0 }; }
+    if (F._pb && ev === 'R') return pbZonePass(F, z);
     const Zm = F.zones[ev], E = 'EST:B-ZONE-' + ev;
     return pp(F, { estimand: E, params: { zone_id: z.zone_id }, event_id: ev, region_kind: 'zone_mask', exact_price_bounds: null, time_bounds: null, cell_mask: z.cell_mask.length, zone_id: z.zone_id,
       start_rule: F.from, end_rule: 'до ' + clk(F.end), yes_count: z.n_zone, unknown_count: Zm.unknown_count, no_event_count: Zm.no_event_count, display_scope: 'zone',
@@ -2549,9 +2945,31 @@
       ext.R = 10 * rows[jR].lo; ext.X = 10 * rows[jX].hi;
       cur.R = { k: fdiv(ext.R, w), b: Math.floor((rows[jR].T - 5 - F.f) / 15) }; cur.X = { k: fdiv(ext.X, w), b: Math.floor((rows[jX].T - 5 - F.f) / 15) };
     }
-    const okK = (ev, k) => !known || (cur[ev] && k === cur[ev].k) || (sl <= last && (ext[ev] == null || (ev === 'R' ? k * w < ext[ev] : (k + 1) * w > ext[ev])));
-    const okCell = (ev, k, b) => !known || (cur[ev] && k === cur[ev].k && b === cur[ev].b) || (okK(ev, k) && F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last);
-    return { sl, known, ext, cur, okK, okCell };
+    const okK = (ev, k) => F._pb && ev === 'R' ? sl <= last : !known || (cur[ev] && k === cur[ev].k) || (sl <= last && (ext[ev] == null || (ev === 'R' ? k * w < ext[ev] : (k + 1) * w > ext[ev])));
+    const okCell = (ev, k, b) => F._pb && ev === 'R' ? F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last : !known || (cur[ev] && k === cur[ev].k && b === cur[ev].b) || (okK(ev, k) && F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last);
+    if (!F.rbx) return { sl, known, ext, cur, okK, okCell };
+    // R before the extreme: the candidate's cell, a low after the running high while an M5 is left for a new high, or a
+    // strictly lower later low that leaves one more M5 for it (lab/contract.py::_reach_k, ref_reach_before_x)
+    const pre = known ? preToday(F, rows) : null, past = new Set(pre ? pre.past.map(c => c.k + '|' + c.b) : []), pastK = new Set(pre ? pre.past.map(c => c.k) : []);
+    cur.R = pre && pre.q; ext.R = pre && pre.v10;
+    const deeper = k => ext.R == null || k * w < ext.R;
+    const okKR = (ev, k) => ev !== 'R' ? okK(ev, k) : !known || (cur.R && k === cur.R.k) || (sl <= last && pastK.has(k)) || (sl <= last - 5 && deeper(k));
+    const okCellR = (ev, k, b) => ev !== 'R' ? okCell(ev, k, b) : !known || (cur.R && k === cur.R.k && b === cur.R.b) || (sl <= last && past.has(k + '|' + b)) ||
+      (deeper(k) && Math.max(sl, F.f + 15 * b) <= Math.min(F.f + 15 * b + 10, last - 5));
+    return { sl, known, ext, cur, okK: okKR, okCell: okCellR };
+  }
+  // today's R before the extreme from the closed M5 after the activation (lab/zonemap24.py::pre_today): q = the cell of the
+  // deepest point before the first M5 of the running high (null when that high is on the first M5); past = the cells of
+  // the M5 from the running high on that undercut it and every low since; v10 = 10 x the lowest of them (null: no M5)
+  function preToday(F, rows) {
+    if (!rows.length) return { q: null, past: [], v10: null };
+    let jh = 0, cand = null;
+    for (let i = 1; i < rows.length; i++) if (rows[i].hi > rows[jh].hi) jh = i;
+    for (let i = 0; i < jh; i++) if (!cand || rows[i].lo < cand.lo) cand = rows[i];
+    const cell = r => ({ k: fdiv(10 * r.lo, F.w0t), b: Math.floor((r.T - 5 - F.f) / 15) }), past = [];
+    let low = cand ? cand.lo : null;
+    for (let i = jh; i < rows.length; i++) if (low == null || rows[i].lo < low) { past.push(cell(rows[i])); low = rows[i].lo; }
+    return { q: cand && cell(cand), past, v10: 10 * low };
   }
   // DR-LAB-NOW-1.0 F2 (2026-10-06): two independent axes, never one state.
   //   reachability = the zone status (HOLDS / POSSIBLE / IMPOSSIBLE / STATUS_UNKNOWN): can today's final event still lie
@@ -2562,6 +2980,8 @@
   // dimmer) — it is still possible today and never called impossible. Supersedes entry 18's «POSSIBLE without sessions
   // ahead drawn as IMPOSSIBLE» (the audit of 06.10 #2: empirical occupancy is not reachability).
   function zoneClock(F, ctx, ev) {
+    if(F._ts)return (F._ts.today?.[ev]||[]).map(v=>v.history_clock);
+    if (F._pb && ev === 'R') return F.zones.R.zones.map((z,i) => (PB.model?.F.ev.R.pts || F.ev.R.pts).some(q => z.cell_mask.some(([k,b]) => k === q.k && b === q.b) && q.t + 5 > sliceOf(ctx)) ? 'FUTURE_PRESENT' : sliceOf(ctx) < z.time_end ? 'FUTURE_EMPTY' : 'PAST_ONLY');
     const Zm = F.zones[ev];
     if (!Zm) return [];
     if (F.held.has('today.zones')) return Zm.zones.map(() => null);
@@ -2569,7 +2989,7 @@
     for (const q of F.ev[ev].pts) { const i = F.zcell[ev].get(q.k + '|' + q.b); if (i != null && q.t + 5 > sl) ahead[i]++; }
     const out = Zm.zones.map((z, i) => ahead[i] ? 'FUTURE_PRESENT' : z.cell_mask.some(([, b]) => F.f + 15 * b + 10 >= sl && F.f + 15 * b <= last) ? 'FUTURE_EMPTY' : 'PAST_ONLY');
     const srv = F.r.today && F.r.today.zones && F.r.today.zones[ev];
-    if (srv && srv.clock && F.r.today.slice === sl && JSON.stringify(srv.clock) !== JSON.stringify(out) && !F.mismatch.includes('zone clock ' + ev)) {
+    if (srv && srv.clock && F._mxKey !== 'cells' && F.r.today.slice === sl && JSON.stringify(srv.clock) !== JSON.stringify(out) && !F.mismatch.includes('zone clock ' + ev)) {
       F.miss('zone clock ' + ev, 'today.zones');
       console.error('design 24: the page and the server disagree on the zone history clock', ev, srv.clock, out);
       kViolate('the page and the server disagree on the history clock of the zones ' + ev, null, F.r._ctx);
@@ -2577,7 +2997,77 @@
     }
     return out;
   }
+  function zstOf(F, ctx, z, s) {
+    if (!REVIEW || s === 'WITHHELD') return zst(s);
+    const v = visitState(F, ctx, null, null, z);
+    if (v.state === 'WITHHELD') return zst('WITHHELD');
+    const paint = zonePaint(F, ctx, z.event_id, z, s);
+    const words = v.state === 'PENDING' && ['FUTURE', 'OPEN'].includes(paint.state) ? lbl('FF:TODAY-VISIT', paint.state) : visitWords(v);
+    // 2026-10-26: the row keeps both of today's facts, the status of the final extreme (possible / holds / impossible)
+    // and the visit of the zone's own cells in its window; they are different questions (meaning/14, spec 16 §2)
+    return zst(s) + ' · <span class="p24-visit" data-visit="' + v.state + '" style="color:' + (v.state === 'VISITED' ? cfg.visitC : v.state === 'MISSED' ? cfg.visitMissC : '#C0CBDC') + '">' + words + '</span>';
+  }
+  // Three different questions stay distinct: immutable R/X mass; its historical clock; today's actual visit.
+  // A zone uses its exact cells and window. A column band has no zone-window: its horizon is (activation, block end].
+  // YES survives gaps; absence is asserted only with every relevant closed M5. A forming/replay-future bar is excluded.
+  function visitState(F, ctx, k0, k1, z) {
+    if (!ctx || !REVIEW) return { state: 'UNKNOWN', t: null };
+    if (F.held.has('today.zones')) return { state: 'WITHHELD', t: null };
+    if (z && z.event_id && F.zones && F.zones[z.event_id]) {
+      const i = F.zones[z.event_id].zones.findIndex(q => q.zone_id === z.zone_id);
+      if (i >= 0 && zoneHeld(F, z.event_id, i)) return { state: 'WITHHELD', t: null };
+    }
+    const cut = Math.min(sliceOf(ctx), F.end), end = z ? Math.min(F.end, z.time_end) : F.end;
+    if (end <= F.act0) return { state: 'NO_PERIOD', t: null };
+    const rows = todayRows(F, ctx).filter(r => r.T <= F.end), byT = new Map(rows.map(r => [r.T, r])), w = F.w0t;
+    const cells = new Map();
+    if (z) for (const [k, b] of z.cell_mask) { if (!cells.has(b)) cells.set(b, []); cells.get(b).push(k); }
+    const relevant = T => !z || cells.has(Math.floor((T - 5 - F.f) / 15));
+    const touches = r => z ? (cells.get(Math.floor((r.T - 5 - F.f) / 15)) || []).some(k => 10 * r.lo < (k + 1) * w && 10 * r.hi >= k * w)
+      : 10 * r.lo < k1 * w && 10 * r.hi >= k0 * w;
+    const hit = rows.find(r => relevant(r.T) && touches(r));
+    if (hit) return { state: 'VISITED', t: hit.T };
+    for (let T = F.act0 + 5; T <= cut; T += 5) if (relevant(T) && !byT.has(T)) return { state: 'UNKNOWN', t: null };
+    return { state: cut >= end ? 'MISSED' : 'PENDING', t: null };
+  }
+  const visitWords = v => lbl('FF:TODAY-VISIT', v.state, { time: v.t == null ? '' : clk(v.t) });
+  const visitSettled = v => v.state === 'VISITED' || v.state === 'MISSED';
+  function targetMarker(F, ctx, ev, target) {
+    const visit = visitState(F, ctx, null, null, target), paint = markerPaint(ev, visit);
+    const cells = target.cell_mask.slice().sort((a, b) => a[1] - b[1] || a[0] - b[0]);
+    const out = { binding: COLOR235.marker.binding, visit, paint, time: null, u: null,
+      targetKey: JSON.stringify([A.inst, ctx.D.iso || ctx.D.date || ctx.D.dm, ctx.s && ctx.s.k, F.view,
+        F.r && F.r.family_id, F.r && F.r.snapshot_id, F.act0, F.end, F.f, F.w0t, F.e0t, F.d0, ev, cells]) };
+    if (visit.state === 'VISITED') {
+      const row = todayRows(F, ctx).find(r => r.T === visit.t), b = Math.floor((visit.t - 5 - F.f) / 15);
+      const cell = row && cells.find(([k, bb]) => bb === b && 10 * row.lo < (k + 1) * F.w0t && 10 * row.hi >= k * F.w0t);
+      if (cell) {
+        const k = cell[0], low = Math.max(row.lo, k * F.w0t / 10), high = Math.min(row.hi, (k + 1) * F.w0t / 10);
+        out.time = visit.t - 2.5; out.u = (low + high) / (2 * F.w0t);
+      }
+    } else if (visit.state === 'MISSED' && cells.length) {
+      const visible = F.u2p && V.Y && V.plot ? cells.filter(([k, b]) => {
+        const x = V.X(F.f + 15 * b + 7.5), y = V.Y(F.u2p((k + 0.5) / 10));
+        return x >= 8 && x <= V.plot.w - 8 && y >= 48 && y <= V.plot.h - 8;
+      }) : [];
+      const use = visible.length ? visible : cells, [k, b] = use[Math.floor(use.length / 2)];
+      out.time = F.f + 15 * b + 7.5; out.u = (k + 0.5) / 10;
+    }
+    return out;
+  }
+  function zonePaint(F, ctx, ev, z, status) {
+    const v = { ...visitState(F, ctx, null, null, z), start: z.time_start };
+    const i = F.zones[ev].zones.indexOf(z), clock = zoneClock(F, ctx, ev)[i];
+    return visitPaint(ev, v, clock && clock !== 'FUTURE_PRESENT' ? 0 : 1, status !== 'IMPOSSIBLE', sliceOf(ctx));
+  }
+  function visitNote(F, ctx, k0, k1, z, selected) {
+    if (!REVIEW) return '';
+    const v = selected || visitState(F, ctx, k0, k1, z), col = v.state === 'VISITED' ? cfg.visitC : v.state === 'MISSED' ? cfg.visitMissC : C.text2;
+    if (v.state === 'UNMARKED' || v.state === 'WITHHELD') return '';
+    return '<div class="p24-visit-note" data-visit="' + v.state + '" style="border-color:' + col + '"><b style="color:' + col + '">' + visitWords(v) + '</b><span>' + lbl('FF:TODAY-VISIT', v.peakWindow ? 'peak_scope' : z ? 'zone_scope' : 'band_scope', v.peakWindow ? { window: v.peakWindow } : null) + '</span></div>';
+  }
   function zoneLook(F, ctx, ev) {
+    if (F._pb && ev === 'R') return F.zones.R.zones.map((z,i) => sliceOf(ctx) >= z.time_end ? 'PAST' : zoneClock(F,ctx,ev)[i] === 'FUTURE_PRESENT' ? 'POSSIBLE' : 'QUIET');
     const S = zoneStatus(F, ctx, ev), K = zoneClock(F, ctx, ev);
     return S.map((st_, i) => st_ === 'POSSIBLE' && K[i] !== 'FUTURE_PRESENT' ? 'QUIET' : st_);
   }
@@ -2585,12 +3075,24 @@
   // request differs from the server's) is not asserted — no status word («—»), no state look, today's reachability open;
   // the zones' shares, their n / N and their drawing as history stay
   function zoneStatus(F, ctx, ev) {
+    if(F._ts)return (F._ts.today?.[ev]||[]).map(v=>v.status);
+    if (F._pb && ev === 'R') return F.zones.R.zones.map(() => 'POSSIBLE');
     const Zm = F.zones[ev];
     if (!Zm) return [];
     if (F.held.has('today.zones')) return Zm.zones.map(() => 'WITHHELD');
     const sl = sliceOf(ctx), rows = todayRows(F, ctx), w = F.w0t, last = F.end - 5;
     let out;
     if (rows.length !== Math.max(0, (sl - F.act0) / 5)) out = Zm.zones.map(() => 'STATUS_UNKNOWN');
+    else if (F.rbx && ev === 'R') {
+      // R before the extreme (lab/zonemap24.py::status_pre)
+      const pre = preToday(F, rows), past = new Set(pre.past.map(c => c.k + '|' + c.b));
+      out = Zm.zones.map(z => {
+        if (pre.q && z.cell_mask.some(([k, b]) => k === pre.q.k && b === pre.q.b)) return 'HOLDS';
+        if (sl > last) return 'IMPOSSIBLE';
+        if (z.cell_mask.some(([k, b]) => past.has(k + '|' + b))) return 'POSSIBLE';
+        return z.cell_mask.some(([k, b]) => (pre.v10 == null || k * w < pre.v10) && Math.max(sl, F.f + 15 * b) <= Math.min(F.f + 15 * b + 10, last - 5)) ? 'POSSIBLE' : 'IMPOSSIBLE';
+      });
+    }
     else {
       let q = null, v10 = null;
       if (rows.length) {
@@ -2610,7 +3112,8 @@
       });
     }
     const srv = F.r.today && F.r.today.zones && F.r.today.zones[ev];
-    if (srv && F.r.today.slice === sl && JSON.stringify(srv.status) !== JSON.stringify(out) && !F.mismatch.includes('zone status ' + ev)) {
+    // the layer «Клетки» reads no zone (matrix235.js): the server's statuses of zones the page does not show are not compared
+    if (srv && F._mxKey !== 'cells' && F.r.today.slice === sl && JSON.stringify(srv.status) !== JSON.stringify(out) && !F.mismatch.includes('zone status ' + ev)) {
       F.miss('zone status ' + ev, 'today.zones');
       console.error('design 24: the page and the server disagree on the zone status', ev, srv.status, out);
       kViolate('the page and the server disagree on today\'s status of the zones ' + ev, null, F.r._ctx);
@@ -2634,6 +3137,7 @@
     return '<div class="il" style="color:' + cfg[ev] + '">' + Z('win_open', { left: w1 - sl }) + '</div>';
   }
   function zoneTip(F, ctx, h) {
+    if (pullbackMode() && h.ev === 'X') return pbJointXTip(ctx, h);
     const Zm = F.zones[h.ev], z = Zm && Zm.zones[h.i];
     if (!z) return '';
     // the zone: its share of the family, its status today, its peak 15 minutes, and in its time window which of R and X
@@ -2645,12 +3149,14 @@
     const q0 = F.u2p(z.price_low / 10), q1 = F.u2p(z.price_high / 10);
     const lkz = ctx ? peakAhead(F, ctx, F.ev[h.ev].pts.filter(q => F.zcell[h.ev].get(q.k + '|' + q.b) === h.i), h.ev) : null;
     const pk = lkz && !lkz.past && s !== 'IMPOSSIBLE' ? peakPass(F, h.ev, { zone_id: z.zone_id }, lkz.b, false, sliceOf(ctx), lkz.n) : null;
-    return '<div class="ih"><span style="color:' + cfg[h.ev] + '">' + z.label + '</span> · ' + F.names[h.ev].toLowerCase() + ' · ' + clk(z.time_start) + '–' + clk(z.time_end) + '<span class="zs zs-' + s + '">' + zst(s) + '</span></div>' +
+    return '<div class="ih"><span style="color:' + cfg[h.ev] + '">' + z.label + '</span> · ' + F.names[h.ev].toLowerCase() + ' · ' + clk(z.time_start) + '–' + clk(z.time_end) + '<span class="zs zs-' + s + '">' + zstOf(F, ctx, z, s) + '</span></div>' +
       '<div class="is">' + band(z.price_low, z.price_high) + ' SD · ' + px(Math.min(q0, q1)) + '–' + px(Math.max(q0, q1)) + '</div>' +
-      '<div class="ibig" style="color:' + cfg[h.ev] + '">' + ppTxt(p) + '<span>' + lbl('EST:B-ZONE-' + h.ev, 'share') + '</span></div>' +
+      (F._tp || F._tpg ? tpZoneHead(F, h.ev, z, p) :                                // TP-2.0: the family share of R's place, the reach of X's
+      '<div class="ibig" style="color:#F0F5FF">' + ppTxt(p) + '<span>' + (F._mx ? zoneCellWords(F, h.ev, z) : lbl('EST:B-ZONE-' + h.ev, 'share')) + '</span></div>') +
+      (REVIEW ? '<div class="p24-visit-note"><span>' + (F.rbx ? lbl('FF:R-BEFORE-X', 'zone_final_' + h.ev, { status: zst(s) }) : lbl('FF:TODAY-VISIT', 'final', { ev: h.ev, status: zst(s) })) + '</span></div>' : '') +
       winLine(F, ctx, h.ev, s, F.f + 15 * b0, F.f + 15 * b1, ctx ? zoneClock(F, ctx, h.ev)[h.i] : null) +
       (pk ? '<div class="il" style="color:' + cfg[h.ev] + '">' + lbl(pk.estimand, 'zone_ahead', { window: clk(F.f + 15 * lkz.b) + '–' + clk(F.f + 15 * lkz.b + 15), pct: ppTxt(pk) }) + '</div>' : '') +
-      '<div class="iq">' + lbl('EST:B-RX-WINDOW-' + h.ev, 'zone_question', { window: clk(tw[0]) + '–' + clk(tw[1]) }) + '</div>' + twoBars(F, pX, pR, h.ev, { k0: null, k1: null, b0, b1 }) +
+      '<div class="iq">' + (F.rbx ? lbl('FF:R-BEFORE-X', 'q_zone', { window: clk(tw[0]) + '–' + clk(tw[1]) }) : lbl('EST:B-RX-WINDOW-' + h.ev, 'zone_question', { window: clk(tw[0]) + '–' + clk(tw[1]) })) + '</div>' + twoBars(F, pX, pR, h.ev, { k0: null, k1: null, b0, b1 }) +
       ifoot(F, lbl('FF:SHARE-STEP', 'foot_zone'));
   }
   // Two independent event-time shares on the same denominator N. They may overlap in the same session, so they are
@@ -2660,6 +3166,7 @@
     // a withheld share (SWPC-1.1 M14) keeps its row with «—» and no bar
     const row = (ev, p) => '<div class="ib"><i style="color:' + cfg[ev] + '">' + lbl(p.estimand, 'two_row', { ev, name: F.names[ev].toLowerCase() }) + '</i><span><em style="width:' + (p.pct == null ? 0 : 100 * p.yes_count / mx).toFixed(1) + '%;background:' + cfg[ev] + '"></em></span><b>' + ppTxt(p) + '</b></div>';
     const rows = first === 'R' ? row('R', pR) + row('X', pX) : row('X', pX) + row('R', pR);
+    if (F.rbx) return rows;                      // 23.5, 29.10: R and X are two different events — no «чаще на N п.п.»
     const d = pp(F, { estimand: D, params: rg, event_id: 'X_minus_R', region_kind: 'difference', start_rule: F.from, end_rule: 'до ' + clk(F.end), yes_count: cX - cR, display_scope: 'inspector' });
     if (pX.pct == null || pR.pct == null || d.pct == null) return rows;       // no comparison drawn from a withheld share
     const gap = num(Math.abs(d.pct), 1);
@@ -2696,7 +3203,7 @@
     dom('date').textContent = ctx.D.date;
     const cmp = dom('cmp22');
     cmp.style.display = A.src === 'live' ? '' : 'none';
-    cmp.href = '/22/#inst=' + A.inst + '&session=' + st.session + (st.rp != null ? '&at=' + clk(st.rp) : '');
+    cmp.href = compare24Href(ctx);
     dom('clock').innerHTML = A.src === 'hist'
       ? '<div style="display:flex;gap:6px"><div class="pill hs"><span class="dot"></span>' + (st.rp != null ? 'История ' + st.session + ' · ' + clk(ctx.obs) : 'История · день закрыт') + '</div>' + (st.rp != null ? '<button id="back">К концу дня</button>' : '') + '</div>'
       : ctx.live ? '<div class="pill"><span class="dot"></span><span id="live">LIVE ' + clk(NOW) + ' ET</span></div>'
@@ -2755,7 +3262,7 @@
   // Page pixels of every layer and block in this frame, written into <script id="geo" type="application/json"> so a
   // headless browser can dump them next to its screenshot of the same address. Changes nothing on the screen.
   function geoDump(ctx) {
-    const F = ctx.F, r0 = cv.getBoundingClientRect(), ox = r0.left, oy = r0.top, s = ctx.s;
+    const F = pbMapContext(ctx).F, r0 = cv.getBoundingClientRect(), ox = r0.left, oy = r0.top, s = ctx.s;
     const P = (x, y) => [Math.round(ox + x), Math.round(oy + y)];
     const rect = el => { if (!el) return null; const r = el.getBoundingClientRect(); return r.width || r.height ? [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height)] : null; };
     const G = { url: location.hash, W: innerWidth, H: innerHeight, mode: st.mode, view: F ? F.view : null, dom: {}, chart: {}, panel: {}, det: {} };
@@ -2837,7 +3344,7 @@
     const el = dom('insp');
     if (!el || !V) return;
     const ctx = V.ctx, use = h && h.k !== 'stripBg' ? h : st.pin;
-    let html = continuationMode() ? continuationInspector(ctx) : pullbackMode() ? pbInspector(ctx, use) : use ? tipHtml(use, ctx) : '';
+    let html = continuationMode() ? continuationInspector(ctx) : use && /^sw/.test(use.k) ? swInspector(ctx, use) : use && /^pb/.test(use.k) ? pbInspector(ctx, use) : pullbackMode() && use?.k === 'pcell' ? pbRegionInspector(ctx,use) : use ? tipHtml(use, ctx) : '';
     if (!html && ctx.F && ctx.F.N) html = '<div class="ih">Слепок семьи</div><div class="is">' + esc(ctx.F.cond) + '</div>' + ifoot(ctx.F, lbl('FF:SHARE-STEP', 'foot_fixed', { event: lbl('FF:PASSPORT-VIEW', 'at_act', null, VW(ctx.F)), t: clk(ctx.F.act0) }));
     if (el._h !== html) { el.innerHTML = html; el._h = html; }
   }
@@ -2888,7 +3395,7 @@
     const was = key(st.hover);
     st.hover = h && !['paxis', 'taxis', 'stripBg'].includes(h.k) ? h : (h && h.k === 'stripBg' ? h : null);
     if (st.hover && st.hover.ev) st.ev = st.hover.ev;      // the event in focus: what the panel and the area speak of
-    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone'].includes(h.k) ? 'pointer' : 'crosshair';
+    cv.style.cursor = st.tool ? 'crosshair' : !h ? 'crosshair' : h.k === 'paxis' ? 'ns-resize' : h.k === 'taxis' ? 'ew-resize' : ['pcell', 'tcell', 'pt', 'area', 'col', 'fcell', 'unk', 'pbpt', 'pbzone', 'pbpcell', 'pbtcell', 'pbarea', 'tpwin', 'tpzone'].includes(h.k) ? 'pointer' : 'crosshair';
     if (alPlusAt(x, y)) cv.style.cursor = 'pointer';
     else { const al = alNear(x, y); if (al) cv.style.cursor = Math.abs(x - al.x) <= 8 ? 'pointer' : 'ns-resize'; }
     showTip(st.hover);
@@ -2920,16 +3427,20 @@
   });
   function click(x, y, d) {
     const h = hit(x, y), F = V.ctx.F;
-    if (h && h.k === 'pcell' && F && st.mode === 'bounds') {        // a click on the price histogram selects its band
+    if (h && (h.k === 'pcell' || h.k === 'pbpcell') && F && st.mode === 'bounds') {        // a click on the price histogram selects its band
       const same = st.area && st.area.k0 === h.k0 && st.area.k1 === h.k1 && st.area.b0 == null && st.area.ev === h.ev;
       st.area = same ? null : { k0: h.k0, k1: h.k1, ev: h.ev || st.ev }; render(true); return;
     }
     if (h && h.k === 'fcell' && d.zone === 'proj') { st.col = h.j; render(true); return; }
-    if (h && h.k === 'tcell' && F) {                                  // a click on the time histogram: a window (for the band)
+    if (h && (h.k === 'tcell' || h.k === 'pbtcell') && F) {                                  // a click on the time histogram: a window (for the band)
       const a = st.area && isFinite(st.area.k0) ? st.area : null, same = st.area && st.area.b0 === h.b0 && st.area.b1 === h.b1;
-      st.area = same ? (a ? { k0: a.k0, k1: a.k1, ev: a.ev } : null) : { k0: a ? a.k0 : -Infinity, k1: a ? a.k1 : Infinity, b0: h.b0, b1: h.b1, ev: a ? a.ev : st.ev };
+      st.area = same ? (a ? { k0: a.k0, k1: a.k1, ev: a.ev } : null) : { k0: a ? a.k0 : -Infinity, k1: a ? a.k1 : Infinity, b0: h.b0, b1: h.b1, ev: a ? a.ev : h.ev || st.ev };
       render(true); return;
     }
+    if (h && h.k === 'tpwin') { tpPinWindow(h.id); return; }           // TP-1.1: a window fixes the price column and constellations
+    if (h && h.k === 'tpzone') { tpPinGhost(h); return; }              // a place of another window: that window on screen
+    if (h && h.k === 'tpline') return;
+    if (h && ['pbzone','pbpcell','pbtcell','pbarea','pbunk'].includes(h.k)) { pin(h); return; }
     if (h && h.k === 'zone' && d.zone === 'strip') { pin(h); return; }
     if (d.zone !== 'plot' && d.zone !== 'draw') return;
     if (h && h.k === 'pt') { pin(h); return; }
@@ -3038,7 +3549,7 @@
       return '<label class="cr"><span>' + n + '</span><input type="range" data-c="' + k + '" min="' + a + '" max="' + b + '" step="' + (step || 1) + '" value="' + v + '"><em>' + v + '</em></label>';
     };
     let open = {};
-    try { open = JSON.parse(localStorage.getItem('drlab.d24.cfgOpen') || '{}'); } catch (e) { /* optional */ }
+    try { open = JSON.parse(localStorage.getItem('drlab.d235.cfgOpen') || '{}'); } catch (e) { /* optional */ }
     dom('cfgp').innerHTML = '<div class="ch"><b>Настройки</b><button id="cfgReset">Сбросить</button></div>' + SCHEMA.map(([t, rows]) => '<details class="cgd"' + (open[t] ? ' open' : '') + ' data-g="' + t + '"><summary class="cg">' + t + '</summary>' + rows.map(row).join('') + '</details>').join('') + integrationSettings();
   }
   dom('cfgp').addEventListener('input', e => {
@@ -3054,9 +3565,9 @@
     const d = e.target;
     if (!d || d.tagName !== 'DETAILS') return;
     let open = {};
-    try { open = JSON.parse(localStorage.getItem('drlab.d24.cfgOpen') || '{}'); } catch (x) { /* optional */ }
+    try { open = JSON.parse(localStorage.getItem('drlab.d235.cfgOpen') || '{}'); } catch (x) { /* optional */ }
     open[d.dataset.g] = d.open;
-    try { localStorage.setItem('drlab.d24.cfgOpen', JSON.stringify(open)); } catch (x) { /* optional */ }
+    try { localStorage.setItem('drlab.d235.cfgOpen', JSON.stringify(open)); } catch (x) { /* optional */ }
   }, true);
   dom('cfgp').addEventListener('click', e => { const b = e.target.closest('button'); if (b && b.id === 'cfgReset') { Object.assign(cfg, DEF); saveCfg(); cfgPanel(); redraw(true); } });
   window.addEventListener('resize', () => redraw(true));
@@ -3070,8 +3581,8 @@
   function running() { const k = sessionNow(); return A.src === 'live' && A.day && A.day.status === 'ok' && NOW >= SESS[k].start && NOW < SESS[k].end; }
   function schedule() {
     clearTimeout(A.timer);
-    if (!A.auto || !running()) return;
-    const step = A.day.switched ? 5 : 1, m = etMinute(), wait = ((Math.floor(m / step) + 1) * step + (step === 1 ? 3 : 20) / 60 - m) * 60000;
+    if (!A.auto || A.src !== 'live') return;
+    const m = etMinute(), wait = (Math.floor(m) + 1 + 3 / 60 - m) * 60000;
     A.timer = setTimeout(() => loadDay(true), Math.max(5000, wait));
   }
   function takeDay(x, first) {
@@ -3084,8 +3595,12 @@
       if (first) { fitSession(st.session); if (st.session === 'RDR' && st.rp == null) { st.v0 = 545; st.v1 = rightEdge(); } }
     }
   }
+  // the scene (family, «Сейчас», candidates) is asked again only when what it is built from changed: another day, or
+  // another closed prefix up to the cut; a minute's refresh inside the same M5 keeps it (operator 2026-10-20)
+  function prefixSig() { const D = day(), cut = Math.floor((A.src === 'hist' ? 1020 : NOW) / 5) * 5; return A.inst + '|' + (D.iso || '') + '|' + D.bars.filter(b => b.t + 5 <= cut).map(b => [b.t, b.o, b.h, b.l, b.c].join(',')).join(';'); }
+  function freshScene() { if (!ICFG.enabled) return; const g = prefixSig(); if (g === IS.sig) return; IS.sig = g; IS.epoch++; IS.key = null; IS.packet = null; IS.error = null; }
   async function loadDay(refresh) {
-    if (ICFG.enabled && (refresh || !A.day)) { IS.epoch++; IS.key = null; IS.packet = null; IS.error = null; }
+    if (ICFG.enabled && !A.day) { IS.epoch++; IS.key = null; IS.packet = null; IS.error = null; IS.sig = null; }
     // DR-LAB-SWPC-1.1 M02 (W01): only the answer to the latest request may become the day on screen — a late answer for
     // the day, instrument or minute asked before is dropped, never drawn under the new name
     const seq = A.daySeq = (A.daySeq || 0) + 1;
@@ -3119,6 +3634,7 @@
       }
     } catch (e) { if (seq !== A.daySeq) return; A.error = 'Локальный сервер не ответил'; }
     A.busy = false;
+    freshScene();
     render(true);
     if (A.src === 'live') alCheck();
     schedule();
@@ -3128,7 +3644,7 @@
   // comes with the data (every minute with a 1- or 5-minute pane in TradingView, else every 5 minutes), so an alert may be
   // late by that much: decisions are taken on the M5 close anyway. One-shot; a crossed line turns grey until moved or
   // removed. Kept in this browser, per instrument; drag a line to move it (re-arms), × at its right end removes it.
-  const AL_KEY = 'drlab.d24.alerts';
+  const AL_KEY = 'drlab.d235.alerts';
   let ALERTS = {};
   try { ALERTS = JSON.parse(localStorage.getItem(AL_KEY) || '{}') || {}; } catch (e) { ALERTS = {}; }
   const alSave = () => { try { localStorage.setItem(AL_KEY, JSON.stringify(ALERTS)); } catch (e) { /* not kept */ } };
@@ -3199,14 +3715,23 @@
   }
   const alNear = (x, y) => (V.alHit || []).find(q => Math.abs(q.y - y) <= 5 && x <= V.plot.w);
   const alPlusAt = (x, y) => V.alPlus && x >= V.alPlus[0] && x <= V.alPlus[0] + V.alPlus[2] && y >= V.alPlus[1] && y <= V.alPlus[1] + V.alPlus[3];
-  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, reachOf, zoneLook, zoneClock, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+  window.__d24 = { st, A, render, alerts: () => ALERTS, alAdd, alCheck, nowOf, phaseOf, reachOf, zoneLook, zoneClock, visitState, visitPaint, zonePaint, bandPaint, markerPaint, targetMarker, colorBindings: COLOR235, cur, hit: (x, y) => hit(x, y), get V() { return V; }, passports: () => P24.list.slice(), links: () => P24.links.slice(), openHist, openLive, filmOf, levelQuery, areaInfo, areaCount, zonesOf, zoneStatus,
+    timeSd:()=>({data:tsData(cur()),trace:TS_TRACE.slice(),profile:'DR-LAB-TIME-SD-1.0'}),emphOf,
     preOf, arriveOf, arriveBundle, candidateSelection, integration: () => ({ enabled: ICFG.enabled, trials: {...TRIAL}, ...IS, packet: scenePacket() }), setTrial,
     continuations:()=>({...CS,packet:continuationPacket(cur())}),pinContinuation,verifyContinuation,
-    pullbacks:()=>({...PB,packet:pbPacket(cur()),mode:pullbackMode()}),pbHit:(x,y)=>pbHit(x,y),pbGeom:()=>{const c=cur(),r=pbPacket(c);return r?pbGeom(c,r):null;},
+    pullbacks:()=>({...PB,packet:pbPacket(cur()),mode:pullbackMode()}),pbHit:(x,y)=>pbHit(x,y),pbGeom:()=>{const c=cur(),r=pbPacket(c);return r?pbGeom(c,r):null;},mapContext:()=>pbMapContext(cur()),timeHills:()=>{const c=pbMapContext(cur());return c.F?{R:bandHills(c.F,c,'R'),X:bandHills(c.F,c,'X')}:null;},
     // DR-LAB-SC-1.1: the page's registry, its violations, and the reference check of its passports (tests/ui_check24.js)
     // violations: those of the scene on screen (SWPC-1.1 M16); all: every one found since the page opened
     contract: () => ({ edition: SC11 && SC11.edition, registry_hash: SC11 && SC11.registry_hash, violations: V ? kNow(V.ctx) : [], all: K.list.map(v => v.msg), integrity: V ? integrity(V.ctx) : [], unchecked: P24.list.filter(p => !p.checked && !p.violation).length }),
-    verify: () => verifyNow(), lbl, cfg };
+    verify: () => verifyNow(), lbl, cfg,
+    // TP-1.1 (tp235.js): the state of the core on screen, for tests/tp235_page.mjs
+    tp: () => { const F = V && V.ctx && V.ctx.F, P = F && F._tp; return { on: TP.on, pin: TP.pin, w: P ? P.w : null, N: P ? { F: P.A && P.A.N, T: P.T.N, W: F.N } : null, clock: P ? P.clock : null, x: P ? P.x : null, xc: P ? P.xc : null,
+      xzones: F && F.zones && F.zones.X ? F.zones.X.zones.map(z => ({ label: z.label, cells: z.cell_mask, n: z.n_zone, price: [z.price_low, z.price_high] })) : [],
+      zones: F && F.zones ? { R: (F.zones.R || { zones: [] }).zones.length, X: (F.zones.X || { zones: [] }).zones.length } : null, caps: (V && V.tpCaps || []).map(q => q.id), lines: (V && V.tpLines || []).map(q => q.ev + ':' + q.id),
+      // 05.11: the pullback places of the other windows on the chart, and the window peaks on the band
+      others: P ? tpOthers(V.ctx).map(q => ({ w: q.w, N: q.G.N, places: q.G.zones.R.zones.filter((z, i) => !zoneHeld(q.G, 'R', i)).length })) : [],
+      ghosts: (V && V.tpGhostHit || []).map(q => ({ w: q.w, i: q.i, box: q.box })), peaks: P ? TP_WINDOWS.filter(w => P.clock.windows[w]).map(w => ({ w, W: P.clock.windows[w], pk: tpWinPeak(F, w) })) : [] }; },
+    tpHit: (x, y) => tpHit(x, y) };
   initPanel24();
   // the address: #date=2025-12-17 (a history day) &inst=NQ &session=RDR &at=11:50 (replay) &ev=X &mode=path
   //              &area=3:6[:b0:b1] (price cells [3, 6) x time cells [b0, b1)) &hist=1 (details open)
@@ -3228,7 +3753,9 @@
     if (q.get('col') != null && q.get('col') !== '') st.col = +q.get('col');                   // &col=12: an M5 column of «Путь семьи» pinned
     if (q.get('scope') === 'all') st.scope = 'all';                                         // &scope=all: the all-weekdays family
     if (q.get('zone')) st.pinZone = +q.get('zone');                                         // &zone=2: the second zone of the chosen event pinned
-    if (q.get('geo')) st.geo = true;                                                         // &geo=1: geometry for spec/ekran-24
+    if (q.get('geo')) st.geo = true;
+    if (q.get('cells')) st.L.cells = true;                                                   // &cells=1: the layer «Клетки» (matrix235.js)                                                         // &geo=1: geometry for spec/ekran-24
+    // &tp=0: the previous meaning (the table of 30.10); &tpw=W2: that window fixed (tp235.js, read at its start)
     if (q.get('hov')) { const a = q.get('hov').split(':'); st.hover = a[0] === 'pcell' ? { k: 'pcell', ev: a[1], k0: +a[2], k1: +a[2] + 1, src: 'proj' } : a[0] === 'tcell' ? { k: 'tcell', b0: +a[1], b1: +a[1] + 1, src: 'strip' } : null; if (st.hover && st.hover.ev) st.ev = st.hover.ev; }   // review snapshots
     cfgPanel();
     if (/^\d{4}-\d\d-\d\d$/.test(q.get('date') || '')) { A.src = 'hist'; A.date = q.get('date'); A.jump = true; st.rpWanted = at; }

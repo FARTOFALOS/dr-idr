@@ -1,6 +1,6 @@
   // ================= «Откаты до обновления» · the candidate DR-LAB-PB-0.1 (operator 2026-10-21) =================
   // meaning/lens/2026-10-21-otkaty-do-obnovleniya/: the construction, its review, the definition and the answer. A view of
-  // its own behind the trial «pullbacks» (⚙ → Испытание кандидатов): the accepted R / X map, its numbers and words stay.
+  // the existing bounds layout; PB-L occupies its amber R display slot. Accepted BASE/NOW stay separate.
   // One source-bound publication (GET /api/integration/pullbacks, lab/pullbacks24.py) for the family on screen (the same
   // F, N, frame): every member's episodes H -> L -> B with its witness bars, the merged bottoms, the constellations of
   // every scale and today's facts. Before anything is drawn the page checks the release hash, the scene and family, every
@@ -8,19 +8,22 @@
   // deeper between, after the activation) and every constellation's members and share against its bundle; a failed check
   // withdraws the number and the drawing together. Stepping by M5 changes only today's facts: the map is the family's
   // history, fixed at its activation, and a pinned historical session stays pinned.
-  const PBC = '#C3A6F2', PB_SCALES = [1, 2, 3, 6], PB_KEY = 'drlab.d24.pbscale';
+  const PBC = cfg.R, PB_SCALES = [1, 2, 3, 6], PB_KEY = 'drlab.d235.pbscale';
   const PB = { key: null, packet: null, pending: null, error: null, seq: 0, scale: 1, cl: null, verified: 0 };
   try { const k = +localStorage.getItem(PB_KEY); if (PB_SCALES.includes(k)) PB.scale = k; } catch (e) { /* 1 */ }
   {
     const q = new URLSearchParams(location.hash.slice(1)), k = +q.get('pbscale');
     if (PB_SCALES.includes(k)) PB.scale = k;
-    if (ICFG.enabled && q.get('mode') === 'pullbacks') { TRIAL.pullbacks = true; st.mode = 'pullbacks'; }
+    // Superseded broad PB overlays cannot replace the approved finite time x SD map.
   }
-  const pullbackMode = () => ICFG.enabled && TRIAL.pullbacks && st.mode === 'pullbacks';
+  // Operator 2026-10-26: the main map of 23.5 is again the final R / X of every session (one star per session, the
+  // zones of screen 24); local pullbacks are a separate overlay layer (sweeps235.js). The PB / time x SD map stays off.
+  const pullbackMode = () => false;
+  // Keep the original star layer on. Compact cell representatives below prevent a catalogue of overlapping episodes.
   function pbRequest(ctx) {
     if (!ctx.F || !ctx.F.N || !ctx.s.conf) return null;
-    const cut = sliceOf(ctx), view = st.view === 'conf' ? 'conf' : 'auto';
-    return { cut, view, key: [IS.epoch, A.inst, ctx.D.iso, ctx.s.k, cut, view, st.scope, ctx.F.r.snapshot_id].join('|') };
+    const cut = sliceOf(ctx), view = st.view === 'conf' ? 'conf' : 'auto', a = st.area, region = a ? [a.k0,a.k1,a.b0,a.b1].map(v=>Number.isFinite(v)?v:null) : null;
+    return { cut, view, region, key: [PB.scale,JSON.stringify(region),IS.epoch, A.inst, ctx.D.iso, ctx.s.k, cut, view, st.scope, ctx.F.r.snapshot_id].join('|') };
   }
   function pbPacket(ctx) { const q = pbRequest(ctx); return q && PB.key === q.key ? PB.packet : null; }
   function requestPullbacks(ctx) {
@@ -29,14 +32,16 @@
     if (!q || (q.key === PB.key && (PB.packet || PB.error)) || PB.pending === q.key) return;
     const token = ++PB.seq, F = ctx.F;
     PB.key = q.key; PB.packet = null; PB.error = null; PB.pending = q.key; PB.cl = null;
-    const args = new URLSearchParams({ instrument: A.inst, session: ctx.s.k, at: q.cut, view: q.view, scope: st.scope });
+    const args = new URLSearchParams({ instrument: A.inst, session: ctx.s.k, at: q.cut, view: q.view, scope: st.scope, scale: PB.scale });
     if (A.src === 'hist') args.set('date', A.date);
-    fetch('/api/integration/pullbacks?' + args).then(async res => {
+    if (q.region) args.set('region', JSON.stringify(q.region));
+    fetch('/api/integration/time-sd?' + args).then(async res => {
       const r = await res.json();
       if (!res.ok) throw Error(r.message || r.error || 'Сервер не ответил');
       if (token !== PB.seq) return;
       if (r.status !== 'OK') throw Error(r.message || r.status);
       await pbVerify(r, q, ctx, F);
+      await tsVerify(r, q, ctx, F);
       if (token !== PB.seq) return;
       PB.packet = r; PB.verified++;
     }).catch(e => { if (token === PB.seq) { PB.error = e.message; PB.packet = null; } })
@@ -98,6 +103,13 @@
     const W = new Map(p.sessions.map(w => [w.id, w])), E = new Map(p.episodes.map(e => [e.id, e]));
     for (const pt of p.points) { const bad = pbWitness(pt, W.get(pt.case), E); if (bad) throw Error('Точка не подтверждается своими свечами (' + bad + '): ' + pt.case); }
     for (const s of PB_SCALES) { const bad = pbZoneCheck(r, s); if (bad) throw Error('Созвездие не совпадает с публикацией: ' + bad + ' · масштаб ' + s); }
+    if(q.region && PB_SCALES.some(s=>!p.marginals[String(s)].some(v=>['k0','k1','b0','b1'].every((k,i)=>v[k]===q.region[i]))))throw Error('Ответ не содержит выбранную область');
+    for (const s of PB_SCALES) for (const v of p.marginals[String(s)]) {
+      const pts=p.points.filter(pt=>pt.kt>=s&&(v.k0==null||pt.k>=v.k0)&&(v.k1==null||pt.k<v.k1)&&(v.b0==null||pt.b>=v.b0)&&(v.b1==null||pt.b<v.b1));
+      const members=[...new Set(pts.map(pt=>pt.case))].sort(), later=new Set(pts.filter(pt=>pt.open+5>q.cut).map(pt=>pt.case)).size;
+      const b=pbBundle(r,'EST:PB-REGION',x=>x.scale===s&&['k0','k1','b0','b1'].every(k=>x[k]===v[k])),pt=b?.estimates.find(e=>e.value_kind==='POINT'),bd=b?.estimates.find(e=>e.value_kind==='BOUNDS');
+      if(JSON.stringify(members)!==JSON.stringify(v.members)||v.n_known!==members.length||v.earlier+v.later!==members.length||v.later!==later||!pt||pt.numerator!==members.length||pt.denominator!==F.N||(v.n_possible&&(!bd||Math.abs(bd.upper-(members.length+v.n_possible)/F.N)>1e-12))) throw Error('Кластер цены/времени не совпадает с составом сессий');
+    }
     // today: the published bars are the visible prefix of this page; every completed episode stands on them
     const T = p.today;
     if (JSON.stringify(todayDirected(ctx, p, T)) !== JSON.stringify(T.bars)) throw Error('Сегодняшние свечи ответа не совпадают с экраном');
@@ -117,23 +129,6 @@
       out.push(!b ? null : d === 1 ? [t(b.o) - e, t(b.h) - e, t(b.l) - e, t(b.c) - e] : [e - t(b.o), e - t(b.l), e - t(b.h), e - t(b.c)]);
     }
     return out;
-  }
-  // ---------- geometry: haze and threads of each constellation over its stars (a binned, separable Gaussian: fast for many) ----------
-  function pbKde(pts, sig) {
-    const step = 4, xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
-    const x0 = Math.min(...xs) - 3 * sig, y0 = Math.min(...ys) - 3 * sig;
-    const nx = Math.ceil((Math.max(...xs) + 3 * sig - x0) / step) + 1, ny = Math.ceil((Math.max(...ys) + 3 * sig - y0) / step) + 1;
-    const A0 = new Float64Array(nx * ny), A1 = new Float64Array(nx * ny), gv = new Float64Array(nx * ny);
-    for (const [x, y] of pts) { const ix = Math.round((x - x0) / step), iy = Math.round((y - y0) / step); if (ix >= 0 && ix < nx && iy >= 0 && iy < ny) A0[iy * nx + ix]++; }
-    const R = Math.ceil(3 * sig / step), K = [];
-    for (let d = -R; d <= R; d++) K.push(Math.exp(-(d * step) * (d * step) / (2 * sig * sig)));
-    for (let iy = 0; iy < ny; iy++) for (let ix = 0; ix < nx; ix++) { let s = 0; for (let d = -R; d <= R; d++) { const j = ix + d; if (j >= 0 && j < nx) s += K[d + R] * A0[iy * nx + j]; } A1[iy * nx + ix] = s; }
-    let mx = 0, mi = 0;
-    for (let iy = 0; iy < ny; iy++) for (let ix = 0; ix < nx; ix++) {
-      let s = 0; for (let d = -R; d <= R; d++) { const j = iy + d; if (j >= 0 && j < ny) s += K[d + R] * A1[j * nx + ix]; }
-      gv[iy * nx + ix] = s; if (s > mx) { mx = s; mi = iy * nx + ix; }
-    }
-    return { step, x0, y0, nx, ny, gv, mx, spot: { x: x0 + (mi % nx) * step, y: y0 + Math.floor(mi / nx) * step } };
   }
   function pbMst(pts) {
     const n = pts.length, inT = new Uint8Array(n), best = new Float64Array(n).fill(Infinity), from = new Int32Array(n).fill(-1), segs = [];
@@ -156,87 +151,15 @@
     const zones = p.maps[String(s)].zones.map((z, i) => {
       const cells = new Set(z.cell_mask.map(c => c[0] + '|' + c[1]));
       const pts = p.points.filter(q => q.kt >= s && cells.has(q.k + '|' + q.b)).map(q => ({ q, x: V.X(q.open + 2.5), y: V.Y(F.u2p(q.v / W.get(q.case).w)) }));
-      const xy = pts.map(o => [o.x, o.y]), kd = xy.length ? pbKde(xy, 18) : null;
+      const xy = pts.map(o => [o.x, o.y]), kd = xy.length ? kde(xy, 18) : null;
       return { z, i, pts, kd, g1: kd ? iso(kd, 0.22) : [], g2: kd ? iso(kd, 0.6) : [], hit: kd ? iso(kd, 0.2) : [], ln: kd ? iso(kd, 0.35) : [], mst: pbMst(xy) };
     });
     return (PB.cl = { key, zones, W, E, P });
   }
   const pbShare = (z, N) => z.n_possible ? pct(100 * z.n_known / N) + '–' + pct(100 * (z.n_known + z.n_possible) / N) : pct(100 * z.n_known / N);
   const pbRel = (r, i) => r.proof.today.zones[String(PB.scale)][i];
-  function pbDraw(c, ctx, phase) {
-    requestPullbacks(ctx);
-    const r = pbPacket(ctx), F = ctx.F;
-    if (phase === 'under') V.pbLbl = [];
-    if (!r || !F) return;
-    const G = pbGeom(ctx, r), h = hv(), N = r.proof.context.N, sl = sliceOf(ctx);
-    if (phase === 'under') {
-      for (const g of G.zones) {
-        if (!g.kd) continue;
-        const rel = pbRel(r, g.i), past = rel.clock === 'PAST', on = !!(h && h.k === 'pbzone' && h.i === g.i), k = !h ? 1 : on ? 1.5 : 0.6;
-        const dim = past ? 0.6 * cfg.spentA / 100 : 1, col = past ? stateCol(PBC, 'spent') : PBC, fa = cfg.cloudA / 100, ta = cfg.threadA / 100;
-        c.save();
-        c.filter = 'blur(14px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
-        c.filter = 'blur(7px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.45, 0.13 * k * dim * fa)); loopsPath(c, g.g2); c.fill();
-        c.filter = 'none';
-        c.strokeStyle = rgba(col, Math.min(0.35, 0.13 * k * dim * ta)); c.lineWidth = 0.5;
-        c.beginPath(); for (const sg of g.mst) { c.moveTo(sg[0], sg[1]); c.lineTo(sg[2], sg[3]); } c.stroke();
-        if (on) { c.strokeStyle = rgba(col, 0.6); c.lineWidth = 1; loopsPath(c, g.ln); c.stroke(); }
-        // the name and share inside, translucent, under the candles, as the accepted constellations show theirs
-        const zt = pbShare(g.z, N), fs = Math.round(clamp(12 + 0.45 * 100 * g.z.n_known / N, 15, 21) * cfg.zoneLbl / 100), nfs = Math.round(fs * 0.6);
-        c.font = '700 ' + nfs + 'px ' + FONT;
-        const wN = c.measureText(g.z.label).width, wT = wN + 4 + pctW(c, zt, '700 ', fs);
-        const cx = g.pts.reduce((a, o) => a + o.x, 0) / g.pts.length, cy = g.pts.reduce((a, o) => a + o.y, 0) / g.pts.length;
-        const lx = clamp(cx - wT / 2, 4, V.plot.w - 64 - wT), ly = clamp(cy - fs / 2, 30, V.plot.h - fs - 4), yb = ly + fs * 0.86;
-        c.globalAlpha = (k < 1 ? 0.4 + 0.5 * k : 1) * (past ? cfg.zoneSpentA / 100 : 1);
-        c.font = '700 ' + nfs + 'px ' + FONT; c.textBaseline = 'alphabetic'; c.fillStyle = rgba(col, cfg.zoneNameA / 100); c.fillText(g.z.label, lx, yb);
-        pctDraw(c, zt, lx + wN + 4, yb, '700 ', fs, rgba(mixW(col, 0.35), cfg.zoneNumA / 100));
-        c.restore();
-        V.pbLbl.push({ box: [lx - 2, ly - 2, wT + 4, fs + 6], i: g.i });
-      }
-      return;
-    }
-    // over the candles: the stars of every constellation, then the path of the hovered or pinned historical session
-    const R0 = 1.7 * cfg.ptSize / 100, sel = h && h.k === 'pbpt' ? G.P.get(h.id) : null;
-    for (const g of G.zones) {
-      const col = pbRel(r, g.i).clock === 'PAST' ? stateCol(PBC, 'spent') : PBC;
-      for (const o of g.pts) {
-        if (o.x < -4 || o.x > V.plot.w + 4 || o.y < -4 || o.y > V.plot.h + 4) continue;
-        const lit = sel ? sel.case === o.q.case : h && h.k === 'pbzone' ? h.i === g.i : null;
-        let a = (o.q.open + 5 <= sl ? cfg.pastA : cfg.ptA) / 100 * 1.1, rr = R0;
-        if (lit === true) { a = Math.min(1, Math.max(a, 0.55) + 0.3); rr = R0 * 1.3; } else if (lit === false) a *= 0.28;
-        c.fillStyle = rgba(col, Math.min(1, a)); c.beginPath(); c.arc(o.x, o.y, rr, 0, 6.2832); c.fill();
-      }
-    }
-    if (sel) pbDrawPath(c, ctx, r, G, sel);
-  }
-  // the chosen historical session: its own M5 (ranges and closes in its IDR units carried to today's scale, its real
-  // clock), the vertex H of every episode ending at this bottom with its level dashed to the update B (the first M5 above
-  // it), the bottom L, its activation and its DR break; quiet, so today's candles stay first
-  function pbDrawPath(c, ctx, r, G, pt) {
-    const F = ctx.F, p = r.proof, w = G.W.get(pt.case), U = v => V.Y(F.u2p(v / w.w)), X = j => V.X(p.grid[j] - 2.5);
-    c.save();
-    c.beginPath(); let first = true;
-    w.bars.forEach((b, j) => { if (!b || j < p.first_i) { first = true; return; } const x = X(j), y = U(b[3]); if (first) { c.moveTo(x, y); first = false; } else c.lineTo(x, y); });
-    c.strokeStyle = rgba('#ECF0F6', Math.min(1, 0.4 * cfg.pathA / 100)); c.lineWidth = 1; c.stroke();
-    w.bars.forEach((b, j) => {
-      if (!b || j < p.first_i) return;
-      const x = Math.round(X(j)) + 0.5;
-      c.strokeStyle = rgba('#ECF0F6', Math.min(1, (j <= w.act_i ? 0.06 : 0.14) * cfg.pathA / 100)); c.beginPath(); c.moveTo(x, U(b[1])); c.lineTo(x, U(b[2])); c.stroke();
-    });
-    const mark = (x, y, t) => { c.font = '700 11px ' + FONT; c.fillStyle = PBC; c.textBaseline = 'middle'; c.fillText(t, x + 8, y + 0.5); };
-    for (const id of pt.episodes) {
-      const e = G.E.get(id), xa = X(e.a), xb = X(e.jb), yh = U(e.h);
-      c.strokeStyle = rgba(PBC, 0.75); c.lineWidth = 1; c.setLineDash([4, 3]); c.beginPath(); c.moveTo(xa, yh); c.lineTo(xb, yh); c.stroke(); c.setLineDash([]);
-      c.fillStyle = PBC; c.beginPath(); c.arc(xa, yh, 3, 0, 6.2832); c.fill(); mark(xa, yh - 9, 'H');
-      c.strokeStyle = PBC; c.lineWidth = 1.6; c.beginPath(); c.moveTo(xb - 5, yh); c.lineTo(xb + 5, yh); c.stroke(); mark(xb, yh - 9, 'B');
-    }
-    const xl = X(pt.i), yl = U(pt.v);
-    c.strokeStyle = PBC; c.lineWidth = 1.6; c.beginPath(); c.arc(xl, yl, 6, 0, 6.2832); c.stroke(); mark(xl, yl, 'L');
-    const tag = (T, text, bg, y) => { const x = V.X(T - 2.5); c.font = '600 10.5px ' + FONT; const tw = c.measureText(text).width + 8; c.fillStyle = bg; roundRect(c, x - tw / 2, y, tw, 16, 3); c.fill(); c.fillStyle = '#0B0C10'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, x, y + 8.5); c.textAlign = 'left'; };
-    tag(w.act, (F.brk ? 'слом ' : 'подтв. ') + clk(w.act), 'rgba(236,240,246,.85)', 70);
-    if (!F.brk && w.brk != null) tag(w.brk, 'слом DR ' + clk(w.brk), 'rgba(242,54,69,.9)', 90);
-    c.restore();
-  }
+  // A bottom can link to several vertices; only vertices established at this view's scale explain its star.
+  const pbLinks = (pt, episodes) => pt.episodes.map(id => episodes.get(id)).filter(e => e && e.kt >= PB.scale);
   function pbHit(x, y) {
     if (!pullbackMode()) return null;
     const ctx = V.ctx, r = pbPacket(ctx);
@@ -262,15 +185,23 @@
     return { clock: lbl(PT, rel.clock), visit: v.state === 'VISITED' ? lbl(PT, 'VISITED', { t: clk(v.close) }) : lbl(PT, v.state === 'UNKNOWN' ? 'VISIT_UNKNOWN' : 'NOT_YET'),
       completion: cp.state === 'COMPLETED' ? lbl(PT, 'COMPLETED', { top: w.top, h: clk(cp.h_open), t: clk(cp.b_close) }) : cp.state === 'IN_ZONE_NOT_UPDATED' ? lbl(PT, 'IN_ZONE_NOT_UPDATED', { top: w.top, h: clk(cp.h_open) }) : lbl(PT, 'NONE') };
   }
+  const pbDisplayLabel=z=>z.label.replace(/^L/,'R');
   const pbWin = z => clk(z.time_start) + '–' + clk(z.time_end);
   const pbDate = id => id.slice(3, 7) + '-' + id.slice(7, 9) + '-' + id.slice(9, 11);
   const pbScaleSwitch = () => '<span class="p24-seg sm pbseg" title="' + esc(lbl(PZ, 'scale_title', { k: PB.scale })) + '"><span class="pbsl">' + lbl(PZ, 'scale') + '</span>' +
     PB_SCALES.map(k => '<button data-pbscale="' + k + '" class="' + (PB.scale === k ? 'on' : '') + '">' + k + '</button>').join('') + '</span>';
+  function compare24Href(ctx) {
+    const q = new URLSearchParams({ inst: A.inst, session: st.session, at: clk(sliceOf(ctx)), scope: st.scope });
+    if (A.src === 'hist' && A.date) q.set('date', A.date);
+    if (st.view === 'conf') q.set('view', 'conf');
+    return 'http://127.0.0.1:8767/24/#' + q;
+  }
   function pbPanel(ctx) {
     requestPullbacks(ctx);
     const F = ctx.F, r = pbPacket(ctx), out = [];
     out.push('<div class="p21-h"><span title="' + esc(lbl(PZ, 'head_title')) + '">' + lbl(PZ, 'head') + '</span><span>' + (F ? lbl(PZ, 'frame', null, VW(F)) : '') + '</span></div>');
     if (F) out.push('<div class="p21-note">' + esc(F.cond) + '</div>');
+    if (A.src === 'hist') out.push('<div class="p21-note"><a class="pbcompare" data-compare24="1" href="' + esc(compare24Href(ctx)) + '" target="_blank" rel="noopener">Сравнить этот срез с №24 ↗</a></div>');
     out.push('<div class="p21-h second pbctl">' + pbScaleSwitch() + scopeSwitch() + '</div>');
     if (!r) return out.join('') + '<div class="p21-note">' + esc(pbStatus(ctx)) + '</div>';
     const p = r.proof, zm = p.maps[String(PB.scale)], N = p.context.N, sl = sliceOf(ctx), now = () => '<div class="p24-now"><span></span>' + (sl >= F.end ? 'блок закончен' : 'сейчас ' + clk(sl)) + '<span></span></div>';
@@ -297,7 +228,7 @@
     const T = r.proof.today, s = PB.scale, u = v => sd(v / T.w), w = pbW(F);
     const done = T.episodes.filter(e => e.status === 'KNOWN' && e.kt >= s), wait = T.episodes.filter(e => e.status === 'NOT_YET' && e.kt >= s && e.L != null);
     const e1 = done.length ? done.reduce((a, b) => b.b_close > a.b_close ? b : a) : null, e2 = wait.length ? wait.reduce((a, b) => b.h_open > a.h_open ? b : a) : null;
-    const s1 = e1 ? lbl(PT, 'today_done', { n: done.length, bot: w.bot, top: w.top, l: u(e1.L), lt: clk(e1.l_open), h: clk(e1.h_open), bt: clk(e1.b_close) }) : lbl(PT, 'today_none');
+    const s1 = e1 ? lbl(PT, 'today_done', { n: done.length, bot: w.bot, top: w.top, l: u(e1.L), lt: clk(e1.l_open), h: u(e1.h), bt: clk(e1.b_close) }) : lbl(PT, 'today_none');
     const s2 = e2 ? lbl(PT, 'today_wait', { top: w.top, bot: w.bot, h: u(e2.h), ht: clk(e2.h_open), l: u(e2.L), lt: clk(e2.l_open) }) : '';
     return '<div class="p21-h second"><span title="' + esc(lbl(PT, 'k', { act: clk(T.act) })) + '">' + lbl(PT, 'today_head', { scale: s }) + '</span></div><div class="p21-note">' + esc(s1) + '</div>' + (s2 ? '<div class="p21-note">' + esc(s2) + '</div>' : '');
   }
@@ -305,11 +236,13 @@
     const r = pbPacket(ctx);
     if (!r) return '<div class="ih">' + lbl(PZ, 'head') + '</div><div class="is">' + esc(pbStatus(ctx)) + '</div>';
     const p = r.proof, N = p.context.N, G = pbGeom(ctx, r), F = ctx.F;
+    if(h?.k==='pbunk')return pbUnknownHtml(ctx);
+    if (h && (h.k === 'pbpcell' || h.k === 'pbtcell' || h.k === 'pbarea')) return pbRegionInspector(ctx, h);
     if (h && h.k === 'pbzone') {
       const z = p.maps[String(PB.scale)].zones[h.i];
       if (!z) return '';
       const wd = pbRelWords(pbRel(r, h.i), F), ww = pbW(F);
-      return '<div class="ih">' + lbl(PZ, 'zone_head', { label: z.label, window: pbWin(z), band: band(z.price_low, z.price_high) }) + '</div>' +
+      return '<div class="ih">' + lbl(PZ, 'zone_head', { label: pbDisplayLabel(z), window: pbWin(z), band: band(z.price_low, z.price_high) }) + '</div>' +
         '<div class="is"><b class="big">' + pbShare(z, N) + '</b> ' + lbl(PZ, 'zone_share', { yes: z.n_known, N, topg: ww.topg }) + '</div>' +
         (z.n_possible ? '<div class="is">' + lbl(PZ, 'zone_unknown', { unknown: z.n_possible }) + '</div>' : '') +
         '<div class="is">' + lbl(PZ, 'zone_more', { episodes: z.n_episodes, points: z.n_points, scale: PB.scale }) + '</div>' +
@@ -319,17 +252,16 @@
     if (h && h.k === 'pbpt') {
       const pt = G.P.get(h.id);
       if (!pt) return '';
-      const w = G.W.get(pt.case), u = v => sd(v / w.w), e0 = G.E.get(pt.episodes[0]), ww = pbW(F);
+      const w = G.W.get(pt.case), u = v => sd(v / w.w), episodes = pbLinks(pt, G.E), ww = pbW(F);
       const lines = ['<b>' + lbl(PE, 'head', { date: w.date.split('-').reverse().join('.') }) + '</b>' + (h.same > 1 ? ' <span class="k">' + lbl(PE, 'same', { n: h.same - 1 }) + '</span>' : '')];
       lines.push(lbl(PE, 'L', { bot: ww.bot, sd: u(pt.v), t: clk(pt.open) + '–' + clk(pt.open + 5) }));
-      for (const id of pt.episodes) {
-        const e = G.E.get(id);
-        lines.push('<span class="k">' + lbl(PE, 'H', { top: ww.top, sd: u(e.h), t: clk(e.h_open) + '–' + clk(e.h_open + 5) }) + '</span>');
+      for (const e of episodes) {
+        lines.push('<span class="k" data-pb-episode="' + esc(e.id) + '">' + lbl(PE, 'H', { top: ww.top, sd: u(e.h), t: clk(e.h_open) + '–' + clk(e.h_open + 5) }) + '</span>');
         lines.push(lbl(PE, 'B', { topg: ww.topg, t: clk(e.b_close - 5) + '–' + clk(e.b_close), c: clk(e.b_close) }) + ' · <span class="k">' + lbl(PE, 'gap', { m: e.b_close - pt.open - 5 }) + '</span>');
+        lines.push('<span data-pb-dr-for="' + esc(e.id) + '">' + lbl(PE, 'dr_' + e.dr, { t: w.brk != null ? clk(w.brk) : '' }) + '</span>');
       }
-      if (pt.episodes.length > 1) lines.push('<span class="k">' + lbl(PE, 'links', { n: pt.episodes.length, topgp: ww.topgp }) + '</span>');
+      if (episodes.length > 1) lines.push('<span class="k">' + lbl(PE, 'links', { n: episodes.length, topgp: ww.topgp }) + '</span>');
       lines.push('<span class="k">' + lbl(PE, 'scale', { top: ww.top, k: pt.kt }) + '</span>');
-      lines.push(lbl(PE, 'dr_' + e0.dr, { t: w.brk != null ? clk(w.brk) : '' }));
       lines.push('<span class="k">' + lbl(PE, 'now', { t: clk(sliceOf(ctx)) }) + '</span>');
       return lines.join('<br>');
     }
@@ -340,19 +272,21 @@
     const r = pbPacket(ctx);
     if (!r) return { head: lbl(PZ, 'head'), body: '<div class="p21-note">' + esc(pbStatus(ctx)) + '</div>' };
     const p = r.proof, N = p.context.N, G = pbGeom(ctx, r);
+    if(o?.k==='pbunk')return {head:'Не распределено по координатам',body:pbUnknownHtml(ctx)};
+    if (o && ['pbpcell','pbtcell','pbarea'].includes(o.k)) return {head:'L · откаты до обновления',body:pbRegionInspector(ctx,o)};
     if (o && o.k === 'pbzone' && p.maps[String(PB.scale)].zones[o.i]) {
       const z = p.maps[String(PB.scale)].zones[o.i], cells = new Set(z.cell_mask.map(c => c[0] + '|' + c[1])), first = new Map();
       for (const q of p.points) if (q.kt >= PB.scale && cells.has(q.k + '|' + q.b) && !first.has(q.case)) first.set(q.case, q);
-      const rows = z.members.map(id => { const q = first.get(id), e = G.E.get(q.episodes[0]); return '<div class="pbep pbrow" data-pbpt="' + esc(q.id) + '"><span>' + esc(pbDate(id)) + '</span><b>L ' + clk(q.open) + ' · B ' + clk(e.b_close) + '</b></div>'; }).join('');
-      return { head: lbl(PZ, 'win_head', { label: z.label }), body: dRow(lbl(PZ, 'win_share'), pbShare(z, N)) + dRow(lbl(PZ, 'win_window'), pbWin(z) + ' · ' + band(z.price_low, z.price_high) + ' SD') +
+      const rows = z.members.map(id => { const q = first.get(id), e = pbLinks(q, G.E)[0]; return '<div class="pbep pbrow" data-pbpt="' + esc(q.id) + '"><span>' + esc(pbDate(id)) + '</span><b>L ' + clk(q.open) + ' · B ' + clk(e.b_close) + '</b></div>'; }).join('');
+      return { head: lbl(PZ, 'win_head', { label: pbDisplayLabel(z) }), body: dRow(lbl(PZ, 'win_share'), pbShare(z, N)) + dRow(lbl(PZ, 'win_window'), pbWin(z) + ' · ' + band(z.price_low, z.price_high) + ' SD') +
         '<div class="p21-note">' + lbl(PZ, 'win_cells', { n: z.cell_mask.length }) + ' · ' + lbl(PZ, 'win_apex', { d: z.apex_D }) + '</div>' +
         '<div class="pblist"><div class="pbep k"><span>' + lbl(PZ, 'win_members') + '</span></div>' + rows +
         (z.possible.length ? '<div class="pbep k"><span>' + lbl(PZ, 'win_possible') + '</span></div><div class="p21-note">' + z.possible.map(id => esc(pbDate(id))).join(', ') + '</div>' : '') + '</div>' };
     }
     if (o && o.k === 'pbpt' && G.P.get(o.id)) {
-      const pt = G.P.get(o.id), w = G.W.get(pt.case), u = v => sd(v / w.w), mine = new Set(pt.episodes);
+      const pt = G.P.get(o.id), w = G.W.get(pt.case), u = v => sd(v / w.w), mine = new Set(pbLinks(pt, G.E).map(e => e.id));
       const dr = w.oppv == null ? lbl(PE, 'dr_NA') : w.brk != null ? lbl(PE, 'dr_broken', { t: clk(w.brk) }) : w.brk_known ? lbl(PE, 'dr_held', { end: clk(p.context.end) }) : lbl(PE, 'dr_unknown');
-      const rows = p.episodes.filter(e => e.case === pt.case).map(e => '<div class="pbep' + (mine.has(e.id) ? ' on' : '') + '" title="' + esc('H ' + u(e.h) + (e.status === 'KNOWN' ? ' · L ' + u(e.L) : '') + ' SD') + '"><span>' +
+      const rows = p.episodes.filter(e => e.case === pt.case && e.kt >= PB.scale).map(e => '<div class="pbep' + (mine.has(e.id) ? ' on' : '') + '" title="' + esc('H ' + u(e.h) + (e.status === 'KNOWN' ? ' · L ' + u(e.L) : '') + ' SD') + '"><span>' +
         clk(e.h_open) + (e.status === 'KNOWN' ? ' → ' + clk(e.l_open) : '') + (e.b_close != null ? ' → ' + clk(e.b_close) : '') + '</span><b>' + lbl(PE, e.status) + ' · ' + lbl(PE, 'win_scale', { k: e.kt }) + '</b></div>').join('');
       return { head: lbl(PE, 'win_head', { date: w.date.split('-').reverse().join('.') }), body: '<div class="p21-note">' + lbl(PE, 'win_act', { t: clk(w.act), dr }) + '</div><div class="pblist"><div class="pbep k"><span>' + lbl(PE, 'win_cols') + '</span></div>' + rows + '</div>' };
     }
@@ -410,11 +344,9 @@
   // the toolbar keeps its accepted width (SWPC-1.1 W01: the cut is never hidden): the view's own button stands only while the
   // view is open (the area button gives way to it); it is entered from its row in the panel or by switching the trial on
   function pbToolbar(F) {
-    const b = dom('mode').querySelector('[data-m="pullbacks"]');
-    if (b) b.hidden = !pullbackMode();
-    dom('areab').hidden = pullbackMode();
-    if (!pullbackMode()) return;
-    dom('ev').innerHTML = '<span class="evc" title="' + esc(lbl(PZ, 'head_title')) + '"><i style="background:' + PBC + '"></i>L<span> ' + pbW(F).bot + '</span></span>';
+    const b=dom('mode').querySelector('[data-m="pullbacks"]');if(b)b.hidden=true;
+    dom('areab').hidden=false;
+    if(pullbackMode()){const role=dom('ev').querySelector('.evc');if(role)role.title=lbl(PZ,'head_title');}
   }
   root.addEventListener('click', e => {
     const b = e.target.closest('[data-pbscale]');
@@ -429,14 +361,185 @@
     const pr = pullbackMode() && pbPacket(ctx);
     if (!pr) return false;
     const cards = g.querySelectorAll('.dcard');
-    cards[1].innerHTML = '<div class="dt">' + lbl('EST:PB-SESSIONS', 'scales_head') + '</div>' + pbScalesHtml(pr);
-    cards[2].innerHTML = '<div class="dt" style="color:' + PBC + '">L · цена × время</div><canvas id="dcL"></canvas>';
+    cards[1].innerHTML = '<div class="dt" style="color:'+cfg.R+'">'+ctx.F.names.R+' R · цена × время</div><canvas id="dcL"></canvas>';
     pbHeat('dcL', ctx, pr);
+    drawHeat('dcX',ctx.F,ctx,'X');
     return true;
   }
   // the entry from the accepted view: one row of the candidates' place in the panel (integration.js::candidatePanel)
-  function pbEntry() {
-    if (!ICFG.enabled || !TRIAL.pullbacks || pullbackMode()) return '';
-    return '<div class="p21-link pbentry" data-pbmode="1" title="' + esc(lbl(PZ, 'head_title')) + '">' + prow('<i class="zn" style="color:' + PBC + '">L</i> ' + lbl(PZ, 'head'), '›') + '</div>';
+  function pbEntry() { return ''; }
+
+  // A typed drawing adapter, never a replacement of the accepted family. R is only the existing amber layout slot.
+  // Its data/passports are PB-L; X stays FINAL-X. BASE/NOW, order and level questions retain the original F.
+  function pbMapContext(ctx) {
+    if (!pullbackMode() || !ctx.F) return ctx;
+    requestPullbacks(ctx);
+    const r=pbPacket(ctx), F=ctx.F, key=r && r.release_id+'|'+PB.scale;
+    if (PB.model?.key===key && PB.model.base===F) return {...ctx,F:PB.model.F};
+    const W=new Map((r?.proof.sessions||[]).map(w=>[w.id,w])), mi=new Map(F.M.map((m,i)=>[m.id,i]));
+    const pts=(r?.proof.points||[]).filter(q=>q.kt>=PB.scale).map(q=>({ev:'R',i:mi.get(q.case),m:F.M[mi.get(q.case)],pbid:q.id,t:q.open,k:q.k,b:q.b,p:F.u2p(q.v/W.get(q.case).w)}));
+    const count=axis=>{const m=new Map();for(const q of pts){if(!m.has(q[axis]))m.set(q[axis],new Set());m.get(q[axis]).add(q.m.id);}return new Map([...m].map(([k,v])=>[k,v.size]));};
+    const zm=r?.proof.maps[String(PB.scale)], zones=(zm?.zones||[]).map(z=>({...z,label:z.label.replace(/^L/,'R'),event_id:'R',n_zone:z.n_known,p_snapshot:z.n_known/F.N}));
+    const zcell=new Map();zones.forEach((z,i)=>z.cell_mask.forEach(([k,b])=>zcell.set(k+'|'+b,i)));
+    const cells=new Map();for(const q of pts){const key=q.k+'|'+q.b;if(!cells.has(key))cells.set(key,{k:q.k,b:q.b,list:[]});const ids=cells.get(key).list;if(!ids.includes(q.i))ids.push(q.i);}
+    const D={event_id:'PB_L',pts,cells,P:count('k'),T:count('b'),known:new Set(pts.map(q=>q.m.id)).size,unknown:zm?.sessions.UNKNOWN||0,none:zm?.sessions.NONE||0};
+    const view={...F,_pb:r||{loading:true},_cl:null,ev:{...F.ev,R:D},zones:{...F.zones,R:{zones,unknown_count:0,no_event_count:0}},zcell:{...F.zcell,R:zcell},names:{...F.names},what:{...F.what,R:'Дна локальных откатов до обновления'}};
+    PB.model={key,base:F,F:view};
+    return {...ctx,F:view};
   }
-  root.addEventListener('click', e => { if (!e.target.closest('[data-pbmode]')) return; st.mode = 'pullbacks'; st.hover = st.pin = null; st.tool = false; render(true); });
+  // Draw the WHOLE published zone, not just the anchor's 3x3 neighbourhood. The anchor names the zone; it is not its mask.
+  // One actual witness per occupied M5 x 0.1-IDR cell removes coincident stars without deleting a zone's other lobes.
+  // The representative is an observed bottom nearest the cell's mean, never an invented price/time coordinate.
+  function pbCloudContext(ctx) {
+    const F=ctx.F;
+    if(!F?._pb?.proof)return ctx;
+    if(PB.model.cloud)return {...ctx,F:PB.model.cloud};
+    const points=[];
+    F.zones.R.zones.forEach(z=>{
+      const cells=new Set(z.cell_mask.map(c=>c.join('|'))),groups=new Map();
+      for(const q of F.ev.R.pts){
+        if(!cells.has(q.k+'|'+q.b))continue;
+        const key=q.k+'|'+q.t;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(q);
+      }
+      for(const qs of groups.values()){
+        const mean=qs.reduce((n,q)=>n+q.p,0)/qs.length;
+        const q=qs.slice().sort((a,b)=>Math.abs(a.p-mean)-Math.abs(b.p-mean)||a.pbid.localeCompare(b.pbid))[0];
+        points.push(q);
+      }
+    });
+    PB.model.cloud={...F,_cl:null,ev:{...F.ev,R:{...F.ev.R,pts:points}}};
+    return {...ctx,F:PB.model.cloud};
+  }
+  function pbProjectionContext(ctx) {
+    const F=ctx.F;
+    if(!F?._pb?.proof)return ctx;
+    const last=new Map();
+    for(const q of F.ev.R.pts){const k=q.m.id+'|'+q.k,old=last.get(k);if(!old||q.t>old.t)last.set(k,q);}
+    // A case is earlier only when ALL its established bottoms in this price band are past the cut.
+    return {...ctx,F:{...F,ev:{...F.ev,R:{...F.ev.R,pts:[...last.values()]}}}};
+  }
+  // The time hill describes all of a zone's history, not the compact on-chart glyphs.
+  // One case contributes at most one Gaussian vote at any clock time, however many local cycles it has there.
+  function pbBandHills(F) {
+    if(PB.model?.F===F && PB.model.hills)return PB.model.hills;
+    const hills=F.zones.R.zones.map((z,i)=>{
+      const cells=new Set(z.cell_mask.map(([k,b])=>k+'|'+b)),byCase=new Map();
+      for(const q of F.ev.R.pts)if(cells.has(q.k+'|'+q.b)){
+        if(!byCase.has(q.m.id))byCase.set(q.m.id,new Set());byCase.get(q.m.id).add(q.t+2.5);
+      }
+      const all=[...byCase.values()].flatMap(s=>[...s]);if(!all.length)return null;
+      const sig=7,t0=Math.min(...all)-3*sig,t1=Math.max(...all)+3*sig,pts=[];
+      let pk=0,pkT=t0;
+      for(let t=t0;t<=t1+0.01;t+=1.5){
+        let d=0;for(const times of byCase.values()){let best=0;for(const u of times)best=Math.max(best,Math.exp(-((t-u)*(t-u))/(2*sig*sig)));d+=best;}
+        pts.push([t,d]);if(d>pk){pk=d;pkT=t;}
+      }
+      const bs=z.cell_mask.map(c=>c[1]);
+      return {z,i,pts,pk,pkT,b0:Math.min(...bs),b1:Math.max(...bs)+1,cases:byCase.size};
+    });
+    if(PB.model?.F===F)PB.model.hills=hills;
+    return hills;
+  }
+  function pbVisualHover(h) {
+    if (!h) return h;
+    if (h.k==='pbzone') return {...h,k:'zone',ev:'R'};
+    if (h.k==='pbpcell') return {...h,k:'pcell',ev:'R'};
+    if (h.k==='pbtcell') return {...h,k:'tcell'};
+    if (h.k==='pbarea') return {...h,k:'area'};
+    if (h.k==='pbpt') {const q=PB.model?.F.ev.R.pts.find(q=>q.pbid===h.id);return q?{...h,k:'pt',ev:'R',i:q.i,q}:h;}
+    return h;
+  }
+  function pbSemanticHit(h) {
+    if (!pullbackMode() || !h) return h;
+    if (h.k==='zone'&&h.ev==='R') return {...h,k:'pbzone'};
+    if (h.k==='pcell'&&h.ev==='R') return {...h,k:'pbpcell'};
+    if (h.k==='tcell') return {...h,k:'pbtcell'};
+    if (h.k==='unk') return {...h,k:'pbunk'};
+    if (h.k==='area'&&st.area?.ev!=='X') return {...h,k:'pbarea'};
+    if (h.k==='pt'&&h.q?.pbid) return {k:'pbpt',id:h.q.pbid,same:new Set(h.same).size,ev:'R'};
+    return h;
+  }
+  function pbRegion(r, bounds, time) {
+    if(!r?.proof)return null;
+    const f=r.proof.context.formed,b0=time?(time[0]-f)/15:null,b1=time?(time[1]-f)/15:null;
+    const k0=Number.isFinite(bounds?.[0])?bounds[0]:null,k1=Number.isFinite(bounds?.[1])?bounds[1]:null;
+    return r.proof.marginals[String(PB.scale)].find(v=>v.k0===k0&&v.k1===k1&&v.b0===b0&&v.b1===b1)||null;
+  }
+  function pbPassport(r, est, values, pred) {
+    const b=r?.proof&&pbBundle(r,est,pred), v=b?.estimates.find(e=>e.value_kind==='POINT'), bd=b?.estimates.find(e=>e.value_kind==='BOUNDS');
+    return {candidate:true,estimand:est,event_id:'PB_L',pct:v?100*v.value:null,pctHi:bd?100*bd.upper:null,
+      yes_count:v?.numerator||0,unknown_count:values?.n_possible||0,N:r?.proof?.context.N||0,phrase:b?.claim.statement_ru||'Число ещё не опубликовано',horizon:'после собственной активации до конца блока',bundle:b};
+  }
+  function pbRegionPass(F,bounds,time,outframe) {
+    const r=F._pb;
+    let v=pbRegion(r,bounds,time);
+    // The off-frame mass is a UNION of sessions, never a sum of overlapping price bins.
+    if(!v&&outframe&&r?.proof){
+      const ks=r.proof.points.filter(p=>p.kt>=PB.scale).map(p=>p.k);
+      if(bounds[0]<=Math.min(...ks))v=pbRegion(r,[null,bounds[1]],null);
+      else if(bounds[1]>Math.max(...ks))v=pbRegion(r,[bounds[0],null],null);
+    }
+    return pbPassport(r,'EST:PB-REGION',v,p=>p.scale===PB.scale&&v&&['k0','k1','b0','b1'].every(k=>p[k]===v[k]));
+  }
+  function pbZonePass(F,z) {return pbPassport(F._pb,PZ,z,p=>p.scale===PB.scale&&p.zone_id===z.zone_id);}
+  function pbUnknownHtml(ctx) {
+    const r=pbPacket(ctx),F=ctx.F;if(!r||!F)return '<div class="is">'+esc(pbStatus(ctx))+'</div>';
+    const b=pbBundle(r,PS,p=>p.scale===PB.scale);
+    let out='<div class="ih">Не распределено по координатам</div>';
+    if(b)for(const c of b.estimates[0].categories.filter(c=>c.category==='UNKNOWN'||c.category==='NONE'))out+='<div class="is" data-pb-category="'+c.category+'">R · '+lbl(PS,c.category)+' · '+pct(100*c.count/F.N)+'</div>';
+    const x=undPass(F,'X','BOTH');
+    return out+'<div class="is">X · не определено / нет периода · '+ppTxt(x)+'</div>';
+  }
+  function pbRegionInspector(ctx,h) {
+    const r=pbPacket(ctx),F=pbMapContext(ctx).F,a=h.k==='pbarea'?st.area:h;
+    const bounds=a?.k0!=null?[a.k0,a.k1]:null,time=a?.b0!=null?[F.f+15*a.b0,F.f+15*a.b1]:null,v=pbRegion(r,bounds,time),p=pbRegionPass(F,bounds,time);
+    const title=(bounds?band(...bounds)+' SD':'')+(bounds&&time?' · ':'')+(time?clk(time[0])+'–'+clk(time[1]):'');
+    const clock=v?'<div class="is">'+v.earlier+' сессий: все установленные дна здесь уже позади по часам; '+v.later+' — есть дно позже среза</div>':'';
+    let html='<div class="ih">R · откаты до обновления · '+title+'</div><div class="is"><b class="big">'+ppTxt(p)+'</b></div><div class="is">'+esc(p.phrase)+'</div>'+clock;
+    if(h.k==='pbtcell'||h.k==='pbpcell'||h.k==='pcell'){
+      const n=areaCount(ctx.F,'X',{k0:bounds?.[0]??-Infinity,k1:bounds?.[1]??Infinity,b0:h.b0,b1:h.b1}),x=evPass(ctx.F,'X','price_time',bounds,time,n);
+      html+='<div class="is" style="color:'+cfg.X+'">X · конечное продолжение · '+ppTxt(x)+'</div>';
+    }
+    return html+'<div class="is k">R — любой завершённый локальный откат, X — единственный конечный экстремум. Одна сессия может дать R в нескольких окнах; это не доли двух противоположных исходов.</div>';
+  }
+  function pbJointXTip(ctx,h) {
+    const F=ctx.F,z=F.zones.X?.zones[h.i];
+    if(!z)return '';
+    const p=zonePass(F,'X',z),s=zoneStatus(F,ctx,'X')[h.i],time=[z.time_start,z.time_end],mc=pbMapContext(ctx).F,l=pbRegionPass(mc,null,time);
+    return '<div class="ih" style="color:'+cfg.X+'">'+z.label+' · конечное продолжение X · '+pbWin(z)+'</div><div class="is">'+band(z.price_low,z.price_high)+' SD</div><div class="ibig">'+ppTxt(p)+'</div><div class="is">'+esc(p.phrase)+'</div>'+winLine(F,ctx,'X',s,...time,zoneClock(F,ctx,'X')[h.i])+'<div class="is" style="color:'+cfg.R+'">R · хотя бы один откат в этом окне времени: '+ppTxt(l)+'</div>';
+  }
+  function pbAreaHtml(ctx) {
+    const F=pbMapContext(ctx).F,a=st.area,bb=isFinite(a.k0)?[a.k0,a.k1]:null,tt=a.b0!=null?[F.f+15*a.b0,F.f+15*a.b1]:null,p=pbRegionPass(F,bb,tt);
+    const name=(bb?band(...bb)+' SD':'')+(bb&&tt?' · ':'')+(tt?clk(tt[0])+'–'+clk(tt[1]):'');
+    let row=link({k:'pbarea',part:'band'},prow('<i style="color:'+cfg.R+'">R</i> откаты в области',ppTxt(p)), '',null,p.phrase);
+    if(p.bundle)row=row.replace('data-l21=','data-bundle="'+p.bundle.id+'" data-edition="'+REVIEW.edition+'" data-l21=');
+    return '<div class="p21-h second p24-sel">Выбранная область <span><button class="p24-x" data-clear="area" title="Снять выбор (Esc)">✕</button></span></div><div class="p21-note"><b style="color:#D1D4DC;font-weight:600">'+esc(name)+'</b></div>'+row;
+  }
+  function pbCombinedZones(ctx) {
+    requestPullbacks(ctx);
+    const F=ctx.F,r=pbPacket(ctx),out=['<div class="p21-h second"><span>Зоны по времени</span>'+scopeSwitch()+'</div>'];
+    out.push('<a data-compare24="1" href="'+esc(compare24Href(ctx))+'" target="_blank" rel="noopener" hidden>№24 ↗</a>');
+    if(!r)out.push('<div class="p21-note">R · '+esc(pbStatus(ctx))+'</div>');
+    const rows=(r?r.proof.maps[String(PB.scale)].zones.map((z,i)=>({ev:'L',z,i})):[]).concat((F.zones.X?.zones||[]).map((z,i)=>({ev:'X',z,i})));
+    rows.sort((a,b)=>a.z.time_start-b.z.time_start||b.z.p_snapshot-a.z.p_snapshot);
+    let sep=false;const sl=sliceOf(ctx);
+    for(const {ev,z,i} of rows){
+      if(!sep&&z.time_end>sl){sep=true;out.push('<div class="p24-now"><span></span>сейчас '+clk(sl)+'<span></span></div>');}
+      if(ev==='L'){
+        const b=pbBundle(r,PZ,p=>p.scale===PB.scale&&p.zone_id===z.zone_id),wd=pbRelWords(pbRel(r,i),F);
+        let row=link({k:'pbzone',i,ev:'R'},'<span class="t"><span><span class="zt">'+pbWin(z)+'</span> <i class="zn" style="color:'+cfg.R+'">'+pbDisplayLabel(z)+'</i></span><span class="p21-sub">'+band(z.price_low,z.price_high)+' SD · '+esc(wd.clock)+'</span></span><b class="zp">'+(b?pbShare(z,F.N):'—')+'</b>','mc',null,b?.claim.statement_ru||'');
+        if(b)row=row.replace('data-l21=','data-bundle="'+b.id+'" data-edition="'+REVIEW.edition+'" data-l21=');out.push(row);
+      }else{
+        const p=zonePass(F,'X',z),status=zoneStatus(F,ctx,'X')[i],paint=zonePaint(F,ctx,'X',z,status);
+        out.push(link({k:'zone',ev:'X',i},'<span class="t"><span><span class="zt">'+pbWin(z)+'</span> <i class="zn" style="color:'+cfg.X+'">'+pbDisplayLabel(z)+'</i></span><span class="p21-sub">'+lbl('EST:B-ZONE-X','sub',{band:band(z.price_low,z.price_high),status:zstOf(F,ctx,z,status)})+'</span></span><b class="zp" style="color:'+paint.text+'">'+ppTxt(p)+'</b>','mc zst-'+status,p,plainTitle(p)));
+      }
+    }
+    if(r){
+      const sb=pbBundle(r,PS,p=>p.scale===PB.scale);
+      if(sb)for(const c of sb.estimates[0].categories)out.push('<div class="p21-link dim" data-bundle="'+sb.id+'" data-edition="'+REVIEW.edition+'">'+prow('<i style="color:'+cfg.R+'">R</i> '+lbl(PS,c.category),pct(100*c.count/F.N))+'</div>');
+      out.push('<div class="p21-note">R · '+lbl(PZ,'note')+'</div>');
+    }
+    if(F.zones.X){const p=resPass(F,'X');out.push(link({k:'evrow',ev:'X'},prow(lbl('EST:B-ZONE-RESIDUAL-X','row',{ev:'<i style="color:'+cfg.X+'">X</i>'}),ppTxt(p)),'dim',p,plainTitle(p)));}
+    if(F.ev.X.unknown+F.ev.X.none){const p=undPass(F,'X','BOTH');out.push(link({k:'evrow',ev:'X'},prow(lbl(p.estimand,'row',{ev:'X'}),ppTxt(p)),'dim',p,plainTitle(p)));}
+    return out.join('');
+  }

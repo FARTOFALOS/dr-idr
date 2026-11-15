@@ -114,7 +114,8 @@ today («История»). **Legacy surfaces** still served but outside the con
 ```
 start-dr-lab-23-5.cmd/.ps1  shortcut «DR Lab 23.5» (the daily screen): TradingView (9222) -> server :8735 -> /23-5/
 start-dr-lab-23-5-kletki.cmd  the same with the layer «Клетки» (#cells=1)
-start-dr-lab.cmd/.ps1      shortcut «DR Lab»: server :8767 (--integration), / opens /23-5/; start-dr-lab-24.cmd opens /24/
+start-dr-lab.cmd/.ps1      shortcut «DR Lab»: server :8767 (--integration), / opens /23-5/
+start-dr-lab-24.cmd/.ps1   (branch ekran-24-r9) shortcut «DR Lab 24»: this working copy's server :8741, /24/ = 23.5 with the price column R9 (meaning/27 §14)
 start-dr-lab-integration.* the isolated candidate stand :8773 (15.10); stop-*.cmd/.ps1 stop the matching server
 contract/                  DR-LAB-SC-1.1 in machine form: LinkML schema, registry (+ 35-tp-2.yaml, 45-claims-tp.yaml),
                            build tool and products; start at contract/README.md (.venv-linkml/ is git-ignored)

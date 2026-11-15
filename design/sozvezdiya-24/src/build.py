@@ -1,12 +1,9 @@
-"""Builds design 24 «Границы хода» into the running tool: lab/dist/24/index.html + d24.js.
-
-Design 24 = design 22's working screen (design/sozvezdiya-22) with its statistical layer replaced by the semantic
-specification DR-LAB-SEM-1.0 (meaning/lens/2026-10-01-specifikaciya-v1.md); data from lab/scene24.py (/api/d24/*).
-Since 2026-10-01 night design 24 is the working screen (operator): http://127.0.0.1:8767/ opens /24/; design 22 is kept
-untouched next to it at /22/. There is no synthetic mockup: a date of 2006-2025 opens as if it were today. Every element
-of the screen, its meaning, its count and its code: spec/ekran-24/.
-
-python build.py        (from this folder)
+"""Build screen 24 (since 15.11.2026: 23.5 with the price column R9 «профиль со скобами», meaning/27 §13) to lab/dist/24.
+Screen 23.5 keeps its own source and build (design/sozvezdiya-23-5) untouched.
+The main map is the final R / X of every session in one table time x SD (matrix235.js: the reset of 27.10,
+meaning/22-time-price-constellation-reset.md); the local layer «Съёмы лоу» is sweeps235.js (operator 2026-10-26); since 03.11 the confirmation family is
+shown by the semantic core DR-LAB-TP-1.1 (tp235.js, docs/DR-LAB-23-5-TP.md), the table of 30.10 by '#tp=0'.
+See docs/DR-LAB-23-5-MATRIX.md and docs/DR-LAB-23-5-SWEEPS.md before altering the mapping or the appearance.
 """
 import os
 
@@ -20,7 +17,7 @@ def read(name):
 
 
 page = read('page.html').replace('/*__PANEL24CSS__*/', read('panel.css'))
-app = read('app.js').replace('  /*__INTEGRATION24__*/\n', read('integration.js') + '\n' + read('continuations.js') + '\n' + read('pullbacks.js')).replace('  /*__PANEL24__*/\n', read('panel.js'))
+app = read('app.js').replace('  /*__INTEGRATION24__*/\n', read('integration.js') + '\n' + read('continuations.js') + '\n' + read('pullbacks.js') + '\n' + read('time_sd235.js') + '\n' + read('matrix235.js') + '\n' + read('tp235.js') + '\n' + read('sweeps235.js')).replace('  /*__PANEL24__*/\n', read('panel.js'))
 # DR-LAB-SC-1.1: the page embeds the page registry of the machine contract (estimands, claim forms with their labels,
 # fact forms), built by contract/tools/build.py; the page renders only these labels and checks its registry hash
 # against the server's envelopes (a contract rebuilt without rebuilding this page is reported, never ignored)

@@ -1,3 +1,7 @@
+> **15.11.2026 (ветка `ekran-24-r9`):** экран 24 заменён — теперь это исходник 23.5 с колонкой цены R9 «профиль со скобами»
+> ([meaning/27](../../meaning/27-kolonka-ceny-23-5.md) §13–§14). Ниже — описание прежнего дизайна 24 «Границы хода»; его
+> исходник остаётся в истории git (main).
+
 # Design 24 «Границы хода» — design 22's screen with the statistics of DR-LAB-SEM-1.0
 
 **The meaning, for agents without code: [`meaning/10-dizajn-24.md`](../../meaning/10-dizajn-24.md)** — where every
