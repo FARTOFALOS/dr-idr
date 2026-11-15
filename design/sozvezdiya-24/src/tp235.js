@@ -433,7 +433,8 @@
       c.restore();
       // screen 24: a window still ahead or running while today's low lies in another window — of the whole family, those whose
       // pullback before the top in it went deeper than today's low (EST:TP-MASS-R); quiet once all of it is behind the clock
-      if (P.today && P.today.w && P.today.w !== w && sl < F.f + 15 * W[1]) {
+      const Wd = P.today && P.today.w ? tp.windows[P.today.w] : null;   // only once the window of today's low is over (Р-К16)
+      if (Wd && P.today.w !== w && sl >= F.f + 15 * Wd[1] && sl < F.f + 15 * W[1]) {
         const dK = fdiv(10 * P.today.lo, F.w0t), pm = tpMass(F, { k0: null, k1: dK, b0: W[0], b1: W[1] });
         if (pm.yes_count) {
           const past = !P.A.ev.R.pts.some(q => q.m.outcome === 'held' && q.k < dK && q.b >= W[0] && q.b < W[1] && q.t + 5 > sl);
@@ -513,6 +514,7 @@
   // phase 'under' (before the candles): haze, threads and names; phase 'over' (after the candles): the stars and, under the
   // mouse, the place's outline
   function tpGhosts(c, ctx, phase) {
+    if (ctx.F && ctx.F._tp) return tpGhostBoxes(c, ctx, phase);      // screen 24: the other windows' places as dashed boxes
     if (phase === 'under') V.tpGhostHit = [];
     if (!ctx.F || !ctx.F._tp || !st.L.zones || st.mode !== 'bounds') return;
     const h = hv(), env = V.zoneEnv, sl = sliceOf(ctx), R0 = 1.7 * cfg.ptSize / 100;

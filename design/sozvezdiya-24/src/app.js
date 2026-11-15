@@ -1084,7 +1084,7 @@
     if (F && st.mode === 'bounds') drawPair(c, mapCtx);
     if (F) drawSweeps(c, ctx);
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
-    if (F && F._tp && st.mode === 'bounds' && !continuationMode()) tpLevelLines(c, mapCtx);   // screen 24: 70 % / 50 % across the chart
+    if (F && F._tp && st.mode === 'bounds' && !continuationMode()) { tpLevelLines(c, mapCtx); tpOtherLevels(c, mapCtx); tpBreakLabel(c, mapCtx); }   // screen 24: 70 % / 50 % across the chart, other windows' levels, the DR break
     if (F && !continuationMode()) drawArea(c, mapCtx);
     if (F && st.mini) drawMini(c, ctx);
     drawTags(c, ctx);
@@ -1096,6 +1096,7 @@
     if (F && V.projW) drawProj(c, pbProjectionContext(mapCtx));
     drawTimeAxis(c, ctx);
     drawLegend(c, ctx);
+    if (F && F._tp && st.mode === 'bounds' && !continuationMode()) tpNowLine(c, mapCtx);   // screen 24: «сейчас» in one line
     PB.paint = false;
     if (full) { toolbar(ctx); panelHtml(ctx); }
     else panelMarks();
@@ -1585,6 +1586,7 @@
   }
   function drawClouds(c, ctx) {
     const F = ctx.F, CL = cloudsOf(F), h = hv(), ph = phaseOf(F, ctx);
+    if (F._tp) return;                                   // screen 24: the places of TP are boxes (tpBoxes), no haze
     for (const ev of ['R', 'X']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev], fa = cfg.cloudA / 100 * phaseK(ph, ev), ta = cfg.threadA / 100 * phaseK(ph, ev);
       CL[ev].forEach((g, i) => {
@@ -1871,6 +1873,7 @@
     const F = ctx.F, inside = cfg.zoneLblPos !== 'side';
     if (phase === 'under') V.zoneHit = null;
     if (!st.L.zones || st.mode !== 'bounds') return;
+    if (F._tp) { if (phase === 'under') { V.zoneHit = []; V.zoneEnv = null; tpBoxes(c, ctx); } return; }   // screen 24
     const CL = cloudsOf(F), h = hv(), placed = [], used = ctx.live ? NOW + 5 : ctx.obs;
     const bars = ctx.D.bars.filter(b => b.t + 5 <= used && V.X(b.t + 5) > 0 && V.X(b.t) < V.plot.w).map(b => [V.X(b.t) - 2, V.Y(b.h) - 2, V.X(b.t + 5) + 2, V.Y(b.l) + 2]);
     const over = (a, b) => a[0] < b[2] && a[2] > b[0] && a[1] < b[3] && a[3] > b[1];
@@ -2611,6 +2614,146 @@
       c.fillStyle = main ? '#FFFFFF' : rgba('#9CC3F3', taken ? 0.5 : 1);
       c.fillText((taken ? '✓ ' : '') + 'дошли ' + L.q + ' % · ' + sd(L.k / 10) + ' SD', 74, y - 4);
     }
+  }
+
+  // ---------- screen 24, 15.11 evening (meaning/27 §15): four things taken from Fable 5.2's proposal of 12–13.11 ----------
+  // 1. a place of R = a box with crisp edges: the hours of its window × its price band, one number (the family share, Ч4);
+  //    a place of X is no band across the session (it read as «how long price will stand»): its name and «дошли» (Ч8) at its
+  //    near edge on the right of the chart, none when a level line 70 % / 50 % already stands at that edge;
+  //    the places of the other windows: dashed boxes in their own hours while they can still happen.
+  function tpBoxes(c, ctx) {
+    const F = ctx.F, P = F._tp, w = P.w, Rch = reachOf(F, ctx), sl = Rch.sl, Wt = w ? tpWinT(F, w) : null, wOver = !!(Wt && sl >= Wt[1]);
+    const CL = cloudsOf(F), W = V.plot.w;
+    const alive = (ev, z) => { for (let k = z.price_low; k < z.price_high; k++) if (Rch.okK(ev, k)) return true; return false; };
+    if (Wt) (F.zones.R ? F.zones.R.zones : []).forEach((z, i) => {
+      if (zoneHeld(F, 'R', i)) return;
+      const x0 = Math.round(V.X(Wt[0])) + 0.5, x1 = Math.round(V.X(Wt[1])) + 0.5, [ya0, yb0] = cellY(F, z.price_low, z.price_high), ya = Math.round(ya0) + 0.5, yb = Math.round(yb0) + 0.5;
+      if (x1 < 0 || x0 > W) return;
+      const played = wOver || !alive('R', z), col = played ? '#8C93A0' : cfg.R;
+      c.save();
+      c.fillStyle = rgba(cfg.R, played ? 0.035 : 0.11); c.fillRect(x0, ya, x1 - x0, yb - ya);
+      c.strokeStyle = rgba(col, played ? 0.5 : 0.95); c.lineWidth = played ? 1 : 1.4; c.setLineDash(played ? [4, 3] : []);
+      c.strokeRect(x0, ya, x1 - x0, yb - ya); c.setLineDash([]);
+      const m = tpMarkPass(F, 'R', z), t = ppTxt(m.p), fs = played ? 12 : 15;
+      c.font = '700 ' + (played ? 10.5 : 12) + 'px ' + FONT;
+      const wN = c.measureText(m.name).width, ly = ya - 6 < 30 ? ya + fs + 2 : ya - 6;
+      c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 3; c.textBaseline = 'alphabetic';
+      c.fillStyle = rgba(col, played ? 0.7 : 1); c.fillText(m.name, x0 + 3, ly);
+      pctDraw(c, t, x0 + 3 + wN + 5, ly, '700 ', fs, played ? 'rgba(200,205,214,.55)' : '#F6C9A6');
+      c.restore();
+      V.zoneHit.push({ box: [x0, ya, x1 - x0, yb - ya], ev: 'R', i, loops: (CL.R[i] && CL.R[i].hit) || [] });
+    });
+    const lv = new Set(tpLevels(F).map(L => L.k));
+    (F.zones.X ? F.zones.X.zones : []).forEach((z, i) => {
+      if (zoneHeld(F, 'X', i) || lv.has(z.price_low)) return;
+      const y = Math.round(V.Y(F.u2p(z.price_low / 10))) + 0.5;
+      if (y < 30 || y > V.plot.h - 6) return;
+      const played = !alive('X', z), col = played ? '#8C93A0' : cfg.X, m = tpMarkPass(F, 'X', z), t = ppTxt(m.p);
+      c.save(); c.font = '700 11px ' + FONT;
+      const wN = c.measureText(m.name).width, wS = pctW(c, t, '700 ', 13), xr = W - 44, lx = xr - wN - 5 - wS;
+      c.strokeStyle = rgba(col, played ? 0.45 : 0.85); c.lineWidth = 1.2; c.beginPath(); c.moveTo(xr + 3, y); c.lineTo(xr + 14, y); c.stroke();
+      c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 3; c.textBaseline = 'middle';
+      c.fillStyle = rgba(col, played ? 0.6 : 0.95); c.fillText(m.name, lx, y);
+      pctDraw(c, t, lx + wN + 5, y, '700 ', 13, played ? 'rgba(200,205,214,.5)' : '#DCEBFB');
+      c.restore();
+      V.zoneHit.push({ box: [lx - 2, y - 9, xr - lx + 16, 18], ev: 'X', i, loops: [] });
+    });
+  }
+  function tpGhostBoxes(c, ctx, phase) {
+    if (phase !== 'under') return;
+    V.tpGhostHit = [];
+    if (!st.L.zones || st.mode !== 'bounds') return;
+    const F = ctx.F;
+    for (const { w, G } of tpOthers(ctx)) {
+      const Wt = tpWinT(F, w), S = zoneLook(G, ctx, 'R'), CL = cloudsOf(G);
+      if (!Wt) continue;
+      G.zones.R.zones.forEach((z, i) => {
+        if (zoneHeld(G, 'R', i)) return;
+        const gone = expiredLook(S[i]);                                // operator 05.11: every other window's place stays on the chart, quieter; one that can no longer be today's — grey and quieter still
+        const x0 = Math.round(V.X(Wt[0])) + 0.5, x1 = Math.round(V.X(Wt[1])) + 0.5, [ya0, yb0] = cellY(F, z.price_low, z.price_high), ya = Math.round(ya0) + 0.5, yb = Math.round(yb0) + 0.5;
+        if (x1 < 0 || x0 > V.plot.w) return;
+        c.save(); c.fillStyle = rgba(cfg.R, gone ? 0.015 : 0.03); c.fillRect(x0, ya, x1 - x0, yb - ya);
+        c.strokeStyle = gone ? 'rgba(140,147,160,.32)' : rgba(cfg.R, 0.55); c.lineWidth = 1; c.setLineDash([4, 3]); c.strokeRect(x0, ya, x1 - x0, yb - ya); c.setLineDash([]);
+        const t = TP_NAME[w] + ' · ' + z.label + ' ', p = tpMassPlace(F, w, z);
+        c.font = '600 10.5px ' + FONT; c.textBaseline = 'alphabetic'; c.fillStyle = gone ? 'rgba(140,147,160,.5)' : rgba(cfg.R, 0.8);
+        const ly = ya - 5 < 30 ? yb + 13 : ya - 5;
+        c.fillText(t, x0 + 3, ly); pctDraw(c, ppTxt(p), x0 + 3 + c.measureText(t).width, ly, '600 ', 11, gone ? 'rgba(200,205,214,.45)' : rgba('#F6C9A6', 0.75));
+        c.restore();
+        V.tpGhostHit.push({ box: [x0, ya, x1 - x0, yb - ya], w, i, loops: (CL.R[i] && CL.R[i].hit) || [] });
+      });
+    }
+  }
+  // 2. the outcomes of the other branches: the levels 70 % / 50 % of the windows still ahead (or running) as quiet ticks at the
+  //    right edge of the chart; a hover on a window's capsule puts that window on screen (tpView), its levels then cross it
+  function tpOtherLevels(c, ctx) {
+    const F = ctx.F, P = F._tp, sl = sliceOf(ctx), W = V.plot.w, used = [];
+    for (const w of TP_WINDOWS) {
+      if (w === P.w || !P.clock.windows[w]) continue;
+      const Wt = tpWinT(F, w);
+      if (!Wt || sl >= Wt[1]) continue;                                 // a window already over without today's low: closed
+      const G = tpSnap(ctx.D, ctx.s, w, P.T);
+      if (!G) continue;
+      for (const L of tpLevels(G)) {
+        const y0 = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;
+        if (y0 < 30 || y0 > V.plot.h - 6) continue;
+        let y = y0; while (used.some(u => Math.abs(u - y) < 12)) y += 12; used.push(y);
+        c.save(); c.strokeStyle = rgba(cfg.X, 0.5); c.lineWidth = 1; c.setLineDash([3, 2]);
+        c.beginPath(); c.moveTo(W - 92, y0); c.lineTo(W - 66, y0); c.stroke(); c.setLineDash([]);
+        c.font = '600 10px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right'; c.fillStyle = 'rgba(156,195,243,.7)';
+        c.fillText(TP_NAME[w] + ' · ' + L.q + ' %' + (G.N < 20 ? ' · мало' : ''), W - 96, y); c.textAlign = 'left';
+        c.restore();
+      }
+    }
+  }
+  // 4. at the line where the DR breaks: the family's share broken (EST:B-DR) and, of the sessions as deep by now, how their DR
+  //    ended (Ч13, EST:TP-DR-AT-DEPTH) — the risk of the side stands at its own price
+  function tpBreakLabel(c, ctx) {
+    const F = ctx.F, P = F._tp, s = ctx.s;
+    if (!P.A || s.drH == null) return;
+    const long = F.d0 > 0, y = Math.round(V.Y(long ? s.drL : s.drH)) + 0.5, W = V.plot.w;
+    if (y < 30 || y > V.plot.h - 6) return;
+    const t1 = 'слом DR · сломан ' + ppTxt(drPass(P.A, 'broken')) + ' семьи', d = tpDepth(F, ctx);
+    const held = d && ['ALL', 'HELD', 'BROKEN', 'UNKNOWN'].some(k => d.pass[k].violation);
+    const t2 = d && d.D && !held ? (lbl('EST:TP-DR-AT-DEPTH', 'row', { cut: clk(d.cut), u: sd(Math.round(100 * d.u) / 100), D: d.D, held: d.held, broken: d.broken }) + (d.D < 20 ? ' · ' + lbl('EST:TP-DR-AT-DEPTH', 'few', { n: d.D }) : '')).replace(/<[^>]+>/g, '') : '';
+    c.save(); c.textAlign = 'right'; c.shadowColor = 'rgba(0,0,0,.75)'; c.shadowBlur = 3;
+    c.font = '700 12px ' + FONT; c.fillStyle = '#F58A93'; c.textBaseline = long ? 'bottom' : 'top';
+    c.fillText(t1, W - 70, long ? y - 4 : y + 4);
+    if (t2) { c.font = '10.5px ' + FONT; c.fillStyle = 'rgba(245,138,147,.8)'; c.textBaseline = long ? 'top' : 'bottom'; c.fillText(t2, W - 70, long ? y + 4 : y - 4); }
+    c.restore();
+  }
+  // 3. «сейчас» in one place, at the top of the chart: time (half of the pullbacks behind or not yet, the window running),
+  //    price (today's low against the place of its window), DR (of the sessions as deep by now, the share whose DR held)
+  function tpNowLine(c, ctx) {
+    const F = ctx.F, P = F._tp, sl = sliceOf(ctx), parts = [];
+    const Lr = tpLines(F).find(L => L.ev === 'R' && L.id === 'median');
+    const wr = TP_WINDOWS.find(w => { const W = P.clock.windows[w]; return W && sl >= F.f + 15 * W[0] && sl < F.f + 15 * W[1]; });
+    const tt = (Lr ? (sl >= Lr.cut ? '½ откатов позади (' + clk(Lr.cut) + ')' : '½ откатов — к ' + clk(Lr.cut)) : '') + (wr ? (Lr ? ' · ' : '') + 'идёт ' + TP_NAME[wr] + ' до ' + clk(F.f + 15 * P.clock.windows[wr][1]) : '');
+    if (tt) parts.push(['ВРЕМЯ', tt, '#EBA06C']);
+    if (P.today) {
+      const dK = fdiv(10 * P.today.lo, F.w0t), Z = (F.zones.R ? F.zones.R.zones : []).filter((z, i) => !zoneHeld(F, 'R', i));
+      const z = Z.sort((a, b) => b.n_zone - a.n_zone)[0];
+      const rel = z ? (dK < z.price_low ? ' · глубже места ' : dK >= z.price_high ? ' · выше места ' : ' · в месте ') + z.label : '';
+      parts.push(['ЦЕНА', 'дно ' + sd(Math.round(100 * P.today.u) / 100) + ' в ' + clk(P.today.t) + rel, '#EBA06C']);
+    }
+    const d = tpDepth(F, ctx);
+    if (d && d.D) {
+      const held = ['ALL', 'HELD', 'BROKEN', 'UNKNOWN'].some(k => d.pass[k].violation);
+      parts.push(['DR', 'так же глубоко ' + d.D + ' · устоял ' + (held ? '—' : pct(100 * d.held / d.D)) + (d.D < 20 ? ' · мало' : ''), '#5FD3AE']);
+    }
+    if (!parts.length) return;
+    c.save(); c.textBaseline = 'middle';
+    let x = 134; const y = 15, segs = [];
+    for (const [k, v, col] of parts) {
+      c.font = '800 10.5px ' + FONT; const wk = c.measureText(k).width;
+      c.font = '11.5px ' + FONT; const wv = c.measureText(v).width;
+      segs.push([k, v, col, x, wk]); x += wk + 6 + wv + 18;
+    }
+    c.fillStyle = 'rgba(11,14,20,.86)'; roundRect(c, 128, 5, Math.min(x - 128 - 8, V.plot.w - 140), 20, 4); c.fill();
+    for (const [k, v, col, x0, wk] of segs) {
+      c.font = '800 10.5px ' + FONT; c.fillStyle = col; c.fillText(k, x0, y);
+      c.font = '11.5px ' + FONT; c.fillStyle = '#D1D4DC'; c.fillText(v, x0 + wk + 6, y);
+    }
+    c.restore();
   }
   function drawProj(c, ctx) {
     if (st.mode === 'bounds') return ctx.F && ctx.F._tp ? drawColR9(c, ctx) : drawProjRX(c, ctx);
