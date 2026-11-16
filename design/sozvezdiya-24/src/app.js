@@ -1006,6 +1006,12 @@
         lo = Math.min(lo, a, b); hi = Math.max(hi, a, b);
       });
     }
+    // screen 24 (operator 16.11): the levels «дошли 70 % / 50 %» of the window not yet reached are in the frame, so their
+    // lines are always on the chart
+    if (ctx.F && ctx.F._tp && ctx.F._tp.w && isFinite(lo)) {
+      const topK = reachOf(ctx.F, ctx).cur.X ? reachOf(ctx.F, ctx).cur.X.k : null;
+      for (const L of tpLevels(ctx.F)) { if (L.p.pct == null || (topK != null && topK >= L.k)) continue; const pp = ctx.F.u2p(L.k / 10); lo = Math.min(lo, pp); hi = Math.max(hi, pp); }
+    }
     // the layer «Клетки»: the event's strong key cells still possible today (4+ sessions, more than half of its best live
     // cell) are in the frame, as the zones still ahead are; a far weak one does not shrink the candles, ▲ / ▼ in the price
     // column name it
@@ -2093,6 +2099,7 @@
     let yLow = 0;
     for (const b of ctx.D.bars) if (b.t + 5 >= st.v0 && b.t <= st.v1) yLow = Math.max(yLow, V.Y(b.l));
     if (s.drL != null) yLow = Math.max(yLow, V.Y(s.drL), V.Y(s.drH));
+    if (F._tp && F._tp.w) { const tk = reachOf(F, ctx).cur.X ? reachOf(F, ctx).cur.X.k : null; for (const L of tpLevels(F)) if (L.p.pct != null && !(tk != null && tk >= L.k)) yLow = Math.max(yLow, V.Y(F.u2p(L.k / 10)) + 6); }   // screen 24: the band does not cover a level's line (16.11)
     for (const ev of ['R', 'X']) {
       const Zm = F.zones[ev], S = Zm ? zoneStatus(F, ctx, ev) : [];
       if (Zm) Zm.zones.forEach((z, i) => {
@@ -2766,7 +2773,7 @@
       if (L.p.pct == null || (topK != null && topK >= L.k)) continue;
       const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;
       if (y < Wd.top || y > Wd.floor) continue;
-      c.save(); c.strokeStyle = rgba(cfg.X, 0.9); c.lineWidth = 1.3; c.setLineDash(L.q === 70 ? [] : [5, 3]);
+      c.save(); c.strokeStyle = mixW(cfg.X, 0.3); c.lineWidth = 1.7; c.setLineDash(L.q === 70 ? [] : [7, 4]);
       c.beginPath(); c.moveTo(x0, y); c.lineTo(V.plot.w, y); c.stroke(); c.restore();
     }
   }
@@ -2775,7 +2782,11 @@
     for (const L of tpLevels(F)) {
       if (L.p.pct == null) continue;
       const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5, taken = topK != null && topK >= L.k, a = taken ? 0.45 : 1;
-      if (y < top0 || y > bot0) continue;
+      if (y < top0 || y > bot0) {
+        const up = y < top0, yy = up ? top0 + 4 : bot0 - 4, t = (up ? '▲ ' : '▼ ') + 'дошли ' + L.q + ' % · ' + sdG(F, L.k / 10);
+        c.save(); c.font = '700 9.5px ' + FONT; c.textBaseline = 'middle'; c.fillStyle = rgba(cfg.X, 0.95 * a); haloFill(c, t, A_.x + A_.w - c.measureText(t).width - 6, yy + (L.q === 70 ? 0 : 12 * (up ? 1 : -1)), C.axis); c.restore();
+        continue;
+      }
       c.save(); c.strokeStyle = rgba(cfg.X, 0.8 * a); c.lineWidth = 1; c.setLineDash(L.q === 70 ? [] : [3, 3]);
       c.beginPath(); c.moveTo(A_.x + 2, y); c.lineTo(A_.x + A_.w - 2, y); c.stroke(); c.restore();
       c.save(); c.font = '700 9.5px ' + FONT; c.textBaseline = 'bottom'; c.fillStyle = rgba(cfg.X, 0.95 * a);
