@@ -336,7 +336,8 @@
     const F = ctx.F, P = F._tp, T = P.T, tp = P.clock, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
     const ov = V.bandOv = bandOverlay(ctx), B = { x: B0.x, y: B0.y - ov, w: B0.w, h: B0.h + ov };
     // one lane of capsules on R's side (where the zone capsules stood): the windows
-    const LH = 15, lane = { R: 1, X: 0 }, upEv = dir.X < 0 ? 'X' : 'R', dnEv = upEv === 'X' ? 'R' : 'X';
+    const LH = 15, lane = { R: dir.R < 0 ? 0 : 1, X: 0 };   // screen 24, a short: the capsules stand at the top of the screen
+    const upEv = dir.X < 0 ? 'X' : 'R', dnEv = upEv === 'X' ? 'R' : 'X';
     const top = B.y + 3 + lane[upEv] * (LH + 2) + 2, bot = B.y + B.h - 3 - lane[dnEv] * (LH + 2) - 2;
     const cy = Math.round((top + bot) / 2) + 0.5, half = (bot - top) / 2 - 2;
     c.save(); c.beginPath(); c.rect(B.x, B.y, B.w, B.h); c.clip();
@@ -411,33 +412,35 @@
     // quieter. Each carries its name and its share of T (core §7: «у W % true-сессий откат до вершины был в этом окне»).
     const shares = TP_WINDOWS.filter(w => tp.windows[w]).map(w => ({ w, W: tp.windows[w], p: tpShare(F, tp.windows[w][0], tp.windows[w][1]) }));
     const capMax = Math.max(1e-9, ...shares.map(q => q.p.pct || 0));
+    // screen 24 (operator 16.11): the windows' capsules on the pullback's side of the screen — a short's at the top, under
+    // the «сейчас» plate, a long's at the bottom of the band; none filled bright
+    if (dir.R < 0) { c.restore(); c.save(); }
     for (const { w, W, p } of shares) {
-      const x0 = V.X(F.f + 15 * W[0]) + 1, x1 = V.X(F.f + 15 * W[1]) - 1, wd = x1 - x0, y0 = dir.R < 0 ? B.y + 3 : B.y + B.h - 3 - LH + 2;
+      const x0 = V.X(F.f + 15 * W[0]) + 1, x1 = V.X(F.f + 15 * W[1]) - 1, wd = x1 - x0, y0 = dir.R < 0 ? 5 : B.y + B.h - 3 - LH + 2;
       if (x1 < B.x || x0 > B.x + B.w || wd < 4) continue;
       const on = w === P.w, hov = !!(h && (h.k === 'tpwin' || h.k === 'tpzone') && h.id === w), side = w === 'BEFORE' || w === 'LATE', r = Math.pow((p.pct || 0) / capMax, 0.7);
       const isD = !!(P.today && P.today.w === w), run = sl >= F.f + 15 * W[0] && sl < F.f + 15 * W[1], nW = tpCount(tp, W[0], W[1]);   // screen 24: ◆ the window of today's low, fill the running one
       c.save(); c.globalAlpha = on || hov ? 1 : 0.8;
-      c.fillStyle = run ? rgba(cfg.R, 0.92) : rgba(cfg.R, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
-      if (isD) { c.fillStyle = rgba(cfg.R, 0.95); c.fillRect(x0 + 8, dir.R < 0 ? y0 + LH + 1 : y0 - 3, Math.max(8, wd - 16), 2); }
+      c.fillStyle = rgba(cfg.R, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
       if (on || hov) { c.strokeStyle = rgba(cfg.R, on ? 0.75 : 0.5); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
       c.beginPath(); c.rect(x0 + 2, y0, wd - 4, LH); c.clip();
       c.textBaseline = 'middle';
       let x = x0 + 9;
       c.font = '700 10.5px ' + FONT;
       const nw = c.measureText(TP_NAME[w]).width, pw = pctW(c, ppTxt(p), '700 ', 10.5 + (on ? 1 : 0));
-      c.font = '700 10.5px ' + FONT; c.fillStyle = run ? '#0B0E14' : rgba(side ? '#B8BEC9' : mixW(cfg.R, 0.2), Math.min(1, (on ? 1 : 0.85) * cfg.capTxt / 100));
+      c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(side ? '#B8BEC9' : mixW(cfg.R, 0.2), Math.min(1, (on ? 1 : 0.85) * cfg.capTxt / 100));
       const nm = (isD ? '◆ ' : '') + TP_NAME[w], nmw = c.measureText(nm).width, dw = isD ? c.measureText('◆ ').width : 0;
       // a narrow window keeps its name, its share then in its title and in the panel; the window of today's low keeps «◆» and
       // its share (screen 24), its name then under the mouse
       const both = wd >= nw + pw + 20 + (isD ? 12 : 0), shareOnly = !both && isD && wd >= dw + pw + 16;
       if (shareOnly) { c.fillText('◆', x, y0 + LH / 2 + 0.5); x += dw; }
       else if (wd >= nmw + 14) { c.fillText(nm, x, y0 + LH / 2 + 0.5); x += nmw + 6; }
-      if (both || shareOnly) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5 + (on ? 1 : 0), run ? '#0B0E14' : rgba(mixW(cfg.R, 0.35), Math.min(1, (on ? 1 : 0.8) * cfg.capTxt / 100)));
+      if (both || shareOnly) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5 + (on ? 1 : 0), rgba(mixW(cfg.R, 0.35), Math.min(1, (on ? 1 : 0.8) * cfg.capTxt / 100)));
       c.restore();
       // screen 24: a window still ahead or running while today's low lies in another window — of the whole family, those whose
       // pullback before the top in it went deeper than today's low (EST:TP-MASS-R); quiet once all of it is behind the clock
       const Wd = P.today && P.today.w ? tp.windows[P.today.w] : null;   // only once the window of today's low is over (Р-К16)
-      if (Wd && P.today.w !== w && sl >= F.f + 15 * Wd[1] && sl < F.f + 15 * W[1]) {
+      if (false && Wd && P.today.w !== w && sl >= F.f + 15 * Wd[1] && sl < F.f + 15 * W[1]) {   // off the chart (operator 16.11: little text)
         const dK = fdiv(10 * P.today.lo, F.w0t), pm = tpMass(F, { k0: null, k1: dK, b0: W[0], b1: W[1] });
         if (pm.yes_count) {
           const past = !P.A.ev.R.pts.some(q => q.m.outcome === 'held' && q.k < dK && q.b >= W[0] && q.b < W[1] && q.t + 5 > sl);
@@ -521,7 +524,6 @@
   // phase 'under' (before the candles): haze, threads and names; phase 'over' (after the candles): the stars and, under the
   // mouse, the place's outline
   function tpGhosts(c, ctx, phase) {
-    if (ctx.F && ctx.F._tp) return tpGhostBoxes(c, ctx, phase);      // screen 24: the other windows' places as dashed boxes
     if (phase === 'under') V.tpGhostHit = [];
     if (!ctx.F || !ctx.F._tp || !st.L.zones || st.mode !== 'bounds') return;
     const h = hv(), env = V.zoneEnv, sl = sliceOf(ctx), R0 = 1.7 * cfg.ptSize / 100;
@@ -529,6 +531,7 @@
       const CL = cloudsOf(G), S = zoneLook(G, ctx, 'R'), wl = !!(h && h.k === 'tpwin' && h.id === w);
       CL.R.forEach((g, i) => {
         if (!g || zoneHeld(G, 'R', i)) return;           // a withheld place's share is «—»: no haze asserts it
+        if (expiredLook(S[i]) && !wl) return;            // screen 24 (operator 16.11): a place that can no longer hold today only under its window's capsule
         const on = !!(h && h.k === 'tpzone' && h.id === w && h.i === i), k = on || wl ? 1.5 : h && h.k !== 'stripBg' ? 0.6 : 1;
         const col = stateCol(cfg.R, S[i]), imp = expiredLook(S[i]), dim = imp ? 0.6 * cfg.spentA / 100 : S[i] === 'QUIET' ? 0.7 : S[i] === 'HOLDS' ? 1.15 : 1;
         if (phase === 'under') {
@@ -546,7 +549,7 @@
           else V.tpGhostHit.push({ box: [0, 0, 0, 0], w, i, loops: g.hit });
           return;
         }
-        if (!st.L.pts) return;
+        if (!st.L.pts || !(on || wl)) return;            // screen 24: stars only under the mouse
         c.save();
         for (const q of G.ev.R.pts) {
           if (pointZone(G, q) !== i) continue;

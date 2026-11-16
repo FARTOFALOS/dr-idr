@@ -1040,7 +1040,7 @@
     // screen 24 (TP): a free strip of 30 px at the top for the «сейчас» plate; 22 px more when a pill (↑ HH:MM over its
     // candle) or a box's name stands at the top of the content, so neither goes under the plate or out of the frame
     if (!(ctx.F && ctx.F._tp && st.mode === 'bounds' && H > 120) || continuationMode()) return [lo1, hi1];
-    let need = 30, topP = -Infinity;
+    let need = ctx.F.d0 > 0 ? 6 : 26, topP = -Infinity;   // a short: the windows' capsules stand under the plate (16.11)
     for (const k of ORDER) {
       const s2 = sess(ctx.D, k, ctx.obs, ctx.live);
       if (s2.drH != null && (s2.status !== 'forming' || k === ctx.s.k) && s2.start + 5 >= st.v0 && s2.start <= st.v1) topP = Math.max(topP, s2.drH);
@@ -1109,7 +1109,6 @@
     if (F && V.projW) drawProj(c, pbProjectionContext(mapCtx));
     drawTimeAxis(c, ctx);
     drawLegend(c, ctx);
-    if (F && F._tp && st.mode === 'bounds' && !continuationMode()) tpNowLine(c, mapCtx);   // screen 24: «сейчас» in one line
     PB.paint = false;
     if (full) { toolbar(ctx); panelHtml(ctx); }
     else panelMarks();
@@ -1477,6 +1476,8 @@
       for (const q of F.ev[ev].pts) {
         const zi = pointZone(F, q);
         if (zi == null) continue;
+        // screen 24 (operator 16.11): a place is its rounded haze, its stars only under the mouse; none for a place that can no longer hold
+        if (F._tp && (expiredLook(look[zi]) || !(h && h.k === 'zone' && h.ev === ev && h.i === zi))) continue;
         const col = expiredLook(look[zi]) ? spent : look[zi] === 'QUIET' ? stateCol(col0, 'QUIET') : col0;
         const x = V.X(q.t + 2.5), y = V.Y(q.p);
         if (x < -4 || x > V.plot.w + 4 || y < -4 || y > V.plot.h + 4) continue;
@@ -1577,7 +1578,7 @@
       Zm.zones.forEach((z, i) => {
         const pts = F.ev[ev].pts.filter(q => F._ts ? tsMember(z,q) : F.zcell[ev].get(q.k + '|' + q.b) === i).map(q => [V.X(q.t + 2.5), V.Y(q.p), q.b]);
         if (!pts.length) { out[ev].push(null); return; }
-        const kd = kde(pts, 18), pb = new Map();
+        const kd = kde(pts, F._tp ? 26 : 18), pb = new Map();   // screen 24: rounder, neighbours merge
         for (const p of pts) pb.set(p[2], (pb.get(p[2]) || 0) + 1);
         let peak = null;
         for (const [b, n] of pb) if (peak == null || n > pb.get(peak) || (n === pb.get(peak) && b < peak)) peak = b;
@@ -1599,11 +1600,11 @@
   }
   function drawClouds(c, ctx) {
     const F = ctx.F, CL = cloudsOf(F), h = hv(), ph = phaseOf(F, ctx);
-    if (F._tp) return;                                   // screen 24: the places of TP are boxes (tpBoxes), no haze
     for (const ev of ['R', 'X']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev], fa = cfg.cloudA / 100 * phaseK(ph, ev), ta = cfg.threadA / 100 * phaseK(ph, ev);
       CL[ev].forEach((g, i) => {
         if (!g || zoneHeld(F, ev, i)) return;        // a withheld zone's share is «—»: its haze and threads do not assert it
+        if (F._tp && expiredLook(S[i])) return;      // screen 24 (operator 16.11): what can no longer hold today is not drawn
         const col = stateCol(col0, S[i]);
         // a spent constellation stays readable as history (operator 2026-10-06: «чуть-чуть ярче»), setting «spentA»
         const k = cloudK(F, ev, i, h, g.z), dim = expiredLook(S[i]) ? 0.6 * cfg.spentA / 100 : S[i] === 'QUIET' ? 0.7 : S[i] === 'HOLDS' ? 1.15 : 1;
@@ -1611,7 +1612,7 @@
         c.filter = 'blur(14px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.5, 0.17 * k * dim * fa)); loopsPath(c, g.g1); c.fill();
         c.filter = 'blur(7px)'; c.fillStyle = rgba(col, 0.5 * Math.min(0.45, 0.13 * k * dim * fa)); loopsPath(c, g.g2); c.fill();
         c.filter = 'none';
-        c.strokeStyle = rgba(col, Math.min(0.35, 0.13 * k * dim * ta)); c.lineWidth = 0.5;
+        c.strokeStyle = rgba(col, F._tp && k <= 1 ? 0 : Math.min(0.35, 0.13 * k * dim * ta)); c.lineWidth = 0.5;
         c.beginPath(); for (const s of g.mst) { c.moveTo(s[0], s[1]); c.lineTo(s[2], s[3]); } c.stroke();
         c.restore();
       });
@@ -1886,7 +1887,6 @@
     const F = ctx.F, inside = cfg.zoneLblPos !== 'side';
     if (phase === 'under') V.zoneHit = null;
     if (!st.L.zones || st.mode !== 'bounds') return;
-    if (F._tp) { if (phase === 'under') { V.zoneHit = []; V.zoneEnv = null; tpBoxes(c, ctx); } return; }   // screen 24
     const CL = cloudsOf(F), h = hv(), placed = [], used = ctx.live ? NOW + 5 : ctx.obs;
     const bars = ctx.D.bars.filter(b => b.t + 5 <= used && V.X(b.t + 5) > 0 && V.X(b.t) < V.plot.w).map(b => [V.X(b.t) - 2, V.Y(b.h) - 2, V.X(b.t + 5) + 2, V.Y(b.l) + 2]);
     const over = (a, b) => a[0] < b[2] && a[2] > b[0] && a[1] < b[3] && a[3] > b[1];
@@ -1905,7 +1905,7 @@
     for (const ev of ['X', 'R']) {
       const S = zoneLook(F, ctx, ev), col0 = cfg[ev];
       CL[ev].forEach((g, i) => {
-        if (!g) return;
+        if (!g || (F._tp && expiredLook(S[i]))) return;   // screen 24 (operator 16.11): no name for a place that can no longer hold today
         const col = stateCol(col0, S[i]);
         const z = g.z, s = S[i], imp = expiredLook(s), on = !!(h && h.k === 'zone' && h.ev === ev && h.i === i);
         if (phase === 'under') { if (inside) zoneMark(c, ctx, F, ev, i, g, z, s, col, h, env); return; }
@@ -2704,13 +2704,10 @@
     const s = ctx.s, nx = st.L.std && s.drH != null ? levels(s).find(l => stdState(s, l) === 'next') : null;
     if (nx) { const y = V.Y(nx.p); if (y < 0 || y > V.plot.h) { c.font = '600 ' + cfg.lineLbl + 'px ' + FONT; const tw = c.measureText('↑ ' + nx.name + ' · ' + px(nx.p)).width; hard.push(y < 0 ? [PW - 10 - tw, 2, PW, 20] : [PW - 10 - tw, V.plot.h - 20, PW, V.plot.h]); } }
     c.restore();
-    const Wd = { top: 30, floor: V.plot.h - (V.stripOn ? bandOverlay(ctx) : 0) - 4, hard, placed, over,
+    const Wd = { top: F.d0 > 0 ? 6 : 26, floor: V.plot.h - (V.stripOn ? bandOverlay(ctx) : 0) - 4, hard, placed, over,
       cost: r => 8 * hard.filter(b => over(r, b)).length + 6 * placed.filter(b => over(r, b)).length + 3 * live.filter(b => over(r, b)).length + bars.filter(b => over(r, b)).length };
     tpLevelLines(c, ctx, Wd);
     tpBreakLabel(c, ctx, Wd);
-    tpBoxWords(c, ctx, Wd);
-    tpGhostWords(c, ctx, Wd);
-    tpOtherLevels(c, ctx, Wd);
   }
   // the least covered of several top-left corners for a word w × h inside the free height, with its cost (null if none fits)
   function tpPlace(Wd, cands, w, h) {
@@ -2726,29 +2723,39 @@
   // the levels 70 % and 50 % of the window of today's low across the chart: the next one not yet reached white, the other
   // blue dashed, a reached one quiet with ✓; the name on the left; a withheld level is not drawn; one beyond the frame (or
   // under the plate, or in the raised band) keeps its name at the edge with ▲ / ▼
+  // a few words in a small outlined box, its right edge at xr, its middle at ym (operator 16.11: little text on the chart,
+  // and what there is stands in boxes); returns its rectangle
+  function tpPill(c, t, xr, ym, col) {
+    c.save(); c.shadowColor = 'transparent'; c.shadowBlur = 0; c.font = '700 10.5px ' + FONT;
+    const w = Math.ceil(c.measureText(t).width) + 14, x0 = Math.round(xr - w);
+    c.fillStyle = 'rgba(8,9,12,.92)'; roundRect(c, x0, ym - 8, w, 16, 8); c.fill();
+    c.strokeStyle = col; c.lineWidth = 1; roundRect(c, x0 + 0.5, ym - 7.5, w - 1, 15, 7.5); c.stroke();
+    c.fillStyle = col; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillText(t, x0 + 7, ym + 0.5); c.restore();
+    return [x0, ym - 8, xr, ym + 8];
+  }
   function tpLevelLines(c, ctx, Wd) {
+    // operator 16.11: as on 23.5 (blue, 70 % solid, 50 % dashed, named on the right), only long, across the chart; a level
+    // already reached today is not drawn; the name is two words in a box, the SD is the grid's own label beside it
     const F = ctx.F;
     if (!F._tp.w) return;
     const Rch = reachOf(F, ctx), topK = Rch.cur.X ? Rch.cur.X.k : null, Ls = tpLevels(F).filter(L => L.p.pct != null), PW = V.plot.w;
-    const next = Ls.find(L => topK == null || topK < L.k), same = Ls.length === 2 && Ls[0].k === Ls[1].k, edge = { up: 0, dn: 0 };
+    const same = Ls.length === 2 && Ls[0].k === Ls[1].k, edge = { up: 0, dn: 0 };
     Ls.forEach((L, j) => {
       if (same && j) return;
-      const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5, taken = topK != null && topK >= L.k, main = L === next;
-      const name = (taken ? '✓ ' : '') + (/^W\d/.test(F._tp.w) ? TP_NAME[F._tp.w] : '«' + TP_NAME[F._tp.w] + '»') + ' · дошли ' + (same ? '70 % и 50 %' : L.q + ' %') + ' · ' + sdG(F, L.k / 10) + ' SD';
-      const col = main ? '#FFFFFF' : rgba('#9CC3F3', taken ? 0.5 : 1);
-      c.save();
-      if (y < Wd.top || y > Wd.floor) {
-        const up = y < Wd.top, t = (up ? '▲ ' : '▼ ') + name, yy = up ? Wd.top + 14 * edge.up++ : Wd.floor - 14 * edge.dn++;
-        c.font = '600 11px ' + FONT; c.textBaseline = up ? 'top' : 'bottom'; c.fillStyle = col; c.shadowColor = 'rgba(0,0,0,.85)'; c.shadowBlur = 3;
-        haloFill(c, t, 74, yy); const tw = c.measureText(t).width; c.restore();
-        Wd.placed.push([72, up ? yy : yy - 14, 78 + tw, up ? yy + 14 : yy]);
+      const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5, taken = topK != null && topK >= L.k;
+      if (taken) return;
+      const name = 'дошли ' + (same ? '70 % и 50 %' : L.q + ' %'), col = mixW(cfg.X, 0.25);
+      c.save(); c.font = '700 10.5px ' + FONT;
+      const tw = Math.ceil(c.measureText(name).width) + 14; c.restore();
+      if (y < Wd.top + 8 || y > Wd.floor - 8) {
+        const up = y < Wd.top + 8, t = (up ? '▲ ' : '▼ ') + name + ' · ' + sdG(F, L.k / 10), ym = up ? Wd.top + 9 + 18 * edge.up++ : Wd.floor - 9 - 18 * edge.dn++;
+        Wd.placed.push(tpPill(c, t, PW - 96, ym, col));
         return;
       }
-      c.strokeStyle = main ? 'rgba(255,255,255,.95)' : rgba(cfg.X, taken ? 0.35 : 0.75); c.lineWidth = main ? 1.8 : 1.2; c.setLineDash(main ? [] : [7, 5]);
-      c.beginPath(); c.moveTo(0, y); c.lineTo(PW, y); c.stroke(); c.setLineDash([]);
-      c.font = (main ? '800 13px ' : '700 11.5px ') + FONT; c.textBaseline = 'bottom'; c.fillStyle = col; c.shadowColor = 'rgba(0,0,0,.85)'; c.shadowBlur = 3;
-      haloFill(c, name, 74, y - 4); const tw = c.measureText(name).width; c.restore();
-      Wd.placed.push([72, y - (main ? 19 : 17), 78 + tw, y - 2]);
+      c.save(); c.strokeStyle = rgba(cfg.X, 0.9); c.lineWidth = 1.4; c.setLineDash(L.q === 50 && !same ? [6, 4] : []);
+      c.beginPath(); c.moveTo(0, y); c.lineTo(PW, y); c.stroke(); c.restore();
+      const pos = tpPlace(Wd, [PW - 60, PW - 170, PW - 290, PW - 420].map(x => [x - tw, y - 8]), tw, 16) || [PW - 60 - tw, y - 8];
+      Wd.placed.push(tpPill(c, name, pos[0] + tw, y, col));
     });
   }
   // 4. at the line where the DR breaks: the family's share broken (EST:B-DR) on the box's side of the line and, beyond it, of
@@ -2759,7 +2766,7 @@
     if (!P.A || s.drH == null) return;
     const long = F.d0 > 0, yL = Math.round(V.Y(long ? s.drL : s.drH)) + 0.5, xr = V.plot.w - 70;
     const d = tpDepth(F, ctx), held = d && ['ALL', 'HELD', 'BROKEN', 'UNKNOWN'].some(k => d.pass[k].violation);
-    const t1 = 'слом DR · сломан ' + ppTxt(drPass(P.A, 'broken')) + ' семьи';
+    const t1 = 'слом ' + ppTxt(drPass(P.A, 'broken'));
     // Ч13 stands once on the chart, in the «сейчас» plate (16.11): a set of a few sessions is not said three times
     const t2 = '' && d && d.D && !held ? (lbl('EST:TP-DR-AT-DEPTH', 'row', { cut: clk(d.cut), u: sdG(F, Math.round(100 * d.u) / 100), D: d.D, held: d.held, broken: d.broken }) + (d.unknown ? lbl('EST:TP-DR-AT-DEPTH', 'row_unknown', { unknown: d.unknown }) : '') + (d.D < 20 ? ' · ' + lbl('EST:TP-DR-AT-DEPTH', 'few', { n: d.D }) : '')).replace(/<[^>]+>/g, '') : '';
     const H = 15, beyond = yL < Wd.top ? -1 : yL > Wd.floor ? 1 : 0, yE = beyond < 0 ? Wd.top - 3 : beyond > 0 ? Wd.floor + 3 : yL;
@@ -2771,8 +2778,7 @@
     c.save(); c.textAlign = 'right'; c.textBaseline = 'top'; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 3;
     for (const r of [R1, R2]) {
       if (!r || !fits(r.side, r.k)) continue;
-      const yt = rowTop(r.side, r.k); c.font = r.f + FONT; c.fillStyle = r.col; haloFill(c, r.t, xr, yt + 1);
-      Wd.placed.push([xr - c.measureText(r.t).width - 2, yt, xr + 2, yt + H]);
+      const yt = rowTop(r.side, r.k); Wd.placed.push(tpPill(c, r.t, xr, yt + 8, r.col));
     }
     c.restore();
   }
@@ -3017,6 +3023,7 @@
     if (x > V.plot.w) return y < V.plot.h ? { k: 'paxis' } : null;
     if (y > V.taxisY) return { k: 'taxis' };
     if (!F) return y > V.plot.h ? null : lvlHit(ctx, y) || vibHit(ctx, x, y) || prevHit(ctx, y);
+    if (F._tp && V.stripOn && x <= V.plot.w && y < 60) { const cp = (V.tpCaps || []).find(a => x >= a.box[0] && x <= a.box[0] + a.box[2] && y >= a.box[1] && y <= a.box[1] + a.box[3]); if (cp) return { k: 'tpwin', id: cp.id, src: 'strip' }; }   // a short's capsules at the top
     if (y > V.plot.h - (V.stripOn ? V.bandOv || 0 : 0) && x <= V.plot.w) {
       // the time band (with its raised part over the free bottom of the chart): a zone's hill (its label first), else a 15-minute column (both events), «?» at the right
       if (!V.stripOn) return { k: 'taxis' };
