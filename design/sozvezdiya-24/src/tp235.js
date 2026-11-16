@@ -255,8 +255,8 @@
         '<div class="ir">' + inW + ' — в этой полосе ' + z.n_zone + '<b>' + ppTxt(pw) + '</b></div>';
     }
     const r = tpReachPass(F, z);
-    return '<div class="ibig" style="color:#F0F5FF">' + ppTxt(r) + '<span>дошли до ' + sd(z.price_low / 10) + ' SD</span></div>' +
-      '<div class="is" style="color:' + cfg.X + '">дошли до ' + sd(z.price_low / 10) + ' SD: ' + r.yes_count + ' ' + inW + '</div>' +
+    return '<div class="ibig" style="color:#F0F5FF">' + ppTxt(r) + '<span>дошли до ' + sdG(F, z.price_low / 10) + ' SD</span></div>' +
+      '<div class="is" style="color:' + cfg.X + '">дошли до ' + sdG(F, z.price_low / 10) + ' SD: ' + r.yes_count + ' ' + inW + '</div>' +
       '<div class="ir">ход кончился в этой полосе: ' + z.n_zone + ' из ' + nw + '<b>' + ppTxt(pw) + '</b></div>';
   }
   // ---------- TP-2.0 Ч12: the levels the window's sessions reached, 70 % and 50 % ----------
@@ -291,7 +291,7 @@
   function tpDepth(F, ctx) {
     const Fb = F._tp.A, today = F._tp.today;
     if (!Fb || !today || !Fb.grid) return null;
-    const sl = today.sl, rt = today.lo, wt = Fb.w0t, set = [];
+    const sl = Math.min(sliceOf(ctx), Fb.end), rt = today.lo, wt = Fb.w0t, set = [];   // the slice now: today's object is cached while its low stays
     for (const m of Fb.M) {
       const pre = [];
       for (let j = 0; j < Fb.grid.length; j++) if (Fb.grid[j] > m.act && Fb.grid[j] <= sl) pre.push(m.path[j]);
@@ -310,7 +310,7 @@
     if (!d) return '';
     const held = ['ALL', 'HELD', 'BROKEN', 'UNKNOWN'].some(k => d.pass[k].violation) ? '—' : null, cut = clk(d.cut);
     if (!d.D) return '<div class="p21-note" title="' + esc(lbl('EST:TP-DR-AT-DEPTH', 'title')) + '">' + lbl('EST:TP-DR-AT-DEPTH', 'none', { cut }) + '</div>';
-    const txt = held || lbl('EST:TP-DR-AT-DEPTH', 'row', { cut, u: sd(Math.round(100 * d.u) / 100), D: d.D, held: d.held, broken: d.broken }) + (d.unknown ? lbl('EST:TP-DR-AT-DEPTH', 'row_unknown', { unknown: d.unknown }) : '');
+    const txt = held || lbl('EST:TP-DR-AT-DEPTH', 'row', { cut, u: sdG(F, Math.round(100 * d.u) / 100), D: d.D, held: d.held, broken: d.broken }) + (d.unknown ? lbl('EST:TP-DR-AT-DEPTH', 'row_unknown', { unknown: d.unknown }) : '');
     const hp = held ? '—' : pct(100 * d.held / d.D);
     return '<div class="p21-h second"><span title="' + esc(lbl('EST:TP-DR-AT-DEPTH', 'title')) + '">' + txt + (d.D < 20 ? ' · ' + lbl('EST:TP-DR-AT-DEPTH', 'few', { n: d.D }) : '') + '</span><span>устоял ' + hp + '</span></div>';
   }
@@ -404,7 +404,7 @@
       // a short mark at the outer end, the median one row further out than the 70 % mark, so close lines stay readable
       c.font = '700 9.5px ' + FONT; c.textBaseline = 'middle'; c.fillStyle = rgba(cfg[L.ev], held ? 0.4 : 0.95);
       c.fillText(L.id === 'median' ? '½' : '70%', x + 3, cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15)));
-      V.tpLines.push({ ev: L.ev, id: L.id, x, y0: Math.min(y0, y1), y1: Math.max(y0, y1) });
+      V.tpLines.push({ ev: L.ev, id: L.id, x, y0: Math.min(y0, y1), y1: Math.max(y0, y1), ly: cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15)) });
     }
     for (const L of labels) { c.font = (L.big ? '700 10.5px ' : '700 10.5px ') + FONT; c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, Math.max(B.y + 7, Math.min(B.y + B.h - 7, L.y))); c.textAlign = 'left'; }
     // the windows in the place of the zone capsules: the selected one outlined, the others a soft fill; «до окна» and «позже»
@@ -426,10 +426,13 @@
       c.font = '700 10.5px ' + FONT;
       const nw = c.measureText(TP_NAME[w]).width, pw = pctW(c, ppTxt(p), '700 ', 10.5 + (on ? 1 : 0));
       c.font = '700 10.5px ' + FONT; c.fillStyle = run ? '#0B0E14' : rgba(side ? '#B8BEC9' : mixW(cfg.R, 0.2), Math.min(1, (on ? 1 : 0.85) * cfg.capTxt / 100));
-      const nm = (isD ? '◆ ' : '') + TP_NAME[w], nmw = c.measureText(nm).width;
-      if (wd >= nmw + 14) { c.fillText(nm, x, y0 + LH / 2 + 0.5); x += nmw + 6; }
-      // a narrow window keeps its name; its share is then in its title and in the panel
-      if (wd >= nw + pw + 20 + (isD ? 12 : 0)) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5 + (on ? 1 : 0), run ? '#0B0E14' : rgba(mixW(cfg.R, 0.35), Math.min(1, (on ? 1 : 0.8) * cfg.capTxt / 100)));
+      const nm = (isD ? '◆ ' : '') + TP_NAME[w], nmw = c.measureText(nm).width, dw = isD ? c.measureText('◆ ').width : 0;
+      // a narrow window keeps its name, its share then in its title and in the panel; the window of today's low keeps «◆» and
+      // its share (screen 24), its name then under the mouse
+      const both = wd >= nw + pw + 20 + (isD ? 12 : 0), shareOnly = !both && isD && wd >= dw + pw + 16;
+      if (shareOnly) { c.fillText('◆', x, y0 + LH / 2 + 0.5); x += dw; }
+      else if (wd >= nmw + 14) { c.fillText(nm, x, y0 + LH / 2 + 0.5); x += nmw + 6; }
+      if (both || shareOnly) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5 + (on ? 1 : 0), run ? '#0B0E14' : rgba(mixW(cfg.R, 0.35), Math.min(1, (on ? 1 : 0.8) * cfg.capTxt / 100)));
       c.restore();
       // screen 24: a window still ahead or running while today's low lies in another window — of the whole family, those whose
       // pullback before the top in it went deeper than today's low (EST:TP-MASS-R); quiet once all of it is behind the clock
@@ -438,10 +441,14 @@
         const dK = fdiv(10 * P.today.lo, F.w0t), pm = tpMass(F, { k0: null, k1: dK, b0: W[0], b1: W[1] });
         if (pm.yes_count) {
           const past = !P.A.ev.R.pts.some(q => q.m.outcome === 'held' && q.k < dK && q.b >= W[0] && q.b < W[1] && q.t + 5 > sl);
-          const tt = (nW < 20 ? 'мало: n=' + nW + ' · ' : '') + 'глубже ' + sd(dK / 10) + ': ' + ppTxt(pm) + ' семьи' + (past ? ' · в истории раньше' : '');
+          const tt = (nW < 20 ? 'мало: n=' + nW + ' · ' : '') + 'глубже ' + sdG(F, dK / 10) + ': ' + ppTxt(pm) + ' семьи' + (past ? ' · в истории раньше' : '');
           c.save(); c.font = '700 9.5px ' + FONT; c.textBaseline = 'bottom'; c.fillStyle = rgba('#F6C9A6', past ? 0.45 : run ? 1 : 0.8);
-          const up = c.measureText(tt).width > wd - 6 ? 13 : 0;        // a narrow window: its line one row higher, clear of the next window's
-          c.fillText(tt, x0 + 4, dir.R < 0 ? y0 + LH + 14 + up : y0 - 5 - up); c.restore();
+          const tw = c.measureText(tt).width, away = dir.R < 0 ? 1 : -1;   // rows away from the capsule: under it for a short, over it for a long
+          let yb = dir.R < 0 ? y0 + LH + 14 : y0 - 5;
+          if (tw > wd - 6) yb += 13 * away;                             // a narrow window: one row further, clear of the next window's
+          const onMark = yy => (V.tpLines || []).some(L => L.ly != null && L.x + 2 < x0 + 4 + tw && L.x + 28 > x0 + 4 && L.ly + 6 > yy - 11 && L.ly - 6 < yy);
+          for (let j = 0; j < 2 && onMark(yb); j++) yb += 13 * away;
+          c.fillText(tt, x0 + 4, yb); c.restore();
         }
       }
       V.tpCaps.push({ id: w, box: [x0, y0, wd, LH] });
@@ -636,14 +643,14 @@
     const n = F.ev.R.pts.filter(q => q.k < h.k0).length, D = F.ev.R;
     const p = pp(F, { estimand: 'EST:B-RX-BAND-R', params: { k0: -100000, k1: h.k0 }, event_id: 'R', region_kind: 'price_band', exact_price_bounds: [-100000, h.k0], time_bounds: null, start_rule: F.from, end_rule: 'до ' + clk(F.end),
       yes_count: n, unknown_count: D.unknown, no_event_count: D.none, display_scope: 'inspector', phrase: lbl('EST:B-RX-BAND-R', 'phrase', { name: F.names.R.toLowerCase(), ev: 'R', what: F.what.R, band: '< ' + sd(h.k0 / 10) }), horizon: hzOf(F) });
-    return '<div class="ir">глубже ' + sd(h.k0 / 10) + ' SD у сессий окна ' + TP_NAME[F._tp.w || 'W1'] + '<b>' + ppTxt(p) + '</b></div>';
+    return '<div class="ir">глубже ' + sdG(F, h.k0 / 10) + ' SD у сессий окна ' + TP_NAME[F._tp.w || 'W1'] + '<b>' + ppTxt(p) + '</b></div>';
   }
   // the X-side ladder at a place of tops (core 1.4, the author's «targets»): of the window's sessions, those whose top
   // reached this band's lower edge or went further (EST:B-RX-BAND-X from the edge up; a top of the last 15 minutes
   // reached its level too, so it counts here though it is never a place)
   function tpReachLine(F, z) {
     if (!F._tp || !z) return '';
-    return '<div class="ir" style="color:' + cfg.X + '">дошли до ' + sd(z.price_low / 10) + ' SD у сессий окна ' + TP_NAME[F._tp.w || 'W1'] + '<b>' + ppTxt(tpReachPass(F, z)) + '</b></div>';
+    return '<div class="ir" style="color:' + cfg.X + '">дошли до ' + sdG(F, z.price_low / 10) + ' SD у сессий окна ' + TP_NAME[F._tp.w || 'W1'] + '<b>' + ppTxt(tpReachPass(F, z)) + '</b></div>';
   }
   // ---------- the panel: the clock of T, the windows (a row fixes its window), then the places of the window ----------
   function tpPanel(F, ctx) {
@@ -675,12 +682,12 @@
     // the continuation of the window's sessions: the time lines of their own top X (the ladder is on today's levels)
     const xl = tpLines(F).filter(L => L.ev === 'X'), xc = P.xc;
     if (P.w) {
-      const W = tp.windows[P.w], why = P.why === 'today' && P.today ? 'сегодня самая глубокая точка — ' + sd(Math.round(100 * P.today.u) / 100) + ' SD в ' + clk(P.today.t) : P.why === 'pin' ? 'закреплено' : 'отката ещё не было';
+      const W = tp.windows[P.w], why = P.why === 'today' && P.today ? 'сегодня самая глубокая точка — ' + sdG(F, Math.round(100 * P.today.u) / 100) + ' SD в ' + clk(P.today.t) : P.why === 'pin' ? 'закреплено' : 'отката ещё не было';
       out.push('<div class="p21-h second"><span title="Продолжение сессий с откатом ' + (W ? clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) : '') + ' (' + why + '): пучки времени вершин, их медиана и 70 %; на графике места вершины — подпись «дошли»: сколько сессий окна дошли до ближнего края; на колонке цены — уровни, до которых дошли 70 % и 50 %.">Продолжение · ' + TP_NAME[P.w] + ' · из сессий окна</span><span>доля окна</span></div>');
       out.push('<div class="p21-note">Продолжение сессий с откатом ' + (W ? clk(F.f + 15 * W[0]) + '–' + clk(F.f + 15 * W[1]) : '') + ' · ' + why + (F.N < 20 ? ' · мало сессий: n=' + F.N : '') + '</div>');
       if (xc) for (const u of xc.bunches) { const p = tpXShare(F, u.b0, u.b1); out.push(link({ k: 'tcell', ev: 'X', b0: u.b0, b1: u.b1, src: 'tpx' }, prow('пучок вершин ' + clk(F.f + 15 * u.b0) + '–' + clk(F.f + 15 * u.b1), ppTxt(p)), 'mc', p, plainTitle(p))); }
       if (xc && !xc.bunches.length) out.push('<div class="p21-note">Пучков вершин нет: ни один отрезок времени не набрал ' + xc.need + ' сессий (5 % семьи, не меньше 4).</div>');
-      for (const L of tpLevels(F)) out.push('<div class="mc" title="' + esc(plainTitle(L.p)) + '"><span class="t"><span>дошли до <b style="color:' + cfg.X + '">' + sd(L.k / 10) + ' SD</b> — ' + L.q + ' % окна</span></span><b>' + ppTxt(L.p) + '</b></div>');
+      for (const L of tpLevels(F)) out.push('<div class="mc" title="' + esc(plainTitle(L.p)) + '"><span class="t"><span>дошли до <b style="color:' + cfg.X + '">' + sdG(F, L.k / 10) + ' SD</b> — ' + L.q + ' % окна</span></span><b>' + ppTxt(L.p) + '</b></div>');
       if (xl.length) out.push('<div class="p21-note">' + xl.map(L => '<span title="' + esc(lbl('EST:B-CLOCK-X', 'earlier', { t: clk(L.cut) }) + ': ' + ppTxt(L.p)) + '">' + (L.id === 'median' ? 'медиана вершины' : '70 % вершин') + ' <b style="color:' + cfg.X + '">' + clk(L.cut) + '</b></span>').join(' · ') + '</div>');
       if (xc && xc.close) { const p = tpXShare(F, xc.bHi, xc.bHi + 1); out.push(link({ k: 'tcell', ev: 'X', b0: xc.bHi, b1: xc.bHi + 1, src: 'tpx' }, prow('ход не кончился до закрытия', ppTxt(p)), 'dim', p, plainTitle(p))); }
       if (F.ev.X.unknown + F.ev.X.none) { const u = undPass(F, 'X', 'BOTH'); out.push(link({ k: 'evrow', ev: 'X' }, prow(lbl('EST:B-RX-UNDETERMINED-X', 'row', { ev: '<i style="color:' + cfg.X + '">X</i>' }), ppTxt(u)), 'dim', u, plainTitle(u))); }

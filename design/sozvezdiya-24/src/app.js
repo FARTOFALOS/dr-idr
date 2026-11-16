@@ -976,7 +976,7 @@
     G.X = t => plot.x + (t - st.v0) / (st.v1 - st.v0) * plot.w;
     G.T = x => st.v0 + (x - plot.x) / plot.w * (st.v1 - st.v0);
     let p0 = st.p0, p1 = st.p1;
-    if (st.auto || p0 == null) { const r = autoRange(ctx); p0 = r[0]; p1 = r[1]; }
+    if (st.auto || p0 == null) { const r = autoRange(ctx, plot.h); p0 = r[0]; p1 = r[1]; }
     G.p0 = p0; G.p1 = p1;
     G.Y = p => plot.y + (p1 - p) / (p1 - p0) * plot.h;
     G.P = y => p1 - (y - plot.y) / plot.h * (p1 - p0);
@@ -988,7 +988,7 @@
   }
   // the price range: the day's candles in view and the box; with a family also the middle 90 % of R and of X (both, so the
   // switch R / X does not jump); everything outside stays in the distribution and is named at the column's edge
-  function autoRange(ctx) {
+  function autoRange(ctx, H) {
     let lo = Infinity, hi = -Infinity;
     const inV = t => t + 5 >= st.v0 && t <= st.v1;
     for (const b of ctx.D.bars) if (inV(b.t)) { lo = Math.min(lo, b.l); hi = Math.max(hi, b.h); }
@@ -1036,7 +1036,20 @@
     // not fit above their constellation move to its side (drawZones)
     const rng = hi - lo;
     if (ctx.F && st.mode === 'bounds' && st.L.strip) lo -= rng * cfg.bandRoom / 100;
-    return [lo - rng * cfg.padBot / 100, hi + rng * cfg.padTop / 100];
+    const lo1 = lo - rng * cfg.padBot / 100, hi1 = hi + rng * cfg.padTop / 100;
+    // screen 24 (TP): a free strip of 30 px at the top for the «сейчас» plate; 22 px more when a pill (↑ HH:MM over its
+    // candle) or a box's name stands at the top of the content, so neither goes under the plate or out of the frame
+    if (!(ctx.F && ctx.F._tp && st.mode === 'bounds' && H > 120) || continuationMode()) return [lo1, hi1];
+    let need = 30, topP = -Infinity;
+    for (const k of ORDER) {
+      const s2 = sess(ctx.D, k, ctx.obs, ctx.live);
+      if (s2.drH != null && (s2.status !== 'forming' || k === ctx.s.k) && s2.start + 5 >= st.v0 && s2.start <= st.v1) topP = Math.max(topP, s2.drH);
+      const bc = s2.conf && s2.side === 1 && ctx.D.bars.find(q => q.t === s2.conf - 5), bf = s2.failed && s2.side !== 1 && ctx.D.bars.find(q => q.t === s2.failed - 5);
+      for (const b of [bc, bf]) if (b && inV(b.t)) topP = Math.max(topP, b.h);
+    }
+    const pxP = (H - need) / Math.max(1e-9, hi1 - lo1);
+    if (topP > -Infinity && (hi1 - topP) * pxP < 22) need += 22 - Math.max(0, (hi1 - topP) * pxP);
+    return [lo1, hi1 + (hi1 - lo1) * need / Math.max(60, H - need)];
   }
   const bodyW = S => { if (S >= 2.5 && S <= 4) return 3; const c = 1 - 0.12 * Math.atan(Math.max(4, S) - 4) / (Math.PI * 0.5); let w = Math.max(1, Math.min(Math.floor(S * c), Math.floor(S))); if (w >= 2 && w % 2 === 0) w -= 1; return w; };
 
@@ -1084,7 +1097,7 @@
     if (F && st.mode === 'bounds') drawPair(c, mapCtx);
     if (F) drawSweeps(c, ctx);
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
-    if (F && F._tp && st.mode === 'bounds' && !continuationMode()) { tpLevelLines(c, mapCtx); tpOtherLevels(c, mapCtx); tpBreakLabel(c, mapCtx); }   // screen 24: 70 % / 50 % across the chart, other windows' levels, the DR break
+    if (F && F._tp && st.mode === 'bounds' && !continuationMode()) tpWords(c, mapCtx);   // screen 24: the levels, the DR break, the places' words, other windows' levels
     if (F && !continuationMode()) drawArea(c, mapCtx);
     if (F && st.mini) drawMini(c, ctx);
     drawTags(c, ctx);
@@ -2237,8 +2250,9 @@
     // its explanation («▲ X · зоны и когда …») removed by the operator 2026-10-06: the names stand at the band's left
   }
   // names of the lines at their right end, just before the price scale, so nothing has to be scrolled to be read
-  function drawTags(c, ctx) {
-    const items = [], s = ctx.s, xr = V.plot.w - 6;
+  // the line names at the right edge: which stand and where (drawTags draws them; screen 24's words keep clear of them)
+  function tagPlaced(ctx) {
+    const items = [], s = ctx.s;
     if (s.drH != null) {
       const play = gridSide(s);
       for (const l of levels(s)) {
@@ -2272,6 +2286,10 @@
       if (placed.some(p => Math.abs(p.y - y) < 11)) continue;
       placed.push({ y, q });
     }
+    return placed;
+  }
+  function drawTags(c, ctx) {
+    const xr = V.plot.w - 6, placed = tagPlaced(ctx);
     c.textBaseline = 'middle'; c.textAlign = 'right';
     for (const { y, q } of placed) {
       c.font = (q.big ? '600 ' + cfg.lineLbl + 'px ' : cfg.prevLbl + 'px ') + FONT;
@@ -2487,30 +2505,47 @@
     c.restore();
   }
 
-  // ---------- screen 24 (15.11.2026, meaning/27 §13, R9 «профиль со скобами»): the price column of TP-2.0 ----------
-  // One quantitative geometry: the length of a row is its share on one constant scale (amber — of the family N, blue — of
-  // the window's sessions). Every row of the window stays; only the brightness moves: bright = a row of a place that can
-  // still be today's (reachOf, the contract's rule), quiet = the rest. A place = a thin bracket that counts nothing + one
+  // ---------- screen 24 (15.11.2026, meaning/27 §13–§16): the price column of TP-2.0 and the words over the chart ----------
+  // One quantitative geometry in the column: the length of a row is its share on one constant scale (amber — of the family N,
+  // blue — of the window's sessions). Every row of the window stays; only the brightness moves: bright = a row of a place that
+  // can still be today's (reachOf, the contract's rule), quiet = the rest. A place = a thin bracket that counts nothing + one
   // number (R: the family share, TP-2.0 Ч4; X: «кончили здесь», Ч9). Tops of the last 15 minutes are outlined: they reach,
-  // they are not places. The author's depth marks ½ / 70-й and the edge of the window's history; white ticks = today's
-  // cells. The levels 70 % / 50 % are not drawn here: they cross the chart (tpLevelLines).
+  // they are not places. The author's depth marks ½ / 70-й and the edge of the window's history; white ticks = today's cells.
+  // The levels 70 % / 50 % cross the chart (tpLevelLines), not the column. A value in SD on screen 24 is named as the STD grid
+  // names its line (sdG: + above the IDR, − below), so a short reads −1,0 where the grid says −1,0.
+  const tpWN = (w, gen) => /^W\d/.test(w) ? TP_NAME[w] : w === 'LATE' ? (gen ? 'окна «позже»' : 'окно «позже»') : '«' + TP_NAME[w] + '»';
+  const sdG = (F, u) => sd(F.d0 > 0 ? u : -u);
+  // a place is alive while one of its rows can still be today's (the same rule in the column and on the chart)
+  const tpAlive = (F, Rch, ev, z) => F.ev[ev].pts.some(q => q.k >= z.price_low && q.k < z.price_high && Rch.okK(ev, q.k));
+  const tpRectLoop = (x0, y0, x1, y1) => [[[x0, y0], [x1, y0], [x1, y1], [x0, y1]]];
+  // a word over lines, candles or bars: a thin outline in the background colour under its letters, so a line crossing it
+  // does not strike it through (no plate under it, operator 2026-10-06)
+  function haloFill(c, t, x, y, bg) { c.save(); c.shadowColor = 'transparent'; c.shadowBlur = 0; c.lineJoin = 'round'; c.lineWidth = 3; c.strokeStyle = bg || C.bg; c.strokeText(t, x, y); c.restore(); c.fillText(t, x, y); }
+  function pctHalo(c, t, x, y, wt, fs, col, bg) {
+    const num = t.replace('%', '');
+    c.font = wt + fs.toFixed(1) + 'px ' + FONT; c.fillStyle = col; haloFill(c, num, x, y, bg);
+    if (!t.includes('%')) return;
+    const wn = c.measureText(num).width;
+    c.save(); c.globalAlpha *= 0.55; c.font = '600 ' + (fs * 0.58).toFixed(1) + 'px ' + FONT; haloFill(c, '%', x + wn + 1, y, bg); c.restore();
+  }
   function drawColR9(c, ctx) {
     const F = ctx.F, A_ = V.proj, top0 = 40, bot0 = A_.h - 16, P = F._tp, Fb = P.A || F, w = P.w;
     c.fillStyle = C.axis; c.fillRect(A_.x, 0, A_.w, A_.h);
     c.fillStyle = C.grid; c.fillRect(A_.x, 0, 1, A_.h);
     V.projBars = []; V.projCols = { X: [A_.x, A_.x + A_.w], R: [A_.x, A_.x + A_.w] }; V.projUnk = null; V.projEdge = null; V.projLbl = [];
     c.save(); c.beginPath(); c.rect(A_.x, 0, A_.w, A_.h); c.clip();
-    const Rch = reachOf(F, ctx), sl = Rch.sl, BX = A_.x + A_.w - 44, x0 = A_.x + 9, S = Math.min(3.2, (BX - 8 - x0) / 22);
+    const Rch = reachOf(F, ctx), sl = Rch.sl, BX = A_.x + A_.w - 44, x0 = A_.x + 9, room = BX - 8 - x0, S = Math.min(3.2, room / 22);
     const base = { R: Fb.N || F.N, X: F.N }, last15 = F.end - 15, Wt = w ? tpWinT(F, w) : null, wOver = !!(Wt && sl >= Wt[1]);
     const rows = { R: new Map(), X: new Map() }, close = new Map();
     for (const ev of ['R', 'X']) for (const q of F.ev[ev].pts) {
       if (ev === 'X' && q.t >= last15) close.set(q.k, (close.get(q.k) || 0) + 1); else rows[ev].set(q.k, (rows[ev].get(q.k) || 0) + 1);
     }
-    const places = { R: [], X: [] };
-    for (const ev of ['R', 'X']) { const Zm = F.zones[ev]; if (Zm) Zm.zones.forEach((z, i) => { if (!zoneHeld(F, ev, i)) places[ev].push(z); }); }
-    const placeOf = (ev, k) => places[ev].find(z => k >= z.price_low && k < z.price_high) || null;
-    const alive = (ev, z) => { for (let k = z.price_low; k < z.price_high; k++) if ((rows[ev].get(k) || (ev === 'X' && close.get(k))) && Rch.okK(ev, k)) return true; return false; };
-    const mainX = places.X.filter(z => alive('X', z)).sort((a, b) => a.price_low - b.price_low)[0] || null;
+    const SL = { R: zoneLook(F, ctx, 'R'), X: zoneLook(F, ctx, 'X') }, places = { R: [], X: [] };
+    for (const ev of ['R', 'X']) { const Zm = F.zones[ev]; if (Zm) Zm.zones.forEach((z, i) => { if (!zoneHeld(F, ev, i)) places[ev].push({ z, i }); }); }
+    const placeOf = (ev, k) => (places[ev].find(o => k >= o.z.price_low && k < o.z.price_high) || {}).z || null;
+    const playedOf = (ev, o) => (ev === 'R' && wOver) || expiredLook(SL[ev][o.i]) || !tpAlive(F, Rch, ev, o.z);
+    const mainX = places.X.filter(o => !playedOf('X', o)).sort((a, b) => a.z.price_low - b.z.price_low)[0];
+    const mainXz = mainX ? mainX.z : null;
     const len = (n, ev) => Math.max(2, S * 100 * n / base[ev]);
     const out = { X: [0, 0], R: [0, 0] }, outK = { X: [null, null], R: [null, null] };
     const keys = [...new Set([...rows.R.keys(), ...rows.X.keys(), ...close.keys()])];
@@ -2524,31 +2559,35 @@
       for (const ev of ['X', 'R']) {
         const n = rows[ev].get(k) || 0, nc = ev === 'X' ? close.get(k) || 0 : 0;
         if (!n && !nc) continue;
+        if (ppHeld(F, 'EST:B-RX-BAND-' + ev, { k0: k, k1: k + 1 })) continue;   // a withheld band share draws no bar (SWPC-1.1 M14)
         if (x > x0) x += 3.5;                                        // a pullback sharing the move's row: after it, apart
         const z = placeOf(ev, k), ok = Rch.okK(ev, k);
-        const a = z ? (ev === 'R' && wOver ? 0.18 : !ok ? 0.24 : ev === 'X' && z !== mainX ? 0.55 : 0.92) : (ev === 'R' && wOver ? 0.12 : 0.2);
-        const l1 = n ? len(n, ev) : 0;
+        const a = z ? (ev === 'R' && wOver ? 0.18 : !ok ? 0.24 : ev === 'X' && z !== mainXz ? 0.55 : 0.92) : (ev === 'R' && wOver ? 0.12 : 0.2);
+        const lim = x0 + room - x;                                   // a row longer than the room stops at the bracket with ▸
+        const l1 = n ? Math.min(len(n, ev), Math.max(2, lim)) : 0;
         if (n) { c.fillStyle = rgba(cfg[ev], a); c.fillRect(x, top + 0.5, l1, hh); }
-        let x1 = x + l1;
-        if (nc) {
-          const l2 = len(nc, ev), xs = x + l1 + (n ? 1 : 0);
+        let x1 = x + l1, cut = n > 0 && len(n, ev) > lim;
+        if (nc && !cut) {
+          const xs = x + l1 + (n ? 1 : 0), lim2 = x0 + room - xs, l2 = Math.min(len(nc, ev), Math.max(2, lim2));
           c.save(); c.strokeStyle = rgba(cfg.X, z ? 0.75 : 0.5); c.lineWidth = 1; c.setLineDash([2, 1.5]);
           c.strokeRect(Math.round(xs) + 0.5, Math.round(top) + 1, Math.max(1, Math.round(l2) - 1), Math.max(1, Math.round(hh) - 1)); c.restore();
-          x1 = xs + l2;
+          x1 = xs + l2; cut = len(nc, ev) > lim2;
         }
+        if (cut) { c.font = '700 9px ' + FONT; c.textBaseline = 'middle'; c.fillStyle = rgba(cfg[ev], 0.9); c.fillText('▸', x1 + 1, (top + bot) / 2); }
         V.projBars.push({ ev, k, b: null, ans: true, top, bot, x0: x, x1, n: n + nc, earlier: 0, later: n + nc });
         x = x1;
       }
     }
     // the brackets: they group a place's rows and count nothing; one number beside, a played place keeps only its name
     c.textBaseline = 'middle';
-    for (const ev of ['R', 'X']) for (const z of places[ev]) {
-      const [ya, yb] = cellY(F, z.price_low, z.price_high), y0 = Math.max(top0, ya + 1), y1 = Math.min(bot0, yb - 1);
+    for (const ev of ['R', 'X']) for (const o of places[ev]) {
+      const z = o.z, [ya, yb] = cellY(F, z.price_low, z.price_high), y0 = Math.max(top0, ya + 1), y1 = Math.min(bot0, yb - 1);
       if (y1 <= y0) continue;
-      const played = ev === 'R' ? wOver || !alive('R', z) : !alive('X', z), minor = ev === 'X' && z !== mainX, hot = !played && !minor;
+      const played = playedOf(ev, o), minor = ev === 'X' && z !== mainXz, hot = !played && !minor;
       c.strokeStyle = played ? 'rgba(111,118,132,.5)' : rgba(cfg[ev], minor ? 0.45 : 0.95); c.lineWidth = hot ? 1.5 : 1;
       c.beginPath(); c.moveTo(BX - 4, y0 + 0.5); c.lineTo(BX + 0.5, y0 + 0.5); c.lineTo(BX + 0.5, y1 - 0.5); c.lineTo(BX - 4, y1 - 0.5); c.stroke();
       if (ya + 1 < top0) { c.beginPath(); c.moveTo(BX - 2.5, y0 + 5); c.lineTo(BX + 0.5, y0 + 1); c.lineTo(BX + 3.5, y0 + 5); c.stroke(); }
+      if (yb - 1 > bot0) { c.beginPath(); c.moveTo(BX - 2.5, y1 - 5); c.lineTo(BX + 0.5, y1 - 1); c.lineTo(BX + 3.5, y1 - 5); c.stroke(); }
       const yc = (y0 + y1) / 2;
       if (played) { c.font = '600 10px ' + FONT; c.fillStyle = 'rgba(139,147,163,.65)'; c.fillText(z.label, BX + 5, yc); continue; }
       const p = ev === 'R' ? tpMassPlace(F, w, z) : zonePass(F, 'X', z), fs = hot ? 13.5 : 11.5;
@@ -2556,27 +2595,36 @@
       c.font = '9px ' + FONT; c.fillStyle = rgba(ev === 'R' ? '#F6C9A6' : '#B7D2F5', hot ? 0.85 : 0.55);
       c.fillText(ev === 'R' ? 'семьи' : 'кончили', BX + 5, yc + 7);
     }
-    // the author's reading of the window's pullbacks: ½ and 70-й of their depth, and the edge below which there were none
-    const ks = F.ev.R.pts.map(q => q.k).sort((a, b) => b - a);
+    // the author's reading of the window's pullbacks: ½ and 70-й of their depth, and the edge beyond which there were none.
+    // A mark stands at the DEEP boundary of its cell (a long and a short alike); the words keep clear of each other
+    const ks = F.ev.R.pts.map(q => q.k).sort((a, b) => b - a), deep = F.d0 > 0 ? 1 : -1, yK = k => Math.round(V.Y(F.u2p(k / 10))) + 0.5;
     if (ks.length >= 5 && w) {
       const op = wOver ? 0.3 : 0.95, kMed = ks[Math.ceil(ks.length / 2) - 1], k70 = ks[Math.ceil(0.7 * ks.length) - 1], kMin = ks[ks.length - 1];
-      const mark = (k, t, dash) => {
-        const y = Math.round(cellY(F, k, k + 1)[1]) + 0.5;
-        if (y < top0 || y > bot0) return null;
-        c.save(); c.strokeStyle = 'rgba(201,206,216,' + op + ')'; c.lineWidth = 1.2; c.setLineDash(dash ? [3, 2] : []); c.beginPath(); c.moveTo(BX - 26, y); c.lineTo(BX - 4, y); c.stroke(); c.restore();
-        c.font = '700 9px ' + FONT; c.fillStyle = 'rgba(201,206,216,' + op + ')'; c.textAlign = 'right'; c.fillText(t, BX - 28, y); c.textAlign = 'left';
-        return y;
-      };
-      mark(kMed, '½', false);
-      const y7 = mark(k70, '70-й', true);
-      if (y7 != null) { c.font = '8.5px ' + FONT; c.fillStyle = 'rgba(201,206,216,' + op * 0.85 + ')'; c.textAlign = 'right'; c.fillText('глубина ' + TP_NAME[w], BX - 4, y7 + 9); c.textAlign = 'left'; }
-      const ye = Math.round(cellY(F, kMin, kMin + 1)[1]) + 1;
-      if (ye > top0 && ye < bot0 - 20) {
-        const oe = wOver ? 0.3 : 0.85;
-        c.fillStyle = rgba('#F6C9A6', oe); c.fillRect(x0 - 4, ye, 30, 1.6);
-        c.font = '700 9.5px ' + FONT; c.fillText('ниже ' + sd(kMin / 10), x0 + 30, ye + 1);
-        c.font = '9.5px ' + FONT; c.fillText('у ' + TP_NAME[w] + ' откатов не было', x0 - 2, ye + 12);
+      const occ = [], free = (a, b) => !occ.some(r => a < r[1] && b > r[0]), inCol = y => y >= top0 && y <= bot0, grey = a => 'rgba(201,206,216,' + a + ')';
+      const tick = (y, dash) => { c.save(); c.strokeStyle = grey(op); c.lineWidth = 1.2; c.setLineDash(dash ? [3, 2] : []); c.beginPath(); c.moveTo(BX - 24, y); c.lineTo(BX - 4, y); c.stroke(); c.restore(); };
+      const yM = yK(kMed), y7 = yK(k70), yE = yK(kMin);
+      c.save(); c.shadowColor = 'rgba(0,0,0,.85)'; c.shadowBlur = 2; c.textBaseline = 'middle';
+      // the edge first: two short lines on its deep side, where the column is empty
+      if (yE > top0 + 4 && yE < bot0 - 4) {
+        const oe = wOver ? 0.3 : 0.85, y1 = deep > 0 ? yE + 9 : yE - 20, y2 = y1 + 11;   // read top-down on both sides
+        c.fillStyle = rgba('#F6C9A6', oe); c.fillRect(x0 - 4, yE - 0.8, 26, 1.6);
+        if (inCol(y1) && inCol(y2)) {
+          c.font = '700 9px ' + FONT; haloFill(c, 'глубже ' + sdG(F, kMin / 10), x0 - 2, y1, C.axis);
+          c.font = '9px ' + FONT; haloFill(c, 'откатов не было', x0 - 2, y2, C.axis);
+          occ.push([Math.min(yE, y1) - 6, Math.max(yE, y2) + 6]);
+        }
       }
+      // ½ and 70-й: one word when they stand closer than a line
+      if (inCol(yM)) tick(yM, false);
+      if (inCol(y7) && y7 !== yM) tick(y7, true);
+      c.font = '700 9px ' + FONT; c.fillStyle = grey(op); c.textAlign = 'right';
+      const word = (t, y) => { if (inCol(y) && free(y - 6, y + 6)) { haloFill(c, t, BX - 26, y, C.axis); occ.push([y - 6, y + 6]); } };
+      if (Math.abs(yM - y7) < 11) word('½ · 70-й', (yM + y7) / 2); else { word('½', yM); word('70-й', y7); }
+      c.textAlign = 'left';
+      // what they measure, one line beyond the 70-й when there is room
+      const yG = y7 + 11 * deep;
+      if (inCol(yG) && free(yG - 5, yG + 5)) { c.font = '8.5px ' + FONT; c.fillStyle = grey(op * 0.85); haloFill(c, 'глубина ' + tpWN(w, true), A_.x + 4, yG, C.axis); }
+      c.restore();
     }
     // today's cells: the pullback before the top so far and today's top
     for (const ev of ['R', 'X']) {
@@ -2584,109 +2632,226 @@
       const [t, b] = cellY(F, q.k, q.k + 1); if (b < top0 || t > bot0) continue;
       c.fillStyle = '#FFFFFF'; c.fillRect(x0 - 6, t + 0.5, 3, Math.max(1, b - t - 1));
     }
-    // the head: which hundred each colour counts
+    // the head: which hundred each colour counts (shortened to fit the column)
     c.textBaseline = 'top'; c.font = '700 10px ' + FONT;
-    c.fillStyle = cfg.R; c.fillText('R · семья ' + (Fb.N || F.N), A_.x + 5, 3);
-    c.fillStyle = cfg.X; c.fillText('X · вершины · ' + (w ? TP_NAME[w] + ' ' : '') + F.N, A_.x + 5, 15);
+    const fit = ts => ts.find(t => c.measureText(t).width <= A_.w - 8) || ts[ts.length - 1], nR = Fb.N || F.N;
+    c.fillStyle = cfg.R; c.fillText(fit(['R · семья ' + nR, 'R · ' + nR]), A_.x + 5, 3);
+    c.fillStyle = cfg.X; c.fillText(fit(w ? ['X · вершины · ' + TP_NAME[w] + ' ' + F.N, 'X · ' + TP_NAME[w] + ' · ' + F.N, 'X · ' + F.N] : ['X · вершины · ' + F.N, 'X · ' + F.N]), A_.x + 5, 15);
+    // beyond the frame: X in its window's hundred, R in the family's (the same hundred as its rows, EST:TP-MASS-R)
+    const Wb = w && P.clock.windows[w];
     const shares = (i, y, bl) => {
       c.font = '10px ' + FONT; c.textBaseline = bl;
       if (out.X[i]) { const t = (i ? '▼ ' : '▲ ') + ppTxt(outPass(F, 'X', i, outK.X[i], out.X[i])); c.fillStyle = cfg.X; c.fillText(t, A_.x + 5, y); }
-      if (out.R[i]) { const t = (i ? '▼ ' : '▲ ') + ppTxt(outPass(F, 'R', i, outK.R[i], out.R[i])); c.fillStyle = cfg.R; c.fillText(t, A_.x + A_.w - c.measureText(t).width - 5, y); }
+      if (out.R[i]) { const pr = Wb ? tpMass(F, { k0: outK.R[i][0], k1: outK.R[i][1] + 1, b0: Wb[0], b1: Wb[1] }) : outPass(F, 'R', i, outK.R[i], out.R[i]); const t = (i ? '▼ ' : '▲ ') + ppTxt(pr); c.fillStyle = cfg.R; c.fillText(t, A_.x + A_.w - c.measureText(t).width - 5, y); }
     };
     if (out.X[0] + out.R[0]) shares(0, 28, 'top');
     if (out.X[1] + out.R[1]) shares(1, A_.h - 3, 'bottom');
     c.restore();
   }
-  // the levels 70 % and 50 % of the window of today's low across the chart, ending at the price scale (screen 24): the next
-  // one not yet reached white, the other blue dashed, a reached one quiet with ✓; the name on the left
-  function tpLevelLines(c, ctx) {
-    const F = ctx.F;
-    if (!F || !F._tp || !F._tp.w) return;
-    const Rch = reachOf(F, ctx), topK = Rch.cur.X ? Rch.cur.X.k : null, Ls = tpLevels(F), W = V.plot.w;
-    const next = Ls.find(L => topK == null || topK < L.k);
-    for (const L of Ls) {
-      const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;
-      if (y < 0 || y > V.plot.h) continue;
-      const taken = topK != null && topK >= L.k, main = L === next;
-      c.save(); c.strokeStyle = main ? 'rgba(255,255,255,.95)' : rgba(cfg.X, taken ? 0.35 : 0.75); c.lineWidth = main ? 1.8 : 1.2; c.setLineDash(main ? [] : [7, 5]);
-      c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); c.restore();
-      c.font = (main ? '800 13px ' : '700 11.5px ') + FONT; c.textBaseline = 'bottom';
-      c.fillStyle = main ? '#FFFFFF' : rgba('#9CC3F3', taken ? 0.5 : 1);
-      c.fillText((taken ? '✓ ' : '') + 'дошли ' + L.q + ' % · ' + sd(L.k / 10) + ' SD', 74, y - 4);
-    }
-  }
-
-  // ---------- screen 24, 15.11 evening (meaning/27 §15): four things taken from Fable 5.2's proposal of 12–13.11 ----------
-  // 1. a place of R = a box with crisp edges: the hours of its window × its price band, one number (the family share, Ч4);
-  //    a place of X is no band across the session (it read as «how long price will stand»): its name and «дошли» (Ч8) at its
-  //    near edge on the right of the chart, none when a level line 70 % / 50 % already stands at that edge;
-  //    the places of the other windows: dashed boxes in their own hours while they can still happen.
+  // 1. a place of R = a box with crisp edges: the hours of its window × its price band; drawn under the candles, its name and
+  //    number (the family share, Ч4) come after the candles (tpBoxWords); a played place is grey and dashed
   function tpBoxes(c, ctx) {
-    const F = ctx.F, P = F._tp, w = P.w, Rch = reachOf(F, ctx), sl = Rch.sl, Wt = w ? tpWinT(F, w) : null, wOver = !!(Wt && sl >= Wt[1]);
-    const CL = cloudsOf(F), W = V.plot.w;
-    const alive = (ev, z) => { for (let k = z.price_low; k < z.price_high; k++) if (Rch.okK(ev, k)) return true; return false; };
-    if (Wt) (F.zones.R ? F.zones.R.zones : []).forEach((z, i) => {
+    const F = ctx.F, P = F._tp, w = P.w, Rch = reachOf(F, ctx), Wt = w ? tpWinT(F, w) : null, wOver = !!(Wt && Rch.sl >= Wt[1]);
+    if (!Wt) return;
+    const SR = zoneLook(F, ctx, 'R');
+    (F.zones.R ? F.zones.R.zones : []).forEach((z, i) => {
       if (zoneHeld(F, 'R', i)) return;
       const x0 = Math.round(V.X(Wt[0])) + 0.5, x1 = Math.round(V.X(Wt[1])) + 0.5, [ya0, yb0] = cellY(F, z.price_low, z.price_high), ya = Math.round(ya0) + 0.5, yb = Math.round(yb0) + 0.5;
-      if (x1 < 0 || x0 > W) return;
-      const played = wOver || !alive('R', z), col = played ? '#8C93A0' : cfg.R;
+      if (x1 < 0 || x0 > V.plot.w) return;
+      const played = wOver || expiredLook(SR[i]) || !tpAlive(F, Rch, 'R', z), col = played ? '#8C93A0' : cfg.R;
       c.save();
       c.fillStyle = rgba(cfg.R, played ? 0.035 : 0.11); c.fillRect(x0, ya, x1 - x0, yb - ya);
       c.strokeStyle = rgba(col, played ? 0.5 : 0.95); c.lineWidth = played ? 1 : 1.4; c.setLineDash(played ? [4, 3] : []);
-      c.strokeRect(x0, ya, x1 - x0, yb - ya); c.setLineDash([]);
-      const m = tpMarkPass(F, 'R', z), t = ppTxt(m.p), fs = played ? 12 : 15;
-      c.font = '700 ' + (played ? 10.5 : 12) + 'px ' + FONT;
-      const wN = c.measureText(m.name).width, ly = ya - 6 < 30 ? ya + fs + 2 : ya - 6;
-      c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 3; c.textBaseline = 'alphabetic';
-      c.fillStyle = rgba(col, played ? 0.7 : 1); c.fillText(m.name, x0 + 3, ly);
-      pctDraw(c, t, x0 + 3 + wN + 5, ly, '700 ', fs, played ? 'rgba(200,205,214,.55)' : '#F6C9A6');
+      c.strokeRect(x0, ya, x1 - x0, yb - ya);
       c.restore();
-      V.zoneHit.push({ box: [x0, ya, x1 - x0, yb - ya], ev: 'R', i, loops: (CL.R[i] && CL.R[i].hit) || [] });
-    });
-    const lv = new Set(tpLevels(F).map(L => L.k));
-    (F.zones.X ? F.zones.X.zones : []).forEach((z, i) => {
-      if (zoneHeld(F, 'X', i) || lv.has(z.price_low)) return;
-      const y = Math.round(V.Y(F.u2p(z.price_low / 10))) + 0.5;
-      if (y < 30 || y > V.plot.h - 6) return;
-      const played = !alive('X', z), col = played ? '#8C93A0' : cfg.X, m = tpMarkPass(F, 'X', z), t = ppTxt(m.p);
-      c.save(); c.font = '700 11px ' + FONT;
-      const wN = c.measureText(m.name).width, wS = pctW(c, t, '700 ', 13), xr = W - 44, lx = xr - wN - 5 - wS;
-      c.strokeStyle = rgba(col, played ? 0.45 : 0.85); c.lineWidth = 1.2; c.beginPath(); c.moveTo(xr + 3, y); c.lineTo(xr + 14, y); c.stroke();
-      c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 3; c.textBaseline = 'middle';
-      c.fillStyle = rgba(col, played ? 0.6 : 0.95); c.fillText(m.name, lx, y);
-      pctDraw(c, t, lx + wN + 5, y, '700 ', 13, played ? 'rgba(200,205,214,.5)' : '#DCEBFB');
-      c.restore();
-      V.zoneHit.push({ box: [lx - 2, y - 9, xr - lx + 16, 18], ev: 'X', i, loops: [] });
     });
   }
+  // the places of the other windows: dashed boxes in their own hours, always on the chart (operator 05.11), grey and quieter
+  // when they can no longer be today's; their names after the candles (tpGhostWords), inside the box last under the mouse
   function tpGhostBoxes(c, ctx, phase) {
     if (phase !== 'under') return;
     V.tpGhostHit = [];
     if (!st.L.zones || st.mode !== 'bounds') return;
     const F = ctx.F;
     for (const { w, G } of tpOthers(ctx)) {
-      const Wt = tpWinT(F, w), S = zoneLook(G, ctx, 'R'), CL = cloudsOf(G);
+      const Wt = tpWinT(F, w), S = zoneLook(G, ctx, 'R');
       if (!Wt) continue;
       G.zones.R.zones.forEach((z, i) => {
         if (zoneHeld(G, 'R', i)) return;
-        const gone = expiredLook(S[i]);                                // operator 05.11: every other window's place stays on the chart, quieter; one that can no longer be today's — grey and quieter still
+        const gone = expiredLook(S[i]);
         const x0 = Math.round(V.X(Wt[0])) + 0.5, x1 = Math.round(V.X(Wt[1])) + 0.5, [ya0, yb0] = cellY(F, z.price_low, z.price_high), ya = Math.round(ya0) + 0.5, yb = Math.round(yb0) + 0.5;
         if (x1 < 0 || x0 > V.plot.w) return;
         c.save(); c.fillStyle = rgba(cfg.R, gone ? 0.015 : 0.03); c.fillRect(x0, ya, x1 - x0, yb - ya);
-        c.strokeStyle = gone ? 'rgba(140,147,160,.32)' : rgba(cfg.R, 0.55); c.lineWidth = 1; c.setLineDash([4, 3]); c.strokeRect(x0, ya, x1 - x0, yb - ya); c.setLineDash([]);
-        const t = TP_NAME[w] + ' · ' + z.label + ' ', p = tpMassPlace(F, w, z);
-        c.font = '600 10.5px ' + FONT; c.textBaseline = 'alphabetic'; c.fillStyle = gone ? 'rgba(140,147,160,.5)' : rgba(cfg.R, 0.8);
-        const ly = ya - 5 < 30 ? yb + 13 : ya - 5;
-        c.fillText(t, x0 + 3, ly); pctDraw(c, ppTxt(p), x0 + 3 + c.measureText(t).width, ly, '600 ', 11, gone ? 'rgba(200,205,214,.45)' : rgba('#F6C9A6', 0.75));
-        c.restore();
-        V.tpGhostHit.push({ box: [x0, ya, x1 - x0, yb - ya], w, i, loops: (CL.R[i] && CL.R[i].hit) || [] });
+        c.strokeStyle = gone ? 'rgba(140,147,160,.32)' : rgba(cfg.R, 0.55); c.lineWidth = 1; c.setLineDash([4, 3]); c.strokeRect(x0, ya, x1 - x0, yb - ya); c.restore();
+        V.tpGhostHit.push({ box: [0, 0, 0, 0], w, i, loops: tpRectLoop(x0, ya, x1, yb), g: { z, x0, x1, ya, yb, gone, p: tpMassPlace(F, w, z) } });
       });
     }
   }
+  // the words over the chart, after the candles and in one pass, so they never cover each other: the levels 70 % / 50 %,
+  // the DR break, the places' names and numbers (R boxes, X edges, the other windows' boxes), the other windows' levels.
+  // They stay under the free strip of the «сейчас» plate and above the raised time band, keep clear of the line names at the
+  // right edge (drawTags), the pills and the boxes' names, and move off the candles as a zone's name does (drawZones)
+  function tpWords(c, ctx) {
+    const F = ctx.F;
+    if (!F || !F._tp) return;
+    const used = ctx.live ? NOW + 5 : ctx.obs, PW = V.plot.w, over = (a, b) => a[0] < b[2] && a[2] > b[0] && a[1] < b[3] && a[3] > b[1];
+    const bars = ctx.D.bars.filter(b => b.t + 5 <= used && V.X(b.t + 5) > 0 && V.X(b.t) < PW).map(b => [V.X(b.t) - 2, V.Y(b.h) - 2, V.X(b.t + 5) + 2, V.Y(b.l) + 2]);
+    const last = ctx.D.bars.filter(b => b.t + 5 <= used).slice(-4), live = [];
+    if (last.length) { const yh = Math.min(...last.map(b => V.Y(b.h))), yl = Math.max(...last.map(b => V.Y(b.l))); live.push([V.X(last[0].t) - 6, yh - 28, V.X(last[last.length - 1].t + 5) + 64, yl + 28]); }
+    const hard = (V.pills || []).concat(V.boxLbl || []), placed = [];
+    c.save();
+    for (const { y, q } of tagPlaced(ctx)) { c.font = (q.big ? '600 ' + cfg.lineLbl + 'px ' : cfg.prevLbl + 'px ') + FONT; hard.push([PW - 14 - c.measureText(q.text).width, y - 8, PW, y + 8]); }
+    const s = ctx.s, nx = st.L.std && s.drH != null ? levels(s).find(l => stdState(s, l) === 'next') : null;
+    if (nx) { const y = V.Y(nx.p); if (y < 0 || y > V.plot.h) { c.font = '600 ' + cfg.lineLbl + 'px ' + FONT; const tw = c.measureText('↑ ' + nx.name + ' · ' + px(nx.p)).width; hard.push(y < 0 ? [PW - 10 - tw, 2, PW, 20] : [PW - 10 - tw, V.plot.h - 20, PW, V.plot.h]); } }
+    c.restore();
+    const Wd = { top: 30, floor: V.plot.h - (V.stripOn ? bandOverlay(ctx) : 0) - 4, hard, placed, over,
+      cost: r => 8 * hard.filter(b => over(r, b)).length + 6 * placed.filter(b => over(r, b)).length + 3 * live.filter(b => over(r, b)).length + bars.filter(b => over(r, b)).length };
+    tpLevelLines(c, ctx, Wd);
+    tpBreakLabel(c, ctx, Wd);
+    tpBoxWords(c, ctx, Wd);
+    tpGhostWords(c, ctx, Wd);
+    tpOtherLevels(c, ctx, Wd);
+  }
+  // the least covered of several top-left corners for a word w × h inside the free height, with its cost (null if none fits)
+  function tpPlace(Wd, cands, w, h) {
+    let best = null, bc = 1e9;
+    cands.forEach(([x, y], j) => {
+      const r = [x - 2, y - 2, x + w + 2, y + h + 2];
+      if (r[1] < Wd.top || r[3] > Wd.floor || r[0] < 2 || r[2] > V.plot.w - 2) return;
+      const cc = Wd.cost(r) + j * 0.01;
+      if (cc < bc) { bc = cc; best = [x, y, cc]; }
+    });
+    return best;
+  }
+  // the levels 70 % and 50 % of the window of today's low across the chart: the next one not yet reached white, the other
+  // blue dashed, a reached one quiet with ✓; the name on the left; a withheld level is not drawn; one beyond the frame (or
+  // under the plate, or in the raised band) keeps its name at the edge with ▲ / ▼
+  function tpLevelLines(c, ctx, Wd) {
+    const F = ctx.F;
+    if (!F._tp.w) return;
+    const Rch = reachOf(F, ctx), topK = Rch.cur.X ? Rch.cur.X.k : null, Ls = tpLevels(F).filter(L => L.p.pct != null), PW = V.plot.w;
+    const next = Ls.find(L => topK == null || topK < L.k), same = Ls.length === 2 && Ls[0].k === Ls[1].k, edge = { up: 0, dn: 0 };
+    Ls.forEach((L, j) => {
+      if (same && j) return;
+      const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5, taken = topK != null && topK >= L.k, main = L === next;
+      const name = (taken ? '✓ ' : '') + (/^W\d/.test(F._tp.w) ? TP_NAME[F._tp.w] : '«' + TP_NAME[F._tp.w] + '»') + ' · дошли ' + (same ? '70 % и 50 %' : L.q + ' %') + ' · ' + sdG(F, L.k / 10) + ' SD';
+      const col = main ? '#FFFFFF' : rgba('#9CC3F3', taken ? 0.5 : 1);
+      c.save();
+      if (y < Wd.top || y > Wd.floor) {
+        const up = y < Wd.top, t = (up ? '▲ ' : '▼ ') + name, yy = up ? Wd.top + 14 * edge.up++ : Wd.floor - 14 * edge.dn++;
+        c.font = '600 11px ' + FONT; c.textBaseline = up ? 'top' : 'bottom'; c.fillStyle = col; c.shadowColor = 'rgba(0,0,0,.85)'; c.shadowBlur = 3;
+        haloFill(c, t, 74, yy); const tw = c.measureText(t).width; c.restore();
+        Wd.placed.push([72, up ? yy : yy - 14, 78 + tw, up ? yy + 14 : yy]);
+        return;
+      }
+      c.strokeStyle = main ? 'rgba(255,255,255,.95)' : rgba(cfg.X, taken ? 0.35 : 0.75); c.lineWidth = main ? 1.8 : 1.2; c.setLineDash(main ? [] : [7, 5]);
+      c.beginPath(); c.moveTo(0, y); c.lineTo(PW, y); c.stroke(); c.setLineDash([]);
+      c.font = (main ? '800 13px ' : '700 11.5px ') + FONT; c.textBaseline = 'bottom'; c.fillStyle = col; c.shadowColor = 'rgba(0,0,0,.85)'; c.shadowBlur = 3;
+      haloFill(c, name, 74, y - 4); const tw = c.measureText(name).width; c.restore();
+      Wd.placed.push([72, y - (main ? 19 : 17), 78 + tw, y - 2]);
+    });
+  }
+  // 4. at the line where the DR breaks: the family's share broken (EST:B-DR) on the box's side of the line and, beyond it, of
+  //    the sessions as deep by now how their DR ended (Ч13, EST:TP-DR-AT-DEPTH, «неизвестно» too); a side without room gives
+  //    its row to the other; a line beyond the frame keeps both rows at the edge with ▲ / ▼
+  function tpBreakLabel(c, ctx, Wd) {
+    const F = ctx.F, P = F._tp, s = ctx.s;
+    if (!P.A || s.drH == null) return;
+    const long = F.d0 > 0, yL = Math.round(V.Y(long ? s.drL : s.drH)) + 0.5, xr = V.plot.w - 70;
+    const d = tpDepth(F, ctx), held = d && ['ALL', 'HELD', 'BROKEN', 'UNKNOWN'].some(k => d.pass[k].violation);
+    const t1 = 'слом DR · сломан ' + ppTxt(drPass(P.A, 'broken')) + ' семьи';
+    // Ч13 stands once on the chart, in the «сейчас» plate (16.11): a set of a few sessions is not said three times
+    const t2 = '' && d && d.D && !held ? (lbl('EST:TP-DR-AT-DEPTH', 'row', { cut: clk(d.cut), u: sdG(F, Math.round(100 * d.u) / 100), D: d.D, held: d.held, broken: d.broken }) + (d.unknown ? lbl('EST:TP-DR-AT-DEPTH', 'row_unknown', { unknown: d.unknown }) : '') + (d.D < 20 ? ' · ' + lbl('EST:TP-DR-AT-DEPTH', 'few', { n: d.D }) : '')).replace(/<[^>]+>/g, '') : '';
+    const H = 15, beyond = yL < Wd.top ? -1 : yL > Wd.floor ? 1 : 0, yE = beyond < 0 ? Wd.top - 3 : beyond > 0 ? Wd.floor + 3 : yL;
+    const rowTop = (side, k) => side < 0 ? yE - 3 - H * (k + 1) : yE + 3 + H * k, fits = (side, k) => { const t = rowTop(side, k); return t >= Wd.top && t + H <= Wd.floor; };
+    const inner = beyond ? -beyond : long ? -1 : 1;                   // -1: rows above the line, +1: below
+    const R1 = { t: (beyond < 0 ? '▲ ' : beyond > 0 ? '▼ ' : '') + t1, f: '700 12px ', col: '#F58A93', side: inner, k: 0 };
+    let R2 = t2 ? { t: t2, f: '10.5px ', col: 'rgba(245,138,147,.85)', side: beyond ? inner : -inner, k: beyond ? 1 : 0 } : null;
+    if (R2 && !fits(R2.side, R2.k)) R2 = Object.assign({}, R2, { side: inner, k: 1 });
+    c.save(); c.textAlign = 'right'; c.textBaseline = 'top'; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 3;
+    for (const r of [R1, R2]) {
+      if (!r || !fits(r.side, r.k)) continue;
+      const yt = rowTop(r.side, r.k); c.font = r.f + FONT; c.fillStyle = r.col; haloFill(c, r.t, xr, yt + 1);
+      Wd.placed.push([xr - c.measureText(r.t).width - 2, yt, xr + 2, yt + H]);
+    }
+    c.restore();
+  }
+  // the names and numbers of the window's places: an R box's at one of its corners off the candles (the family share, Ч4;
+  // a played one its name only); an X place's name and «дошли» (Ч8) at its near edge on the right of the chart, left of the
+  // line names, none where a level line already stands. Under the mouse the name first, inside the box after the stars
+  function tpBoxWords(c, ctx, Wd) {
+    const F = ctx.F, P = F._tp, w = P.w, Rch = reachOf(F, ctx), Wt = w ? tpWinT(F, w) : null, wOver = !!(Wt && Rch.sl >= Wt[1]), PW = V.plot.w;
+    const SR = zoneLook(F, ctx, 'R'), SX = zoneLook(F, ctx, 'X');
+    if (Wt) (F.zones.R ? F.zones.R.zones : []).forEach((z, i) => {
+      if (zoneHeld(F, 'R', i)) return;
+      const x0 = Math.round(V.X(Wt[0])) + 0.5, x1 = Math.round(V.X(Wt[1])) + 0.5, [ya0, yb0] = cellY(F, z.price_low, z.price_high), ya = Math.round(ya0) + 0.5, yb = Math.round(yb0) + 0.5;
+      if (x1 < 0 || x0 > PW || yb < Wd.top || ya > Wd.floor) return;
+      const played = wOver || expiredLook(SR[i]) || !tpAlive(F, Rch, 'R', z), col = played ? '#8C93A0' : cfg.R;
+      const m = tpMarkPass(F, 'R', z), t = ppTxt(m.p), nf = played ? '600 10.5px ' : '700 12px ', fs = 15;
+      c.font = nf + FONT;
+      const wN = c.measureText(m.name).width, wT = played ? wN : wN + 5 + pctW(c, t, '700 ', fs), hT = played ? 12 : 16;
+      const L = Math.max(x0 + 3, 4), R_ = Math.min(x1 - 3, PW - 4) - wT;
+      const at = tpPlace(Wd, [[L, ya - hT - 3], [R_, ya - hT - 3], [L, ya + 3], [R_, ya + 3], [L, yb + 3], [R_, yb + 3], [L, yb - hT - 3], [R_, yb - hT - 3]], wT, hT)
+        || [clamp(L, 4, PW - wT - 4), clamp(ya - hT - 3, Wd.top, Wd.floor - hT)];
+      const lx = at[0], ly = at[1], base = ly + hT - 3;
+      Wd.placed.push([lx - 2, ly - 2, lx + wT + 2, ly + hT + 2]);
+      c.save(); c.shadowColor = 'rgba(0,0,0,.85)'; c.shadowBlur = 3; c.textBaseline = 'alphabetic';
+      c.font = nf + FONT; c.fillStyle = rgba(col, played ? 0.7 : 1); haloFill(c, m.name, lx, base);
+      if (!played) pctHalo(c, t, lx + wN + 5, base, '700 ', fs, '#F6C9A6');
+      c.restore();
+      V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 4, hT + 4], ev: 'R', i, loops: tpRectLoop(x0, ya, x1, yb) });
+    });
+    const lv = new Set(tpLevels(F).filter(L => L.p.pct != null).map(L => L.k));
+    (F.zones.X ? F.zones.X.zones : []).forEach((z, i) => {
+      if (zoneHeld(F, 'X', i) || lv.has(z.price_low)) return;
+      const y = Math.round(V.Y(F.u2p(z.price_low / 10))) + 0.5;
+      if (y < Wd.top + 6 || y > Wd.floor - 6) return;
+      const played = expiredLook(SX[i]) || !tpAlive(F, Rch, 'X', z), col = played ? '#8C93A0' : cfg.X, m = tpMarkPass(F, 'X', z), t = ppTxt(m.p);
+      c.font = '700 11px ' + FONT;
+      const wN = c.measureText(m.name).width, wT = wN + 5 + pctW(c, t, '700 ', 13), hT = 15;
+      let xr = PW - 44;                                               // left of a line name standing at this price
+      for (let k = 0; k < 4; k++) { const r = [xr - wT - 2, y - hT / 2 - 2, xr + 16, y + hT / 2 + 2], hit = Wd.hard.filter(b => Wd.over(r, b)); if (!hit.length) break; xr = Math.min(...hit.map(b => b[0])) - 18; }
+      const lx = xr - wT, free = yy => { const r = [lx - 2, yy - 2, xr + 16, yy + hT + 2]; return yy >= Wd.top && yy + hT <= Wd.floor && !Wd.placed.some(b => Wd.over(r, b)) && !Wd.hard.some(b => Wd.over(r, b)); };
+      let ly = y - hT / 2;
+      for (const dy of [0, -16, 16, -32, 32]) if (free(y - hT / 2 + dy)) { ly = y - hT / 2 + dy; break; }
+      Wd.placed.push([lx - 2, ly - 2, xr + 16, ly + hT + 2]);
+      const ym = ly + hT / 2;
+      c.save();
+      c.strokeStyle = rgba(col, played ? 0.45 : 0.85); c.lineWidth = 1.2; c.beginPath(); c.moveTo(xr + 3, ym); if (Math.abs(ym - y) > 1) c.lineTo(xr + 8, y); c.lineTo(xr + 14, y); c.stroke();
+      c.shadowColor = 'rgba(0,0,0,.85)'; c.shadowBlur = 3; c.textBaseline = 'middle';
+      c.fillStyle = rgba(col, played ? 0.6 : 0.95); haloFill(c, m.name, lx, ym);
+      pctHalo(c, t, lx + wN + 5, ym, '700 ', 13, played ? 'rgba(200,205,214,.5)' : '#DCEBFB');
+      c.restore();
+      V.zoneHit.push({ box: [lx - 2, ly - 2, wT + 20, hT + 4], ev: 'X', i, loops: [] });
+    });
+  }
+  // the other windows' places: «W2 · R1» and the family share at a free corner of the box; with no free corner the name is
+  // left out (the box stays, its words under the mouse)
+  function tpGhostWords(c, ctx, Wd) {
+    const PW = V.plot.w;
+    for (const q of V.tpGhostHit || []) {
+      const g = q.g;
+      if (!g || g.yb < Wd.top || g.ya > Wd.floor) continue;
+      const t = TP_NAME[q.w] + ' · ' + g.z.label + ' ', ps = ppTxt(g.p);
+      c.font = '600 10.5px ' + FONT;
+      const tw = c.measureText(t).width, wT = tw + pctW(c, ps, '600 ', 11), hT = 12;
+      const L = Math.max(g.x0 + 3, 4), R_ = Math.min(g.x1 - 3, PW - 4) - wT;
+      const at = tpPlace(Wd, [[L, g.ya - hT - 3], [L, g.yb + 3], [L, g.ya + 3], [R_, g.ya - hT - 3], [R_, g.yb + 3], [L, g.yb - hT - 3]], wT, hT);
+      if (!at || at[2] >= 6) continue;                                // it would cover a word or a line name
+      const lx = at[0], ly = at[1], base = ly + hT - 2;
+      Wd.placed.push([lx - 2, ly - 2, lx + wT + 2, ly + hT + 2]);
+      c.save(); c.shadowColor = 'rgba(0,0,0,.75)'; c.shadowBlur = 3; c.textBaseline = 'alphabetic';
+      c.font = '600 10.5px ' + FONT; c.fillStyle = g.gone ? 'rgba(140,147,160,.55)' : rgba(cfg.R, 0.85); haloFill(c, t, lx, base);
+      pctHalo(c, ps, lx + tw, base, '600 ', 11, g.gone ? 'rgba(200,205,214,.45)' : rgba('#F6C9A6', 0.8));
+      c.restore();
+      q.box = [lx - 2, ly - 2, wT + 4, hT + 4];
+    }
+  }
   // 2. the outcomes of the other branches: the levels 70 % / 50 % of the windows still ahead (or running) as quiet ticks at the
-  //    right edge of the chart; a hover on a window's capsule puts that window on screen (tpView), its levels then cross it
-  function tpOtherLevels(c, ctx) {
-    const F = ctx.F, P = F._tp, sl = sliceOf(ctx), W = V.plot.w, used = [];
+  //    right edge of the chart, the name above (or under) its tick where the room is free; a hover on a window's capsule puts
+  //    that window on screen (tpView), its levels then cross it
+  function tpOtherLevels(c, ctx, Wd) {
+    const F = ctx.F, P = F._tp, sl = sliceOf(ctx), PW = V.plot.w;
     for (const w of TP_WINDOWS) {
       if (w === P.w || !P.clock.windows[w]) continue;
       const Wt = tpWinT(F, w);
@@ -2694,51 +2859,50 @@
       const G = tpSnap(ctx.D, ctx.s, w, P.T);
       if (!G) continue;
       for (const L of tpLevels(G)) {
-        const y0 = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;
-        if (y0 < 30 || y0 > V.plot.h - 6) continue;
-        let y = y0; while (used.some(u => Math.abs(u - y) < 12)) y += 12; used.push(y);
-        c.save(); c.strokeStyle = rgba(cfg.X, 0.5); c.lineWidth = 1; c.setLineDash([3, 2]);
-        c.beginPath(); c.moveTo(W - 92, y0); c.lineTo(W - 66, y0); c.stroke(); c.setLineDash([]);
-        c.font = '600 10px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right'; c.fillStyle = 'rgba(156,195,243,.7)';
-        c.fillText(TP_NAME[w] + ' · ' + L.q + ' %' + (G.N < 20 ? ' · мало' : ''), W - 96, y); c.textAlign = 'left';
+        if (L.p.pct == null) continue;                                 // a withheld level is not drawn
+        const y0 = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5, tick = [PW - 92, y0 - 2, PW - 66, y0 + 2];
+        if (y0 < Wd.top + 4 || y0 > Wd.floor - 4 || Wd.placed.some(b => Wd.over(tick, b))) continue;
+        c.save(); c.font = '600 10px ' + FONT;
+        const t = TP_NAME[w] + ' · ' + L.q + ' %' + (G.N < 20 ? ' · мало' : ''), tw = c.measureText(t).width;
+        let yy = null;
+        for (const yt of [y0 - 13, y0 + 2]) { const r = [PW - 98 - tw, yt - 1, PW - 64, yt + 12]; if (yt >= Wd.top && yt + 12 <= Wd.floor && !Wd.placed.some(b => Wd.over(r, b)) && !Wd.hard.some(b => Wd.over(r, b))) { yy = yt; break; } }
+        c.strokeStyle = rgba(cfg.X, 0.5); c.lineWidth = 1; c.setLineDash([3, 2]);
+        c.beginPath(); c.moveTo(PW - 92, y0); c.lineTo(PW - 66, y0); c.stroke(); c.setLineDash([]);
+        Wd.placed.push(tick);
+        if (yy != null) {
+          c.textBaseline = 'top'; c.textAlign = 'right'; c.fillStyle = 'rgba(156,195,243,.75)'; c.shadowColor = 'rgba(0,0,0,.85)'; c.shadowBlur = 3;
+          haloFill(c, t, PW - 96, yy); c.textAlign = 'left';
+          Wd.placed.push([PW - 98 - tw, yy - 1, PW - 64, yy + 12]);
+        }
         c.restore();
       }
     }
   }
-  // 4. at the line where the DR breaks: the family's share broken (EST:B-DR) and, of the sessions as deep by now, how their DR
-  //    ended (Ч13, EST:TP-DR-AT-DEPTH) — the risk of the side stands at its own price
-  function tpBreakLabel(c, ctx) {
-    const F = ctx.F, P = F._tp, s = ctx.s;
-    if (!P.A || s.drH == null) return;
-    const long = F.d0 > 0, y = Math.round(V.Y(long ? s.drL : s.drH)) + 0.5, W = V.plot.w;
-    if (y < 30 || y > V.plot.h - 6) return;
-    const t1 = 'слом DR · сломан ' + ppTxt(drPass(P.A, 'broken')) + ' семьи', d = tpDepth(F, ctx);
-    const held = d && ['ALL', 'HELD', 'BROKEN', 'UNKNOWN'].some(k => d.pass[k].violation);
-    const t2 = d && d.D && !held ? (lbl('EST:TP-DR-AT-DEPTH', 'row', { cut: clk(d.cut), u: sd(Math.round(100 * d.u) / 100), D: d.D, held: d.held, broken: d.broken }) + (d.D < 20 ? ' · ' + lbl('EST:TP-DR-AT-DEPTH', 'few', { n: d.D }) : '')).replace(/<[^>]+>/g, '') : '';
-    c.save(); c.textAlign = 'right'; c.shadowColor = 'rgba(0,0,0,.75)'; c.shadowBlur = 3;
-    c.font = '700 12px ' + FONT; c.fillStyle = '#F58A93'; c.textBaseline = long ? 'bottom' : 'top';
-    c.fillText(t1, W - 70, long ? y - 4 : y + 4);
-    if (t2) { c.font = '10.5px ' + FONT; c.fillStyle = 'rgba(245,138,147,.8)'; c.textBaseline = long ? 'top' : 'bottom'; c.fillText(t2, W - 70, long ? y + 4 : y - 4); }
-    c.restore();
-  }
-  // 3. «сейчас» in one place, at the top of the chart: time (half of the pullbacks behind or not yet, the window running),
-  //    price (today's low against the place of its window), DR (of the sessions as deep by now, the share whose DR held)
+  // 3. «сейчас» in one place, at the top of the chart (the frame keeps a free strip for it): time (half of the pullbacks behind
+  //    or not yet, the window running), price (today's pullback against the places of ITS window: inside one, deeper or
+  //    shallower than the nearest), DR (of the sessions as deep by now: how many, held, broken)
   function tpNowLine(c, ctx) {
     const F = ctx.F, P = F._tp, sl = sliceOf(ctx), parts = [];
-    const Lr = tpLines(F).find(L => L.ev === 'R' && L.id === 'median');
+    const Lr = tpLines(F).find(L => L.ev === 'R' && L.id === 'median' && L.p.pct != null);
     const wr = TP_WINDOWS.find(w => { const W = P.clock.windows[w]; return W && sl >= F.f + 15 * W[0] && sl < F.f + 15 * W[1]; });
-    const tt = (Lr ? (sl >= Lr.cut ? '½ откатов позади (' + clk(Lr.cut) + ')' : '½ откатов — к ' + clk(Lr.cut)) : '') + (wr ? (Lr ? ' · ' : '') + 'идёт ' + TP_NAME[wr] + ' до ' + clk(F.f + 15 * P.clock.windows[wr][1]) : '');
+    const tt = (Lr ? (sl >= Lr.cut ? '½ откатов позади (' + clk(Lr.cut) + ')' : '½ откатов — к ' + clk(Lr.cut)) : '') + (wr ? (Lr ? ' · ' : '') + 'идёт ' + tpWN(wr, false) + ' до ' + clk(F.f + 15 * P.clock.windows[wr][1]) : '');
     if (tt) parts.push(['ВРЕМЯ', tt, '#EBA06C']);
     if (P.today) {
-      const dK = fdiv(10 * P.today.lo, F.w0t), Z = (F.zones.R ? F.zones.R.zones : []).filter((z, i) => !zoneHeld(F, 'R', i));
-      const z = Z.sort((a, b) => b.n_zone - a.n_zone)[0];
-      const rel = z ? (dK < z.price_low ? ' · глубже места ' : dK >= z.price_high ? ' · выше места ' : ' · в месте ') + z.label : '';
-      parts.push(['ЦЕНА', 'дно ' + sd(Math.round(100 * P.today.u) / 100) + ' в ' + clk(P.today.t) + rel, '#EBA06C']);
+      const Gd = P.today.w ? (P.today.w === P.w ? F : tpSnap(ctx.D, ctx.s, P.today.w, P.T)) : null;
+      const dK = fdiv(10 * P.today.lo, F.w0t), Z = Gd && Gd.zones.R ? Gd.zones.R.zones.filter((z, i) => !zoneHeld(Gd, 'R', i)) : [];
+      let rel = '';
+      const inZ = Z.find(z => dK >= z.price_low && dK < z.price_high);
+      if (inZ) rel = ' · в месте ' + inZ.label;
+      else if (Z.length) {
+        const below = Z.filter(z => dK < z.price_low).sort((a, b) => a.price_low - b.price_low).pop(), above = Z.filter(z => dK >= z.price_high).sort((a, b) => b.price_high - a.price_high)[0];
+        rel = below && above ? ' · между местами ' + above.label + ' и ' + below.label : below ? ' · глубже места ' + below.label : ' · мельче места ' + above.label;
+      }
+      parts.push(['ЦЕНА', 'самая глубокая точка ' + sdG(F, Math.round(100 * P.today.u) / 100) + ' в ' + clk(P.today.t) + rel, '#EBA06C']);
     }
     const d = tpDepth(F, ctx);
     if (d && d.D) {
       const held = ['ALL', 'HELD', 'BROKEN', 'UNKNOWN'].some(k => d.pass[k].violation);
-      parts.push(['DR', 'так же глубоко ' + d.D + ' · устоял ' + (held ? '—' : pct(100 * d.held / d.D)) + (d.D < 20 ? ' · мало' : ''), '#5FD3AE']);
+      parts.push(['DR', held ? 'так же глубоко — числа удержаны' : 'так же глубоко ' + d.D + ': устоял у ' + d.held + ', сломан у ' + d.broken + (d.unknown ? ', неизвестно у ' + d.unknown : '') + (d.D < 20 ? ' · мало' : ''), '#5FD3AE']);
     }
     if (!parts.length) return;
     c.save(); c.textBaseline = 'middle';
@@ -2748,7 +2912,9 @@
       c.font = '11.5px ' + FONT; const wv = c.measureText(v).width;
       segs.push([k, v, col, x, wk]); x += wk + 6 + wv + 18;
     }
-    c.fillStyle = 'rgba(11,14,20,.86)'; roundRect(c, 128, 5, Math.min(x - 128 - 8, V.plot.w - 140), 20, 4); c.fill();
+    const pw = Math.min(x - 128 - 8, V.plot.w - 140);
+    c.fillStyle = 'rgba(11,14,20,.86)'; roundRect(c, 128, 5, pw, 20, 4); c.fill();
+    c.beginPath(); c.rect(128, 5, pw, 20); c.clip();                    // a narrow window: the line is cut at its plate
     for (const [k, v, col, x0, wk] of segs) {
       c.font = '800 10.5px ' + FONT; c.fillStyle = col; c.fillText(k, x0, y);
       c.font = '11.5px ' + FONT; c.fillStyle = '#D1D4DC'; c.fillText(v, x0 + wk + 6, y);
