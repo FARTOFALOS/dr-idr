@@ -5575,7 +5575,7 @@
     const F = ctx.F, A_ = V.proj, top0 = 40, bot0 = A_.h - 16, P = F._tp, Fb = P.A || F, w = P.w;
     c.fillStyle = C.axis; c.fillRect(A_.x, 0, A_.w, A_.h);
     c.fillStyle = C.grid; c.fillRect(A_.x, 0, 1, A_.h);
-    V.projBars = []; V.projCols = { X: [A_.x, A_.x + A_.w], R: [A_.x, A_.x + A_.w] }; V.projUnk = null; V.projEdge = null; V.projLbl = [];
+    V.projBars = []; V.projCols = { X: [A_.x, A_.x + A_.w], R: [A_.x, A_.x + A_.w] }; V.projUnk = null; V.projEdge = null; V.projLbl = []; V.r9Num = [];
     c.save(); c.beginPath(); c.rect(A_.x, 0, A_.w, A_.h); c.clip();
     const Rch = reachOf(F, ctx), sl = Rch.sl, BX = A_.x + A_.w - 44, x0 = A_.x + 9, room = BX - 8 - x0, S = Math.min(3.2, room / 22);
     const base = { R: Fb.N || F.N, X: F.N }, last15 = F.end - 15, Wt = w ? tpWinT(F, w) : null, wOver = !!(Wt && sl >= Wt[1]);
@@ -5633,7 +5633,11 @@
       if (yb - 1 > bot0) { c.beginPath(); c.moveTo(BX - 2.5, y1 - 5); c.lineTo(BX + 0.5, y1 - 1); c.lineTo(BX + 3.5, y1 - 5); c.stroke(); }
       const yc = (y0 + y1) / 2;
       if (played) { c.font = '600 10px ' + FONT; c.fillStyle = 'rgba(139,147,163,.65)'; c.fillText(z.label, BX + 5, yc); continue; }
+      // a place of the move keeps its bracket only (16.11): «кончили здесь» is in the inspector (Р3, accepted 10.11), and the
+      // words «дошли 70 % / 50 %» of 23.5 stand at these heights
+      if (ev === 'X') continue;
       const p = ev === 'R' ? tpMassPlace(F, w, z) : zonePass(F, 'X', z), fs = hot ? 13.5 : 11.5;
+      V.r9Num.push([yc - 12, yc + 13]);
       pctDraw(c, ppTxt(p), BX + 5, yc - 4, '800 ', fs, rgba(ev === 'R' ? '#F6C9A6' : '#B7D2F5', hot ? 1 : 0.65));
       c.font = '9px ' + FONT; c.fillStyle = rgba(ev === 'R' ? '#F6C9A6' : '#B7D2F5', hot ? 0.85 : 0.55);
       c.fillText(ev === 'R' ? 'семьи' : 'кончили', BX + 5, yc + 7);
@@ -5689,6 +5693,7 @@
     };
     if (out.X[0] + out.R[0]) shares(0, 28, 'top');
     if (out.X[1] + out.R[1]) shares(1, A_.h - 3, 'bottom');
+    tpReachMarks24(c, ctx, A_, top0, bot0);
     c.restore();
   }
   // 1. a place of R = a box with crisp edges: the hours of its window × its price band; drawn under the candles, its name and
@@ -5777,29 +5782,34 @@
     return [x0, ym - 8, xr, ym + 8];
   }
   function tpLevelLines(c, ctx, Wd) {
-    // operator 16.11: as on 23.5 (blue, 70 % solid, 50 % dashed, named on the right), only long, across the chart; a level
-    // already reached today is not drawn; the name is two words in a box, the SD is the grid's own label beside it
+    // operator 16.11 (second word): the levels exactly as on 23.5 — the mark and its words «дошли 70 % · +0,8» in the price
+    // column behind the price scale (tpReachMarks24) — and the same line carried across the chart, nothing written on it;
+    // a level already reached today keeps only its quiet mark in the column
     const F = ctx.F;
     if (!F._tp.w) return;
-    const Rch = reachOf(F, ctx), topK = Rch.cur.X ? Rch.cur.X.k : null, Ls = tpLevels(F).filter(L => L.p.pct != null), PW = V.plot.w;
-    const same = Ls.length === 2 && Ls[0].k === Ls[1].k, edge = { up: 0, dn: 0 };
-    Ls.forEach((L, j) => {
-      if (same && j) return;
-      const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5, taken = topK != null && topK >= L.k;
-      if (taken) return;
-      const name = 'дошли ' + (same ? '70 % и 50 %' : L.q + ' %'), col = mixW(cfg.X, 0.25);
-      c.save(); c.font = '700 10.5px ' + FONT;
-      const tw = Math.ceil(c.measureText(name).width) + 14; c.restore();
-      if (y < Wd.top + 8 || y > Wd.floor - 8) {
-        const up = y < Wd.top + 8, t = (up ? '▲ ' : '▼ ') + name + ' · ' + sdG(F, L.k / 10), ym = up ? Wd.top + 9 + 18 * edge.up++ : Wd.floor - 9 - 18 * edge.dn++;
-        Wd.placed.push(tpPill(c, t, PW - 96, ym, col));
-        return;
-      }
-      c.save(); c.strokeStyle = rgba(cfg.X, 0.9); c.lineWidth = 1.4; c.setLineDash(L.q === 50 && !same ? [6, 4] : []);
-      c.beginPath(); c.moveTo(0, y); c.lineTo(PW, y); c.stroke(); c.restore();
-      const pos = tpPlace(Wd, [PW - 60, PW - 170, PW - 290, PW - 420].map(x => [x - tw, y - 8]), tw, 16) || [PW - 60 - tw, y - 8];
-      Wd.placed.push(tpPill(c, name, pos[0] + tw, y, col));
-    });
+    const Rch = reachOf(F, ctx), topK = Rch.cur.X ? Rch.cur.X.k : null;
+    for (const L of tpLevels(F)) {
+      if (L.p.pct == null || (topK != null && topK >= L.k)) continue;
+      const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;
+      if (y < Wd.top || y > Wd.floor) continue;
+      c.save(); c.strokeStyle = rgba(cfg.X, 0.8); c.lineWidth = 1; c.setLineDash(L.q === 70 ? [] : [3, 3]);
+      c.beginPath(); c.moveTo(0, y); c.lineTo(V.plot.w, y); c.stroke(); c.restore();
+    }
+  }
+  function tpReachMarks24(c, ctx, A_, top0, bot0) {
+    const F = ctx.F, Rch = reachOf(F, ctx), topK = Rch.cur.X ? Rch.cur.X.k : null;
+    for (const L of tpLevels(F)) {
+      if (L.p.pct == null) continue;
+      const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5, taken = topK != null && topK >= L.k, a = taken ? 0.45 : 1;
+      if (y < top0 || y > bot0) continue;
+      c.save(); c.strokeStyle = rgba(cfg.X, 0.8 * a); c.lineWidth = 1; c.setLineDash(L.q === 70 ? [] : [3, 3]);
+      c.beginPath(); c.moveTo(A_.x + 2, y); c.lineTo(A_.x + A_.w - 2, y); c.stroke(); c.restore();
+      c.save(); c.font = '700 9.5px ' + FONT; c.textBaseline = 'bottom'; c.fillStyle = rgba(cfg.X, 0.95 * a);
+      const t = (taken ? '✓ ' : '') + 'дошли ' + L.q + ' % · ' + sdG(F, L.k / 10);
+      // over its line as on 23.5; under it where a bracket's number already stands over
+      const hit = (y0, y1) => (V.r9Num || []).some(r => y0 < r[1] && y1 > r[0]), yb = !hit(y - 12, y - 1) || hit(y + 2, y + 13) ? y - 1 : y + 12;
+      haloFill(c, t, A_.x + A_.w - c.measureText(t).width - 6, yb, C.axis); c.restore();
+    }
   }
   // 4. at the line where the DR breaks: the family's share broken (EST:B-DR) on the box's side of the line and, beyond it, of
   //    the sessions as deep by now how their DR ended (Ч13, EST:TP-DR-AT-DEPTH, «неизвестно» too); a side without room gives
