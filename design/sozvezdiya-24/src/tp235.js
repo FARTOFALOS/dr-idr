@@ -395,6 +395,9 @@
       const n = nX.get(u.peak) || 0, x = (V.X(F.f + 15 * u.peak) + V.X(F.f + 15 * u.peak + 15)) / 2, y = yOf('X', n / NX), inside = Math.abs(y - cy) > half - 10;
       labels.push({ x, y: y + dir.X * (inside ? -8 : 9), t: ppTxt(p), col: inside ? '#EEF5FF' : mixW(cfg.X, 0.25), big: true });
     }
+    // the columns' numbers' places: the clock marks keep off them (operator 16.11)
+    c.font = '700 10.5px ' + FONT;
+    const lblBox = labels.map(L => { const ly = Math.max(B.y + 7, Math.min(B.y + B.h - 7, L.y)), hw = c.measureText(L.t).width / 2 + 2; return [L.x - hw, ly - 7, L.x + hw, ly + 7]; });
     // the lines of the clock: the median solid, the 70 % mark dashed, each in its event's half
     for (const L of tpLines(F)) {
       const x = Math.round(V.X(L.cut)) + 0.5;
@@ -404,8 +407,11 @@
       c.beginPath(); c.moveTo(x, y0); c.lineTo(x, y1); c.stroke(); c.restore();
       // a short mark at the outer end, the median one row further out than the 70 % mark, so close lines stay readable
       c.font = '700 9.5px ' + FONT; c.textBaseline = 'middle'; c.fillStyle = rgba(cfg[L.ev], held ? 0.4 : 0.95);
-      c.fillText(L.id === 'median' ? '½' : '70%', x + 3, cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15)));
-      V.tpLines.push({ ev: L.ev, id: L.id, x, y0: Math.min(y0, y1), y1: Math.max(y0, y1), ly: cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15)) });
+      const mt = L.id === 'median' ? '½' : '70%', mw = c.measureText(mt).width;
+      let ml = cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15));
+      for (let j = 0; j < 6 && lblBox.some(r => x + 3 < r[2] && x + 3 + mw > r[0] && ml + 6 > r[1] && ml - 6 < r[3]); j++) ml -= dir[L.ev] * 12;   // a number stands there: the mark moves toward the centre
+      c.fillText(mt, x + 3, ml);
+      V.tpLines.push({ ev: L.ev, id: L.id, x, y0: Math.min(y0, y1), y1: Math.max(y0, y1), ly: ml });
     }
     for (const L of labels) { c.font = (L.big ? '700 10.5px ' : '700 10.5px ') + FONT; c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, Math.max(B.y + 7, Math.min(B.y + B.h - 7, L.y))); c.textAlign = 'left'; }
     // the windows in the place of the zone capsules: the selected one outlined, the others a soft fill; «до окна» and «позже»

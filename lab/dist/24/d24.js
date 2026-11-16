@@ -4012,7 +4012,7 @@
     const projW = !continuationMode() && st.L.proj && ctx.F && ctx.F.N ? (bounds ? 116 : 96) : 0;
     // the time band under the chart (variant «Окна времени»): capsules, hills, columns; operator 2026-10-06: the candles
     // take the height, the band about an eighth of it (84-118 px)
-    const bandH = bounds && st.L.strip ? Math.round(clamp((H - handleH - timeH) * cfg.bandH / 100, 60, (H - handleH - timeH) * 0.4)) : 0;
+    const bandH = bounds && st.L.strip ? Math.round(clamp((H - handleH - timeH) * cfg.bandH / 100, 60, ctx.F && ctx.F._tp ? 118 : (H - handleH - timeH) * 0.4)) : 0;   // screen 24: the band keeps its size when the window is stretched (operator 16.11)
     const plot = { x: 0, y: 0, w: W - axisW - projW, h: H - handleH - timeH - bandH };
     const G = { W, H, handleH, axisW, timeH, plot, projW, ctx, bandH, taxisY: plot.h + bandH };
     G.proj = { x: plot.w + axisW, y: 0, w: projW, h: plot.h };
@@ -5623,6 +5623,7 @@
     }
     // the brackets: they group a place's rows and count nothing; one number beside, a played place keeps only its name
     c.textBaseline = 'middle';
+    const bl = [];   // the brackets' words, laid out after the loop at a fixed size (operator 16.11: they do not stretch with the height or cover each other)
     for (const ev of ['R', 'X']) for (const o of places[ev]) {
       const z = o.z, [ya, yb] = cellY(F, z.price_low, z.price_high), y0 = Math.max(top0, ya + 1), y1 = Math.min(bot0, yb - 1);
       if (y1 <= y0) continue;
@@ -5632,15 +5633,31 @@
       if (ya + 1 < top0) { c.beginPath(); c.moveTo(BX - 2.5, y0 + 5); c.lineTo(BX + 0.5, y0 + 1); c.lineTo(BX + 3.5, y0 + 5); c.stroke(); }
       if (yb - 1 > bot0) { c.beginPath(); c.moveTo(BX - 2.5, y1 - 5); c.lineTo(BX + 0.5, y1 - 1); c.lineTo(BX + 3.5, y1 - 5); c.stroke(); }
       const yc = (y0 + y1) / 2;
-      if (played) { c.font = '600 10px ' + FONT; c.fillStyle = 'rgba(139,147,163,.65)'; c.fillText(z.label, BX + 5, yc); continue; }
+      if (played) { bl.push({ yc, h: 12, y0, y1, played: true, z }); continue; }
       // a place of the move keeps its bracket only (16.11): «кончили здесь» is in the inspector (Р3, accepted 10.11), and the
       // words «дошли 70 % / 50 %» of 23.5 stand at these heights
       if (ev === 'X') continue;
-      const p = ev === 'R' ? tpMassPlace(F, w, z) : zonePass(F, 'X', z), fs = hot ? 13.5 : 11.5;
-      V.r9Num.push([yc - 12, yc + 13]);
-      pctDraw(c, ppTxt(p), BX + 5, yc - 4, '800 ', fs, rgba(ev === 'R' ? '#F6C9A6' : '#B7D2F5', hot ? 1 : 0.65));
-      c.font = '9px ' + FONT; c.fillStyle = rgba(ev === 'R' ? '#F6C9A6' : '#B7D2F5', hot ? 0.85 : 0.55);
-      c.fillText(ev === 'R' ? 'семьи' : 'кончили', BX + 5, yc + 7);
+      bl.push({ yc, h: 25, y0, y1, hot, ev, p: tpMassPlace(F, w, z), fs: hot ? 13.5 : 11.5 });
+    }
+    {
+      // fixed-size words: kept off the marks of the levels and off each other, moved along the column from their bracket's
+      // middle (a thin leader to the bracket when moved), never past the column's frame
+      const fixed = [];
+      for (const L of tpLevels(F)) if (L.p.pct != null) { const yy = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5; fixed.push([yy - 13, yy + 3]); }
+      const free = (a, b) => !fixed.some(r => a < r[1] && b > r[0]) && b <= bot0 && a >= top0;
+      bl.sort((a, b) => a.yc - b.yc);
+      for (const it of bl) {
+        const half = it.h / 2;
+        let best = null;
+        for (let d = 0; d <= 260 && best == null; d += 4) for (const sg of d ? [1, -1] : [1]) { const yy = it.yc + sg * d; if (free(yy - half, yy + half)) { best = yy; break; } }
+        if (best == null) continue;
+        fixed.push([best - half, best + half]);
+        const moved = Math.abs(best - it.yc) > 3;
+        if (moved) { c.save(); c.strokeStyle = 'rgba(160,168,180,.35)'; c.lineWidth = 1; c.beginPath(); c.moveTo(BX + 0.5, Math.max(it.y0, Math.min(it.y1, best))); c.lineTo(BX + 4, best); c.stroke(); c.restore(); }
+        if (it.played) { c.font = '600 10px ' + FONT; c.fillStyle = 'rgba(139,147,163,.65)'; c.fillText(it.z.label, BX + 5, best); continue; }
+        pctDraw(c, ppTxt(it.p), BX + 5, best - 5, '800 ', it.fs, rgba('#F6C9A6', it.hot ? 1 : 0.65));
+        c.font = '9px ' + FONT; c.fillStyle = rgba('#F6C9A6', it.hot ? 0.85 : 0.55); c.fillText('семьи', BX + 5, best + 8);
+      }
     }
     // the author's reading of the window's pullbacks: ½ and 70-й of their depth, and the edge beyond which there were none.
     // A mark stands at the DEEP boundary of its cell (a long and a short alike); the words keep clear of each other
@@ -5787,13 +5804,13 @@
     // a level already reached today keeps only its quiet mark in the column
     const F = ctx.F;
     if (!F._tp.w) return;
-    const Rch = reachOf(F, ctx), topK = Rch.cur.X ? Rch.cur.X.k : null;
+    const Rch = reachOf(F, ctx), topK = Rch.cur.X ? Rch.cur.X.k : null, x0 = Math.max(0, Math.round(V.X(ctx.s.start)));   // from the session's box to the column (16.11)
     for (const L of tpLevels(F)) {
       if (L.p.pct == null || (topK != null && topK >= L.k)) continue;
       const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;
       if (y < Wd.top || y > Wd.floor) continue;
-      c.save(); c.strokeStyle = rgba(cfg.X, 0.8); c.lineWidth = 1; c.setLineDash(L.q === 70 ? [] : [3, 3]);
-      c.beginPath(); c.moveTo(0, y); c.lineTo(V.plot.w, y); c.stroke(); c.restore();
+      c.save(); c.strokeStyle = rgba(cfg.X, 0.9); c.lineWidth = 1.3; c.setLineDash(L.q === 70 ? [] : [5, 3]);
+      c.beginPath(); c.moveTo(x0, y); c.lineTo(V.plot.w, y); c.stroke(); c.restore();
     }
   }
   function tpReachMarks24(c, ctx, A_, top0, bot0) {
@@ -8604,6 +8621,9 @@
       const n = nX.get(u.peak) || 0, x = (V.X(F.f + 15 * u.peak) + V.X(F.f + 15 * u.peak + 15)) / 2, y = yOf('X', n / NX), inside = Math.abs(y - cy) > half - 10;
       labels.push({ x, y: y + dir.X * (inside ? -8 : 9), t: ppTxt(p), col: inside ? '#EEF5FF' : mixW(cfg.X, 0.25), big: true });
     }
+    // the columns' numbers' places: the clock marks keep off them (operator 16.11)
+    c.font = '700 10.5px ' + FONT;
+    const lblBox = labels.map(L => { const ly = Math.max(B.y + 7, Math.min(B.y + B.h - 7, L.y)), hw = c.measureText(L.t).width / 2 + 2; return [L.x - hw, ly - 7, L.x + hw, ly + 7]; });
     // the lines of the clock: the median solid, the 70 % mark dashed, each in its event's half
     for (const L of tpLines(F)) {
       const x = Math.round(V.X(L.cut)) + 0.5;
@@ -8613,8 +8633,11 @@
       c.beginPath(); c.moveTo(x, y0); c.lineTo(x, y1); c.stroke(); c.restore();
       // a short mark at the outer end, the median one row further out than the 70 % mark, so close lines stay readable
       c.font = '700 9.5px ' + FONT; c.textBaseline = 'middle'; c.fillStyle = rgba(cfg[L.ev], held ? 0.4 : 0.95);
-      c.fillText(L.id === 'median' ? '½' : '70%', x + 3, cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15)));
-      V.tpLines.push({ ev: L.ev, id: L.id, x, y0: Math.min(y0, y1), y1: Math.max(y0, y1), ly: cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15)) });
+      const mt = L.id === 'median' ? '½' : '70%', mw = c.measureText(mt).width;
+      let ml = cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15));
+      for (let j = 0; j < 6 && lblBox.some(r => x + 3 < r[2] && x + 3 + mw > r[0] && ml + 6 > r[1] && ml - 6 < r[3]); j++) ml -= dir[L.ev] * 12;   // a number stands there: the mark moves toward the centre
+      c.fillText(mt, x + 3, ml);
+      V.tpLines.push({ ev: L.ev, id: L.id, x, y0: Math.min(y0, y1), y1: Math.max(y0, y1), ly: ml });
     }
     for (const L of labels) { c.font = (L.big ? '700 10.5px ' : '700 10.5px ') + FONT; c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, Math.max(B.y + 7, Math.min(B.y + B.h - 7, L.y))); c.textAlign = 'left'; }
     // the windows in the place of the zone capsules: the selected one outlined, the others a soft fill; «до окна» and «позже»
