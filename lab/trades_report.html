@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Журнал сделок</title>
+<style>
+:root{--bg:#f7f7f5;--panel:#fff;--ink:#1d1d1b;--muted:#6b6b66;--line:#e3e2dc;--plus:#1f7a4d;--minus:#b3261e;--zero:#6b6b66;--accent:#2f5d8a;--chip:#eef1f5}
+@media (prefers-color-scheme:dark){:root{--bg:#141414;--panel:#1c1c1c;--ink:#ecebe6;--muted:#9a9993;--line:#2e2e2c;--plus:#5cc28c;--minus:#ef7a70;--zero:#9a9993;--accent:#8fb6e0;--chip:#242a31}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1400px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:20px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 16px}
+.tiles{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;min-width:170px}
+.tile b{display:block;font-size:18px}
+.tile span{color:var(--muted);font-size:12px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+button{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:5px 12px;cursor:pointer}
+button.on{border-color:var(--accent);color:var(--accent);font-weight:600}
+.wrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{position:sticky;top:0;background:var(--panel);color:var(--muted);font-weight:500;font-size:12px}
+tr.t{cursor:pointer}
+tr.t:hover{background:var(--chip)}
+.r{text-align:right}
+.plus{color:var(--plus)}.minus{color:var(--minus)}.zero{color:var(--zero)}
+.chip{display:inline-block;background:var(--chip);border-radius:4px;padding:0 6px;font-size:12px}
+tr.acts td{background:var(--bg);white-space:normal}
+.acts table{font-size:12px}
+.note{color:var(--muted);font-size:12px;margin-top:12px}
+</style>
+</head>
+<body>
+<main>
+<h1>Журнал сделок</h1>
+<p class="sub" id="sub"></p>
+<div class="tiles" id="tiles"></div>
+<div class="bar" id="kinds"></div>
+<div class="wrap"><table><thead><tr>
+<th>Открыта (NY)</th><th>Счёт</th><th>Инстр.</th><th>Напр.</th><th class="r">Макс. конт.</th><th class="r">Держал</th>
+<th class="r">Вход</th><th class="r">Выход</th><th class="r">Пункты</th><th class="r">$ с комиссией</th><th>Закрыл</th>
+<th class="r">Тейк: сдвигов</th><th class="r">Стоп: сдвигов</th><th>Сессия · мин от бокса</th><th>Состояние · SD</th>
+</tr></thead><tbody id="rows"></tbody></table></div>
+<p class="note" id="note"></p>
+</main>
+<script>
+const D = /*DATA*/null;
+const fmt = (v, n=2) => v == null ? '—' : Number(v).toLocaleString('ru-RU', {minimumFractionDigits:n, maximumFractionDigits:n});
+const hold = s => s == null ? 'открыта' : s < 60 ? Math.round(s) + ' с' : s < 3600 ? (s/60).toFixed(1) + ' мин' : (s/3600).toFixed(1) + ' ч';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const KIND = {prop:'проп', sim:'сим'};
+const ORIGIN = {hand:'рука', close_button:'кнопка Close', panel:'панель', agent:'агент', external:'внешняя', auto:'авто'};
+let kind = 'all', open = new Set();
+function tiles(list){
+  const by = {};
+  for (const t of list) { const k = t.kind; by[k] ??= {n:0, net:0, hold:[], plus:0}; const b = by[k]; b.n++;
+    if (t.pnl_net_est != null) b.net += t.pnl_net_est; if (t.hold_sec != null) b.hold.push(t.hold_sec); if (t.outcome === 'плюс') b.plus++; }
+  const med = a => { if (!a.length) return null; const s = [...a].sort((x,y)=>x-y); return s[Math.floor(s.length/2)]; };
+  document.getElementById('tiles').innerHTML = Object.entries(by).map(([k,b]) =>
+    `<div class="tile"><span>${KIND[k]||k}: сделок</span><b>${b.n}</b><span>медиана держания ${hold(med(b.hold))} · в плюс ${b.plus} · итог $${fmt(b.net)}</span></div>`).join('');
+}
+function render(){
+  const list = D.trades.filter(t => kind === 'all' || t.kind === kind);
+  tiles(D.trades);
+  document.getElementById('kinds').innerHTML = [['all','все'],['prop','проп'],['sim','сим']].map(([k,l]) =>
+    `<button class="${k===kind?'on':''}" data-k="${k}">${l}</button>`).join('');
+  const rows = [];
+  for (const t of list) {
+    const cls = t.outcome === 'плюс' ? 'plus' : t.outcome === 'минус' ? 'minus' : 'zero';
+    rows.push(`<tr class="t" data-id="${t.trade_id}"><td>${esc(t.opened_et)}</td><td>${KIND[t.kind]||t.kind} <span class="chip">#${t.attempt??''}</span></td>
+      <td>${esc(t.master)}</td><td>${t.direction==='long'?'лонг':'шорт'}</td><td class="r">${t.max_qty}</td><td class="r">${hold(t.hold_sec)}</td>
+      <td class="r">${fmt(t.avg_entry)}</td><td class="r">${fmt(t.avg_exit)}</td><td class="r ${cls}">${fmt(t.points)}</td>
+      <td class="r ${cls}">${t.gap ? 'пропуск в базе' : fmt(t.pnl_net_est)}</td><td>${esc(t.exit_by)}${t.exit_before_target?' · тейк стоял':''}</td>
+      <td class="r">${t.target_set ? t.target_moves : '—'}</td><td class="r">${t.stop_set ? t.stop_moves : '—'}</td>
+      <td>${t.entry_session ? esc(t.entry_session) + ' · ' + fmt(t.entry_box_min,0) : 'вне сессий'}</td>
+      <td>${esc(t.entry_state ?? '')}${t.entry_sd!=null?' · '+fmt(t.entry_sd):''}</td></tr>`);
+    if (open.has(t.trade_id)) rows.push(`<tr class="acts"><td colspan="15"><table>${t.acts.map(a =>
+      `<tr><td>${esc(a.time_et)}</td><td>${esc(a.action)}</td><td>${esc(a.role)}</td><td>${esc(ORIGIN[a.origin]||a.origin)}</td>
+       <td>${esc(a.order_type)}</td><td>${a.side==='buy'?'купить':'продать'} ${a.quantity??''}</td>
+       <td class="r">${a.price_from!=null?fmt(a.price_from)+' → '+fmt(a.price_to)+' ('+(a.toward??'')+', '+fmt(a.ticks_moved,0)+' т.)':fmt(a.price)}</td></tr>`).join('')}</table></td></tr>`);
+  }
+  document.getElementById('rows').innerHTML = rows.join('');
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('button[data-k]'); if (b) { kind = b.dataset.k; render(); return; }
+  const r = e.target.closest('tr.t'); if (r) { const id = +r.dataset.id; open.has(id) ? open.delete(id) : open.add(id); render(); }
+});
+document.getElementById('sub').textContent = `Собрано из NinjaTrader: ${D.collected ?? '—'} (UTC). Время сделок — Нью-Йорк. Нажмите на сделку, чтобы увидеть все действия.`;
+document.getElementById('note').textContent = Object.entries(D.reconcile || {}).map(([a, r]) =>
+  `Сверка ${a}: баланс NinjaTrader изменился на $${fmt(r.nt_cash_change)}, закрытые сделки журнала дают $${fmt(r.journal_closed_pnl)}; не объяснено $${fmt(r.unexplained)}${(r.unexplained_is_in||[]).length ? ' — это результат сделок, у которых в базе NinjaTrader не хватает исполнений: ' + r.unexplained_is_in.join(', ') : ''}.`).join(' ')
+  + ' Доллары «с комиссией» — по ставке OneUp ($1 за микроконтракт за сторону) для обоих счетов; на Sim101 NinjaTrader комиссию не берёт.';
+render();
+</script>
+</body>
+</html>
