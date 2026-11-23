@@ -136,7 +136,8 @@ lab/
 design/sozvezdiya-23-5/src the source of 23.5 (build.py -> lab/dist/23-5); design/sozvezdiya-24/src the source of 24
 design/sozvezdiya-22, -23  sources of the legacy pages /22/ and /sem-v1/
 meaning/                   the semantic layer (Russian): README, numbered documents, the lenses that are still sources
-spec/                      SC-1.0/1.1, SWPC-1.1, INTEGRATION-1.0, the deep-research inputs; ekran-24/ and ekran-23-5/:
+spec/                      SC-1.0/1.1, SWPC-1.1, INTEGRATION-1.0, the 23.5 usage journal (DR-LAB-23-5-USAGE-TRACKER),
+                           the deep-research inputs; ekran-24/ and ekran-23-5/:
                            screens element by element with screenshots
 docs/                      architecture, decisions, UI rules, the method, research, the 23.5 layer documents
 integration/               the 15.10 integration: candidate registry (candidates/), the preserved Trace/FOM reference
