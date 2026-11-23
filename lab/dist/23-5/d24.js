@@ -8677,7 +8677,7 @@
     lastInput: 0, idle: false, ptr: { in: false, x: -1, y: -1, el: null }, hov: null, hovGrace: 0, opens: new Map(),
     pending: null, base: null, baseHover: null, gest: null, wheel: null, stroke: null, avail: new Set(), ctxKey: '', inactive: 'hidden', started: false
   };
-  const BUILD235 = '408a642a5f12';
+  const BUILD235 = 'b8669783febe';
   const UQ = 'drlab.usage235.q', UOFF = 'drlab.usage235.off', HOVER_MS = 800, IDLE_MS = 30000, TICK = 150, QMAX = 4000;
   try { if (localStorage.getItem(UOFF) === '1') USG.on = false; } catch (e) { /* optional */ }
   const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); }));
@@ -8751,7 +8751,16 @@
   async function uFlush(beacon) {
     if (!USG.q.length) return;
     uGapNote();
-    const batch = USG.q.slice(0, 250), body = JSON.stringify({ schema_version: 1, events: batch }), url = '/api/usage/23-5/events';
+    // a packet is bounded by its size, not only by its count: the server refuses a body over 512 000 bytes (a trace of
+    // 120 points is ~5 kB), and a beacon carries at most 64 kB (PR #30 review)
+    const limit = beacon ? 60000 : 400000, batch = [], url = '/api/usage/23-5/events';
+    let size = 40;
+    for (const e of USG.q) {
+      const n = JSON.stringify(e).length + 1;
+      if (batch.length && (batch.length >= (USG.cap || 250) || size + n > limit)) break;
+      batch.push(e); size += n;
+    }
+    const body = JSON.stringify({ schema_version: 1, events: batch });
     if (beacon) {
       // leaving or hiding the page: no answer is awaited; the events stay queued and the next opening resends them (the
       // server ignores an event_id it already has)
@@ -8769,8 +8778,15 @@
         for (const x of j.rejected || []) if (x.event_id) done.add(x.event_id);
         USG.rejected += (j.rejected || []).length;
         USG.q = USG.q.filter(e => !done.has(e.event_id)); USG.fail = 0; uSave(true);
-      } else if (r.status === 400) { USG.q.splice(0, batch.length); USG.rejected += batch.length; USG.fail++; uSave(true); }
-      else USG.fail++;
+      } else if (r.status === 400 && batch.length === 1) {
+        // one event the server cannot take as a packet at all: drop it alone and note the gap
+        USG.q.splice(0, 1); USG.rejected += 1; USG.fail++; uSave(true);
+      } else if (r.status === 400) {
+        // a refused packet of several events stays queued (valid events are never dropped with it); the next packets
+        // are halved until the one the server cannot take is alone
+        USG.cap = Math.max(1, Math.floor(batch.length / 2)); USG.fail++;
+      } else USG.fail++;
+      if (r.ok) USG.cap = 0;
     } catch (e) { USG.fail++; }
     USG.busy = false;
   }
@@ -9122,7 +9138,8 @@
       clearTimeout(USG.wheel.t);
       USG.wheel.t = setTimeout(() => { const w = USG.wheel; USG.wheel = null; uGesture(null, 'wheel', w.view, 'chart.view'); }, 300);
     }, { capture: true, passive: true });   // before the chart's own handler: the view before the first notch
-    cv.addEventListener('dblclick', () => { const g = uView(); setTimeout(() => uGesture('view.reset', 'mouse', g, 'chart.view'), 60); }, { passive: true });
+    // the view before the chart's own double-click reset (fitSession): a document capture listener runs first (PR #30 review)
+    document.addEventListener('dblclick', e => { if (e.target !== cv) return; const g = uView(); setTimeout(() => uGesture('view.reset', 'mouse', g, 'chart.view'), 60); }, { capture: true, passive: true });
     nav.addEventListener('click', () => { /* the nav buttons change the view: recorded as a gesture of the control */ const g = uView(); setTimeout(() => uGesture(null, 'button', g, 'chart.nav'), 60); }, true);
     document.addEventListener('visibilitychange', () => { if (!uVisible()) { uEndAll('hidden'); uFlush(true); } else uBegin(); });
     window.addEventListener('blur', () => { uEndAll('blur'); });
