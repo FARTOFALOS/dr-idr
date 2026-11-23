@@ -126,6 +126,21 @@ def build(path, with_first=True):
     b.fill(P, e3, at(12, 40), 'sell', 20015, 1, 0)
     # F (prop): a limit entry placed while flat and cancelled
     b.order(P, '', 1, BUY, LIMIT, 1, [(at(13, 0), INIT, 19990, 0), (at(13, 0, 1), WORK, 19990, 0), (at(13, 5), CXL, 19990, 0)])
+    # G (prop): long 1, target placed and cancelled at 14:02, then closed at market 14:05 -> no target was standing
+    g1 = b.order(P, '', 1, BUY, MARKET, 1, [(at(14, 0), FILL, 0, 0)])
+    b.fill(P, g1, at(14, 0), 'buy', 20030, 1, 1)
+    b.order(P, '', 1, SELL, LIMIT, 1, [(at(14, 0, 5), INIT, 20060, 0), (at(14, 0, 6), WORK, 20060, 0), (at(14, 2), CXL, 20060, 0)])
+    g3 = b.order(P, '', 1, SELL, MARKET, 1, [(at(14, 5), FILL, 0, 0)])
+    b.fill(P, g3, at(14, 5), 'sell', 20035, 1, 0)
+    # I and J (prop): during trade I (15:00-15:10) the entry of J is placed (15:05), it fills only at 15:20
+    i1 = b.order(P, '', 1, BUY, MARKET, 1, [(at(15, 0), FILL, 0, 0)])
+    b.fill(P, i1, at(15, 0), 'buy', 20030, 1, 1)
+    i2 = b.order(P, '', 1, SELL, MARKET, 1, [(at(15, 10), FILL, 0, 0)])
+    b.fill(P, i2, at(15, 10), 'sell', 20032, 1, 0)
+    j1 = b.order(P, '', 1, BUY, LIMIT, 1, [(at(15, 5), INIT, 19980, 0), (at(15, 5, 1), WORK, 19980, 0), (at(15, 20), FILL, 19980, 0)])
+    b.fill(P, j1, at(15, 20), 'buy', 19980, 1, 1)
+    j2 = b.order(P, '', 1, SELL, MARKET, 1, [(at(15, 30), FILL, 0, 0)])
+    b.fill(P, j2, at(15, 30), 'sell', 19995, 1, 0)
     cash = 100000 + (116 if with_first else 0) - 10 + 10
     b.c.execute('insert into AccountItems values(2, 7, 1, ?, ?)', (cash, ticks(at(13, 10))))
     b.c.commit(); b.c.close()
@@ -156,7 +171,7 @@ with tempfile.TemporaryDirectory() as tmp:
     j = sqlite3.connect(jr); j.row_factory = sqlite3.Row
     tr = [dict(r) for r in j.execute('select * from trades order by trade_id')]
     by = lambda acc, t0: next(x for x in tr if x['account'] == acc and x['opened_utc'].startswith(t0))
-    check(len(tr) == 7, f'7 trades from 6 scenarios with a flip (got {len(tr)})')
+    check(len(tr) == 10, f'10 trades from 9 scenarios with a flip (got {len(tr)})')
     check(j.execute("select count(*) from nt_accounts where name='Backtest' and kind='other'").fetchone()[0] == 1, 'Backtest is kept raw but is no kind')
 
     A = by('Sim101', '2026-11-18T09:30:00')
@@ -189,17 +204,25 @@ with tempfile.TemporaryDirectory() as tmp:
     check(D['exit_by'] == 'рынок' and D['exit_before_target'] == 1 and D['left_to_target_ticks'] == 100.0,
           'D: closed at market 100 ticks before a working target')
 
-    E = [x for x in tr if x['account'] == 'testOUP00000000001' and x['opened_utc'] >= '2026-11-18T12']
+    E = [x for x in tr if x['account'] == 'testOUP00000000001' and '2026-11-18T12' <= x['opened_utc'] < '2026-11-18T13']
     check(len(E) == 2 and E[0]['status'] == 'gap' and E[0]['pnl_gross'] is None, 'E: the trade without its closing fill is marked, no invented result')
     check(E[1]['status'] == 'closed' and E[1]['gap'] == 0 and E[1]['pnl_gross'] == 10.0, 'E: the next trade is whole (+$10)')
 
+    G = by('testOUP00000000001', '2026-11-18T14:00')
+    check(G['exit_by'] == 'рынок' and G['exit_before_target'] == 0 and G['left_to_target_ticks'] is None,
+          'G: a target cancelled before the market exit is not counted as standing')
+    I = by('testOUP00000000001', '2026-11-18T15:00')
+    J = by('testOUP00000000001', '2026-11-18T15:20')
+    j_acts = [tuple(r) for r in j.execute("select distinct trade_id, role from actions where price=19980")]
+    check(j_acts == [(J['trade_id'], 'вход')], f'J: the entry placed during I belongs to J, the trade of its fill (got {j_acts})')
+    check(J['entry_order_type'] == 'Limit' and I['target_set'] == 0, 'J: limit entry; I has no target from it')
     acts = [dict(r) for r in j.execute('select * from actions')]
     f_act = [a for a in acts if a['price'] == 19990]
     check(f_act and all(a['trade_id'] is None and a['role'] == 'вход без исполнения' for a in f_act), 'F: unfilled entry kept as actions, no trade')
     check({a['action'] for a in f_act} == {'выставил', 'отменил'}, 'F: placed and cancelled')
     mv = [a for a in acts if a['action'] == 'передвинул']
     check(len(mv) == 2 and {(a['role'], a['toward']) for a in mv} == {('тейк', 'дальше'), ('стоп', 'ближе')}, f'moves: target further, stop closer {[(a["role"], a["toward"], a["price_from"], a["price_to"]) for a in mv]}')
-    check(sum(a['action'] == 'исполнено' for a in acts) == 13, 'every fill is an action, repeats removed')
+    check(sum(a['action'] == 'исполнено' for a in acts) == 19, 'every fill is an action, repeats removed')
 
     rec = json.loads(j.execute("select value from meta where key='reconcile'").fetchone()[0])
     check(rec['Sim101']['unexplained'] == 0 and rec['Sim101']['nt_cash_change'] == 116, 'Sim101 balance = sum of its trades')
@@ -211,7 +234,7 @@ with tempfile.TemporaryDirectory() as tmp:
     build(src, with_first=False)                        # NinjaTrader base reset: trade A is gone from the source
     check(T.collect(src, jr, live, rep, force=True) == 'ok', 'collect after a reset of the source')
     j = sqlite3.connect(jr)
-    check(j.execute('select count(*) from trades').fetchone()[0] == 7, 'the journal keeps trade A after the reset')
+    check(j.execute('select count(*) from trades').fetchone()[0] == 10, 'the journal keeps trade A after the reset')
     check(j.execute("select count(*) from runs").fetchone()[0] == 3, 'every run is recorded')
     j.close()
 

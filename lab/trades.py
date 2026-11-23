@@ -331,12 +331,22 @@ class Market:
 
 # ------------------------------------------------------------------------------------------------ derived layer
 def price_at(updates, t, field):
-    """Price of an order at time t: last non-zero value among updates up to t (by sequence number)."""
+    """Price of an order at time t: last non-zero value among updates stamped up to t, in sequence order. Update
+    times are not monotone in the sequence (NinjaTrader mixes local and server stamps), so every update is looked at."""
     val = None
     for u in updates:
-        if u['t'] > t + 0.5: break
-        if u[field]: val = u[field]
+        if u['t'] <= t + 0.5 and u[field]: val = u[field]
     return val
+
+
+ENDED = {'Cancelled', 'CancelPending', 'CancelSubmitted', 'Rejected', 'Filled'}
+
+
+def standing_at(updates, t):
+    """Was the order still standing at time t: it had an update by then and its last state by then is not
+    cancelled (or being cancelled), rejected or filled."""
+    seen = [u for u in updates if u['t'] <= t]
+    return bool(seen) and seen[-1]['state'] not in ENDED
 
 
 def rebuild(j):
@@ -411,16 +421,25 @@ def rebuild(j):
     # orders -> trades: same account and instrument, first seen between the trade's first fill (minus 3 s) and its end
     by_ai = {}
     for tr in trades: by_ai.setdefault((tr['account'], tr['instrument']), []).append(tr)
+    # an order with a fill belongs to the trade holding its first fill; only orders that never filled are placed by time
     order_trade = {}
+    for tr in trades:
+        for oid in tr['order_ids']:
+            order_trade.setdefault(oid, tr)
     for oid, o in orders.items():
-        ups = updates.get(oid, [])
-        t0 = min([u['t'] for u in ups] + [o['t']])
-        for tr in by_ai.get((o['account'], o['instrument']), []):
-            end = tr['fills'][-1]['t'] if tr['status'] != 'open' else float('inf')
-            if tr['fills'][0]['t'] - 3 <= t0 <= end + 0.5 or oid in tr['order_ids']:
-                order_trade[oid] = tr['trade_id']
-                tr.setdefault('orders', []).append(oid)
-                break
+        tr = order_trade.get(oid)
+        if tr is None:
+            ups = updates.get(oid, [])
+            t0 = min([u['t'] for u in ups] + [o['t']])
+            for cand in by_ai.get((o['account'], o['instrument']), []):
+                end = cand['fills'][-1]['t'] if cand['status'] != 'open' else float('inf')
+                if cand['fills'][0]['t'] - 3 <= t0 <= end + 0.5:
+                    tr = cand
+                    break
+        if tr is not None:
+            order_trade[oid] = tr
+            tr.setdefault('orders', []).append(oid)
+    order_trade = {oid: tr['trade_id'] for oid, tr in order_trade.items() if oid in orders}
     rows = []
     for tr in trades:
         rows.append(_trade_row(tr, meta_of(inst, tr), orders, updates, acc, attempt, market))
@@ -553,8 +572,8 @@ def _trade_row(tr, meta, orders, updates, acc, attempt, market):
         t_end = last['t']
         for o, ups, field in tgt:
             if o['order_id'] in {f['order_id'] for f in ext}: continue
-            placed = min([u['t'] for u in ups] + [o['t']])
-            if placed > t_end: continue
+            if ups and not standing_at(ups, t_end): continue      # cancelled, rejected or filled before the exit
+            if not ups and o['t'] > t_end: continue
             p = price_at(ups, t_end, field) or o[field]
             if p is None: continue
             before = 1
