@@ -16,15 +16,21 @@ def read(name):
 
 
 page = read('page.html').replace('/*__PANEL24CSS__*/', read('panel.css'))
-app = read('app.js').replace('  /*__INTEGRATION24__*/\n', read('integration.js') + '\n' + read('continuations.js') + '\n' + read('pullbacks.js') + '\n' + read('time_sd235.js') + '\n' + read('matrix235.js') + '\n' + read('tp235.js') + '\n' + read('sweeps235.js')).replace('  /*__PANEL24__*/\n', read('panel.js'))
+app = read('app.js').replace('  /*__INTEGRATION24__*/\n', read('integration.js') + '\n' + read('continuations.js') + '\n' + read('pullbacks.js') + '\n' + read('time_sd235.js') + '\n' + read('matrix235.js') + '\n' + read('tp235.js') + '\n' + read('sweeps235.js') + '\n' + read('usage235.js')).replace('  /*__PANEL24__*/\n', read('panel.js'))
 # DR-LAB-SC-1.1: the page embeds the page registry of the machine contract (estimands, claim forms with their labels,
 # fact forms), built by contract/tools/build.py; the page renders only these labels and checks its registry hash
 # against the server's envelopes (a contract rebuilt without rebuilding this page is reported, never ignored)
 sc11 = open(os.path.join(REPO, 'contract', 'build', 'page_registry.json'), encoding='utf-8').read().strip()
 app = app.replace('/*__SC11__*/null', sc11)
+# the usage journal (usage235.js, spec/DR-LAB-23-5-USAGE-TRACKER.md) names the build of the page in every event, so a
+# change of the screen can be compared before / after (operator 23.11.2026); its report page is served at /23-5/usage/
+import hashlib
+app = app.replace('/*__BUILD235__*/', hashlib.sha1(app.encode('utf-8')).hexdigest()[:12])
 assert '/*__PANEL24CSS__*/' not in page and '/*__PANEL24__*/' not in app and '/*__SC11__*/' not in app, 'template changed: update build.py'
 os.makedirs(OUT, exist_ok=True)
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8', newline='\n').write(page)
 open(os.path.join(OUT, 'd24.js'), 'w', encoding='utf-8', newline='\n').write(
     '// Built from design/sozvezdiya-23-5/src (app.js + panel.js) by its build.py: edit there.\n' + app)
+os.makedirs(os.path.join(OUT, 'usage'), exist_ok=True)
+open(os.path.join(OUT, 'usage', 'index.html'), 'w', encoding='utf-8', newline='\n').write(read('usage_report.html'))
 print('lab/dist/23-5/index.html', round(len(page) / 1e3), 'kB · d24.js', round(len(app) / 1e3), 'kB')

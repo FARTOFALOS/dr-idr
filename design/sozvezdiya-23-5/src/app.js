@@ -3420,10 +3420,11 @@
     };
     let open = {};
     try { open = JSON.parse(localStorage.getItem('drlab.d235.cfgOpen') || '{}'); } catch (e) { /* optional */ }
-    dom('cfgp').innerHTML = '<div class="ch"><b>Настройки</b><button id="cfgReset">Сбросить</button></div>' + SCHEMA.map(([t, rows]) => '<details class="cgd"' + (open[t] ? ' open' : '') + ' data-g="' + t + '"><summary class="cg">' + t + '</summary>' + rows.map(row).join('') + '</details>').join('') + integrationSettings();
+    dom('cfgp').innerHTML = '<div class="ch"><b>Настройки</b><button id="cfgReset">Сбросить</button></div>' + SCHEMA.map(([t, rows]) => '<details class="cgd"' + (open[t] ? ' open' : '') + ' data-g="' + t + '"><summary class="cg">' + t + '</summary>' + rows.map(row).join('') + '</details>').join('') + integrationSettings() + usageSettings();
   }
   dom('cfgp').addEventListener('input', e => {
     if (e.target.dataset.trial) { setTrial(e.target.dataset.trial, e.target.checked); return; }
+    if (e.target.id === 'usageOn') { usageToggle(e.target.checked); return; }      // the usage journal (usage235.js)
     const k = e.target.dataset.c;
     if (!k) return;
     const d = DEF[k];

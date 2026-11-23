@@ -44,6 +44,14 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def same_origin(self):
+        # the usage journal accepts only the page of this very server (spec/DR-LAB-23-5-USAGE-TRACKER.md §3.2)
+        host = self.headers.get('Host') or ''
+        port = self.server.server_address[1]
+        if host not in ('127.0.0.1:%d' % port, 'localhost:%d' % port): return False
+        origin = self.headers.get('Origin') or ''
+        return origin in ('', 'http://' + host) and (self.headers.get('Sec-Fetch-Site') or 'same-origin') in ('same-origin', 'none')
+
     def redirect(self, where):
         self.send_response(302)
         self.send_header('Location', where)
@@ -175,6 +183,12 @@ class Handler(SimpleHTTPRequestHandler):
                 at = params.get('at')
                 return self.json(contract.finalize(url.path, scene24.family(inst, params.get('session', 'RDR'), int(float(at)) if at not in (None, '') else None,
                                                                             date, params.get('view', 'auto'))))
+            if url.path == '/api/usage/23-5/export':
+                # the usage journal of 23.5 for a period (lab/usage235.py): how the screen was used, never market data
+                if not self.same_origin(): return self.json({'error': 'only the page of this server'}, 403)
+                import usage235
+                return self.json(usage235.export(usage235._parse(params.get('from')), usage235._parse(params.get('to')),
+                                                instrument=params.get('instrument') or None, session=params.get('session') or None))
             if url.path == '/api/spec':
                 path = ROOT.parent/'docs'/'SEMANTICS.md'
                 return self.json({'text':path.read_text(encoding='utf-8') if path.exists() else 'Смысловая спецификация готовится вместе с интерфейсом.'})
@@ -195,10 +209,18 @@ class Handler(SimpleHTTPRequestHandler):
             raise
 
     def do_POST(self):
-        # DR-LAB-SC-1.1: the page's own passports recomputed by the reference definitions (tests/ui_check24.js); the
-        # only POST of this read-only server, it changes nothing
+        # DR-LAB-SC-1.1: the page's own passports recomputed by the reference definitions (tests/ui_check24.js), the
+        # candidate continuations, and the one writing route: the usage journal of 23.5 (lab/.runtime only)
         url = urlparse(self.path)
         try:
+            if url.path == '/api/usage/23-5/events':
+                # the usage journal of 23.5: a packet of finished events, written in one transaction, acknowledged after
+                # the commit; a resent event_id is ignored (lab/usage235.py). The chart never waits for this answer.
+                if not self.same_origin(): return self.json({'error': 'only the page of this server'}, 403)
+                n = int(self.headers.get('Content-Length') or 0)
+                import usage235
+                if n > usage235.MAX_BODY: raise ValueError('body too large')
+                return self.json(usage235.accept(self.rfile.read(n)))
             if url.path == '/api/integration/continuations':
                 if not INTEGRATION: return self.json(dict(status='INTEGRATION_DISABLED'),403)
                 if START_SOURCE_REVISION!=runtime_identity.current() or START_DATA_REVISION!=runtime_identity.data_revision():
@@ -240,12 +262,16 @@ if __name__ == '__main__':
     parser.add_argument('--data', choices=['market', 'demo'], default='market')
     parser.add_argument('--integration',action='store_true')
     parser.add_argument('--passive-live-refresh', action='store_true')
+    parser.add_argument('--usage-db', help='another file for the usage journal of 23.5 (a test stand; default lab/.runtime/usage-23-5.sqlite3)')
     args = parser.parse_args()
     if args.passive_live_refresh and args.data != 'market':
         parser.error('--passive-live-refresh requires market data')
     if args.integration and args.data != 'market':
         parser.error('--integration requires --data market; synthetic and market scenes stay separate')
     INTEGRATION = args.integration
+    if args.usage_db:
+        import usage235
+        usage235.DB_PATH = Path(args.usage_db).resolve()
     PASSIVE_LIVE_REFRESH = args.passive_live_refresh
     engine = importlib.import_module('engine' if args.data == 'demo' else 'engine_market')
     DATA_KIND = 'SYNTHETIC' if args.data == 'demo' else 'MARKET'

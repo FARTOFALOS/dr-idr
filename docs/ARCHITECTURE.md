@@ -84,6 +84,8 @@ Tick sizes: NQ, ES 0.25; YM 1. History bars carry the **close** minute of each M
 | `GET /api/d24/dates?instrument=NQ` | design 24: every trading date of the base with the sessions whose first confirmation is established that day (`[[date, "AOR"], …]`) |
 | `GET /api/d24/now?instrument=NQ&session=RDR[&date=…][&at=…][&view=…]` | design 24: the layer «Сейчас» of the family at the slice (DR-LAB-NOW-1.0, `lab/now24.py`) |
 | `GET /api/contract` | the compiled machine contract DR-LAB-SC-1.1 (`contract/build/registry.json` with its stamps) and its runtime status (`CONFORMANT` / `CONTRACT_STALE` with reasons) |
+| `POST /api/usage/23-5/events` | body `{schema_version: 1, events: [...]}` from the page of 23.5 (`usage235.js`): the usage journal, written in one transaction to `lab/.runtime/usage-23-5.sqlite3` (`lab/usage235.py`); an `event_id` already stored is ignored, an invalid event is refused alone → `{status, accepted, written, duplicates, rejected}`; same origin only; the only route that writes, and only there |
+| `GET /api/usage/23-5/export?from&to&instrument&session` | the journal of a period (UTC bounds) with its summary, live and review apart, builds, gaps; the report page `/23-5/usage/` reads it; same origin only |
 | `POST /api/d24/verify` | body `{instrument, session, at, date, view, passports: [{id, estimand, params, yes_count, unknown_count, no_event_count, N}]}`: the page's passports recomputed by the reference definitions (`lab/contract.py::verify_passports`) → `{status, snapshot_id, checked, mismatches}`; the server's only POST, it changes nothing |
 
 ### The contract gate (`lab/contract.py`, DR-LAB-SC-1.1; `contract/README.md`)

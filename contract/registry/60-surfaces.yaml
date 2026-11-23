@@ -70,6 +70,18 @@ surfaces:
     surface_profile: SERVICE
     definitions: SRC:AGENTS
     marking: "no statistic; the launcher polls it"
+  - id: API:/api/usage/23-5/events
+    sc_ref: ["IMPLEMENTATION"]
+    route: /api/usage/23-5/events
+    surface_profile: SERVICE
+    definitions: SRC:AGENTS
+    marking: "POST only: the usage journal of screen 23.5 (spec/DR-LAB-23-5-USAGE-TRACKER.md, lab/usage235.py); the operator's actions on the page, no market number, no statistic"
+  - id: API:/api/usage/23-5/export
+    sc_ref: ["IMPLEMENTATION"]
+    route: /api/usage/23-5/export
+    surface_profile: SERVICE
+    definitions: SRC:AGENTS
+    marking: "the usage journal of 23.5 for a period with its summary (lab/usage235.py); how the screen was used, no market number, no statistic of the method"
   - id: API:/api/spec
     sc_ref: ["IMPLEMENTATION"]
     route: /api/spec

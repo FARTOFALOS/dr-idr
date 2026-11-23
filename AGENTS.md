@@ -36,6 +36,7 @@ it is implemented, §14 where each piece lives and the rules not to break). Chan
 | «Продолжения», «Откаты до обновления» (⚙ → Испытание кандидатов) | candidates, off by default | [integration/README](integration/README.md), [spec/ekran-24/15-otkaty](spec/ekran-24/15-otkaty.md) | `continuations.js`, `pullbacks.js`, `lab/continuations24.py`, `lab/pullbacks24.py` | `tests/continuations24.py`, `tests/pullbacks24.py` |
 | time × SD route (`/api/integration/time-sd`) | superseded 26.10, route kept | [docs/DR-LAB-23-5-TIME-SD](docs/DR-LAB-23-5-TIME-SD.md) | `time_sd235.js`, `lab/time_sd235.py` | `tests/time_sd235.py` |
 | The STD grid | current (operator 11.11) | below | `app.js::gridSide` | — |
+| Usage journal (always on; ⚙ → «Запись использования»; report `/23-5/usage/`) | current (operator 23.11) | [spec/DR-LAB-23-5-USAGE-TRACKER](spec/DR-LAB-23-5-USAGE-TRACKER.md), [meaning/07](meaning/07-cepochka-reshenij.md) 23.11 | `usage235.js`, `usage_report.html`, `lab/usage235.py` → `lab/.runtime/usage-23-5.sqlite3` | `tests/usage235.py` |
 
 - **R on 23.5** is the pullback before the session's extreme (operator 29.10): every family request carries `:rpre`
   (`OUT:R-BEFORE-X-1`, reference `lab/contract.py::ref_before_extreme_R`). NOW-1.0 stays on the final R.
