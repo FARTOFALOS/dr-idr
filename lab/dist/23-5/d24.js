@@ -9281,9 +9281,40 @@
     const ba = clampB(Math.floor((V.T(x0) - F.f) / 15)), bb = clampB(Math.floor((V.T(x1) - F.f) / 15));
     return { k0: Math.min(ka, kb), k1: Math.max(ka, kb) + 1, b0: Math.min(ba, bb), b1: Math.max(ba, bb) + 1 };
   }
+  // the steady hover (operator 24.11.2026: «когда веду мышь от W1 к W2 по коричневым кластерам, блоки прыгают и
+  // мельтешат»). A place under the mouse (a zone, another window's place) or a window capsule on the band is «heavy»: it
+  // draws its whole time window or switches the price column and the places of X. Inside a place, an STD line within 3.5 px
+  // or a star within 5 px used to take the hover for a few pixels and the place's block vanished and came back; between two
+  // places, or across the 2 px gap between the capsules W1 and W2, the screen flipped to the default window and back. Now a
+  // heavy hover keeps the screen while the mouse is still on it; anything else under the mouse inside it (a line, a star,
+  // an overlapping place) takes over only after the mouse rests there HOLD.stay ms; off it, the next thing (another place,
+  // a capsule, nothing) takes over after HOLD.leave ms. What each hover shows is unchanged; only when it changes.
+  const HOLD = { stay: 300, leave: 150 };
+  const hoverKey = o => JSON.stringify(o && Object.assign({}, o, { q: undefined, l: undefined, v: undefined, P: undefined, same: undefined }));
+  const heavyHover = h => !!h && (h.k === 'tpwin' || h.k === 'tpzone' || (h.k === 'zone' && h.src !== 'strip'));
+  function stillOn(h, x, y) {
+    const inB = b => x >= b[0] && x <= b[0] + b[2] && y >= b[1] && y <= b[1] + b[3];
+    if (h.k === 'zone') { const z = (V.zoneHit || []).find(q => q.ev === h.ev && q.i === h.i); return !!z && (inB(z.box) || inLoops(z.loops, x, y)); }
+    if (h.k === 'tpzone') { const z = (V.tpGhostHit || []).find(q => q.w === h.id && q.i === h.i); return !!z && (inB(z.box) || inLoops(z.loops, x, y)); }
+    if (h.k === 'tpwin') { const c = (V.tpCaps || []).find(q => q.id === h.id); return !!c && inB([c.box[0] - 4, c.box[1] - 6, c.box[2] + 8, c.box[3] + 12]); }
+    return false;
+  }
+  const steady = { key: null, since: 0, timer: 0, cx: 0, cy: 0 };
+  function steadyHover(h, x, y) {
+    clearTimeout(steady.timer);
+    const cur = st.hover, kh = hoverKey(h);
+    if (!heavyHover(cur) || kh === hoverKey(cur)) { steady.key = null; return h; }
+    const wait = stillOn(cur, x, y) ? HOLD.stay : HOLD.leave, now = performance.now();
+    if (steady.key !== kh) { steady.key = kh; steady.since = now; }
+    if (now - steady.since >= wait) { steady.key = null; return h; }
+    // the mouse may stop here: look again when the wait is over (a move of the mouse in between looks again itself)
+    steady.timer = setTimeout(() => { if (st.mx >= 0 && !st.drag) cv.dispatchEvent(new MouseEvent('mousemove', { clientX: steady.cx, clientY: steady.cy })); }, wait - (now - steady.since) + 5);
+    return cur;
+  }
   cv.addEventListener('mousemove', e => {
     const [x, y] = local(e);
     st.mx = x; st.my = y;
+    steady.cx = e.clientX; steady.cy = e.clientY;
     const d = st.drag;
     if (d) {
       const dx = x - d.x, dy = y - d.y, F = V.ctx.F;
@@ -9311,7 +9342,7 @@
       redraw();
       return;
     }
-    const h = hit(x, y), key = o => JSON.stringify(o && Object.assign({}, o, { q: undefined, l: undefined, v: undefined, P: undefined, same: undefined }));
+    const h = steadyHover(hit(x, y), x, y), key = hoverKey;
     const was = key(st.hover);
     st.hover = h && !['paxis', 'taxis', 'stripBg'].includes(h.k) ? h : (h && h.k === 'stripBg' ? h : null);
     if (st.hover && st.hover.ev) st.ev = st.hover.ev;      // the event in focus: what the panel and the area speak of
@@ -9321,7 +9352,7 @@
     showTip(st.hover);
     if (key(st.hover) !== was) { animStrip(); redraw(true); } else redraw();
   });
-  cv.addEventListener('mouseleave', () => { st.mx = -1; st.my = -1; if (!st.drag) { st.hover = null; tip.hidden = true; animStrip(); } redraw(true); });
+  cv.addEventListener('mouseleave', () => { st.mx = -1; st.my = -1; clearTimeout(steady.timer); steady.key = null; if (!st.drag) { st.hover = null; tip.hidden = true; animStrip(); } redraw(true); });
   cv.addEventListener('mousedown', e => {
     if (e.button !== 0) return;
     const [x, y] = local(e), F = V.ctx.F;
