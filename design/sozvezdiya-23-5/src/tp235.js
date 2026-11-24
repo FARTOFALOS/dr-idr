@@ -284,6 +284,15 @@
       c.fillText(t, A_.x + A_.w - c.measureText(t).width - 6, y - 1);
     }
   }
+  // the same levels across the whole chart, under the candles (operator 24.11: the lines do not stop at the column)
+  function tpReachLines(c, F) {
+    for (const L of tpLevels(F)) {
+      const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;
+      if (y < 0 || y > V.plot.h) continue;
+      c.save(); c.strokeStyle = rgba(cfg.X, 0.45); c.lineWidth = 1; c.setLineDash(L.q === 70 ? [] : [3, 3]);
+      c.beginPath(); c.moveTo(0, y); c.lineTo(V.plot.w, y); c.stroke(); c.restore();
+    }
+  }
   // ---------- TP-2.0 Ч13: how the DR ended for the family's sessions that by this clock had gone as deep ----------
   // CS:TP-DEPTH-AT-CUT-1: eligible at the cut as in «Сейчас» (own activation before it, a complete prefix, the DR still
   // whole) and their deepest point against the activation up to the cut at today's or deeper (exact, integers);

@@ -1072,6 +1072,7 @@
     if (F && st.mode === 'bounds' && !continuationMode()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'under');
     if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
+    if (F && F._tp && st.mode === 'bounds' && V.projW && !continuationMode()) tpReachLines(c, F);   // TP-2.0 Ч12: 70 % and 50 % across the chart (tp235.js)
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);

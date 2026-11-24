@@ -4115,6 +4115,7 @@
     if (F && st.mode === 'bounds' && !continuationMode()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'under');
     if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
+    if (F && F._tp && st.mode === 'bounds' && V.projW && !continuationMode()) tpReachLines(c, F);   // TP-2.0 Ч12: 70 % and 50 % across the chart (tp235.js)
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);
@@ -8035,6 +8036,15 @@
       c.font = '700 9.5px ' + FONT; c.textBaseline = 'bottom'; c.fillStyle = rgba(cfg.X, 0.95);
       const t = 'дошли ' + L.q + ' % · ' + sd(L.k / 10);
       c.fillText(t, A_.x + A_.w - c.measureText(t).width - 6, y - 1);
+    }
+  }
+  // the same levels across the whole chart, under the candles (operator 24.11: the lines do not stop at the column)
+  function tpReachLines(c, F) {
+    for (const L of tpLevels(F)) {
+      const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;
+      if (y < 0 || y > V.plot.h) continue;
+      c.save(); c.strokeStyle = rgba(cfg.X, 0.45); c.lineWidth = 1; c.setLineDash(L.q === 70 ? [] : [3, 3]);
+      c.beginPath(); c.moveTo(0, y); c.lineTo(V.plot.w, y); c.stroke(); c.restore();
     }
   }
   // ---------- TP-2.0 Ч13: how the DR ended for the family's sessions that by this clock had gone as deep ----------
