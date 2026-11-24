@@ -4898,6 +4898,7 @@
       const Rch = reachOf(F, ctx), ev0 = a.ev || st.ev; let ok = false;
       for (let k = a.k0; k < a.k1; k++) if (Rch.okK(ev0, k)) { ok = true; break; }
       if (ok && a.b0 != null && F.f + 15 * a.b1 <= sliceOf(ctx)) ok = false;
+      if (ok && a.b0 != null && !areaCount(F, ev0, a)) ok = false;   // no session of the family there: nothing to wait for
       col = ok ? cfg.okC : '#8A93A3';
     }
     const xE = Math.min(V.X(F.end) + 8, V.plot.w - 64);
@@ -4921,13 +4922,15 @@
         c.strokeStyle = rgba(col, 0.9); c.lineWidth = 1.2;
         c.beginPath(); c.moveTo(x, top); c.lineTo(x, bot); c.moveTo(x - 4, top); c.lineTo(x, top); c.moveTo(x - 4, bot); c.lineTo(x, bot); c.stroke();
         const nb = areaCount(F, ev, { k0: a.k0, k1: a.k1 }), tb = ppTxt(evPass(F, ev, 'price_band', [a.k0, a.k1], null, nb)), yl = clamp((top + bot) / 2, 10, V.plot.h - 10);
+        // operator 24.11: on an opaque plate, over the names of the lines at the right edge
+        c.fillStyle = 'rgba(8,9,12,.95)'; c.fillRect(x + 2, yl - 9, c.measureText(tb).width + 6, 18);
         c.fillStyle = '#FFFFFF'; c.fillText(tb, x + 5, yl);
         V.areaHit = [{ box: [x - 6, top, c.measureText(tb).width + 14, Math.max(12, bot - top)], part: 'band' }];
       }
       if (a.b0 != null) {
         const nr = areaCount(F, ev, a), tr = ppTxt(evPass(F, ev, hasBand ? 'price_time' : 'time_band', hasBand ? [a.k0, a.k1] : null, [F.f + 15 * a.b0, F.f + 15 * a.b1], nr)), w = c.measureText(tr).width;
         const lx = clamp(x1 - w - 4, x0 + 2, V.plot.w - w - 4), ly = hasBand ? Math.max(10, ya - 9) : 12;
-        c.fillStyle = 'rgba(8,9,12,.8)'; c.fillRect(lx - 3, ly - 8, w + 6, 16);
+        c.fillStyle = 'rgba(8,9,12,.95)'; c.fillRect(lx - 3, ly - 8, w + 6, 16);
         c.fillStyle = col; c.fillText(tr, lx, ly + 0.5);
         (V.areaHit = V.areaHit || []).push({ box: [lx - 3, ly - 8, w + 6, 16], part: 'window' }, { box: [x0, ya, x1 - x0, yb - ya], part: 'frame' });
       }
