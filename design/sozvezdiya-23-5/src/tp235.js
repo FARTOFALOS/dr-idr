@@ -273,6 +273,9 @@
     }
     return out;
   }
+  // the places' name boxes of the last frame (app.js render): where the level lines over the chart break (their
+  // drawing, tpReachChart, comes with the branch of the lines across the chart)
+  let TP_LBL = [];
   function tpReachMarks(c, F, A_, top0, bot0) {
     for (const L of tpLevels(F)) {
       const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;

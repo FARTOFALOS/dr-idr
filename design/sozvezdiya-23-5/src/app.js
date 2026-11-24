@@ -1092,6 +1092,8 @@
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
     if (F && !continuationMode()) drawArea(c, mapCtx);
     if (F && st.mini) drawMini(c, ctx);
+    // the places' name boxes of this frame, for the next frame's lines to break under them (tpReachChart draws first)
+    TP_LBL = [...(V.zoneHit || []), ...(V.tpGhostHit || [])].map(q => q.box).filter(Boolean);
     drawTags(c, ctx);
     drawAlerts(c);
     drawCross(c);
@@ -1329,8 +1331,11 @@
     }
     c.textBaseline = 'middle'; c.textAlign = 'right';
     if (hpx > 90) for (let j = 1; j <= 9; j++) {
-      c.font = (j === 5 ? '700 ' + (cfg.fracLbl + 1) + 'px ' : cfg.fracLbl + 'px ') + FONT; c.fillStyle = j === 5 ? C.mid : C.text3;   // small (operator 2026-10-06)
-      c.fillText(num(j / 10, 1), xb, V.Y(s.idrL + j * w / 10));
+      c.font = (j === 5 ? '700 ' + (cfg.fracLbl + 1) + 'px ' : cfg.fracLbl + 'px ') + FONT;   // small (operator 2026-10-06)
+      // operator 24.11: on a dark plate, so the candles under them do not cut the figures
+      const t = num(j / 10, 1), ty = V.Y(s.idrL + j * w / 10), tw = c.measureText(t).width;
+      c.fillStyle = rgba(C.bg, 0.85); c.fillRect(xb - tw - 2, ty - cfg.fracLbl / 2 - 1.5, tw + 4, cfg.fracLbl + 3);
+      c.fillStyle = j === 5 ? C.mid : C.text3; c.fillText(t, xb, ty);
     }
     c.textAlign = 'left';
   }
@@ -2324,7 +2329,9 @@
     if (hh && hh.k === 'prev') tags.push([V.Y(hh.p), px(hh.p), '#8C95A3', '#0B0C10']);
     const lastP = s.priceNow != null ? s.priceNow : null;
     const hot = tags.filter(q => q[4]);
-    for (const [y, t, bg, fg, hv_] of tags) if (y > 0 && y < H && (hv_ || !hot.some(q => Math.abs(q[0] - y) < 18))) axisTag(c, y, t, bg, fg);
+    // operator 24.11: a tag that the last price's own tag would cover is left out (the line keeps its name on the chart)
+    const yP = lastP != null ? V.Y(lastP) : null, underP = y => yP != null && y > yP - 22 && y < yP + (ctx.live && A.src === 'live' ? 30 : 18);
+    for (const [y, t, bg, fg, hv_] of tags) if (y > 0 && y < H && (hv_ || (!hot.some(q => Math.abs(q[0] - y) < 18) && !underP(y)))) axisTag(c, y, t, bg, fg);
     // the last price on top of the other tags, with the countdown to the close of the current M5 under it (as TradingView)
     if (lastP != null) {
       const b = ctx.D.bars.filter(q => q.t + 5 <= (ctx.live ? NOW + 5 : ctx.obs)).pop(), y = V.Y(lastP), bg = b && b.c >= b.o ? C.up : C.dn;
