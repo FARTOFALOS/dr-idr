@@ -5494,6 +5494,8 @@
     }
     // the labels: R left of the bar, X right of it; per side the hovered and the zones' peaks first, never overlapping
     const used = { R: [], X: [] };
+    // operator 24.11: the rows of the level words (70 % / 50 %) stay free of the column's own percentages
+    if (F._tp && !(typeof antOn === 'function' && antOn())) for (const y of tpReachRows(F, top0, bot0)) { used.R.push([y, 14]); used.X.push([y, 14]); }
     for (const L of labels.sort((a, b) => (b.on - a.on) || (b.pk - a.pk) || (b.n - a.n))) {
       // the label's size and brightness follow the share on the same scale as the bar: the strongest rows read first
       // the strongest row of the column 14 px bold, the weakest zone rows about 9 px (linear in the share)
@@ -8059,11 +8061,16 @@
       if (y < top0 || y > bot0) continue;
       c.save(); c.strokeStyle = rgba(cfg.X, 0.8); c.lineWidth = 1; c.setLineDash(L.q === 70 ? [] : [3, 3]);
       c.beginPath(); c.moveTo(A_.x + 2, y); c.lineTo(A_.x + A_.w - 2, y); c.stroke(); c.restore();
-      c.font = '700 9.5px ' + FONT; c.textBaseline = 'bottom'; c.fillStyle = rgba(cfg.X, 0.95);
-      const t = 'дошли ' + L.q + ' % · ' + sd(L.k / 10);
-      c.fillText(t, A_.x + A_.w - c.measureText(t).width - 6, y - 1);
+      // operator 24.11: the words UNDER their line, on a dark plate, never over the bars' numbers (drawProjRX keeps
+      // their rows free: tpReachRows)
+      c.font = '700 9.5px ' + FONT; c.textBaseline = 'top';
+      const t = L.q + '% · ' + sd(L.k / 10), tw = c.measureText(t).width, tx = A_.x + A_.w - tw - 6;
+      c.fillStyle = 'rgba(11,12,16,.88)'; c.fillRect(tx - 3, y + 1, tw + 6, 12);
+      c.fillStyle = rgba(cfg.X, 0.95); c.fillText(t, tx, y + 2);
     }
   }
+  // the rows the level words take in the price column, so its percentages there step aside
+  const tpReachRows = (F, top0, bot0) => tpLevels(F).map(L => Math.round(V.Y(F.u2p(L.k / 10))) + 7).filter(y => y > top0 && y < bot0);
   // ---------- TP-2.0 Ч13: how the DR ended for the family's sessions that by this clock had gone as deep ----------
   // CS:TP-DEPTH-AT-CUT-1: eligible at the cut as in «Сейчас» (own activation before it, a complete prefix, the DR still
   // whole) and their deepest point against the activation up to the cut at today's or deeper (exact, integers);
@@ -8177,6 +8184,7 @@
       labels.push({ x, y: y + dir.X * (inside ? -8 : 9), t: ppTxt(p), col: inside ? '#EEF5FF' : mixW(cfg.X, 0.25), big: true });
     }
     // the lines of the clock: the median solid, the 70 % mark dashed, each in its event's half
+    const lineMarks = [];
     for (const L of tpLines(F)) {
       const x = Math.round(V.X(L.cut)) + 0.5;
       if (x < B.x || x > B.x + B.w) continue;
@@ -8184,11 +8192,21 @@
       c.save(); c.strokeStyle = rgba(cfg[L.ev], held ? 0.25 : on ? 1 : 0.85); c.lineWidth = on ? 2 : 1.3; c.setLineDash(L.id === 'p70' ? [4, 3] : []);
       c.beginPath(); c.moveTo(x, y0); c.lineTo(x, y1); c.stroke(); c.restore();
       // a short mark at the outer end, the median one row further out than the 70 % mark, so close lines stay readable
-      c.font = '700 9.5px ' + FONT; c.textBaseline = 'middle'; c.fillStyle = rgba(cfg[L.ev], held ? 0.4 : 0.95);
-      c.fillText(L.id === 'median' ? '½' : '70%', x + 3, cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15)));
+      // operator 24.11: the mark on a dark plate right of its line; the column numbers nearby step aside (below)
+      c.font = '700 9.5px ' + FONT; c.textBaseline = 'middle';
+      const mt = L.id === 'median' ? '½' : '70%', mw = c.measureText(mt).width, my = cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15));
+      c.fillStyle = 'rgba(10,11,15,.85)'; c.fillRect(x + 1, my - 6, mw + 4, 12); lineMarks.push([x + 1, my - 6, x + mw + 5, my + 6]);
+      c.fillStyle = rgba(cfg[L.ev], held ? 0.4 : 0.95); c.fillText(mt, x + 3, my);
       V.tpLines.push({ ev: L.ev, id: L.id, x, y0: Math.min(y0, y1), y1: Math.max(y0, y1) });
     }
-    for (const L of labels) { c.font = (L.big ? '700 10.5px ' : '700 10.5px ') + FONT; c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, Math.max(B.y + 7, Math.min(B.y + B.h - 7, L.y))); c.textAlign = 'left'; }
+    const placedL = [];
+    for (const L of labels) {
+      c.font = '700 10.5px ' + FONT; const w = c.measureText(L.t).width, ly = Math.max(B.y + 7, Math.min(B.y + B.h - 7, L.y)), r = [L.x - w / 2 - 2, ly - 7, L.x + w / 2 + 2, ly + 7];
+      const hit = q => r[0] < q[2] && r[2] > q[0] && r[1] < q[3] && r[3] > q[1];
+      if (!L.big && (lineMarks.some(hit) || placedL.some(hit))) continue;   // operator 24.11: no number over another or over ½ / 70 %
+      placedL.push(r);
+      c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, ly); c.textAlign = 'left';
+    }
     // the windows in the place of the zone capsules: the selected one outlined, the others a soft fill; «до окна» and «позже»
     // quieter. Each carries its name and its share of T (core §7: «у W % true-сессий откат до вершины был в этом окне»).
     const shares = TP_WINDOWS.filter(w => tp.windows[w]).map(w => ({ w, W: tp.windows[w], p: tpShare(F, tp.windows[w][0], tp.windows[w][1]) }));

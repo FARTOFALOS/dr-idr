@@ -2451,6 +2451,8 @@
     }
     // the labels: R left of the bar, X right of it; per side the hovered and the zones' peaks first, never overlapping
     const used = { R: [], X: [] };
+    // operator 24.11: the rows of the level words (70 % / 50 %) stay free of the column's own percentages
+    if (F._tp && !(typeof antOn === 'function' && antOn())) for (const y of tpReachRows(F, top0, bot0)) { used.R.push([y, 14]); used.X.push([y, 14]); }
     for (const L of labels.sort((a, b) => (b.on - a.on) || (b.pk - a.pk) || (b.n - a.n))) {
       // the label's size and brightness follow the share on the same scale as the bar: the strongest rows read first
       // the strongest row of the column 14 px bold, the weakest zone rows about 9 px (linear in the share)
