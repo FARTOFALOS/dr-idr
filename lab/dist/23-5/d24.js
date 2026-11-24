@@ -4305,7 +4305,14 @@
     if (!h) return;
     if (h.k === 'arrive') { candidateHighlight(c, ctx, h); return; }
     if (h.k === 'now') { drawNowLevels(c, ctx, h.ev); return; }
-    const col = cfg[h.ev || st.ev];
+    let col = cfg[h.ev || st.ev];
+    // operator 24.11: a selected price band runs across the chart in its STATE — green while today's final event can
+    // still lie there, grey once it cannot; R / X is named in the inspector
+    if ((h.k === 'pcell' || h.k === 'mcell') && h.ev) {
+      const Rch = reachOf(F, ctx); let ok = false;
+      for (let k = h.k0; k < (h.k1 != null ? h.k1 : h.k0 + 1); k++) if (Rch.okK(h.ev, k)) { ok = true; break; }
+      col = ok ? cfg.okC : '#8A93A3';
+    }
     if (h.k === 'pcell') {
       const [ya, yb] = cellY(F, h.k0, h.k1);
       c.fillStyle = rgba(col, 0.09); c.fillRect(0, ya, V.plot.w, Math.max(1, yb - ya));
@@ -4883,7 +4890,16 @@
     const F = ctx.F, a = st.area || (st.drag && st.drag.area);
     V.areaHit = null;
     if (!a) return;
-    const col = st.mode === 'path' ? '#E6EAF0' : cfg[a.ev || st.ev], live = st.drag && st.drag.area === a;
+    // operator 24.11: the selected area in its STATE — green while today's final event can still lie in its band (and its
+    // time is not over), grey once it cannot; a time-only area keeps the role colour
+    let col = st.mode === 'path' ? '#E6EAF0' : cfg[a.ev || st.ev];
+    const live = st.drag && st.drag.area === a;
+    if (st.mode !== 'path' && isFinite(a.k0)) {
+      const Rch = reachOf(F, ctx), ev0 = a.ev || st.ev; let ok = false;
+      for (let k = a.k0; k < a.k1; k++) if (Rch.okK(ev0, k)) { ok = true; break; }
+      if (ok && a.b0 != null && F.f + 15 * a.b1 <= sliceOf(ctx)) ok = false;
+      col = ok ? cfg.okC : '#8A93A3';
+    }
     const xE = Math.min(V.X(F.end) + 8, V.plot.w - 64);
     const hasBand = isFinite(a.k0);
     const x0 = a.b0 != null ? V.X(F.f + 15 * a.b0) : V.X(F.f), x1 = a.b0 != null ? V.X(F.f + 15 * a.b1) : V.X(F.end);
@@ -5483,13 +5499,15 @@
         const len = Math.max(2, blen * n / mx), g = F._ts || okRow(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
         // a withheld band share (its passport «—», SWPC-1.1 M14): no bar; the next segment keeps its place, the label says «—»
         if (mv ? ppHeld(F, 'EST:B-RX-REGION-' + ev, { k0: k, k1: k + 1, b0: mv.b, b1: mv.b + 1 }) : ppHeld(F, 'EST:B-RX-BAND-' + ev, { k0: k, k1: k + 1 })) { labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk: false, on, z, rowH: bot - top, ok: okRow(ev, k), mv }); x += len; continue; }
-        const spent=F._ts&&!okRow(ev,k);
-        // operator 24.11: the part still ahead is VALID green while its row is reachable; the role R / X is the thin edge
-        c.fillStyle = spent ? rgba(stateCol(cfg[ev], 'spent'),Math.min(1,a*cfg.projA/90)*cfg.passedA/100*1.8) : rgba(cfg.okC, Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
+        // operator 24.11: a row today's final event can no longer reach is IMPOSSIBLE all over — neutral dark grey, no
+        // trace of amber / sky (amber must never read «may still come»); the part still ahead is VALID green while the
+        // row is reachable; the role R / X is the thin edge
+        const spent = !okRow(ev, k);
+        c.fillStyle = spent ? rgba(SPENT,Math.min(1,a*cfg.projA/90)*cfg.passedA/100*1.8) : rgba(cfg.okC, Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
         c.fillStyle = rgba(cfg[ev], Math.min(1, 0.35 + a)); c.fillRect(x, top + 0.5, Math.min(2, len), hh);
         if (g) {
           const dead = !okRow(ev, k);
-          c.fillStyle = dead ? rgba(stateCol(cfg[ev], 'spent'), Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8))
+          c.fillStyle = dead ? rgba(SPENT, Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8))
             : rgba(cfg.projDoneC, Math.min(1, Math.max(0.2, 0.75 * a * cfg.projA / 90 * cfg.passedA / 30)));
           c.fillRect(x + la, top + 0.5, len - la, hh);
         }
@@ -5510,7 +5528,7 @@
       // with nothing ahead is grey and small: it has played out today (operator 2026-10-06)
       // grey only when today's final event can no longer lie in the band (reachability); a band whose family events are
       // all behind the clock but still reachable today is green (history clock) — DR-LAB-NOW-1.0 F2, the audit's D4
-      const dead = !L.on && (L.ahead <= 0 || (F._ts && !L.ok)), gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
+      const dead = !L.on && (L.ahead <= 0 || !L.ok), gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
       if (used[L.ev].some(u => Math.abs(u[0] - L.y) < (u[1] + fs) / 2 + 1)) continue;
       used[L.ev].push([L.y, fs]);
       const col = cfg[L.ev], wt = L.on || (!dead && q > 0.7) ? '700 ' : L.z != null && !dead ? '600 ' : '';
