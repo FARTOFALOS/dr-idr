@@ -372,7 +372,9 @@
         if (closeX) a *= 0.55;                                // the tops of the last 15 minutes: a move not ended before the close
         if (lit) a = Math.max(a, 0.5);
         if (bu) a = Math.max(a, (past ? 0.3 : 0.5) + 0.45 * share / mxE[ev]);   // a bunch: brighter (the author's darker time mode)
-        c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
+        // operator 24.11: a column whose 15 minutes are over is grey (history behind the clock), one still ahead green;
+        // R / X keep their halves, their names and the clock lines in their own colour
+        c.fillStyle = rgba(past ? cfg.projDoneC : cfg.okC, Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, share);
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
         if (closeX && Math.abs(y - cy) > 3) { c.save(); c.strokeStyle = rgba(cfg.X, 0.55); c.lineWidth = 1; c.setLineDash([2, 2]); c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir.X, y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1)); c.restore(); }
@@ -415,18 +417,19 @@
       const x0 = V.X(F.f + 15 * W[0]) + 1, x1 = V.X(F.f + 15 * W[1]) - 1, wd = x1 - x0, y0 = dir.R < 0 ? B.y + 3 : B.y + B.h - 3 - LH + 2;
       if (x1 < B.x || x0 > B.x + B.w || wd < 4) continue;
       const on = w === P.w, hov = !!(h && (h.k === 'tpwin' || h.k === 'tpzone') && h.id === w), side = w === 'BEFORE' || w === 'LATE', r = Math.pow((p.pct || 0) / capMax, 0.7);
+      const cc = F.f + 15 * W[1] <= sl ? cfg.projDoneC : cfg.okC;   // operator 24.11: the window over — grey; still open — green
       c.save(); c.globalAlpha = on || hov ? 1 : 0.8;
-      c.fillStyle = rgba(cfg.R, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
-      if (on || hov) { c.strokeStyle = rgba(cfg.R, on ? 0.75 : 0.5); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
+      c.fillStyle = rgba(cc, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
+      if (on || hov) { c.strokeStyle = rgba(cc, on ? 0.75 : 0.5); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
       c.beginPath(); c.rect(x0 + 2, y0, wd - 4, LH); c.clip();
       c.textBaseline = 'middle';
       let x = x0 + 9;
       c.font = '700 10.5px ' + FONT;
       const nw = c.measureText(TP_NAME[w]).width, pw = pctW(c, ppTxt(p), '700 ', 10.5 + (on ? 1 : 0));
-      c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(side ? '#B8BEC9' : mixW(cfg.R, 0.2), Math.min(1, (on ? 1 : 0.85) * cfg.capTxt / 100));
+      c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(side ? '#B8BEC9' : mixW(cc, 0.35), Math.min(1, (on ? 1 : 0.85) * cfg.capTxt / 100));
       if (wd >= nw + 14) { c.fillText(TP_NAME[w], x, y0 + LH / 2 + 0.5); x += nw + 6; }
       // a narrow window keeps its name; its share is then in its title and in the panel
-      if (wd >= nw + pw + 20) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5 + (on ? 1 : 0), rgba(mixW(cfg.R, 0.35), Math.min(1, (on ? 1 : 0.8) * cfg.capTxt / 100)));
+      if (wd >= nw + pw + 20) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5 + (on ? 1 : 0), rgba(mixW(cc, 0.45), Math.min(1, (on ? 1 : 0.8) * cfg.capTxt / 100)));
       c.restore();
       V.tpCaps.push({ id: w, box: [x0, y0, wd, LH] });
     }
@@ -550,8 +553,9 @@
     if (!z || zoneHeld(G, 'R', h.i)) return;
     const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = G.f + 15 * Math.min(...bs), t1 = G.f + 15 * (Math.max(...bs) + 1);
     const look = zoneStatus(G, ctx, 'R')[h.i], spent = expiredLook(look);
-    V.lk = { ev: 'R', src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', marker: targetMarker(G, ctx, 'R', z) };
-    V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg.R, 'spent') : cfg.R });
+    const tl = targetLook(G, ctx, { t1, look, z });
+    V.lk = { ev: 'R', src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', tl, marker: targetMarker(G, ctx, 'R', z) };
+    V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: tl.col });
   }
   // a click on such a place puts its window on screen and keeps the place under the inspector
   function tpPinGhost(h) { TP.pin = h.id; st.ev = 'R'; st.pin = null; st.pinZone = h.i + 1; st.hover = null; tip.hidden = true; render(true); }

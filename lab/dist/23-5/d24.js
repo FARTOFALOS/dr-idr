@@ -45,7 +45,7 @@
   };
   // everything a viewer can tune in «Настройки»; kept in this browser (localStorage), «Сбросить» restores these
   const DEF = {
-    R: '#EBA06C', X: '#72A9EC', path: '#9FB3D1', visitC: '#8BE7A1', visitMissC: '#FF7B86', projR: '#EBA06C', projX: '#72A9EC', projDoneC: '#5FA886',
+    R: '#EBA06C', X: '#72A9EC', path: '#9FB3D1', visitC: '#8BE7A1', visitMissC: '#FF7B86', projR: '#EBA06C', projX: '#72A9EC', projDoneC: '#7C8594', okC: '#46C985', workedC: '#93A4BF', missC: '#C8606A',
     ptA: 80, ptSize: 100, pastA: 35, cloudA: 100, threadA: 100, projA: 90, stripA: 80, heatA: 200,
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
@@ -91,6 +91,12 @@
     cfg.clockGreen235 = 1;
     try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* optional storage */ }
   }
+  // Operator 24.11: colour by STATE (spec/ekran-24/18-cveta-sostoyanij-23-5.md): what is still valid is green, what has
+  // passed is grey (worked: grey-blue, not worked: muted red). The column's «history before the slice» turns grey.
+  if (!cfg.state235) {
+    cfg.projDoneC = DEF.projDoneC; cfg.state235 = 1;
+    try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* optional storage */ }
+  }
   // Operator 22.10: use screen 24's shading, not the former flat high-contrast column of this origin.
   if (!cfg.shading24_235) {
     try { localStorage.setItem(CFG_KEY + '.before-shading24', JSON.stringify(cfg)); } catch (e) { /* optional backup */ }
@@ -111,7 +117,7 @@
       ['calloutA', 'Выноски · непрозрачность, %', 'range', 20, 100, 5]]],
     ['Точки сессий', [['ptA', 'Яркость', 'range', 10, 100], ['ptSize', 'Размер', 'range', 50, 200], ['pastA', 'Прошедшие по часам · яркость', 'range', 5, 100],
       ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10]]],
-    ['Колонка у цены', [['projR', 'Откат R · цвет колонки', 'color'], ['projX', 'Продолжение X · цвет колонки', 'color'], ['projDoneC', 'История раньше среза · цвет колонки', 'color'], ['visitC', 'Приход сегодня · галочка и кружок', 'color'], ['visitMissC', 'Окно без прихода · крестик и кружок', 'color'], ['projA', 'Яркость', 'range', 10, 100], ['colSize', 'Размер цифр, %', 'range', 60, 160, 5], ['passedA', 'История раньше среза · яркость', 'range', 30, 100]]],
+    ['Колонка у цены', [['projR', 'Откат R · цвет колонки', 'color'], ['projX', 'Продолжение X · цвет колонки', 'color'], ['projDoneC', 'История раньше среза · цвет колонки', 'color'], ['okC', 'Валидно · цвет', 'color'], ['workedC', 'Отработало · цвет', 'color'], ['missC', 'Прошло, не отработало · цвет', 'color'], ['visitC', 'Приход сегодня · галочка и кружок', 'color'], ['visitMissC', 'Окно без прихода · крестик и кружок', 'color'], ['projA', 'Яркость', 'range', 10, 100], ['colSize', 'Размер цифр, %', 'range', 60, 160, 5], ['passedA', 'История раньше среза · яркость', 'range', 30, 100]]],
     ['Лента времени', [['stripA', 'Столбики · яркость', 'range', 10, 100], ['bandA', 'Вся лента · непрозрачность, %', 'range', 20, 100],
       ['bandH', 'Высота, % экрана', 'range', 8, 30], ['bandRise', 'Подъём в пустое место, % графика', 'range', 0, 50],
       ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5],
@@ -4312,8 +4318,10 @@
         const x0 = V.X(tt[0]), x1 = V.X(tt[1]), pk = tpWinPeak(F, h.id);
         c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h);
         // operator 05.11: the window's peak 15 minutes over the chart and on the time axis — when its pullback is most frequent
-        if (pk) { c.fillStyle = rgba(cfg.R, 0.08); c.fillRect(V.X(pk.t0), 0, V.X(pk.t1) - V.X(pk.t0), V.plot.h); }
-        V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R, peak: pk ? [pk.t0, pk.t1] : null };
+        if (pk) { c.fillStyle = rgba(pk.t1 <= sliceOf(ctx) ? cfg.projDoneC : cfg.okC, 0.08); c.fillRect(V.X(pk.t0), 0, V.X(pk.t1) - V.X(pk.t0), V.plot.h); }
+        // operator 24.11: the window's time tags by its state — still open: green; over: grey (a window is not one
+        // place, so it has no visit fact of its own; its places carry that)
+        V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: tt[1] <= sliceOf(ctx) ? cfg.projDoneC : cfg.okC, peak: pk ? [pk.t0, pk.t1] : null };
       }
     }
     if (h.k === 'tcell') {
@@ -4698,8 +4706,9 @@
       if (z && !zoneHeld(F, h.ev, h.i)) {          // a withheld zone draws no window (its inspector says «—»)
         const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = F.f + 15 * Math.min(...bs), t1 = F.f + 15 * (Math.max(...bs) + 1);
         const look = (F._pb && h.ev === 'R' ? zoneLook(F,ctx,h.ev) : zoneStatus(F,ctx,h.ev))[h.i], spent = expiredLook(look);
-        V.lk = { ev: h.ev, src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', marker: targetMarker(F, ctx, h.ev, z) };
-        V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg[h.ev], 'spent') : cfg[h.ev] });
+        const tl = targetLook(F, ctx, { t1, look, z });
+        V.lk = { ev: h.ev, src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', tl, marker: targetMarker(F, ctx, h.ev, z) };
+        V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: tl.col });
       }
       return;
     } else if (h.k === 'pcell' && h.ev && F._mx) mxLink(F, ctx, h);
@@ -4807,21 +4816,21 @@
     const F = ctx.F, col = REVIEW && lk.marker ? lk.marker.paint.color : lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
     if (lk.src === 'zone') {
       const [y0, y1] = cellY(F, lk.k0, lk.k1), ya = Math.min(y0, y1), yb = Math.max(y0, y1), xs = clamp(V.X(lk.sl), xa, xb);
-      // a zone that holds today's extreme is today's answer so far, whatever the clock: its whole window in its (lighter)
-      // colour; a possible zone loses the passed part of its window; an impossible one is spent all over
-      const cz = lk.hold ? mixW(cfg[lk.ev], 0.25) : cfg[lk.ev], cs = stateCol(cfg[lk.ev], 'spent');
-      const xl = lk.hold ? xa : xs, live = !lk.spent && xb > xl;
-      // the passed part of a possible zone's window is GREEN (already traded by the clock); an impossible zone grey
-      if (lk.spent) { c.fillStyle = rgba(cs, 0.12); c.fillRect(xa, ya, xb - xa, yb - ya); }
-      else if (xl > xa) { c.fillStyle = rgba(cfg.doneC, 0.16); c.fillRect(xa, ya, xl - xa, yb - ya); }
-      if (live) {
-        const g = c.createLinearGradient(xl, 0, xb, 0);
-        g.addColorStop(0, rgba(cz, 0.18)); g.addColorStop(1, rgba(cz, 0.07));
-        c.fillStyle = g; c.fillRect(xl, ya, xb - xl, yb - ya);
-      }
-      c.setLineDash([3, 3]); c.lineWidth = 1;
-      c.strokeStyle = rgba(cs, 0.55); c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xa) - 1), Math.max(2, Math.round(yb - ya) - 1));
-      if (live) { c.strokeStyle = rgba(cz, 0.75); c.strokeRect(Math.round(xl) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xl) - 1), Math.max(2, Math.round(yb - ya) - 1)); }
+      // operator 24.11: the box by its STATE (targetLook), the role R / X only in its dashed edge. A target still open
+      // and reachable: the passed part of its window grey, the part ahead green; a settled or holding one is one colour
+      const tl = lk.tl || targetLook(F, ctx, { t1, look: lk.hold ? 'HOLDS' : lk.spent ? 'IMPOSSIBLE' : 'POSSIBLE' }), W = xb - xa, H = yb - ya;
+      if (tl.state === 'VALID') {
+        if (xs > xa) { c.fillStyle = rgba(cfg.projDoneC, 0.16); c.fillRect(xa, ya, xs - xa, H); }
+        if (xb > xs) { const g = c.createLinearGradient(xs, 0, xb, 0); g.addColorStop(0, rgba(cfg.okC, 0.22)); g.addColorStop(1, rgba(cfg.okC, 0.08)); c.fillStyle = g; c.fillRect(xs, ya, xb - xs, H); }
+      } else { c.fillStyle = rgba(tl.col, tl.state === 'HOLDS' ? 0.24 : tl.state === 'IMPOSSIBLE' ? 0.1 : 0.16); c.fillRect(xa, ya, W, H); }
+      c.lineWidth = 1; c.setLineDash([3, 3]); c.strokeStyle = rgba(cfg[lk.ev], 0.6);
+      c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(W) - 1), Math.max(2, Math.round(H) - 1));
+      c.setLineDash(tl.state === 'IMPOSSIBLE' || tl.state === 'UNKNOWN' ? [3, 3] : []);
+      const xo = tl.state === 'VALID' ? xs : xa;
+      if (xb > xo + 1) { c.strokeStyle = tl.state === 'HOLDS' ? 'rgba(255,255,255,.8)' : rgba(tl.col, 0.85); c.strokeRect(Math.round(xo) + 1.5, Math.round(ya) + 1.5, Math.max(2, Math.round(xb - xo) - 3), Math.max(2, Math.round(H) - 3)); }
+      c.setLineDash([]);
+      const mk = tl.state === 'WORKED' ? '✓' : tl.state === 'MISSED' ? '×' : '';
+      if (mk && !REVIEW) { c.font = '700 13px ' + FONT; c.textBaseline = 'bottom'; c.textAlign = 'right'; c.fillStyle = tl.col; c.fillText(mk, xb - 3, ya - 2); c.textAlign = 'left'; }
       c.setLineDash([]);
       if (REVIEW && lk.marker && visitSettled(lk.marker.visit)) drawVisitRing(c, F, lk.marker);
       return;
@@ -5468,11 +5477,13 @@
         // a withheld band share (its passport «—», SWPC-1.1 M14): no bar; the next segment keeps its place, the label says «—»
         if (mv ? ppHeld(F, 'EST:B-RX-REGION-' + ev, { k0: k, k1: k + 1, b0: mv.b, b1: mv.b + 1 }) : ppHeld(F, 'EST:B-RX-BAND-' + ev, { k0: k, k1: k + 1 })) { labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk: false, on, z, rowH: bot - top, ok: okRow(ev, k), mv }); x += len; continue; }
         const spent=F._ts&&!okRow(ev,k);
-        c.fillStyle = spent ? rgba(stateCol(cfg[ev], 'spent'),Math.min(1,a*cfg.projA/90)*cfg.passedA/100*1.8) : rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
+        // operator 24.11: the part still ahead is VALID green while its row is reachable; the role R / X is the thin edge
+        c.fillStyle = spent ? rgba(stateCol(cfg[ev], 'spent'),Math.min(1,a*cfg.projA/90)*cfg.passedA/100*1.8) : rgba(cfg.okC, Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
+        c.fillStyle = rgba(cfg[ev], Math.min(1, 0.35 + a)); c.fillRect(x, top + 0.5, Math.min(2, len), hh);
         if (g) {
           const dead = !okRow(ev, k);
           c.fillStyle = dead ? rgba(stateCol(cfg[ev], 'spent'), Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8))
-            : rgba(cfg.doneC, Math.min(1, Math.max(0.2, 0.75 * a * cfg.projA / 90 * cfg.passedA / 30)));
+            : rgba(cfg.projDoneC, Math.min(1, Math.max(0.2, 0.75 * a * cfg.projA / 90 * cfg.passedA / 30)));
           c.fillRect(x + la, top + 0.5, len - la, hh);
         }
         V.projBars.push({ ev, k, b: mv ? mv.b : null, ans: mv ? mv.ans : true, top, bot, x0: x, x1: x + len, n, earlier:g, later:n-g });
@@ -5498,7 +5509,7 @@
       const p = L.mv ? mxCellPass(F, L.ev, L.mv) : evPass(F, L.ev, 'price_cell', [L.k, L.k + 1], null, L.n), t = ppTxt(p), tw = pctW(c, t, wt, fs);
       if (L.mv) V.projLbl.push({ ev: L.ev, k: L.k, b: L.mv.b, n: L.mv.n, est: p.estimand, yes: p.yes_count, N: p.N });
       pctDraw(c, t, L.ev === 'R' ? Math.max(A_.x + 3, x0 - 3 - tw) : Math.min(L.xe + 3, A_.x + A_.w - tw - 6), L.y + 0.5, wt, fs,
-        L.on ? '#FFFFFF' : gone ? rgba(cfg.doneC, 0.75) : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(col, 0.45 * r), 0.5 + 0.5 * r) : C.text3);
+        L.on ? '#FFFFFF' : gone ? rgba(cfg.projDoneC, 0.85) : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(col, 0.45 * r), 0.5 + 0.5 * r) : C.text3);
     }
     // the zones' price extents: thin ticks at the right edge, one lane per overlap
     const ends = [];
@@ -5923,8 +5934,8 @@
   // Three different questions stay distinct: immutable R/X mass; its historical clock; today's actual visit.
   // A zone uses its exact cells and window. A column band has no zone-window: its horizon is (activation, block end].
   // YES survives gaps; absence is asserted only with every relevant closed M5. A forming/replay-future bar is excluded.
-  function visitState(F, ctx, k0, k1, z) {
-    if (!ctx || !REVIEW) return { state: 'UNKNOWN', t: null };
+  function visitState(F, ctx, k0, k1, z, force) {
+    if (!ctx || (!REVIEW && !force)) return { state: 'UNKNOWN', t: null };
     if (F.held.has('today.zones')) return { state: 'WITHHELD', t: null };
     if (z && z.event_id && F.zones && F.zones[z.event_id]) {
       const i = F.zones[z.event_id].zones.findIndex(q => q.zone_id === z.zone_id);
@@ -5967,6 +5978,22 @@
       out.time = F.f + 15 * b + 7.5; out.u = (k + 0.5) / 10;
     }
     return out;
+  }
+  // Operator 24.11 (spec/ekran-24/18-cveta-sostoyanij-23-5.md): ONE state of a time × price target (a zone, a window)
+  // for its box, its capsule and its price / time tags. Time, price and the observed fact stay three questions; the
+  // colour is their combination: VALID green (the window not over, the price still reachable), HOLDS bright green
+  // (today's extreme inside), WORKED grey-blue (a closed M5 came into its own cells in its window), MISSED muted red
+  // (the window over, every M5 known, no visit), PAST grey (the window over, the fact not established), IMPOSSIBLE dark
+  // grey (the window still open, the price already beyond), UNKNOWN (status withheld / incomplete).
+  function targetLook(F, ctx, o) {
+    const sl = sliceOf(ctx), v = o.z ? visitState(F, ctx, null, null, o.z, true) : { state: 'UNKNOWN', t: null };
+    if (o.look === 'WITHHELD' || v.state === 'WITHHELD') return { state: 'UNKNOWN', col: '#A8B5CB', v };
+    if (o.look === 'HOLDS') return { state: 'HOLDS', col: mixW(cfg.okC, 0.3), v };
+    if (v.state === 'VISITED') return { state: 'WORKED', col: cfg.workedC, v };
+    if (o.t1 != null && o.t1 <= sl) return v.state === 'MISSED' ? { state: 'MISSED', col: cfg.missC, v } : { state: 'PAST', col: cfg.projDoneC, v };
+    if (expiredLook(o.look)) return { state: 'IMPOSSIBLE', col: SPENT, v };
+    if (o.look === 'STATUS_UNKNOWN') return { state: 'UNKNOWN', col: '#A8B5CB', v };
+    return { state: 'VALID', col: cfg.okC, v };
   }
   function zonePaint(F, ctx, ev, z, status) {
     const v = { ...visitState(F, ctx, null, null, z), start: z.time_start };
@@ -8125,7 +8152,9 @@
         if (closeX) a *= 0.55;                                // the tops of the last 15 minutes: a move not ended before the close
         if (lit) a = Math.max(a, 0.5);
         if (bu) a = Math.max(a, (past ? 0.3 : 0.5) + 0.45 * share / mxE[ev]);   // a bunch: brighter (the author's darker time mode)
-        c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
+        // operator 24.11: a column whose 15 minutes are over is grey (history behind the clock), one still ahead green;
+        // R / X keep their halves, their names and the clock lines in their own colour
+        c.fillStyle = rgba(past ? cfg.projDoneC : cfg.okC, Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, share);
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
         if (closeX && Math.abs(y - cy) > 3) { c.save(); c.strokeStyle = rgba(cfg.X, 0.55); c.lineWidth = 1; c.setLineDash([2, 2]); c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir.X, y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1)); c.restore(); }
@@ -8168,18 +8197,19 @@
       const x0 = V.X(F.f + 15 * W[0]) + 1, x1 = V.X(F.f + 15 * W[1]) - 1, wd = x1 - x0, y0 = dir.R < 0 ? B.y + 3 : B.y + B.h - 3 - LH + 2;
       if (x1 < B.x || x0 > B.x + B.w || wd < 4) continue;
       const on = w === P.w, hov = !!(h && (h.k === 'tpwin' || h.k === 'tpzone') && h.id === w), side = w === 'BEFORE' || w === 'LATE', r = Math.pow((p.pct || 0) / capMax, 0.7);
+      const cc = F.f + 15 * W[1] <= sl ? cfg.projDoneC : cfg.okC;   // operator 24.11: the window over — grey; still open — green
       c.save(); c.globalAlpha = on || hov ? 1 : 0.8;
-      c.fillStyle = rgba(cfg.R, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
-      if (on || hov) { c.strokeStyle = rgba(cfg.R, on ? 0.75 : 0.5); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
+      c.fillStyle = rgba(cc, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
+      if (on || hov) { c.strokeStyle = rgba(cc, on ? 0.75 : 0.5); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
       c.beginPath(); c.rect(x0 + 2, y0, wd - 4, LH); c.clip();
       c.textBaseline = 'middle';
       let x = x0 + 9;
       c.font = '700 10.5px ' + FONT;
       const nw = c.measureText(TP_NAME[w]).width, pw = pctW(c, ppTxt(p), '700 ', 10.5 + (on ? 1 : 0));
-      c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(side ? '#B8BEC9' : mixW(cfg.R, 0.2), Math.min(1, (on ? 1 : 0.85) * cfg.capTxt / 100));
+      c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(side ? '#B8BEC9' : mixW(cc, 0.35), Math.min(1, (on ? 1 : 0.85) * cfg.capTxt / 100));
       if (wd >= nw + 14) { c.fillText(TP_NAME[w], x, y0 + LH / 2 + 0.5); x += nw + 6; }
       // a narrow window keeps its name; its share is then in its title and in the panel
-      if (wd >= nw + pw + 20) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5 + (on ? 1 : 0), rgba(mixW(cfg.R, 0.35), Math.min(1, (on ? 1 : 0.8) * cfg.capTxt / 100)));
+      if (wd >= nw + pw + 20) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5 + (on ? 1 : 0), rgba(mixW(cc, 0.45), Math.min(1, (on ? 1 : 0.8) * cfg.capTxt / 100)));
       c.restore();
       V.tpCaps.push({ id: w, box: [x0, y0, wd, LH] });
     }
@@ -8303,8 +8333,9 @@
     if (!z || zoneHeld(G, 'R', h.i)) return;
     const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = G.f + 15 * Math.min(...bs), t1 = G.f + 15 * (Math.max(...bs) + 1);
     const look = zoneStatus(G, ctx, 'R')[h.i], spent = expiredLook(look);
-    V.lk = { ev: 'R', src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', marker: targetMarker(G, ctx, 'R', z) };
-    V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg.R, 'spent') : cfg.R });
+    const tl = targetLook(G, ctx, { t1, look, z });
+    V.lk = { ev: 'R', src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', tl, marker: targetMarker(G, ctx, 'R', z) };
+    V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: tl.col });
   }
   // a click on such a place puts its window on screen and keeps the place under the inspector
   function tpPinGhost(h) { TP.pin = h.id; st.ev = 'R'; st.pin = null; st.pinZone = h.i + 1; st.hover = null; tip.hidden = true; render(true); }
