@@ -1,0 +1,203 @@
+{
+  "purpose": "Dark palette v2 for TradingView window 1 (MNQ | QQQ) with one-command rollback. Operator authorization 25.11: connector settings on one window, NEW Pine versions of «90» and RIZ (originals kept), backup/rollback first.",
+  "tv": {
+    "originalLayout": {
+      "name": "BASE",
+      "id": "kUwtVNuo",
+      "url": "https://www.tradingview.com/chart/kUwtVNuo/",
+      "note": "All 4 TV windows show this one layout with different symbols. Never write into it."
+    },
+    "window1": {
+      "cdpTarget": "309200BC4FE359BC2FE7CC3BA3BDD02B",
+      "panes": [
+        "CME_MINI:MNQZ2026 5",
+        "BATS:QQQ 1"
+      ]
+    },
+    "copyLayout": {
+      "name": "BASE · dark",
+      "id": "w8qiG86Q",
+      "numericId": 141837520,
+      "was": "Unnamed (AAPL 1M, no studies; snapshot baseline/unnamed/, tag unnamed-before)",
+      "openIn": "window 1 (CDP target 309200BC…), which showed BASE before",
+      "status": "v2 applied 25.11 (tags v2-*)"
+    }
+  },
+  "tvSideLayers": [
+    {
+      "kind": "chart template",
+      "name": "Светлая исходная",
+      "where": "Settings → Template (any chart)",
+      "status": "saved 25.11",
+      "rollback": "Settings → Template → «Светлая исходная» → Ok: restores canvas, scales, candles of that pane"
+    },
+    {
+      "kind": "indicator template",
+      "name": "светлая-исходная MNQ",
+      "where": "Indicators ▾ → Templates → Open template…",
+      "status": "saved 25.11 from window 1 left pane",
+      "rollback": "Open it on the pane: REPLACES that pane's indicators with the five saved ones and their baseline inputs"
+    },
+    {
+      "kind": "indicator template",
+      "name": "светлая-исходная QQQ",
+      "where": "Indicators ▾ → Templates → Open template…",
+      "status": "saved 25.11 from window 1 right pane",
+      "rollback": "as above, right pane"
+    },
+    {
+      "kind": "per-indicator settings template",
+      "name": "светлая-исходная",
+      "status": "NOT POSSIBLE - TV indicator dialogs offer only Reset settings / Save as default; replaced by the two indicator templates above and baseline JSON"
+    }
+  ],
+  "parts": [
+    {
+      "id": "01-canvas",
+      "kind": "prop",
+      "where": "chart properties (paneProperties, scalesProperties), both panes",
+      "files": [
+        "parts/01-canvas/apply.json",
+        "parts/01-canvas/revert.json"
+      ],
+      "rollback": "node tools/restore.mjs 01-canvas --to baseline",
+      "status": "applied in BASE · dark"
+    },
+    {
+      "id": "02-candles",
+      "kind": "prop",
+      "where": "main series candleStyle, both panes",
+      "files": [
+        "parts/02-candles/apply.json",
+        "parts/02-candles/revert.json"
+      ],
+      "rollback": "node tools/restore.mjs 02-candles --to baseline",
+      "status": "applied in BASE · dark"
+    },
+    {
+      "id": "03-dr-idr",
+      "kind": "inputs",
+      "where": "DR/IDR V1.5 · M5 STD (Kjpe4R, pane 0), DR/IDR V1.5 public (smyxzu, pane 1)",
+      "files": [
+        "parts/03-dr-idr/apply.json",
+        "parts/03-dr-idr/revert.json"
+      ],
+      "rollback": "node tools/restore.mjs 03-dr-idr --to baseline",
+      "status": "applied in BASE · dark"
+    },
+    {
+      "id": "04-90-nq",
+      "kind": "pine",
+      "status": "applied in BASE · dark",
+      "where": "new private script «90 · NQ · dark» replacing YNtADH on pane 0 of the copy",
+      "files": [
+        "parts/04-90-nq/apply.json",
+        "parts/04-90-nq/revert.json"
+      ],
+      "rollback": "remove dark instance; original instance state in baseline/window-309200BC.json; or indicator template «светлая-исходная MNQ»",
+      "script": {
+        "name": "90 · NQ · dark",
+        "id": "USER;a9dacb5075374ccc8727bab25562fa24",
+        "version": "1.0"
+      }
+    },
+    {
+      "id": "05-90-v92",
+      "kind": "pine",
+      "status": "applied in BASE · dark",
+      "where": "new private script «90 v92 · dark» replacing 6faABb on pane 1 of the copy",
+      "files": [
+        "parts/05-90-v92/apply.json",
+        "parts/05-90-v92/revert.json"
+      ],
+      "rollback": "as 04, template «светлая-исходная QQQ»",
+      "script": {
+        "name": "90 v92 · dark",
+        "id": "USER;e03765a4be0b41f383f59bbc71b1c7db",
+        "version": "1.0"
+      }
+    },
+    {
+      "id": "06-riz97",
+      "kind": "pine",
+      "status": "applied in BASE · dark",
+      "where": "new private script «RIZ v9.8 · dark» replacing whP7bS (pane 0) and UXSpIc (pane 1) of the copy",
+      "files": [
+        "parts/06-riz97/apply.json",
+        "parts/06-riz97/revert.json"
+      ],
+      "rollback": "as 04",
+      "script": {
+        "name": "RIZ v9.8 · dark",
+        "id": "USER;faa68923f4a946fd8513f54ea8be1195",
+        "version": "1.0"
+      }
+    },
+    {
+      "id": "07-riz-blue",
+      "kind": "inputs",
+      "where": "RIZ BLUE v1.0 (UCnufl pane 0, NRyELJ pane 1)",
+      "files": [
+        "parts/07-riz-blue/apply.json",
+        "parts/07-riz-blue/revert.json"
+      ],
+      "rollback": "node tools/restore.mjs 07-riz-blue --to baseline",
+      "status": "applied in BASE · dark"
+    },
+    {
+      "id": "08-slt",
+      "kind": "inputs",
+      "where": "Sessions Liquidity Tracker (62k2u0 pane 0, GFE0BT pane 1, closed source)",
+      "files": [
+        "parts/08-slt/apply.json",
+        "parts/08-slt/revert.json"
+      ],
+      "rollback": "node tools/restore.mjs 08-slt --to baseline",
+      "status": "applied in BASE · dark"
+    },
+    {
+      "id": "09-session-highlights",
+      "kind": "prop",
+      "where": "chart sessions (sessionHighlight backgrounds), both panes",
+      "files": [
+        "parts/09-session-highlights/apply.json",
+        "parts/09-session-highlights/revert.json"
+      ],
+      "rollback": "node tools/restore.mjs 09-session-highlights --to baseline",
+      "status": "applied in BASE · dark"
+    },
+    {
+      "id": "08b-slt-midnight",
+      "kind": "inputs",
+      "status": "NOT applied - unconfirmed (no midnight line drawn by SLT while «Show Separator Lines» is off)",
+      "files": [
+        "parts/08b-slt-midnight/apply.json",
+        "parts/08b-slt-midnight/revert.json"
+      ]
+    }
+  ],
+  "fullRollback": [
+    "dark layout back to its own start: node tools/restore.mjs all --to baseline, and re-run tools/replace-study.mjs with the original pine ids (or load baseline/dark-start/layout-json.json content); back to the original Unnamed: load baseline/unnamed/layout-json-unnamed.json content and rename «Unnamed»",
+    "node tools/restore.mjs all --to baseline  (prop + inputs parts)",
+    "pine parts: remove dark instances, Open template «светлая-исходная MNQ» / «… QQQ» on the panes",
+    "or simply switch window 1 back to layout BASE: the copy is a separate layout and BASE is untouched",
+    "last resort: baseline/layout-json-309200BC.json is the full saveToJSON content of window 1"
+  ],
+  "open": [
+    "08-slt mapping is an interpretation of unnamed inputs: in_26 = session high/low line, in_31 = raided line (#C8606A t30), in_40/in_42 = NY-midnight line (dashed, #F29A38 t30, coordinator 25.11), in_60/67/74 = PDH, PWH, PMH lines; session box (#A3A8B3 t94) NOT mapped: identify visually in the test layout",
+    "restore.mjs write path not exercised on TV (only dry-run)",
+    "tools/pine-save-new.mjs saves through pine-facade save/new with allow_overwrite=false; originals verified unchanged (same source and version) after saving",
+    "Manual drawings: the dark layout has none on the MNQ pane (0 of 229; loadContent did not bring them) and 102 of 106 on QQQ; many of those are black (8/8 fibs, 22/35 trend lines, 39/50 rectangles) and are invisible on #08090C. Drawings are not to be touched without the operator.",
+    "SLT label text colours (in_57/64/92/99) applied but not seen on screen: PDH/PWH/9:30/8:30 labels were outside the visible range."
+  ],
+  "instances": {
+    "pane0": {
+      "90 · NQ · dark": "Az5SN1 (replaces YNtADH)",
+      "RIZ v9.8 · dark": "aHkkAo (replaces whP7bS)"
+    },
+    "pane1": {
+      "90 v92 · dark": "hwT3Wm (replaces 6faABb)",
+      "RIZ v9.8 · dark": "6krbp7 (replaces UXSpIc, hidden as before)"
+    }
+  }
+}

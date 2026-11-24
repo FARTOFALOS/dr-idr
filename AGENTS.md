@@ -6,6 +6,10 @@ decision chain [`meaning/07-cepochka-reshenij.md`](meaning/07-cepochka-reshenij.
 commit `3847a70` (the last `main` before the cleanup: old designs 1–21, the 29.09–15.10 lenses and studies, the
 superseded docs). Links to removed files point there. Do not bring removed material back as a current base.
 
+**Handoff 24.11.2026 (read before touching the working copy):** what the cloud threads changed on 24.11 (PRs #32–#34,
+minute voice, mode menu, the TradingView dark palette), where it lives, backups and how to roll each piece back —
+[`handoff/2026-11-24/README.md`](handoff/2026-11-24/README.md).
+
 ## Screen 23.5 · 2026-11-10: TP-2.0 (operator accepted; supersedes TP-1.4 where they differ)
 
 **Start here.** The meaning and the engineer's map: [meaning/25-tp-2-0-specifikaciya.md](meaning/25-tp-2-0-specifikaciya.md)
