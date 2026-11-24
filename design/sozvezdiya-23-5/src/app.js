@@ -677,7 +677,7 @@
     const own = !SC11 ? null : id.startsWith('FF:') ? SC11.facts[id] : (LBLC1.on && SC11.cforms && SC11.cforms[id]) || SC11.forms[id];
     // FF:PHASE-RULE exists only in the candidate edition (08.10); the candidate words of the accepted «Сейчас» forms are
     // never reached from here (tests/integration_faults.mjs), only by reviewLbl for the trial «nowmarks»
-    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id.startsWith('EST:PB-')||id.startsWith('EST:TS-')||id==='EST:K-ARRIVE'||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:CANDIDATE-STATUS','FF:TODAY-Z-PASSED','FF:TODAY-VISIT','FF:PB-TODAY','FF:PB-EPISODE','FF:R-BEFORE-X'].includes(id);
+    const candidateId=id.startsWith('EST:P-')||id.startsWith('EST:C-')||id.startsWith('EST:PB-')||id.startsWith('EST:TS-')||id==='EST:K-ARRIVE'||id.startsWith('EST:ANT-')||['FF:K-TARGET','FF:PRE-STATE','FF:FEW-SESSIONS','FF:PHASE-RULE','FF:CANDIDATE-STATUS','FF:TODAY-Z-PASSED','FF:TODAY-VISIT','FF:PB-TODAY','FF:PB-EPISODE','FF:R-BEFORE-X'].includes(id);
     const extra = candidateId && REVIEW && (id.startsWith('FF:') ? REVIEW.facts[id] : REVIEW.forms[id]);
     const box = own && own.labels[key] ? own : extra || own;
     const set = box && box.labels[key], t = set && (view && set[view] != null ? set[view] : set.ANY);
@@ -771,10 +771,13 @@
     // the case set of the passport: the family's own, or a set selected from it (CS:TP-DEPTH-AT-CUT-1, TP-2.0 §2.3); a
     // base family admits the descriptive C0, a TP set (OUTCOME_SUBGROUP) and a matched set the conditional C1 only —
     // a base estimand there takes its C1 twin (SC11.cforms; lab/contract.py::admissible_claims, claim_form_of)
-    const cs = p.case_set || F.cs, role = SC11 && SC11.case_sets[cs], c0 = role === 'BASE_FAMILY';
-    const e = SC11 && SC11.estimands[p.estimand], f = SC11 && (c0 ? SC11.forms[p.estimand] : (SC11.cforms && SC11.cforms[p.estimand]) || SC11.forms[p.estimand]), miss = e && e.params.find(k => !(k in p.params));
+    // «Слой от Anthropic» (ant235.js): its estimands, forms and case set exist only in the candidate edition (REVIEW)
+    const REG = /^EST:ANT-/.test(p.estimand) ? (SC11 && REVIEW) || null : SC11;
+    const cs = p.case_set || F.cs, role = REG && REG.case_sets[cs], c0 = role === 'BASE_FAMILY';
+    const e = REG && REG.estimands[p.estimand], f = REG && (c0 ? REG.forms[p.estimand] : (REG.cforms && REG.cforms[p.estimand]) || REG.forms[p.estimand]), miss = e && e.params.find(k => !(k in p.params));
     const sum = p.yes_count + p.unknown_count + p.no_event_count, diff = e && e.measure === 'SHARE_DIFFERENCE';
     const bad = !SC11 ? 'страница собрана без реестра контракта'
+      : !REG ? 'кандидатный реестр не загружен: ' + p.estimand
       : !e || !f ? 'an unregistered estimand ' + p.estimand
       : e.profile !== 'PROFILE:BASE-24' ? p.estimand + ' is not of the base profile'
       : !e.q4.includes(cs) ? p.estimand + ' is not defined on ' + cs
@@ -1078,6 +1081,7 @@
     if (F && !continuationMode()) drawNowMarks(c, ctx);
     drawPills(c, ctx);
     if (!continuationMode()) drawNow(c, ctx);
+    if (F && F._tp && st.mode === 'bounds' && !continuationMode() && antOn()) antChart(c, ctx);   // «Слой от Anthropic» (ant235.js)
     if (F && !continuationMode()) drawLink(c, mapCtx);
     if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, cloudCtx);
     if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'over');
@@ -2466,7 +2470,7 @@
       const [ya, yb] = cellY(F, o.k0, o.k1), y0 = Math.max(top0, ya), y1 = Math.min(bot0, yb);
       if (y1 > y0) { c.fillStyle = rgba(cfg[o.ev], o.hot ? 1 : 0.7); c.fillRect(A_.x + A_.w - 4 - 3 * ln, y0, 2, y1 - y0); }
     });
-    if (F._tp) tpReachMarks(c, F, A_, top0, bot0);                   // TP-2.0 Ч12: the levels 70 % and 50 % of the window reached
+    if (F._tp) { if (antOn()) antMarks(c, F, A_, top0, bot0); else tpReachMarks(c, F, A_, top0, bot0); }   // TP-2.0 Ч12 (ant235.js: «Слой от Anthropic»)
     // the heads (R on the left, X on the right, as their percentages) and the shares beyond the frame
     c.textBaseline = 'top'; c.font = '700 10.5px ' + FONT;
     c.fillStyle = cfg.R; c.fillText('R откат', A_.x + 5, 3);
@@ -3054,6 +3058,8 @@
     for (const b of dom('mode').querySelectorAll('button')) b.classList.toggle('on', b.dataset.m === st.mode);
     const vw = F ? VW(F) : ctx.s.failed ? 'BRK' : 'CONF', nm = F ? F.names : { R: lbl('FF:PASSPORT-VIEW', 'name_R', null, vw), X: lbl('FF:PASSPORT-VIEW', 'name_X', null, vw) };
     // A freehand area belongs to the event currently in focus. Make that semantic choice explicit before the drag.
+    const an = dom('antb');                                         // «Слой от Anthropic» (ant235.js): with TP and the candidate registry
+    if (an) { an.hidden = !antAvail(); an.classList.toggle('on', antOn()); an.setAttribute('aria-pressed', antOn() ? 'true' : 'false'); }
     const ab = dom('areab');
     if (ab) { ab.textContent = '▭ Область · ' + st.ev; ab.title = 'Выбрать область ' + st.ev + ' мышью: цена или цена × время; R/X меняется вместе с текущим фокусом'; }
     // R and X are on the chart together (operator 2026-10-01): the toolbar names them, there is no switch
@@ -3136,7 +3142,7 @@
     const P = (x, y) => [Math.round(ox + x), Math.round(oy + y)];
     const rect = el => { if (!el) return null; const r = el.getBoundingClientRect(); return r.width || r.height ? [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height)] : null; };
     const G = { url: location.hash, W: innerWidth, H: innerHeight, mode: st.mode, view: F ? F.view : null, dom: {}, chart: {}, panel: {}, det: {} };
-    for (const id of ['inst', 'sess', 'date', 'mode', 'ev', 'areab', 'apibar', 'dayb', 'step21', 'panel21toggle', 'lay', 'cfgb', 'cmp22', 'clock', 'panel', 'insp', 'det', 'deth', 'nav']) G.dom[id] = rect(dom(id));
+    for (const id of ['inst', 'sess', 'date', 'mode', 'ev', 'antb', 'areab', 'apibar', 'dayb', 'step21', 'panel21toggle', 'lay', 'cfgb', 'cmp22', 'clock', 'panel', 'insp', 'det', 'deth', 'nav']) G.dom[id] = rect(dom(id));
     const pl = [...panel.children];
     G.panel.blocks = pl.map(el => ({ cls: el.className, text: el.innerText.split('\n')[0].slice(0, 40), r: rect(el) }));
     G.panel.links = [...panel.querySelectorAll('[data-l21]')].map(el => ({ text: el.innerText.split('\n')[0].slice(0, 40), r: rect(el) }));
@@ -3380,6 +3386,7 @@
     else if (t.closest('#mode button')) { st.mode = t.closest('button').dataset.m; st.hover = null; st.pin = null; if(continuationMode()&&!CS.target)st.tool=true; render(true); }
     else if (t.closest('#ev button')) { if (st.mode === 'bounds') { st.ev = t.closest('button').dataset.e; st.hover = null; if (st.pin && st.pin.k === 'pt') st.pin = null; render(true); } }
     else if (t.id === 'areab') { st.tool = !st.tool; render(true); }
+    else if (t.closest('#antb')) { ANT.on = !ANT.on; st.hover = null; tip.hidden = true; render(true); }
     else if (t.id === 'refresh21') loadDay(true);
     else if (t.id === 'back') backLive();
     else if (t.id === 'lay') { st.menu = !st.menu; dom('menu').hidden = !st.menu; t.classList.toggle('on', st.menu); dom('cfgp').hidden = true; dom('cfgb').classList.remove('on'); dom('dayp').hidden = true; }
@@ -3601,7 +3608,9 @@
       // 05.11: the pullback places of the other windows on the chart, and the window peaks on the band
       others: P ? tpOthers(V.ctx).map(q => ({ w: q.w, N: q.G.N, places: q.G.zones.R.zones.filter((z, i) => !zoneHeld(q.G, 'R', i)).length })) : [],
       ghosts: (V && V.tpGhostHit || []).map(q => ({ w: q.w, i: q.i, box: q.box })), peaks: P ? TP_WINDOWS.filter(w => P.clock.windows[w]).map(w => ({ w, W: P.clock.windows[w], pk: tpWinPeak(F, w) })) : [] }; },
-    tpHit: (x, y) => tpHit(x, y) };
+    tpHit: (x, y) => tpHit(x, y),
+    // «Слой от Anthropic» (ant235.js): its state on screen, for tests/ant235_page.mjs
+    ant: () => antState(V && V.ctx && V.ctx.F) };
   initPanel24();
   // the address: #date=2025-12-17 (a history day) &inst=NQ &session=RDR &at=11:50 (replay) &ev=X &mode=path
   //              &area=3:6[:b0:b1] (price cells [3, 6) x time cells [b0, b1)) &hist=1 (details open)

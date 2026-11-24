@@ -2191,6 +2191,88 @@ def ref_tp_depth_set(fam, bars, tick, cut):
     return out
 
 
+# ---------------------------------------------------------------------------------------------------------------------
+# «Слой от Anthropic» on screen 23.5 — the candidate DR-LAB-ANT-0.1 (integration/candidates/registry/97-ant-layer.yaml,
+# meaning/28-sloj-ot-anthropic.md). Claude's proposal of 22.11.2026, asked for by the operator as a layer to switch on and
+# off over the original 23.5; PROPOSED, not accepted. Its numbers live in the candidate edition DR-LAB-CANDIDATES-1 and
+# are verified through the candidate gate (lab/server.py routes EST:ANT-* there); the accepted registry does not know them.
+# ---------------------------------------------------------------------------------------------------------------------
+def ref_ant_today(fam, bars, tick, cut):
+    """Today at the common clock cut (the confirmation family): today's closed M5 after the activation up to the cut
+    (never past the block end), in directed ticks. None while the prefix is incomplete. Returns the cut, the deepest low
+    and the 15-minute cell of its first M5, the highest high, today's IDR width and whether no close went beyond
+    today's opposite DR (the DR still whole)."""
+    today, sch = fam["today"], fam["schedule"]
+    if fam["view"] != "conf" or today.get("c0") is None or today.get("drL") is None: return None
+    d, act, cut = today["side"], today["c0"], min(int(cut), sch["end"])
+    tk = lambda p: int(round(p / tick))
+    e_t, w_t = tk(today["idrH"] if d == 1 else today["idrL"]), tk(today["idrH"] - today["idrL"])
+    opp = d * (tk(today["drL"] if d == 1 else today["drH"]) - e_t)
+    have = {int(b[0]) + 5: b for b in bars}
+    rows = []
+    for T in range(act + 5, cut + 1, 5):
+        b = have.get(T)
+        if b is None: return None
+        lo, hi = (b[3], b[2]) if d == 1 else (b[2], b[3])
+        rows.append((T, d * (tk(lo) - e_t), d * (tk(hi) - e_t), d * (tk(b[4]) - e_t)))
+    if not rows or w_t <= 0: return None
+    j = min(range(len(rows)), key=lambda i: (rows[i][1], i))
+    return dict(cut=cut, r=rows[j][1], b=(rows[j][0] - 5 - sch["formed"]) // 15, x=max(r[2] for r in rows), w=w_t,
+                intact=all(r[3] >= opp for r in rows))
+
+
+def ref_ant_like_now(fam, bars, tick, cut, b0, b1):
+    """CS:ANT-LIKE-NOW-1: the members of the confirmation family that at the common clock cut were like today — eligible
+    as in NOW-1.0 and CS:TP-DEPTH-AT-CUT-1 (own activation before the cut, no whole M5 missing up to it, no close beyond
+    the own opposite DR up to it), the first M5 of their deepest low after the activation up to the cut in the window
+    [b0, b1) of T's clock (DR-LAB-TP-2.0, tp-2.0) that holds today's, their highest high up to the cut within a quarter of
+    the IDR width of today's (the tolerance of the NOW-1.0 matcher M1X; exact, integers). Returns (today, members), or
+    (None, why) when the set is not defined at this cut:
+    no today's state (incomplete prefix), today's DR already broken, today's deepest point not in [b0, b1), or [b0, b1)
+    not a window of T's clock re-derived from the family."""
+    t = ref_ant_today(fam, bars, tick, cut)
+    if t is None: return None, "no today's state at this cut (incomplete prefix or no activation)"
+    if not t["intact"]: return None, "today's DR is already broken at this cut"
+    if not b0 <= t["b"] < b1: return None, f"today's deepest point (cell {t['b']}) is not in the window [{b0}, {b1})"
+    grid, formed, end, M = fam["grid"], fam["schedule"]["formed"], fam["schedule"]["end"], fam["members"]
+    win = (fam["key"]["window"][0] - formed) // 15
+    clock = ref_tp_clock([m["R"] for m in M if m.get("outcome") == "held"], formed, win, end, len(M))
+    if [b0, b1] not in [W for W in clock["windows"].values() if W]: return None, f"[{b0}, {b1}) is not a window of T's clock"
+    out = []
+    for m in M:
+        J = [j for j, T in enumerate(grid) if m["act"] < T <= t["cut"]]
+        pre = [m["path"][j] for j in J]
+        if not pre or any(q is None for q in pre) or any(q[2] < m["oppv"] for q in pre): continue
+        i = min(range(len(pre)), key=lambda i: (pre[i][0], i))
+        if not b0 <= (grid[J[i]] - 5 - formed) // 15 < b1: continue
+        if not _near(max(q[1] for q in pre), m["w"], t["x"], t["w"], 1, 4): continue
+        out.append(m)
+    return t, out
+
+
+def ref_ant_reach_before_break(path, grid, cut, end, k, w, oppv):
+    """OUT:ANT-REACH-BEFORE-BREAK-1 for one member: over the M5 closing after the common cut (its M5 excluded) up to
+    the block end, an M5 high at the 0.1-SD cell k or further (10 high >= k w) before the first own M5 that closes
+    beyond the own opposite DR (that M5 does not count): YES; the DR broke first or the block ended: NO; a missing M5
+    before the answer: UNKNOWN (a break could hide in it)."""
+    gap = False
+    for j in _horizon(grid, cut, end):
+        q = path[j]
+        if q is None: gap = True; continue
+        if q[2] < oppv: return "unknown" if gap else "no"
+        if 10 * q[1] >= k * w: return "unknown" if gap else "yes"
+    return "unknown" if gap else "no"
+
+
+def ref_ant_true_in_window(m, formed, b0, b1):
+    """OUT:ANT-TRUE-IN-WINDOW-1 for one member: the condition of the window's levels «дошли 70 % / 50 %» (CS:TP-WINDOW-1):
+    YES — DR held to the block end and the R before the top known with its first M5 in [b0, b1); UNKNOWN — DR outcome
+    unknown, or DR held and R before the top unknown; NO — every other case."""
+    o, R = m.get("outcome"), m["R"]
+    if o == "unknown" or (o == "held" and R["s"] == "unknown"): return "unknown"
+    return "yes" if o == "held" and R["s"] == "known" and b0 <= (R["t"] - formed) // 15 < b1 else "no"
+
+
 def verify_passports(fam, bars, tick, passports):
     """Each page passport {estimand, params, yes_count, unknown_count, no_event_count, N} recomputed from the family
     members by the reference definitions. Returns the mismatches."""
@@ -2234,6 +2316,17 @@ def verify_passports(fam, bars, tick, passports):
                 if Dt is None: out.append(dict(id=p.get("id"), estimand=e, error="no set at this cut (incomplete prefix or no activation)")); continue
                 cat = {"HELD": "held", "BROKEN": "broken", "UNKNOWN": "unknown"}.get(a["category"])
                 want = (len(Dt) if a["category"] == "ALL" else sum(1 for m in Dt if m.get("outcome") == cat),)
+            elif e in ("EST:ANT-REACH-AHEAD", "EST:ANT-COND-WINDOW"):
+                # the candidate layer (DR-LAB-ANT-0.1): only the candidate gate registers these estimands
+                t, Ct = ref_ant_like_now(fam, bars, tick, int(a["cut"]), int(a["b0"]), int(a["b1"]))
+                if t is None: out.append(dict(id=p.get("id"), estimand=e, error=Ct, params=a)); continue
+                if e == "EST:ANT-REACH-AHEAD":
+                    k = int(a["k"])
+                    if k <= ref_cell(t["x"], t["w"]): out.append(dict(id=p.get("id"), estimand=e, error=f"level {k} is not above today's top so far", params=a)); continue
+                    res = [ref_ant_reach_before_break(m["path"], grid, t["cut"], end, k, m["w"], m["oppv"]) for m in Ct]
+                else:
+                    res = [ref_ant_true_in_window(m, formed, int(a["b0"]), int(a["b1"])) for m in Ct]
+                want = (res.count("yes"), res.count("unknown"), res.count("no"))
             elif e == "EST:B-DR":
                 want = (sum(1 for m in M if m.get("outcome") == a["category"]),)
             elif e == "EST:B-ORDER":

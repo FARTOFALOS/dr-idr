@@ -47,6 +47,7 @@
     out.push('<div class="p21-h"><span title="' + esc(ttl) + '">' + (F0.brk ? 'Семья слома' : 'Семья') + ' · ' + esc(F0.cond) + '</span><span>' + (sl >= F0.end ? 'блок закончен' : 'после ' + clk(sl)) + '</span></div>');
     if (s.failed) out.push(viewSwitch(s));
     if (F0.out) out.push(outcomeHtml(F0));
+    if (F._tp && antOn()) out.push(antPanel(F, ctx));                 // «Слой от Anthropic» (ant235.js): first, while it is on
     if (F._tp) out.push(tpPanel(F, ctx));
     const cellsFirst = st.mode === 'bounds' && F._mx && mxCellsOn();   // the layer «Клетки»: «какую клетку выбрать» stands first, under the DR
     if (cellsFirst) out.push(zonesHtml(F, ctx));

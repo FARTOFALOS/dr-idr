@@ -1,5 +1,6 @@
 {
  "case_sets": {
+  "CS:ANT-LIKE-NOW-1": "MATCHED_AT_CUT",
   "CS:C-G": "HISTORICAL_UNIVERSE",
   "CS:C-POS": "MATCHED_AT_CUT",
   "CS:C-RISK": "MATCHED_AT_CUT",
@@ -23,8 +24,36 @@
   "CS:UNIVERSE-1": "HISTORICAL_UNIVERSE",
   "CS:ZM3-STUDY-1": "RETROSPECTIVE_RESEARCH"
  },
+ "cforms": {},
  "edition": "DR-LAB-CANDIDATES-1",
  "estimands": {
+  "EST:ANT-COND-WINDOW": {
+   "measure": "SHARE",
+   "params": [
+    "cut",
+    "b0",
+    "b1"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:ANT-LIKE-NOW-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
+  "EST:ANT-REACH-AHEAD": {
+   "measure": "SHARE",
+   "params": [
+    "cut",
+    "b0",
+    "b1",
+    "k"
+   ],
+   "profile": "PROFILE:BASE-24",
+   "q4": [
+    "CS:ANT-LIKE-NOW-1"
+   ],
+   "unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE"
+  },
   "EST:B-CLOCK-PEAK-R": {
    "measure": "SHARE",
    "params": [
@@ -1811,6 +1840,95 @@
   }
  },
  "forms": {
+  "EST:ANT-COND-WINDOW": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:ANT-COND-WINDOW",
+   "labels": {
+    "cond": {
+     "ANY": "если true · {w}"
+    },
+    "note": {
+     "ANY": "Уровни окна {w} — {levels} — верны, если DR устоит и откат до вершины останется в {w}"
+    },
+    "note_none": {
+     "ANY": "Уровней окна {w} «дошли 70 % / 50 %» сейчас нет"
+    },
+    "passed": {
+     "ANY": "пройден"
+    },
+    "row": {
+     "ANY": "так закончились: true и откат в {w}"
+    },
+    "row_title": {
+     "ANY": "Уровни окна {w} «дошли 70 % / 50 %» посчитаны по сессиям, где DR устоял и откат до вершины был в {w}. Из {n} похожих на сегодня к {cut} так закончились {yes}; DR сломан или откат до вершины в другом окне — {no}; неизвестно {unknown}. История, не прогноз."
+    }
+   },
+   "value_form": "POINT"
+  },
+  "EST:ANT-REACH-AHEAD": {
+   "claim_class": "ConditionalDescriptiveClaim",
+   "id": "CF:ANT-REACH-AHEAD",
+   "labels": {
+    "broken": {
+     "ANY": "DR сегодня уже сломан — уровни «после» не считаются."
+    },
+    "check": {
+     "ANY": "Проверка на истории NQ, ES, YM 2016–2025 (семьи по дню недели; каждый день видит только прежние дни): линия 70 % сбылась в 66 % случаев, линия 50 % — в 51 %; уровни окна 23.5, прочитанные в тот же момент, — в 41 % и 29 %. Это гипотеза, оператор её не принимал."
+    },
+    "ended": {
+     "ANY": "Блок закончился — уровней «после» нет."
+    },
+    "few": {
+     "ANY": "мало сессий: n={n}"
+    },
+    "head": {
+     "ANY": "Слой от Anthropic · после {cut}"
+    },
+    "head_r": {
+     "ANY": "из похожих"
+    },
+    "head_title": {
+     "ANY": "Предложение Claude от 22.11.2026 — кандидат, оператор его не принимал. Похожие на сегодня — сессии этой семьи, которые к {cut} были как сегодня: DR цел, самая глубокая точка в том же окне, вершина пока там же, где сегодня (±0,25 SD). Строки — сколько из них после {cut} дошли до уровня раньше слома своего DR. История, не прогноз. Кнопка «Слой от Anthropic» ещё раз — 23.5 как было."
+    },
+    "level": {
+     "ANY": "{q} % похожих — до {lvl} SD"
+    },
+    "level_none": {
+     "ANY": "{q} % похожих — выше сегодняшней вершины такого уровня нет"
+    },
+    "like": {
+     "ANY": "к {cut} как сегодня — {n} сессий: DR цел, самая глубокая точка в {w} ({t0}–{t1}), вершина там же, где сегодня ({top} SD ± 0,25)"
+    },
+    "line_q": {
+     "ANY": "дошли {q} % · {lvl}"
+    },
+    "line_when": {
+     "ANY": "после {cut}"
+    },
+    "none": {
+     "ANY": "к {cut} как сегодня не было ни одной сессии семьи"
+    },
+    "nowin": {
+     "ANY": "Сегодняшняя самая глубокая точка вне окон часов отката — слой не считается."
+    },
+    "row": {
+     "ANY": "дошли до {lvl} SD"
+    },
+    "row_title": {
+     "ANY": "Из {n} похожих на сегодня к {cut}: после {cut} до {lvl} SD или дальше дошли {yes} раньше слома своего DR; не дошли {no}; неизвестно {unknown} (пропущенные M5). История, не прогноз."
+    },
+    "step": {
+     "ANY": "шаг {step} SD"
+    },
+    "thin": {
+     "ANY": "похожих меньше {need} (5 % семьи, не меньше 4) — линии 70 % и 50 % не рисуются"
+    },
+    "wait": {
+     "ANY": "Слой ждёт сегодняшнюю самую глубокую точку после подтверждения."
+    }
+   },
+   "value_form": "POINT"
+  },
   "EST:B-CLOCK-PEAK-R": {
    "claim_class": "DescriptiveClaim",
    "id": "CF:B-CLOCK-PEAK-R",
@@ -3661,5 +3779,5 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "d89730346eb40993"
+ "registry_hash": "3edcc2e55c63a769"
 }

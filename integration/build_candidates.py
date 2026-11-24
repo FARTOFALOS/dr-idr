@@ -51,6 +51,8 @@ def main():
     changed_enums['HorizonEnd']=dict(spec['enums']['HorizonEnd'])
     changed_enums['HorizonEnd']['permissible_values']=dict(spec['enums']['HorizonEnd']['permissible_values'])
     changed_enums['HorizonEnd']['permissible_values']['BEFORE_FIRST_M5_OF_FINAL_X']={'description':'M5 opening before the first M5 of the final X; that M5 is not looked into'}
+    # «Слой от Anthropic» (DR-LAB-ANT-0.1, 22.11.2026, screen 23.5 only): a level reached before the own DR broke
+    changed_enums['HorizonEnd']['permissible_values']['BEFORE_OWN_DR_BREAK_CLOSE']={'description':'M5 closing before the first own M5 that closes beyond the own opposite DR (that M5 not counted), at the latest the block end'}
     dump(HERE/'schema.yaml',dict(id='https://dr-lab.local/candidates',name='dr_lab_candidates',
         imports=['../../contract/schema/dr_lab_sc'],enums=changed_enums))
     builder.SCHEMA=HERE/'schema.yaml'; builder.REG_DIR=HERE/'registry'; builder.OUT=HERE/'build'

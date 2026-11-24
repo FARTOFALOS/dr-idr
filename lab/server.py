@@ -225,8 +225,18 @@ class Handler(SimpleHTTPRequestHandler):
             if fam.get('status') != 'ok':
                 return self.json({'status': fam.get('status'), 'mismatches': [], 'checked': 0})
             day = scene24.day_view(inst, date)
-            bad = contract.verify_passports(fam, day.get('bars') or [], float(day.get('tick') or 0.25), req.get('passports') or [])
-            return self.json({'status': 'ok', 'snapshot_id': fam['snapshot_id'], 'checked': len(req.get('passports') or []), 'mismatches': bad})
+            passports = req.get('passports') or []
+            bars, tick = day.get('bars') or [], float(day.get('tick') or 0.25)
+            # «Слой от Anthropic» (candidate DR-LAB-ANT-0.1): its estimands exist only in the candidate edition, so its
+            # passports are recomputed by the candidate gate (the same reference code, the candidate registry)
+            ant = [p for p in passports if str(p.get('estimand') or '').startswith('EST:ANT-')]
+            bad = contract.verify_passports(fam, bars, tick, [p for p in passports if p not in ant])
+            if ant and INTEGRATION:
+                import integration24
+                bad += integration24.review_gate().verify_passports(fam, bars, tick, ant)
+            elif ant:
+                bad += [dict(id=p.get('id'), estimand=p.get('estimand'), error='a candidate number: this server runs without --integration') for p in ant]
+            return self.json({'status': 'ok', 'snapshot_id': fam['snapshot_id'], 'checked': len(passports), 'mismatches': bad})
         except (ValueError, TypeError) as exc:
             self.json({'error': str(exc)}, 400)
         except Exception:

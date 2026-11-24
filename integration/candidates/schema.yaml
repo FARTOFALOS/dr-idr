@@ -129,6 +129,9 @@
     "NOT_APPLICABLE": {},
     "BEFORE_FIRST_M5_OF_FINAL_X": {
      "description": "M5 opening before the first M5 of the final X; that M5 is not looked into"
+    },
+    "BEFORE_OWN_DR_BREAK_CLOSE": {
+     "description": "M5 closing before the first own M5 that closes beyond the own opposite DR (that M5 not counted), at the latest the block end"
     }
    }
   }

@@ -632,6 +632,32 @@
     "undetermined_rule": "Unknown outcome stays in the support; fewer than 20 total or known outcomes withholds number and conditional geometry",
     "version": "1.0",
     "weekday_scope": "ALL_WEEKDAYS"
+   },
+   {
+    "comparison": "CMP:ANT-LIKE-NOW-1",
+    "condition_availability": "PREFIX_AT_CUT",
+    "condition_ru": "к часу t: своя активация раньше, нет пропущенных M5, DR ещё цел, самая глубокая точка после активации — в том же окне часов отката, что сегодняшняя, а вершина пока там же, где сегодняшняя (±¼ ширины IDR, как в «Сейчас»)",
+    "grounds": "PROPOSAL",
+    "history_rule": "the members of the confirmation family eligible at the common clock cut t (own activation before t, no whole M5 missing up to t, no close beyond the own opposite DR up to t) whose deepest low after the own activation up to t has its first M5 in the window [b0, b1) of T's clock (DR-LAB-TP-2.0, tp-2.0, re-derived from the family) that holds today's, and whose highest high after the own activation up to t is within a quarter of the IDR width of today's (the tolerance of the NOW-1.0 matcher M1X), in IDR widths, exactly in integers; today's DR whole at t",
+    "id": "CS:ANT-LIKE-NOW-1",
+    "live_use": "PERMITTED",
+    "parent": [
+     "CS:F-CONF-1",
+     "CS:F-CONF-ALL-1"
+    ],
+    "profile": "PROFILE:BASE-24",
+    "role": "MATCHED_AT_CUT",
+    "sc_ref": [
+     "H1",
+     "H3",
+     "C1"
+    ],
+    "source_refs": [
+     "SRC:ANT-REQUEST-2211",
+     "SRC:ANT-LAYER-0.1"
+    ],
+    "title_ru": "сессии семьи, которые к этому часу были как сегодня",
+    "version": "1"
    }
   ],
   "claim_forms": [
@@ -5052,6 +5078,211 @@
     "subject_ru": "вся фиксированная семья F; локальный откат до обновления",
     "value_form": "BOUNDS_IF_UNKNOWN",
     "version": "1.0"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "к общему часовому срезу t: своя активация раньше, нет пропущенных M5, DR ещё цел, самая глубокая точка после активации — в том же окне часов отката, что сегодняшняя, вершина пока там же, где сегодняшняя (±¼ ширины IDR)",
+    "estimand": "EST:ANT-REACH-AHEAD",
+    "forbidden_readings_ru": [
+     "вероятность дойти сегодня",
+     "цель сделки",
+     "уровень стопа",
+     "сигнал входа или выхода",
+     "доля всей семьи"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "CF:ANT-REACH-AHEAD",
+    "labels": [
+     {
+      "key": "head",
+      "surface": "PANEL",
+      "text_ru": "Слой от Anthropic · после {cut}",
+      "view": "ANY"
+     },
+     {
+      "key": "head_title",
+      "surface": "PANEL",
+      "text_ru": "Предложение Claude от 22.11.2026 — кандидат, оператор его не принимал. Похожие на сегодня — сессии этой семьи, которые к {cut} были как сегодня: DR цел, самая глубокая точка в том же окне, вершина пока там же, где сегодня (±0,25 SD). Строки — сколько из них после {cut} дошли до уровня раньше слома своего DR. История, не прогноз. Кнопка «Слой от Anthropic» ещё раз — 23.5 как было.",
+      "view": "ANY"
+     },
+     {
+      "key": "head_r",
+      "surface": "PANEL",
+      "text_ru": "из похожих",
+      "view": "ANY"
+     },
+     {
+      "key": "like",
+      "surface": "PANEL",
+      "text_ru": "к {cut} как сегодня — {n} сессий: DR цел, самая глубокая точка в {w} ({t0}–{t1}), вершина там же, где сегодня ({top} SD ± 0,25)",
+      "view": "ANY"
+     },
+     {
+      "key": "few",
+      "surface": "PANEL",
+      "text_ru": "мало сессий: n={n}",
+      "view": "ANY"
+     },
+     {
+      "key": "none",
+      "surface": "PANEL",
+      "text_ru": "к {cut} как сегодня не было ни одной сессии семьи",
+      "view": "ANY"
+     },
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "дошли до {lvl} SD",
+      "view": "ANY"
+     },
+     {
+      "key": "row_title",
+      "surface": "PANEL",
+      "text_ru": "Из {n} похожих на сегодня к {cut}: после {cut} до {lvl} SD или дальше дошли {yes} раньше слома своего DR; не дошли {no}; неизвестно {unknown} (пропущенные M5). История, не прогноз.",
+      "view": "ANY"
+     },
+     {
+      "key": "level",
+      "surface": "PANEL",
+      "text_ru": "{q} % похожих — до {lvl} SD",
+      "view": "ANY"
+     },
+     {
+      "key": "level_none",
+      "surface": "PANEL",
+      "text_ru": "{q} % похожих — выше сегодняшней вершины такого уровня нет",
+      "view": "ANY"
+     },
+     {
+      "key": "thin",
+      "surface": "PANEL",
+      "text_ru": "похожих меньше {need} (5 % семьи, не меньше 4) — линии 70 % и 50 % не рисуются",
+      "view": "ANY"
+     },
+     {
+      "key": "step",
+      "surface": "PANEL",
+      "text_ru": "шаг {step} SD",
+      "view": "ANY"
+     },
+     {
+      "key": "wait",
+      "surface": "PANEL",
+      "text_ru": "Слой ждёт сегодняшнюю самую глубокую точку после подтверждения.",
+      "view": "ANY"
+     },
+     {
+      "key": "broken",
+      "surface": "PANEL",
+      "text_ru": "DR сегодня уже сломан — уровни «после» не считаются.",
+      "view": "ANY"
+     },
+     {
+      "key": "nowin",
+      "surface": "PANEL",
+      "text_ru": "Сегодняшняя самая глубокая точка вне окон часов отката — слой не считается.",
+      "view": "ANY"
+     },
+     {
+      "key": "ended",
+      "surface": "PANEL",
+      "text_ru": "Блок закончился — уровней «после» нет.",
+      "view": "ANY"
+     },
+     {
+      "key": "line_q",
+      "surface": "CANVAS",
+      "text_ru": "дошли {q} % · {lvl}",
+      "view": "ANY"
+     },
+     {
+      "key": "line_when",
+      "surface": "CANVAS",
+      "text_ru": "после {cut}",
+      "view": "ANY"
+     },
+     {
+      "key": "check",
+      "surface": "PANEL",
+      "text_ru": "Проверка на истории NQ, ES, YM 2016–2025 (семьи по дню недели; каждый день видит только прежние дни): линия 70 % сбылась в 66 % случаев, линия 50 % — в 51 %; уровни окна 23.5, прочитанные в тот же момент, — в 41 % и 29 %. Это гипотеза, оператор её не принимал.",
+      "view": "ANY"
+     }
+    ],
+    "note": "DR-LAB-ANT-0.1, Claude 22.11.2026: the operator asked for the layer to compare it with the original 23.5 by eye; the definitions are not accepted",
+    "price_transfer": "M0_TODAY_EDGE",
+    "sc_ref": [
+     "C1",
+     "H3",
+     "K33"
+    ],
+    "statement_ru": "Из {n} сессий семьи, которые к {cut} были как сегодня, после {cut} до {lvl} SD или дальше дошли {yes} раньше слома своего DR, не дошли {no}, неизвестно у {unknown}. Это история, не прогноз сегодняшнего дня.",
+    "subject_ru": "сессии семьи, которые к этому часу были как сегодня",
+    "value_form": "POINT",
+    "version": "1"
+   },
+   {
+    "acceptance": "PROPOSED_BY_EXECUTOR",
+    "claim_class": "ConditionalDescriptiveClaim",
+    "condition_ru": "к общему часовому срезу t: своя активация раньше, нет пропущенных M5, DR ещё цел, самая глубокая точка после активации — в том же окне часов отката, что сегодняшняя, вершина пока там же, где сегодняшняя (±¼ ширины IDR)",
+    "estimand": "EST:ANT-COND-WINDOW",
+    "forbidden_readings_ru": [
+     "вероятность, что DR сегодня устоит",
+     "доля всей семьи",
+     "стоп удержится",
+     "сигнал входа или выхода"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "CF:ANT-COND-WINDOW",
+    "labels": [
+     {
+      "key": "row",
+      "surface": "PANEL",
+      "text_ru": "так закончились: true и откат в {w}",
+      "view": "ANY"
+     },
+     {
+      "key": "row_title",
+      "surface": "PANEL",
+      "text_ru": "Уровни окна {w} «дошли 70 % / 50 %» посчитаны по сессиям, где DR устоял и откат до вершины был в {w}. Из {n} похожих на сегодня к {cut} так закончились {yes}; DR сломан или откат до вершины в другом окне — {no}; неизвестно {unknown}. История, не прогноз.",
+      "view": "ANY"
+     },
+     {
+      "key": "note",
+      "surface": "PANEL",
+      "text_ru": "Уровни окна {w} — {levels} — верны, если DR устоит и откат до вершины останется в {w}",
+      "view": "ANY"
+     },
+     {
+      "key": "note_none",
+      "surface": "PANEL",
+      "text_ru": "Уровней окна {w} «дошли 70 % / 50 %» сейчас нет",
+      "view": "ANY"
+     },
+     {
+      "key": "cond",
+      "surface": "CANVAS",
+      "text_ru": "если true · {w}",
+      "view": "ANY"
+     },
+     {
+      "key": "passed",
+      "surface": "CANVAS",
+      "text_ru": "пройден",
+      "view": "ANY"
+     }
+    ],
+    "note": "DR-LAB-ANT-0.1, Claude 22.11.2026: the operator asked for the layer to compare it with the original 23.5 by eye; the definitions are not accepted",
+    "price_transfer": "NONE",
+    "sc_ref": [
+     "C1",
+     "H3",
+     "K33"
+    ],
+    "statement_ru": "Из {n} сессий семьи, которые к {cut} были как сегодня, DR устоял и откат до вершины был в окне {w} у {yes}; иначе — у {no}; неизвестно у {unknown}. Уровни окна «дошли 70 % / 50 %» посчитаны только по таким дням. Это история, не прогноз.",
+    "subject_ru": "сессии семьи, которые к этому часу были как сегодня",
+    "value_form": "POINT",
+    "version": "1"
    }
   ],
   "comparisons": [
@@ -5217,6 +5448,28 @@
     "title_ru": "«стоят там же» — близкое положение close на общих часах; прежние посещения места не исключают",
     "tolerance": "|u_hist - u_today| <= 1/4 inclusive, exact in integers: 4 |v_m w_t - v_t w_m| <= w_m w_t (lab/now24.py::_near); written down before the measurements (screens 21-22, PRE-24), never widened",
     "version": "1.0",
+    "weights": "NONE"
+   },
+   {
+    "alignment": "COMMON_SESSION_CLOCK",
+    "feature_availability": "PREFIX_AT_CUT",
+    "features": [
+     "eligible at t as in NOW-1.0 (lab/contract.py::ref_prefix with the own opposite DR)",
+     "w(t): the 15-minute cell of the first M5 of the minimum directed low after the own activation over the M5 closed by t lies in [b0, b1), the window of T's clock that holds today's",
+     "x(t): the maximum directed high after the own activation over the M5 closed by t; 4 |x_s(t) w_today - x_today(t) w_s| <= w_s w_today (exact, integers; the tolerance of NOW-1.0 M1X)"
+    ],
+    "frozen": true,
+    "grounds": "PROPOSAL",
+    "id": "CMP:ANT-LIKE-NOW-1",
+    "sc_ref": [
+     "H3",
+     "C1"
+    ],
+    "source_refs": [
+     "SRC:ANT-LAYER-0.1"
+    ],
+    "title_ru": "как сегодня к тому же часу",
+    "version": "1",
     "weights": "NONE"
    }
   ],
@@ -11280,6 +11533,99 @@
      "SRC:TIME-SD-235"
     ],
     "version": "1.0"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "EST:ANT-REACH-AHEAD",
+    "parameters": [
+     {
+      "meaning_ru": "общий часовой срез t — закрытие последней закрытой M5",
+      "name": "cut",
+      "parameter_kind": "CUT"
+     },
+     {
+      "meaning_ru": "первая 15-минутная клетка окна часов отката T, где сегодняшняя самая глубокая точка",
+      "name": "b0",
+      "parameter_kind": "TIME_WINDOW_CELLS"
+     },
+     {
+      "meaning_ru": "клетка после этого окна",
+      "name": "b1",
+      "parameter_kind": "TIME_WINDOW_CELLS"
+     },
+     {
+      "meaning_ru": "уровень k/10 SD от края IDR — клетка цены выше сегодняшней вершины к t",
+      "name": "k",
+      "parameter_kind": "PRICE_CELL"
+     }
+    ],
+    "profile": "PROFILE:BASE-24",
+    "q1_formalised_part_ru": "среди сессий семьи, похожих на сегодня к срезу t (CS:ANT-LIKE-NOW-1, окно [b0, b1)), — сколько после t дошли до уровня k/10 SD (максимум M5 в клетке k или дальше) раньше слома своего DR; уровень k — выше сегодняшней вершины к t",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION_AT_CUT",
+    "q4_case_set": [
+     "CS:ANT-LIKE-NOW-1"
+    ],
+    "q4_denominator": "N_MATCH_AT_CUT",
+    "q5_outcome": "OUT:ANT-REACH-BEFORE-BREAK-1",
+    "q5_region": "REG:LEVEL-1",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "отбор — по M5, закрытым к срезу t (общие часы ET); событие — M5, закрывшиеся после t, до первой M5 с закрытием за своим противоположным DR (она не входит), не позже конца блока H",
+    "q7_measure": "SHARE",
+    "q8_order_ru": "дошли + не дошли + неизвестно = число похожих; доля «дошли» не растёт с уровнем; при наборе меньше 20 — пометка «мало сессий: n=…», набор не расширяется; линии 70 % и 50 % — только при наборе не меньше порога массы TP-2.0 (5 % семьи, не меньше 4)",
+    "q8_unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE",
+    "q8_weights": "NONE",
+    "question": "Q:ANT-REACH-AHEAD",
+    "sc_ref": [
+     "T1",
+     "C1",
+     "H3"
+    ],
+    "version": "1"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "EST:ANT-COND-WINDOW",
+    "parameters": [
+     {
+      "meaning_ru": "общий часовой срез t — закрытие последней закрытой M5",
+      "name": "cut",
+      "parameter_kind": "CUT"
+     },
+     {
+      "meaning_ru": "первая 15-минутная клетка окна часов отката T, где сегодняшняя самая глубокая точка",
+      "name": "b0",
+      "parameter_kind": "TIME_WINDOW_CELLS"
+     },
+     {
+      "meaning_ru": "клетка после этого окна",
+      "name": "b1",
+      "parameter_kind": "TIME_WINDOW_CELLS"
+     }
+    ],
+    "profile": "PROFILE:BASE-24",
+    "q1_formalised_part_ru": "среди сессий семьи, похожих на сегодня к срезу t (CS:ANT-LIKE-NOW-1, окно [b0, b1)), — у скольких DR устоял до конца блока и откат до вершины был в том же окне [b0, b1): условие, при котором верны уровни окна «дошли 70 % / 50 %»",
+    "q2_target": "FIXED_HISTORICAL_SET",
+    "q3_unit": "SESSION_AT_CUT",
+    "q4_case_set": [
+     "CS:ANT-LIKE-NOW-1"
+    ],
+    "q4_denominator": "N_MATCH_AT_CUT",
+    "q5_outcome": "OUT:ANT-TRUE-IN-WINDOW-1",
+    "q5_region": "REG:TIME-WINDOW-1",
+    "q6_cut": "CUT:LAST-CLOSED-M5-1",
+    "q6_time_ru": "отбор — по M5, закрытым к срезу t (общие часы ET); исход DR и откат до вершины — до конца блока H",
+    "q7_measure": "SHARE",
+    "q8_order_ru": "так + иначе + неизвестно = число похожих; при наборе меньше 20 — пометка «мало сессий: n=…», набор не расширяется",
+    "q8_unknown": "UNKNOWN_KEPT_IN_N_NO_COORDINATE",
+    "q8_weights": "NONE",
+    "question": "Q:ANT-COND-WINDOW",
+    "sc_ref": [
+     "T1",
+     "C1",
+     "H3"
+    ],
+    "version": "1"
    }
   ],
   "estimators": [
@@ -11878,6 +12224,26 @@
     ],
     "unknown_handling_ru": "точка n/N; границы [n/N; (n + возможные)/N]; неизвестное не считается отсутствием",
     "version": "1.0"
+   },
+   {
+    "estimands": [
+     "EST:ANT-REACH-AHEAD",
+     "EST:ANT-COND-WINDOW"
+    ],
+    "grounds": "PROPOSAL",
+    "id": "ESTR:ANT-COUNT-1",
+    "implementations": [
+     "design/sozvezdiya-23-5/src/ant235.js::antNow"
+    ],
+    "reference_definition": "lab/contract.py::ref_ant_like_now",
+    "rounding_ru": "один знак",
+    "rule": "COUNT_OVER_N",
+    "sc_ref": [
+     "V0",
+     "V2.1"
+    ],
+    "unknown_handling_ru": "доля = «да» / число похожих; неизвестные (пропущенная M5, неизвестный исход DR или откат) остаются в числе похожих и в «да» не входят; их число — в паспорте и в подсказке строки",
+    "version": "1"
    }
   ],
   "examples": [
@@ -15399,6 +15765,65 @@
     "title_ru": "откат до экстремума сессии (R до X)",
     "uses_case_future_as_label": true,
     "version": "1"
+   },
+   {
+    "components": [
+     "EXISTENCE"
+    ],
+    "contribution": "ONE_BINARY_VOTE",
+    "event": "LEVEL",
+    "grounds": "PROPOSAL",
+    "horizon_end": "BEFORE_OWN_DR_BREAK_CLOSE",
+    "horizon_start": "COMMON_CUT_EXCLUSIVE",
+    "id": "OUT:ANT-REACH-BEFORE-BREAK-1",
+    "implementations": [
+     "design/sozvezdiya-23-5/src/ant235.js::antAhead"
+    ],
+    "projection": "AT_LEVEL_OR_BEYOND",
+    "reference_definition": "lab/contract.py::ref_ant_reach_before_break",
+    "sc_ref": [
+     "P0.1",
+     "P0.2"
+    ],
+    "source_refs": [
+     "SRC:ANT-LAYER-0.1"
+    ],
+    "statuses": "YES: over the M5 closing after the common cut t (its M5 excluded) up to the block end H, an M5 high at the 0.1-SD cell k or further (10 high >= k w) before the first own M5 that closes beyond the own opposite DR (that M5 does not count, its order inside the candle is not looked into); NO: the DR broke first, or the block ended without it; UNKNOWN: a missing M5 before the answer (a break could hide in it)",
+    "tie_rule": "ONE_VOTE_PER_CASE",
+    "title_ru": "дошли до уровня после среза раньше слома DR",
+    "uses_case_future_as_label": true,
+    "version": "1"
+   },
+   {
+    "components": [
+     "CATEGORY",
+     "ENDPOINT",
+     "FIRST_TIME"
+    ],
+    "contribution": "ONE_BINARY_VOTE",
+    "event": "R",
+    "grounds": "PROPOSAL",
+    "horizon_end": "BLOCK_END_CLOSE_INCLUSIVE",
+    "horizon_start": "OWN_ACTIVATION_CLOSE_EXCLUSIVE",
+    "id": "OUT:ANT-TRUE-IN-WINDOW-1",
+    "implementations": [
+     "design/sozvezdiya-23-5/src/ant235.js::antNow"
+    ],
+    "projection": "EXTREME_BEFORE_FINAL_X",
+    "reference_definition": "lab/contract.py::ref_ant_true_in_window",
+    "sc_ref": [
+     "P0.1",
+     "P0.2",
+     "C1"
+    ],
+    "source_refs": [
+     "SRC:ANT-LAYER-0.1"
+    ],
+    "statuses": "YES: DR HELD to the block end and the R before the top (OUT:R-BEFORE-X-1) KNOWN with its first M5 in the window [b0, b1) — the condition of the window's levels «дошли 70 % / 50 %» (DR-LAB-TP-2.0 Ч12, the set T_W); UNKNOWN: DR outcome UNKNOWN, or DR HELD and R before the top UNKNOWN; NO: every other case (DR broken; R before the top in another window or NO_PERIOD)",
+    "tie_rule": "ONE_VOTE_PER_CASE",
+    "title_ru": "DR устоял, и откат до вершины был в окне",
+    "uses_case_future_as_label": true,
+    "version": "1"
    }
   ],
   "profiles": [
@@ -15815,6 +16240,28 @@
     ],
     "scene_ru": "те же эпизоды и их последующие M5 после закрытия M5 дна; посещение области в её собственном окне, одна сессия один голос от полной F",
     "text_ru": "Куда и когда шли те же истории после откатов из выбранного ядра?",
+    "version": "1"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "Q:ANT-REACH-AHEAD",
+    "sc_ref": [
+     "T0",
+     "C1"
+    ],
+    "scene_ru": "из сессий семьи, которые к этому часу были как сегодня (DR цел, самая глубокая точка в том же окне, вершина там же, где сегодня), сколько потом дошли до уровня раньше слома своего DR",
+    "text_ru": "Куда доходили похожие на сегодня сессии после этого часа?",
+    "version": "1"
+   },
+   {
+    "grounds": "PROPOSAL",
+    "id": "Q:ANT-COND-WINDOW",
+    "sc_ref": [
+     "T0",
+     "C1"
+    ],
+    "scene_ru": "из тех же сессий — у скольких DR устоял и откат до вершины был в окне сегодняшнего отката (условие уровней окна «дошли 70 % / 50 %»)",
+    "text_ru": "Часто ли похожие дни заканчивались так, как предполагают уровни окна?",
     "version": "1"
    }
   ],
@@ -16547,6 +16994,30 @@
     ]
    },
    {
+    "document": "meaning/28-sloj-ot-anthropic.md",
+    "grounds": "OPERATOR_REQUIREMENT",
+    "id": "SRC:ANT-REQUEST-2211",
+    "locator": "§1: the operator, live chat 22.11.2026 10:17: «реализуй, просто сделай этот слой все свои реализации, имплементируй конкретно сделай рядом, где у меня сверху область и R … слева еще одну, то есть назови его слой от антропика … если я буду нажимать на эту плашку … я буду видеть, что показывают именно твои предложенные изменения»",
+    "role": "DECISION",
+    "sc_ref": [
+     "§12.5",
+     "§12.6"
+    ]
+   },
+   {
+    "document": "meaning/28-sloj-ot-anthropic.md",
+    "grounds": "PROPOSAL",
+    "id": "SRC:ANT-LAYER-0.1",
+    "locator": "§2-§5: the set CS:ANT-LIKE-NOW-1, the two estimands and their walk-forward check on the operator's history",
+    "role": "DEFINITION",
+    "sc_ref": [
+     "§12.5",
+     "§12.6",
+     "H3",
+     "C1"
+    ]
+   },
+   {
     "document": "meaning/07-cepochka-reshenij.md",
     "grounds": "OPERATOR_REQUIREMENT",
     "id": "SRC:TABLE-CELLS-3010",
@@ -17121,6 +17592,30 @@
     ],
     "validation_kind": "COMPUTATIONAL_INVARIANT",
     "version": "1.1"
+   },
+   {
+    "corpus_ru": "NQ, ES, YM × ADR, ODR, RDR; 7 200 дней 2016–2025 в 264 семьях (ключи — из 40 случайных дат второй половины 2025 на инструмент), 27 659 срезов",
+    "corpus_seen_before": true,
+    "grounds": "RESEARCH_RESULT",
+    "id": "VAL:ANT-WALKFORWARD-2211",
+    "lifecycle": "HYPOTHESIS",
+    "protocol_ru": "каждая сессия 2016–2025 как «сегодня», похожие — только из более ранних дат её семьи (не меньше 40); срезы через 15, 30, 60 и 120 минут после подтверждения; линия q — дальняя клетка, до которой после среза раньше слома DR дошли не меньше q похожих (при похожих не меньше порога массы TP-2.0); «сбылось» — «сегодня» после среза дошло до неё раньше своего слома DR (неизвестные исходы не считаются); для сравнения — уровни окна 23.5 (Ч12), ещё не пройденные к срезу",
+    "result_ru": "линия 70 % стояла в 36 % срезов и сбылась в 66 % (похожие говорили в среднем 75 %); линия 50 % — в 65 % срезов, сбылась в 51 % (говорили 54 %); уровни окна 23.5, прочитанные в тот же момент, сбылись в 41 % (70 %) и 29 % (50 %); долю «так закончились» похожие давали 43–46 %, на деле 49 %; допуск ±¼ по вершине выбран после сравнения с «не выше сегодняшней», ±½ и полосой ½ ниже на той же истории — взят готовый допуск M1X «Сейчас», не подобранный",
+    "runtime_artifact": "device scratch antcal.py, antcal_*near4.json (22.11.2026; built from market data, never committed)",
+    "sc_ref": [
+     "V3"
+    ],
+    "source_refs": [
+     "SRC:ANT-LAYER-0.1"
+    ],
+    "title_ru": "проверка «Слоя от Anthropic» на истории оператора (22.11.2026)",
+    "validates": [
+     "CS:ANT-LIKE-NOW-1",
+     "EST:ANT-REACH-AHEAD",
+     "EST:ANT-COND-WINDOW"
+    ],
+    "validation_kind": "RESEARCH_EXPLORATORY",
+    "version": "0.1"
    }
   ]
  },
@@ -17128,10 +17623,10 @@
   "document": "integration/candidates/SC11-proposal.md",
   "document_sha256_lf": "783064fc5c1445b149300cf4b2d610ec1b9f4ef7bb58cd5311c89c20c0cb450a",
   "edition": "DR-LAB-CANDIDATES-1",
-  "linkml": "1.11.1",
-  "registry_sha256": "d89730346eb4099390a41ee43db1563d111daa062e1a964f6d806b903470ead4",
-  "runtime_spec_sha256": "32f4df78431d890606a09e6f6cbafac88b6967e079342319bf57bee8f76857a0",
-  "schema_sha256_lf": "98472283678606a509922e3891569552242eff17409600226db945baf6dcd173",
+  "linkml": "1.12.1",
+  "registry_sha256": "3edcc2e55c63a7691f045f6d9ad9c98fd127afa9f94f602111b33f0cf4ecd662",
+  "runtime_spec_sha256": "93cc7275a93a5967b22ac3436a60da2b88f2fbb3611207b3af56b849e9e4481d",
+  "schema_sha256_lf": "f9229b5e5a8fd672581da22d2ce6a7e26292e2f868cd09b1c8c38d445d20013c",
   "sources": {
    "contract/schema/dr_lab_sc.yaml": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
    "integration/candidates/SC11-proposal.md": "783064fc5c1445b149300cf4b2d610ec1b9f4ef7bb58cd5311c89c20c0cb450a",
@@ -17147,8 +17642,9 @@
    "integration/candidates/registry/90-pullbacks.yaml": "0bcc119aef1355b385d8378e66fcd2866ccbb97f042dd576069052d64bb44536",
    "integration/candidates/registry/95-time-sd.yaml": "f3fefbcaf6ddfee7e07841991cc5360481ba90c2e5c6ecbc21a8e1f2951e5543",
    "integration/candidates/registry/96-r-before-x.yaml": "01c08ad2bfcb63e3ee26fc6eff5315bb976b72a1fd5f1a45e3bcbf294c4fe2cb",
+   "integration/candidates/registry/97-ant-layer.yaml": "65cfce1353ed03bddd607499517019bd0ad57852c409eb8096ce2cfd5e8ce014",
    "integration/candidates/registry/98-table-cells.yaml": "43c759a9ec9bbb356ac36f4b2711d031cd80e977e25f235fd8ac44e891491172",
-   "integration/candidates/schema.yaml": "98472283678606a509922e3891569552242eff17409600226db945baf6dcd173",
+   "integration/candidates/schema.yaml": "f9229b5e5a8fd672581da22d2ce6a7e26292e2f868cd09b1c8c38d445d20013c",
    "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"
   }
  }

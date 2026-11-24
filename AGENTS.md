@@ -1,6 +1,7 @@
 # DR IDR — entry for agents
 
-**State of this file: 11.11.2026, after the repository cleanup.** Everything here is current. What used to be layered
+**State of this file: 11.11.2026, after the repository cleanup; 22.11 adds the candidate layer «Слой от Anthropic» to the
+23.5 table.** Everything here is current. What used to be layered
 history in this file (TP-1.4, the table time × SD, the 15–21.10 integration updates, the 07.10 baseline) is in the
 decision chain [`meaning/07-cepochka-reshenij.md`](meaning/07-cepochka-reshenij.md), in `docs/DECISIONS.md` and in the
 commit `3847a70` (the last `main` before the cleanup: old designs 1–21, the 29.09–15.10 lenses and studies, the
@@ -36,6 +37,7 @@ it is implemented, §14 where each piece lives and the rules not to break). Chan
 | «Продолжения», «Откаты до обновления» (⚙ → Испытание кандидатов) | candidates, off by default | [integration/README](integration/README.md), [spec/ekran-24/15-otkaty](spec/ekran-24/15-otkaty.md) | `continuations.js`, `pullbacks.js`, `lab/continuations24.py`, `lab/pullbacks24.py` | `tests/continuations24.py`, `tests/pullbacks24.py` |
 | time × SD route (`/api/integration/time-sd`) | superseded 26.10, route kept | [docs/DR-LAB-23-5-TIME-SD](docs/DR-LAB-23-5-TIME-SD.md) | `time_sd235.js`, `lab/time_sd235.py` | `tests/time_sd235.py` |
 | The STD grid | current (operator 11.11) | below | `app.js::gridSide` | — |
+| «Слой от Anthropic» (the button left of «▭ Область · R»; `#ant=1`) | candidate DR-LAB-ANT-0.1 (Claude 22.11, asked for by the operator, not accepted), off at every opening | [meaning/28](meaning/28-sloj-ot-anthropic.md) | `ant235.js`, `lab/contract.py::ref_ant_*`, `integration/candidates/registry/97-ant-layer.yaml` | `tests/ant235.py`, `tests/ant235_page.mjs` |
 
 - **R on 23.5** is the pullback before the session's extreme (operator 29.10): every family request carries `:rpre`
   (`OUT:R-BEFORE-X-1`, reference `lab/contract.py::ref_before_extreme_R`). NOW-1.0 stays on the final R.
