@@ -1,0 +1,117 @@
+diff --git a/design/sozvezdiya-23-5/src/app.js b/design/sozvezdiya-23-5/src/app.js
+index eb29de6..e68e1c0 100755
+--- a/design/sozvezdiya-23-5/src/app.js
++++ b/design/sozvezdiya-23-5/src/app.js
+@@ -3231,9 +3231,61 @@
+     const ba = clampB(Math.floor((V.T(x0) - F.f) / 15)), bb = clampB(Math.floor((V.T(x1) - F.f) / 15));
+     return { k0: Math.min(ka, kb), k1: Math.max(ka, kb) + 1, b0: Math.min(ba, bb), b1: Math.max(ba, bb) + 1 };
+   }
++  // the steady hover (operator 24.11.2026: «когда веду мышь от W1 к W2 по коричневым кластерам, блоки прыгают и
++  // мельтешат»). A place under the mouse (a zone, another window's place) or a window capsule on the band is «heavy»: it
++  // draws its whole time window or switches the price column and the places of X. Inside a place, an STD line within 3.5 px
++  // or a star within 5 px used to take the hover for a few pixels and the place's block vanished and came back; between two
++  // places, or across the 2 px gap between the capsules W1 and W2, the screen flipped to the default window and back. Now a
++  // heavy hover keeps the screen while the mouse is still on it; anything else under the mouse inside it (a line, a star,
++  // an overlapping place) takes over only after the mouse rests there HOLD.stay ms; off it, the next thing (another place,
++  // a capsule, nothing) takes over after HOLD.leave ms. What each hover shows is unchanged; only when it changes.
++  const HOLD = { stay: 300, leave: 150 };
++  const hoverKey = o => JSON.stringify(o && Object.assign({}, o, { q: undefined, l: undefined, v: undefined, P: undefined, same: undefined }));
++  const heavyHover = h => !!h && (h.k === 'tpwin' || h.k === 'tpzone' || (h.k === 'zone' && h.src !== 'strip'));
++  function stillOn(h, x, y) {
++    const inB = b => x >= b[0] && x <= b[0] + b[2] && y >= b[1] && y <= b[1] + b[3];
++    if (h.k === 'zone') { const z = (V.zoneHit || []).find(q => q.ev === h.ev && q.i === h.i); return !!z && (inB(z.box) || inLoops(z.loops, x, y)); }
++    if (h.k === 'tpzone') { const z = (V.tpGhostHit || []).find(q => q.w === h.id && q.i === h.i); return !!z && (inB(z.box) || inLoops(z.loops, x, y)); }
++    if (h.k === 'tpwin') { const c = (V.tpCaps || []).find(q => q.id === h.id); return !!c && inB([c.box[0] - 4, c.box[1] - 6, c.box[2] + 8, c.box[3] + 12]); }
++    return false;
++  }
++  // the place the mouse is in, whatever lighter thing (an STD line, a star, a line of the clock) the hit gives there: hit's
++  // order of places; on the band, the window capsule
++  function placeAt(x, y) {
++    const inB = b => x >= b[0] && x <= b[0] + b[2] && y >= b[1] && y <= b[1] + b[3];
++    if (y > V.plot.h - (V.stripOn ? V.bandOv || 0 : 0)) {           // on the band: the capsule of a window, its row a little wider
++      const c = (V.tpCaps || []).find(q => x >= q.box[0] && x <= q.box[0] + q.box[2] && y >= q.box[1] - 8 && y <= q.box[1] + q.box[3] + 8);
++      return c ? { k: 'tpwin', id: c.id, src: 'strip' } : null;
++    }
++    for (const z of V.zoneHit || []) if (inB(z.box)) return { k: 'zone', ev: z.ev, i: z.i };
++    for (const q of V.tpGhostHit || []) if (inB(q.box)) return { k: 'tpzone', ev: 'R', id: q.w, i: q.i };
++    for (const z of V.zoneHit || []) if (inLoops(z.loops, x, y)) return { k: 'zone', ev: z.ev, i: z.i };
++    for (const q of V.tpGhostHit || []) if (inLoops(q.loops, x, y)) return { k: 'tpzone', ev: 'R', id: q.w, i: q.i };
++    return null;
++  }
++  const steady = { rest: null, restAt: 0, next: null, nextAt: 0, timer: 0, cx: 0, cy: 0 };
++  function steadyHover(raw, x, y) {
++    clearTimeout(steady.timer);
++    const cur = st.hover, now = performance.now(), kr = hoverKey(raw), on = heavyHover(cur) && stillOn(cur, x, y);
++    // what shows without waiting: the heavy hover the mouse is still on, else the place under the mouse, else the hit
++    const base = on ? cur : (!heavyHover(raw) && placeAt(x, y)) || raw;
++    // the hit itself (a line, a star, an overlapping place) wins over that only when the mouse rests on it
++    if (steady.rest !== kr) { steady.rest = kr; steady.restAt = now; }
++    const rested = now - steady.restAt >= HOLD.stay, want = kr === hoverKey(base) || rested ? raw : base, kw = hoverKey(want);
++    let out = want, wait = kr !== hoverKey(base) && !rested ? HOLD.stay - (now - steady.restAt) : Infinity;
++    // off a heavy hover, the next thing takes over only after a short pause (a gap between places or capsules)
++    if (heavyHover(cur) && kw !== hoverKey(cur) && !on) {
++      if (steady.next !== kw) { steady.next = kw; steady.nextAt = now; }
++      if (now - steady.nextAt < HOLD.leave) { out = cur; wait = Math.min(wait, HOLD.leave - (now - steady.nextAt)); }
++    } else steady.next = null;
++    // the mouse may stop here: look again when the wait is over (a move of the mouse in between looks again itself)
++    if (isFinite(wait)) steady.timer = setTimeout(() => { if (st.mx >= 0 && !st.drag) cv.dispatchEvent(new MouseEvent('mousemove', { clientX: steady.cx, clientY: steady.cy })); }, wait + 5);
++    return out;
++  }
+   cv.addEventListener('mousemove', e => {
+     const [x, y] = local(e);
+     st.mx = x; st.my = y;
++    steady.cx = e.clientX; steady.cy = e.clientY;
+     const d = st.drag;
+     if (d) {
+       const dx = x - d.x, dy = y - d.y, F = V.ctx.F;
+@@ -3261,7 +3313,7 @@
+       redraw();
+       return;
+     }
+-    const h = hit(x, y), key = o => JSON.stringify(o && Object.assign({}, o, { q: undefined, l: undefined, v: undefined, P: undefined, same: undefined }));
++    const h = steadyHover(hit(x, y), x, y), key = hoverKey;
+     const was = key(st.hover);
+     st.hover = h && !['paxis', 'taxis', 'stripBg'].includes(h.k) ? h : (h && h.k === 'stripBg' ? h : null);
+     if (st.hover && st.hover.ev) st.ev = st.hover.ev;      // the event in focus: what the panel and the area speak of
+@@ -3271,7 +3323,7 @@
+     showTip(st.hover);
+     if (key(st.hover) !== was) { animStrip(); redraw(true); } else redraw();
+   });
+-  cv.addEventListener('mouseleave', () => { st.mx = -1; st.my = -1; if (!st.drag) { st.hover = null; tip.hidden = true; animStrip(); } redraw(true); });
++  cv.addEventListener('mouseleave', () => { st.mx = -1; st.my = -1; clearTimeout(steady.timer); steady.rest = steady.next = null; if (!st.drag) { st.hover = null; tip.hidden = true; animStrip(); } redraw(true); });
+   cv.addEventListener('mousedown', e => {
+     if (e.button !== 0) return;
+     const [x, y] = local(e), F = V.ctx.F;
+diff --git a/meaning/13-zhurnal-vizualizacii.md b/meaning/13-zhurnal-vizualizacii.md
+index ce8486c..93f3225 100755
+--- a/meaning/13-zhurnal-vizualizacii.md
++++ b/meaning/13-zhurnal-vizualizacii.md
+@@ -1023,6 +1023,28 @@ PRE/ARRIVE включаются в настройках отдельно. В с
+   YM ADR 16.12). Сцена NQ ODR 19.12 на синтетике — слом DR (семья слома, ядро не действует): её 8 проверок падают и
+   без этой правки. `matrix235_page`, `cells235_page` — те же результаты до и после.
+ 
++### 66. 23.5: наведение не мельтешит (24.11.2026)
++
++- **Что видно.** Под мышью показывается то же, что раньше, но картинка больше не дёргается при движении мыши. Место
++  отката (облако) держит свой блок времени, пока мышь внутри облака. Линии STD и звёзды внутри облака его больше не
++  перебивают. Звезда или линия внутри облака под мышью — если задержать на ней мышь около 0,3 с. От W1 к W2 (облака
++  или капсулы в полосе времени) экран переключается один раз, примерно через 0,15 с после того, как мышь ушла с
++  прежнего места. Зазор между капсулами и пустое место между облаками экран не сбрасывают.
++- **Зачем.** Оператор 24.11: «когда веду мышь от W1 к W2 по коричневым кластерам, блоки отката и продолжения по
++  времени расширяются и прыгают… при наведении иногда мельтешит». Причина — порядок попаданий мыши: внутри облака
++  линия STD ближе 3,5 px и звезда ближе 5 px важнее облака, поэтому блок облака пропадал и возвращался через каждые
++  несколько пикселей. Между облаками и в зазоре 2 px между капсулами наведение уходило в пустоту, а экран
++  возвращался к окну по умолчанию. Капсула под мышью переключает колонку цены и места X, отсюда скачки блоков.
++- **Как.** `app.js`: `steadyHover` между `hit` и `st.hover` в `mousemove`, плюс `placeAt`, `stillOn`, `HOLD`
++  (`stay` 300 мс, `leave` 150 мс). Попадания (`hit`), рисунок, числа и щелчки не менялись. Щелчок по-прежнему берёт то,
++  что точно под мышью.
++- **Решил исполнитель [И].** Задержки 300 / 150 мс. «Тяжёлое» наведение — место R/X на графике, место другого окна,
++  капсула окна. Ряд капсул для удержания на 8 px выше и ниже капсулы.
++- **Проверки.** Модель движения мыши, в которой код наведения взят прямо из `app.js` (облака W1/W2 с перекрытием,
++  линии через 40 px, звёзды через 23 px, мышь 0,4 px/мс). Облака W1 → W2: 30 смен картинки до правки, 3 после (W1,
++  W2, пусто). Капсулы W1 → W2 при дрожании руки ±7 px: 14 до, 4 после. Остановка на звезде внутри облака: звезда
++  наводится через 0,3 с. Страничный тест `tests/tp235_page.mjs` в облаке не запускался: нет рыночной ленты.
++
+ ## Решено в интервью, ещё не сделано
+ 
+ - **Подсветка фазы.** Пока откат не сделан, зоны R чуть ярче, после него — зоны X. С 19.10 доступна кандидатом —
