@@ -1,3 +1,0 @@
-# Part 5/8 RIZ BLUE v1.0 (own, 425 lines, v6, behind_chart=true)
-Entities: (1) blue 2X+ zone box (FVG on TF 6–46 min spanned by bodies ≥2× with both edges untouched) — fill color.new(c2x_fill, c2x_tr=90) → #2962FF α.10, border color.new(c2x_brdc, c2x_btr=0) → opaque #2962FF w1; extend right; disappears when a wick takes an edge or body closes through (breaker); deleted when both edges swept. (2) duration label (transparent box as text carrier, e.g. «18м», «2ч46м») text lbl_col (#000000 α.97 now), size normal.
-All colours are inputs (colour + separate transparency int). Hard-coded only the invisible carrier box (black 100% transp) — harmless.

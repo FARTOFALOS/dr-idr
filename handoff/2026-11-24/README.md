@@ -17,8 +17,8 @@
    не меняли. Это точка «как было вечером 24.11», к ней можно вернуться всегда.
 3. **Три PR дня** (#32 цвета, #33 линии 70/50, #34 мельтешение) лежат на GitHub черновиками и локально ветками
    `handoff/pr32-…`, `handoff/pr33-…`, `handoff/pr34-…`. Их содержимое уже есть в рабочей копии; сами PR не слиты.
-4. **Палитра TradingView** — отдельная работа вне этого репозитория: `C:\Users\Admin\Claude\tv-palette` (свой git,
-   тег `baseline`, `tools/restore.mjs`). 23.5 она не трогает.
+4. **Палитра TradingView** — отдельная работа вне этого репозитория, к DR Lab не относится. Указатель — 03, всё
+   остальное — `C:\Users\Admin\Claude\tv-palette\START\README.md`.
 5. **Ничего не пушить и не сливать без слова оператора.**
 
 ## Файлы этой папки
@@ -27,12 +27,11 @@
 |---|---|
 | [01-vetki-i-pr.md](01-vetki-i-pr.md) | Карта веток и PR: что, зачем, коммиты, как проверить, как откатить, конфликты между ними |
 | [02-rabochaya-kopiya.md](02-rabochaya-kopiya.md) | Незакоммиченная работа в рабочей копии: какие правки 24.11, какой тред, файлы, бэкапы `*.bak-*-2411`, откат по частям |
-| [03-tradingview-palitra.md](03-tradingview-palitra.md) | Тёмная палитра TradingView: где лежит, правила, как откатить, что идёт ночью (аудитор) |
+| [03-tradingview-palitra.md](03-tradingview-palitra.md) | Указатель на тёмную палитру TradingView (отдельная работа; для DR не нужна) |
 | [04-pravila-i-resheniya.md](04-pravila-i-resheniya.md) | Решения и правила оператора, которые надо соблюдать |
 | [05-otkrytye-voprosy.md](05-otkrytye-voprosy.md) | Что не решено, не проверено или ждёт оператора |
 | [06-bekapy-i-vosstanovlenie.md](06-bekapy-i-vosstanovlenie.md) | Все бэкапы дня и как восстановиться без облака и без GitHub |
-| `cloud-files/` | Копии файлов, которые треды положили в общую папку облачного проекта (патчи, заметки, спека палитры, превью) |
-| `tv-palette-snapshot/` | Текстовая копия `AGENTS.md`, `manifest.json`, `log.md` из `tv-palette` на момент снимка |
+| `cloud-files/` | Копии файлов из общей папки облачного проекта по 23.5 (патчи цветов и мельтешения, заметка журнала) |
 
 ## Карта одним взглядом
 
@@ -47,7 +46,7 @@ main 6897a8a ──────────────────────�
  ├─ PR #30 usage-23-5, PR #31 trade-journal (23.11, открыты, не тема этого дня)
  └─ (нет на GitHub)                       snapshot/working-copy-2026-11-24 2b40998 (вся рабочая копия 24.11)
                                           handoff-2026-11-24 (эта папка; main + handoff/ + ссылка в AGENTS.md)
-вне репозитория: C:\Users\Admin\Claude\tv-palette (git, без remote) — палитра TradingView
+вне репозитория: C:\Users\Admin\Claude\tv-palette (git, без remote) — палитра TradingView, вход START/README.md
 ```
 
 ## Как начать работу новому агенту
