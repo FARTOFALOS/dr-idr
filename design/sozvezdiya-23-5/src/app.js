@@ -1069,28 +1069,29 @@
     if (st.L.prev) drawPrev(c, ctx);
     if (st.L.vib) drawVib(c, ctx);
     // the corridor of a hovered band first (its prices on the scale), then the link (its time on the axis), then the film
-    if (F && !continuationMode()) { drawHighlight(c, mapCtx); linkOf(mapCtx); }
+    if (F && !continuationMode() && !ancOn()) { drawHighlight(c, mapCtx); linkOf(mapCtx); }
     if (continuationMode()) continuationDraw(c,ctx);
     if (F && st.mode === 'path') drawFilm(c, ctx);
     drawLevels(c, ctx);
     drawReference(c, ctx);
-    if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, cloudCtx); drawMemberPath(c, mapCtx); }
-    if (F && st.mode === 'bounds' && !continuationMode()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
-    if (F && !continuationMode()) drawZones(c, cloudCtx, 'under');
-    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
+    if (F && st.mode === 'bounds' && !ancOn()) { if (st.L.zones) drawClouds(c, cloudCtx); drawMemberPath(c, mapCtx); }
+    if (F && st.mode === 'bounds' && !continuationMode() && !ancOn()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
+    if (F && !continuationMode() && !ancOn()) drawZones(c, cloudCtx, 'under');
+    if (F && F._tp && !continuationMode() && !ancOn()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
+    if (F && ancOn()) ancChart(c, ctx);   // «От этой свечи» (anc235.js, operator 25.11): instead of the places and windows
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);
     if (F && !continuationMode()) drawNowMarks(c, ctx);
     drawPills(c, ctx);
     if (!continuationMode()) drawNow(c, ctx);
-    if (F && !continuationMode()) drawLink(c, mapCtx);
-    if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, cloudCtx);
-    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'over');
-    if (F && st.mode === 'bounds') drawPair(c, mapCtx);
+    if (F && !continuationMode() && !ancOn()) drawLink(c, mapCtx);
+    if (F && st.mode === 'bounds' && st.L.pts && !ancOn()) drawPoints(c, cloudCtx);
+    if (F && F._tp && !continuationMode() && !ancOn()) tpGhosts(c, cloudCtx, 'over');
+    if (F && st.mode === 'bounds' && !ancOn()) drawPair(c, mapCtx);
     if (F) drawSweeps(c, ctx);
-    if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
-    if (F && !continuationMode()) drawArea(c, mapCtx);
+    if (F && !continuationMode() && !ancOn()) drawZones(c, cloudCtx, 'over');
+    if (F && !continuationMode() && !ancOn()) drawArea(c, mapCtx);
     if (F && st.mini) drawMini(c, ctx);
     // the places' name boxes of this frame, for the next frame's lines to break under them (tpReachChart draws first)
     TP_LBL = [...(V.zoneHit || []), ...(V.tpGhostHit || [])].map(q => q.box).filter(Boolean);
@@ -2121,6 +2122,7 @@
     return Math.round(clamp(V.plot.h - yLow - 10, 0, V.plot.h * cfg.bandRise / 100));
   }
   function drawBand(c, ctx) {
+    if (ctx.F && ancOn()) return ancBand(c, ctx);                 // «От этой свечи» (anc235.js): 5-minute columns
     if (ctx.F && ctx.F._tp) return tpBand(c, ctx);                 // TP-1.1: the clock of T and its windows (tp235.js)
     const F = ctx.F, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, N = F.N, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
     // the band's drawing area: its own strip plus the free height above it (operator 2026-10-06: the columns of X and R
@@ -2525,6 +2527,7 @@
     c.restore();
   }
   function drawProj(c, ctx) {
+    if (ancOn()) return ancProj(c, ctx);                            // «От этой свечи» (anc235.js)
     if (st.mode === 'bounds') return drawProjRX(c, ctx);
     const F = ctx.F, A_ = V.proj, W = A_.w - 40, h = hv(), d = projData(ctx);
     c.fillStyle = C.axis; c.fillRect(A_.x, 0, A_.w, A_.h);
@@ -3112,6 +3115,8 @@
     for (const b of dom('mode').querySelectorAll('button')) b.classList.toggle('on', b.dataset.m === st.mode);
     const vw = F ? VW(F) : ctx.s.failed ? 'BRK' : 'CONF', nm = F ? F.names : { R: lbl('FF:PASSPORT-VIEW', 'name_R', null, vw), X: lbl('FF:PASSPORT-VIEW', 'name_X', null, vw) };
     // A freehand area belongs to the event currently in focus. Make that semantic choice explicit before the drag.
+    const ancb = dom('ancb');                                       // «От этой свечи» (anc235.js, operator 25.11)
+    if (ancb) { ancb.classList.toggle('on', ancOn()); ancb.setAttribute('aria-pressed', ancOn() ? 'true' : 'false'); }
     const ab = dom('areab');
     if (ab) { ab.textContent = '▭ Область · ' + st.ev; ab.title = 'Выбрать область ' + st.ev + ' мышью: цена или цена × время; R/X меняется вместе с текущим фокусом'; }
     // R and X are on the chart together (operator 2026-10-01): the toolbar names them, there is no switch
@@ -3354,6 +3359,7 @@
     click(x, y, d);
   });
   function click(x, y, d) {
+    if (ancOn() && ancClick(x, y)) return;                          // «От этой свечи»: the horizon (anc235.js)
     const h = hit(x, y), F = V.ctx.F;
     if (h && (h.k === 'pcell' || h.k === 'pbpcell') && F && st.mode === 'bounds') {        // a click on the price histogram selects its band
       const same = st.area && st.area.k0 === h.k0 && st.area.k1 === h.k1 && st.area.b0 == null && st.area.ev === h.ev;
@@ -3438,6 +3444,7 @@
     else if (t.closest('#mode button')) { st.mode = t.closest('button').dataset.m; st.hover = null; st.pin = null; if(continuationMode()&&!CS.target)st.tool=true; render(true); }
     else if (t.closest('#ev button')) { if (st.mode === 'bounds') { st.ev = t.closest('button').dataset.e; st.hover = null; if (st.pin && st.pin.k === 'pt') st.pin = null; render(true); } }
     else if (t.id === 'areab') { st.tool = !st.tool; render(true); }
+    else if (t.closest('#ancb')) { ANC.on = !ANC.on; ANC.memo = null; st.hover = null; st.pin = null; tip.hidden = true; render(true); }
     else if (t.id === 'refresh21') loadDay(true);
     else if (t.id === 'back') backLive();
     else if (t.id === 'lay') { st.menu = !st.menu; dom('menu').hidden = !st.menu; t.classList.toggle('on', st.menu); dom('cfgp').hidden = true; dom('cfgb').classList.remove('on'); dom('dayp').hidden = true; }

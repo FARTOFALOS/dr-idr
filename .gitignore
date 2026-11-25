@@ -1,5 +1,7 @@
 # built history, live candles, logs: rebuildable, and market data must never be published
 lab/.runtime/
+# «От этой свечи» (23.5): the session library built by lab/anchor235_build.py from the base
+lab/dist/23-5/anchor/
 __pycache__/
 *.pyc
 .DS_Store
