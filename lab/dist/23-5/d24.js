@@ -4828,13 +4828,14 @@
     const F = ctx.F, col = REVIEW && lk.marker ? lk.marker.paint.color : lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
     if (lk.src === 'zone') {
       const [y0, y1] = cellY(F, lk.k0, lk.k1), ya = Math.min(y0, y1), yb = Math.max(y0, y1), xs = clamp(V.X(lk.sl), xa, xb);
-      // operator 24.11: the box by its STATE (targetLook), the role R / X only in its dashed edge. A target still open
-      // and reachable: the passed part of its window grey, the part ahead green; a settled or holding one is one colour
+      // operator 24.11 / 25.11: the fill says WHAT (R amber, X blue), the solid inner edge says the STATE (targetLook):
+      // green = still valid by time and price, white = holds now, grey ✓ = worked, red × = passed without it. A target
+      // still open: the passed part of its window grey, the part ahead in the role colour inside the green edge
       const tl = lk.tl || targetLook(F, ctx, { t1, look: lk.hold ? 'HOLDS' : lk.spent ? 'IMPOSSIBLE' : 'POSSIBLE' }), W = xb - xa, H = yb - ya;
       if (tl.state === 'VALID') {
         if (xs > xa) { c.fillStyle = rgba(cfg.projDoneC, 0.16); c.fillRect(xa, ya, xs - xa, H); }
-        if (xb > xs) { const g = c.createLinearGradient(xs, 0, xb, 0); g.addColorStop(0, rgba(cfg.okC, 0.22)); g.addColorStop(1, rgba(cfg.okC, 0.08)); c.fillStyle = g; c.fillRect(xs, ya, xb - xs, H); }
-      } else { c.fillStyle = rgba(tl.col, tl.state === 'HOLDS' ? 0.24 : tl.state === 'IMPOSSIBLE' ? 0.1 : 0.16); c.fillRect(xa, ya, W, H); }
+        if (xb > xs) { const g = c.createLinearGradient(xs, 0, xb, 0); g.addColorStop(0, rgba(cfg[lk.ev], 0.26)); g.addColorStop(1, rgba(cfg[lk.ev], 0.1)); c.fillStyle = g; c.fillRect(xs, ya, xb - xs, H); }
+      } else { c.fillStyle = rgba(tl.state === 'HOLDS' ? cfg[lk.ev] : tl.col, tl.state === 'HOLDS' ? 0.28 : tl.state === 'IMPOSSIBLE' ? 0.1 : 0.16); c.fillRect(xa, ya, W, H); }
       c.lineWidth = 1; c.setLineDash([3, 3]); c.strokeStyle = rgba(cfg[lk.ev], 0.6);
       c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(W) - 1), Math.max(2, Math.round(H) - 1));
       c.setLineDash(tl.state === 'IMPOSSIBLE' || tl.state === 'UNKNOWN' ? [3, 3] : []);
@@ -8190,9 +8191,9 @@
         if (closeX) a *= 0.55;                                // the tops of the last 15 minutes: a move not ended before the close
         if (lit) a = Math.max(a, 0.5);
         if (bu) a = Math.max(a, (past ? 0.3 : 0.5) + 0.45 * share / mxE[ev]);   // a bunch: brighter (the author's darker time mode)
-        // operator 24.11: a column whose 15 minutes are over is grey (history behind the clock), one still ahead green;
-        // R / X keep their halves, their names and the clock lines in their own colour
-        c.fillStyle = rgba(past ? cfg.projDoneC : cfg.okC, Math.min(1, a * cfg.stripA / 80));
+        // operator 25.11: the hue says WHAT (R amber, X blue), grey says the 15 minutes are over; whether the window is
+        // still open is said by its capsule (green / grey), not by the columns
+        c.fillStyle = rgba(past ? cfg.projDoneC : cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, share);
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
         if (closeX && Math.abs(y - cy) > 3) { c.save(); c.strokeStyle = rgba(cfg.X, 0.55); c.lineWidth = 1; c.setLineDash([2, 2]); c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir.X, y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1)); c.restore(); }

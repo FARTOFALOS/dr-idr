@@ -1785,13 +1785,14 @@
     const F = ctx.F, col = REVIEW && lk.marker ? lk.marker.paint.color : lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
     if (lk.src === 'zone') {
       const [y0, y1] = cellY(F, lk.k0, lk.k1), ya = Math.min(y0, y1), yb = Math.max(y0, y1), xs = clamp(V.X(lk.sl), xa, xb);
-      // operator 24.11: the box by its STATE (targetLook), the role R / X only in its dashed edge. A target still open
-      // and reachable: the passed part of its window grey, the part ahead green; a settled or holding one is one colour
+      // operator 24.11 / 25.11: the fill says WHAT (R amber, X blue), the solid inner edge says the STATE (targetLook):
+      // green = still valid by time and price, white = holds now, grey ✓ = worked, red × = passed without it. A target
+      // still open: the passed part of its window grey, the part ahead in the role colour inside the green edge
       const tl = lk.tl || targetLook(F, ctx, { t1, look: lk.hold ? 'HOLDS' : lk.spent ? 'IMPOSSIBLE' : 'POSSIBLE' }), W = xb - xa, H = yb - ya;
       if (tl.state === 'VALID') {
         if (xs > xa) { c.fillStyle = rgba(cfg.projDoneC, 0.16); c.fillRect(xa, ya, xs - xa, H); }
-        if (xb > xs) { const g = c.createLinearGradient(xs, 0, xb, 0); g.addColorStop(0, rgba(cfg.okC, 0.22)); g.addColorStop(1, rgba(cfg.okC, 0.08)); c.fillStyle = g; c.fillRect(xs, ya, xb - xs, H); }
-      } else { c.fillStyle = rgba(tl.col, tl.state === 'HOLDS' ? 0.24 : tl.state === 'IMPOSSIBLE' ? 0.1 : 0.16); c.fillRect(xa, ya, W, H); }
+        if (xb > xs) { const g = c.createLinearGradient(xs, 0, xb, 0); g.addColorStop(0, rgba(cfg[lk.ev], 0.26)); g.addColorStop(1, rgba(cfg[lk.ev], 0.1)); c.fillStyle = g; c.fillRect(xs, ya, xb - xs, H); }
+      } else { c.fillStyle = rgba(tl.state === 'HOLDS' ? cfg[lk.ev] : tl.col, tl.state === 'HOLDS' ? 0.28 : tl.state === 'IMPOSSIBLE' ? 0.1 : 0.16); c.fillRect(xa, ya, W, H); }
       c.lineWidth = 1; c.setLineDash([3, 3]); c.strokeStyle = rgba(cfg[lk.ev], 0.6);
       c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(W) - 1), Math.max(2, Math.round(H) - 1));
       c.setLineDash(tl.state === 'IMPOSSIBLE' || tl.state === 'UNKNOWN' ? [3, 3] : []);

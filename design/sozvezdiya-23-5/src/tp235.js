@@ -380,9 +380,9 @@
         if (closeX) a *= 0.55;                                // the tops of the last 15 minutes: a move not ended before the close
         if (lit) a = Math.max(a, 0.5);
         if (bu) a = Math.max(a, (past ? 0.3 : 0.5) + 0.45 * share / mxE[ev]);   // a bunch: brighter (the author's darker time mode)
-        // operator 24.11: a column whose 15 minutes are over is grey (history behind the clock), one still ahead green;
-        // R / X keep their halves, their names and the clock lines in their own colour
-        c.fillStyle = rgba(past ? cfg.projDoneC : cfg.okC, Math.min(1, a * cfg.stripA / 80));
+        // operator 25.11: the hue says WHAT (R amber, X blue), grey says the 15 minutes are over; whether the window is
+        // still open is said by its capsule (green / grey), not by the columns
+        c.fillStyle = rgba(past ? cfg.projDoneC : cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, share);
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
         if (closeX && Math.abs(y - cy) > 3) { c.save(); c.strokeStyle = rgba(cfg.X, 0.55); c.lineWidth = 1; c.setLineDash([2, 2]); c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir.X, y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1)); c.restore(); }
