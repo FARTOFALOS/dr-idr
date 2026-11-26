@@ -8527,7 +8527,7 @@
     return out.join('');
   }
 
-  // ---------- «От этой свечи» (MVP v3, operator 25.11.2026; not a contract estimand, nothing is sent to /verify) ----------
+  // ---------- «От этой свечи» (MVP v4, operator 25–26.11.2026; not a contract estimand, nothing is sent to /verify) ----------
   // Operator 25.11: «нажимаю и вижу … пятиминутные кластеры … вместо всех вот этих боксов»; then «примени тот же смысл,
   // что в DR-сессии, только в меньшем масштабе … вверх расширение и вниз расширение только считаем … не лесенка».
   // The DR rules of TP-2.0 (meaning/25 §2.4–2.5, lab/tp11.py) on a smaller frame:
@@ -8541,10 +8541,11 @@
   // - time: counts of the extremes' M5 → bunches by the TP rule (tpRegions), marks ½ and 70 %;
   // - price: counts per ANC_STEP SD beyond the anchor → places by the same rule; a bunch or a place needs tpNeed(M);
   // - every number is a share of M. History of similar moments, not a forecast.
-  // - on the chart (operator 25.11 evening: «не нужно показывать звезды … самый максимальный кластер … его границы
-  //   протягивались на весь экран налево»): each place a quiet dashed box over the middle half of its ends' hours; its ONE
-  //   cluster, the 5 min × 0,1 SD cell with the most ends, bright, its two SD bounds carried translucent to the left edge
-  //   with the name. The rules for agents: spec/ekran-24/19-ot-etoj-svechi-23-5.md.
+  // - on the chart (operator 25.11 evening and 26.11: «не нужно показывать звезды … самый максимальный кластер … его
+  //   границы протягивались на весь экран налево», «выделяй не весь блок», «более прозрачно», «не надо дублировать»): of
+  //   each place only its ONE cluster, the 5 min × 0,1 SD cell with the most ends, translucent, with a faint long
+  //   rectangle at its two SD bounds from the left edge up to it and one label at that edge; the place's block is not
+  //   drawn (its rows stay in the price column). The rules for agents: spec/ekran-24/19-ot-etoj-svechi-23-5.md.
   const ANC = { on: /(?:^|[#&])anc=1(?:&|$)/.test(location.hash), lib: {}, load: {}, Hs: [6, 12, 0], hi: 1, memo: null };
   const ANC_MIN = 20, ANC_STEP = 0.1;   // the price cell: 0,1 SD of the DR grid, as TP-2.0 (operator 25.11: «уровни, которые относятся к DR»)
   window.__anc = ANC;   // for checks from the console
@@ -8671,37 +8672,27 @@
       const E = a.ev[e];
       // the places: the band of the extensions' ends × the hours they came, the share of M
       for (const z of E.places) {
-        // the place itself quiet (the operator reads the block himself); its one cluster bright, carried to the left
-        const ya = ancY(F, z.k0 * ANC_STEP), yb = ancY(F, z.k1 * ANC_STEP), y0 = Math.min(ya, yb), hh = Math.max(3, Math.abs(yb - ya));
-        const x0 = V.X(z.t0), x1 = Math.max(x0 + 4, V.X(z.t1));
-        c.fillStyle = rgba(cfg[e], 0.06); c.fillRect(x0, y0, x1 - x0, hh);
-        c.strokeStyle = rgba(cfg[e], 0.35); c.lineWidth = 1; c.setLineDash([3, 3]);
-        c.strokeRect(Math.round(x0) + 0.5, Math.round(y0) + 0.5, Math.round(x1 - x0) - 1, Math.round(hh) - 1); c.setLineDash([]);
+        // operator 26.11: not the place's block («со всем блоком я сам разберусь»), only its one main cluster, not bright
+        // («более прозрачно, чтобы я видел график»), and a faint long rectangle from the left edge up to it («откуда он
+        // выходит и где его ожидать по времени»); one label, no duplicated words
         const T0 = z.top;
         if (!T0) continue;
         const ca = ancY(F, T0.k * ANC_STEP), cb = ancY(F, (T0.k + 1) * ANC_STEP), cy0 = Math.min(ca, cb), ch = Math.max(3, Math.abs(cb - ca));
         const cx0 = V.X(T0.t), cx1 = Math.max(cx0 + 4, V.X(T0.t + 5));
-        // its SD bounds to the left edge, translucent, with the name at the edge
-        c.strokeStyle = rgba(cfg[e], 0.6); c.lineWidth = 1; c.setLineDash([6, 4]);
+        // the faint rectangle at the cell's two SD bounds, from the left edge to the cell
+        c.fillStyle = rgba(cfg[e], 0.07); c.fillRect(0, cy0, cx0, ch);
+        c.strokeStyle = rgba(cfg[e], 0.22); c.lineWidth = 1;
         for (const y of [Math.round(cy0) + 0.5, Math.round(cy0 + ch) - 0.5]) { c.beginPath(); c.moveTo(0, y); c.lineTo(cx0, y); c.stroke(); }
-        c.setLineDash([]);
-        c.fillStyle = rgba(cfg[e], 0.05); c.fillRect(0, cy0, cx0, ch);
-        c.fillStyle = rgba(cfg[e], 0.6); c.fillRect(cx0, cy0, cx1 - cx0, ch);
-        c.strokeStyle = mixW(cfg[e], 0.4); c.lineWidth = 1.5; c.strokeRect(Math.round(cx0) + 0.5, Math.round(cy0) + 0.5, Math.round(cx1 - cx0) - 1, Math.round(ch) - 1);
+        // the cluster itself: translucent fill, a thin edge in the role's colour
+        c.fillStyle = rgba(cfg[e], 0.28); c.fillRect(cx0, cy0, cx1 - cx0, ch);
+        c.strokeStyle = rgba(cfg[e], 0.8); c.lineWidth = 1; c.strokeRect(Math.round(cx0) + 0.5, Math.round(cy0) + 0.5, Math.round(cx1 - cx0) - 1, Math.round(ch) - 1);
+        // its one label at the left edge: the name, the SD, the 5 minutes and its share of M
         const rng = ancSd(T0.k / 10) + '…' + ancSd((T0.k + 1) / 10).replace(/^[+−]/, '');
+        const lt = z.name + ' ' + rng + ' · ' + clk(T0.t) + ' · ' + ancPct(T0.n / a.M) + '%';
         c.font = '600 10px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'left';
-        const lt = z.name + ' ' + rng, lw = c.measureText(lt).width, lym = clamp(cy0 + ch / 2, 54, V.plot.h - 8);
-        const ly0 = ancFree(placedL, 6, 12 + lw, lym, 7, 15);
-        placedL.push([6, ly0 - 7, 12 + lw, ly0 + 7]);
-        c.fillStyle = 'rgba(8,9,12,.8)'; c.fillRect(6, ly0 - 7, lw + 6, 14); c.fillStyle = rgba(cfg[e], 0.95); c.fillText(lt, 9, ly0);
-        // its words next to the cell: the name, the SD, the 5 minutes and its share of M
-        const t = z.name + ' · ' + rng + ' · ' + clk(T0.t) + ' · ' + ancPct(T0.n / a.M) + '%';
-        c.font = '700 11.5px ' + FONT;
-        const tw = c.measureText(t).width;
-        // to the right of the cell; when that runs into the price scale, to its left
-        const lx = cx1 + 11 + tw <= V.plot.w ? cx1 + 5 : Math.max(0, cx0 - 11 - tw), ly = ancFree(placedL, lx, lx + tw + 6, clamp(cy0 + ch / 2, 54, V.plot.h - 10), 8, 17);
-        placedL.push([lx, ly - 8, lx + tw + 6, ly + 8]);
-        c.fillStyle = 'rgba(8,9,12,.88)'; c.fillRect(lx, ly - 8, tw + 6, 16); c.fillStyle = mixW(cfg[e], 0.2); c.fillText(t, lx + 3, ly);
+        const lw = c.measureText(lt).width, ly = ancFree(placedL, 6, 12 + lw, clamp(cy0 + ch / 2, 54, V.plot.h - 8), 7, 15);
+        placedL.push([6, ly - 7, 12 + lw, ly + 7]);
+        c.fillStyle = 'rgba(8,9,12,.72)'; c.fillRect(6, ly - 7, lw + 6, 14); c.fillStyle = rgba(cfg[e], 0.95); c.fillText(lt, 9, ly);
       }
     }
     c.restore();
