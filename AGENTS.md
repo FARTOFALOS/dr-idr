@@ -35,6 +35,7 @@ it is implemented, §14 where each piece lives and the rules not to break). Chan
 | «Съёмы лоу» (Слои ▾, off by default) | candidate | [docs/DR-LAB-23-5-SWEEPS](docs/DR-LAB-23-5-SWEEPS.md) | `sweeps235.js`, `lab/sweeps235_ref.py` | `tests/sweeps235.py`, `tests/sweeps235_page.mjs` |
 | «Продолжения», «Откаты до обновления» (⚙ → Испытание кандидатов) | candidates, off by default | [integration/README](integration/README.md), [spec/ekran-24/15-otkaty](spec/ekran-24/15-otkaty.md) | `continuations.js`, `pullbacks.js`, `lab/continuations24.py`, `lab/pullbacks24.py` | `tests/continuations24.py`, `tests/pullbacks24.py` |
 | time × SD route (`/api/integration/time-sd`) | superseded 26.10, route kept | [docs/DR-LAB-23-5-TIME-SD](docs/DR-LAB-23-5-TIME-SD.md) | `time_sd235.js`, `lab/time_sd235.py` | `tests/time_sd235.py` |
+| «От этой свечи» (button left of «▭ Область», `#anc=1`) | MVP candidate (operator 25.11), not a contract estimand | [spec/ekran-24/19](spec/ekran-24/19-ot-etoj-svechi-23-5.md) | `anc235.js`, `lab/anchor235_build.py` (library in `lab/dist/23-5/anchor/`, market data, never committed) | live view only |
 | The STD grid | current (operator 11.11) | below | `app.js::gridSide` | — |
 
 - **R on 23.5** is the pullback before the session's extreme (operator 29.10): every family request carries `:rpre`

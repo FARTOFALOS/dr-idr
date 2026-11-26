@@ -273,17 +273,25 @@
     }
     return out;
   }
+  // the places' name boxes of the last frame (app.js render): where the level lines over the chart break (their
+  // drawing, tpReachChart, comes with the branch of the lines across the chart)
+  let TP_LBL = [];
   function tpReachMarks(c, F, A_, top0, bot0) {
     for (const L of tpLevels(F)) {
       const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;
       if (y < top0 || y > bot0) continue;
       c.save(); c.strokeStyle = rgba(cfg.X, 0.8); c.lineWidth = 1; c.setLineDash(L.q === 70 ? [] : [3, 3]);
       c.beginPath(); c.moveTo(A_.x + 2, y); c.lineTo(A_.x + A_.w - 2, y); c.stroke(); c.restore();
-      c.font = '700 9.5px ' + FONT; c.textBaseline = 'bottom'; c.fillStyle = rgba(cfg.X, 0.95);
-      const t = 'дошли ' + L.q + ' % · ' + sd(L.k / 10);
-      c.fillText(t, A_.x + A_.w - c.measureText(t).width - 6, y - 1);
+      // operator 24.11: the words UNDER their line, on a dark plate, never over the bars' numbers (drawProjRX keeps
+      // their rows free: tpReachRows)
+      c.font = '700 9.5px ' + FONT; c.textBaseline = 'top';
+      const t = L.q + '% · ' + sd(L.k / 10), tw = c.measureText(t).width, tx = A_.x + A_.w - tw - 6;
+      c.fillStyle = 'rgba(11,12,16,.88)'; c.fillRect(tx - 3, y + 1, tw + 6, 12);
+      c.fillStyle = rgba(cfg.X, 0.95); c.fillText(t, tx, y + 2);
     }
   }
+  // the rows the level words take in the price column, so its percentages there step aside
+  const tpReachRows = (F, top0, bot0) => tpLevels(F).map(L => Math.round(V.Y(F.u2p(L.k / 10))) + 7).filter(y => y > top0 && y < bot0);
   // ---------- TP-2.0 Ч13: how the DR ended for the family's sessions that by this clock had gone as deep ----------
   // CS:TP-DEPTH-AT-CUT-1: eligible at the cut as in «Сейчас» (own activation before it, a complete prefix, the DR still
   // whole) and their deepest point against the activation up to the cut at today's or deeper (exact, integers);
@@ -372,7 +380,9 @@
         if (closeX) a *= 0.55;                                // the tops of the last 15 minutes: a move not ended before the close
         if (lit) a = Math.max(a, 0.5);
         if (bu) a = Math.max(a, (past ? 0.3 : 0.5) + 0.45 * share / mxE[ev]);   // a bunch: brighter (the author's darker time mode)
-        c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
+        // operator 25.11: the hue says WHAT (R amber, X blue), grey says the 15 minutes are over; whether the window is
+        // still open is said by its capsule (green / grey), not by the columns
+        c.fillStyle = rgba(past ? cfg.projDoneC : cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, share);
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
         if (closeX && Math.abs(y - cy) > 3) { c.save(); c.strokeStyle = rgba(cfg.X, 0.55); c.lineWidth = 1; c.setLineDash([2, 2]); c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir.X, y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1)); c.restore(); }
@@ -395,6 +405,7 @@
       labels.push({ x, y: y + dir.X * (inside ? -8 : 9), t: ppTxt(p), col: inside ? '#EEF5FF' : mixW(cfg.X, 0.25), big: true });
     }
     // the lines of the clock: the median solid, the 70 % mark dashed, each in its event's half
+    const lineMarks = [];
     for (const L of tpLines(F)) {
       const x = Math.round(V.X(L.cut)) + 0.5;
       if (x < B.x || x > B.x + B.w) continue;
@@ -402,11 +413,21 @@
       c.save(); c.strokeStyle = rgba(cfg[L.ev], held ? 0.25 : on ? 1 : 0.85); c.lineWidth = on ? 2 : 1.3; c.setLineDash(L.id === 'p70' ? [4, 3] : []);
       c.beginPath(); c.moveTo(x, y0); c.lineTo(x, y1); c.stroke(); c.restore();
       // a short mark at the outer end, the median one row further out than the 70 % mark, so close lines stay readable
-      c.font = '700 9.5px ' + FONT; c.textBaseline = 'middle'; c.fillStyle = rgba(cfg[L.ev], held ? 0.4 : 0.95);
-      c.fillText(L.id === 'median' ? '½' : '70%', x + 3, cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15)));
+      // operator 24.11: the mark on a dark plate right of its line; the column numbers nearby step aside (below)
+      c.font = '700 9.5px ' + FONT; c.textBaseline = 'middle';
+      const mt = L.id === 'median' ? '½' : '70%', mw = c.measureText(mt).width, my = cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15));
+      c.fillStyle = 'rgba(10,11,15,.85)'; c.fillRect(x + 1, my - 6, mw + 4, 12); lineMarks.push([x + 1, my - 6, x + mw + 5, my + 6]);
+      c.fillStyle = rgba(cfg[L.ev], held ? 0.4 : 0.95); c.fillText(mt, x + 3, my);
       V.tpLines.push({ ev: L.ev, id: L.id, x, y0: Math.min(y0, y1), y1: Math.max(y0, y1) });
     }
-    for (const L of labels) { c.font = (L.big ? '700 10.5px ' : '700 10.5px ') + FONT; c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, Math.max(B.y + 7, Math.min(B.y + B.h - 7, L.y))); c.textAlign = 'left'; }
+    const placedL = [];
+    for (const L of labels) {
+      c.font = '700 10.5px ' + FONT; const w = c.measureText(L.t).width, ly = Math.max(B.y + 7, Math.min(B.y + B.h - 7, L.y)), r = [L.x - w / 2 - 2, ly - 7, L.x + w / 2 + 2, ly + 7];
+      const hit = q => r[0] < q[2] && r[2] > q[0] && r[1] < q[3] && r[3] > q[1];
+      if (!L.big && (lineMarks.some(hit) || placedL.some(hit))) continue;   // operator 24.11: no number over another or over ½ / 70 %
+      placedL.push(r);
+      c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, ly); c.textAlign = 'left';
+    }
     // the windows in the place of the zone capsules: the selected one outlined, the others a soft fill; «до окна» and «позже»
     // quieter. Each carries its name and its share of T (core §7: «у W % true-сессий откат до вершины был в этом окне»).
     const shares = TP_WINDOWS.filter(w => tp.windows[w]).map(w => ({ w, W: tp.windows[w], p: tpShare(F, tp.windows[w][0], tp.windows[w][1]) }));
@@ -415,18 +436,19 @@
       const x0 = V.X(F.f + 15 * W[0]) + 1, x1 = V.X(F.f + 15 * W[1]) - 1, wd = x1 - x0, y0 = dir.R < 0 ? B.y + 3 : B.y + B.h - 3 - LH + 2;
       if (x1 < B.x || x0 > B.x + B.w || wd < 4) continue;
       const on = w === P.w, hov = !!(h && (h.k === 'tpwin' || h.k === 'tpzone') && h.id === w), side = w === 'BEFORE' || w === 'LATE', r = Math.pow((p.pct || 0) / capMax, 0.7);
+      const cc = F.f + 15 * W[1] <= sl ? cfg.projDoneC : cfg.okC;   // operator 24.11: the window over — grey; still open — green
       c.save(); c.globalAlpha = on || hov ? 1 : 0.8;
-      c.fillStyle = rgba(cfg.R, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
-      if (on || hov) { c.strokeStyle = rgba(cfg.R, on ? 0.75 : 0.5); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
+      c.fillStyle = rgba(cc, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
+      if (on || hov) { c.strokeStyle = rgba(cc, on ? 0.75 : 0.5); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
       c.beginPath(); c.rect(x0 + 2, y0, wd - 4, LH); c.clip();
       c.textBaseline = 'middle';
       let x = x0 + 9;
       c.font = '700 10.5px ' + FONT;
       const nw = c.measureText(TP_NAME[w]).width, pw = pctW(c, ppTxt(p), '700 ', 10.5 + (on ? 1 : 0));
-      c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(side ? '#B8BEC9' : mixW(cfg.R, 0.2), Math.min(1, (on ? 1 : 0.85) * cfg.capTxt / 100));
+      c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(side ? '#B8BEC9' : mixW(cc, 0.35), Math.min(1, (on ? 1 : 0.85) * cfg.capTxt / 100));
       if (wd >= nw + 14) { c.fillText(TP_NAME[w], x, y0 + LH / 2 + 0.5); x += nw + 6; }
       // a narrow window keeps its name; its share is then in its title and in the panel
-      if (wd >= nw + pw + 20) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5 + (on ? 1 : 0), rgba(mixW(cfg.R, 0.35), Math.min(1, (on ? 1 : 0.8) * cfg.capTxt / 100)));
+      if (wd >= nw + pw + 20) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5 + (on ? 1 : 0), rgba(mixW(cc, 0.45), Math.min(1, (on ? 1 : 0.8) * cfg.capTxt / 100)));
       c.restore();
       V.tpCaps.push({ id: w, box: [x0, y0, wd, LH] });
     }
@@ -550,8 +572,9 @@
     if (!z || zoneHeld(G, 'R', h.i)) return;
     const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = G.f + 15 * Math.min(...bs), t1 = G.f + 15 * (Math.max(...bs) + 1);
     const look = zoneStatus(G, ctx, 'R')[h.i], spent = expiredLook(look);
-    V.lk = { ev: 'R', src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', marker: targetMarker(G, ctx, 'R', z) };
-    V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg.R, 'spent') : cfg.R });
+    const tl = targetLook(G, ctx, { t1, look, z });
+    V.lk = { ev: 'R', src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', tl, marker: targetMarker(G, ctx, 'R', z) };
+    V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: tl.col });
   }
   // a click on such a place puts its window on screen and keeps the place under the inspector
   function tpPinGhost(h) { TP.pin = h.id; st.ev = 'R'; st.pin = null; st.pinZone = h.i + 1; st.hover = null; tip.hidden = true; render(true); }

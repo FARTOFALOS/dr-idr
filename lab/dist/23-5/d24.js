@@ -45,7 +45,7 @@
   };
   // everything a viewer can tune in «Настройки»; kept in this browser (localStorage), «Сбросить» restores these
   const DEF = {
-    R: '#EBA06C', X: '#72A9EC', path: '#9FB3D1', visitC: '#8BE7A1', visitMissC: '#FF7B86', projR: '#EBA06C', projX: '#72A9EC', projDoneC: '#5FA886',
+    R: '#EBA06C', X: '#72A9EC', path: '#9FB3D1', visitC: '#8BE7A1', visitMissC: '#FF7B86', projR: '#EBA06C', projX: '#72A9EC', projDoneC: '#7C8594', okC: '#46C985', workedC: '#93A4BF', missC: '#C8606A',
     ptA: 80, ptSize: 100, pastA: 35, cloudA: 100, threadA: 100, projA: 90, stripA: 80, heatA: 200,
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
@@ -91,6 +91,12 @@
     cfg.clockGreen235 = 1;
     try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* optional storage */ }
   }
+  // Operator 24.11: colour by STATE (spec/ekran-24/18-cveta-sostoyanij-23-5.md): what is still valid is green, what has
+  // passed is grey (worked: grey-blue, not worked: muted red). The column's «history before the slice» turns grey.
+  if (!cfg.state235) {
+    cfg.projDoneC = DEF.projDoneC; cfg.state235 = 1;
+    try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* optional storage */ }
+  }
   // Operator 22.10: use screen 24's shading, not the former flat high-contrast column of this origin.
   if (!cfg.shading24_235) {
     try { localStorage.setItem(CFG_KEY + '.before-shading24', JSON.stringify(cfg)); } catch (e) { /* optional backup */ }
@@ -111,7 +117,7 @@
       ['calloutA', 'Выноски · непрозрачность, %', 'range', 20, 100, 5]]],
     ['Точки сессий', [['ptA', 'Яркость', 'range', 10, 100], ['ptSize', 'Размер', 'range', 50, 200], ['pastA', 'Прошедшие по часам · яркость', 'range', 5, 100],
       ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10]]],
-    ['Колонка у цены', [['projR', 'Откат R · цвет колонки', 'color'], ['projX', 'Продолжение X · цвет колонки', 'color'], ['projDoneC', 'История раньше среза · цвет колонки', 'color'], ['visitC', 'Приход сегодня · галочка и кружок', 'color'], ['visitMissC', 'Окно без прихода · крестик и кружок', 'color'], ['projA', 'Яркость', 'range', 10, 100], ['colSize', 'Размер цифр, %', 'range', 60, 160, 5], ['passedA', 'История раньше среза · яркость', 'range', 30, 100]]],
+    ['Колонка у цены', [['projR', 'Откат R · цвет колонки', 'color'], ['projX', 'Продолжение X · цвет колонки', 'color'], ['projDoneC', 'История раньше среза · цвет колонки', 'color'], ['okC', 'Валидно · цвет', 'color'], ['workedC', 'Отработало · цвет', 'color'], ['missC', 'Прошло, не отработало · цвет', 'color'], ['visitC', 'Приход сегодня · галочка и кружок', 'color'], ['visitMissC', 'Окно без прихода · крестик и кружок', 'color'], ['projA', 'Яркость', 'range', 10, 100], ['colSize', 'Размер цифр, %', 'range', 60, 160, 5], ['passedA', 'История раньше среза · яркость', 'range', 30, 100]]],
     ['Лента времени', [['stripA', 'Столбики · яркость', 'range', 10, 100], ['bandA', 'Вся лента · непрозрачность, %', 'range', 20, 100],
       ['bandH', 'Высота, % экрана', 'range', 8, 30], ['bandRise', 'Подъём в пустое место, % графика', 'range', 0, 50],
       ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5],
@@ -4106,29 +4112,32 @@
     if (st.L.prev) drawPrev(c, ctx);
     if (st.L.vib) drawVib(c, ctx);
     // the corridor of a hovered band first (its prices on the scale), then the link (its time on the axis), then the film
-    if (F && !continuationMode()) { drawHighlight(c, mapCtx); linkOf(mapCtx); }
+    if (F && !continuationMode() && !ancOn()) { drawHighlight(c, mapCtx); linkOf(mapCtx); }
     if (continuationMode()) continuationDraw(c,ctx);
     if (F && st.mode === 'path') drawFilm(c, ctx);
     drawLevels(c, ctx);
     drawReference(c, ctx);
-    if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, cloudCtx); drawMemberPath(c, mapCtx); }
-    if (F && st.mode === 'bounds' && !continuationMode()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
-    if (F && !continuationMode()) drawZones(c, cloudCtx, 'under');
-    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
+    if (F && st.mode === 'bounds' && !ancOn()) { if (st.L.zones) drawClouds(c, cloudCtx); drawMemberPath(c, mapCtx); }
+    if (F && st.mode === 'bounds' && !continuationMode() && !ancOn()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
+    if (F && !continuationMode() && !ancOn()) drawZones(c, cloudCtx, 'under');
+    if (F && F._tp && !continuationMode() && !ancOn()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
+    if (F && ancOn()) ancChart(c, ctx);   // «От этой свечи» (anc235.js, operator 25.11): instead of the places and windows
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);
     if (F && !continuationMode()) drawNowMarks(c, ctx);
     drawPills(c, ctx);
     if (!continuationMode()) drawNow(c, ctx);
-    if (F && !continuationMode()) drawLink(c, mapCtx);
-    if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, cloudCtx);
-    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'over');
-    if (F && st.mode === 'bounds') drawPair(c, mapCtx);
+    if (F && !continuationMode() && !ancOn()) drawLink(c, mapCtx);
+    if (F && st.mode === 'bounds' && st.L.pts && !ancOn()) drawPoints(c, cloudCtx);
+    if (F && F._tp && !continuationMode() && !ancOn()) tpGhosts(c, cloudCtx, 'over');
+    if (F && st.mode === 'bounds' && !ancOn()) drawPair(c, mapCtx);
     if (F) drawSweeps(c, ctx);
-    if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
-    if (F && !continuationMode()) drawArea(c, mapCtx);
+    if (F && !continuationMode() && !ancOn()) drawZones(c, cloudCtx, 'over');
+    if (F && !continuationMode() && !ancOn()) drawArea(c, mapCtx);
     if (F && st.mini) drawMini(c, ctx);
+    // the places' name boxes of this frame, for the next frame's lines to break under them (tpReachChart draws first)
+    TP_LBL = [...(V.zoneHit || []), ...(V.tpGhostHit || [])].map(q => q.box).filter(Boolean);
     drawTags(c, ctx);
     drawAlerts(c);
     drawCross(c);
@@ -4297,7 +4306,14 @@
     if (!h) return;
     if (h.k === 'arrive') { candidateHighlight(c, ctx, h); return; }
     if (h.k === 'now') { drawNowLevels(c, ctx, h.ev); return; }
-    const col = cfg[h.ev || st.ev];
+    let col = cfg[h.ev || st.ev];
+    // operator 24.11: a selected price band runs across the chart in its STATE — green while today's final event can
+    // still lie there, grey once it cannot; R / X is named in the inspector
+    if ((h.k === 'pcell' || h.k === 'mcell') && h.ev) {
+      const Rch = reachOf(F, ctx); let ok = false;
+      for (let k = h.k0; k < (h.k1 != null ? h.k1 : h.k0 + 1); k++) if (Rch.okK(h.ev, k)) { ok = true; break; }
+      col = ok ? cfg.okC : '#8A93A3';
+    }
     if (h.k === 'pcell') {
       const [ya, yb] = cellY(F, h.k0, h.k1);
       c.fillStyle = rgba(col, 0.09); c.fillRect(0, ya, V.plot.w, Math.max(1, yb - ya));
@@ -4312,8 +4328,10 @@
         const x0 = V.X(tt[0]), x1 = V.X(tt[1]), pk = tpWinPeak(F, h.id);
         c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h);
         // operator 05.11: the window's peak 15 minutes over the chart and on the time axis — when its pullback is most frequent
-        if (pk) { c.fillStyle = rgba(cfg.R, 0.08); c.fillRect(V.X(pk.t0), 0, V.X(pk.t1) - V.X(pk.t0), V.plot.h); }
-        V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R, peak: pk ? [pk.t0, pk.t1] : null };
+        if (pk) { c.fillStyle = rgba(pk.t1 <= sliceOf(ctx) ? cfg.projDoneC : cfg.okC, 0.08); c.fillRect(V.X(pk.t0), 0, V.X(pk.t1) - V.X(pk.t0), V.plot.h); }
+        // operator 24.11: the window's time tags by its state — still open: green; over: grey (a window is not one
+        // place, so it has no visit fact of its own; its places carry that)
+        V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: tt[1] <= sliceOf(ctx) ? cfg.projDoneC : cfg.okC, peak: pk ? [pk.t0, pk.t1] : null };
       }
     }
     if (h.k === 'tcell') {
@@ -4364,8 +4382,11 @@
     }
     c.textBaseline = 'middle'; c.textAlign = 'right';
     if (hpx > 90) for (let j = 1; j <= 9; j++) {
-      c.font = (j === 5 ? '700 ' + (cfg.fracLbl + 1) + 'px ' : cfg.fracLbl + 'px ') + FONT; c.fillStyle = j === 5 ? C.mid : C.text3;   // small (operator 2026-10-06)
-      c.fillText(num(j / 10, 1), xb, V.Y(s.idrL + j * w / 10));
+      c.font = (j === 5 ? '700 ' + (cfg.fracLbl + 1) + 'px ' : cfg.fracLbl + 'px ') + FONT;   // small (operator 2026-10-06)
+      // operator 24.11: on a dark plate, so the candles under them do not cut the figures
+      const t = num(j / 10, 1), ty = V.Y(s.idrL + j * w / 10), tw = c.measureText(t).width;
+      c.fillStyle = rgba(C.bg, 0.85); c.fillRect(xb - tw - 2, ty - cfg.fracLbl / 2 - 1.5, tw + 4, cfg.fracLbl + 3);
+      c.fillStyle = j === 5 ? C.mid : C.text3; c.fillText(t, xb, ty);
     }
     c.textAlign = 'left';
   }
@@ -4698,8 +4719,9 @@
       if (z && !zoneHeld(F, h.ev, h.i)) {          // a withheld zone draws no window (its inspector says «—»)
         const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = F.f + 15 * Math.min(...bs), t1 = F.f + 15 * (Math.max(...bs) + 1);
         const look = (F._pb && h.ev === 'R' ? zoneLook(F,ctx,h.ev) : zoneStatus(F,ctx,h.ev))[h.i], spent = expiredLook(look);
-        V.lk = { ev: h.ev, src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', marker: targetMarker(F, ctx, h.ev, z) };
-        V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg[h.ev], 'spent') : cfg[h.ev] });
+        const tl = targetLook(F, ctx, { t1, look, z });
+        V.lk = { ev: h.ev, src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', tl, marker: targetMarker(F, ctx, h.ev, z) };
+        V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: tl.col });
       }
       return;
     } else if (h.k === 'pcell' && h.ev && F._mx) mxLink(F, ctx, h);
@@ -4807,21 +4829,22 @@
     const F = ctx.F, col = REVIEW && lk.marker ? lk.marker.paint.color : lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
     if (lk.src === 'zone') {
       const [y0, y1] = cellY(F, lk.k0, lk.k1), ya = Math.min(y0, y1), yb = Math.max(y0, y1), xs = clamp(V.X(lk.sl), xa, xb);
-      // a zone that holds today's extreme is today's answer so far, whatever the clock: its whole window in its (lighter)
-      // colour; a possible zone loses the passed part of its window; an impossible one is spent all over
-      const cz = lk.hold ? mixW(cfg[lk.ev], 0.25) : cfg[lk.ev], cs = stateCol(cfg[lk.ev], 'spent');
-      const xl = lk.hold ? xa : xs, live = !lk.spent && xb > xl;
-      // the passed part of a possible zone's window is GREEN (already traded by the clock); an impossible zone grey
-      if (lk.spent) { c.fillStyle = rgba(cs, 0.12); c.fillRect(xa, ya, xb - xa, yb - ya); }
-      else if (xl > xa) { c.fillStyle = rgba(cfg.doneC, 0.16); c.fillRect(xa, ya, xl - xa, yb - ya); }
-      if (live) {
-        const g = c.createLinearGradient(xl, 0, xb, 0);
-        g.addColorStop(0, rgba(cz, 0.18)); g.addColorStop(1, rgba(cz, 0.07));
-        c.fillStyle = g; c.fillRect(xl, ya, xb - xl, yb - ya);
-      }
-      c.setLineDash([3, 3]); c.lineWidth = 1;
-      c.strokeStyle = rgba(cs, 0.55); c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xa) - 1), Math.max(2, Math.round(yb - ya) - 1));
-      if (live) { c.strokeStyle = rgba(cz, 0.75); c.strokeRect(Math.round(xl) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xl) - 1), Math.max(2, Math.round(yb - ya) - 1)); }
+      // operator 24.11 / 25.11: the fill says WHAT (R amber, X blue), the solid inner edge says the STATE (targetLook):
+      // green = still valid by time and price, white = holds now, grey ✓ = worked, red × = passed without it. A target
+      // still open: the passed part of its window grey, the part ahead in the role colour inside the green edge
+      const tl = lk.tl || targetLook(F, ctx, { t1, look: lk.hold ? 'HOLDS' : lk.spent ? 'IMPOSSIBLE' : 'POSSIBLE' }), W = xb - xa, H = yb - ya;
+      if (tl.state === 'VALID') {
+        if (xs > xa) { c.fillStyle = rgba(cfg.projDoneC, 0.16); c.fillRect(xa, ya, xs - xa, H); }
+        if (xb > xs) { const g = c.createLinearGradient(xs, 0, xb, 0); g.addColorStop(0, rgba(cfg[lk.ev], 0.26)); g.addColorStop(1, rgba(cfg[lk.ev], 0.1)); c.fillStyle = g; c.fillRect(xs, ya, xb - xs, H); }
+      } else { c.fillStyle = rgba(tl.state === 'HOLDS' ? cfg[lk.ev] : tl.col, tl.state === 'HOLDS' ? 0.28 : tl.state === 'IMPOSSIBLE' ? 0.1 : 0.16); c.fillRect(xa, ya, W, H); }
+      c.lineWidth = 1; c.setLineDash([3, 3]); c.strokeStyle = rgba(cfg[lk.ev], 0.6);
+      c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(W) - 1), Math.max(2, Math.round(H) - 1));
+      c.setLineDash(tl.state === 'IMPOSSIBLE' || tl.state === 'UNKNOWN' ? [3, 3] : []);
+      const xo = tl.state === 'VALID' ? xs : xa;
+      if (xb > xo + 1) { c.strokeStyle = tl.state === 'HOLDS' ? 'rgba(255,255,255,.8)' : rgba(tl.col, 0.85); c.strokeRect(Math.round(xo) + 1.5, Math.round(ya) + 1.5, Math.max(2, Math.round(xb - xo) - 3), Math.max(2, Math.round(H) - 3)); }
+      c.setLineDash([]);
+      const mk = tl.state === 'WORKED' ? '✓' : tl.state === 'MISSED' ? '×' : '';
+      if (mk && !REVIEW) { c.font = '700 13px ' + FONT; c.textBaseline = 'bottom'; c.textAlign = 'right'; c.fillStyle = tl.col; c.fillText(mk, xb - 3, ya - 2); c.textAlign = 'left'; }
       c.setLineDash([]);
       if (REVIEW && lk.marker && visitSettled(lk.marker.visit)) drawVisitRing(c, F, lk.marker);
       return;
@@ -4869,7 +4892,17 @@
     const F = ctx.F, a = st.area || (st.drag && st.drag.area);
     V.areaHit = null;
     if (!a) return;
-    const col = st.mode === 'path' ? '#E6EAF0' : cfg[a.ev || st.ev], live = st.drag && st.drag.area === a;
+    // operator 24.11: the selected area in its STATE — green while today's final event can still lie in its band (and its
+    // time is not over), grey once it cannot; a time-only area keeps the role colour
+    let col = st.mode === 'path' ? '#E6EAF0' : cfg[a.ev || st.ev];
+    const live = st.drag && st.drag.area === a;
+    if (st.mode !== 'path' && isFinite(a.k0)) {
+      const Rch = reachOf(F, ctx), ev0 = a.ev || st.ev; let ok = false;
+      for (let k = a.k0; k < a.k1; k++) if (Rch.okK(ev0, k)) { ok = true; break; }
+      if (ok && a.b0 != null && F.f + 15 * a.b1 <= sliceOf(ctx)) ok = false;
+      if (ok && a.b0 != null && !areaCount(F, ev0, a)) ok = false;   // no session of the family there: nothing to wait for
+      col = ok ? cfg.okC : '#8A93A3';
+    }
     const xE = Math.min(V.X(F.end) + 8, V.plot.w - 64);
     const hasBand = isFinite(a.k0);
     const x0 = a.b0 != null ? V.X(F.f + 15 * a.b0) : V.X(F.f), x1 = a.b0 != null ? V.X(F.f + 15 * a.b1) : V.X(F.end);
@@ -4891,13 +4924,15 @@
         c.strokeStyle = rgba(col, 0.9); c.lineWidth = 1.2;
         c.beginPath(); c.moveTo(x, top); c.lineTo(x, bot); c.moveTo(x - 4, top); c.lineTo(x, top); c.moveTo(x - 4, bot); c.lineTo(x, bot); c.stroke();
         const nb = areaCount(F, ev, { k0: a.k0, k1: a.k1 }), tb = ppTxt(evPass(F, ev, 'price_band', [a.k0, a.k1], null, nb)), yl = clamp((top + bot) / 2, 10, V.plot.h - 10);
+        // operator 24.11: on an opaque plate, over the names of the lines at the right edge
+        c.fillStyle = 'rgba(8,9,12,.95)'; c.fillRect(x + 2, yl - 9, c.measureText(tb).width + 6, 18);
         c.fillStyle = '#FFFFFF'; c.fillText(tb, x + 5, yl);
         V.areaHit = [{ box: [x - 6, top, c.measureText(tb).width + 14, Math.max(12, bot - top)], part: 'band' }];
       }
       if (a.b0 != null) {
         const nr = areaCount(F, ev, a), tr = ppTxt(evPass(F, ev, hasBand ? 'price_time' : 'time_band', hasBand ? [a.k0, a.k1] : null, [F.f + 15 * a.b0, F.f + 15 * a.b1], nr)), w = c.measureText(tr).width;
         const lx = clamp(x1 - w - 4, x0 + 2, V.plot.w - w - 4), ly = hasBand ? Math.max(10, ya - 9) : 12;
-        c.fillStyle = 'rgba(8,9,12,.8)'; c.fillRect(lx - 3, ly - 8, w + 6, 16);
+        c.fillStyle = 'rgba(8,9,12,.95)'; c.fillRect(lx - 3, ly - 8, w + 6, 16);
         c.fillStyle = col; c.fillText(tr, lx, ly + 0.5);
         (V.areaHit = V.areaHit || []).push({ box: [lx - 3, ly - 8, w + 6, 16], part: 'window' }, { box: [x0, ya, x1 - x0, yb - ya], part: 'frame' });
       }
@@ -5130,6 +5165,7 @@
     return Math.round(clamp(V.plot.h - yLow - 10, 0, V.plot.h * cfg.bandRise / 100));
   }
   function drawBand(c, ctx) {
+    if (ctx.F && ancOn()) return ancBand(c, ctx);                 // «От этой свечи» (anc235.js): 5-minute columns
     if (ctx.F && ctx.F._tp) return tpBand(c, ctx);                 // TP-1.1: the clock of T and its windows (tp235.js)
     const F = ctx.F, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, N = F.N, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
     // the band's drawing area: its own strip plus the free height above it (operator 2026-10-06: the columns of X and R
@@ -5358,7 +5394,9 @@
     if (hh && hh.k === 'prev') tags.push([V.Y(hh.p), px(hh.p), '#8C95A3', '#0B0C10']);
     const lastP = s.priceNow != null ? s.priceNow : null;
     const hot = tags.filter(q => q[4]);
-    for (const [y, t, bg, fg, hv_] of tags) if (y > 0 && y < H && (hv_ || !hot.some(q => Math.abs(q[0] - y) < 18))) axisTag(c, y, t, bg, fg);
+    // operator 24.11: a tag that the last price's own tag would cover is left out (the line keeps its name on the chart)
+    const yP = lastP != null ? V.Y(lastP) : null, underP = y => yP != null && y > yP - 22 && y < yP + (ctx.live && A.src === 'live' ? 30 : 18);
+    for (const [y, t, bg, fg, hv_] of tags) if (y > 0 && y < H && (hv_ || (!hot.some(q => Math.abs(q[0] - y) < 18) && !underP(y)))) axisTag(c, y, t, bg, fg);
     // the last price on top of the other tags, with the countdown to the close of the current M5 under it (as TradingView)
     if (lastP != null) {
       const b = ctx.D.bars.filter(q => q.t + 5 <= (ctx.live ? NOW + 5 : ctx.obs)).pop(), y = V.Y(lastP), bg = b && b.c >= b.o ? C.up : C.dn;
@@ -5467,12 +5505,16 @@
         const len = Math.max(2, blen * n / mx), g = F._ts || okRow(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
         // a withheld band share (its passport «—», SWPC-1.1 M14): no bar; the next segment keeps its place, the label says «—»
         if (mv ? ppHeld(F, 'EST:B-RX-REGION-' + ev, { k0: k, k1: k + 1, b0: mv.b, b1: mv.b + 1 }) : ppHeld(F, 'EST:B-RX-BAND-' + ev, { k0: k, k1: k + 1 })) { labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk: false, on, z, rowH: bot - top, ok: okRow(ev, k), mv }); x += len; continue; }
-        const spent=F._ts&&!okRow(ev,k);
-        c.fillStyle = spent ? rgba(stateCol(cfg[ev], 'spent'),Math.min(1,a*cfg.projA/90)*cfg.passedA/100*1.8) : rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
+        // operator 24.11: a row today's final event can no longer reach is IMPOSSIBLE all over — neutral dark grey, no
+        // trace of amber / sky (amber must never read «may still come»); the part still ahead is VALID green while the
+        // row is reachable; the role R / X is the thin edge
+        const spent = !okRow(ev, k);
+        c.fillStyle = spent ? rgba(SPENT,Math.min(1,a*cfg.projA/90)*cfg.passedA/100*1.8) : rgba(cfg.okC, Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
+        c.fillStyle = rgba(cfg[ev], Math.min(1, 0.35 + a)); c.fillRect(x, top + 0.5, Math.min(2, len), hh);
         if (g) {
           const dead = !okRow(ev, k);
-          c.fillStyle = dead ? rgba(stateCol(cfg[ev], 'spent'), Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8))
-            : rgba(cfg.doneC, Math.min(1, Math.max(0.2, 0.75 * a * cfg.projA / 90 * cfg.passedA / 30)));
+          c.fillStyle = dead ? rgba(SPENT, Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8))
+            : rgba(cfg.projDoneC, Math.min(1, Math.max(0.2, 0.75 * a * cfg.projA / 90 * cfg.passedA / 30)));
           c.fillRect(x + la, top + 0.5, len - la, hh);
         }
         V.projBars.push({ ev, k, b: mv ? mv.b : null, ans: mv ? mv.ans : true, top, bot, x0: x, x1: x + len, n, earlier:g, later:n-g });
@@ -5483,6 +5525,8 @@
     }
     // the labels: R left of the bar, X right of it; per side the hovered and the zones' peaks first, never overlapping
     const used = { R: [], X: [] };
+    // operator 24.11: the rows of the level words (70 % / 50 %) stay free of the column's own percentages
+    if (F._tp && !(typeof antOn === 'function' && antOn())) for (const y of tpReachRows(F, top0, bot0)) { used.R.push([y, 14]); used.X.push([y, 14]); }
     for (const L of labels.sort((a, b) => (b.on - a.on) || (b.pk - a.pk) || (b.n - a.n))) {
       // the label's size and brightness follow the share on the same scale as the bar: the strongest rows read first
       // the strongest row of the column 14 px bold, the weakest zone rows about 9 px (linear in the share)
@@ -5490,7 +5534,7 @@
       // with nothing ahead is grey and small: it has played out today (operator 2026-10-06)
       // grey only when today's final event can no longer lie in the band (reachability); a band whose family events are
       // all behind the clock but still reachable today is green (history clock) — DR-LAB-NOW-1.0 F2, the audit's D4
-      const dead = !L.on && (L.ahead <= 0 || (F._ts && !L.ok)), gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
+      const dead = !L.on && (L.ahead <= 0 || !L.ok), gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
       if (used[L.ev].some(u => Math.abs(u[0] - L.y) < (u[1] + fs) / 2 + 1)) continue;
       used[L.ev].push([L.y, fs]);
       const col = cfg[L.ev], wt = L.on || (!dead && q > 0.7) ? '700 ' : L.z != null && !dead ? '600 ' : '';
@@ -5498,7 +5542,7 @@
       const p = L.mv ? mxCellPass(F, L.ev, L.mv) : evPass(F, L.ev, 'price_cell', [L.k, L.k + 1], null, L.n), t = ppTxt(p), tw = pctW(c, t, wt, fs);
       if (L.mv) V.projLbl.push({ ev: L.ev, k: L.k, b: L.mv.b, n: L.mv.n, est: p.estimand, yes: p.yes_count, N: p.N });
       pctDraw(c, t, L.ev === 'R' ? Math.max(A_.x + 3, x0 - 3 - tw) : Math.min(L.xe + 3, A_.x + A_.w - tw - 6), L.y + 0.5, wt, fs,
-        L.on ? '#FFFFFF' : gone ? rgba(cfg.doneC, 0.75) : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(col, 0.45 * r), 0.5 + 0.5 * r) : C.text3);
+        L.on ? '#FFFFFF' : gone ? rgba(cfg.projDoneC, 0.85) : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(col, 0.45 * r), 0.5 + 0.5 * r) : C.text3);
     }
     // the zones' price extents: thin ticks at the right edge, one lane per overlap
     const ends = [];
@@ -5526,6 +5570,7 @@
     c.restore();
   }
   function drawProj(c, ctx) {
+    if (ancOn()) return ancProj(c, ctx);                            // «От этой свечи» (anc235.js)
     if (st.mode === 'bounds') return drawProjRX(c, ctx);
     const F = ctx.F, A_ = V.proj, W = A_.w - 40, h = hv(), d = projData(ctx);
     c.fillStyle = C.axis; c.fillRect(A_.x, 0, A_.w, A_.h);
@@ -5923,8 +5968,8 @@
   // Three different questions stay distinct: immutable R/X mass; its historical clock; today's actual visit.
   // A zone uses its exact cells and window. A column band has no zone-window: its horizon is (activation, block end].
   // YES survives gaps; absence is asserted only with every relevant closed M5. A forming/replay-future bar is excluded.
-  function visitState(F, ctx, k0, k1, z) {
-    if (!ctx || !REVIEW) return { state: 'UNKNOWN', t: null };
+  function visitState(F, ctx, k0, k1, z, force) {
+    if (!ctx || (!REVIEW && !force)) return { state: 'UNKNOWN', t: null };
     if (F.held.has('today.zones')) return { state: 'WITHHELD', t: null };
     if (z && z.event_id && F.zones && F.zones[z.event_id]) {
       const i = F.zones[z.event_id].zones.findIndex(q => q.zone_id === z.zone_id);
@@ -5967,6 +6012,22 @@
       out.time = F.f + 15 * b + 7.5; out.u = (k + 0.5) / 10;
     }
     return out;
+  }
+  // Operator 24.11 (spec/ekran-24/18-cveta-sostoyanij-23-5.md): ONE state of a time × price target (a zone, a window)
+  // for its box, its capsule and its price / time tags. Time, price and the observed fact stay three questions; the
+  // colour is their combination: VALID green (the window not over, the price still reachable), HOLDS bright green
+  // (today's extreme inside), WORKED grey-blue (a closed M5 came into its own cells in its window), MISSED muted red
+  // (the window over, every M5 known, no visit), PAST grey (the window over, the fact not established), IMPOSSIBLE dark
+  // grey (the window still open, the price already beyond), UNKNOWN (status withheld / incomplete).
+  function targetLook(F, ctx, o) {
+    const sl = sliceOf(ctx), v = o.z ? visitState(F, ctx, null, null, o.z, true) : { state: 'UNKNOWN', t: null };
+    if (o.look === 'WITHHELD' || v.state === 'WITHHELD') return { state: 'UNKNOWN', col: '#A8B5CB', v };
+    if (o.look === 'HOLDS') return { state: 'HOLDS', col: mixW(cfg.okC, 0.3), v };
+    if (v.state === 'VISITED') return { state: 'WORKED', col: cfg.workedC, v };
+    if (o.t1 != null && o.t1 <= sl) return v.state === 'MISSED' ? { state: 'MISSED', col: cfg.missC, v } : { state: 'PAST', col: cfg.projDoneC, v };
+    if (expiredLook(o.look)) return { state: 'IMPOSSIBLE', col: SPENT, v };
+    if (o.look === 'STATUS_UNKNOWN') return { state: 'UNKNOWN', col: '#A8B5CB', v };
+    return { state: 'VALID', col: cfg.okC, v };
   }
   function zonePaint(F, ctx, ev, z, status) {
     const v = { ...visitState(F, ctx, null, null, z), start: z.time_start };
@@ -6097,6 +6158,8 @@
     for (const b of dom('mode').querySelectorAll('button')) b.classList.toggle('on', b.dataset.m === st.mode);
     const vw = F ? VW(F) : ctx.s.failed ? 'BRK' : 'CONF', nm = F ? F.names : { R: lbl('FF:PASSPORT-VIEW', 'name_R', null, vw), X: lbl('FF:PASSPORT-VIEW', 'name_X', null, vw) };
     // A freehand area belongs to the event currently in focus. Make that semantic choice explicit before the drag.
+    const ancb = dom('ancb');                                       // «От этой свечи» (anc235.js, operator 25.11)
+    if (ancb) { ancb.classList.toggle('on', ancOn()); ancb.setAttribute('aria-pressed', ancOn() ? 'true' : 'false'); }
     const ab = dom('areab');
     if (ab) { ab.textContent = '▭ Область · ' + st.ev; ab.title = 'Выбрать область ' + st.ev + ' мышью: цена или цена × время; R/X меняется вместе с текущим фокусом'; }
     // R and X are on the chart together (operator 2026-10-01): the toolbar names them, there is no switch
@@ -8026,17 +8089,25 @@
     }
     return out;
   }
+  // the places' name boxes of the last frame (app.js render): where the level lines over the chart break (their
+  // drawing, tpReachChart, comes with the branch of the lines across the chart)
+  let TP_LBL = [];
   function tpReachMarks(c, F, A_, top0, bot0) {
     for (const L of tpLevels(F)) {
       const y = Math.round(V.Y(F.u2p(L.k / 10))) + 0.5;
       if (y < top0 || y > bot0) continue;
       c.save(); c.strokeStyle = rgba(cfg.X, 0.8); c.lineWidth = 1; c.setLineDash(L.q === 70 ? [] : [3, 3]);
       c.beginPath(); c.moveTo(A_.x + 2, y); c.lineTo(A_.x + A_.w - 2, y); c.stroke(); c.restore();
-      c.font = '700 9.5px ' + FONT; c.textBaseline = 'bottom'; c.fillStyle = rgba(cfg.X, 0.95);
-      const t = 'дошли ' + L.q + ' % · ' + sd(L.k / 10);
-      c.fillText(t, A_.x + A_.w - c.measureText(t).width - 6, y - 1);
+      // operator 24.11: the words UNDER their line, on a dark plate, never over the bars' numbers (drawProjRX keeps
+      // their rows free: tpReachRows)
+      c.font = '700 9.5px ' + FONT; c.textBaseline = 'top';
+      const t = L.q + '% · ' + sd(L.k / 10), tw = c.measureText(t).width, tx = A_.x + A_.w - tw - 6;
+      c.fillStyle = 'rgba(11,12,16,.88)'; c.fillRect(tx - 3, y + 1, tw + 6, 12);
+      c.fillStyle = rgba(cfg.X, 0.95); c.fillText(t, tx, y + 2);
     }
   }
+  // the rows the level words take in the price column, so its percentages there step aside
+  const tpReachRows = (F, top0, bot0) => tpLevels(F).map(L => Math.round(V.Y(F.u2p(L.k / 10))) + 7).filter(y => y > top0 && y < bot0);
   // ---------- TP-2.0 Ч13: how the DR ended for the family's sessions that by this clock had gone as deep ----------
   // CS:TP-DEPTH-AT-CUT-1: eligible at the cut as in «Сейчас» (own activation before it, a complete prefix, the DR still
   // whole) and their deepest point against the activation up to the cut at today's or deeper (exact, integers);
@@ -8125,7 +8196,9 @@
         if (closeX) a *= 0.55;                                // the tops of the last 15 minutes: a move not ended before the close
         if (lit) a = Math.max(a, 0.5);
         if (bu) a = Math.max(a, (past ? 0.3 : 0.5) + 0.45 * share / mxE[ev]);   // a bunch: brighter (the author's darker time mode)
-        c.fillStyle = rgba(cfg[ev], Math.min(1, a * cfg.stripA / 80));
+        // operator 25.11: the hue says WHAT (R amber, X blue), grey says the 15 minutes are over; whether the window is
+        // still open is said by its capsule (green / grey), not by the columns
+        c.fillStyle = rgba(past ? cfg.projDoneC : cfg[ev], Math.min(1, a * cfg.stripA / 80));
         const y = yOf(ev, share);
         c.fillRect(x0, Math.min(cy + dir[ev], y), x1 - x0, Math.abs(y - cy) - 1);
         if (closeX && Math.abs(y - cy) > 3) { c.save(); c.strokeStyle = rgba(cfg.X, 0.55); c.lineWidth = 1; c.setLineDash([2, 2]); c.strokeRect(Math.round(x0) + 0.5, Math.round(Math.min(cy + dir.X, y)) + 0.5, Math.max(1, Math.round(x1 - x0) - 1), Math.max(1, Math.round(Math.abs(y - cy) - 1) - 1)); c.restore(); }
@@ -8148,6 +8221,7 @@
       labels.push({ x, y: y + dir.X * (inside ? -8 : 9), t: ppTxt(p), col: inside ? '#EEF5FF' : mixW(cfg.X, 0.25), big: true });
     }
     // the lines of the clock: the median solid, the 70 % mark dashed, each in its event's half
+    const lineMarks = [];
     for (const L of tpLines(F)) {
       const x = Math.round(V.X(L.cut)) + 0.5;
       if (x < B.x || x > B.x + B.w) continue;
@@ -8155,11 +8229,21 @@
       c.save(); c.strokeStyle = rgba(cfg[L.ev], held ? 0.25 : on ? 1 : 0.85); c.lineWidth = on ? 2 : 1.3; c.setLineDash(L.id === 'p70' ? [4, 3] : []);
       c.beginPath(); c.moveTo(x, y0); c.lineTo(x, y1); c.stroke(); c.restore();
       // a short mark at the outer end, the median one row further out than the 70 % mark, so close lines stay readable
-      c.font = '700 9.5px ' + FONT; c.textBaseline = 'middle'; c.fillStyle = rgba(cfg[L.ev], held ? 0.4 : 0.95);
-      c.fillText(L.id === 'median' ? '½' : '70%', x + 3, cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15)));
+      // operator 24.11: the mark on a dark plate right of its line; the column numbers nearby step aside (below)
+      c.font = '700 9.5px ' + FONT; c.textBaseline = 'middle';
+      const mt = L.id === 'median' ? '½' : '70%', mw = c.measureText(mt).width, my = cy + dir[L.ev] * (half - (L.id === 'median' ? 4 : 15));
+      c.fillStyle = 'rgba(10,11,15,.85)'; c.fillRect(x + 1, my - 6, mw + 4, 12); lineMarks.push([x + 1, my - 6, x + mw + 5, my + 6]);
+      c.fillStyle = rgba(cfg[L.ev], held ? 0.4 : 0.95); c.fillText(mt, x + 3, my);
       V.tpLines.push({ ev: L.ev, id: L.id, x, y0: Math.min(y0, y1), y1: Math.max(y0, y1) });
     }
-    for (const L of labels) { c.font = (L.big ? '700 10.5px ' : '700 10.5px ') + FONT; c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, Math.max(B.y + 7, Math.min(B.y + B.h - 7, L.y))); c.textAlign = 'left'; }
+    const placedL = [];
+    for (const L of labels) {
+      c.font = '700 10.5px ' + FONT; const w = c.measureText(L.t).width, ly = Math.max(B.y + 7, Math.min(B.y + B.h - 7, L.y)), r = [L.x - w / 2 - 2, ly - 7, L.x + w / 2 + 2, ly + 7];
+      const hit = q => r[0] < q[2] && r[2] > q[0] && r[1] < q[3] && r[3] > q[1];
+      if (!L.big && (lineMarks.some(hit) || placedL.some(hit))) continue;   // operator 24.11: no number over another or over ½ / 70 %
+      placedL.push(r);
+      c.fillStyle = L.col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.t, L.x, ly); c.textAlign = 'left';
+    }
     // the windows in the place of the zone capsules: the selected one outlined, the others a soft fill; «до окна» and «позже»
     // quieter. Each carries its name and its share of T (core §7: «у W % true-сессий откат до вершины был в этом окне»).
     const shares = TP_WINDOWS.filter(w => tp.windows[w]).map(w => ({ w, W: tp.windows[w], p: tpShare(F, tp.windows[w][0], tp.windows[w][1]) }));
@@ -8168,18 +8252,19 @@
       const x0 = V.X(F.f + 15 * W[0]) + 1, x1 = V.X(F.f + 15 * W[1]) - 1, wd = x1 - x0, y0 = dir.R < 0 ? B.y + 3 : B.y + B.h - 3 - LH + 2;
       if (x1 < B.x || x0 > B.x + B.w || wd < 4) continue;
       const on = w === P.w, hov = !!(h && (h.k === 'tpwin' || h.k === 'tpzone') && h.id === w), side = w === 'BEFORE' || w === 'LATE', r = Math.pow((p.pct || 0) / capMax, 0.7);
+      const cc = F.f + 15 * W[1] <= sl ? cfg.projDoneC : cfg.okC;   // operator 24.11: the window over — grey; still open — green
       c.save(); c.globalAlpha = on || hov ? 1 : 0.8;
-      c.fillStyle = rgba(cfg.R, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
-      if (on || hov) { c.strokeStyle = rgba(cfg.R, on ? 0.75 : 0.5); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
+      c.fillStyle = rgba(cc, Math.min(1, ((on ? 0.3 : 0.1 + 0.16 * r) * (side ? 0.6 : 1) + (hov ? 0.08 : 0)) * cfg.capA / 100)); roundRect(c, x0, y0, wd, LH, LH / 2); c.fill();
+      if (on || hov) { c.strokeStyle = rgba(cc, on ? 0.75 : 0.5); c.lineWidth = 1; roundRect(c, x0 + 0.5, y0 + 0.5, wd - 1, LH - 1, LH / 2); c.stroke(); }
       c.beginPath(); c.rect(x0 + 2, y0, wd - 4, LH); c.clip();
       c.textBaseline = 'middle';
       let x = x0 + 9;
       c.font = '700 10.5px ' + FONT;
       const nw = c.measureText(TP_NAME[w]).width, pw = pctW(c, ppTxt(p), '700 ', 10.5 + (on ? 1 : 0));
-      c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(side ? '#B8BEC9' : mixW(cfg.R, 0.2), Math.min(1, (on ? 1 : 0.85) * cfg.capTxt / 100));
+      c.font = '700 10.5px ' + FONT; c.fillStyle = rgba(side ? '#B8BEC9' : mixW(cc, 0.35), Math.min(1, (on ? 1 : 0.85) * cfg.capTxt / 100));
       if (wd >= nw + 14) { c.fillText(TP_NAME[w], x, y0 + LH / 2 + 0.5); x += nw + 6; }
       // a narrow window keeps its name; its share is then in its title and in the panel
-      if (wd >= nw + pw + 20) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5 + (on ? 1 : 0), rgba(mixW(cfg.R, 0.35), Math.min(1, (on ? 1 : 0.8) * cfg.capTxt / 100)));
+      if (wd >= nw + pw + 20) pctDraw(c, ppTxt(p), x, y0 + LH / 2 + 0.5, '700 ', 10.5 + (on ? 1 : 0), rgba(mixW(cc, 0.45), Math.min(1, (on ? 1 : 0.8) * cfg.capTxt / 100)));
       c.restore();
       V.tpCaps.push({ id: w, box: [x0, y0, wd, LH] });
     }
@@ -8303,8 +8388,9 @@
     if (!z || zoneHeld(G, 'R', h.i)) return;
     const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = G.f + 15 * Math.min(...bs), t1 = G.f + 15 * (Math.max(...bs) + 1);
     const look = zoneStatus(G, ctx, 'R')[h.i], spent = expiredLook(look);
-    V.lk = { ev: 'R', src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', marker: targetMarker(G, ctx, 'R', z) };
-    V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg.R, 'spent') : cfg.R });
+    const tl = targetLook(G, ctx, { t1, look, z });
+    V.lk = { ev: 'R', src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', tl, marker: targetMarker(G, ctx, 'R', z) };
+    V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: tl.col });
   }
   // a click on such a place puts its window on screen and keeps the place under the inspector
   function tpPinGhost(h) { TP.pin = h.id; st.ev = 'R'; st.pin = null; st.pinZone = h.i + 1; st.hover = null; tip.hidden = true; render(true); }
@@ -8439,6 +8525,262 @@
       });
     }
     return out.join('');
+  }
+
+  // ---------- «От этой свечи» (MVP v4, operator 25–26.11.2026; not a contract estimand, nothing is sent to /verify) ----------
+  // Operator 25.11: «нажимаю и вижу … пятиминутные кластеры … вместо всех вот этих боксов»; then «примени тот же смысл,
+  // что в DR-сессии, только в меньшем масштабе … вверх расширение и вниз расширение только считаем … не лесенка».
+  // The DR rules of TP-2.0 (meaning/25 §2.4–2.5, lab/tp11.py) on a smaller frame:
+  // - the box is the anchor M5 (the last closed one; in replay the chosen one): its high and low play the DR;
+  // - the family: every historical session of the same instrument, session and side (all weekdays, the base lab/.runtime
+  //   via lab/anchor235_build.py, dates before today) that at the SAME clock M5 was confirmed, had its DR whole and closed
+  //   as far from its IDR edge in SD as today (±0,25 SD; ±0,5 when fewer than ANC_MIN) — M of them, one vote each;
+  // - two facts per session over the horizon: the extension up (its farthest high beyond the anchor's high, the first M5
+  //   reaching it) and the extension down (its farthest low beyond the anchor's low); no extension on a side is its own
+  //   row, never a zero; an extreme in the horizon's last M5 is a move cut by the horizon («ещё шли»), not a place;
+  // - time: counts of the extremes' M5 → bunches by the TP rule (tpRegions), marks ½ and 70 %;
+  // - price: counts per ANC_STEP SD beyond the anchor → places by the same rule; a bunch or a place needs tpNeed(M);
+  // - every number is a share of M. History of similar moments, not a forecast.
+  // - on the chart (operator 25.11 evening and 26.11: «не нужно показывать звезды … самый максимальный кластер … его
+  //   границы протягивались на весь экран налево», «выделяй не весь блок», «более прозрачно», «не надо дублировать»): of
+  //   each place only its ONE cluster, the 5 min × 0,1 SD cell with the most ends, translucent, with a faint long
+  //   rectangle at its two SD bounds from the left edge up to it and one label at that edge; the place's block is not
+  //   drawn (its rows stay in the price column). The rules for agents: spec/ekran-24/19-ot-etoj-svechi-23-5.md.
+  const ANC = { on: /(?:^|[#&])anc=1(?:&|$)/.test(location.hash), lib: {}, load: {}, Hs: [6, 12, 0], hi: 1, memo: null };
+  const ANC_MIN = 20, ANC_STEP = 0.1;   // the price cell: 0,1 SD of the DR grid, as TP-2.0 (operator 25.11: «уровни, которые относятся к DR»)
+  window.__anc = ANC;   // for checks from the console
+  const ancOn = () => ANC.on;
+  const ancPct = v => (Math.round(v * 1000) / 10).toFixed(1).replace('.', ',').replace(/,0$/, '');
+  const ancSd = r => (r > 0 ? '+' : r < 0 ? '−' : '') + Math.abs(r).toFixed(1).replace('.', ',');
+  const ancHName = () => ANC.Hs[ANC.hi] ? ANC.Hs[ANC.hi] * 5 + ' мин' : 'до конца блока';
+  function ancLib(key) {
+    if (ANC.lib[key]) return ANC.lib[key];
+    if (!ANC.load[key]) ANC.load[key] = fetch('anchor/' + key + '.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null)
+      .then(j => { ANC.lib[key] = j || { err: 1 }; ANC.memo = null; render(true); }).catch(() => { ANC.lib[key] = { err: 1 }; render(true); });
+    return null;
+  }
+  function ancNow(ctx) {
+    const F = ctx.F;
+    if (!F || !ctx.s.conf) return { why: 'Нет подтверждения — не от чего считать' };
+    if (ctx.s.failed) return { why: 'DR сегодня сломан — этот режим считает только для целого DR' };
+    const lib = ancLib(A.inst + '_' + ctx.s.k);
+    if (!lib) return { why: 'Загружаю историю сессий…' };
+    if (lib.err) return { why: 'Нет файла истории: запустите python -B lab/anchor235_build.py' };
+    const T = sliceOf(ctx), j = lib.grid.indexOf(T), b = ctx.D.bars.find(q => q.t + 5 === T);
+    if (j < 0 || !b) return { why: 'Срез вне часов сессии' };
+    const dir = p => F.d0 * (tk(p) - F.e0t), c0 = dir(b.c), h0 = Math.max(dir(b.h), dir(b.l)), l0 = Math.min(dir(b.h), dir(b.l));
+    const u0 = c0 / F.w0t, iso = ctx.D.iso || '9999', H = ANC.Hs[ANC.hi];
+    const key = [A.inst, ctx.s.k, T, c0, h0, l0, iso, H, F.d0].join('|');
+    if (ANC.memo && ANC.memo.key === key) return ANC.memo;
+    const g1 = H ? Math.min(lib.grid.length - 1, j + H) : lib.grid.length - 1, L = g1 - j, cand = [];
+    if (L < 2) return { why: 'До конца блока меньше двух M5' };
+    for (const s of lib.sessions) {
+      if (s.s !== F.d0 || s.d >= iso || s.c > T) continue;
+      const pj = s.p[j];
+      if (!pj) continue;
+      let broke = false;
+      for (let g = 0; g <= j && !broke; g++) { const q = s.p[g]; if (q && lib.grid[g] > s.c && q[2] < s.o) broke = true; }
+      if (broke) continue;
+      cand.push({ s, dist: Math.abs(pj[2] / s.w - u0) });
+    }
+    let tol = 0.25, MS = cand.filter(q => q.dist <= tol);
+    if (MS.length < ANC_MIN) { tol = 0.5; MS = cand.filter(q => q.dist <= tol); }
+    const ev = { X: { pts: [], none: 0, open: 0, unk: 0 }, R: { pts: [], none: 0, open: 0, unk: 0 } };
+    for (const { s } of MS) {
+      const aH = s.p[j][1], aL = s.p[j][0];
+      let hi = null, lo = null, gH = 0, gL = 0, gap = false;
+      for (let g = j + 1; g <= g1; g++) {
+        const q = s.p[g];
+        if (!q) { gap = true; continue; }
+        if (hi == null || q[1] > hi) { hi = q[1]; gH = g; }
+        if (lo == null || q[0] < lo) { lo = q[0]; gL = g; }
+      }
+      if (hi == null || gap) { ev.X.unk++; ev.R.unk++; continue; }      // a missing M5 could hold the extreme: unknown
+      for (const [e, ext, u, g] of [['X', hi - aH, hi / s.w, gH], ['R', aL - lo, lo / s.w, gL]]) {
+        if (ext <= 0) { ev[e].none++; continue; }                        // never beyond the anchor on this side
+        if (g === g1) { ev[e].open++; continue; }                        // still going when the horizon ended
+        // the end on the session's OWN DR grid (u from its IDR edge in its IDR widths), as the screen's SD levels
+        ev[e].pts.push({ u, k: Math.floor(u / ANC_STEP + 1e-9), c: g - j - 1, t: lib.grid[g] - 5, d: s.d });
+      }
+    }
+    const M = MS.length, need = tpNeed(M);
+    for (const e of ['X', 'R']) {
+      const E = ev[e], tc = new Array(L).fill(0);
+      for (const p of E.pts) tc[p.c]++;
+      E.tc = tc;
+      E.bunches = tpRegions(tc).map(([lo, hi, ap]) => ({ c0: lo, c1: hi + 1, ap, n: tc.slice(lo, hi + 1).reduce((x, y) => x + y, 0) })).filter(u => u.n >= need);
+      const ts = E.pts.map(p => p.t).sort((x, y) => x - y);
+      E.half = tpQuant(ts, 1, 2); E.p70 = tpQuant(ts, 7, 10);
+      const kmin = E.pts.reduce((m, p) => Math.min(m, p.k), Infinity), kmax = E.pts.reduce((m, p) => Math.max(m, p.k), -Infinity);
+      const pc = E.pts.length ? new Array(kmax - kmin + 1).fill(0) : [];
+      for (const p of E.pts) pc[p.k - kmin]++;
+      E.pc = pc; E.kmin = E.pts.length ? kmin : 0;
+      E.places = tpRegions(pc).map(([lo, hi, ap]) => {
+        const mem = E.pts.filter(p => p.k - E.kmin >= lo && p.k - E.kmin <= hi), ts2 = mem.map(p => p.t).sort((x, y) => x - y);
+        // the box's hours: the middle half of its sessions' ends (first and third quarter), so the accent shows
+        const q1 = tpQuant(ts2, 1, 4), q3 = tpQuant(ts2, 3, 4);
+        // the place's own cluster (operator 25.11 «один самый максимальный кластер»): its 5 min × 0,1 SD cell with the most
+        // ends; ties — the earlier time, then the cell nearer the place's apex row
+        const occ = new Map();
+        for (const p of mem) { const kk = p.t + '|' + p.k; occ.set(kk, (occ.get(kk) || 0) + 1); }
+        let top = null;
+        for (const [kk, n] of occ) {
+          const [t, k] = kk.split('|').map(Number), cand = { t, k, n };
+          if (!top || n > top.n || (n === top.n && (t < top.t || (t === top.t && Math.abs(k - E.kmin - ap) < Math.abs(top.k - E.kmin - ap))))) top = cand;
+        }
+        return { k0: E.kmin + lo, k1: E.kmin + hi + 1, ap: E.kmin + ap, n: mem.length, t0: q1.t, t1: q3.t + 5, tq: tpQuant(ts2, 1, 2), top };
+      }).filter(z => z.n >= need).sort((a, b2) => a.k0 - b2.k0);
+      E.places.forEach((z, i) => { z.name = e + (i + 1); });
+      E.out = E.pts.length - E.places.reduce((x, z) => x + z.n, 0);
+    }
+    ANC.memo = { key, T, j, g1, L, c0, h0, l0, u0, tol, M, need, pool: cand.length, ev, t1: lib.grid[g1], H };
+    return ANC.memo;
+  }
+  // a level u of the DR grid (directed SD from today's IDR edge) on today's chart
+  const ancY = (F, u) => V.Y(F.u2p(u));
+  // the nearest free height for a label [x0, x1] around y (half height hh, step dy), alternating up and down, inside the
+  // chart below its header line
+  const ancFree = (placed, x0, x1, y, hh, dy) => {
+    for (const off of [0, -1, 1, -2, 2, -3, 3, -4, 4]) {
+      const yy = y + off * dy;
+      if (yy < 54 || yy > V.plot.h - 10) continue;
+      if (!placed.some(q => x0 < q[2] && x1 > q[0] && yy - hh < q[3] && yy + hh > q[1])) return yy;
+    }
+    return y;
+  };
+  const ancWord = (F, e) => (e === 'X') === (F.d0 > 0) ? 'вверх' : 'вниз';
+  function ancChart(c, ctx) {
+    const F = ctx.F, a = ancNow(ctx);
+    V.ancHdr = null;
+    c.save();
+    c.font = '600 11px ' + FONT; c.textBaseline = 'top'; c.textAlign = 'left';
+    const head = a.why || ('От свечи ' + clk(a.T - 5) + '–' + clk(a.T) + ' · похожих ' + a.M + ' · все дни · DR цел · ±' + String(a.tol).replace('.', ',') +
+      ' SD · ' + ancHName() + ' ▾' + (a.M < ANC_MIN ? ' · мало сессий' : ''));
+    const hw = c.measureText(head).width;
+    c.fillStyle = 'rgba(8,9,12,.9)'; c.fillRect(8, 26, hw + 12, 18);
+    c.fillStyle = a.why ? '#A3A8B3' : '#E6EAF0'; c.fillText(head, 14, 29);
+    V.ancHdr = [8, 26, 20 + hw, 44];
+    if (a.why || !a.M) { c.restore(); return; }
+    const xA = V.X(a.T), xB = V.X(a.t1);
+    // the anchor M5 as the small box: its high and low over the horizon, the line of the anchor
+    c.strokeStyle = 'rgba(230,234,240,.45)'; c.setLineDash([2, 3]); c.lineWidth = 1;
+    c.beginPath(); c.moveTo(Math.round(xA) + 0.5, 0); c.lineTo(Math.round(xA) + 0.5, V.plot.h); c.stroke();
+    for (const u of [a.h0 / F.w0t, a.l0 / F.w0t]) { const y = Math.round(V.Y(F.u2p(u))) + 0.5; c.beginPath(); c.moveTo(V.X(a.T - 5), y); c.lineTo(xB, y); c.stroke(); }
+    c.setLineDash([]);
+    const placedL = [];
+    for (const e of ['R', 'X']) {
+      const E = a.ev[e];
+      // the places: the band of the extensions' ends × the hours they came, the share of M
+      for (const z of E.places) {
+        // operator 26.11: not the place's block («со всем блоком я сам разберусь»), only its one main cluster, not bright
+        // («более прозрачно, чтобы я видел график»), and a faint long rectangle from the left edge up to it («откуда он
+        // выходит и где его ожидать по времени»); one label, no duplicated words
+        const T0 = z.top;
+        if (!T0) continue;
+        const ca = ancY(F, T0.k * ANC_STEP), cb = ancY(F, (T0.k + 1) * ANC_STEP), cy0 = Math.min(ca, cb), ch = Math.max(3, Math.abs(cb - ca));
+        const cx0 = V.X(T0.t), cx1 = Math.max(cx0 + 4, V.X(T0.t + 5));
+        // the faint rectangle at the cell's two SD bounds, from the left edge to the cell
+        c.fillStyle = rgba(cfg[e], 0.07); c.fillRect(0, cy0, cx0, ch);
+        c.strokeStyle = rgba(cfg[e], 0.22); c.lineWidth = 1;
+        for (const y of [Math.round(cy0) + 0.5, Math.round(cy0 + ch) - 0.5]) { c.beginPath(); c.moveTo(0, y); c.lineTo(cx0, y); c.stroke(); }
+        // the cluster itself: translucent fill, a thin edge in the role's colour
+        c.fillStyle = rgba(cfg[e], 0.28); c.fillRect(cx0, cy0, cx1 - cx0, ch);
+        c.strokeStyle = rgba(cfg[e], 0.8); c.lineWidth = 1; c.strokeRect(Math.round(cx0) + 0.5, Math.round(cy0) + 0.5, Math.round(cx1 - cx0) - 1, Math.round(ch) - 1);
+        // its one label at the left edge: the name, the SD, the 5 minutes and its share of M
+        const rng = ancSd(T0.k / 10) + '…' + ancSd((T0.k + 1) / 10).replace(/^[+−]/, '');
+        const lt = z.name + ' ' + rng + ' · ' + clk(T0.t) + ' · ' + ancPct(T0.n / a.M) + '%';
+        c.font = '600 10px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'left';
+        const lw = c.measureText(lt).width, ly = ancFree(placedL, 6, 12 + lw, clamp(cy0 + ch / 2, 54, V.plot.h - 8), 7, 15);
+        placedL.push([6, ly - 7, 12 + lw, ly + 7]);
+        c.fillStyle = 'rgba(8,9,12,.72)'; c.fillRect(6, ly - 7, lw + 6, 14); c.fillStyle = rgba(cfg[e], 0.95); c.fillText(lt, 9, ly);
+      }
+    }
+    c.restore();
+  }
+  // the time band in 5-minute columns: when the extensions up (X half) and down (R half) ended; bunches framed with their
+  // share of M, the marks ½ and 70 %
+  function ancBand(c, ctx) {
+    const F = ctx.F, a = ancNow(ctx), B = V.band, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
+    V.bandOv = 0;
+    c.save(); c.beginPath(); c.rect(B.x, B.y, B.w, B.h); c.clip();
+    c.fillStyle = '#0A0B0F'; c.fillRect(B.x, B.y, B.w, B.h); c.fillStyle = C.grid; c.fillRect(B.x, B.y, B.w, 1);
+    const cy = Math.round(B.y + B.h / 2) + 0.5, half = B.h / 2 - 4;
+    c.fillStyle = C.grid; c.fillRect(B.x, cy, B.w, 1);
+    c.font = '600 10px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'left';
+    for (const e of ['X', 'R']) { c.fillStyle = rgba(cfg[e], 0.9); c.fillText((e === 'X' ? 'X ' : 'R ') + ancWord(F, e) + ' · когда кончилось расширение', B.x + 6, cy + dir[e] * (half - 4)); }
+    if (!a.why && a.M) {
+      const mx = Math.max(1, ...a.ev.X.tc, ...a.ev.R.tc), cx = i => V.X(lib5(a, i));
+      const placedB = [];
+      for (const e of ['X', 'R']) {
+        const E = a.ev[e], inB = i => E.bunches.some(u => i >= u.c0 && i < u.c1);
+        E.tc.forEach((n, i) => {
+          if (!n) return;
+          const x0 = cx(i) + 1, x1 = cx(i + 1) - 1, hh = Math.max(2, (half - 14) * n / mx), y = dir[e] < 0 ? cy - hh : cy + 1;
+          c.fillStyle = rgba(cfg[e], (inB(i) ? 0.55 : 0.22) + 0.35 * n / mx); c.fillRect(x0, y, Math.max(1, x1 - x0), hh);
+        });
+        for (const u of E.bunches) {
+          const x0 = cx(u.c0) + 0.5, x1 = cx(u.c1) - 0.5, yy = dir[e] < 0 ? cy - half + 10 : cy + 2, hh = half - 12;
+          c.strokeStyle = rgba(cfg[e], 0.9); c.lineWidth = 1; c.strokeRect(Math.round(x0) + 0.5, Math.round(yy) + 0.5, Math.round(x1 - x0), Math.round(hh));
+          c.font = '700 11px ' + FONT; c.textAlign = 'center'; c.fillStyle = mixW(cfg[e], 0.25);
+          const lt = ancPct(u.n / a.M) + '%', lw = c.measureText(lt).width, lx = (x0 + x1) / 2, ly = dir[e] < 0 ? yy + 5 : yy + hh - 6;
+          if (placedB.some(q => q[2] === e && Math.abs(q[0] - lx) < (q[1] + lw) / 2 + 3)) continue;   // no number over another
+          placedB.push([lx, lw, e]); c.fillText(lt, lx, ly);
+        }
+        for (const [q, nm] of [[E.half, '½'], [E.p70, '70%']]) {
+          if (!q) continue;
+          const x = Math.round(V.X(q.t + 5)) + 0.5;
+          c.strokeStyle = rgba(cfg[e], 0.9); c.setLineDash(nm === '½' ? [] : [4, 3]); c.beginPath(); c.moveTo(x, cy + dir[e]); c.lineTo(x, cy + dir[e] * (half + 2)); c.stroke(); c.setLineDash([]);
+          c.font = '700 9.5px ' + FONT; c.textAlign = 'left'; c.fillStyle = rgba(cfg[e], 0.95); c.fillText(nm, x + 3, cy + dir[e] * (nm === '½' ? 8 : 18));
+        }
+      }
+    }
+    c.restore();
+  }
+  const lib5 = (a, i) => a.T + 5 * i;   // the open minute of the i-th M5 after the anchor
+  // the price column: where the extensions ended, per ANC_STEP SD beyond the anchor (a density, not «хотя бы до»); the
+  // rows of a place brighter, its name and share at its apex row
+  function ancProj(c, ctx0) {
+    const ctx = V.ctx || ctx0, F = ctx.F, a = ancNow(ctx), A_ = V.proj;
+    c.fillStyle = C.axis; c.fillRect(A_.x, 0, A_.w, A_.h); c.fillStyle = C.grid; c.fillRect(A_.x, 0, 1, A_.h);
+    V.projBars = [];
+    c.save(); c.beginPath(); c.rect(A_.x, 0, A_.w, A_.h); c.clip();
+    if (!a.why && a.M) {
+      const x0 = A_.x + 46, blen = A_.w - 46 - 50;
+      for (const e of ['X', 'R']) {
+        const E = a.ev[e], mx = Math.max(1, ...E.pc), yE = Math.round(ancY(F, e === 'X' ? a.h0 / F.w0t : a.l0 / F.w0t)) + 0.5;
+        c.strokeStyle = 'rgba(230,234,240,.5)'; c.beginPath(); c.moveTo(A_.x, yE); c.lineTo(A_.x + A_.w, yE); c.stroke();
+        E.pc.forEach((n, i) => {
+          if (!n) return;
+          const k = E.kmin + i, ya = ancY(F, k * ANC_STEP), yb = ancY(F, (k + 1) * ANC_STEP), y0 = Math.min(ya, yb), hh = Math.max(1, Math.abs(yb - ya) - 1);
+          if (y0 > A_.h - 38 || y0 + hh < 0) return;
+          const z = E.places.find(q => k >= q.k0 && k < q.k1);
+          c.fillStyle = rgba(cfg[e], z ? 0.85 : 0.3); c.fillRect(x0, y0, Math.max(1, blen * n / mx), hh);
+          if (z && k === z.ap) {
+            c.font = '700 10px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillStyle = mixW(cfg[e], 0.2);
+            c.fillText(z.name + ' ' + ancPct(z.n / a.M) + '%', x0 + blen * n / mx + 3, y0 + hh / 2);
+          }
+          if (hh >= 9 && (z || n / mx >= 0.5)) { c.font = '500 9px ' + FONT; c.textBaseline = 'middle'; c.textAlign = 'right'; c.fillStyle = '#8D93A0'; c.fillText(ancSd(k / 10), A_.x + 42, y0 + hh / 2); }
+        });
+      }
+    }
+    // the footer: the count, the horizon (a click changes it) and the rows that are not places
+    c.fillStyle = 'rgba(10,11,15,.96)'; c.fillRect(A_.x + 1, A_.h - 52, A_.w - 1, 52);
+    c.textBaseline = 'bottom'; c.textAlign = 'left'; c.font = '700 10px ' + FONT; c.fillStyle = '#C9CED8';
+    c.fillText(a.why ? 'От этой свечи' : 'От ' + clk(a.T) + ' · похожих ' + a.M, A_.x + 6, A_.h - 36);
+    c.font = '500 9.5px ' + FONT; c.fillStyle = '#8D93A0'; c.fillText('горизонт: ' + ancHName() + ' ▾', A_.x + 6, A_.h - 22);
+    if (!a.why && a.M) {
+      const r = e => { const E = a.ev[e]; return e + ': нет ' + ancPct(E.none / a.M) + '% · ещё шли ' + ancPct(E.open / a.M) + '%'; };
+      c.fillText(r('X') + ' · ' + r('R'), A_.x + 6, A_.h - 8);
+    }
+    V.ancFoot = [A_.x, A_.h - 52, A_.x + A_.w, A_.h];
+    c.restore();
+  }
+  // a click on the chart's header or the column's footer: the next horizon (30 / 60 min / to the block end)
+  function ancClick(x, y) {
+    const inR = r => r && x >= r[0] && x <= r[2] && y >= r[1] && y <= r[3];
+    if (!inR(V.ancHdr) && !inR(V.ancFoot)) return false;
+    ANC.hi = (ANC.hi + 1) % ANC.Hs.length; ANC.memo = null; render(true);
+    return true;
   }
 
   // ================= 23.5 · «Съёмы лоу» — the local layer (operator 2026-10-26) =================
@@ -9346,6 +9688,7 @@
     click(x, y, d);
   });
   function click(x, y, d) {
+    if (ancOn() && ancClick(x, y)) return;                          // «От этой свечи»: the horizon (anc235.js)
     const h = hit(x, y), F = V.ctx.F;
     if (h && (h.k === 'pcell' || h.k === 'pbpcell') && F && st.mode === 'bounds') {        // a click on the price histogram selects its band
       const same = st.area && st.area.k0 === h.k0 && st.area.k1 === h.k1 && st.area.b0 == null && st.area.ev === h.ev;
@@ -9430,6 +9773,7 @@
     else if (t.closest('#mode button')) { st.mode = t.closest('button').dataset.m; st.hover = null; st.pin = null; if(continuationMode()&&!CS.target)st.tool=true; render(true); }
     else if (t.closest('#ev button')) { if (st.mode === 'bounds') { st.ev = t.closest('button').dataset.e; st.hover = null; if (st.pin && st.pin.k === 'pt') st.pin = null; render(true); } }
     else if (t.id === 'areab') { st.tool = !st.tool; render(true); }
+    else if (t.closest('#ancb')) { ANC.on = !ANC.on; ANC.memo = null; st.hover = null; st.pin = null; tip.hidden = true; render(true); }
     else if (t.id === 'refresh21') loadDay(true);
     else if (t.id === 'back') backLive();
     else if (t.id === 'lay') { st.menu = !st.menu; dom('menu').hidden = !st.menu; t.classList.toggle('on', st.menu); dom('cfgp').hidden = true; dom('cfgb').classList.remove('on'); dom('dayp').hidden = true; }

@@ -44,7 +44,7 @@
   };
   // everything a viewer can tune in «Настройки»; kept in this browser (localStorage), «Сбросить» restores these
   const DEF = {
-    R: '#EBA06C', X: '#72A9EC', path: '#9FB3D1', visitC: '#8BE7A1', visitMissC: '#FF7B86', projR: '#EBA06C', projX: '#72A9EC', projDoneC: '#5FA886',
+    R: '#EBA06C', X: '#72A9EC', path: '#9FB3D1', visitC: '#8BE7A1', visitMissC: '#FF7B86', projR: '#EBA06C', projX: '#72A9EC', projDoneC: '#7C8594', okC: '#46C985', workedC: '#93A4BF', missC: '#C8606A',
     ptA: 80, ptSize: 100, pastA: 35, cloudA: 100, threadA: 100, projA: 90, stripA: 80, heatA: 200,
     dr: '#EEF1F5', drA: 92, drW: 1.6, idr: '#AEBACB', idrA: 85, idrW: 1.2, idrDash: 'dash',
     mid: '#8B95A5', midA: 80, midDash: 'dots', std: '#A7B2C3', stdA: 75, stdOffA: 40,
@@ -90,6 +90,12 @@
     cfg.clockGreen235 = 1;
     try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* optional storage */ }
   }
+  // Operator 24.11: colour by STATE (spec/ekran-24/18-cveta-sostoyanij-23-5.md): what is still valid is green, what has
+  // passed is grey (worked: grey-blue, not worked: muted red). The column's «history before the slice» turns grey.
+  if (!cfg.state235) {
+    cfg.projDoneC = DEF.projDoneC; cfg.state235 = 1;
+    try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) { /* optional storage */ }
+  }
   // Operator 22.10: use screen 24's shading, not the former flat high-contrast column of this origin.
   if (!cfg.shading24_235) {
     try { localStorage.setItem(CFG_KEY + '.before-shading24', JSON.stringify(cfg)); } catch (e) { /* optional backup */ }
@@ -110,7 +116,7 @@
       ['calloutA', 'Выноски · непрозрачность, %', 'range', 20, 100, 5]]],
     ['Точки сессий', [['ptA', 'Яркость', 'range', 10, 100], ['ptSize', 'Размер', 'range', 50, 200], ['pastA', 'Прошедшие по часам · яркость', 'range', 5, 100],
       ['pathA', 'Путь сессии при наведении · яркость, %', 'range', 0, 300, 10]]],
-    ['Колонка у цены', [['projR', 'Откат R · цвет колонки', 'color'], ['projX', 'Продолжение X · цвет колонки', 'color'], ['projDoneC', 'История раньше среза · цвет колонки', 'color'], ['visitC', 'Приход сегодня · галочка и кружок', 'color'], ['visitMissC', 'Окно без прихода · крестик и кружок', 'color'], ['projA', 'Яркость', 'range', 10, 100], ['colSize', 'Размер цифр, %', 'range', 60, 160, 5], ['passedA', 'История раньше среза · яркость', 'range', 30, 100]]],
+    ['Колонка у цены', [['projR', 'Откат R · цвет колонки', 'color'], ['projX', 'Продолжение X · цвет колонки', 'color'], ['projDoneC', 'История раньше среза · цвет колонки', 'color'], ['okC', 'Валидно · цвет', 'color'], ['workedC', 'Отработало · цвет', 'color'], ['missC', 'Прошло, не отработало · цвет', 'color'], ['visitC', 'Приход сегодня · галочка и кружок', 'color'], ['visitMissC', 'Окно без прихода · крестик и кружок', 'color'], ['projA', 'Яркость', 'range', 10, 100], ['colSize', 'Размер цифр, %', 'range', 60, 160, 5], ['passedA', 'История раньше среза · яркость', 'range', 30, 100]]],
     ['Лента времени', [['stripA', 'Столбики · яркость', 'range', 10, 100], ['bandA', 'Вся лента · непрозрачность, %', 'range', 20, 100],
       ['bandH', 'Высота, % экрана', 'range', 8, 30], ['bandRise', 'Подъём в пустое место, % графика', 'range', 0, 50],
       ['capA', 'Капсулы зон · заливка', 'range', 20, 300, 10], ['capTxt', 'Капсулы зон · текст', 'range', 40, 150, 5],
@@ -1063,29 +1069,32 @@
     if (st.L.prev) drawPrev(c, ctx);
     if (st.L.vib) drawVib(c, ctx);
     // the corridor of a hovered band first (its prices on the scale), then the link (its time on the axis), then the film
-    if (F && !continuationMode()) { drawHighlight(c, mapCtx); linkOf(mapCtx); }
+    if (F && !continuationMode() && !ancOn()) { drawHighlight(c, mapCtx); linkOf(mapCtx); }
     if (continuationMode()) continuationDraw(c,ctx);
     if (F && st.mode === 'path') drawFilm(c, ctx);
     drawLevels(c, ctx);
     drawReference(c, ctx);
-    if (F && st.mode === 'bounds') { if (st.L.zones) drawClouds(c, cloudCtx); drawMemberPath(c, mapCtx); }
-    if (F && st.mode === 'bounds' && !continuationMode()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
-    if (F && !continuationMode()) drawZones(c, cloudCtx, 'under');
-    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
+    if (F && st.mode === 'bounds' && !ancOn()) { if (st.L.zones) drawClouds(c, cloudCtx); drawMemberPath(c, mapCtx); }
+    if (F && st.mode === 'bounds' && !continuationMode() && !ancOn()) drawMxCells(c, mapCtx);      // the layer «Клетки» (matrix235.js)
+    if (F && !continuationMode() && !ancOn()) drawZones(c, cloudCtx, 'under');
+    if (F && F._tp && !continuationMode() && !ancOn()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
+    if (F && ancOn()) ancChart(c, ctx);   // «От этой свечи» (anc235.js, operator 25.11): instead of the places and windows
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);
     if (F && !continuationMode()) drawNowMarks(c, ctx);
     drawPills(c, ctx);
     if (!continuationMode()) drawNow(c, ctx);
-    if (F && !continuationMode()) drawLink(c, mapCtx);
-    if (F && st.mode === 'bounds' && st.L.pts) drawPoints(c, cloudCtx);
-    if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'over');
-    if (F && st.mode === 'bounds') drawPair(c, mapCtx);
+    if (F && !continuationMode() && !ancOn()) drawLink(c, mapCtx);
+    if (F && st.mode === 'bounds' && st.L.pts && !ancOn()) drawPoints(c, cloudCtx);
+    if (F && F._tp && !continuationMode() && !ancOn()) tpGhosts(c, cloudCtx, 'over');
+    if (F && st.mode === 'bounds' && !ancOn()) drawPair(c, mapCtx);
     if (F) drawSweeps(c, ctx);
-    if (F && !continuationMode()) drawZones(c, cloudCtx, 'over');
-    if (F && !continuationMode()) drawArea(c, mapCtx);
+    if (F && !continuationMode() && !ancOn()) drawZones(c, cloudCtx, 'over');
+    if (F && !continuationMode() && !ancOn()) drawArea(c, mapCtx);
     if (F && st.mini) drawMini(c, ctx);
+    // the places' name boxes of this frame, for the next frame's lines to break under them (tpReachChart draws first)
+    TP_LBL = [...(V.zoneHit || []), ...(V.tpGhostHit || [])].map(q => q.box).filter(Boolean);
     drawTags(c, ctx);
     drawAlerts(c);
     drawCross(c);
@@ -1254,7 +1263,14 @@
     if (!h) return;
     if (h.k === 'arrive') { candidateHighlight(c, ctx, h); return; }
     if (h.k === 'now') { drawNowLevels(c, ctx, h.ev); return; }
-    const col = cfg[h.ev || st.ev];
+    let col = cfg[h.ev || st.ev];
+    // operator 24.11: a selected price band runs across the chart in its STATE — green while today's final event can
+    // still lie there, grey once it cannot; R / X is named in the inspector
+    if ((h.k === 'pcell' || h.k === 'mcell') && h.ev) {
+      const Rch = reachOf(F, ctx); let ok = false;
+      for (let k = h.k0; k < (h.k1 != null ? h.k1 : h.k0 + 1); k++) if (Rch.okK(h.ev, k)) { ok = true; break; }
+      col = ok ? cfg.okC : '#8A93A3';
+    }
     if (h.k === 'pcell') {
       const [ya, yb] = cellY(F, h.k0, h.k1);
       c.fillStyle = rgba(col, 0.09); c.fillRect(0, ya, V.plot.w, Math.max(1, yb - ya));
@@ -1269,8 +1285,10 @@
         const x0 = V.X(tt[0]), x1 = V.X(tt[1]), pk = tpWinPeak(F, h.id);
         c.fillStyle = 'rgba(209,212,220,.04)'; c.fillRect(x0, 0, x1 - x0, V.plot.h);
         // operator 05.11: the window's peak 15 minutes over the chart and on the time axis — when its pullback is most frequent
-        if (pk) { c.fillStyle = rgba(cfg.R, 0.08); c.fillRect(V.X(pk.t0), 0, V.X(pk.t1) - V.X(pk.t0), V.plot.h); }
-        V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: cfg.R, peak: pk ? [pk.t0, pk.t1] : null };
+        if (pk) { c.fillStyle = rgba(pk.t1 <= sliceOf(ctx) ? cfg.projDoneC : cfg.okC, 0.08); c.fillRect(V.X(pk.t0), 0, V.X(pk.t1) - V.X(pk.t0), V.plot.h); }
+        // operator 24.11: the window's time tags by its state — still open: green; over: grey (a window is not one
+        // place, so it has no visit fact of its own; its places carry that)
+        V.win = { t0: tt[0], t1: tt[1], pA: null, pB: null, col: tt[1] <= sliceOf(ctx) ? cfg.projDoneC : cfg.okC, peak: pk ? [pk.t0, pk.t1] : null };
       }
     }
     if (h.k === 'tcell') {
@@ -1321,8 +1339,11 @@
     }
     c.textBaseline = 'middle'; c.textAlign = 'right';
     if (hpx > 90) for (let j = 1; j <= 9; j++) {
-      c.font = (j === 5 ? '700 ' + (cfg.fracLbl + 1) + 'px ' : cfg.fracLbl + 'px ') + FONT; c.fillStyle = j === 5 ? C.mid : C.text3;   // small (operator 2026-10-06)
-      c.fillText(num(j / 10, 1), xb, V.Y(s.idrL + j * w / 10));
+      c.font = (j === 5 ? '700 ' + (cfg.fracLbl + 1) + 'px ' : cfg.fracLbl + 'px ') + FONT;   // small (operator 2026-10-06)
+      // operator 24.11: on a dark plate, so the candles under them do not cut the figures
+      const t = num(j / 10, 1), ty = V.Y(s.idrL + j * w / 10), tw = c.measureText(t).width;
+      c.fillStyle = rgba(C.bg, 0.85); c.fillRect(xb - tw - 2, ty - cfg.fracLbl / 2 - 1.5, tw + 4, cfg.fracLbl + 3);
+      c.fillStyle = j === 5 ? C.mid : C.text3; c.fillText(t, xb, ty);
     }
     c.textAlign = 'left';
   }
@@ -1655,8 +1676,9 @@
       if (z && !zoneHeld(F, h.ev, h.i)) {          // a withheld zone draws no window (its inspector says «—»)
         const bs = z.cell_mask.map(q => q[1]), ks = z.cell_mask.map(q => q[0]), t0 = F.f + 15 * Math.min(...bs), t1 = F.f + 15 * (Math.max(...bs) + 1);
         const look = (F._pb && h.ev === 'R' ? zoneLook(F,ctx,h.ev) : zoneStatus(F,ctx,h.ev))[h.i], spent = expiredLook(look);
-        V.lk = { ev: h.ev, src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', marker: targetMarker(F, ctx, h.ev, z) };
-        V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: spent ? stateCol(cfg[h.ev], 'spent') : cfg[h.ev] });
+        const tl = targetLook(F, ctx, { t1, look, z });
+        V.lk = { ev: h.ev, src: 'zone', t0, t1, k0: Math.min(...ks), k1: Math.max(...ks) + 1, sl: sliceOf(ctx), spent, hold: look === 'HOLDS', tl, marker: targetMarker(F, ctx, h.ev, z) };
+        V.win = Object.assign({ pA: null, pB: null }, V.win || {}, { t0, t1, col: tl.col });
       }
       return;
     } else if (h.k === 'pcell' && h.ev && F._mx) mxLink(F, ctx, h);
@@ -1764,21 +1786,22 @@
     const F = ctx.F, col = REVIEW && lk.marker ? lk.marker.paint.color : lk.past ? '#F23645' : lk.col || cfg[lk.ev], t0 = lk.t0 != null ? lk.t0 : F.f + 15 * lk.b, t1 = lk.t1 != null ? lk.t1 : t0 + 15, xa = V.X(t0), xb = V.X(t1);
     if (lk.src === 'zone') {
       const [y0, y1] = cellY(F, lk.k0, lk.k1), ya = Math.min(y0, y1), yb = Math.max(y0, y1), xs = clamp(V.X(lk.sl), xa, xb);
-      // a zone that holds today's extreme is today's answer so far, whatever the clock: its whole window in its (lighter)
-      // colour; a possible zone loses the passed part of its window; an impossible one is spent all over
-      const cz = lk.hold ? mixW(cfg[lk.ev], 0.25) : cfg[lk.ev], cs = stateCol(cfg[lk.ev], 'spent');
-      const xl = lk.hold ? xa : xs, live = !lk.spent && xb > xl;
-      // the passed part of a possible zone's window is GREEN (already traded by the clock); an impossible zone grey
-      if (lk.spent) { c.fillStyle = rgba(cs, 0.12); c.fillRect(xa, ya, xb - xa, yb - ya); }
-      else if (xl > xa) { c.fillStyle = rgba(cfg.doneC, 0.16); c.fillRect(xa, ya, xl - xa, yb - ya); }
-      if (live) {
-        const g = c.createLinearGradient(xl, 0, xb, 0);
-        g.addColorStop(0, rgba(cz, 0.18)); g.addColorStop(1, rgba(cz, 0.07));
-        c.fillStyle = g; c.fillRect(xl, ya, xb - xl, yb - ya);
-      }
-      c.setLineDash([3, 3]); c.lineWidth = 1;
-      c.strokeStyle = rgba(cs, 0.55); c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xa) - 1), Math.max(2, Math.round(yb - ya) - 1));
-      if (live) { c.strokeStyle = rgba(cz, 0.75); c.strokeRect(Math.round(xl) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(xb - xl) - 1), Math.max(2, Math.round(yb - ya) - 1)); }
+      // operator 24.11 / 25.11: the fill says WHAT (R amber, X blue), the solid inner edge says the STATE (targetLook):
+      // green = still valid by time and price, white = holds now, grey ✓ = worked, red × = passed without it. A target
+      // still open: the passed part of its window grey, the part ahead in the role colour inside the green edge
+      const tl = lk.tl || targetLook(F, ctx, { t1, look: lk.hold ? 'HOLDS' : lk.spent ? 'IMPOSSIBLE' : 'POSSIBLE' }), W = xb - xa, H = yb - ya;
+      if (tl.state === 'VALID') {
+        if (xs > xa) { c.fillStyle = rgba(cfg.projDoneC, 0.16); c.fillRect(xa, ya, xs - xa, H); }
+        if (xb > xs) { const g = c.createLinearGradient(xs, 0, xb, 0); g.addColorStop(0, rgba(cfg[lk.ev], 0.26)); g.addColorStop(1, rgba(cfg[lk.ev], 0.1)); c.fillStyle = g; c.fillRect(xs, ya, xb - xs, H); }
+      } else { c.fillStyle = rgba(tl.state === 'HOLDS' ? cfg[lk.ev] : tl.col, tl.state === 'HOLDS' ? 0.28 : tl.state === 'IMPOSSIBLE' ? 0.1 : 0.16); c.fillRect(xa, ya, W, H); }
+      c.lineWidth = 1; c.setLineDash([3, 3]); c.strokeStyle = rgba(cfg[lk.ev], 0.6);
+      c.strokeRect(Math.round(xa) + 0.5, Math.round(ya) + 0.5, Math.max(2, Math.round(W) - 1), Math.max(2, Math.round(H) - 1));
+      c.setLineDash(tl.state === 'IMPOSSIBLE' || tl.state === 'UNKNOWN' ? [3, 3] : []);
+      const xo = tl.state === 'VALID' ? xs : xa;
+      if (xb > xo + 1) { c.strokeStyle = tl.state === 'HOLDS' ? 'rgba(255,255,255,.8)' : rgba(tl.col, 0.85); c.strokeRect(Math.round(xo) + 1.5, Math.round(ya) + 1.5, Math.max(2, Math.round(xb - xo) - 3), Math.max(2, Math.round(H) - 3)); }
+      c.setLineDash([]);
+      const mk = tl.state === 'WORKED' ? '✓' : tl.state === 'MISSED' ? '×' : '';
+      if (mk && !REVIEW) { c.font = '700 13px ' + FONT; c.textBaseline = 'bottom'; c.textAlign = 'right'; c.fillStyle = tl.col; c.fillText(mk, xb - 3, ya - 2); c.textAlign = 'left'; }
       c.setLineDash([]);
       if (REVIEW && lk.marker && visitSettled(lk.marker.visit)) drawVisitRing(c, F, lk.marker);
       return;
@@ -1826,7 +1849,17 @@
     const F = ctx.F, a = st.area || (st.drag && st.drag.area);
     V.areaHit = null;
     if (!a) return;
-    const col = st.mode === 'path' ? '#E6EAF0' : cfg[a.ev || st.ev], live = st.drag && st.drag.area === a;
+    // operator 24.11: the selected area in its STATE — green while today's final event can still lie in its band (and its
+    // time is not over), grey once it cannot; a time-only area keeps the role colour
+    let col = st.mode === 'path' ? '#E6EAF0' : cfg[a.ev || st.ev];
+    const live = st.drag && st.drag.area === a;
+    if (st.mode !== 'path' && isFinite(a.k0)) {
+      const Rch = reachOf(F, ctx), ev0 = a.ev || st.ev; let ok = false;
+      for (let k = a.k0; k < a.k1; k++) if (Rch.okK(ev0, k)) { ok = true; break; }
+      if (ok && a.b0 != null && F.f + 15 * a.b1 <= sliceOf(ctx)) ok = false;
+      if (ok && a.b0 != null && !areaCount(F, ev0, a)) ok = false;   // no session of the family there: nothing to wait for
+      col = ok ? cfg.okC : '#8A93A3';
+    }
     const xE = Math.min(V.X(F.end) + 8, V.plot.w - 64);
     const hasBand = isFinite(a.k0);
     const x0 = a.b0 != null ? V.X(F.f + 15 * a.b0) : V.X(F.f), x1 = a.b0 != null ? V.X(F.f + 15 * a.b1) : V.X(F.end);
@@ -1848,13 +1881,15 @@
         c.strokeStyle = rgba(col, 0.9); c.lineWidth = 1.2;
         c.beginPath(); c.moveTo(x, top); c.lineTo(x, bot); c.moveTo(x - 4, top); c.lineTo(x, top); c.moveTo(x - 4, bot); c.lineTo(x, bot); c.stroke();
         const nb = areaCount(F, ev, { k0: a.k0, k1: a.k1 }), tb = ppTxt(evPass(F, ev, 'price_band', [a.k0, a.k1], null, nb)), yl = clamp((top + bot) / 2, 10, V.plot.h - 10);
+        // operator 24.11: on an opaque plate, over the names of the lines at the right edge
+        c.fillStyle = 'rgba(8,9,12,.95)'; c.fillRect(x + 2, yl - 9, c.measureText(tb).width + 6, 18);
         c.fillStyle = '#FFFFFF'; c.fillText(tb, x + 5, yl);
         V.areaHit = [{ box: [x - 6, top, c.measureText(tb).width + 14, Math.max(12, bot - top)], part: 'band' }];
       }
       if (a.b0 != null) {
         const nr = areaCount(F, ev, a), tr = ppTxt(evPass(F, ev, hasBand ? 'price_time' : 'time_band', hasBand ? [a.k0, a.k1] : null, [F.f + 15 * a.b0, F.f + 15 * a.b1], nr)), w = c.measureText(tr).width;
         const lx = clamp(x1 - w - 4, x0 + 2, V.plot.w - w - 4), ly = hasBand ? Math.max(10, ya - 9) : 12;
-        c.fillStyle = 'rgba(8,9,12,.8)'; c.fillRect(lx - 3, ly - 8, w + 6, 16);
+        c.fillStyle = 'rgba(8,9,12,.95)'; c.fillRect(lx - 3, ly - 8, w + 6, 16);
         c.fillStyle = col; c.fillText(tr, lx, ly + 0.5);
         (V.areaHit = V.areaHit || []).push({ box: [lx - 3, ly - 8, w + 6, 16], part: 'window' }, { box: [x0, ya, x1 - x0, yb - ya], part: 'frame' });
       }
@@ -2087,6 +2122,7 @@
     return Math.round(clamp(V.plot.h - yLow - 10, 0, V.plot.h * cfg.bandRise / 100));
   }
   function drawBand(c, ctx) {
+    if (ctx.F && ancOn()) return ancBand(c, ctx);                 // «От этой свечи» (anc235.js): 5-minute columns
     if (ctx.F && ctx.F._tp) return tpBand(c, ctx);                 // TP-1.1: the clock of T and its windows (tp235.js)
     const F = ctx.F, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, N = F.N, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
     // the band's drawing area: its own strip plus the free height above it (operator 2026-10-06: the columns of X and R
@@ -2315,7 +2351,9 @@
     if (hh && hh.k === 'prev') tags.push([V.Y(hh.p), px(hh.p), '#8C95A3', '#0B0C10']);
     const lastP = s.priceNow != null ? s.priceNow : null;
     const hot = tags.filter(q => q[4]);
-    for (const [y, t, bg, fg, hv_] of tags) if (y > 0 && y < H && (hv_ || !hot.some(q => Math.abs(q[0] - y) < 18))) axisTag(c, y, t, bg, fg);
+    // operator 24.11: a tag that the last price's own tag would cover is left out (the line keeps its name on the chart)
+    const yP = lastP != null ? V.Y(lastP) : null, underP = y => yP != null && y > yP - 22 && y < yP + (ctx.live && A.src === 'live' ? 30 : 18);
+    for (const [y, t, bg, fg, hv_] of tags) if (y > 0 && y < H && (hv_ || (!hot.some(q => Math.abs(q[0] - y) < 18) && !underP(y)))) axisTag(c, y, t, bg, fg);
     // the last price on top of the other tags, with the countdown to the close of the current M5 under it (as TradingView)
     if (lastP != null) {
       const b = ctx.D.bars.filter(q => q.t + 5 <= (ctx.live ? NOW + 5 : ctx.obs)).pop(), y = V.Y(lastP), bg = b && b.c >= b.o ? C.up : C.dn;
@@ -2424,12 +2462,16 @@
         const len = Math.max(2, blen * n / mx), g = F._ts || okRow(ev, k) ? Math.min(n, gone[ev].get(k) || 0) : n, la = len * (n - g) / n, hh = Math.max(1, bot - top - 1);
         // a withheld band share (its passport «—», SWPC-1.1 M14): no bar; the next segment keeps its place, the label says «—»
         if (mv ? ppHeld(F, 'EST:B-RX-REGION-' + ev, { k0: k, k1: k + 1, b0: mv.b, b1: mv.b + 1 }) : ppHeld(F, 'EST:B-RX-BAND-' + ev, { k0: k, k1: k + 1 })) { labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk: false, on, z, rowH: bot - top, ok: okRow(ev, k), mv }); x += len; continue; }
-        const spent=F._ts&&!okRow(ev,k);
-        c.fillStyle = spent ? rgba(stateCol(cfg[ev], 'spent'),Math.min(1,a*cfg.projA/90)*cfg.passedA/100*1.8) : rgba(cfg[ev], Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
+        // operator 24.11: a row today's final event can no longer reach is IMPOSSIBLE all over — neutral dark grey, no
+        // trace of amber / sky (amber must never read «may still come»); the part still ahead is VALID green while the
+        // row is reachable; the role R / X is the thin edge
+        const spent = !okRow(ev, k);
+        c.fillStyle = spent ? rgba(SPENT,Math.min(1,a*cfg.projA/90)*cfg.passedA/100*1.8) : rgba(cfg.okC, Math.min(1, a * cfg.projA / 90)); c.fillRect(x, top + 0.5, la, hh);
+        c.fillStyle = rgba(cfg[ev], Math.min(1, 0.35 + a)); c.fillRect(x, top + 0.5, Math.min(2, len), hh);
         if (g) {
           const dead = !okRow(ev, k);
-          c.fillStyle = dead ? rgba(stateCol(cfg[ev], 'spent'), Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8))
-            : rgba(cfg.doneC, Math.min(1, Math.max(0.2, 0.75 * a * cfg.projA / 90 * cfg.passedA / 30)));
+          c.fillStyle = dead ? rgba(SPENT, Math.min(1, Math.min(1, a * cfg.projA / 90) * cfg.passedA / 100 * 1.8))
+            : rgba(cfg.projDoneC, Math.min(1, Math.max(0.2, 0.75 * a * cfg.projA / 90 * cfg.passedA / 30)));
           c.fillRect(x + la, top + 0.5, len - la, hh);
         }
         V.projBars.push({ ev, k, b: mv ? mv.b : null, ans: mv ? mv.ans : true, top, bot, x0: x, x1: x + len, n, earlier:g, later:n-g });
@@ -2440,6 +2482,8 @@
     }
     // the labels: R left of the bar, X right of it; per side the hovered and the zones' peaks first, never overlapping
     const used = { R: [], X: [] };
+    // operator 24.11: the rows of the level words (70 % / 50 %) stay free of the column's own percentages
+    if (F._tp && !(typeof antOn === 'function' && antOn())) for (const y of tpReachRows(F, top0, bot0)) { used.R.push([y, 14]); used.X.push([y, 14]); }
     for (const L of labels.sort((a, b) => (b.on - a.on) || (b.pk - a.pk) || (b.n - a.n))) {
       // the label's size and brightness follow the share on the same scale as the bar: the strongest rows read first
       // the strongest row of the column 14 px bold, the weakest zone rows about 9 px (linear in the share)
@@ -2447,7 +2491,7 @@
       // with nothing ahead is grey and small: it has played out today (operator 2026-10-06)
       // grey only when today's final event can no longer lie in the band (reachability); a band whose family events are
       // all behind the clock but still reachable today is green (history clock) — DR-LAB-NOW-1.0 F2, the audit's D4
-      const dead = !L.on && (L.ahead <= 0 || (F._ts && !L.ok)), gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
+      const dead = !L.on && (L.ahead <= 0 || !L.ok), gone = dead && L.ok, r = str(L.ahead), q = L.ahead / m1, fs = (L.on ? 13 : dead ? 8.5 : L.z != null ? 8.5 + 5.5 * q : 8 + 1.2 * q) * cfg.colSize / 100;
       if (used[L.ev].some(u => Math.abs(u[0] - L.y) < (u[1] + fs) / 2 + 1)) continue;
       used[L.ev].push([L.y, fs]);
       const col = cfg[L.ev], wt = L.on || (!dead && q > 0.7) ? '700 ' : L.z != null && !dead ? '600 ' : '';
@@ -2455,7 +2499,7 @@
       const p = L.mv ? mxCellPass(F, L.ev, L.mv) : evPass(F, L.ev, 'price_cell', [L.k, L.k + 1], null, L.n), t = ppTxt(p), tw = pctW(c, t, wt, fs);
       if (L.mv) V.projLbl.push({ ev: L.ev, k: L.k, b: L.mv.b, n: L.mv.n, est: p.estimand, yes: p.yes_count, N: p.N });
       pctDraw(c, t, L.ev === 'R' ? Math.max(A_.x + 3, x0 - 3 - tw) : Math.min(L.xe + 3, A_.x + A_.w - tw - 6), L.y + 0.5, wt, fs,
-        L.on ? '#FFFFFF' : gone ? rgba(cfg.doneC, 0.75) : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(col, 0.45 * r), 0.5 + 0.5 * r) : C.text3);
+        L.on ? '#FFFFFF' : gone ? rgba(cfg.projDoneC, 0.85) : dead ? 'rgba(140,146,157,.5)' : L.z != null ? rgba(mixW(col, 0.45 * r), 0.5 + 0.5 * r) : C.text3);
     }
     // the zones' price extents: thin ticks at the right edge, one lane per overlap
     const ends = [];
@@ -2483,6 +2527,7 @@
     c.restore();
   }
   function drawProj(c, ctx) {
+    if (ancOn()) return ancProj(c, ctx);                            // «От этой свечи» (anc235.js)
     if (st.mode === 'bounds') return drawProjRX(c, ctx);
     const F = ctx.F, A_ = V.proj, W = A_.w - 40, h = hv(), d = projData(ctx);
     c.fillStyle = C.axis; c.fillRect(A_.x, 0, A_.w, A_.h);
@@ -2880,8 +2925,8 @@
   // Three different questions stay distinct: immutable R/X mass; its historical clock; today's actual visit.
   // A zone uses its exact cells and window. A column band has no zone-window: its horizon is (activation, block end].
   // YES survives gaps; absence is asserted only with every relevant closed M5. A forming/replay-future bar is excluded.
-  function visitState(F, ctx, k0, k1, z) {
-    if (!ctx || !REVIEW) return { state: 'UNKNOWN', t: null };
+  function visitState(F, ctx, k0, k1, z, force) {
+    if (!ctx || (!REVIEW && !force)) return { state: 'UNKNOWN', t: null };
     if (F.held.has('today.zones')) return { state: 'WITHHELD', t: null };
     if (z && z.event_id && F.zones && F.zones[z.event_id]) {
       const i = F.zones[z.event_id].zones.findIndex(q => q.zone_id === z.zone_id);
@@ -2924,6 +2969,22 @@
       out.time = F.f + 15 * b + 7.5; out.u = (k + 0.5) / 10;
     }
     return out;
+  }
+  // Operator 24.11 (spec/ekran-24/18-cveta-sostoyanij-23-5.md): ONE state of a time × price target (a zone, a window)
+  // for its box, its capsule and its price / time tags. Time, price and the observed fact stay three questions; the
+  // colour is their combination: VALID green (the window not over, the price still reachable), HOLDS bright green
+  // (today's extreme inside), WORKED grey-blue (a closed M5 came into its own cells in its window), MISSED muted red
+  // (the window over, every M5 known, no visit), PAST grey (the window over, the fact not established), IMPOSSIBLE dark
+  // grey (the window still open, the price already beyond), UNKNOWN (status withheld / incomplete).
+  function targetLook(F, ctx, o) {
+    const sl = sliceOf(ctx), v = o.z ? visitState(F, ctx, null, null, o.z, true) : { state: 'UNKNOWN', t: null };
+    if (o.look === 'WITHHELD' || v.state === 'WITHHELD') return { state: 'UNKNOWN', col: '#A8B5CB', v };
+    if (o.look === 'HOLDS') return { state: 'HOLDS', col: mixW(cfg.okC, 0.3), v };
+    if (v.state === 'VISITED') return { state: 'WORKED', col: cfg.workedC, v };
+    if (o.t1 != null && o.t1 <= sl) return v.state === 'MISSED' ? { state: 'MISSED', col: cfg.missC, v } : { state: 'PAST', col: cfg.projDoneC, v };
+    if (expiredLook(o.look)) return { state: 'IMPOSSIBLE', col: SPENT, v };
+    if (o.look === 'STATUS_UNKNOWN') return { state: 'UNKNOWN', col: '#A8B5CB', v };
+    return { state: 'VALID', col: cfg.okC, v };
   }
   function zonePaint(F, ctx, ev, z, status) {
     const v = { ...visitState(F, ctx, null, null, z), start: z.time_start };
@@ -3054,6 +3115,8 @@
     for (const b of dom('mode').querySelectorAll('button')) b.classList.toggle('on', b.dataset.m === st.mode);
     const vw = F ? VW(F) : ctx.s.failed ? 'BRK' : 'CONF', nm = F ? F.names : { R: lbl('FF:PASSPORT-VIEW', 'name_R', null, vw), X: lbl('FF:PASSPORT-VIEW', 'name_X', null, vw) };
     // A freehand area belongs to the event currently in focus. Make that semantic choice explicit before the drag.
+    const ancb = dom('ancb');                                       // «От этой свечи» (anc235.js, operator 25.11)
+    if (ancb) { ancb.classList.toggle('on', ancOn()); ancb.setAttribute('aria-pressed', ancOn() ? 'true' : 'false'); }
     const ab = dom('areab');
     if (ab) { ab.textContent = '▭ Область · ' + st.ev; ab.title = 'Выбрать область ' + st.ev + ' мышью: цена или цена × время; R/X меняется вместе с текущим фокусом'; }
     // R and X are on the chart together (operator 2026-10-01): the toolbar names them, there is no switch
@@ -3296,6 +3359,7 @@
     click(x, y, d);
   });
   function click(x, y, d) {
+    if (ancOn() && ancClick(x, y)) return;                          // «От этой свечи»: the horizon (anc235.js)
     const h = hit(x, y), F = V.ctx.F;
     if (h && (h.k === 'pcell' || h.k === 'pbpcell') && F && st.mode === 'bounds') {        // a click on the price histogram selects its band
       const same = st.area && st.area.k0 === h.k0 && st.area.k1 === h.k1 && st.area.b0 == null && st.area.ev === h.ev;
@@ -3380,6 +3444,7 @@
     else if (t.closest('#mode button')) { st.mode = t.closest('button').dataset.m; st.hover = null; st.pin = null; if(continuationMode()&&!CS.target)st.tool=true; render(true); }
     else if (t.closest('#ev button')) { if (st.mode === 'bounds') { st.ev = t.closest('button').dataset.e; st.hover = null; if (st.pin && st.pin.k === 'pt') st.pin = null; render(true); } }
     else if (t.id === 'areab') { st.tool = !st.tool; render(true); }
+    else if (t.closest('#ancb')) { ANC.on = !ANC.on; ANC.memo = null; st.hover = null; st.pin = null; tip.hidden = true; render(true); }
     else if (t.id === 'refresh21') loadDay(true);
     else if (t.id === 'back') backLive();
     else if (t.id === 'lay') { st.menu = !st.menu; dom('menu').hidden = !st.menu; t.classList.toggle('on', st.menu); dom('cfgp').hidden = true; dom('cfgb').classList.remove('on'); dom('dayp').hidden = true; }

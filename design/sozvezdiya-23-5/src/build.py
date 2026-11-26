@@ -16,7 +16,7 @@ def read(name):
 
 
 page = read('page.html').replace('/*__PANEL24CSS__*/', read('panel.css'))
-app = read('app.js').replace('  /*__INTEGRATION24__*/\n', read('integration.js') + '\n' + read('continuations.js') + '\n' + read('pullbacks.js') + '\n' + read('time_sd235.js') + '\n' + read('matrix235.js') + '\n' + read('tp235.js') + '\n' + read('sweeps235.js')).replace('  /*__PANEL24__*/\n', read('panel.js'))
+app = read('app.js').replace('  /*__INTEGRATION24__*/\n', read('integration.js') + '\n' + read('continuations.js') + '\n' + read('pullbacks.js') + '\n' + read('time_sd235.js') + '\n' + read('matrix235.js') + '\n' + read('tp235.js') + '\n' + read('anc235.js') + '\n' + read('sweeps235.js')).replace('  /*__PANEL24__*/\n', read('panel.js'))
 # DR-LAB-SC-1.1: the page embeds the page registry of the machine contract (estimands, claim forms with their labels,
 # fact forms), built by contract/tools/build.py; the page renders only these labels and checks its registry hash
 # against the server's envelopes (a contract rebuilt without rebuilding this page is reported, never ignored)
