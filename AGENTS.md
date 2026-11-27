@@ -36,6 +36,7 @@ it is implemented, §14 where each piece lives and the rules not to break). Chan
 | «Продолжения», «Откаты до обновления» (⚙ → Испытание кандидатов) | candidates, off by default | [integration/README](integration/README.md), [spec/ekran-24/15-otkaty](spec/ekran-24/15-otkaty.md) | `continuations.js`, `pullbacks.js`, `lab/continuations24.py`, `lab/pullbacks24.py` | `tests/continuations24.py`, `tests/pullbacks24.py` |
 | time × SD route (`/api/integration/time-sd`) | superseded 26.10, route kept | [docs/DR-LAB-23-5-TIME-SD](docs/DR-LAB-23-5-TIME-SD.md) | `time_sd235.js`, `lab/time_sd235.py` | `tests/time_sd235.py` |
 | The STD grid | current (operator 11.11) | below | `app.js::gridSide` | — |
+| Usage journal (always on; ⚙ → «Запись использования»; report `/23-5/usage/`) | current (operator 23.11) | [spec/DR-LAB-23-5-USAGE-TRACKER](spec/DR-LAB-23-5-USAGE-TRACKER.md), [meaning/07](meaning/07-cepochka-reshenij.md) 23.11 | `usage235.js`, `usage_report.html`, `lab/usage235.py` → `lab/.runtime/usage-23-5.sqlite3` | `tests/usage235.py` |
 
 - **R on 23.5** is the pullback before the session's extreme (operator 29.10): every family request carries `:rpre`
   (`OUT:R-BEFORE-X-1`, reference `lab/contract.py::ref_before_extreme_R`). NOW-1.0 stays on the final R.
@@ -135,7 +136,8 @@ lab/
 design/sozvezdiya-23-5/src the source of 23.5 (build.py -> lab/dist/23-5); design/sozvezdiya-24/src the source of 24
 design/sozvezdiya-22, -23  sources of the legacy pages /22/ and /sem-v1/
 meaning/                   the semantic layer (Russian): README, numbered documents, the lenses that are still sources
-spec/                      SC-1.0/1.1, SWPC-1.1, INTEGRATION-1.0, the deep-research inputs; ekran-24/ and ekran-23-5/:
+spec/                      SC-1.0/1.1, SWPC-1.1, INTEGRATION-1.0, the 23.5 usage journal (DR-LAB-23-5-USAGE-TRACKER),
+                           the deep-research inputs; ekran-24/ and ekran-23-5/:
                            screens element by element with screenshots
 docs/                      architecture, decisions, UI rules, the method, research, the 23.5 layer documents
 integration/               the 15.10 integration: candidate registry (candidates/), the preserved Trace/FOM reference

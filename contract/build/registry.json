@@ -12574,6 +12574,26 @@
     "surface_profile": "SERVICE"
    },
    {
+    "definitions": "SRC:AGENTS",
+    "id": "API:/api/usage/23-5/events",
+    "marking": "POST only: the usage journal of screen 23.5 (spec/DR-LAB-23-5-USAGE-TRACKER.md, lab/usage235.py); the operator's actions on the page, no market number, no statistic",
+    "route": "/api/usage/23-5/events",
+    "sc_ref": [
+     "IMPLEMENTATION"
+    ],
+    "surface_profile": "SERVICE"
+   },
+   {
+    "definitions": "SRC:AGENTS",
+    "id": "API:/api/usage/23-5/export",
+    "marking": "the usage journal of 23.5 for a period with its summary (lab/usage235.py); how the screen was used, no market number, no statistic of the method",
+    "route": "/api/usage/23-5/export",
+    "sc_ref": [
+     "IMPLEMENTATION"
+    ],
+    "surface_profile": "SERVICE"
+   },
+   {
     "definitions": "SRC:SEMANTICS-24",
     "id": "API:/api/spec",
     "marking": "the text of docs/SEMANTICS.md; no statistic",
@@ -12930,8 +12950,8 @@
   "document": "spec/DR-LAB-Semantic-Contract-1.1-(patched).md",
   "document_sha256_lf": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b",
   "edition": "DR-LAB-SC-1.1",
-  "linkml": "1.12.1",
-  "registry_sha256": "fc9831da55bdcb2dd477f68bacdcca661a0c0e997e123474cd23117ad7999dbd",
+  "linkml": "1.11.1",
+  "registry_sha256": "2d7188888cf3dce60503ef12e7ee36813dab087abc101a0c8e22d038a0f2dcb0",
   "runtime_spec_sha256": "9795540070e3c2d2e04f06013481334397c5afe792f18fcb11f9417237d533b7",
   "schema_sha256_lf": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
   "sources": {
@@ -12943,7 +12963,7 @@
    "contract/registry/40-claims.yaml": "392b75a5463f8d29a7938b6b79f2f1f10d8b0ef48df4589e39a1408091db2490",
    "contract/registry/45-claims-tp.yaml": "040d87bef97116e8051ca098b2bd44b57c441a8ea305bc1dc39b9b5944ba1486",
    "contract/registry/50-validation.yaml": "c64d992d9eb01bece7a11ee3578eae3aad68d25e62e0befb0a2232cb484e3a53",
-   "contract/registry/60-surfaces.yaml": "173c6385240db1a195301770b4dc28dc1c69a9ae372d65348801650cb2995b88",
+   "contract/registry/60-surfaces.yaml": "838bb8920b1ebf9a7557be3815ffc013209a75c3523b71d88a5fde545730bf6c",
    "contract/registry/70-obligations.yaml": "c5baded1777e25e259c687bdb72c0fb707ec966bfd53d1439691e8db3dbc5174",
    "contract/schema/dr_lab_sc.yaml": "a9f049e03d1f1e7ef9f29d484382f10283bab76578bae5ba2cdbd18eb4d03c11",
    "spec/DR-LAB-Semantic-Contract-1.1-(patched).md": "bdba727622a3bc691822ebef40d58d9509ec45878defa33a0248a3edd99df30b"

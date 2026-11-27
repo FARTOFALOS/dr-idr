@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Использование 23.5</title>
+<!-- The report of the usage journal of screen 23.5 (lab/usage235.py, spec/DR-LAB-23-5-USAGE-TRACKER.md). Built by
+     design/sozvezdiya-23-5/src/build.py to lab/dist/23-5/usage/. Reads GET /api/usage/23-5/export; no market data. -->
+<style>
+:root { --bg: #0B0C10; --panel: #13151B; --line: #262A33; --t1: #E6E9EF; --t2: #A7B0BF; --t3: #6E7787; --acc: #7CC4F2; --amb: #E8A54B; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--t1); font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header { position: sticky; top: 0; z-index: 2; background: var(--bg); border-bottom: 1px solid var(--line); padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+h1 { font-size: 15px; margin: 0 12px 0 0; font-weight: 650; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { background: none; border: 0; color: var(--t2); padding: 5px 10px; font: inherit; cursor: pointer; }
+.seg button.on { background: #1F2430; color: var(--t1); }
+select, input[type=date], .btn { background: var(--panel); color: var(--t1); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; font: inherit; }
+.btn { cursor: pointer; }
+main { padding: 14px 16px 40px; max-width: 1280px; margin: 0 auto; }
+.note { color: var(--t3); font-size: 12px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 8px 0 18px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.tile b { display: block; font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.tile span { color: var(--t2); font-size: 12px; }
+section { margin: 22px 0; }
+h2 { font-size: 14px; margin: 0 0 4px; font-weight: 650; }
+h2 + .note { margin-bottom: 8px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 18px; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--t3); font-weight: 500; font-size: 12px; }
+td.n { text-align: right; }
+td .id { color: var(--t3); font-size: 11px; }
+.bar { height: 8px; border-radius: 0 4px 4px 0; background: var(--acc); display: inline-block; vertical-align: middle; }
+.st-used { color: var(--t2); } .st-unused { color: var(--amb); } .st-never { color: var(--t3); }
+.heat { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+.heat canvas { width: 100%; display: block; }
+#tipx { position: fixed; pointer-events: none; background: #1B1F28; border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; font-size: 12px; z-index: 5; display: none; max-width: 320px; }
+.seq { font-size: 12px; }
+.seq i { color: var(--t3); font-style: normal; padding: 0 4px; }
+.empty { color: var(--t3); padding: 30px 0; text-align: center; }
+@media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } header { padding: 8px 16px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Как используется экран 23.5</h1>
+  <div class="seg" id="per"><button data-d="1">Сегодня</button><button data-d="7" class="on">7 дней</button><button data-d="30">30 дней</button><button data-d="0">Всё</button></div>
+  <label class="note">с <input type="date" id="d0"></label><label class="note">по <input type="date" id="d1"></label>
+  <div class="seg" id="scope"><button data-s="live" class="on">Живой рынок</button><button data-s="review">Разбор истории</button><button data-s="all">Всё</button></div>
+  <select id="inst"><option value="">Все инструменты</option><option>NQ</option><option>ES</option><option>YM</option></select>
+  <select id="sess"><option value="">Все сессии</option><option>ADR</option><option>ODR</option><option>RDR</option></select>
+  <button class="btn" id="dl">Выгрузить JSON</button>
+</header>
+<main id="out"><div class="empty">Загружаю журнал…</div></main>
+<div id="tipx"></div>
+<script>
+(() => {
+  // the Russian names of the functions the page journals (usage235.js); an unknown id is shown as it is
+  const NAME = {
+    'instrument': 'Инструмент', 'session': 'Сессия', 'history.day': 'День истории', 'history.source': 'Живой ↔ история', 'map.mode': 'Режим карты',
+    'event.focus': 'Фокус R / X', 'family.scope': 'Семья: охват', 'family.view': 'Семья: вид', 'tp.window_pin': 'Закрепить окно отката',
+    'detail.pin': 'Закрепить деталь', 'area.select': 'Выделить область', 'column.select': 'Выбрать колонку', 'replay.slice': 'Срез повтора',
+    'area.tool': 'Инструмент «Область»', 'layer.ant': 'Слой от Anthropic', 'layers': 'Слои', 'trials': 'Испытание кандидатов',
+    'lower_window.pin': 'Закрепить нижнее окно', 'strip.pin': 'Закрепить ленту', 'summary.panel': 'Панель «Сводка»', 'menu.layers': 'Меню «Слои»',
+    'menu.settings': 'Настройки ⚙', 'menu.history': 'Окно «История»', 'price.autoscale': 'Автомасштаб цены',
+    'view.time': 'Время: больше / меньше прошлого', 'view.price': 'Цена: сдвиг / масштаб', 'view.reset': 'Сброс вида',
+    'top.instrument': 'Кнопки инструмента', 'top.session': 'Кнопки сессии', 'top.mode': 'Кнопки режима', 'top.event': 'Кнопки R / X',
+    'top.replay_step': 'Шаг −5м / +5м', 'chart.nav': 'Кнопки − + ↺', 'top.areab': 'Кнопка «Область»', 'top.antb': 'Кнопка слоя Anthropic',
+    'top.dayb': 'Кнопка «История»', 'top.panel21toggle': 'Кнопка «Сводка»', 'top.lay': 'Кнопка «Слои»', 'top.cfgb': 'Кнопка ⚙', 'top.cmp22': 'Ссылка на экран 24',
+    'top.back': 'Кнопка «К текущему»', 'top.refresh21': 'Обновить', 'top.deth': 'Заголовок нижнего окна', 'top.auto21': 'Авто-обновление',
+    'alert.add': 'Оповещение: добавить', 'alert.del': 'Оповещение: удалить', 'alert.drag': 'Оповещение: перенести',
+    'chart.tpwin': 'Окно отката (W)', 'chart.tpzone': 'Место другого окна', 'chart.tpline': 'Линия окна', 'chart.zone': 'Место R / X',
+    'chart.lvl': 'Уровень DR / IDR / STD', 'chart.prev': 'Линии прошлой сессии', 'chart.pcell': 'Ячейка цены (колонка)', 'chart.tcell': 'Ячейка времени',
+    'chart.pt': 'Звезда (одна сессия)', 'chart.area': 'Выделенная область', 'chart.col': 'Колонка', 'chart.fcell': 'Ячейка пути', 'chart.unk': 'Неизвестные',
+    'chart.vib': 'Вибрация', 'chart.now': 'Сейчас', 'chart.sw': 'Съём лоу', 'chart.swzone': 'Зона съёмов', 'chart.evrow': 'Строка события',
+    'panel.tpwin': 'Сводка: окно отката', 'panel.tpzone': 'Сводка: место окна', 'panel.zone': 'Сводка: место R / X', 'panel.evrow': 'Сводка: строка события',
+    'panel.lvl': 'Сводка: уровень', 'panel.col': 'Сводка: колонка', 'panel.scope': 'Сводка: охват семьи', 'panel.view': 'Сводка: вид семьи', 'panel.clear': 'Сводка: снять выбор',
+    'lower_window.zone': 'Нижнее окно: место', 'lower_window.hcell': 'Нижнее окно: клетка', 'lower_window.fcell': 'Нижнее окно: путь',
+    'lower_window.order': 'Нижнее окно: порядок', 'lower_window.lvl': 'Нижнее окно: уровень',
+    'open.tp_window': 'Окно отката закреплено', 'open.area': 'Область выделена', 'open.column': 'Колонка выбрана', 'open.lower_window_pin': 'Нижнее окно закреплено',
+    'open.menu.layers': 'Меню «Слои» открыто', 'open.menu.settings': 'Настройки открыты', 'open.menu.history': 'Окно «История» открыто', 'open.layer.ant': 'Слой Anthropic включён',
+    'click.chart': 'График', 'click.strip': 'Лента окон', 'click.price_column': 'Ценовая колонка', 'click.price_axis': 'Шкала цены', 'click.time_axis': 'Шкала времени'
+  };
+  const REG = { chart: 'график', price_axis: 'шкала цены', price_column: 'ценовая колонка', time_axis: 'шкала времени', strip: 'лента окон', panel: 'сводка', lower_window: 'нижнее окно', inspector: 'инспектор', top: 'верхняя строка', menu: 'меню', other: 'прочее' };
+  const nm = f => { if (NAME[f]) return NAME[f]; const m = /^open\.pin\.(.+)$/.exec(f); if (m) return 'Закреплено: ' + (NAME['chart.' + m[1]] || m[1]); const s = /^(settings|layers|trial|history)\.(.+)$/.exec(f); if (s) return { settings: 'Настройка', layers: 'Слой', trial: 'Кандидат', history: 'История' }[s[1]] + ': ' + s[2]; return f; };
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const sec = s => s < 60 ? s.toFixed(s < 10 ? 1 : 0) + ' с' : s < 3600 ? (s / 60).toFixed(1) + ' мин' : (s / 3600).toFixed(1) + ' ч';
+  const $ = id => document.getElementById(id);
+  const S = { d: 7, scope: 'live', data: null };
+  try { const v = JSON.parse(localStorage.getItem('drlab.usage.report') || '{}'); if (v.d != null) S.d = v.d; if (v.scope) S.scope = v.scope; } catch (e) { /* optional */ }
+  const keep = () => { try { localStorage.setItem('drlab.usage.report', JSON.stringify({ d: S.d, scope: S.scope })); } catch (e) { /* optional */ } };
+  const iso = d => d.toISOString();
+  function range() {
+    // the period is chosen in local days of this computer; its bounds go to the server in UTC
+    if ($('d0').value || $('d1').value) {
+      const a = $('d0').value ? new Date($('d0').value + 'T00:00:00') : new Date(2026, 0, 1), b = $('d1').value ? new Date($('d1').value + 'T00:00:00') : new Date();
+      if ($('d1').value) b.setDate(b.getDate() + 1);
+      return [a, b];
+    }
+    const b = new Date(Date.now() + 60000), a = new Date(); a.setHours(0, 0, 0, 0);
+    if (S.d === 0) return [new Date(2026, 0, 1), b];
+    a.setDate(a.getDate() - (S.d - 1));
+    return [a, b];
+  }
+  function marks() {
+    for (const b of document.querySelectorAll('#per button')) b.classList.toggle('on', !$('d0').value && !$('d1').value && +b.dataset.d === S.d);
+    for (const b of document.querySelectorAll('#scope button')) b.classList.toggle('on', b.dataset.s === S.scope);
+  }
+  async function load() {
+    marks();
+    const [a, b] = range(), q = new URLSearchParams({ from: iso(a), to: iso(b) });
+    if ($('inst').value) q.set('instrument', $('inst').value);
+    if ($('sess').value) q.set('session', $('sess').value);
+    try {
+      const r = await fetch('/api/usage/23-5/export?' + q);
+      S.data = await r.json();
+      if (!r.ok) throw new Error(S.data.error || r.status);
+      draw();
+    } catch (e) { $('out').innerHTML = '<div class="empty">Журнал не прочитан: ' + esc(e.message) + '. Сервер 23.5 запущен?</div>'; }
+  }
+  function draw() {
+    const X = S.data, M = X.summary[S.scope], out = [];
+    const nAct = M.actions.reduce((a, x) => a + x.calls, 0), nHov = M.hover_views.reduce((a, x) => a + x.views, 0);
+    const mouseS = Object.values(M.mouse.region_seconds).reduce((a, x) => a + x, 0);
+    const unused = M.availability.filter(x => x.status === 'available_unused').length;
+    out.push('<div class="tiles">' + [[M.openings, 'открытий экрана'], [nAct, 'действий'], [nHov, 'просмотров наведением ≥ 0,8 с'], [sec(mouseS), 'мышь на экране'],
+      [M.dead_clicks.reduce((a, x) => a + x.n, 0), 'кликов без отклика'], [unused, 'доступно, но не тронуто'],
+      [(M.away ? M.away.times : 0) + ' · ' + sec(M.away ? M.away.seconds : 0), 'курсор на другом экране']].map(([v, t]) => '<div class="tile"><b>' + v + '</b><span>' + t + '</span></div>').join('') + '</div>');
+    out.push('<p class="note">' + esc(X.reading) + '</p>');
+    if (!X.events_count) { out.push('<div class="empty">За этот период записей нет. Запись идёт сама при работе с экраном 23.5.</div>'); $('out').innerHTML = out.join(''); return; }
+    const maxA = Math.max(1, ...M.actions.map(x => x.calls)), maxH = Math.max(1, ...M.hover_views.map(x => x.seconds));
+    out.push('<div class="grid2"><section><h2>Действия</h2><div class="note">Что изменилось на экране после вашего нажатия, клавиши или жеста</div><table><tr><th>Функция</th><th></th><th>раз</th><th>открытий</th><th>чем</th></tr>' +
+      M.actions.map(x => '<tr><td>' + esc(nm(x.feature)) + '<div class="id">' + esc(x.feature) + '</div></td><td style="width:30%"><span class="bar" style="width:' + (100 * x.calls / maxA) + '%"></span></td><td class="n">' + x.calls + '</td><td class="n">' + x.visits + '</td><td class="note">' + esc(Object.entries(x.via).map(([k, v]) => k + ' ' + v).join(', ')) + '</td></tr>').join('') + '</table></section>');
+    out.push('<section><h2>Просмотры наведением</h2><div class="note">Подсказка или подсветка была видна ≥ 0,8 с. Показ, а не доказательство прочтения</div><table><tr><th>Что</th><th></th><th>раз</th><th>время</th><th>возвраты</th></tr>' +
+      M.hover_views.map(x => '<tr><td>' + esc(nm(x.feature)) + '<div class="id">' + esc(Object.entries(x.objects).map(([k, v]) => k + '×' + v).join(' ')) + '</div></td><td style="width:26%"><span class="bar" style="width:' + (100 * x.seconds / maxH) + '%"></span></td><td class="n">' + x.views + '</td><td class="n">' + sec(x.seconds) + '</td><td class="n">' + x.returns + '</td></tr>').join('') + '</table></section></div>');
+    const restS = Object.values(M.mouse.rest_region_seconds || {}).reduce((a, x) => a + x, 0);
+    out.push('<section><h2>Куда ходит мышь</h2><div class="note">Время движения курсора по странице, пока она активна. Где мышь стояла на месте 2 с и дольше — это покой: он вынесен ниже отдельно (' + sec(restS) + '), чтобы припаркованный курсор не заливал карту. Слева — весь экран (как он лежит в окне), справа — график в координатах метода: минуты от начала коробки × положение к IDR. Одинаковые пятна совпадают между днями при любой цене и любом масштабе.</div><div class="grid2"><div class="heat"><canvas id="hs" height="250"></canvas></div><div class="heat"><canvas id="hc" height="250"></canvas></div></div>' +
+      '<div class="grid2" style="margin-top:10px"><table><tr><th>Область экрана</th><th>движение</th><th>покой</th></tr>' + [...new Set([...Object.keys(M.mouse.region_seconds), ...Object.keys(M.mouse.rest_region_seconds || {})])].map(k => '<tr><td>' + esc(REG[k] || k) + '</td><td class="n">' + sec(M.mouse.region_seconds[k] || 0) + '</td><td class="n">' + sec((M.mouse.rest_region_seconds || {})[k] || 0) + '</td></tr>').join('') + '</table>' +
+      '<table><tr><th>Возле линии (≤ 6 px)</th><th>время</th></tr>' + (Object.entries(M.mouse.near_line_seconds).map(([k, v]) => '<tr><td>' + esc(lineName(k)) + '</td><td class="n">' + sec(v) + '</td></tr>').join('') || '<tr><td class="note" colspan=2>нет</td></tr>') + '</table></div>' +
+      '<h2 style="margin-top:16px">Проводки вдоль уровней</h2><div class="note">Мышь шла вдоль одной линии: три и больше точек подряд у неё, со сдвигом не меньше 5 % ширины экрана. Ширина — где по экрану шла проводка (ценовая колонка справа, около 75 %)</div><table><tr><th>Линия</th><th>раз</th><th>время</th><th>по ширине</th><th>минуты от коробки</th><th>окна</th><th>инструменты</th></tr>' +
+      ((M.mouse.sweeps || []).map(x => '<tr><td>' + esc(lineName(x.line)) + '</td><td class="n">' + x.n + '</td><td class="n">' + sec(x.seconds) + '</td><td class="n">' + Math.round(x.x_from * 100) + '–' + Math.round(x.x_to * 100) + ' %</td><td class="n">' + (x.min_from == null ? '—' : x.min_from + '…' + x.min_to) + '</td><td class="note">' + esc(Object.entries(x.windows).map(([k, v]) => k + '×' + v).join(' ')) + '</td><td class="note">' + esc(Object.entries(x.instruments).map(([k, v]) => k + '×' + v).join(' ')) + '</td></tr>').join('') || '<tr><td class="note" colspan=7>пока нет</td></tr>') + '</table>' +
+      '<h2 style="margin-top:16px">Где мышь стоит на месте</h2><div class="heat"><canvas id="hr" height="200"></canvas></div></section>');
+    out.push('<div class="grid2"><section><h2>Клики без отклика</h2><div class="note">Нажатие, после которого на экране ничего не изменилось: место, где ждали ответа</div><table><tr><th>Где</th><th>под курсором</th><th>раз</th></tr>' +
+      (M.dead_clicks.map(x => '<tr><td>' + esc(nm(x.feature)) + '</td><td class="note">' + esc(x.object || '') + '</td><td class="n">' + x.n + '</td></tr>').join('') || '<tr><td class="note" colspan=3>нет</td></tr>') + '</table></section>');
+    out.push('<section><h2>Открытые и закреплённые детали</h2><div class="note">Сколько деталь оставалась на экране, пока страница активна и курсор на ней. Взгляд на другой экран или 30 с без ввода прерывают счёт: деталь остаётся одним открытием, а куски складываются</div><table><tr><th>Деталь</th><th>открытий</th><th>кусков</th><th>время</th><th>до простоя</th></tr>' +
+      (M.open_views.map(x => '<tr><td>' + esc(nm(x.feature)) + '</td><td class="n">' + x.opens + '</td><td class="n">' + (x.pieces ?? x.opens) + '</td><td class="n">' + sec(x.seconds) + '</td><td class="n">' + x.ended_by_idle + '</td></tr>').join('') || '<tr><td class="note" colspan=5>нет</td></tr>') + '</table>' +
+      (M.away ? '<p class="note">Курсор уходил на другой экран ' + M.away.times + ' раз, всего ' + sec(M.away.seconds) + ' (страница при этом оставалась активной)</p>' : '') + '</section></div>');
+    const order = { available_unused: 0, never_seen_available: 1, used: 2 };
+    out.push('<section><h2>Доступно и использовано</h2><div class="note">«Доступно, 0 раз» — повод спросить, нужна ли функция, а не основание её убрать. «Доступность не подтверждена» — функция не была на экране в этом режиме</div><table><tr><th>Функция</th><th>доступна (открытий)</th><th>использована (открытий)</th><th>раз</th><th></th></tr>' +
+      M.availability.slice().sort((a, b) => order[a.status] - order[b.status] || b.available_in_visits - a.available_in_visits).map(x => '<tr><td>' + esc(nm(x.feature)) + '<div class="id">' + esc(x.feature) + '</div></td><td class="n">' + x.available_in_visits + '</td><td class="n">' + x.used_in_visits + '</td><td class="n">' + x.calls + '</td><td class="' + (x.status === 'used' ? 'st-used">используется' : x.status === 'available_unused' ? 'st-unused">доступна, 0 раз' : 'st-never">доступность не подтверждена') + '</td></tr>').join('') + '</table></section>');
+    out.push('<section><h2>Повторяющиеся цепочки</h2><div class="note">Три шага подряд внутри одного открытия (A — действие, V — просмотр), встретившиеся больше одного раза</div>' +
+      (M.sequences.map(x => '<div class="seq"><b>' + x.n + '×</b> ' + x.steps.map(s => esc(s.slice(0, 2) + nm(s.slice(2).split('·')[0]) + (s.includes('·') ? ' · ' + s.split('·')[1] : ''))).join('<i>→</i>') + '</div>').join('') || '<div class="note">пока нет</div>') + '</section>');
+    out.push('<section><h2>Версии экрана и пробелы записи</h2><table><tr><th>Сборка</th><th>с</th><th>по</th><th>открытий</th><th>событий</th></tr>' + X.builds.map(b => '<tr><td>' + esc(b.build) + '</td><td>' + new Date(b.first_utc).toLocaleString('ru') + '</td><td>' + new Date(b.last_utc).toLocaleString('ru') + '</td><td class="n">' + b.visits + '</td><td class="n">' + b.events + '</td></tr>').join('') + '</table>' +
+      '<p class="note">Период: ' + new Date(X.range_utc.start).toLocaleString('ru') + ' — ' + new Date(X.range_utc.end).toLocaleString('ru') + ' · схема ' + X.schema_version + ' · пробелов: ' + (M.gaps.length + X.server_gaps.length) + (M.gaps.length + X.server_gaps.length ? ' (' + esc([...M.gaps.map(g => g.what + ' ' + JSON.stringify(g.data || {})), ...X.server_gaps.map(g => g.what)].join('; ')) + ')' : '') + '</p></section>');
+    $('out').innerHTML = out.join('');
+    heatScreen(M.mouse.screen_grid); heatChart(M.mouse.chart_grid);
+    if (M.mouse.rest_screen_grid) heatScreen(M.mouse.rest_screen_grid, 'hr', 'весь экран: где курсор лежал 2 с и дольше');
+  }
+  function lineName(k) {
+    const m = /^reach(\d+)$/.exec(k); if (m) return 'дошли ' + m[1] + ' % (ценовая колонка)';
+    const t = { drH: 'DR high', drL: 'DR low', idrH: 'IDR high', idrL: 'IDR low', mid: 'середина IDR', open: 'открытие' }[k]; if (t) return t;
+    const s = /^([ud])(\d+)$/.exec(k); if (s) return 'STD ' + (s[1] === 'u' ? '+' : '−') + (s[2] / 2);
+    return k;
+  }
+  // one hue, dark → bright with time (sequential); the background is the panel; a cell's exact value is in its tooltip
+  const ramp = f => { const a = [24, 30, 42], b = [124, 196, 242], t = Math.sqrt(f); return 'rgb(' + a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',') + ')'; };
+  function prep(cv) { const r = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight || 250; cv.width = w * r; cv.height = h * r; const c = cv.getContext('2d'); c.setTransform(r, 0, 0, r, 0, 0); return [c, w, h]; }
+  function tipOn(cv, find) {
+    const tip = $('tipx');
+    cv.onmousemove = e => { const r = cv.getBoundingClientRect(), t = find(e.clientX - r.left, e.clientY - r.top); if (!t) { tip.style.display = 'none'; return; } tip.innerHTML = t; tip.style.display = 'block'; tip.style.left = Math.min(innerWidth - 330, e.clientX + 12) + 'px'; tip.style.top = (e.clientY + 12) + 'px'; };
+    cv.onmouseleave = () => { tip.style.display = 'none'; };
+  }
+  function heatScreen(G, id, label) {
+    const cv = $(id || 'hs'); if (!cv) return;
+    const [c, w, h] = prep(cv), cw = w / G.cols, ch = (h - 18) / G.rows, max = Math.max(0.001, ...G.cells.map(q => q[2])), at = new Map(G.cells.map(q => [q[0] + ',' + q[1], q[2]]));
+    c.fillStyle = '#13151B'; c.fillRect(0, 0, w, h);
+    for (const [x, y, v] of G.cells) { c.fillStyle = ramp(v / max); c.fillRect(x * cw + 0.5, y * ch + 0.5, cw - 1, ch - 1); }
+    c.strokeStyle = '#262A33'; c.strokeRect(0.5, 0.5, w - 1, h - 18);
+    c.fillStyle = '#6E7787'; c.font = '11px system-ui'; c.fillText(label || 'весь экран: верх — кнопки, справа — сводка (как в окне браузера)', 4, h - 4);
+    tipOn(cv, (x, y) => { const i = Math.floor(x / cw), j = Math.floor(y / ch), v = at.get(i + ',' + j); return v ? sec(v) + ' · ' + Math.round(i / G.cols * 100) + '–' + Math.round((i + 1) / G.cols * 100) + ' % ширины, ' + Math.round(j / G.rows * 100) + ' % высоты' : null; });
+  }
+  function heatChart(G) {
+    const cv = $('hc'); if (!cv) return;
+    const [c, w, h] = prep(cv), L = 44, B = 20, cells = G.cells.filter(q => q[1] >= -4 && q[1] <= 5);
+    c.fillStyle = '#13151B'; c.fillRect(0, 0, w, h);
+    if (!cells.length) { c.fillStyle = '#6E7787'; c.font = '12px system-ui'; c.fillText('над графиком мышь ещё не была', L, h / 2); return; }
+    const m0 = Math.min(...cells.map(q => q[0])), m1 = Math.max(...cells.map(q => q[0])) + G.minute_step;
+    const u0 = Math.min(-1, ...cells.map(q => q[1])), u1 = Math.max(2, ...cells.map(q => q[1])) + G.level_step;
+    const X = m => L + (m - m0) / (m1 - m0) * (w - L - 6), Y = u => (h - B) - (u - u0) / (u1 - u0) * (h - B - 6), max = Math.max(0.001, ...cells.map(q => q[2]));
+    for (const [m, u, v] of cells) { c.fillStyle = ramp(v / max); c.fillRect(X(m) + 0.5, Y(u + G.level_step) + 0.5, Math.max(1, X(m + G.minute_step) - X(m) - 1), Math.max(1, Y(u) - Y(u + G.level_step) - 1)); }
+    c.font = '10.5px system-ui'; c.textBaseline = 'middle';
+    for (const [u, t, strong] of [[0, 'IDR low', 1], [1, 'IDR high', 1], [0.5, 'mid', 0], [1.5, '+0.5', 0], [2, '+1', 0], [3, '+2', 0], [-0.5, '−0.5', 0], [-1, '−1', 0], [-2, '−2', 0]]) {
+      if (u < u0 || u > u1) continue; const y = Math.round(Y(u)) + 0.5;
+      c.strokeStyle = strong ? 'rgba(230,233,239,.35)' : 'rgba(230,233,239,.12)'; c.beginPath(); c.moveTo(L, y); c.lineTo(w - 6, y); c.stroke();
+      c.fillStyle = '#6E7787'; c.fillText(t, 2, y);
+    }
+    c.textBaseline = 'alphabetic'; c.fillStyle = '#6E7787';
+    const step = (m1 - m0) > 600 ? 120 : (m1 - m0) > 240 ? 60 : 30;
+    for (let m = Math.ceil(m0 / step) * step; m <= m1; m += step) { const x = X(m); c.fillRect(x, h - B, 1, 4); c.fillText((m >= 0 ? '+' : '') + m + 'м', x + 2, h - 5); }
+    c.strokeStyle = 'rgba(232,165,75,.6)'; c.beginPath(); c.moveTo(X(0) + 0.5, 6); c.lineTo(X(0) + 0.5, h - B); c.stroke();
+    tipOn(cv, (x, y) => { const m = m0 + (x - L) / (w - L - 6) * (m1 - m0), u = u0 + ((h - B) - y) / (h - B - 6) * (u1 - u0); const q = cells.find(z => m >= z[0] && m < z[0] + G.minute_step && u >= z[1] && u < z[1] + G.level_step); return q ? sec(q[2]) + ' · ' + q[0] + '…' + (q[0] + G.minute_step) + ' мин от начала коробки · ' + q[1] + '…' + (q[1] + G.level_step) + ' к IDR (0 низ, 1 верх, шаг STD 0,5)' : null; });
+  }
+  $('per').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.d = +b.dataset.d; $('d0').value = $('d1').value = ''; keep(); load(); };
+  $('scope').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.scope = b.dataset.s; keep(); marks(); if (S.data) draw(); };
+  for (const id of ['d0', 'd1', 'inst', 'sess']) $(id).onchange = load;
+  $('dl').onclick = () => {
+    if (!S.data) return;
+    const a = document.createElement('a'), [d0, d1] = range();
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(S.data, null, 1)], { type: 'application/json' }));
+    a.download = 'usage-23-5_' + d0.toISOString().slice(0, 10) + '_' + d1.toISOString().slice(0, 10) + '.json'; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  };
+  window.addEventListener('resize', () => { if (S.data) draw(); });
+  load();
+})();
+</script>
+</body>
+</html>

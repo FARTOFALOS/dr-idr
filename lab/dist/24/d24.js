@@ -3570,7 +3570,7 @@
    "value_form": "POINT"
   }
  },
- "registry_hash": "fc9831da55bdcb2d"
+ "registry_hash": "2d7188888cf3dce6"
 };
   // A violation belongs to the scene it was found in (DR-LAB-SWPC-1.1 M16): a passport's snapshot, one family response or
   // one NOW response (each its own number: a new answer to the same request starts clean), or the page itself ('*': a page without its registry,
