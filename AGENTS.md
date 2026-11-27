@@ -129,6 +129,8 @@ lab/
   live.py, tv_fetch.mjs, tv_passive.mjs   live candles from TradingView Desktop over CDP (never written to history)
   build_market.py, build_boxes.py   the history base from the G3 tape (once); engine_market.py, engine.py: legacy, demo
   dr_voice.py, dr_speak.ps1 the spoken reading of the screen
+  trades.py, trades_report.html, trades_task.ps1   the operator's trade journal from NinjaTrader (every order, move,
+                           fill; trades prop vs Sim101); private, lab/.runtime/trades/; spec/DR-LAB-TRADE-JOURNAL.md
   q1/                      the Q1 historical pilot of 12.10 (own server, kept with its checks)
   dist/                    built pages: 23-5/ and 24/ (built from design/), legacy index.html, classic.html, sem-v1/
   .runtime/                git-ignored: history, live candles, logs, NOW validation — market data, never committed
@@ -149,6 +151,7 @@ tests/                     checks (below)
 1. **Market data is never committed or published.** The tape and everything built from it (`lab/.runtime/`) stay
    local. The repository is public. Screenshots of the working screen are not market data in this sense: they go into
    the repository when they serve a review (operator, 2026-09-30).
+   The operator's own trades (`lab/.runtime/trades/`, account numbers, fills) are private in the same way (23.11).
 2. **2026 stays hidden in the history base.** The build stops at 2025-12-31 ET; `tests/smoke.py` checks it. The 2026
    tape is the forward observation of the G3 research line and of the zone map's acceptance (О23, О24).
 3. **No Volume** anywhere in the method.
@@ -212,6 +215,8 @@ python -B tests/contract_sc11.py         # the contract: expect ALL GOOD
 - **Server or `lab/*.py` touched:** restart the server (it caches modules): `stop-dr-lab-23-5.cmd`, then
   `start-dr-lab-23-5.cmd -NoBrowser`; the same for `:8767` with `stop-dr-lab.cmd` / `start-dr-lab.cmd`. Run them from
   PowerShell directly, never through a pipe.
+- **The trade journal** (`lab/trades*.py|html|ps1`): `python -B tests/trades.py` (synthetic base only); on the operator's
+  computer `python lab/trades.py collect --force` and `python lab/trades.py summary`. Never commit its output.
 - Links between documents: `python -B tests/semantic_links.py`.
 
 ## Repository rules
