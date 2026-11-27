@@ -3934,6 +3934,7 @@
       }
     } catch (e) { VQ.fails++; }
     VQ.busy = false;
+    if (V?.tpFocus && !V.tpFocus.shown && V.tpFocus.pass.checked && !V.tpFocus.pass.violation) redraw(false);
     if (VQ.fails > 2) kViolate('the reference check of the page’s numbers is unavailable (POST /api/d24/verify): ' + ((VQ.last && (VQ.last.status || VQ.last.error)) || 'no answer'), null, '*');
     else if (P24.list.some(p => !p.checked && !p.violation && p.req)) verifySoon();
     return VQ.last;
@@ -4094,6 +4095,7 @@
     if (st.pinZone && ctx.F) { st.pin = { k: 'zone', ev: st.ev, i: st.pinZone - 1 }; st.pinZone = null; }
     V = geom(ctx);
     V.win = null;
+    V.tpFocus = tpFocusOf(ctx);
     const c = g2;
     c.setTransform(dpr, 0, 0, dpr, 0, 0);
     Object.assign(C, { dr: cfg.dr, idr: cfg.idr, mid: cfg.mid, std: cfg.std, stdOn: cfg.std, vib: cfg.viC, up: cfg.upC, dn: cfg.dnC, bg: cfg.bg });
@@ -4116,6 +4118,7 @@
     if (F && !continuationMode()) drawZones(c, cloudCtx, 'under');
     if (F && F._tp && !continuationMode()) tpGhosts(c, cloudCtx, 'under');      // TP: the pullback places of the other windows (tp235.js)
     if (F && V.lk && V.lk.row && V.lk.k0 != null) drawBandProfile(c, ctx, V.lk, 'body');
+    tpFocusPlot(c);
     drawCandles(c, ctx);
     if (F && !continuationMode()) drawNowRange(c, ctx);
     if (F && !continuationMode()) drawNowMarks(c, ctx);
@@ -5446,7 +5449,8 @@
     const okRow = (ev, k) => F._mx && PV[ev].get(k) ? Rch.okCell(ev, k, PV[ev].get(k).b) : Rch.okK(ev, k);
     // audit 2026-10-06: a band where today's final event can no longer lie (today's R is already deeper, today's X already
     // further) is faded whole and its label grey: this is what «the level has traded today» means
-    const labels = [];
+    const labels = [], focus = V.tpFocus?.shown && F === V.ctx.F ? V.tpFocus : null;
+    const focusRow = (ev, k) => ev === 'R' && focus?.k === k;
     for (const k of keys) {
       const [top, bot] = cellY(F, k, k + 1);
       if (bot < top0 || top > bot0) {
@@ -5475,15 +5479,32 @@
             : rgba(cfg.doneC, Math.min(1, Math.max(0.2, 0.75 * a * cfg.projA / 90 * cfg.passedA / 30)));
           c.fillRect(x + la, top + 0.5, len - la, hh);
         }
+        if (focusRow(ev, k)) {
+          const col = tpFocusColor(focus), part = len * focus.n / n;
+          c.fillStyle = rgba(col, focus.active ? 0.34 : 0.14);
+          c.fillRect(x, top + 0.5, part, hh);
+          c.fillStyle = rgba(col, focus.active ? 0.86 : 0.33);
+          c.fillRect(x, bot - 1.5, part, 1);
+        }
         V.projBars.push({ ev, k, b: mv ? mv.b : null, ans: mv ? mv.ans : true, top, bot, x0: x, x1: x + len, n, earlier:g, later:n-g });
         const pk = I.peak.has(k);
-        if ((!mv || mv.ans) && (on || pk || z != null || 100 * n / F.N >= 3 || (mv && sec))) labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top, ok: okRow(ev, k), mv });
+        if ((!mv || mv.ans) && (focusRow(ev, k) || on || pk || z != null || 100 * n / F.N >= 3 || (mv && sec))) labels.push({ ev, k, y: (top + bot) / 2, xe: x + len, n, ahead: n - g, pk, on, z, rowH: bot - top, ok: okRow(ev, k), mv });
         x += len;
       }
     }
     // the labels: R left of the bar, X right of it; per side the hovered and the zones' peaks first, never overlapping
     const used = { R: [], X: [] };
-    for (const L of labels.sort((a, b) => (b.on - a.on) || (b.pk - a.pk) || (b.n - a.n))) {
+    for (const L of labels.sort((a, b) => (+!!focusRow(b.ev, b.k) - +!!focusRow(a.ev, a.k)) || (b.on - a.on) || (b.pk - a.pk) || (b.n - a.n))) {
+      if (focusRow(L.ev, L.k)) {
+        const fs = (focus.active ? 13 : 9) * cfg.colSize / 100, wt = focus.active ? '700 ' : '';
+        if (used.R.some(u => Math.abs(u[0] - L.y) < (u[1] + fs) / 2 + 1)) continue;
+        used.R.push([L.y, fs]);
+        const t = ppTxt(focus.pass), w = pctW(c, t, wt, fs), x = Math.max(A_.x + 3, x0 - 3 - w);
+        c.textBaseline = 'middle';
+        pctDraw(c, t, x, L.y + 0.5, wt, fs, tpFocusColor(focus));
+        V.tpFocusLabel = [x - 2, L.y - fs / 2 - 2, x + w + 2, L.y + fs / 2 + 2];
+        continue;
+      }
       // the label's size and brightness follow the share on the same scale as the bar: the strongest rows read first
       // the strongest row of the column 14 px bold, the weakest zone rows about 9 px (linear in the share)
       // the weight of a label follows what is still AHEAD in its band (the number stays the band's whole share); a band
@@ -5574,11 +5595,27 @@
     c.fillStyle = C.grid; c.fillRect(0, y, V.W, 1);
     const step = niceStep(st.v1 - st.v0, W, 72, [5, 10, 15, 30, 60, 120, 180, 240, 360, 720]);
     const h = hv(), busy = [ctx.obs], wn = V.win;
+    const focus = V.tpFocus?.shown && !wn ? V.tpFocus : null;
+    const cursorOn = st.mx >= 0 && st.mx < W && st.my < V.plot.h;
+    let focusAt = null;
+    if (focus) {
+      const x = V.X((focus.t0 + focus.t1) / 2), obs = V.X(ctx.obs);
+      if (x > 0 && x < W) {
+        const anchor = Math.max(42, Math.min(W - 42, x));
+        const occupied = [obs];
+        if (cursorOn) occupied.push(V.X(snapT(V.T(st.mx)) - 2.5));
+        const slots = [anchor, ...occupied.flatMap(p => [p + 74, p - 74])];
+        const slot = slots.filter(p => p >= 42 && p <= W - 42 && occupied.every(b => Math.abs(p - b) >= 74))
+          .sort((a, b) => Math.abs(a - anchor) - Math.abs(b - anchor))[0];
+        if (slot != null) { focusAt = V.T(slot); busy.push(focusAt); }
+      }
+    }
     if (wn && wn.t0 != null) busy.push(wn.t0, wn.t1);
     if (st.mx >= 0 && st.mx < W && st.my < V.plot.h) busy.push(snapT(V.T(st.mx)) - 2.5);
     c.font = '11.5px ' + FONT; c.fillStyle = C.text2; c.textBaseline = 'middle'; c.textAlign = 'center';
     for (let t = Math.ceil(st.v0 / step) * step; t <= st.v1; t += step) { const x = V.X(t); if (x > 20 && x < W - 20 && !busy.some(b => Math.abs(V.X(b) - x) < 42)) c.fillText(t % 1440 === 0 ? ctx.D.dm : clk(t), x, y + V.timeH / 2); }
     const tag = (t, bg, fg, txt) => { const x = V.X(t), text = txt || clk(t); c.font = '600 11px ' + FONT; const w = c.measureText(text).width + 12; c.fillStyle = bg; roundRect(c, x - w / 2, y + 4, w, 20, 3); c.fill(); c.fillStyle = fg; c.fillText(text, x, y + 14.5); };
+    if (focusAt != null) tag(focusAt, rgba(tpFocusColor(focus), focus.active ? .86 : .26), focus.active ? '#0B0C10' : '#D7DBE2', clk(focus.t0) + '–' + clk(focus.t1));
     // operator 2026-10-06: the hovered cluster's time window is what the trader looks for, so it is drawn last, over the
     // slice tag; the cursor's own time tag is left out while a window is shown
     tag(ctx.obs, ctx.live && !ctx.D.hist ? '#2A2F38' : ctx.D.hist ? C.hist : C.replay, ctx.live && !ctx.D.hist ? '#fff' : '#0B0C10');
@@ -5604,6 +5641,8 @@
   function hit(x, y) { return swHit(x, y) || pbSemanticHit(hitMap(x, y)); }
   function hitMap(x, y) {
     const ctx = pbMapContext(V.ctx), F = ctx.F;
+    const f = V.tpFocusLabel;
+    if (f && x >= f[0] && x <= f[2] && y >= f[1] && y <= f[3]) return { k: 'tpfocus', src: 'proj' };
     if (F && V.projW && x >= V.proj.x && y < V.plot.h) {
       if (V.projUnk && y >= V.projUnk[1]) return { k: 'unk', src: 'proj' };
       if (st.mode === 'bounds') {
@@ -5694,6 +5733,7 @@
     return lbl(M_, d.all_x_before_all_r ? 'order_x_all' : 'order_x');
   }
   function tipHtml(h, ctx) {
+    if (h.k === 'tpfocus' && V.tpFocus?.shown) return sentence(V.tpFocus.pass);
     const F = ctx.F, s = ctx.s;
     if (!h) return '';
     if (h.k === 'arrive' || h.k === 'pre') return candidateTip(h, ctx);
@@ -8085,6 +8125,45 @@
     return out;
   }
   // ---------- the band of TP (drawBand's place and manner: the same strip, columns, capsules and colours) ----------
+  // Display focus only: one existing B-RX-REGION-R cell in the current TP window.
+  function tpFocusOf(ctx) {
+    const F = ctx.F, P = F && F._tp, W = P && P.clock.windows[P.w];
+    if (!W || !F.rbx || st.mode !== 'bounds' || !st.L.zones || !st.L.proj || !st.L.strip || continuationMode() ||
+      (typeof ancOn === 'function' && ancOn()) || (typeof antOn === 'function' && antOn()) || ctx.s.failed != null) return null;
+    const reach = reachOf(F, ctx);
+    if (!reach.known) return null;
+    const cells = new Map();
+    for (const q of F.ev.R.pts) {
+      if (q.b < W[0] || q.b >= W[1]) continue;
+      const key = q.k + '|' + q.b;
+      const cell = cells.get(key) || { k: q.k, b: q.b, n: 0, t0: F.f + 15 * q.b, t1: F.f + 15 * (q.b + 1) };
+      cell.n++;
+      cells.set(key, cell);
+    }
+    const ordered = [...cells.values()];
+    const ahead = ordered.filter(q => q.t1 > reach.sl && reach.okCell('R', q.k, q.b));
+    const pool = ahead.length ? ahead : ordered;
+    pool.sort((a, b) => b.n - a.n || (ahead.length ? a.b - b.b : b.b - a.b) || b.k - a.k);
+    const q = pool[0];
+    if (!q) return null;
+    const pass = evPass(F, 'R', 'region', [q.k, q.k + 1], [q.t0, q.t1], q.n);
+    return { ...q, pass, active: !!ahead.length, shown: !!pass.checked && !pass.violation };
+  }
+  function tpFocusColor(q) { return q.active ? mixW(cfg.R, 0.38) : cfg.projDoneC; }
+  function tpFocusPlot(c) {
+    const q = V.tpFocus;
+    if (!q?.shown) return;
+    const [top, bot] = cellY(V.ctx.F, q.k, q.k + 1), x0 = V.X(q.t0), x1 = V.X(q.t1);
+    const col = tpFocusColor(q);
+    c.save();
+    c.fillStyle = rgba(col, q.active ? 0.10 : 0.035);
+    c.strokeStyle = rgba(col, q.active ? 0.88 : 0.35);
+    c.lineWidth = q.active ? 1.5 : 1;
+    if (!q.active) c.setLineDash([3, 3]);
+    c.fillRect(x0, top, x1 - x0, bot - top);
+    c.strokeRect(x0, top, x1 - x0, bot - top);
+    c.restore();
+  }
   function tpBand(c, ctx) {
     const F = ctx.F, P = F._tp, T = P.T, tp = P.clock, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
     const ov = V.bandOv = bandOverlay(ctx), B = { x: B0.x, y: B0.y - ov, w: B0.w, h: B0.h + ov };
@@ -8097,6 +8176,12 @@
     if (ov > 0) { const gr = c.createLinearGradient(0, B.y, 0, B0.y); gr.addColorStop(0, 'rgba(10,11,15,0)'); gr.addColorStop(1, 'rgba(10,11,15,.72)'); c.fillStyle = gr; c.fillRect(B.x, B.y, B.w, ov); }
     c.fillStyle = C.grid; c.fillRect(B0.x, B0.y, B0.w, 1);
     drawMidnight(c, B0.y, B0.y + B0.h);
+    const focus = V.tpFocus;
+    if (focus?.shown) {
+      const x0 = V.X(focus.t0), x1 = V.X(focus.t1);
+      c.fillStyle = rgba(tpFocusColor(focus), focus.active ? 0.85 : 0.35);
+      c.fillRect(x0, B0.y + 1, x1 - x0, 2);
+    }
     // TP-2.0: R — T's clock as a share of the whole family (N); X — the window's sessions, share of |T_W|. One scale per
     // colour (rule 3): each half has its own maximum, the halves are never compared by height.
     const nR = new Map(tp.cells), nX = F.ev.X.T, NR = (P.A && P.A.N) || T.N, NX = F.N;

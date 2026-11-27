@@ -332,6 +332,45 @@
     return out;
   }
   // ---------- the band of TP (drawBand's place and manner: the same strip, columns, capsules and colours) ----------
+  // Display focus only: one existing B-RX-REGION-R cell in the current TP window.
+  function tpFocusOf(ctx) {
+    const F = ctx.F, P = F && F._tp, W = P && P.clock.windows[P.w];
+    if (!W || !F.rbx || st.mode !== 'bounds' || !st.L.zones || !st.L.proj || !st.L.strip || continuationMode() ||
+      (typeof ancOn === 'function' && ancOn()) || (typeof antOn === 'function' && antOn()) || ctx.s.failed != null) return null;
+    const reach = reachOf(F, ctx);
+    if (!reach.known) return null;
+    const cells = new Map();
+    for (const q of F.ev.R.pts) {
+      if (q.b < W[0] || q.b >= W[1]) continue;
+      const key = q.k + '|' + q.b;
+      const cell = cells.get(key) || { k: q.k, b: q.b, n: 0, t0: F.f + 15 * q.b, t1: F.f + 15 * (q.b + 1) };
+      cell.n++;
+      cells.set(key, cell);
+    }
+    const ordered = [...cells.values()];
+    const ahead = ordered.filter(q => q.t1 > reach.sl && reach.okCell('R', q.k, q.b));
+    const pool = ahead.length ? ahead : ordered;
+    pool.sort((a, b) => b.n - a.n || (ahead.length ? a.b - b.b : b.b - a.b) || b.k - a.k);
+    const q = pool[0];
+    if (!q) return null;
+    const pass = evPass(F, 'R', 'region', [q.k, q.k + 1], [q.t0, q.t1], q.n);
+    return { ...q, pass, active: !!ahead.length, shown: !!pass.checked && !pass.violation };
+  }
+  function tpFocusColor(q) { return q.active ? mixW(cfg.R, 0.38) : cfg.projDoneC; }
+  function tpFocusPlot(c) {
+    const q = V.tpFocus;
+    if (!q?.shown) return;
+    const [top, bot] = cellY(V.ctx.F, q.k, q.k + 1), x0 = V.X(q.t0), x1 = V.X(q.t1);
+    const col = tpFocusColor(q);
+    c.save();
+    c.fillStyle = rgba(col, q.active ? 0.10 : 0.035);
+    c.strokeStyle = rgba(col, q.active ? 0.88 : 0.35);
+    c.lineWidth = q.active ? 1.5 : 1;
+    if (!q.active) c.setLineDash([3, 3]);
+    c.fillRect(x0, top, x1 - x0, bot - top);
+    c.strokeRect(x0, top, x1 - x0, bot - top);
+    c.restore();
+  }
   function tpBand(c, ctx) {
     const F = ctx.F, P = F._tp, T = P.T, tp = P.clock, B0 = V.band, h = hv(), sl = sliceOf(ctx), lk = V.lk, dir = F.d0 > 0 ? { X: -1, R: 1 } : { X: 1, R: -1 };
     const ov = V.bandOv = bandOverlay(ctx), B = { x: B0.x, y: B0.y - ov, w: B0.w, h: B0.h + ov };
@@ -344,6 +383,12 @@
     if (ov > 0) { const gr = c.createLinearGradient(0, B.y, 0, B0.y); gr.addColorStop(0, 'rgba(10,11,15,0)'); gr.addColorStop(1, 'rgba(10,11,15,.72)'); c.fillStyle = gr; c.fillRect(B.x, B.y, B.w, ov); }
     c.fillStyle = C.grid; c.fillRect(B0.x, B0.y, B0.w, 1);
     drawMidnight(c, B0.y, B0.y + B0.h);
+    const focus = V.tpFocus;
+    if (focus?.shown) {
+      const x0 = V.X(focus.t0), x1 = V.X(focus.t1);
+      c.fillStyle = rgba(tpFocusColor(focus), focus.active ? 0.85 : 0.35);
+      c.fillRect(x0, B0.y + 1, x1 - x0, 2);
+    }
     // TP-2.0: R — T's clock as a share of the whole family (N); X — the window's sessions, share of |T_W|. One scale per
     // colour (rule 3): each half has its own maximum, the halves are never compared by height.
     const nR = new Map(tp.cells), nX = F.ev.X.T, NR = (P.A && P.A.N) || T.N, NX = F.N;
